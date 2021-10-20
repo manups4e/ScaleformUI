@@ -1389,10 +1389,7 @@ namespace NativeUI
 		public void BindMenuToItem(UIMenu menuToBind, UIMenuItem itemToBindTo)
 		{
 			if (!MenuItems.Contains(itemToBindTo))
-			{
 				AddItem(itemToBindTo);
-				Debug.WriteLine("binding");
-			}
 			menuToBind.ParentMenu = this;
 			menuToBind.ParentItem = itemToBindTo;
 			if (Children.ContainsKey(itemToBindTo))
@@ -1646,8 +1643,6 @@ namespace NativeUI
 						}
 						break;
 				}
-				Notifications.DrawText(0.3f, 0.7f, $"mouse => {mouse}");
-				Notifications.DrawText(0.3f, 0.725f, $"res => {res}");
 			}
 			if (!HasSoundFinished(menuSound))
 			{
@@ -1970,7 +1965,6 @@ namespace NativeUI
 				{
 					var it = MenuItems.IndexOf(item);
 					var pan = item.Panels.IndexOf(panel);
-					Debug.WriteLine($"item=>{item.GetType()}, panelCount =>{item.Panels.Count}, itemIdx => {it}");
 					switch (panel)
 					{
 						case UIMenuColorPanel:
