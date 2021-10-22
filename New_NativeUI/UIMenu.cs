@@ -860,6 +860,7 @@ namespace NativeUI
 		private readonly Dictionary<MenuControls, Tuple<List<Keys>, List<Tuple<Control, int>>>> _keyDictionary =
 			new Dictionary<MenuControls, Tuple<List<Keys>, List<Tuple<Control, int>>>>();
 
+		private List<string> spriteDicts = new();
 		private readonly Scaleform _menuGlare;
 
 		private static readonly MenuControls[] _menuControls = Enum.GetValues(typeof(MenuControls)).Cast<MenuControls>().ToArray();
@@ -1676,20 +1677,24 @@ namespace NativeUI
 
 		public async void GoUp()
 		{
+			MenuItems[_activeItem % (MenuItems.Count)].Selected = false;
 			BeginScaleformMovieMethod(NativeUIScaleform._nativeui.Handle, "SET_INPUT_EVENT");
 			ScaleformMovieMethodAddParamInt(8);
 			var ret = EndScaleformMovieMethodReturnValue();
 			while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
 			_activeItem = GetScaleformMovieFunctionReturnInt(ret);
+			MenuItems[_activeItem % (MenuItems.Count)].Selected = true;
 			IndexChange(CurrentSelection);
 		}
 		public async void GoDown()
 		{
+			MenuItems[_activeItem % (MenuItems.Count)].Selected = false;
 			BeginScaleformMovieMethod(NativeUIScaleform._nativeui.Handle, "SET_INPUT_EVENT");
 			ScaleformMovieMethodAddParamInt(9);
 			var ret = EndScaleformMovieMethodReturnValue();
 			while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
 			_activeItem = GetScaleformMovieFunctionReturnInt(ret);
+			MenuItems[_activeItem % (MenuItems.Count)].Selected = true;
 			IndexChange(CurrentSelection);
 		}
 		public async void GoLeft()
@@ -1880,7 +1885,7 @@ namespace NativeUI
 				_justOpened = value;
 				_itemsDirty = value;
 
-				if (ParentMenu != null) return;
+				if (ParentMenu is not null) return;
 				if (Children.Count > 0 && Children.ContainsKey(MenuItems[CurrentSelection]) && Children[MenuItems[CurrentSelection]].Visible) return;
 				NativeUIScaleform.InstructionalButtons.Enabled = value;
 				NativeUIScaleform.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
@@ -1925,7 +1930,6 @@ namespace NativeUI
 				await BaseScript.Delay(0);
 				API.RequestStreamedTextureDict("char_creator_portraits", true);
 			}
-
 		}
 
 		internal async void _buildUpMenu()
@@ -1936,6 +1940,7 @@ namespace NativeUI
 				NativeUIScaleform._nativeui.CallFunction("ADD_HERITAGE_WINDOW", Windows[0].Mom, Windows[0].Dad);
 			foreach (var item in MenuItems)
 			{
+				_loadScaleform();
 				switch (item)
 				{
 					case UIMenuListItem:
@@ -1948,7 +1953,7 @@ namespace NativeUI
 						break;
 					case UIMenuSliderItem:
 						UIMenuSliderItem prItem = (UIMenuSliderItem)item;
-						NativeUIScaleform._nativeui.CallFunction("ADD_ITEM", prItem._itemId, prItem.Label, prItem.Description, 100, 5, 0, (int)prItem.MainColor, (int)prItem.HighlightColor, (int)prItem.TextColor, (int)prItem.HighlightedTextColor, (int)prItem.BackgroundSliderColor, (int)prItem.SliderColor, prItem._heritage);
+						NativeUIScaleform._nativeui.CallFunction("ADD_ITEM", prItem._itemId, prItem.Label, prItem.Description, prItem._max, prItem._multiplier, prItem.Value, (int)prItem.MainColor, (int)prItem.HighlightColor, (int)prItem.TextColor, (int)prItem.HighlightedTextColor, (int)prItem.BackgroundSliderColor, (int)prItem.SliderColor, prItem._heritage);
 						break;
 					case UIMenuProgressItem:
 						UIMenuProgressItem slItem = (UIMenuProgressItem)item;
@@ -1956,7 +1961,8 @@ namespace NativeUI
 						break;
 					default:
 						NativeUIScaleform._nativeui.CallFunction("ADD_ITEM", item._itemId, item.Label, item.Description, (int)item.MainColor, (int)item.HighlightColor, (int)item.TextColor, (int)item.HighlightedTextColor);
-						if (item.RightBadge != null && item.RightBadge != BadgeIcon.NONE)
+						NativeUIScaleform._nativeui.CallFunction("SET_RIGHT_LABEL", MenuItems.IndexOf(item), item.RightLabel);
+						if (item.RightBadge != BadgeIcon.NONE)
 							NativeUIScaleform._nativeui.CallFunction("SET_RIGHT_BADGE", MenuItems.IndexOf(item), UIMenuItem.GetSpriteDictionary(item.RightBadge), (int)item.RightBadge);
 						break;
 				}
@@ -1973,7 +1979,7 @@ namespace NativeUI
 							break;
 						case UIMenuPercentagePanel:
 							UIMenuPercentagePanel pp = (UIMenuPercentagePanel)panel;
-							NativeUIScaleform._nativeui.CallFunction("ADD_PANEL", it, 1, pp.Title, "0%", "100%", 0);
+							NativeUIScaleform._nativeui.CallFunction("ADD_PANEL", it, 1, pp.Title, "0%", "100%", pp.Percentage);
 							break;
 						case UIMenuGridPanel:
 							UIMenuGridPanel gp = (UIMenuGridPanel)panel;
@@ -2013,6 +2019,7 @@ namespace NativeUI
 				if (MenuItems.Count == 0) _activeItem = 0;
 				MenuItems[_activeItem % (MenuItems.Count)].Selected = false;
 				_activeItem = 1000000 - (1000000 % MenuItems.Count) + value;
+				MenuItems[_activeItem % (MenuItems.Count)].Selected = true;
 				if (CurrentSelection > _maxItem)
 				{
 					_maxItem = CurrentSelection;
