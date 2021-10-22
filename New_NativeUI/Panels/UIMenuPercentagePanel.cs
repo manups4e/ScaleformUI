@@ -28,6 +28,7 @@ namespace NativeUI
 			}
 			set
 			{
+				_value = value;
 				_setValue(value);
 			}
 		}

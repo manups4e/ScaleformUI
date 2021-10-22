@@ -210,9 +210,6 @@ namespace NativeUI
         // Taken from MenuAPI (Thanks Tom).
         public dynamic ItemData { get; set; }
 
-		private readonly HudColor _defaultColor = HudColor.HUD_COLOUR_PAUSE_BG;
-		private readonly HudColor _disabledColor = HudColor.HUD_COLOUR_GREYDARK; // Why allocating memory for same color every time?
-
         /// <summary>
         /// Called when user selects the current item.
         /// </summary>
@@ -306,14 +303,22 @@ namespace NativeUI
         /// <param name="badge"></param>
         public async virtual void SetRightBadge(BadgeIcon badge)
         {
-            RightBadge = badge;
-            string dict = GetSpriteDictionary(badge);
-            while (!API.HasStreamedTextureDictLoaded(dict))
+            if (Parent is not null)
             {
-                await BaseScript.Delay(0);
-                API.RequestStreamedTextureDict(dict, true);
+                RightBadge = badge;
+                string dict = GetSpriteDictionary(badge);
+                while (!API.HasStreamedTextureDictLoaded(dict))
+                {
+                    await BaseScript.Delay(0);
+                    API.RequestStreamedTextureDict(dict, true);
+                }
+                NativeUIScaleform._nativeui.CallFunction("SET_RIGHT_BADGE", Parent.MenuItems.IndexOf(this), dict, (int)badge);
+                API.RemoveAnimDict(dict);
             }
-            NativeUIScaleform._nativeui.CallFunction("SET_RIGHT_BADGE", Parent.MenuItems.IndexOf(this), dict, (int)badge);
+            else
+            {
+                RightBadge = badge;
+            }
         }
 
 
@@ -324,18 +329,22 @@ namespace NativeUI
         public virtual void SetRightLabel(string text)
         {
             RightLabel = text;
+            if (Parent is not null)
+            {
+                NativeUIScaleform._nativeui.CallFunction("SET_RIGHT_LABEL", Parent.MenuItems.IndexOf(this), RightLabel);
+            }
         }
 
         /// <summary>
         /// Returns the current right label.
         /// </summary>
-        public virtual string RightLabel { get; private set; }
+        public virtual string RightLabel { get; private set; } = "";
 
 
         /// <summary>
         /// Returns the current left badge.
         /// </summary>
-        public virtual BadgeIcon LeftBadge { get; private set; }
+        public virtual BadgeIcon LeftBadge { get; private set; } = BadgeIcon.NONE;
 
         /// <summary>
         /// Add a Panel to the UIMenuItem

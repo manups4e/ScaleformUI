@@ -4,6 +4,7 @@ using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
 using CitizenFX.Core;
 using System.Threading.Tasks;
+using System;
 
 namespace NativeUI
 {
@@ -30,14 +31,13 @@ namespace NativeUI
 		public UIMenuColorPanel(string title, ColorPanelType ColorType, int startIndex = 0)
 		{
 			Title = title??"Color Panel";
-			ParentItem = null;
 			ColorPanelColorType = ColorType;
 			_value = startIndex;
 		}
 
 		internal void PanelChanged()
 		{
-			OnColorPanelChange.Invoke(ParentItem, this, CurrentSelection);
+			OnColorPanelChange?.Invoke(ParentItem, this, CurrentSelection);
 		}
 
 		/*
@@ -64,8 +64,8 @@ namespace NativeUI
 
 		public void _setValue(int val)
         {
-			var it = this.ParentItem.Parent.MenuItems.IndexOf(this.ParentItem);
-			var van = this.ParentItem.Panels.IndexOf(this);
+			var it = ParentItem.Parent.MenuItems.IndexOf(this.ParentItem);
+			var van = ParentItem.Panels.IndexOf(this);
 			NativeUIScaleform._nativeui.CallFunction("SET_COLOR_PANEL_VALUE", it, van, val);
 		}
 	}
