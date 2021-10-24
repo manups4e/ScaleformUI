@@ -198,13 +198,16 @@ namespace NativeUI
     {
 
         internal int _itemId = 0;
-		public HudColor MainColor { get; set; }
-		public HudColor HighlightColor { get; set; }
+        public HudColor MainColor { get; set; }
+        public HudColor HighlightColor { get; set; }
 
-		public HudColor TextColor { get; set; }
-		public HudColor HighlightedTextColor { get; set; }
+        public HudColor TextColor { get; set; }
+        public HudColor HighlightedTextColor { get; set; }
 
-        public List<UIMenuPanel> Panels = new List<UIMenuPanel>();
+        public List<UIMenuPanel> Panels = new();
+        private bool _selected;
+        private string _label;
+        private string _rightLabel = "";
 
         // Allows you to attach data to a menu item if you want to identify the menu item without having to put identification info in the visible text or description.
         // Taken from MenuAPI (Thanks Tom).
@@ -216,45 +219,81 @@ namespace NativeUI
         public event ItemActivatedEvent Activated;
 
 
-		/// <summary>
-		/// Basic menu button.
-		/// </summary>
-		/// <param name="text">Button label.</param>
-		public UIMenuItem(string text) : this(text, "", HudColor.HUD_COLOUR_PAUSE_BG, HudColor.HUD_COLOUR_WHITE) {}
+        /// <summary>
+        /// Basic menu button.
+        /// </summary>
+        /// <param name="text">Button label.</param>
+        public UIMenuItem(string text) : this(text, "", HudColor.HUD_COLOUR_PAUSE_BG, HudColor.HUD_COLOUR_WHITE) { }
 
-		/// <summary>
-		/// Basic menu button with description.
-		/// </summary>
-		/// <param name="text">Button label.</param>
-		/// <param name="description">Description.</param>
-		public UIMenuItem(string text, string description) : this(text, description, HudColor.HUD_COLOUR_PAUSE_BG, HudColor.HUD_COLOUR_WHITE) {}
+        /// <summary>
+        /// Basic menu button with description.
+        /// </summary>
+        /// <param name="text">Button label.</param>
+        /// <param name="description">Description.</param>
+        public UIMenuItem(string text, string description) : this(text, description, HudColor.HUD_COLOUR_PAUSE_BG, HudColor.HUD_COLOUR_WHITE) { }
 
-		/// <summary>
-		/// Basic menu button with description and colors.
-		/// </summary>
-		/// <param name="text">Button label.</param>
-		/// <param name="description">Button label.</param>
-		/// <param name="description">Button label.</param>
-		/// <param name="description">Button label.</param>
-		public UIMenuItem(string text, string description, HudColor color, HudColor highlightColor)
-		{
-			Enabled = true;
+        /// <summary>
+        /// Basic menu button with description and colors.
+        /// </summary>
+        /// <param name="text">Button label.</param>
+        /// <param name="description">Button label.</param>
+        /// <param name="description">Button label.</param>
+        /// <param name="description">Button label.</param>
+        public UIMenuItem(string text, string description, HudColor color, HudColor highlightColor)
+        {
+            Enabled = true;
 
-			MainColor = color;
-			HighlightColor = highlightColor;
+            MainColor = color;
+            HighlightColor = highlightColor;
 
-			TextColor = HudColor.HUD_COLOUR_WHITE;
-			HighlightedTextColor = HudColor.HUD_COLOUR_BLACK;
-            // aggiungere text, e label e badge ints
+            TextColor = HudColor.HUD_COLOUR_WHITE;
+            HighlightedTextColor = HudColor.HUD_COLOUR_BLACK;
             Label = text;
-			Description = description;
-		}
+            Description = description;
+        }
 
 
-		/// <summary>
-		/// Whether this item is currently selected.
-		/// </summary>
-		public virtual bool Selected { get; set; }
+        /// <summary>
+        /// Whether this item is currently selected.
+        /// </summary>
+        public virtual bool Selected
+        {
+            get => _selected;
+            set
+            {
+                _selected = value;
+                if (value)
+                {
+                    if (_label.Contains("~"))
+                    {
+                        _label = _label.Replace("~w~", "~l~");
+                        _label = _label.Replace("~s~", "~l~");
+                        if (!_label.StartsWith("~"))
+                            _label = _label.Insert(0, "~l~");
+                    }
+                    if (_rightLabel.Contains("~"))
+                    {
+                        _rightLabel = _rightLabel.Replace("~w~", "~l~");
+                        _rightLabel = _rightLabel.Replace("~s~", "~l~");
+                        if (!_rightLabel.StartsWith("~"))
+                            _rightLabel = _rightLabel.Insert(0, "~l~");
+                    }
+                }
+                else
+                {
+                    _label = _label.Replace("~l~", "~s~");
+                    if (!_label.StartsWith("~"))
+                        _label = _label.Insert(0, "~s~");
+                    _rightLabel = _rightLabel.Replace("~l~", "~s~");
+                    if (!_rightLabel.StartsWith("~"))
+                        _rightLabel = _rightLabel.Insert(0, "~s~");
+                }
+                if (Parent is not null)
+                {
+                    NativeUIScaleform._nativeui.CallFunction("SET_ITEM_LABELS", Parent.MenuItems.IndexOf(this), _label, _rightLabel);
+                }
+            }
+        }
 
 
         /// <summary>
@@ -284,7 +323,34 @@ namespace NativeUI
         /// <summary>
         /// Returns this item's label.
         /// </summary>
-        public virtual string Label { get; set; }
+        public virtual string Label
+        {
+            get => _label;
+            set
+            {
+                _label = value;
+                if (_selected)
+                {
+                    if (_label.Contains("~"))
+                    {
+                        _label = _label.Replace("~w~", "~l~");
+                        _label = _label.Replace("~s~", "~l~");
+                        if (!_label.StartsWith("~"))
+                            _label = _label.Insert(0, "~l~");
+                    }
+                }
+                else
+                {
+                    _label = _label.Replace("~l~", "~s~");
+                    if (!_label.StartsWith("~"))
+                        _label = _label.Insert(0, "~s~");
+                }
+                if (Parent is not null)
+                {
+                    NativeUIScaleform._nativeui.CallFunction("SET_LEFT_LABEL", Parent.MenuItems.IndexOf(this), _label);
+                }
+            }
+        }
 
 
         /// <summary>
@@ -329,17 +395,39 @@ namespace NativeUI
         public virtual void SetRightLabel(string text)
         {
             RightLabel = text;
-            if (Parent is not null)
-            {
-                NativeUIScaleform._nativeui.CallFunction("SET_RIGHT_LABEL", Parent.MenuItems.IndexOf(this), RightLabel);
-            }
         }
 
         /// <summary>
         /// Returns the current right label.
         /// </summary>
-        public virtual string RightLabel { get; private set; } = "";
-
+        public virtual string RightLabel
+        {
+            get => _rightLabel;
+            private set
+            {
+                _rightLabel = value;
+                if (_selected)
+                {
+                    if (_rightLabel.Contains("~"))
+                    {
+                        _rightLabel = _rightLabel.Replace("~w~", "~l~");
+                        _rightLabel = _rightLabel.Replace("~s~", "~l~");
+                        if (!_rightLabel.StartsWith("~"))
+                            _rightLabel = _rightLabel.Insert(0, "~l~");
+                    }
+                }
+                else
+                {
+                    _rightLabel = _rightLabel.Replace("~l~", "~s~");
+                    if (!_rightLabel.StartsWith("~"))
+                        _rightLabel = _rightLabel.Insert(0, "~s~");
+                }
+                if (Parent is not null)
+                {
+                    NativeUIScaleform._nativeui.CallFunction("SET_RIGHT_LABEL", Parent.MenuItems.IndexOf(this), _rightLabel);
+                }
+            }
+        }
 
         /// <summary>
         /// Returns the current left badge.
