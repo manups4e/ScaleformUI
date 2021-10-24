@@ -1936,7 +1936,7 @@ namespace NativeUI
 		{
 			while (!NativeUIScaleform._nativeui.IsLoaded) await BaseScript.Delay(0);
 			NativeUIScaleform._nativeui.CallFunction("CREATE_MENU", Title, Subtitle, _customTexture.Key, _customTexture.Value);
-			if(Windows.Count > 0)
+			if (Windows.Count > 0)
 				NativeUIScaleform._nativeui.CallFunction("ADD_HERITAGE_WINDOW", Windows[0].Mom, Windows[0].Dad);
 			foreach (var item in MenuItems)
 			{
@@ -1999,12 +1999,12 @@ namespace NativeUI
 
 					}
 				}
-				NativeUIScaleform._nativeui.CallFunction("SET_CURRENT_ITEM", this.CurrentSelection);
-				SetStreamedTextureDictAsNoLongerNeeded(_customTexture.Key);
-				SetStreamedTextureDictAsNoLongerNeeded("commonmenu");
-				SetStreamedTextureDictAsNoLongerNeeded("pause_menu_pages_char_mom_dad");
-				SetStreamedTextureDictAsNoLongerNeeded("char_creator_portraits");
 			}
+			NativeUIScaleform._nativeui.CallFunction("SET_CURRENT_ITEM", this.CurrentSelection);
+			SetStreamedTextureDictAsNoLongerNeeded(_customTexture.Key);
+			SetStreamedTextureDictAsNoLongerNeeded("commonmenu");
+			SetStreamedTextureDictAsNoLongerNeeded("pause_menu_pages_char_mom_dad");
+			SetStreamedTextureDictAsNoLongerNeeded("char_creator_portraits");
 		}
 
 		/// <summary>
