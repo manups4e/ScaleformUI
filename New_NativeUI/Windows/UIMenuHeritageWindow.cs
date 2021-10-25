@@ -33,6 +33,7 @@ namespace NativeUI
 				API.RequestStreamedTextureDict("char_creator_portraits", true);
 			}
 			NativeUIScaleform._nativeui.CallFunction("UPDATE_HERITAGE_WINDOW", wid, Mom, Dad);
+			API.SetStreamedTextureDictAsNoLongerNeeded("char_creator_portraits");
 		}
 	}
 }
