@@ -1655,7 +1655,7 @@ namespace NativeUI
 		}
 
 		internal async void requestValueAsync(PointF mouse)
-        {
+		{
 		}
 
 		public void GoBack()
@@ -1771,7 +1771,7 @@ namespace NativeUI
 				return;
 			}
 
-			if(playSound)
+			if (playSound)
 				Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
 			switch (MenuItems[CurrentSelection])
 			{
@@ -1957,7 +1957,7 @@ namespace NativeUI
 						break;
 					case UIMenuProgressItem:
 						UIMenuProgressItem slItem = (UIMenuProgressItem)item;
-						NativeUIScaleform._nativeui.CallFunction("ADD_ITEM", slItem._itemId, slItem.Label, slItem.Description, slItem._max, slItem._multiplier, slItem.Value, (int)slItem.MainColor, (int)slItem.HighlightColor, (int)slItem.TextColor, (int)slItem.HighlightedTextColor, (int)slItem.SliderColor, (int)slItem.BackgroundSliderColor, slItem._heritage);
+						NativeUIScaleform._nativeui.CallFunction("ADD_ITEM", slItem._itemId, slItem.Label, slItem.Description, slItem._max, slItem._multiplier, slItem.Value, (int)slItem.MainColor, (int)slItem.HighlightColor, (int)slItem.TextColor, (int)slItem.HighlightedTextColor, (int)slItem.SliderColor, (int)slItem.BackgroundSliderColor);
 						break;
 					default:
 						NativeUIScaleform._nativeui.CallFunction("ADD_ITEM", item._itemId, item.Label, item.Description, (int)item.MainColor, (int)item.HighlightColor, (int)item.TextColor, (int)item.HighlightedTextColor);
@@ -1989,18 +1989,14 @@ namespace NativeUI
 							UIMenuStatisticsPanel sp = (UIMenuStatisticsPanel)panel;
 							NativeUIScaleform._nativeui.CallFunction("ADD_PANEL", it, 3);
 							if (sp.Items.Count > 0)
-							{
 								foreach (var stat in sp.Items)
-								{
 									NativeUIScaleform._nativeui.CallFunction("ADD_STATISTIC_TO_PANEL", it, pan, stat.Text, stat.Value);
-								}
-							}
 							break;
 
 					}
 				}
 			}
-			NativeUIScaleform._nativeui.CallFunction("SET_CURRENT_ITEM", this.CurrentSelection);
+			NativeUIScaleform._nativeui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
 			SetStreamedTextureDictAsNoLongerNeeded(_customTexture.Key);
 			SetStreamedTextureDictAsNoLongerNeeded("commonmenu");
 			SetStreamedTextureDictAsNoLongerNeeded("pause_menu_pages_char_mom_dad");
@@ -2030,7 +2026,7 @@ namespace NativeUI
 					_maxItem = MaxItemsOnScreen + CurrentSelection;
 					_minItem = CurrentSelection;
 				}
-				NativeUIScaleform._nativeui.CallFunction("SET_CURRENT_ITEM", this.CurrentSelection);
+				NativeUIScaleform._nativeui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
 			}
 		}
 
