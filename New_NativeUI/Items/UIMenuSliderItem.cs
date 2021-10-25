@@ -97,6 +97,12 @@ namespace NativeUI
 		{
 		}
 
+		public UIMenuSliderItem(string text, string description, int max, int mult, int startVal, bool heritage) : this(text, description, HudColor.HUD_COLOUR_FREEMODE, HudColor.HUD_COLOUR_PAUSE_BG, heritage)
+		{
+			Maximum = max;
+			Multiplier = mult;
+			Value = startVal;
+		}
 		/// <summary>
 		/// List item, with slider.
 		/// </summary>
