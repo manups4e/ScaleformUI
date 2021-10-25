@@ -85,7 +85,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="stream\nativeui.gfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="stream\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
