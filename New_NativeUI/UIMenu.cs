@@ -1329,7 +1329,7 @@ namespace NativeUI
 				//if (tmpKeys.Any(Game.IsKeyPressed))
 				//    return true;
 			}
-			if (tmpControls.Any(tuple => Game.IsControlJustReleased(tuple.Item2, tuple.Item1)))
+			if (tmpControls.Any(tuple => Game.IsControlJustPressed(tuple.Item2, tuple.Item1)))
 				return true;
 			return false;
 		}

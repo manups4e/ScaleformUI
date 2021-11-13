@@ -51,13 +51,13 @@
     <Compile Include="MenuExample.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\New_NativeUI\New_NativeUI.csproj">
-      <Project>{f3e16ed9-dbf7-4e7b-b04b-9b24b11891d3}</Project>
-      <Name>NativeUI</Name>
-    </ProjectReference>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\New_NativeUI\NativeUI.csproj">
+      <Project>{f5614594-90fd-4f4c-9c68-c9dc90060f8d}</Project>
+      <Name>NativeUI</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -68,7 +68,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>copy /y C:\Users\manups4e\source\repos\New_NativeUI\MenuExample\bin\Debug\NativeUI.dll L:\FiveM\ManuGamemode\resources\[nuova_gamemode_old]\NativeUI\
-copy /y C:\Users\manups4e\source\repos\New_NativeUI\MenuExample\bin\Debug\MenuExample.net.dll L:\FiveM\ManuGamemode\resources\[nuova_gamemode_old]\NativeUI\</PostBuildEvent>
+    <PostBuildEvent>copy /y G:\Progetti\source\repos\New_NativeUI\MenuExample\bin\Debug\NativeUI.dll L:\FiveM\ManuGamemode\resources\[nuova_gamemode_old]\NativeUI\
+copy /y G:\Progetti\source\repos\New_NativeUI\MenuExample\bin\Debug\MenuExample.net.dll L:\FiveM\ManuGamemode\resources\[nuova_gamemode_old]\NativeUI\</PostBuildEvent>
   </PropertyGroup>
 </Project>

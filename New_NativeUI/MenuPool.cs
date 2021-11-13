@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
+using NativeUI.PauseMenu;
 using Control = CitizenFX.Core.Control;
 
 namespace NativeUI
@@ -61,6 +62,7 @@ namespace NativeUI
         public event MenuStateChangeEvent OnMenuStateChanged;
 
         private readonly List<UIMenu> _menuList = new List<UIMenu>();
+        private readonly List<TabView> _pauseMenuList = new List<TabView>();
 
         /// <summary>
         /// Add your menu to the menu pool.
@@ -70,6 +72,11 @@ namespace NativeUI
         {
             _menuList.Add(menu);
             menu._poolcontainer = this;
+        }
+
+        public void AddPauseMenu(TabView menu)
+        {
+            _pauseMenuList.Add(menu);
         }
 
         /// <summary>
@@ -178,6 +185,9 @@ namespace NativeUI
                 if (_menuList[i].Visible)
                     _menuList[i].ProcessControl();
             }
+            var pauseMenu = _pauseMenuList.SingleOrDefault(x => x.Visible);
+            if (pauseMenu is not null)
+                pauseMenu.ProcessControls();
         }
 
 
@@ -236,6 +246,9 @@ namespace NativeUI
                 if (_menuList[i].Visible)
                     _menuList[i].Draw();
             }
+            var pauseMenu = _pauseMenuList.SingleOrDefault(x => x.Visible);
+            if(pauseMenu is not null)
+                pauseMenu.Draw();
         }
 
 

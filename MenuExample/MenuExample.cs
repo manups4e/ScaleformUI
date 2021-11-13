@@ -7,6 +7,9 @@ using NativeUI;
 using CitizenFX.Core.Native;
 using System.Linq;
 using System.Threading.Tasks;
+using NativeUI.PauseMenu;
+using NativeUI.PauseMenu.Items;
+using NativeUI.PauseMenu.Tabs;
 
 public class MenuExample : BaseScript
 {
@@ -711,6 +714,136 @@ public class MenuExample : BaseScript
 		};
 	}
 
+	public void PauseMenuExample(UIMenu menu)
+    {
+		UIMenuItem pause = new UIMenuItem("Open Pause Menu");
+		menu.AddItem(pause);
+		pause.Activated += (a, b) =>
+		{
+			PauseMenuShowcase(a);
+		};
+	}
+
+	public void PauseMenuShowcase(UIMenu mainMenu)
+    {
+		TabView pauseMenu = new TabView("PauseMenu example", "Look there's a subtitle too!", "Detail 1", "Detail 2", "Detail 3");
+		_menuPool.AddPauseMenu(pauseMenu);
+		TabTextItem basicTab = new TabTextItem("TabTextItem", "This is the title!");
+		basicTab.AddItem(new BasicTabItem("~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+		basicTab.AddItem(new BasicTabItem("~r~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+		basicTab.AddItem(new BasicTabItem("~b~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+		basicTab.AddItem(new BasicTabItem("~g~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+		basicTab.AddItem(new BasicTabItem("~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+		basicTab.AddItem(new BasicTabItem("~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+		basicTab.AddItem(new BasicTabItem("~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+		basicTab.AddItem(new BasicTabItem("~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+		basicTab.AddItem(new BasicTabItem("~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+		basicTab.AddItem(new BasicTabItem("~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+		basicTab.AddItem(new BasicTabItem("~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+		basicTab.AddItem(new BasicTabItem("~r~Use the mouse wheel to scroll the text!!"));
+		pauseMenu.AddTab(basicTab);
+
+		TabSubmenuItem multiItemTab = new TabSubmenuItem("TabSubMenu");
+		pauseMenu.AddTab(multiItemTab);
+		TabLeftItem first = new TabLeftItem("1 - Empty", LeftItemType.Empty);
+		TabLeftItem second = new TabLeftItem("2 - Info", LeftItemType.Info);
+		TabLeftItem third = new TabLeftItem("3 - Statistics", LeftItemType.Statistics);
+		TabLeftItem fourth = new TabLeftItem("4 - Settings", LeftItemType.Settings);
+		multiItemTab.AddLeftItem(first);
+		multiItemTab.AddLeftItem(second);
+		multiItemTab.AddLeftItem(third);
+		multiItemTab.AddLeftItem(fourth);
+
+		second.TextTitle = "Info Title!!";
+		second.AddItem(new BasicTabItem("~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+		second.AddItem(new BasicTabItem("~r~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+		second.AddItem(new BasicTabItem("~b~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+		second.AddItem(new BasicTabItem("~g~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+		second.AddItem(new BasicTabItem("~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+		second.AddItem(new BasicTabItem("~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+		second.AddItem(new BasicTabItem("~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+		second.AddItem(new BasicTabItem("~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+		second.AddItem(new BasicTabItem("~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+		second.AddItem(new BasicTabItem("~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+		second.AddItem(new BasicTabItem("~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+		second.AddItem(new BasicTabItem("~r~Use the mouse wheel to scroll the text!!"));
+
+		StatsTabItem _labelStatItem = new StatsTabItem("Item's Label", "Item's right label");
+		StatsTabItem _coloredBarStatItem0 = new StatsTabItem("Item's Label", 0, HudColor.HUD_COLOUR_ORANGE);
+		StatsTabItem _coloredBarStatItem1 = new StatsTabItem("Item's Label", 25, HudColor.HUD_COLOUR_RED);
+		StatsTabItem _coloredBarStatItem2 = new StatsTabItem("Item's Label", 50, HudColor.HUD_COLOUR_BLUE);
+		StatsTabItem _coloredBarStatItem3 = new StatsTabItem("Item's Label", 75, HudColor.HUD_COLOUR_GREEN);
+		StatsTabItem _coloredBarStatItem4 = new StatsTabItem("Item's Label", 100, HudColor.HUD_COLOUR_PURPLE);
+
+		third.AddItem(_labelStatItem);
+		third.AddItem(_coloredBarStatItem0);
+		third.AddItem(_coloredBarStatItem1);
+		third.AddItem(_coloredBarStatItem2);
+		third.AddItem(_coloredBarStatItem3);
+		third.AddItem(_coloredBarStatItem4);
+
+		List<dynamic> itemList = new List<dynamic>() { "This", "Is", "The", "List", "Super", "Power", "Wooow" };
+		SettingsTabItem _settings1 = new SettingsTabItem("Item's Label", "Item's right Label");
+		SettingsTabItem _settings2 = new SettingsTabItem("Item's Label", itemList, 0);
+		SettingsTabItem _settings3 = new SettingsTabItem("Item's Label", 100, 25, false, HudColor.HUD_COLOUR_FREEMODE);
+		SettingsTabItem _settings4 = new SettingsTabItem("Item's Label", 100, 75, true, HudColor.HUD_COLOUR_PINK);
+		SettingsTabItem _settings5 = new SettingsTabItem("Item's Label", UIMenuCheckboxStyle.Tick, true);
+		SettingsTabItem _settings6 = new SettingsTabItem("Item's Label", 100, 50, HudColor.HUD_COLOUR_RED);
+		fourth.AddItem(_settings1);
+		fourth.AddItem(_settings2);
+		fourth.AddItem(_settings3);
+		fourth.AddItem(_settings4);
+		fourth.AddItem(_settings5);
+		fourth.AddItem(_settings6);
+
+		pauseMenu.OnPauseMenuOpen += (menu) =>
+		{
+			Screen.ShowSubtitle(menu.Title + " Opened!");
+			mainMenu.Visible = false;
+		};
+		pauseMenu.OnPauseMenuClose += (menu) =>
+		{
+			Screen.ShowSubtitle(menu.Title + " Closed!");
+			mainMenu.Visible = true;
+		};
+
+		pauseMenu.OnPauseMenuTabChanged += (menu, tab, tabIndex) =>
+		{
+			Screen.ShowSubtitle(tab.Title + " Selected!");
+		};
+
+		pauseMenu.OnPauseMenuFocusChanged += (menu, tab, focusLevel) =>
+		{
+			Screen.ShowSubtitle(tab.Title + " Focus at level => ~y~"+ focusLevel +"~w~!");
+			if(focusLevel == 1)
+            {
+				if(tab is TabTextItem)
+                {
+					List<InstructionalButton> buttons = new List<InstructionalButton>()
+					{
+						new InstructionalButton(Control.PhoneCancel, Game.GetGXTEntry("HUD_INPUT3")),
+						new InstructionalButton(Control.LookUpDown, "Scroll text", PadCheck.Controller),
+						new InstructionalButton(InputGroup.INPUTGROUP_CURSOR_SCROLL, "Scroll text", PadCheck.Keyboard)
+					
+					};
+
+					NativeUIScaleform.InstructionalButtons.SetInstructionalButtons(buttons);
+                }
+            }
+		};
+
+		pauseMenu.OnLeftItemChange += (menu, tabIndex, focusLevel, leftItemIndex) =>
+		{
+			Screen.ShowSubtitle(menu.Tabs[tabIndex].Title + " Focus at level => ~y~" + focusLevel + "~w~, and left Item ~o~N° " + (leftItemIndex+1) + "~w~ selected!");
+		};
+
+		pauseMenu.OnRightItemChange += (menu, tabIndex, focusLevel, leftItemIndex, rightItemIndex) =>
+		{
+			Screen.ShowSubtitle(menu.Tabs[tabIndex].Title + " Focus at level => ~y~" + focusLevel + "~w~, left Item ~o~N° " + (leftItemIndex + 1) + "~w~ and right Item ~b~N° " + (rightItemIndex+1) + "~w~ selected!");
+		};
+		pauseMenu.Visible = true;
+	}
+
 	public MenuExample()
 	{
 		_menuPool = new MenuPool();
@@ -724,6 +857,7 @@ public class MenuExample : BaseScript
 		AddMenuCook(mainMenu);
 		HandleMenuEvents(mainMenu);
 		AddMenuAnotherMenu(mainMenu);
+		PauseMenuExample(mainMenu);
 		_menuPool.RefreshIndex();
 
 

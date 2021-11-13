@@ -48,6 +48,14 @@
     <Compile Include="Hud\Markers\MarkersHandler.cs" />
     <Compile Include="Hud\Notifications\NotificationChars.cs" />
     <Compile Include="Hud\Notifications\Notifications.cs" />
+    <Compile Include="PauseMenu\Items\BasicTabItem.cs" />
+    <Compile Include="PauseMenu\Items\SettingsTabItem.cs" />
+    <Compile Include="PauseMenu\Items\StatsTabItem.cs" />
+    <Compile Include="PauseMenu\Tabs\BaseTab.cs" />
+    <Compile Include="PauseMenu\Tabs\TabSubmenuItem.cs" />
+    <Compile Include="PauseMenu\Tabs\TabLeftItem.cs" />
+    <Compile Include="PauseMenu\Tabs\TabTextItem.cs" />
+    <Compile Include="PauseMenu\TabView.cs" />
     <Compile Include="Scaleforms\BigMessage\BigMessage.cs" />
     <Compile Include="Controls.cs" />
     <Compile Include="Elements\Sprite.cs" />
@@ -73,6 +81,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scaleforms\MediumMessage\MediumMessage.cs" />
     <Compile Include="Scaleforms\NativeUI\NativeUIScaleform.cs" />
+    <Compile Include="Scaleforms\PauseMenu\PauseMenuScaleform.cs" />
     <Compile Include="Scaleforms\PopupWarning\PopupWarning.cs" />
     <Compile Include="ScreenTools.cs" />
     <Compile Include="TimerBars\Bars\ProgressTimerBar.cs" />
