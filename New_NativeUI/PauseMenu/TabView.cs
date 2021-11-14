@@ -111,7 +111,6 @@ namespace NativeUI.PauseMenu
                     SendPauseMenuOpen();
                     Screen.Effects.Start(ScreenEffect.FocusOut, 800);
                     API.TransitionToBlurred(700);
-
                     NativeUIScaleform.InstructionalButtons.SetInstructionalButtons(buttons);
                     BuildPauseMenu();
                     API.SetPlayerControl(Game.Player.Handle, false, 0);
@@ -278,7 +277,7 @@ namespace NativeUI.PauseMenu
                 if (FocusLevel == 0) return;
                 result = await _pause.SendInputEvent(9);
             }
-            else if (Game.IsControlJustPressed(2, Control.PhoneLeft) || Game.IsControlJustPressed(2, Control.FrontendLb))
+            else if (Game.IsControlJustPressed(2, Control.PhoneLeft))
             {
                 if (FocusLevel == 1) return;
                 if (FocusLevel == 0)
@@ -288,7 +287,7 @@ namespace NativeUI.PauseMenu
                 result = await _pause.SendInputEvent(10);
             }
 
-            else if (Game.IsControlJustPressed(2, Control.PhoneRight) || Game.IsControlJustPressed(2, Control.FrontendRb))
+            else if (Game.IsControlJustPressed(2, Control.PhoneRight))
             {
                 if (FocusLevel == 1) return;
                 if (FocusLevel == 0)
@@ -296,6 +295,24 @@ namespace NativeUI.PauseMenu
                     _pause.HeaderGoRight();
                 }
                 result = await _pause.SendInputEvent(11);
+            }
+
+            else if (Game.IsControlJustPressed(2, Control.FrontendLb))
+            {
+                if (FocusLevel == 0)
+                {
+                    _pause.HeaderGoLeft();
+                    result = await _pause.SendInputEvent(10);
+                }
+            }
+
+            else if (Game.IsControlJustPressed(2, Control.FrontendRb))
+            {
+                if (FocusLevel == 0)
+                {
+                    _pause.HeaderGoRight();
+                    result = await _pause.SendInputEvent(11);
+                }
             }
 
             else if (Game.IsControlJustPressed(2, Control.FrontendAccept))
@@ -342,6 +359,29 @@ namespace NativeUI.PauseMenu
                 {
                     result = await _pause.SendScrollEvent(1);
                     _timer = Game.GameTime;
+                }
+            }
+
+            if (Game.IsControlPressed(2, Control.PhoneLeft))
+            {
+                if (FocusLevel == 2)
+                {
+                    if (Game.GameTime - _timer > 250)
+                    {
+                        result = await _pause.SendInputEvent(10);
+                        _timer = Game.GameTime;
+                    }
+                }
+            }
+            else if (Game.IsControlPressed(2, Control.PhoneRight))
+            {
+                if (FocusLevel == 2)
+                {
+                    if (Game.GameTime - _timer > 250)
+                    {
+                        result = await _pause.SendInputEvent(11);
+                        _timer = Game.GameTime;
+                    }
                 }
             }
 
