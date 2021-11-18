@@ -199,6 +199,16 @@ namespace NativeUI
             //Debug.WriteLine("InputEvent UP [tabIndex, focusLevel, currentTabLeftItemIndex, currentRightPanelItemIndex, retVal] = " + res);
         }
 
+        public async Task<string> SendClickEvent()
+        {
+            BeginScaleformMovieMethod(_pause.Handle, "MOUSE_CLICK_EVENT");
+            ScaleformMovieMethodAddParamBool(!IsInputDisabled(2));
+            var ret = EndScaleformMovieMethodReturnValue();
+            while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            var res = GetScaleformMovieFunctionReturnString(ret);
+            return res;
+        }
+
         public void Dispose()
         {
             _pause.CallFunction("CLEAR_ALL");

@@ -270,31 +270,27 @@ namespace NativeUI.PauseMenu
             if (Game.IsControlJustPressed(2, Control.PhoneUp))
             {
                 if (FocusLevel == 0) return;
-                result = await _pause.SendInputEvent(8);
+                    result = await _pause.SendInputEvent(8);
             }
             else if (Game.IsControlJustPressed(2, Control.PhoneDown))
             {
                 if (FocusLevel == 0) return;
-                result = await _pause.SendInputEvent(9);
+                    result = await _pause.SendInputEvent(9);
             }
+
             else if (Game.IsControlJustPressed(2, Control.PhoneLeft))
             {
                 if (FocusLevel == 1) return;
                 if (FocusLevel == 0)
-                {
                     _pause.HeaderGoLeft();
-                }
                 result = await _pause.SendInputEvent(10);
             }
-
             else if (Game.IsControlJustPressed(2, Control.PhoneRight))
             {
                 if (FocusLevel == 1) return;
-                if (FocusLevel == 0)
-                {
-                    _pause.HeaderGoRight();
-                }
-                result = await _pause.SendInputEvent(11);
+                    if (FocusLevel == 0)
+                        _pause.HeaderGoRight();
+                    result = await _pause.SendInputEvent(11);
             }
 
             else if (Game.IsControlJustPressed(2, Control.FrontendLb))
@@ -305,7 +301,6 @@ namespace NativeUI.PauseMenu
                     result = await _pause.SendInputEvent(10);
                 }
             }
-
             else if (Game.IsControlJustPressed(2, Control.FrontendRb))
             {
                 if (FocusLevel == 0)
@@ -361,7 +356,8 @@ namespace NativeUI.PauseMenu
                     _timer = Game.GameTime;
                 }
             }
-
+   
+            /*
             if (Game.IsControlPressed(2, Control.PhoneLeft))
             {
                 if (FocusLevel == 2)
@@ -384,7 +380,17 @@ namespace NativeUI.PauseMenu
                     }
                 }
             }
+            */
 
+            if (Game.IsControlJustPressed(0, Control.Attack) && API.IsInputDisabled(2))
+            {
+                if (Game.GameTime - _timer > 250)
+                {
+                    result = await _pause.SendClickEvent();
+                    _timer = Game.GameTime;
+                }
+            }
+        
             if (!string.IsNullOrWhiteSpace(result) && result.Contains(","))
             {
                 var split = result.Split(',');
@@ -470,7 +476,6 @@ namespace NativeUI.PauseMenu
 
                 // DEBUG
                 //Debug.WriteLine("Scaleform [tabIndex, focusLevel, currentTabLeftItemIndex, currentRightPanelItemIndex, retVal] = " + result);
-                //Debug.WriteLine($"C# [tabIndex, focusLevel, currentTabLeftItemIndex, currentRightPanelItemIndex, retVal] = {Index},{FocusLevel},{leftItemIndex},{RightItemIndex}");
             }
         }
 
