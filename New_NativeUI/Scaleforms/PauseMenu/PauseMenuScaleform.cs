@@ -202,7 +202,6 @@ namespace NativeUI
         public async Task<string> SendClickEvent()
         {
             BeginScaleformMovieMethod(_pause.Handle, "MOUSE_CLICK_EVENT");
-            ScaleformMovieMethodAddParamBool(!IsInputDisabled(2));
             var ret = EndScaleformMovieMethodReturnValue();
             while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
             var res = GetScaleformMovieFunctionReturnString(ret);
