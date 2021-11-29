@@ -34,8 +34,8 @@
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CitizenFX.Core.Client, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CitizenFX.Core.Client.1.0.4207\lib\net45\CitizenFX.Core.Client.dll</HintPath>
+    <Reference Include="CitizenFX.Core.Client, Version=0.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\CitizenFX.Core.Client.1.0.5020\lib\net45\CitizenFX.Core.Client.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
@@ -48,6 +48,7 @@
     <Compile Include="Hud\Markers\MarkersHandler.cs" />
     <Compile Include="Hud\Notifications\NotificationChars.cs" />
     <Compile Include="Hud\Notifications\Notifications.cs" />
+    <Compile Include="Items\UIMenuStatsItem.cs" />
     <Compile Include="PauseMenu\Items\BasicTabItem.cs" />
     <Compile Include="PauseMenu\Items\SettingsTabItem.cs" />
     <Compile Include="PauseMenu\Items\StatsTabItem.cs" />
@@ -93,10 +94,10 @@
     <Compile Include="Windows\UIMenuWindow.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <Folder Include="stream\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="stream\" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
