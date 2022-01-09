@@ -4,7 +4,7 @@ using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
 using Font = CitizenFX.Core.UI.Font;
 
-namespace NativeUI
+namespace ScaleformUI
 {
     /// <summary>
     /// A Text object in the 1080 pixels height base system.

@@ -5,11 +5,9 @@ using System.Linq;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
-using NativeUI.PauseMenu.Items;
-using NativeUI.PauseMenu.Tabs;
 using Font = CitizenFX.Core.UI.Font;
 
-namespace NativeUI.PauseMenu
+namespace ScaleformUI.PauseMenu
 {
     public delegate void PauseMenuOpenEvent(TabView menu);
     public delegate void PauseMenuCloseEvent(TabView menu);
@@ -98,7 +96,7 @@ namespace NativeUI.PauseMenu
             Index = 0;
             FocusLevel = 0;
             TemporarilyHidden = false;
-            _pause = NativeUIScaleform.PauseMenu;
+            _pause = ScaleformUI.PauseMenu;
         }
 
         public bool Visible
@@ -108,11 +106,12 @@ namespace NativeUI.PauseMenu
             {
                 if (value)
                 {
+                    BuildPauseMenu();
                     SendPauseMenuOpen();
                     Screen.Effects.Start(ScreenEffect.FocusOut, 800);
                     API.TransitionToBlurred(700);
-                    NativeUIScaleform.InstructionalButtons.SetInstructionalButtons(buttons);
-                    BuildPauseMenu();
+
+                    ScaleformUI.InstructionalButtons.SetInstructionalButtons(buttons);
                     API.SetPlayerControl(Game.Player.Handle, false, 0);
                 }
                 else
@@ -123,8 +122,8 @@ namespace NativeUI.PauseMenu
                     SendPauseMenuClose();
                     API.SetPlayerControl(Game.Player.Handle, true, 0);
                 }
-                API.SetPauseMenuActive(value);
-                NativeUIScaleform.InstructionalButtons.Enabled = value;
+                Game.IsPaused = value;
+                ScaleformUI.InstructionalButtons.Enabled = value;
                 _pause.Visible = value;
                 _visible = value;
             }
@@ -152,12 +151,14 @@ namespace NativeUI.PauseMenu
             }
             if (HeaderPicture != null)
                 _pause.SetHeaderCharImg(HeaderPicture.Item2, HeaderPicture.Item2, true);
+/*
             else
             {
                 var mugshot = await Notifications.GetPedMugshotAsync(Game.PlayerPed);
                 _pause.SetHeaderCharImg(mugshot.Item2, mugshot.Item2, true);
                 API.ReleasePedheadshotImgUpload(mugshot.Item1);
             }
+*/
             _pause.SetHeaderDetails(SideStringTop, SideStringMiddle, SideStringBottom);
             _loaded = true;
         }
@@ -270,12 +271,12 @@ namespace NativeUI.PauseMenu
             if (Game.IsControlJustPressed(2, Control.PhoneUp))
             {
                 if (FocusLevel == 0) return;
-                    result = await _pause.SendInputEvent(8);
+                result = await _pause.SendInputEvent(8);
             }
             else if (Game.IsControlJustPressed(2, Control.PhoneDown))
             {
                 if (FocusLevel == 0) return;
-                    result = await _pause.SendInputEvent(9);
+                result = await _pause.SendInputEvent(9);
             }
 
             else if (Game.IsControlJustPressed(2, Control.PhoneLeft))
@@ -288,9 +289,9 @@ namespace NativeUI.PauseMenu
             else if (Game.IsControlJustPressed(2, Control.PhoneRight))
             {
                 if (FocusLevel == 1) return;
-                    if (FocusLevel == 0)
-                        _pause.HeaderGoRight();
-                    result = await _pause.SendInputEvent(11);
+                if (FocusLevel == 0)
+                    _pause.HeaderGoRight();
+                result = await _pause.SendInputEvent(11);
             }
 
             else if (Game.IsControlJustPressed(2, Control.FrontendLb))
@@ -313,13 +314,22 @@ namespace NativeUI.PauseMenu
             else if (Game.IsControlJustPressed(2, Control.FrontendAccept))
             {
                 result = await _pause.SendInputEvent(16);
-                if (focusLevel == 2)
+                switch (focusLevel)
                 {
-                    if (Tabs[Index].LeftItemList[leftItemIndex].ItemList[rightItemIndex] is SettingsTabItem)
-                    {
-                        var it = Tabs[Index].LeftItemList[leftItemIndex].ItemList[rightItemIndex] as SettingsTabItem;
-                        it.Activate();
-                    }
+
+                    case 1:
+                        if(Tabs[Index].LeftItemList[leftItemIndex].ItemType == LeftItemType.Info || Tabs[Index].LeftItemList[leftItemIndex].ItemType == LeftItemType.Empty)
+                        {
+                            Tabs[Index].LeftItemList[leftItemIndex].Activated();
+                        }
+                        break;
+                    case 2:
+                        if (Tabs[Index].LeftItemList[leftItemIndex].ItemList[rightItemIndex] is SettingsTabItem)
+                        {
+                            var it = Tabs[Index].LeftItemList[leftItemIndex].ItemList[rightItemIndex] as SettingsTabItem;
+                            it.Activate();
+                        }
+                        break;
                 }
             }
 
@@ -356,7 +366,7 @@ namespace NativeUI.PauseMenu
                     _timer = Game.GameTime;
                 }
             }
-   
+
             /*
             if (Game.IsControlPressed(2, Control.PhoneLeft))
             {
@@ -390,7 +400,7 @@ namespace NativeUI.PauseMenu
                     _timer = Game.GameTime;
                 }
             }
-        
+
             if (!string.IsNullOrWhiteSpace(result) && result.Contains(","))
             {
                 var split = result.Split(',');
@@ -476,6 +486,7 @@ namespace NativeUI.PauseMenu
 
                 // DEBUG
                 //Debug.WriteLine("Scaleform [tabIndex, focusLevel, currentTabLeftItemIndex, currentRightPanelItemIndex, retVal] = " + result);
+                //Debug.WriteLine($"C# [tabIndex, focusLevel, currentTabLeftItemIndex, currentRightPanelItemIndex, retVal] = {Index},{FocusLevel},{leftItemIndex},{RightItemIndex}");
             }
         }
 

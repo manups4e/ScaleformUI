@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 
-namespace NativeUI
+namespace ScaleformUI
 {
 
     public enum WarningPopupType
@@ -63,6 +63,11 @@ namespace NativeUI
 			_warning.CallFunction("SHOW_POPUP_WARNING", 1000, title, subtitle, prompt, true, (int)type, errorMsg);
 		}
 
+		public async void ShowWarning(string title, string subtitle, int ms, string prompt = "", string errorMsg = "", WarningPopupType type = WarningPopupType.Classic)
+		{
+			await Load();
+			_warning.CallFunction("SHOW_POPUP_WARNING", ms, title, subtitle, prompt, true, (int)type, errorMsg);
+		}
 		/// <summary>
 		/// Updates the current Warning, this is used to change any text in the current warning screen.
 		/// </summary>
@@ -91,10 +96,10 @@ namespace NativeUI
 			_disableControls = true;
 			_buttonList = buttons;
 			if (buttons == null || buttons.Count == 0) return;
-			NativeUIScaleform.InstructionalButtons.SetInstructionalButtons(_buttonList);
-			NativeUIScaleform.InstructionalButtons.UseMouseButtons = true;
+			ScaleformUI.InstructionalButtons.SetInstructionalButtons(_buttonList);
+			ScaleformUI.InstructionalButtons.UseMouseButtons = true;
 			_warning.CallFunction("SHOW_POPUP_WARNING", 1000, title, subtitle, prompt, true, (int)type, errorMsg);
-			NativeUIScaleform.InstructionalButtons.Enabled = true;
+			ScaleformUI.InstructionalButtons.Enabled = true;
 		}
 
 		internal void Update()
@@ -103,15 +108,15 @@ namespace NativeUI
 			_warning.Render2D();
 			if (_disableControls)
 			{
-				NativeUIScaleform.InstructionalButtons.Draw();
+				ScaleformUI.InstructionalButtons.Draw();
 				foreach (var b in _buttonList)
 				{
 					if (Game.IsControlJustPressed(1, b.GamepadButton) || Game.IsControlJustPressed(1, b.KeyboardButton))
 					{
 						OnButtonPressed?.Invoke(b);
 						Dispose();
-						NativeUIScaleform.InstructionalButtons.Enabled = false;
-						NativeUIScaleform.InstructionalButtons.UseMouseButtons = false;
+						ScaleformUI.InstructionalButtons.Enabled = false;
+						ScaleformUI.InstructionalButtons.UseMouseButtons = false;
 						return;
 					}
 				}

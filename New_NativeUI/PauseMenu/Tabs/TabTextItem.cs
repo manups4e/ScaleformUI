@@ -1,14 +1,12 @@
 ﻿using CitizenFX.Core;
-using NativeUI.PauseMenu.Items;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace NativeUI.PauseMenu
+namespace ScaleformUI.PauseMenu
 {
     public class TabTextItem : BaseTab
     {
         public string TextTitle { get; set; }
-        public string Text { get; set; }
         public int WordWrap { get; set; }
         public List<BasicTabItem> LabelsList = new List<BasicTabItem>();
 

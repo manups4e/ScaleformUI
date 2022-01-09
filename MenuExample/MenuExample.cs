@@ -3,13 +3,11 @@ using System.Drawing;
 using System.Collections.Generic;
 using CitizenFX.Core;
 using CitizenFX.Core.UI;
-using NativeUI;
+using ScaleformUI;
 using CitizenFX.Core.Native;
 using System.Linq;
 using System.Threading.Tasks;
-using NativeUI.PauseMenu;
-using NativeUI.PauseMenu.Items;
-using NativeUI.PauseMenu.Tabs;
+using ScaleformUI.PauseMenu;
 
 public class MenuExample : BaseScript
 {
@@ -103,14 +101,14 @@ public class MenuExample : BaseScript
 		{
 			if(item == showSimplePopup)
 			{
-				NativeUIScaleform.Warning.ShowWarning("This is the title", "This is the subtitle", "This is the prompt.. you have 6 seconds left", "This is the error message, NativeUI Ver. 3.0");
+                ScaleformUI.ScaleformUI.Warning.ShowWarning("This is the title", "This is the subtitle", "This is the prompt.. you have 6 seconds left", "This is the error message, ScaleformUI Ver. 3.0");
 				await Delay(1000);
 				for (int i=5; i > -1; i--)
 				{
-					NativeUIScaleform.Warning.UpdateWarning("This is the title", "This is the subtitle", $"This is the prompt.. you have {i} seconds left", "This is the error message, NativeUI Ver. 3.0");
+                    ScaleformUI.ScaleformUI.Warning.UpdateWarning("This is the title", "This is the subtitle", $"This is the prompt.. you have {i} seconds left", "This is the error message, ScaleformUI Ver. 3.0");
 					await Delay(1000);
 				}
-				NativeUIScaleform.Warning.Dispose();
+                ScaleformUI.ScaleformUI.Warning.Dispose();
 			}
 			else if (item == showPopupButtons)
 			{
@@ -121,23 +119,23 @@ public class MenuExample : BaseScript
 					new InstructionalButton(Control.FrontendX, Control.Detonate, "This will change button if you're using gamepad or keyboard"),
 					new InstructionalButton(new List<Control> { Control.MoveUpOnly, Control.MoveLeftOnly , Control.MoveDownOnly , Control.MoveRightOnly }, "Woow multiple buttons at once??")
 				};
-				NativeUIScaleform.Warning.ShowWarningWithButtons("This is the title", "This is the subtitle", "This is the prompt, press any button", buttons, "This is the error message, NativeUI Ver. 3.0");
-				NativeUIScaleform.Warning.OnButtonPressed += (button) =>
+                ScaleformUI.ScaleformUI.Warning.ShowWarningWithButtons("This is the title", "This is the subtitle", "This is the prompt, press any button", buttons, "This is the error message, ScaleformUI Ver. 3.0");
+                ScaleformUI.ScaleformUI.Warning.OnButtonPressed += (button) =>
 				{
-					Debug.WriteLine($"You pressed a Button => {button.Text}");
+                    Debug.WriteLine($"You pressed a Button => {button.Text}");
 				};
 			}
 			else if (item == customInstr2)
 			{
-				if (NativeUIScaleform.InstructionalButtons.ControlButtons.Count >= 6) return;
-				NativeUIScaleform.InstructionalButtons.AddInstructionalButton(new InstructionalButton((Control)new Random().Next(0, 250), "I'm a new button look at me!"));
+				if (ScaleformUI.ScaleformUI.InstructionalButtons.ControlButtons.Count >= 6) return;
+                ScaleformUI.ScaleformUI.InstructionalButtons.AddInstructionalButton(new InstructionalButton((Control)new Random().Next(0, 250), "I'm a new button look at me!"));
 			}
 		};
 
 		customInstr.OnListSelected += (item, index) =>
 		{
-			if (NativeUIScaleform.InstructionalButtons.IsSaving) return;
-			NativeUIScaleform.InstructionalButtons.AddSavingText((LoadingSpinnerType)(index + 1), "I'm a saving text", 3000);
+			if (ScaleformUI.ScaleformUI.InstructionalButtons.IsSaving) return;
+            ScaleformUI.ScaleformUI.InstructionalButtons.AddSavingText((LoadingSpinnerType)(index + 1), "I'm a saving text", 3000);
 		};
 	}
 	public void NotificationShowdown(UIMenu menu)
@@ -164,7 +162,7 @@ public class MenuExample : BaseScript
 		notifications.AddItem(noti7);
 		notifications.AddItem(noti8);
 
-		NativeUI.NativeUINotification notification = null;
+		ScaleformUI.ScaleformUINotification notification = null;
 		notifications.OnListChange += (_menu, _item, _index) =>
 		{
 			if(_item == noti1)
@@ -631,7 +629,7 @@ public class MenuExample : BaseScript
 		};
 
 		var listPanelItem1 = new UIMenuItem("Change Color","It can be whatever item you want it to be");
-		var ColorPanel = new UIMenuColorPanel("Color Panel Example", UIMenuColorPanel.ColorPanelType.Hair);
+		var ColorPanel = new UIMenuColorPanel("Color Panel Example", ColorPanelType.Hair);
 		// you can choose between hair palette or makeup palette
 		menu.AddItem(listPanelItem1);
 		listPanelItem1.AddPanel(ColorPanel);
@@ -727,7 +725,7 @@ public class MenuExample : BaseScript
 	public void PauseMenuShowcase(UIMenu mainMenu)
     {
 		TabView pauseMenu = new TabView("PauseMenu example", "Look there's a subtitle too!", "Detail 1", "Detail 2", "Detail 3");
-		_menuPool.AddPauseMenu(pauseMenu);
+		_menuPool.Add(pauseMenu);
 		TabTextItem basicTab = new TabTextItem("TabTextItem", "This is the title!");
 		basicTab.AddItem(new BasicTabItem("~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
 		basicTab.AddItem(new BasicTabItem("~r~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
@@ -827,7 +825,7 @@ public class MenuExample : BaseScript
 					
 					};
 
-					NativeUIScaleform.InstructionalButtons.SetInstructionalButtons(buttons);
+                    ScaleformUI.ScaleformUI.InstructionalButtons.SetInstructionalButtons(buttons);
                 }
             }
 		};
@@ -847,7 +845,7 @@ public class MenuExample : BaseScript
 	public MenuExample()
 	{
 		_menuPool = new MenuPool();
-		var mainMenu = new UIMenu("Native UI", "NATIVEUI SHOWCASE", new PointF(50, 50), true); // true means add menu Glare scaleform to the menu
+		var mainMenu = new UIMenu("Native UI", "ScaleformUI SHOWCASE", new PointF(20, 20), true); // true means add menu Glare scaleform to the menu
 		_menuPool.Add(mainMenu);
 		HeritageMenu(mainMenu);
 		AddScaleformMenu(mainMenu);

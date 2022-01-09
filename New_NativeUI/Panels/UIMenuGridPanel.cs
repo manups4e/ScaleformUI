@@ -6,7 +6,7 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
 
-namespace NativeUI
+namespace ScaleformUI
 {
 	public enum GridType
     {
@@ -83,14 +83,14 @@ namespace NativeUI
         {
 			var it = ParentItem.Parent.MenuItems.IndexOf(ParentItem);
 			var van = ParentItem.Panels.IndexOf(this);
-			NativeUIScaleform._nativeui.CallFunction("SET_GRID_PANEL_VALUE_RETURN_VALUE", it, van, value.X, value.Y);
+			ScaleformUI._ScaleformUI.CallFunction("SET_GRID_PANEL_VALUE_RETURN_VALUE", it, van, value.X, value.Y);
 		}
 
 		public async void SetMousePosition(PointF mouse)
 		{
 			var it = ParentItem.Parent.MenuItems.IndexOf(ParentItem);
 			var van = ParentItem.Panels.IndexOf(this);
-			API.BeginScaleformMovieMethod(NativeUIScaleform._nativeui.Handle, "SET_GRID_PANEL_POSITION_RETURN_VALUE");
+			API.BeginScaleformMovieMethod(ScaleformUI._ScaleformUI.Handle, "SET_GRID_PANEL_POSITION_RETURN_VALUE");
 			API.ScaleformMovieMethodAddParamInt(0);
 			API.ScaleformMovieMethodAddParamInt(1);
 			API.ScaleformMovieMethodAddParamFloat(mouse.X);

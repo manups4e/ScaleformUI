@@ -1,7 +1,7 @@
 ﻿
 using System.Drawing;
 
-namespace NativeUI
+namespace ScaleformUI
 {
     public class ProgressTimerBar : TimerBarBase
     {

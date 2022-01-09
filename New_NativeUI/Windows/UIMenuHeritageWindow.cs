@@ -5,7 +5,7 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
 
-namespace NativeUI
+namespace ScaleformUI
 {
 	public class UIMenuHeritageWindow : UIMenuWindow
 	{
@@ -32,7 +32,7 @@ namespace NativeUI
 				await BaseScript.Delay(0);
 				API.RequestStreamedTextureDict("char_creator_portraits", true);
 			}
-			NativeUIScaleform._nativeui.CallFunction("UPDATE_HERITAGE_WINDOW", wid, Mom, Dad);
+			ScaleformUI._ScaleformUI.CallFunction("UPDATE_HERITAGE_WINDOW", wid, Mom, Dad);
 			API.SetStreamedTextureDictAsNoLongerNeeded("char_creator_portraits");
 		}
 	}

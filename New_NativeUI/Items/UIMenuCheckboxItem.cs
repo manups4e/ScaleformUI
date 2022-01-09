@@ -4,7 +4,7 @@ using System;
 using System.Drawing;
 using System.Threading.Tasks;
 
-namespace NativeUI
+namespace ScaleformUI
 {
     public enum UIMenuCheckboxStyle
 	{
@@ -62,7 +62,7 @@ namespace NativeUI
         /// <param name="description">Description for this item.</param>
         /// <param name="mainColor">Main item color.</param>
         /// <param name="highlightColor">Highlight item color.</param>
-        public UIMenuCheckboxItem(string text, UIMenuCheckboxStyle style, bool check, string description, HudColor mainColor, HudColor highlightColor) : base(text, description, mainColor, highlightColor)
+        public UIMenuCheckboxItem(string text, UIMenuCheckboxStyle style, bool check, string description, HudColor mainColor, HudColor highlightColor) : base(text, description, mainColor, highlightColor, HudColor.HUD_COLOUR_WHITE, HudColor.HUD_COLOUR_BLACK)
         {
             Style = style;
             _checked = check;
@@ -78,7 +78,7 @@ namespace NativeUI
             {
                 _checked = value;
                 var it = Parent.MenuItems.IndexOf(this);
-                NativeUIScaleform._nativeui.CallFunction("SET_INPUT_EVENT", 16, it, value);
+                ScaleformUI._ScaleformUI.CallFunction("SET_INPUT_EVENT", 16, it, value);
             }
         }
 

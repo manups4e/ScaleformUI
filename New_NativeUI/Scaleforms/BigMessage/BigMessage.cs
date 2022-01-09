@@ -4,7 +4,7 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using System.Threading.Tasks;
 
-namespace NativeUI
+namespace ScaleformUI
 {
     public class BigMessageHandler
     {
@@ -89,6 +89,13 @@ namespace NativeUI
             _timer = time;
         }
 
+        public async void ShowMpWastedMessage(string msg, string sub, int time = 5000)
+        {
+            await Load();
+            _start = Game.GameTime;
+            _sc.CallFunction("SHOW_SHARD_WASTED_MP_MESSAGE", msg, sub);
+            _timer = time;
+        }
         public async void ShowCustomShard(string funcName, params object[] paremeters)
         {
             await Load();
@@ -97,7 +104,7 @@ namespace NativeUI
 
         internal void Update()
         {
-            if (_sc == null) return;
+            if (_sc == null || Game.IsPaused) return;
             _sc.Render2D();
             if (_start != 0 && Game.GameTime - _start > _timer)
             {
@@ -105,7 +112,6 @@ namespace NativeUI
                 _start = 0;
                 Dispose();
             }
-
         }
     }
 

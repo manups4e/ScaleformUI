@@ -2,7 +2,7 @@
 using System.Drawing;
 using Font = CitizenFX.Core.UI.Font;
 
-namespace NativeUI
+namespace ScaleformUI
 {
     public abstract class TimerBarBase
     {

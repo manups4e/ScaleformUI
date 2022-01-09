@@ -6,7 +6,7 @@ using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
 using static CitizenFX.Core.Native.API;
 using Font = CitizenFX.Core.UI.Font;
-namespace NativeUI
+namespace ScaleformUI
 {
 	public enum NotificationType : int
 	{
@@ -44,19 +44,19 @@ namespace NativeUI
 	}
 
 	// Had to copy from Cfx API or i wouldn't have been able to use it
-	public sealed class NativeUINotification
+	public sealed class ScaleformUINotification
 	{
 		#region Fields
 		int _handle;
 		#endregion
 
-		internal NativeUINotification(int handle)
+		internal ScaleformUINotification(int handle)
 		{
 			_handle = handle;
 		}
 
 		/// <summary>
-		/// Hides this <see cref="NativeUINotification"/> instantly
+		/// Hides this <see cref="ScaleformUINotification"/> instantly
 		/// </summary>
 		public void Hide()
 		{
@@ -74,11 +74,11 @@ namespace NativeUI
 		/// <param name="blink"> if true the notification will blink </param>
 		/// <param name="showBriefing"> if true the notification will visible in briefing page in pause menu </param>
 		/// <returns></returns>
-		public static NativeUINotification ShowNotification(string msg, bool blink = false, bool showBriefing = true)
+		public static ScaleformUINotification ShowNotification(string msg, bool blink = false, bool showBriefing = true)
 		{
-			AddTextEntry("NativeUINotification", msg);
-			BeginTextCommandThefeedPost("NativeUINotification");
-			return new NativeUINotification(EndTextCommandThefeedPostTicker(blink, showBriefing));
+			AddTextEntry("ScaleformUINotification", msg);
+			BeginTextCommandThefeedPost("ScaleformUINotification");
+			return new ScaleformUINotification(EndTextCommandThefeedPostTicker(blink, showBriefing));
 		}
 
 		/// <summary>
@@ -89,12 +89,12 @@ namespace NativeUI
 		/// <param name="blink"> if true the notification will blink </param>
 		/// <param name="showBriefing"> if true the notification will visible in briefing page in pause menu </param>
 		/// <returns></returns>
-		public static NativeUINotification ShowNotification(string msg, NotificationColor color, bool blink = false, bool showBriefing = true)
+		public static ScaleformUINotification ShowNotification(string msg, NotificationColor color, bool blink = false, bool showBriefing = true)
 		{
-			AddTextEntry("NativeUINotification", msg);
-			BeginTextCommandThefeedPost("NativeUINotification");
+			AddTextEntry("ScaleformUINotification", msg);
+			BeginTextCommandThefeedPost("ScaleformUINotification");
 			ThefeedNextPostBackgroundColor((int)color);
-			return new NativeUINotification(EndTextCommandThefeedPostTicker(blink, showBriefing));
+			return new ScaleformUINotification(EndTextCommandThefeedPostTicker(blink, showBriefing));
 		}
 
 		/// <summary>
@@ -103,8 +103,8 @@ namespace NativeUI
 		/// <param name="helpText">Text to be shown</param>
 		public static void ShowHelpNotification(string helpText)
 		{
-			AddTextEntry("NativeUIHelpText", helpText);
-			DisplayHelpTextThisFrame("NativeUIHelpText", false);
+			AddTextEntry("ScaleformUIHelpText", helpText);
+			DisplayHelpTextThisFrame("ScaleformUIHelpText", false);
 		}
 
 		/// <summary>
@@ -115,8 +115,8 @@ namespace NativeUI
 		public static void ShowHelpNotification(string helpText, int time)
 		{
 			if (time > 5000) time = 5000;
-			AddTextEntry("NativeUIHelpText", helpText);
-			BeginTextCommandDisplayHelp("NativeUIHelpText");
+			AddTextEntry("ScaleformUIHelpText", helpText);
+			BeginTextCommandDisplayHelp("ScaleformUIHelpText");
 			EndTextCommandDisplayHelp(0, false, true, time);
 		}
 
@@ -128,10 +128,10 @@ namespace NativeUI
 		/// <param name="time"></param>
 		public static void ShowFloatingHelpNotification(string msg, Vector3 coords, int time = -1)
 		{
-			AddTextEntry("NativeUIFloatingHelpText", msg);
+			AddTextEntry("ScaleformUIFloatingHelpText", msg);
 			SetFloatingHelpTextWorldPosition(1, coords.X, coords.Y, coords.Z);
 			SetFloatingHelpTextStyle(1, 1, 2, -1, 3, 0);
-			BeginTextCommandDisplayHelp("NativeUIFloatingHelpText");
+			BeginTextCommandDisplayHelp("ScaleformUIFloatingHelpText");
 			EndTextCommandDisplayHelp(2, false, false, time);
 		}
 
@@ -149,17 +149,17 @@ namespace NativeUI
 		/// <param name="type">The <see cref="NotificationType"/></param>
 		/// <param name="showInBrief">True to show it in Briefing page in Pause Menu</param>
 		/// <param name="sound">If true a sound will be played on notification appearing</param>
-		public static NativeUINotification ShowAdvancedNotification(string title, string subtitle, string text, string iconSet = "Default", string icon = "Default", HudColor bgColor = HudColor.NONE, Color flashColor = new Color(), bool blink = false, NotificationType type = NotificationType.Default, bool showInBrief = true, bool sound = true)
+		public static ScaleformUINotification ShowAdvancedNotification(string title, string subtitle, string text, string iconSet = "Default", string icon = "Default", HudColor bgColor = HudColor.NONE, Color flashColor = new Color(), bool blink = false, NotificationType type = NotificationType.Default, bool showInBrief = true, bool sound = true)
 		{
-			AddTextEntry("NativeUIAdvancedNotification", text);
-			BeginTextCommandThefeedPost("NativeUIAdvancedNotification");
+			AddTextEntry("ScaleformUIAdvancedNotification", text);
+			BeginTextCommandThefeedPost("ScaleformUIAdvancedNotification");
 			AddTextComponentSubstringPlayerName(text);
 			if (bgColor != HudColor.NONE)
 				SetNotificationBackgroundColor((int)bgColor);
 			if (!flashColor.IsEmpty && blink)
 				SetNotificationFlashColor(flashColor.R, flashColor.G, flashColor.B, flashColor.A);
 			if (sound) Audio.PlaySoundFrontend("DELETE", "HUD_DEATHMATCH_SOUNDSET");
-			return new NativeUINotification(EndTextCommandThefeedPostMessagetext(iconSet, icon, true, (int)type, title, subtitle));
+			return new ScaleformUINotification(EndTextCommandThefeedPostMessagetext(iconSet, icon, true, (int)type, title, subtitle));
 			//return new Notification(EndTextCommandThefeedPostTicker(blink, showInBrief));
 		}
 
@@ -173,11 +173,11 @@ namespace NativeUI
 		/// <param name="showBrief">Show or not in Pause Menu briefing page</param>
 		public static async void ShowStatNotification(int newProgress, int oldProgress, string title, bool blink = false, bool showBrief = true)
 		{
-			AddTextEntry("NativeUIStatsNotification", title);
+			AddTextEntry("ScaleformUIStatsNotification", title);
 			Tuple<int, string> mug = await GetPedMugshotAsync(Game.PlayerPed);
 			BeginTextCommandThefeedPost("PS_UPDATE");
 			AddTextComponentInteger(newProgress);
-			Function.Call(Hash.END_TEXT_COMMAND_THEFEED_POST_STATS, "NativeUIStatsNotification", 2, newProgress, oldProgress, false, mug.Item2, mug.Item2);
+			Function.Call(Hash.END_TEXT_COMMAND_THEFEED_POST_STATS, "ScaleformUIStatsNotification", 2, newProgress, oldProgress, false, mug.Item2, mug.Item2);
 			EndTextCommandThefeedPostTicker(blink, showBrief);
 			UnregisterPedheadshot(mug.Item1);
 		}

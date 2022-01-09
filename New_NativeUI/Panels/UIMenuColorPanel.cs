@@ -6,12 +6,12 @@ using CitizenFX.Core;
 using System.Threading.Tasks;
 using System;
 
-namespace NativeUI
+namespace ScaleformUI
 {
-    public class UIMenuColorPanel : UIMenuPanel
+	public enum ColorPanelType { Hair, Makeup }
+	public class UIMenuColorPanel : UIMenuPanel
 	{
 		public string Title { get; set; }
-		public enum ColorPanelType { Hair, Makeup }
 		public ColorPanelType ColorPanelColorType { get; set; }
 		internal int _value { get; set; }
 		public event ColorPanelChangedEvent OnColorPanelChange;
@@ -25,6 +25,10 @@ namespace NativeUI
 			set
 			{
 				_value = value;
+				if (value > 63)
+					_value -= 63;
+				if (value < 0)
+					_value += 63;
 				_setValue(value);
 			}
 		}
@@ -54,7 +58,7 @@ namespace NativeUI
         {
 			var it = this.ParentItem.Parent.MenuItems.IndexOf(this.ParentItem);
 			var van = this.ParentItem.Panels.IndexOf(this);
-			API.BeginScaleformMovieMethod(NativeUIScaleform._nativeui.Handle, "GET_VALUE_FROM_PANEL");
+			API.BeginScaleformMovieMethod(ScaleformUI._ScaleformUI.Handle, "GET_VALUE_FROM_PANEL");
 			API.ScaleformMovieMethodAddParamInt(it);
 			API.ScaleformMovieMethodAddParamInt(van);
 			var ret = API.EndScaleformMovieMethodReturnValue();
@@ -66,7 +70,7 @@ namespace NativeUI
         {
 			var it = ParentItem.Parent.MenuItems.IndexOf(this.ParentItem);
 			var van = ParentItem.Panels.IndexOf(this);
-			NativeUIScaleform._nativeui.CallFunction("SET_COLOR_PANEL_VALUE", it, van, val);
+			ScaleformUI._ScaleformUI.CallFunction("SET_COLOR_PANEL_VALUE", it, van, val);
 		}
 	}
 }

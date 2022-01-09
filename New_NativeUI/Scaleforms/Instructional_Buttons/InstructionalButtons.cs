@@ -7,7 +7,7 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
 
-namespace NativeUI
+namespace ScaleformUI
 {
     public enum PadCheck
     {
@@ -328,7 +328,7 @@ namespace NativeUI
             _changed = true;
             savingTimer = Game.GameTime;
             Screen.LoadingPrompt.Show(text, spinnerType);
-            while (Game.GameTime - savingTimer < time) await BaseScript.Delay(100);
+            while (Game.GameTime - savingTimer <= time) await BaseScript.Delay(100);
             Screen.LoadingPrompt.Hide();
             _isSaving = false;
         }
@@ -345,7 +345,7 @@ namespace NativeUI
                 if (button.IsUsingController)
                 {
                     if (button.PadCheck == PadCheck.Keyboard) continue;
-                    if (NativeUIScaleform.Warning.IsShowing)
+                    if (ScaleformUI.Warning.IsShowing)
                         _sc.CallFunction("SET_DATA_SLOT", count, button.GetButtonId(), button.Text, 0, -1);
                     else
                         _sc.CallFunction("SET_DATA_SLOT", count, button.GetButtonId(), button.Text);
@@ -357,7 +357,7 @@ namespace NativeUI
                         _sc.CallFunction("SET_DATA_SLOT", count, button.GetButtonId(), button.Text, 1, (int)button.KeyboardButton);
                     else
                     {
-                        if (NativeUIScaleform.Warning.IsShowing)
+                        if (ScaleformUI.Warning.IsShowing)
                             _sc.CallFunction("SET_DATA_SLOT", count, button.GetButtonId(), button.Text, 0, -1);
                         else
                             _sc.CallFunction("SET_DATA_SLOT", count, button.GetButtonId(), button.Text);
@@ -410,17 +410,16 @@ namespace NativeUI
             }
             UpdateButtons();
 
-            if (!NativeUIScaleform.Warning.IsShowing) Draw();
+            if (!ScaleformUI.Warning.IsShowing) Draw();
 
-            foreach (InstructionalButton button in ControlButtons.Where(x => x.InputButton == null))
+            foreach (InstructionalButton button in ControlButtons.Where(x => x.InputButton != InputGroup.UNUSED))
             {
                 if (IsControlJustPressed(button.GamepadButton, button.PadCheck) || (button.GamepadButtons != null && button.GamepadButtons.Any(x => IsControlJustPressed(x, button.PadCheck))))
                     button.InvokeEvent(button.GamepadButton);
                 else if (IsControlJustPressed(button.KeyboardButton, button.PadCheck) || (button.KeyboardButtons != null && button.KeyboardButtons.Any(x => IsControlJustPressed(x, button.PadCheck))))
                     button.InvokeEvent(button.KeyboardButton);
             }
-            if (_useMouseButtons)
-                Screen.Hud.ShowCursorThisFrame();
+            if (_useMouseButtons) Screen.Hud.ShowCursorThisFrame();
             Screen.Hud.HideComponentThisFrame(HudComponent.VehicleName);
             Screen.Hud.HideComponentThisFrame(HudComponent.AreaName);
             Screen.Hud.HideComponentThisFrame(HudComponent.StreetName);

@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using CitizenFX.Core.UI;
+using System.Collections.Generic;
 
-namespace NativeUI
+namespace ScaleformUI
 {
     public class TimerBarPool
     {
@@ -28,9 +29,10 @@ namespace NativeUI
 
         public void Draw()
         {
+            var off = ScaleformUI.InstructionalButtons.Enabled || ScaleformUI.InstructionalButtons.IsSaving ? 9 : 0;
             for (int i = 0; i < _bars.Count; i++)
             {
-                _bars[i].Draw(i * 10);
+                _bars[i].Draw((i * 10)+off);
             }
         }
     }

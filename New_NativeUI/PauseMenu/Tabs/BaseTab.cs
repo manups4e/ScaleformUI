@@ -1,9 +1,8 @@
-﻿using NativeUI.PauseMenu.Tabs;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace NativeUI.PauseMenu
+namespace ScaleformUI.PauseMenu
 {
     public class BaseTab
     {

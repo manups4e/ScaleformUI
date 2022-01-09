@@ -3,10 +3,10 @@ using System.Drawing;
 using System.Linq;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using NativeUI.PauseMenu;
+using ScaleformUI.PauseMenu;
 using Control = CitizenFX.Core.Control;
 
-namespace NativeUI
+namespace ScaleformUI
 {
 
     public delegate void MenuStateChangeEvent(UIMenu oldMenu, UIMenu newMenu, MenuState state);
@@ -61,8 +61,8 @@ namespace NativeUI
         /// </summary>
         public event MenuStateChangeEvent OnMenuStateChanged;
 
-        private readonly List<UIMenu> _menuList = new List<UIMenu>();
-        private readonly List<TabView> _pauseMenuList = new List<TabView>();
+        internal readonly List<UIMenu> _menuList = new List<UIMenu>();
+        internal readonly List<TabView> _pauseMenuList = new List<TabView>();
 
         /// <summary>
         /// Add your menu to the menu pool.
@@ -73,8 +73,7 @@ namespace NativeUI
             _menuList.Add(menu);
             menu._poolcontainer = this;
         }
-
-        public void AddPauseMenu(TabView menu)
+        public void Add(TabView menu)
         {
             _pauseMenuList.Add(menu);
         }
@@ -140,9 +139,8 @@ namespace NativeUI
 			UIMenuItem item = new UIMenuItem(text, description);
 			menu.AddItem(item);
 			UIMenu submenu = new UIMenu(menu.Title, text, offset);
-			if (BannerInheritance && menu.BannerTexture != null)
-				submenu.SetBannerType(menu.BannerTexture);
-            submenu.MouseControlsEnabled = menu.MouseControlsEnabled;
+			if (BannerInheritance && menu._customTexture.Key != null && menu._customTexture.Value != null)
+				submenu.SetBannerType(menu._customTexture);
             submenu.MouseEdgeEnabled = menu.MouseEdgeEnabled;
             Add(submenu);
 			menu.BindMenuToItem(submenu, item);
@@ -247,7 +245,7 @@ namespace NativeUI
                     _menuList[i].Draw();
             }
             var pauseMenu = _pauseMenuList.SingleOrDefault(x => x.Visible);
-            if(pauseMenu is not null)
+            if (pauseMenu is not null)
                 pauseMenu.Draw();
         }
 
@@ -256,11 +254,9 @@ namespace NativeUI
         /// Checks if any menu is currently visible.
         /// </summary>
         /// <returns>true if at least one menu is visible, false if not.</returns>
-        public bool IsAnyMenuOpen()
-        {
-            return _menuList.Any(menu => menu.Visible);
-        }
+        public bool IsAnyMenuOpen => _menuList.Any(menu => menu.Visible) || _pauseMenuList.Any(menu => menu.Visible);
 
+        public bool IsAnyPauseMenuOpen => _pauseMenuList.Any(menu => menu.Visible);
 
         /// <summary>
         /// Process all of your menus' functions. Call this in a tick event.

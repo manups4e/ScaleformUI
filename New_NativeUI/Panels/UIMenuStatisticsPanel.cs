@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Threading.Tasks;
 using CitizenFX.Core.UI;
 
-namespace NativeUI
+namespace ScaleformUI
 {
 	public class UIMenuStatisticsPanel : UIMenuPanel
 	{
@@ -25,7 +25,7 @@ namespace NativeUI
 			Items.Add(item);
 			var it = ParentItem.Parent.MenuItems.IndexOf(ParentItem);
 			var van = ParentItem.Panels.IndexOf(this);
-			NativeUIScaleform._nativeui.CallFunction("ADD_STATISTIC_TO_PANEL", it, van, Name, _value);
+			ScaleformUI._ScaleformUI.CallFunction("ADD_STATISTIC_TO_PANEL", it, van, Name, _value);
 		}
 
 		public float GetPercentage(int ItemId)
@@ -42,7 +42,7 @@ namespace NativeUI
 				Items[ItemId].Value = 0;
 			var it = ParentItem.Parent.MenuItems.IndexOf(ParentItem);
 			var van = ParentItem.Panels.IndexOf(this);
-			NativeUIScaleform._nativeui.CallFunction("SET_PANEL_STATS_ITEM_VALUE", it, van, ItemId, Items[ItemId].Value);
+			ScaleformUI._ScaleformUI.CallFunction("SET_PANEL_STATS_ITEM_VALUE", it, van, ItemId, Items[ItemId].Value);
 		}
 	}
 

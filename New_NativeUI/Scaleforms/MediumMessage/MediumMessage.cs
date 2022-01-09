@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using CitizenFX.Core;
 using static CitizenFX.Core.Native.API;
 
-namespace NativeUI
+namespace ScaleformUI
 {
     public class MediumMessageHandler
     {
@@ -44,7 +44,7 @@ namespace NativeUI
 
         internal async void Update()
         {
-            if (_sc == null) return;
+            if (_sc == null || Game.IsPaused) return;
             _sc.Render2D();
 
             if (_start != 0 && Game.GameTime - _start > _timer)

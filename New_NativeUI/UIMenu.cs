@@ -10,7 +10,7 @@ using CitizenFX.Core.UI;
 using System.Drawing;
 using System.Threading.Tasks;
 
-namespace NativeUI
+namespace ScaleformUI
 {
 	#region Delegates
 	public enum Keys
@@ -836,7 +836,7 @@ namespace NativeUI
 	#endregion
 
 	/// <summary>
-	/// Base class for NativeUI. Calls the next events: OnIndexChange, OnListChanged, OnCheckboxChange, OnItemSelect, OnMenuClose, OnMenuchange.
+	/// Base class for ScaleformUI. Calls the next events: OnIndexChange, OnListChanged, OnCheckboxChange, OnItemSelect, OnMenuClose, OnMenuchange.
 	/// </summary>
 	public class UIMenu
 	{
@@ -848,7 +848,7 @@ namespace NativeUI
 		private bool _justOpened = true;
 		private bool _itemsDirty = false;
 
-		private KeyValuePair<string, string> _customTexture;
+		internal KeyValuePair<string, string> _customTexture;
 
 		//Pagination
 		private const int MaxItemsOnScreen = 9;
@@ -1024,9 +1024,8 @@ namespace NativeUI
 		/// <param name="offset">PointF object with X and Y data for offsets. Applied to all menu elements.</param>
 		/// <param name="customBanner">Path to your custom texture.</param>
 		/// <param name="glare">Add menu Glare scaleform?.</param>
-		public UIMenu(string title, string subtitle, PointF offset, string customBanner) : this(title, subtitle, offset, "commonmenu", "interaction_bgd", false)
+		public UIMenu(string title, string subtitle, PointF offset, KeyValuePair<string, string> customBanner, bool glare = false) : this(title, subtitle, offset, customBanner.Key, customBanner.Value, glare)
 		{
-			BannerTexture = customBanner;
 		}
 
 
@@ -1050,7 +1049,7 @@ namespace NativeUI
 			Title = title;
 			Subtitle = subtitle;
 			MouseWheelControlEnabled = true;
-			_loadScaleform();
+			LoadScaleform();
 			SetKey(MenuControls.Up, Control.PhoneUp);
 			SetKey(MenuControls.Down, Control.PhoneDown);
 
@@ -1120,16 +1119,16 @@ namespace NativeUI
 		/// <param name="disable"></param>
 		public void DisableInstructionalButtons(bool disable)
 		{
-			NativeUIScaleform.InstructionalButtons.Enabled = !disable;
+			ScaleformUI.InstructionalButtons.Enabled = !disable;
 		}
 
 		/// <summary>
 		/// Set the banner to your own custom texture. Set it to "" if you want to restore the banner.
 		/// </summary>
 		/// <param name="pathToCustomSprite">Path to your sprite image.</param>
-		public void SetBannerType(string pathToCustomSprite)
+		public void SetBannerType(KeyValuePair<string, string> pathToCustomSprite)
 		{
-			BannerTexture = pathToCustomSprite;
+			_customTexture = pathToCustomSprite;
 		}
 
 		/// <summary>
@@ -1329,7 +1328,7 @@ namespace NativeUI
 				//if (tmpKeys.Any(Game.IsKeyPressed))
 				//    return true;
 			}
-			if (tmpControls.Any(tuple => Game.IsControlJustPressed(tuple.Item2, tuple.Item1)))
+			if (tmpControls.Any(tuple => Game.IsControlJustReleased(tuple.Item2, tuple.Item1)))
 				return true;
 			return false;
 		}
@@ -1422,8 +1421,8 @@ namespace NativeUI
 		/// </summary>
 		public async Task Draw()
 		{
-			if (!Visible || NativeUIScaleform.Warning.IsShowing) return;
-			while (!NativeUIScaleform._nativeui.IsLoaded) await BaseScript.Delay(0);
+			if (!Visible || ScaleformUI.Warning.IsShowing) return;
+			while (!ScaleformUI._ScaleformUI.IsLoaded) await BaseScript.Delay(0);
 
 			if (ControlDisablingEnabled)
 				Controls.Toggle(false);
@@ -1432,7 +1431,8 @@ namespace NativeUI
 			float y = Offset.Y / Screen.Height;
 			float width = 1280 / Screen.ScaledWidth;
 			float height = 720 / Screen.Height;
-			DrawScaleformMovie(NativeUIScaleform._nativeui.Handle, x + (width / 2.0f), y + (height / 2.0f), width, height, 255, 255, 255, 255, 0);
+
+			DrawScaleformMovie(ScaleformUI._ScaleformUI.Handle, x + (width / 2.0f), y + (height / 2.0f), width, height, 255, 255, 255, 255, 0);
 
 			if (Glare)
 			{
@@ -1498,7 +1498,7 @@ namespace NativeUI
 			if (Game.IsControlJustPressed(0, Control.Attack))
 			{
 				PointF mouse = new PointF(GetDisabledControlNormal(0, 239) * Screen.ScaledWidth - Offset.X, GetDisabledControlNormal(0, 240) * Screen.Height - Offset.Y);
-				BeginScaleformMovieMethod(NativeUIScaleform._nativeui.Handle, "SET_INPUT_MOUSE_EVENT_SINGLE");
+				BeginScaleformMovieMethod(ScaleformUI._ScaleformUI.Handle, "SET_INPUT_MOUSE_EVENT_SINGLE");
 				ScaleformMovieMethodAddParamFloat(mouse.X);
 				ScaleformMovieMethodAddParamFloat(mouse.Y);
 				var ret = EndScaleformMovieMethodReturnValue();
@@ -1566,7 +1566,7 @@ namespace NativeUI
 			else if (Game.IsControlPressed(0, Control.Attack))
 			{
 				PointF mouse = new PointF(GetDisabledControlNormal(0, 239) * Screen.ScaledWidth - Offset.X, GetDisabledControlNormal(0, 240) * Screen.Height - Offset.Y);
-				BeginScaleformMovieMethod(NativeUIScaleform._nativeui.Handle, "SET_INPUT_MOUSE_EVENT_CONTINUE");
+				BeginScaleformMovieMethod(ScaleformUI._ScaleformUI.Handle, "SET_INPUT_MOUSE_EVENT_CONTINUE");
 				ScaleformMovieMethodAddParamFloat(mouse.X);
 				ScaleformMovieMethodAddParamFloat(mouse.Y);
 				var ret = EndScaleformMovieMethodReturnValue();
@@ -1654,52 +1654,62 @@ namespace NativeUI
 			}
 		}
 
-		internal async void requestValueAsync(PointF mouse)
-		{
-		}
-
 		public void GoBack()
 		{
 			Game.PlaySound(AUDIO_BACK, AUDIO_LIBRARY);
 			if (ParentMenu != null)
 			{
-				NativeUIScaleform._nativeui.CallFunction("CLEAR_ALL");
-				NativeUIScaleform.InstructionalButtons.Enabled = true;
-				NativeUIScaleform.InstructionalButtons.SetInstructionalButtons(ParentMenu.InstructionalButtons);
+				ScaleformUI._ScaleformUI.CallFunction("CLEAR_ALL");
+				ScaleformUI.InstructionalButtons.Enabled = true;
+				ScaleformUI.InstructionalButtons.SetInstructionalButtons(ParentMenu.InstructionalButtons);
 				_poolcontainer.MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
 				ParentMenu.MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
 				MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
 				ParentMenu.Visible = true;
-				ParentMenu._buildUpMenu();
+				ParentMenu.BuildUpMenu();
 			}
 			Visible = false;
 		}
 
 		public async void GoUp()
 		{
-			MenuItems[_activeItem % (MenuItems.Count)].Selected = false;
-			BeginScaleformMovieMethod(NativeUIScaleform._nativeui.Handle, "SET_INPUT_EVENT");
-			ScaleformMovieMethodAddParamInt(8);
-			var ret = EndScaleformMovieMethodReturnValue();
-			while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-			_activeItem = GetScaleformMovieFunctionReturnInt(ret);
-			MenuItems[_activeItem % (MenuItems.Count)].Selected = true;
-			IndexChange(CurrentSelection);
+			try
+			{
+				MenuItems[CurrentSelection].Selected = false;
+				BeginScaleformMovieMethod(ScaleformUI._ScaleformUI.Handle, "SET_INPUT_EVENT");
+				ScaleformMovieMethodAddParamInt(8);
+				var ret = EndScaleformMovieMethodReturnValue();
+				while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+				_activeItem = GetScaleformMovieFunctionReturnInt(ret);
+				MenuItems[CurrentSelection].Selected = true;
+				IndexChange(CurrentSelection);
+			}
+			catch(Exception e)
+            {
+				Debug.WriteLine(e.ToString());
+            }
 		}
 		public async void GoDown()
 		{
-			MenuItems[_activeItem % (MenuItems.Count)].Selected = false;
-			BeginScaleformMovieMethod(NativeUIScaleform._nativeui.Handle, "SET_INPUT_EVENT");
-			ScaleformMovieMethodAddParamInt(9);
-			var ret = EndScaleformMovieMethodReturnValue();
-			while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-			_activeItem = GetScaleformMovieFunctionReturnInt(ret);
-			MenuItems[_activeItem % (MenuItems.Count)].Selected = true;
-			IndexChange(CurrentSelection);
+			try
+			{
+				MenuItems[CurrentSelection].Selected = false;
+				BeginScaleformMovieMethod(ScaleformUI._ScaleformUI.Handle, "SET_INPUT_EVENT");
+				ScaleformMovieMethodAddParamInt(9);
+				var ret = EndScaleformMovieMethodReturnValue();
+				while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+				_activeItem = GetScaleformMovieFunctionReturnInt(ret);
+				MenuItems[CurrentSelection].Selected = true;
+				IndexChange(CurrentSelection);
+			}
+			catch (Exception e)
+			{
+				Debug.WriteLine(e.ToString());
+			}
 		}
 		public async void GoLeft()
 		{
-			BeginScaleformMovieMethod(NativeUIScaleform._nativeui.Handle, "SET_INPUT_EVENT");
+			BeginScaleformMovieMethod(ScaleformUI._ScaleformUI.Handle, "SET_INPUT_EVENT");
 			ScaleformMovieMethodAddParamInt(10);
 			var ret = EndScaleformMovieMethodReturnValue();
 			while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
@@ -1724,14 +1734,14 @@ namespace NativeUI
 				case UIMenuProgressItem:
 					{
 						UIMenuProgressItem it = (UIMenuProgressItem)MenuItems[CurrentSelection];
-						it.Value = res;
+						it.Value= res;
 						ProgressChange(it, it.Value);
 						break;
 					}
 				case UIMenuStatsItem:
 					{
 						UIMenuStatsItem it = (UIMenuStatsItem)MenuItems[CurrentSelection];
-						it.Value = res;
+						it.Value=res;
 						// aggiungere evento
 						break;
 					}
@@ -1740,7 +1750,7 @@ namespace NativeUI
 
 		public async void GoRight()
 		{
-			BeginScaleformMovieMethod(NativeUIScaleform._nativeui.Handle, "SET_INPUT_EVENT");
+			BeginScaleformMovieMethod(ScaleformUI._ScaleformUI.Handle, "SET_INPUT_EVENT");
 			ScaleformMovieMethodAddParamInt(11);
 			var ret = EndScaleformMovieMethodReturnValue();
 			while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
@@ -1770,16 +1780,16 @@ namespace NativeUI
 						break;
 					}
 				case UIMenuStatsItem:
-					{
+                    {
 						UIMenuStatsItem it = (UIMenuStatsItem)MenuItems[CurrentSelection];
 						it.Value = res;
 						// aggiungere evento
 						break;
-					}
+                    }
 			}
 		}
 
-		public async void Select(bool playSound)
+		public void Select(bool playSound)
 		{
 			if (!MenuItems[CurrentSelection].Enabled)
 			{
@@ -1787,7 +1797,7 @@ namespace NativeUI
 				return;
 			}
 
-			if (playSound)
+			if(playSound)
 				Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
 			switch (MenuItems[CurrentSelection])
 			{
@@ -1813,14 +1823,14 @@ namespace NativeUI
 					MenuItems[CurrentSelection].ItemActivate(this);
 					if (!Children.ContainsKey(MenuItems[CurrentSelection])) return;
 					Visible = false;
-					NativeUIScaleform._nativeui.CallFunction("CLEAR_ALL");
-					NativeUIScaleform.InstructionalButtons.Enabled = true;
-					NativeUIScaleform.InstructionalButtons.SetInstructionalButtons(Children[MenuItems[CurrentSelection]].InstructionalButtons);
+					ScaleformUI._ScaleformUI.CallFunction("CLEAR_ALL");
+					ScaleformUI.InstructionalButtons.Enabled = true;
+					ScaleformUI.InstructionalButtons.SetInstructionalButtons(Children[MenuItems[CurrentSelection]].InstructionalButtons);
 					_poolcontainer.MenuChangeEv(this, Children[MenuItems[CurrentSelection]], MenuState.ChangeForward);
 					MenuChangeEv(this, Children[MenuItems[CurrentSelection]], MenuState.ChangeForward);
 					Children[MenuItems[CurrentSelection]].MenuChangeEv(this, Children[MenuItems[CurrentSelection]], MenuState.ChangeForward);
 					Children[MenuItems[CurrentSelection]].Visible = true;
-					Children[MenuItems[CurrentSelection]]._buildUpMenu();
+					Children[MenuItems[CurrentSelection]].BuildUpMenu();
 					Children[MenuItems[CurrentSelection]].MouseEdgeEnabled = MouseEdgeEnabled;
 					break;
 			}
@@ -1831,8 +1841,8 @@ namespace NativeUI
 		public async void ProcessControl(Keys key = Keys.None)
 		{
 
-			while (!NativeUIScaleform._nativeui.IsLoaded) await BaseScript.Delay(0);
-			if (!Visible || NativeUIScaleform.Warning.IsShowing) return;
+			while (!ScaleformUI._ScaleformUI.IsLoaded) await BaseScript.Delay(0);
+			if (!Visible || ScaleformUI.Warning.IsShowing) return;
 			if (_justOpened)
 			{
 				_justOpened = false;
@@ -1896,26 +1906,26 @@ namespace NativeUI
 			get { return _visible; }
 			set
 			{
-				_loadScaleform();
+				LoadScaleform();
 				_visible = value;
 				_justOpened = value;
 				_itemsDirty = value;
 
 				if (ParentMenu is not null) return;
 				if (Children.Count > 0 && Children.ContainsKey(MenuItems[CurrentSelection]) && Children[MenuItems[CurrentSelection]].Visible) return;
-				NativeUIScaleform.InstructionalButtons.Enabled = value;
-				NativeUIScaleform.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
+				ScaleformUI.InstructionalButtons.Enabled = value;
+				ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
 				if (value)
 				{
 					_poolcontainer.MenuChangeEv(null, this, MenuState.Opened);
 					MenuChangeEv(null, this, MenuState.Opened);
-					_buildUpMenu();
+					BuildUpMenu();
 				}
 				else
 				{
 					_poolcontainer.MenuChangeEv(this, null, MenuState.Closed);
 					MenuChangeEv(this, null, MenuState.Closed);
-					NativeUIScaleform._nativeui.CallFunction("CLEAR_ALL");
+					ScaleformUI._ScaleformUI.CallFunction("CLEAR_ALL");
 				}
 				if (!value) return;
 				if (!ResetCursorOnOpen) return;
@@ -1924,67 +1934,59 @@ namespace NativeUI
 			}
 		}
 
-		private async void _loadScaleform()
+		private async void LoadScaleform()
 		{
-			while (!HasStreamedTextureDictLoaded("commonmenu"))
-			{
+
+			RequestStreamedTextureDict("commonmenu", true);
+			RequestStreamedTextureDict("pause_menu_pages_char_mom_dad", true);
+			RequestStreamedTextureDict(_customTexture.Key, true);
+			RequestStreamedTextureDict("char_creator_portraits", true);
+
+			while (!HasStreamedTextureDictLoaded("commonmenu") && 
+				!HasStreamedTextureDictLoaded("pause_menu_pages_char_mom_dad") && 
+				!HasStreamedTextureDictLoaded(_customTexture.Key) && 
+				!HasStreamedTextureDictLoaded("char_creator_portraits"))
 				await BaseScript.Delay(0);
-				RequestStreamedTextureDict("commonmenu", true);
-			}
-			while (!HasStreamedTextureDictLoaded("pause_menu_pages_char_mom_dad"))
-			{
-				await BaseScript.Delay(0);
-				RequestStreamedTextureDict("pause_menu_pages_char_mom_dad", true);
-			}
-			while (!HasStreamedTextureDictLoaded(_customTexture.Key))
-			{
-				await BaseScript.Delay(0);
-				RequestStreamedTextureDict(_customTexture.Key, true);
-			}
-			while (!API.HasStreamedTextureDictLoaded("char_creator_portraits"))
-			{
-				await BaseScript.Delay(0);
-				API.RequestStreamedTextureDict("char_creator_portraits", true);
-			}
 		}
 
-		internal async void _buildUpMenu()
+		internal async void BuildUpMenu()
 		{
-			while (!NativeUIScaleform._nativeui.IsLoaded) await BaseScript.Delay(0);
-			NativeUIScaleform._nativeui.CallFunction("CREATE_MENU", Title, Subtitle, _customTexture.Key, _customTexture.Value);
-			if (Windows.Count > 0)
-				NativeUIScaleform._nativeui.CallFunction("ADD_HERITAGE_WINDOW", Windows[0].Mom, Windows[0].Dad);
+			LoadScaleform();
+			while (!ScaleformUI._ScaleformUI.IsLoaded) await BaseScript.Delay(0);
+			ScaleformUI._ScaleformUI.CallFunction("CREATE_MENU", Title, Subtitle, _customTexture.Key, _customTexture.Value);
+			if(Windows.Count > 0)
+				ScaleformUI._ScaleformUI.CallFunction("ADD_HERITAGE_WINDOW", Windows[0].Mom, Windows[0].Dad);
 			foreach (var item in MenuItems)
 			{
-				_loadScaleform();
+				LoadScaleform();
 				switch (item)
 				{
 					case UIMenuListItem:
 						UIMenuListItem it = (UIMenuListItem)item;
-						NativeUIScaleform._nativeui.CallFunction("ADD_ITEM", it._itemId, it.Label, it.Description, string.Join(",", it.Items), it.Index, (int)it.MainColor, (int)it.HighlightColor, (int)it.TextColor, (int)it.HighlightedTextColor);
+						ScaleformUI._ScaleformUI.CallFunction("ADD_ITEM", it._itemId, it.Label, it.Description, string.Join(",", it.Items), it.Index, (int)it.MainColor, (int)it.HighlightColor, (int)it.TextColor, (int)it.HighlightedTextColor);
 						break;
 					case UIMenuCheckboxItem:
 						UIMenuCheckboxItem check = (UIMenuCheckboxItem)item;
-						NativeUIScaleform._nativeui.CallFunction("ADD_ITEM", check._itemId, check.Label, check.Description, (int)check.Style, check.Checked, (int)check.MainColor, (int)check.HighlightColor, (int)check.TextColor, (int)check.HighlightedTextColor);
+						ScaleformUI._ScaleformUI.CallFunction("ADD_ITEM", check._itemId, check.Label, check.Description, (int)check.Style, check.Checked, (int)check.MainColor, (int)check.HighlightColor, (int)check.TextColor, (int)check.HighlightedTextColor);
 						break;
 					case UIMenuSliderItem:
 						UIMenuSliderItem prItem = (UIMenuSliderItem)item;
-						NativeUIScaleform._nativeui.CallFunction("ADD_ITEM", prItem._itemId, prItem.Label, prItem.Description, prItem._max, prItem._multiplier, prItem.Value, (int)prItem.MainColor, (int)prItem.HighlightColor, (int)prItem.TextColor, (int)prItem.HighlightedTextColor, (int)prItem.BackgroundSliderColor, (int)prItem.SliderColor, prItem._heritage);
+						ScaleformUI._ScaleformUI.CallFunction("ADD_ITEM", prItem._itemId, prItem.Label, prItem.Description, prItem._max, prItem._multiplier, prItem.Value, (int)prItem.MainColor, (int)prItem.HighlightColor, (int)prItem.TextColor, (int)prItem.HighlightedTextColor, (int)prItem.BackgroundSliderColor, (int)prItem.SliderColor, prItem._heritage);
 						break;
 					case UIMenuProgressItem:
 						UIMenuProgressItem slItem = (UIMenuProgressItem)item;
-						NativeUIScaleform._nativeui.CallFunction("ADD_ITEM", slItem._itemId, slItem.Label, slItem.Description, slItem._max, slItem._multiplier, slItem.Value, (int)slItem.MainColor, (int)slItem.HighlightColor, (int)slItem.TextColor, (int)slItem.HighlightedTextColor, (int)slItem.BackgroundSliderColor, (int)slItem.SliderColor);
+						ScaleformUI._ScaleformUI.CallFunction("ADD_ITEM", slItem._itemId, slItem.Label, slItem.Description, slItem._max, slItem._multiplier, slItem.Value, (int)slItem.MainColor, (int)slItem.HighlightColor, (int)slItem.TextColor, (int)slItem.HighlightedTextColor, (int)slItem.SliderColor);
 						break;
 
 					case UIMenuStatsItem:
 						UIMenuStatsItem statsItem = (UIMenuStatsItem)item;
-						NativeUIScaleform._nativeui.CallFunction("ADD_ITEM", 5, statsItem.Label, statsItem.Description, statsItem.Value, statsItem.Type, (int)statsItem.Color);
+						ScaleformUI._ScaleformUI.CallFunction("ADD_ITEM", 5, statsItem.Label, statsItem.Description, statsItem.Value, statsItem.Type, (int)statsItem.Color);
 						break;
 					default:
-						NativeUIScaleform._nativeui.CallFunction("ADD_ITEM", item._itemId, item.Label, item.Description, (int)item.MainColor, (int)item.HighlightColor, (int)item.TextColor, (int)item.HighlightedTextColor);
-						NativeUIScaleform._nativeui.CallFunction("SET_RIGHT_LABEL", MenuItems.IndexOf(item), item.RightLabel);
+						ScaleformUI._ScaleformUI.CallFunction("ADD_ITEM", item._itemId, item.Label, item.Description, (int)item.MainColor, (int)item.HighlightColor, (int)item.TextColor, (int)item.HighlightedTextColor);
+						ScaleformUI._ScaleformUI.CallFunction("SET_RIGHT_LABEL", MenuItems.IndexOf(item), item.RightLabel);
 						if (item.RightBadge != BadgeIcon.NONE)
-							NativeUIScaleform._nativeui.CallFunction("SET_RIGHT_BADGE", MenuItems.IndexOf(item), UIMenuItem.GetSpriteDictionary(item.RightBadge), (int)item.RightBadge);
+							ScaleformUI._ScaleformUI.CallFunction("SET_RIGHT_BADGE", MenuItems.IndexOf(item), UIMenuItem.GetSpriteDictionary(item.RightBadge), (int)item.RightBadge);
 						break;
 				}
 				if (item.Panels.Count == 0) continue;
@@ -1996,28 +1998,28 @@ namespace NativeUI
 					{
 						case UIMenuColorPanel:
 							UIMenuColorPanel cp = (UIMenuColorPanel)panel;
-							NativeUIScaleform._nativeui.CallFunction("ADD_PANEL", it, 0, cp.Title, (int)cp.ColorPanelColorType, cp.CurrentSelection);
+							ScaleformUI._ScaleformUI.CallFunction("ADD_PANEL", it, 0, cp.Title, (int)cp.ColorPanelColorType, cp.CurrentSelection);
 							break;
 						case UIMenuPercentagePanel:
 							UIMenuPercentagePanel pp = (UIMenuPercentagePanel)panel;
-							NativeUIScaleform._nativeui.CallFunction("ADD_PANEL", it, 1, pp.Title, "0%", "100%", pp.Percentage);
+							ScaleformUI._ScaleformUI.CallFunction("ADD_PANEL", it, 1, pp.Title, "0%", "100%", pp.Percentage);
 							break;
 						case UIMenuGridPanel:
 							UIMenuGridPanel gp = (UIMenuGridPanel)panel;
-							NativeUIScaleform._nativeui.CallFunction("ADD_PANEL", it, 2, gp.TopLabel, gp.RightLabel, gp.LeftLabel, gp.BottomLabel, gp.CirclePosition.X, gp.CirclePosition.Y, true, (int)gp.GridType);
+							ScaleformUI._ScaleformUI.CallFunction("ADD_PANEL", it, 2, gp.TopLabel, gp.RightLabel, gp.LeftLabel, gp.BottomLabel, gp.CirclePosition.X, gp.CirclePosition.Y, true, (int)gp.GridType);
 							break;
 						case UIMenuStatisticsPanel:
 							UIMenuStatisticsPanel sp = (UIMenuStatisticsPanel)panel;
-							NativeUIScaleform._nativeui.CallFunction("ADD_PANEL", it, 3);
+							ScaleformUI._ScaleformUI.CallFunction("ADD_PANEL", it, 3);
 							if (sp.Items.Count > 0)
 								foreach (var stat in sp.Items)
-									NativeUIScaleform._nativeui.CallFunction("ADD_STATISTIC_TO_PANEL", it, pan, stat.Text, stat.Value);
+									ScaleformUI._ScaleformUI.CallFunction("ADD_STATISTIC_TO_PANEL", it, pan, stat.Text, stat.Value);
 							break;
 
 					}
 				}
 			}
-			NativeUIScaleform._nativeui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
+			ScaleformUI._ScaleformUI.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
 			SetStreamedTextureDictAsNoLongerNeeded(_customTexture.Key);
 			SetStreamedTextureDictAsNoLongerNeeded("commonmenu");
 			SetStreamedTextureDictAsNoLongerNeeded("pause_menu_pages_char_mom_dad");
@@ -2047,7 +2049,7 @@ namespace NativeUI
 					_maxItem = MaxItemsOnScreen + CurrentSelection;
 					_minItem = CurrentSelection;
 				}
-				NativeUIScaleform._nativeui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
+				ScaleformUI._ScaleformUI.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
 			}
 		}
 

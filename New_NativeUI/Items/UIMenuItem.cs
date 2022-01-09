@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Threading.Tasks;
 
-namespace NativeUI
+namespace ScaleformUI
 {
     public enum BadgeIcon
     {
@@ -201,8 +201,8 @@ namespace NativeUI
         public HudColor MainColor { get; set; }
         public HudColor HighlightColor { get; set; }
 
-        public HudColor TextColor { get; set; }
-        public HudColor HighlightedTextColor { get; set; }
+        public HudColor TextColor { get; set; } = HudColor.HUD_COLOUR_WHITE;
+        public HudColor HighlightedTextColor { get; set; } = HudColor.HUD_COLOUR_BLACK;
 
         public List<UIMenuPanel> Panels = new();
         private bool _selected;
@@ -223,14 +223,17 @@ namespace NativeUI
         /// Basic menu button.
         /// </summary>
         /// <param name="text">Button label.</param>
-        public UIMenuItem(string text) : this(text, "", HudColor.HUD_COLOUR_PAUSE_BG, HudColor.HUD_COLOUR_WHITE) { }
+        public UIMenuItem(string text) : this(text, "") { }
 
         /// <summary>
         /// Basic menu button with description.
         /// </summary>
         /// <param name="text">Button label.</param>
         /// <param name="description">Description.</param>
-        public UIMenuItem(string text, string description) : this(text, description, HudColor.HUD_COLOUR_PAUSE_BG, HudColor.HUD_COLOUR_WHITE) { }
+        public UIMenuItem(string text, string description) : this(text, description, HudColor.HUD_COLOUR_PAUSE_BG, HudColor.HUD_COLOUR_WHITE, HudColor.HUD_COLOUR_WHITE, HudColor.HUD_COLOUR_BLACK) { }
+
+
+        public UIMenuItem(string text, string description, HudColor mainColor, HudColor highlightColor) : this(text, description, mainColor, highlightColor, HudColor.HUD_COLOUR_WHITE, HudColor.HUD_COLOUR_BLACK) { }
 
         /// <summary>
         /// Basic menu button with description and colors.
@@ -239,15 +242,14 @@ namespace NativeUI
         /// <param name="description">Button label.</param>
         /// <param name="description">Button label.</param>
         /// <param name="description">Button label.</param>
-        public UIMenuItem(string text, string description, HudColor color, HudColor highlightColor)
+        public UIMenuItem(string text, string description, HudColor color, HudColor highlightColor, HudColor textColor, HudColor highlightedTextColor)
         {
             Enabled = true;
-
             MainColor = color;
             HighlightColor = highlightColor;
+            TextColor = textColor;
+            HighlightedTextColor = highlightedTextColor;
 
-            TextColor = HudColor.HUD_COLOUR_WHITE;
-            HighlightedTextColor = HudColor.HUD_COLOUR_BLACK;
             Label = text;
             Description = description;
         }
@@ -288,9 +290,9 @@ namespace NativeUI
                     if (!_rightLabel.StartsWith("~"))
                         _rightLabel = _rightLabel.Insert(0, "~s~");
                 }
-                if (Parent is not null)
+                if(Parent is not null)
                 {
-                    NativeUIScaleform._nativeui.CallFunction("SET_ITEM_LABELS", Parent.MenuItems.IndexOf(this), _label, _rightLabel);
+                    ScaleformUI._ScaleformUI.CallFunction("SET_ITEM_LABELS", Parent.MenuItems.IndexOf(this), _label, _rightLabel);
                 }
             }
         }
@@ -347,7 +349,7 @@ namespace NativeUI
                 }
                 if (Parent is not null)
                 {
-                    NativeUIScaleform._nativeui.CallFunction("SET_LEFT_LABEL", Parent.MenuItems.IndexOf(this), _label);
+                    ScaleformUI._ScaleformUI.CallFunction("SET_LEFT_LABEL", Parent.MenuItems.IndexOf(this), _label);
                 }
             }
         }
@@ -378,7 +380,7 @@ namespace NativeUI
                     await BaseScript.Delay(0);
                     API.RequestStreamedTextureDict(dict, true);
                 }
-                NativeUIScaleform._nativeui.CallFunction("SET_RIGHT_BADGE", Parent.MenuItems.IndexOf(this), dict, (int)badge);
+                ScaleformUI._ScaleformUI.CallFunction("SET_RIGHT_BADGE", Parent.MenuItems.IndexOf(this), dict, (int)badge);
                 API.RemoveAnimDict(dict);
             }
             else
@@ -424,7 +426,7 @@ namespace NativeUI
                 }
                 if (Parent is not null)
                 {
-                    NativeUIScaleform._nativeui.CallFunction("SET_RIGHT_LABEL", Parent.MenuItems.IndexOf(this), _rightLabel);
+                    ScaleformUI._ScaleformUI.CallFunction("SET_RIGHT_LABEL", Parent.MenuItems.IndexOf(this), _rightLabel);
                 }
             }
         }

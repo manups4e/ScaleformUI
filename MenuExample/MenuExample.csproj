@@ -51,9 +51,9 @@
     <Compile Include="MenuExample.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\New_NativeUI\NativeUI.csproj">
+    <ProjectReference Include="..\New_NativeUI\ScaleformUI.csproj">
       <Project>{f5614594-90fd-4f4c-9c68-c9dc90060f8d}</Project>
-      <Name>NativeUI</Name>
+      <Name>ScaleformUI</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

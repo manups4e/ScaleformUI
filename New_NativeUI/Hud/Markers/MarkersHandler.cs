@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static CitizenFX.Core.Native.API;
 
-namespace NativeUI
+namespace ScaleformUI
 {
 	public class MarkersHandler : BaseScript
 	{

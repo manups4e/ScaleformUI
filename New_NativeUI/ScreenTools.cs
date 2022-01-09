@@ -5,7 +5,7 @@ using System.Drawing;
 using System;
 using CitizenFX.Core.UI;
 
-namespace NativeUI
+namespace ScaleformUI
 {
 	/// <summary>
 	/// Tools to deal with the game screen.
@@ -120,8 +120,8 @@ namespace NativeUI
 				g = 10 - g;
 
 				// Then, get the screen resolution
-				int screenw = Screen.Resolution.Width;
-				int screenh = Screen.Resolution.Height;
+				float screenw = Screen.ScaledWidth;
+				float screenh = Screen.Height;
 				// Calculate the ratio
 				float ratio = (float)screenw / screenh;
 				// And this thing (that I don't know what it does)

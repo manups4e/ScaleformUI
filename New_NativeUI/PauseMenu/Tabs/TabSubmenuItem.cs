@@ -2,10 +2,8 @@
 using System.Drawing;
 using CitizenFX.Core.Native;
 using CitizenFX.Core;
-using NativeUI.PauseMenu.Items;
-using NativeUI.PauseMenu.Tabs;
 
-namespace NativeUI.PauseMenu
+namespace ScaleformUI.PauseMenu
 {
     public class TabSubmenuItem : BaseTab
     {

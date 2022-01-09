@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Threading.Tasks;
 using CitizenFX.Core.UI;
 
-namespace NativeUI
+namespace ScaleformUI
 {
     public class UIMenuListItem : UIMenuItem, IListItem
     {
@@ -65,7 +65,11 @@ namespace NativeUI
         {
         }
 
-		public UIMenuListItem(string text, List<dynamic> items, int index, string description, HudColor mainColor, HudColor higlightColor) : base(text, description, mainColor, higlightColor)
+        public UIMenuListItem(string text, List<dynamic> items, int index, string description, HudColor mainColor, HudColor higlightColor) : this(text, items, index, description, mainColor, higlightColor, HudColor.HUD_COLOUR_WHITE, HudColor.HUD_COLOUR_BLACK)
+        {
+        }
+        
+        public UIMenuListItem(string text, List<dynamic> items, int index, string description, HudColor mainColor, HudColor higlightColor, HudColor textColor, HudColor highlightTextColor) : base(text, description, mainColor, higlightColor, textColor, highlightTextColor)
 		{
 			const int y = 0;
 			_items = items;
@@ -84,7 +88,6 @@ namespace NativeUI
         {
             return _items.FindIndex(p => ReferenceEquals(p, item));
         }
-
 
 		/// <summary>
 		/// Find an item by it's index and return the item.
@@ -115,6 +118,13 @@ namespace NativeUI
         internal virtual void ListSelectedTrigger(int newindex)
         {
             OnListSelected?.Invoke(this, newindex);
+        }
+
+        public void ChangeList(List<dynamic> list, int index)
+        {
+            _items.Clear();
+            _items = list;
+            ScaleformUI._ScaleformUI.CallFunction("UPDATE_LISTITEM_LIST", Parent.MenuItems.IndexOf(this), string.Join(",", _items), index);
         }
 
         public override void SetRightBadge(BadgeIcon badge)

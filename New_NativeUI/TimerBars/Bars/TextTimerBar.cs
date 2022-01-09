@@ -2,13 +2,13 @@
 using System.Drawing;
 using Font = CitizenFX.Core.UI.Font;
 
-namespace NativeUI
+namespace ScaleformUI
 {
     public class TextTimerBar : TimerBarBase
     {
         public string Caption { get; set; }
         public Color CaptionColor { get; set; } = Colors.White;
-
+        public bool Enabled;
         public TextTimerBar(string label, string text) : base(label)
         {
             Caption = text;
@@ -21,6 +21,7 @@ namespace NativeUI
 
         public override void Draw(int interval)
         {
+            if (!Enabled) return;
             SizeF res = ScreenTools.ResolutionMaintainRatio;
             PointF safe = ScreenTools.SafezoneBounds;
 

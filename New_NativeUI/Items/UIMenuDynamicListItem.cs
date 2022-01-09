@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Threading.Tasks;
 using Font = CitizenFX.Core.UI.Font;
 
-namespace NativeUI
+namespace ScaleformUI
 {
     public class UIMenuDynamicListItem : UIMenuItem, IListItem
     {

@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Threading.Tasks;
 
-namespace NativeUI
+namespace ScaleformUI
 {
 	public class UIMenuSliderItem : UIMenuItem
 	{

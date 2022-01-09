@@ -1,11 +1,10 @@
-﻿using NativeUI.PauseMenu.Items;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NativeUI.PauseMenu.Tabs
+namespace ScaleformUI.PauseMenu
 {
     public enum LeftItemType
     {
@@ -16,6 +15,7 @@ namespace NativeUI.PauseMenu.Tabs
     }
 
     public delegate void IndexChangeEvent(SettingsTabItem item, int index);
+    public delegate void ActivatedEvent(TabLeftItem item, int index);
 
     public class TabLeftItem
     {
@@ -30,6 +30,7 @@ namespace NativeUI.PauseMenu.Tabs
         public string TextTitle { get; set; }
 
         public event IndexChangeEvent OnIndexChanged;
+        public event ActivatedEvent OnActivated;
         public BaseTab Parent { get; set; }
 
         public TabLeftItem(string label, LeftItemType type, HudColor mainColor = HudColor.NONE, HudColor highlightColor = HudColor.NONE)
@@ -49,6 +50,11 @@ namespace NativeUI.PauseMenu.Tabs
         internal void IndexChanged()
         {
             OnIndexChanged?.Invoke(ItemList[ItemIndex] as SettingsTabItem, ItemIndex);
+        }
+
+        internal void Activated()
+        {
+            OnActivated?.Invoke(this, Parent.LeftItemList.IndexOf(this));
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace NativeUI
+﻿namespace ScaleformUI
 {
     public interface IListItem
     {

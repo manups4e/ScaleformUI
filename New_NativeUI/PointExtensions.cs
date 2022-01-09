@@ -3,7 +3,7 @@
 using CitizenFX.Core;
 using System.Drawing;
 
-namespace NativeUI
+namespace ScaleformUI
 {
     public static class MiscExtensions
     {

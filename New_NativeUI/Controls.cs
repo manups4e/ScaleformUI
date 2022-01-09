@@ -2,7 +2,7 @@
 using static CitizenFX.Core.Native.API;
 using System.Linq;
 
-namespace NativeUI
+namespace ScaleformUI
 {
 	/// <summary>
 	/// Class that provides tools to handle the game controls.

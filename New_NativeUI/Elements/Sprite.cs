@@ -7,7 +7,7 @@ using CitizenFX.Core;
 using CitizenFX.Core.UI;
 using System.Drawing;
 
-namespace NativeUI
+namespace ScaleformUI
 {
     public class Sprite
     {
@@ -90,7 +90,7 @@ namespace NativeUI
             API.DrawSprite(TextureDict, TextureName, x, y, w, h, Heading, Color.R, Color.G, Color.B, Color.A);
         }
 
-        public static void Draw(string dict, string name, int xpos, int ypos, int boxWidth, int boxHeight, float rotation, Color color)
+        public static void Draw(string dict, string name, float xpos, float ypos, float boxWidth, float boxHeight, float rotation, Color color)
         {
             if (!API.HasStreamedTextureDictLoaded(dict))
                 API.RequestStreamedTextureDict(dict, true);

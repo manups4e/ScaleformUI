@@ -7,19 +7,18 @@ using System.Text;
 using System.Threading.Tasks;
 using CitizenFX.Core.Native;
 
-namespace NativeUI
+namespace ScaleformUI
 {
     public class PauseMenuScaleform
     {
         private Scaleform _header;
         private Scaleform _pause;
         private bool _visible;
-        internal bool Loaded => _header.IsLoaded && _pause.IsLoaded;
+        internal bool Loaded => _header is not null && _header.IsLoaded && _pause is not null && _pause.IsLoaded;
         public bool Visible { get => _visible; set => _visible = value; }
 
         public PauseMenuScaleform()
         {
-            Load();
         }
 
         public void Load()
@@ -184,7 +183,6 @@ namespace NativeUI
             while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
             var res = GetScaleformMovieFunctionReturnString(ret);
             return res;
-            //Debug.WriteLine("InputEvent UP [tabIndex, focusLevel, currentTabLeftItemIndex, currentRightPanelItemIndex, retVal] = " + res);
         }
 
         public async Task<string> SendScrollEvent(int direction)
@@ -196,9 +194,7 @@ namespace NativeUI
             while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
             var res = GetScaleformMovieFunctionReturnString(ret);
             return res;
-            //Debug.WriteLine("InputEvent UP [tabIndex, focusLevel, currentTabLeftItemIndex, currentRightPanelItemIndex, retVal] = " + res);
         }
-
         public async Task<string> SendClickEvent()
         {
             BeginScaleformMovieMethod(_pause.Handle, "MOUSE_CLICK_EVENT");
@@ -219,9 +215,10 @@ namespace NativeUI
 
         public void Draw()
         {
-            if (_visible)
+            if (_visible && !Game.IsPaused)
             {
-                ShowCursorThisFrame();
+                if(IsInputDisabled(2))
+                    ShowCursorThisFrame();
                 DrawScaleformMovie(_header.Handle, 0.501f, 0.162f, 0.6782f, 0.145f, 255, 255, 255, 255, 0);
                 DrawScaleformMovie(_pause.Handle, 0.6617187f, 0.7166667f, 1, 1, 255, 255, 255, 255, 0);
             }

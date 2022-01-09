@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Threading.Tasks;
 using static CitizenFX.Core.Native.API;
 
-namespace NativeUI
+namespace ScaleformUI
 {
 	public class Marker
 	{

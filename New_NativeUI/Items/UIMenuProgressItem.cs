@@ -7,13 +7,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NativeUI
+namespace ScaleformUI
 {
 	public class UIMenuProgressItem : UIMenuItem
 	{
+		protected internal bool Pressed;
+		protected internal UIMenuGridAudio Audio;
+
 		protected internal int _value = 0;
 		protected internal int _max;
 		protected internal int _multiplier = 5;
+		protected internal bool Divider;
 		protected internal HudColor SliderColor;
 		protected internal HudColor BackgroundSliderColor;
 
@@ -25,8 +29,6 @@ namespace NativeUI
 
 		public UIMenuProgressItem(string text, int maxCount, int startIndex, string description, bool heritage = false) : this(text, maxCount, startIndex, description, HudColor.HUD_COLOUR_FREEMODE, HudColor.HUD_COLOUR_PAUSE_BG)
 		{
-			_max = maxCount;
-			_value = startIndex;
 		}
 
 		public UIMenuProgressItem(string text, int maxCount, int startIndex, string description, HudColor sliderColor, HudColor backgroundSliderColor) : base(text, description)
@@ -35,6 +37,7 @@ namespace NativeUI
 			_value = startIndex;
 			SliderColor = sliderColor;
 			BackgroundSliderColor = backgroundSliderColor;
+			Audio = new UIMenuGridAudio("CONTINUOUS_SLIDER", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0);
 			_itemId = 4;
 		}
 
@@ -59,7 +62,7 @@ namespace NativeUI
 		public int Multiplier
 		{
 			get => _multiplier;
-			set => _multiplier = value;
+			set =>_multiplier = value;
 		}
 
 		/// <summary>
