@@ -54,14 +54,14 @@ namespace ScaleformUI
         {
 			var it = ParentItem.Parent.MenuItems.IndexOf(ParentItem);
 			var van = ParentItem.Panels.IndexOf(this);
-			ScaleformUI._ScaleformUI.CallFunction("SET_PERCENT_PANEL_RETURN_VALUE", it, van, val);
+			ScaleformUI._ui.CallFunction("SET_PERCENT_PANEL_RETURN_VALUE", it, van, val);
 		}
 
 		public async void SetMousePercentage(PointF mouse)
         {
 			var it = ParentItem.Parent.MenuItems.IndexOf(ParentItem);
 			var van = ParentItem.Panels.IndexOf(this);
-			API.BeginScaleformMovieMethod(ScaleformUI._ScaleformUI.Handle, "SET_PERCENT_PANEL_POSITION_RETURN_VALUE");
+			API.BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_PERCENT_PANEL_POSITION_RETURN_VALUE");
 			API.ScaleformMovieMethodAddParamInt(it);
 			API.ScaleformMovieMethodAddParamInt(van);
 			API.ScaleformMovieMethodAddParamFloat(mouse.X);

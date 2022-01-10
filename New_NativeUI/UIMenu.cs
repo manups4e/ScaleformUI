@@ -1422,7 +1422,7 @@ namespace ScaleformUI
 		public async Task Draw()
 		{
 			if (!Visible || ScaleformUI.Warning.IsShowing) return;
-			while (!ScaleformUI._ScaleformUI.IsLoaded) await BaseScript.Delay(0);
+			while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
 
 			if (ControlDisablingEnabled)
 				Controls.Toggle(false);
@@ -1432,7 +1432,7 @@ namespace ScaleformUI
 			float width = 1280 / Screen.ScaledWidth;
 			float height = 720 / Screen.Height;
 
-			DrawScaleformMovie(ScaleformUI._ScaleformUI.Handle, x + (width / 2.0f), y + (height / 2.0f), width, height, 255, 255, 255, 255, 0);
+			DrawScaleformMovie(ScaleformUI._ui.Handle, x + (width / 2.0f), y + (height / 2.0f), width, height, 255, 255, 255, 255, 0);
 
 			if (Glare)
 			{
@@ -1444,6 +1444,30 @@ namespace ScaleformUI
 				);
 
 				DrawScaleformMovie(_menuGlare.Handle, gl.X, gl.Y, _glareSize.Width, _glareSize.Height, 255, 255, 255, 255, 0);
+			}
+
+			foreach (var item in MenuItems)
+			{
+				switch (item)
+				{
+					case UIMenuSliderItem:
+						{
+							var it = (UIMenuSliderItem)item;
+							ScaleformUI._ui.CallFunction("UPDATE_ITEM", MenuItems.IndexOf(it), it.Description, (int)it.MainColor, (int)it.HighlightColor, (int)it.TextColor, (int)it.HighlightedTextColor, (int)it.SliderColor, (int)it.BackgroundSliderColor);
+							break;
+						}
+
+					case UIMenuProgressItem:
+						{
+							var it = (UIMenuProgressItem)item;
+							ScaleformUI._ui.CallFunction("UPDATE_ITEM", MenuItems.IndexOf(it), it.Description, (int)it.MainColor, (int)it.HighlightColor, (int)it.TextColor, (int)it.HighlightedTextColor, (int)it.SliderColor, (int)it.BackgroundSliderColor);
+							break;
+						}
+
+					default:
+						ScaleformUI._ui.CallFunction("UPDATE_ITEM", MenuItems.IndexOf(item), item.Description, (int)item.MainColor, (int)item.HighlightColor, (int)item.TextColor, (int)item.HighlightedTextColor);
+						break;
+				}
 			}
 		}
 
@@ -1498,7 +1522,7 @@ namespace ScaleformUI
 			if (Game.IsControlJustPressed(0, Control.Attack))
 			{
 				PointF mouse = new PointF(GetDisabledControlNormal(0, 239) * Screen.ScaledWidth - Offset.X, GetDisabledControlNormal(0, 240) * Screen.Height - Offset.Y);
-				BeginScaleformMovieMethod(ScaleformUI._ScaleformUI.Handle, "SET_INPUT_MOUSE_EVENT_SINGLE");
+				BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_INPUT_MOUSE_EVENT_SINGLE");
 				ScaleformMovieMethodAddParamFloat(mouse.X);
 				ScaleformMovieMethodAddParamFloat(mouse.Y);
 				var ret = EndScaleformMovieMethodReturnValue();
@@ -1566,7 +1590,7 @@ namespace ScaleformUI
 			else if (Game.IsControlPressed(0, Control.Attack))
 			{
 				PointF mouse = new PointF(GetDisabledControlNormal(0, 239) * Screen.ScaledWidth - Offset.X, GetDisabledControlNormal(0, 240) * Screen.Height - Offset.Y);
-				BeginScaleformMovieMethod(ScaleformUI._ScaleformUI.Handle, "SET_INPUT_MOUSE_EVENT_CONTINUE");
+				BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_INPUT_MOUSE_EVENT_CONTINUE");
 				ScaleformMovieMethodAddParamFloat(mouse.X);
 				ScaleformMovieMethodAddParamFloat(mouse.Y);
 				var ret = EndScaleformMovieMethodReturnValue();
@@ -1659,7 +1683,7 @@ namespace ScaleformUI
 			Game.PlaySound(AUDIO_BACK, AUDIO_LIBRARY);
 			if (ParentMenu != null)
 			{
-				ScaleformUI._ScaleformUI.CallFunction("CLEAR_ALL");
+				ScaleformUI._ui.CallFunction("CLEAR_ALL");
 				ScaleformUI.InstructionalButtons.Enabled = true;
 				ScaleformUI.InstructionalButtons.SetInstructionalButtons(ParentMenu.InstructionalButtons);
 				_poolcontainer.MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
@@ -1676,7 +1700,7 @@ namespace ScaleformUI
 			try
 			{
 				MenuItems[CurrentSelection].Selected = false;
-				BeginScaleformMovieMethod(ScaleformUI._ScaleformUI.Handle, "SET_INPUT_EVENT");
+				BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_INPUT_EVENT");
 				ScaleformMovieMethodAddParamInt(8);
 				var ret = EndScaleformMovieMethodReturnValue();
 				while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
@@ -1694,7 +1718,7 @@ namespace ScaleformUI
 			try
 			{
 				MenuItems[CurrentSelection].Selected = false;
-				BeginScaleformMovieMethod(ScaleformUI._ScaleformUI.Handle, "SET_INPUT_EVENT");
+				BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_INPUT_EVENT");
 				ScaleformMovieMethodAddParamInt(9);
 				var ret = EndScaleformMovieMethodReturnValue();
 				while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
@@ -1709,7 +1733,7 @@ namespace ScaleformUI
 		}
 		public async void GoLeft()
 		{
-			BeginScaleformMovieMethod(ScaleformUI._ScaleformUI.Handle, "SET_INPUT_EVENT");
+			BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_INPUT_EVENT");
 			ScaleformMovieMethodAddParamInt(10);
 			var ret = EndScaleformMovieMethodReturnValue();
 			while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
@@ -1750,7 +1774,7 @@ namespace ScaleformUI
 
 		public async void GoRight()
 		{
-			BeginScaleformMovieMethod(ScaleformUI._ScaleformUI.Handle, "SET_INPUT_EVENT");
+			BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_INPUT_EVENT");
 			ScaleformMovieMethodAddParamInt(11);
 			var ret = EndScaleformMovieMethodReturnValue();
 			while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
@@ -1823,7 +1847,7 @@ namespace ScaleformUI
 					MenuItems[CurrentSelection].ItemActivate(this);
 					if (!Children.ContainsKey(MenuItems[CurrentSelection])) return;
 					Visible = false;
-					ScaleformUI._ScaleformUI.CallFunction("CLEAR_ALL");
+					ScaleformUI._ui.CallFunction("CLEAR_ALL");
 					ScaleformUI.InstructionalButtons.Enabled = true;
 					ScaleformUI.InstructionalButtons.SetInstructionalButtons(Children[MenuItems[CurrentSelection]].InstructionalButtons);
 					_poolcontainer.MenuChangeEv(this, Children[MenuItems[CurrentSelection]], MenuState.ChangeForward);
@@ -1841,7 +1865,7 @@ namespace ScaleformUI
 		public async void ProcessControl(Keys key = Keys.None)
 		{
 
-			while (!ScaleformUI._ScaleformUI.IsLoaded) await BaseScript.Delay(0);
+			while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
 			if (!Visible || ScaleformUI.Warning.IsShowing) return;
 			if (_justOpened)
 			{
@@ -1925,7 +1949,7 @@ namespace ScaleformUI
 				{
 					_poolcontainer.MenuChangeEv(this, null, MenuState.Closed);
 					MenuChangeEv(this, null, MenuState.Closed);
-					ScaleformUI._ScaleformUI.CallFunction("CLEAR_ALL");
+					ScaleformUI._ui.CallFunction("CLEAR_ALL");
 				}
 				if (!value) return;
 				if (!ResetCursorOnOpen) return;
@@ -1952,10 +1976,10 @@ namespace ScaleformUI
 		internal async void BuildUpMenu()
 		{
 			LoadScaleform();
-			while (!ScaleformUI._ScaleformUI.IsLoaded) await BaseScript.Delay(0);
-			ScaleformUI._ScaleformUI.CallFunction("CREATE_MENU", Title, Subtitle, _customTexture.Key, _customTexture.Value);
+			while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
+			ScaleformUI._ui.CallFunction("CREATE_MENU", Title, Subtitle, _customTexture.Key, _customTexture.Value);
 			if(Windows.Count > 0)
-				ScaleformUI._ScaleformUI.CallFunction("ADD_HERITAGE_WINDOW", Windows[0].Mom, Windows[0].Dad);
+				ScaleformUI._ui.CallFunction("ADD_HERITAGE_WINDOW", Windows[0].Mom, Windows[0].Dad);
 			foreach (var item in MenuItems)
 			{
 				LoadScaleform();
@@ -1963,30 +1987,30 @@ namespace ScaleformUI
 				{
 					case UIMenuListItem:
 						UIMenuListItem it = (UIMenuListItem)item;
-						ScaleformUI._ScaleformUI.CallFunction("ADD_ITEM", it._itemId, it.Label, it.Description, string.Join(",", it.Items), it.Index, (int)it.MainColor, (int)it.HighlightColor, (int)it.TextColor, (int)it.HighlightedTextColor);
+						ScaleformUI._ui.CallFunction("ADD_ITEM", it._itemId, it.Label, it.Description, string.Join(",", it.Items), it.Index, (int)it.MainColor, (int)it.HighlightColor, (int)it.TextColor, (int)it.HighlightedTextColor);
 						break;
 					case UIMenuCheckboxItem:
 						UIMenuCheckboxItem check = (UIMenuCheckboxItem)item;
-						ScaleformUI._ScaleformUI.CallFunction("ADD_ITEM", check._itemId, check.Label, check.Description, (int)check.Style, check.Checked, (int)check.MainColor, (int)check.HighlightColor, (int)check.TextColor, (int)check.HighlightedTextColor);
+						ScaleformUI._ui.CallFunction("ADD_ITEM", check._itemId, check.Label, check.Description, (int)check.Style, check.Checked, (int)check.MainColor, (int)check.HighlightColor, (int)check.TextColor, (int)check.HighlightedTextColor);
 						break;
 					case UIMenuSliderItem:
 						UIMenuSliderItem prItem = (UIMenuSliderItem)item;
-						ScaleformUI._ScaleformUI.CallFunction("ADD_ITEM", prItem._itemId, prItem.Label, prItem.Description, prItem._max, prItem._multiplier, prItem.Value, (int)prItem.MainColor, (int)prItem.HighlightColor, (int)prItem.TextColor, (int)prItem.HighlightedTextColor, (int)prItem.BackgroundSliderColor, (int)prItem.SliderColor, prItem._heritage);
+						ScaleformUI._ui.CallFunction("ADD_ITEM", prItem._itemId, prItem.Label, prItem.Description, prItem._max, prItem._multiplier, prItem.Value, (int)prItem.MainColor, (int)prItem.HighlightColor, (int)prItem.TextColor, (int)prItem.HighlightedTextColor, (int)prItem.BackgroundSliderColor, (int)prItem.SliderColor, prItem._heritage);
 						break;
 					case UIMenuProgressItem:
 						UIMenuProgressItem slItem = (UIMenuProgressItem)item;
-						ScaleformUI._ScaleformUI.CallFunction("ADD_ITEM", slItem._itemId, slItem.Label, slItem.Description, slItem._max, slItem._multiplier, slItem.Value, (int)slItem.MainColor, (int)slItem.HighlightColor, (int)slItem.TextColor, (int)slItem.HighlightedTextColor, (int)slItem.SliderColor);
+						ScaleformUI._ui.CallFunction("ADD_ITEM", slItem._itemId, slItem.Label, slItem.Description, slItem._max, slItem._multiplier, slItem.Value, (int)slItem.MainColor, (int)slItem.HighlightColor, (int)slItem.TextColor, (int)slItem.HighlightedTextColor, (int)slItem.SliderColor);
 						break;
 
 					case UIMenuStatsItem:
 						UIMenuStatsItem statsItem = (UIMenuStatsItem)item;
-						ScaleformUI._ScaleformUI.CallFunction("ADD_ITEM", 5, statsItem.Label, statsItem.Description, statsItem.Value, statsItem.Type, (int)statsItem.Color);
+						ScaleformUI._ui.CallFunction("ADD_ITEM", 5, statsItem.Label, statsItem.Description, statsItem.Value, statsItem.Type, (int)statsItem.Color);
 						break;
 					default:
-						ScaleformUI._ScaleformUI.CallFunction("ADD_ITEM", item._itemId, item.Label, item.Description, (int)item.MainColor, (int)item.HighlightColor, (int)item.TextColor, (int)item.HighlightedTextColor);
-						ScaleformUI._ScaleformUI.CallFunction("SET_RIGHT_LABEL", MenuItems.IndexOf(item), item.RightLabel);
+						ScaleformUI._ui.CallFunction("ADD_ITEM", item._itemId, item.Label, item.Description, (int)item.MainColor, (int)item.HighlightColor, (int)item.TextColor, (int)item.HighlightedTextColor);
+						ScaleformUI._ui.CallFunction("SET_RIGHT_LABEL", MenuItems.IndexOf(item), item.RightLabel);
 						if (item.RightBadge != BadgeIcon.NONE)
-							ScaleformUI._ScaleformUI.CallFunction("SET_RIGHT_BADGE", MenuItems.IndexOf(item), UIMenuItem.GetSpriteDictionary(item.RightBadge), (int)item.RightBadge);
+							ScaleformUI._ui.CallFunction("SET_RIGHT_BADGE", MenuItems.IndexOf(item), UIMenuItem.GetSpriteDictionary(item.RightBadge), (int)item.RightBadge);
 						break;
 				}
 				if (item.Panels.Count == 0) continue;
@@ -1998,28 +2022,28 @@ namespace ScaleformUI
 					{
 						case UIMenuColorPanel:
 							UIMenuColorPanel cp = (UIMenuColorPanel)panel;
-							ScaleformUI._ScaleformUI.CallFunction("ADD_PANEL", it, 0, cp.Title, (int)cp.ColorPanelColorType, cp.CurrentSelection);
+							ScaleformUI._ui.CallFunction("ADD_PANEL", it, 0, cp.Title, (int)cp.ColorPanelColorType, cp.CurrentSelection);
 							break;
 						case UIMenuPercentagePanel:
 							UIMenuPercentagePanel pp = (UIMenuPercentagePanel)panel;
-							ScaleformUI._ScaleformUI.CallFunction("ADD_PANEL", it, 1, pp.Title, "0%", "100%", pp.Percentage);
+							ScaleformUI._ui.CallFunction("ADD_PANEL", it, 1, pp.Title, "0%", "100%", pp.Percentage);
 							break;
 						case UIMenuGridPanel:
 							UIMenuGridPanel gp = (UIMenuGridPanel)panel;
-							ScaleformUI._ScaleformUI.CallFunction("ADD_PANEL", it, 2, gp.TopLabel, gp.RightLabel, gp.LeftLabel, gp.BottomLabel, gp.CirclePosition.X, gp.CirclePosition.Y, true, (int)gp.GridType);
+							ScaleformUI._ui.CallFunction("ADD_PANEL", it, 2, gp.TopLabel, gp.RightLabel, gp.LeftLabel, gp.BottomLabel, gp.CirclePosition.X, gp.CirclePosition.Y, true, (int)gp.GridType);
 							break;
 						case UIMenuStatisticsPanel:
 							UIMenuStatisticsPanel sp = (UIMenuStatisticsPanel)panel;
-							ScaleformUI._ScaleformUI.CallFunction("ADD_PANEL", it, 3);
+							ScaleformUI._ui.CallFunction("ADD_PANEL", it, 3);
 							if (sp.Items.Count > 0)
 								foreach (var stat in sp.Items)
-									ScaleformUI._ScaleformUI.CallFunction("ADD_STATISTIC_TO_PANEL", it, pan, stat.Text, stat.Value);
+									ScaleformUI._ui.CallFunction("ADD_STATISTIC_TO_PANEL", it, pan, stat.Text, stat.Value);
 							break;
 
 					}
 				}
 			}
-			ScaleformUI._ScaleformUI.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
+			ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
 			SetStreamedTextureDictAsNoLongerNeeded(_customTexture.Key);
 			SetStreamedTextureDictAsNoLongerNeeded("commonmenu");
 			SetStreamedTextureDictAsNoLongerNeeded("pause_menu_pages_char_mom_dad");
@@ -2049,7 +2073,7 @@ namespace ScaleformUI
 					_maxItem = MaxItemsOnScreen + CurrentSelection;
 					_minItem = CurrentSelection;
 				}
-				ScaleformUI._ScaleformUI.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
+				ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
 			}
 		}
 

@@ -26,7 +26,7 @@ namespace ScaleformUI
         public void SetValue(int value)
         {
             Value = value;
-            ScaleformUI._ScaleformUI.CallFunction("SET_ITEM_VALUE", value);
+            ScaleformUI._ui.CallFunction("SET_ITEM_VALUE", value);
         }
 
     }

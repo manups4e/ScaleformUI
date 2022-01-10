@@ -16,7 +16,7 @@ namespace ScaleformUI
         public static PopupWarning Warning { get; set; }
         public static PlayerListHandler PlayerListInstance { get; set; }
         public static MissionSelectorHandler JobMissionSelection { get; set; }
-        internal static Scaleform _ScaleformUI { get; set; }
+        internal static Scaleform _ui { get; set; }
         public ScaleformUI()
         {
             Warning = new();
@@ -25,7 +25,7 @@ namespace ScaleformUI
             PlayerListInstance = new();
             JobMissionSelection = new();
             PauseMenu = new();
-            _ScaleformUI = new("scaleformui");
+            _ui = new("scaleformui");
             InstructionalButtons = new();
             InstructionalButtons.Load();
             Tick += ScaleformUIThread_Tick;
@@ -40,8 +40,8 @@ namespace ScaleformUI
             JobMissionSelection.Update();
             InstructionalButtons.HandleScaleform();
 
-            if (_ScaleformUI is null)
-                _ScaleformUI = new Scaleform("ScaleformUI");
+            if (_ui is null)
+                _ui = new Scaleform("ScaleformUI");
 
             if (!PauseMenu.Loaded)
                 PauseMenu.Load();

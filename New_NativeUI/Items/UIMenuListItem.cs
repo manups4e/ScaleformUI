@@ -124,7 +124,7 @@ namespace ScaleformUI
         {
             _items.Clear();
             _items = list;
-            ScaleformUI._ScaleformUI.CallFunction("UPDATE_LISTITEM_LIST", Parent.MenuItems.IndexOf(this), string.Join(",", _items), index);
+            ScaleformUI._ui.CallFunction("UPDATE_LISTITEM_LIST", Parent.MenuItems.IndexOf(this), string.Join(",", _items), index);
         }
 
         public override void SetRightBadge(BadgeIcon badge)

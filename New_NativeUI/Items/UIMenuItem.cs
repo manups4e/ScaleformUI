@@ -207,7 +207,10 @@ namespace ScaleformUI
         public List<UIMenuPanel> Panels = new();
         private bool _selected;
         private string _label;
+        private string _formatLeftLabel;
         private string _rightLabel = "";
+        private string _formatRightLabel;
+
 
         // Allows you to attach data to a menu item if you want to identify the menu item without having to put identification info in the visible text or description.
         // Taken from MenuAPI (Thanks Tom).
@@ -266,33 +269,39 @@ namespace ScaleformUI
                 _selected = value;
                 if (value)
                 {
-                    if (_label.Contains("~"))
+                    if (!_formatLeftLabel.StartsWith("~"))
+                        _formatLeftLabel = _formatLeftLabel.Insert(0, "~l~");
+                    if (_formatLeftLabel.Contains("~"))
                     {
-                        _label = _label.Replace("~w~", "~l~");
-                        _label = _label.Replace("~s~", "~l~");
-                        if (!_label.StartsWith("~"))
-                            _label = _label.Insert(0, "~l~");
+                        _formatLeftLabel = _formatLeftLabel.Replace("~w~", "~l~");
+                        _formatLeftLabel = _formatLeftLabel.Replace("~s~", "~l~");
                     }
-                    if (_rightLabel.Contains("~"))
+                    if (!string.IsNullOrWhiteSpace(_formatRightLabel))
                     {
-                        _rightLabel = _rightLabel.Replace("~w~", "~l~");
-                        _rightLabel = _rightLabel.Replace("~s~", "~l~");
-                        if (!_rightLabel.StartsWith("~"))
-                            _rightLabel = _rightLabel.Insert(0, "~l~");
+                        if (!_formatRightLabel.StartsWith("~"))
+                            _formatRightLabel = _formatRightLabel.Insert(0, "~l~");
+                        if (_formatRightLabel.Contains("~"))
+                        {
+                            _formatRightLabel = _formatRightLabel.Replace("~w~", "~l~");
+                            _formatRightLabel = _formatRightLabel.Replace("~s~", "~l~");
+                        }
                     }
                 }
                 else
                 {
-                    _label = _label.Replace("~l~", "~s~");
-                    if (!_label.StartsWith("~"))
-                        _label = _label.Insert(0, "~s~");
-                    _rightLabel = _rightLabel.Replace("~l~", "~s~");
-                    if (!_rightLabel.StartsWith("~"))
-                        _rightLabel = _rightLabel.Insert(0, "~s~");
+                    _formatLeftLabel = _formatLeftLabel.Replace("~l~", "~s~");
+                    if (!_formatLeftLabel.StartsWith("~"))
+                        _formatLeftLabel = _formatLeftLabel.Insert(0, "~s~");
+                    if (!string.IsNullOrWhiteSpace(_formatRightLabel))
+                    {
+                        _formatRightLabel = _formatRightLabel.Replace("~l~", "~s~");
+                        if (!_formatRightLabel.StartsWith("~"))
+                            _formatRightLabel = _formatRightLabel.Insert(0, "~s~");
+                    }
                 }
-                if(Parent is not null)
+                if (Parent is not null)
                 {
-                    ScaleformUI._ScaleformUI.CallFunction("SET_ITEM_LABELS", Parent.MenuItems.IndexOf(this), _label, _rightLabel);
+                    ScaleformUI._ui.CallFunction("SET_ITEM_LABELS", Parent.MenuItems.IndexOf(this), _formatLeftLabel, _rightLabel);
                 }
             }
         }
@@ -331,25 +340,26 @@ namespace ScaleformUI
             set
             {
                 _label = value;
+                _formatLeftLabel = value;
                 if (_selected)
                 {
-                    if (_label.Contains("~"))
+                    if (_formatLeftLabel.Contains("~"))
                     {
-                        _label = _label.Replace("~w~", "~l~");
-                        _label = _label.Replace("~s~", "~l~");
-                        if (!_label.StartsWith("~"))
-                            _label = _label.Insert(0, "~l~");
+                        _formatLeftLabel = _formatLeftLabel.Replace("~w~", "~l~");
+                        _formatLeftLabel = _formatLeftLabel.Replace("~s~", "~l~");
+                        if (!_formatLeftLabel.StartsWith("~"))
+                            _formatLeftLabel = _formatLeftLabel.Insert(0, "~l~");
                     }
                 }
                 else
                 {
-                    _label = _label.Replace("~l~", "~s~");
-                    if (!_label.StartsWith("~"))
-                        _label = _label.Insert(0, "~s~");
+                    _formatLeftLabel = _formatLeftLabel.Replace("~l~", "~s~");
+                    if (!_formatLeftLabel.StartsWith("~"))
+                        _formatLeftLabel = _formatLeftLabel.Insert(0, "~s~");
                 }
                 if (Parent is not null)
                 {
-                    ScaleformUI._ScaleformUI.CallFunction("SET_LEFT_LABEL", Parent.MenuItems.IndexOf(this), _label);
+                    ScaleformUI._ui.CallFunction("SET_LEFT_LABEL", Parent.MenuItems.IndexOf(this), _formatLeftLabel);
                 }
             }
         }
@@ -380,7 +390,7 @@ namespace ScaleformUI
                     await BaseScript.Delay(0);
                     API.RequestStreamedTextureDict(dict, true);
                 }
-                ScaleformUI._ScaleformUI.CallFunction("SET_RIGHT_BADGE", Parent.MenuItems.IndexOf(this), dict, (int)badge);
+                ScaleformUI._ui.CallFunction("SET_RIGHT_BADGE", Parent.MenuItems.IndexOf(this), dict, (int)badge);
                 API.RemoveAnimDict(dict);
             }
             else
@@ -408,25 +418,26 @@ namespace ScaleformUI
             private set
             {
                 _rightLabel = value;
+                _formatRightLabel = value;
                 if (_selected)
                 {
-                    if (_rightLabel.Contains("~"))
+                    if (_formatRightLabel.Contains("~"))
                     {
-                        _rightLabel = _rightLabel.Replace("~w~", "~l~");
-                        _rightLabel = _rightLabel.Replace("~s~", "~l~");
-                        if (!_rightLabel.StartsWith("~"))
-                            _rightLabel = _rightLabel.Insert(0, "~l~");
+                        _formatRightLabel = _formatRightLabel.Replace("~w~", "~l~");
+                        _formatRightLabel = _formatRightLabel.Replace("~s~", "~l~");
+                        if (!_formatRightLabel.StartsWith("~"))
+                            _formatRightLabel = _formatRightLabel.Insert(0, "~l~");
                     }
                 }
                 else
                 {
-                    _rightLabel = _rightLabel.Replace("~l~", "~s~");
-                    if (!_rightLabel.StartsWith("~"))
-                        _rightLabel = _rightLabel.Insert(0, "~s~");
+                    _formatRightLabel = _formatRightLabel.Replace("~l~", "~s~");
+                    if (!_formatRightLabel.StartsWith("~"))
+                        _formatRightLabel = _formatRightLabel.Insert(0, "~s~");
                 }
                 if (Parent is not null)
                 {
-                    ScaleformUI._ScaleformUI.CallFunction("SET_RIGHT_LABEL", Parent.MenuItems.IndexOf(this), _rightLabel);
+                    ScaleformUI._ui.CallFunction("SET_RIGHT_LABEL", Parent.MenuItems.IndexOf(this), _formatRightLabel);
                 }
             }
         }

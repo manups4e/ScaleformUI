@@ -83,14 +83,14 @@ namespace ScaleformUI
         {
 			var it = ParentItem.Parent.MenuItems.IndexOf(ParentItem);
 			var van = ParentItem.Panels.IndexOf(this);
-			ScaleformUI._ScaleformUI.CallFunction("SET_GRID_PANEL_VALUE_RETURN_VALUE", it, van, value.X, value.Y);
+			ScaleformUI._ui.CallFunction("SET_GRID_PANEL_VALUE_RETURN_VALUE", it, van, value.X, value.Y);
 		}
 
 		public async void SetMousePosition(PointF mouse)
 		{
 			var it = ParentItem.Parent.MenuItems.IndexOf(ParentItem);
 			var van = ParentItem.Panels.IndexOf(this);
-			API.BeginScaleformMovieMethod(ScaleformUI._ScaleformUI.Handle, "SET_GRID_PANEL_POSITION_RETURN_VALUE");
+			API.BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_GRID_PANEL_POSITION_RETURN_VALUE");
 			API.ScaleformMovieMethodAddParamInt(0);
 			API.ScaleformMovieMethodAddParamInt(1);
 			API.ScaleformMovieMethodAddParamFloat(mouse.X);
