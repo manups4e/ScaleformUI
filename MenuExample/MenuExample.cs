@@ -743,8 +743,9 @@ public class MenuExample : BaseScript
 		await Task.FromResult(0);
 	}
 
-	public void PauseMenuShowcase(UIMenu mainMenu)
+	public void PauseMenuShowcase(UIMenu _menu)
     {
+		var mainMenu = _menu;
 		TabView pauseMenu = new TabView("PauseMenu example", "Look there's a subtitle too!", "Detail 1", "Detail 2", "Detail 3");
 		_menuPool.Add(pauseMenu);
 		TabTextItem basicTab = new TabTextItem("TabTextItem", "This is the title!");
@@ -820,9 +821,11 @@ public class MenuExample : BaseScript
 			Screen.ShowSubtitle(menu.Title + " Opened!");
 			mainMenu.Visible = false;
 		};
-		pauseMenu.OnPauseMenuClose += (menu) =>
+		pauseMenu.OnPauseMenuClose += async (menu) =>
 		{
 			Screen.ShowSubtitle(menu.Title + " Closed!");
+			// to prevent the pause menu to close the menu too!
+			await BaseScript.Delay(250);
 			mainMenu.Visible = true;
 		};
 
