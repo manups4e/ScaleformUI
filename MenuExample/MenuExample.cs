@@ -15,23 +15,88 @@ public class MenuExample : BaseScript
 	private string dish = "Banana";
 	private MenuPool _menuPool;
 
-	public void AddMenuKetchup(UIMenu menu)
-	{
-		var newitem = new UIMenuCheckboxItem("Add ketchup?", UIMenuCheckboxStyle.Cross, ketchup, "Do you wish to add ketchup?");
-		menu.AddItem(newitem);
-		menu.OnCheckboxChange += (sender, item, checked_) =>
-		{
-			if (item == newitem)
-			{
-				ketchup = checked_;
-				Notifications.ShowNotification("~r~Ketchup status: ~b~" + ketchup);
-			}
-		};
-	}
+	public void ExampleMenu()
+    {
+		UIMenu exampleMenu = new UIMenu("Native UI", "ScaleformUI SHOWCASE", new PointF(20, 20), true); // true means add menu Glare scaleform to the menu
+		// let's add the menu to the Pool
+		_menuPool.Add(exampleMenu);
 
-	public void HeritageMenu(UIMenu menu)
-	{
-		var heritagemenu = _menuPool.AddSubMenu(menu, "Heritage Menu");
+        #region Menu Declaration
+
+		#region Ketchup
+
+		var ketchupItem = new UIMenuCheckboxItem("Add ketchup?", UIMenuCheckboxStyle.Cross, ketchup, "Do you wish to add ketchup?");
+		exampleMenu.AddItem(ketchupItem);
+
+		#endregion
+
+		#region Cook
+
+		var cookItem = new UIMenuItem("Cook!", "Cook the dish with the appropiate ingredients and ketchup.");
+		exampleMenu.AddItem(cookItem);
+		cookItem.SetLeftBadge(BadgeIcon.STAR);
+		cookItem.SetRightBadge(BadgeIcon.TICK);
+
+		var colorItem = new UIMenuItem("UIMenuItem with Colors", "~b~Look!!~r~I can be colored ~y~too!!~w~", HudColor.HUD_COLOUR_PURPLE, HudColor.HUD_COLOUR_PINK);
+		exampleMenu.AddItem(colorItem);
+
+		var foodsList = new List<dynamic>
+		{
+			"Banana",
+			"Apple",
+			"Pizza",
+			"Quartilicious",
+			0xF00D, // Dynamic!
+        };
+
+		var BlankItem = new UIMenuSeparatorItem();
+		exampleMenu.AddItem(BlankItem);
+
+		var colorListItem = new UIMenuListItem("Colored ListItem.. Really?", foodsList, 0, "~b~Look!!~r~I can be colored ~y~too!!~w~", HudColor.HUD_COLOUR_PURPLE, HudColor.HUD_COLOUR_PINK);
+		exampleMenu.AddItem(colorListItem);
+
+		var slider = new UIMenuSliderItem("Slider Item", "Cool!", true); // by default max is 100 and multipler 5 = 20 steps.
+		exampleMenu.AddItem(slider);
+		var progress = new UIMenuProgressItem("Slider Progress Item", 10, 0);
+		exampleMenu.AddItem(progress);
+
+		var listPanelItem1 = new UIMenuItem("Change Color", "It can be whatever item you want it to be");
+		var ColorPanel = new UIMenuColorPanel("Color Panel Example", ColorPanelType.Hair);
+		// you can choose between hair palette or makeup palette
+		exampleMenu.AddItem(listPanelItem1);
+		listPanelItem1.AddPanel(ColorPanel);
+
+		var listPanelItem2 = new UIMenuItem("Change Percentage", "It can be whatever item you want it to be");
+		var PercentagePanel = new UIMenuPercentagePanel("Percentage Panel Example", "0%", "100%");
+		// You can change every text in this Panel
+		exampleMenu.AddItem(listPanelItem2);
+		listPanelItem2.AddPanel(PercentagePanel);
+
+		var listPanelItem3 = new UIMenuItem("Change Grid Position", "It can be whatever item you want it to be");
+		var GridPanel = new UIMenuGridPanel("Up", "Left", "Right", "Down", new System.Drawing.PointF(.5f, .5f));
+		var HorizontalGridPanel = new UIMenuGridPanel("Left", "Right", new System.Drawing.PointF(.5f, .5f));
+		// you can choose the text in every position and where to place the starting position of the cirlce
+		exampleMenu.AddItem(listPanelItem3);
+		listPanelItem3.AddPanel(GridPanel);
+		listPanelItem3.AddPanel(HorizontalGridPanel);
+
+		var listPanelItem4 = new UIMenuListItem("Look at Statistics", new List<object> { "Example", "example2" }, 0);
+		var statistics = new UIMenuStatisticsPanel();
+		exampleMenu.AddItem(listPanelItem4);
+		listPanelItem4.AddPanel(statistics);
+		statistics.AddStatistics("Look at this!", 0);
+		statistics.AddStatistics("I'm a statistic too!", 0);
+		statistics.AddStatistics("Am i not?!", 0);
+		//you can add as menu statistics you want 
+		statistics.SetPercentage(0, 10f);
+		statistics.SetPercentage(1, 50f);
+		statistics.SetPercentage(2, 100f);
+		//and you can get / set their percentage
+
+		#endregion
+
+		#region Heritage SubMenu
+		var heritagemenu = _menuPool.AddSubMenu(exampleMenu, "Heritage Menu");
 		var heritageWindow = new UIMenuHeritageWindow(0, 0);
 		heritagemenu.AddWindow(heritageWindow);
 		List<dynamic> momfaces = new List<dynamic>() { "Hannah", "Audrey", "Jasmine", "Giselle", "Amelia", "Isabella", "Zoe", "Ava", "Camilla", "Violet", "Sophia", "Eveline", "Nicole", "Ashley", "Grace", "Brianna", "Natalie", "Olivia", "Elizabeth", "Charlotte", "Emma", "Misty" };
@@ -44,50 +109,12 @@ public class MenuExample : BaseScript
 		heritagemenu.AddItem(mom);
 		heritagemenu.AddItem(dad);
 		heritagemenu.AddItem(newItem);
-		int MomIndex = 0;
-		int DadIndex = 0;
-		heritagemenu.OnListChange += (_sender, _listItem, _newIndex) =>
-		{
-			if (_listItem == mom)
-			{
-				MomIndex = _newIndex;
-				heritageWindow.Index(MomIndex, DadIndex);
-			}
-			else if (_listItem == dad)
-			{
-				DadIndex = _newIndex;
-				heritageWindow.Index(MomIndex, DadIndex);
-			}
-			// This way the heritage window changes only if you change a list item!
-		};
-	}
 
-	public void AddMenuFoods(UIMenu menu)
-	{
-		var foods = new List<dynamic>
-		{
-			"Banana",
-			"Apple",
-			"Pizza",
-			"Quartilicious",
-			0xF00D, // Dynamic!
-        };
-		var newitem = new UIMenuListItem("Food", foods, 0);
-		menu.AddItem(newitem);
-		menu.OnListChange += (sender, item, index) =>
-		{
-			if (item == newitem)
-			{
-				dish = item.Items[index].ToString();
-				Notifications.ShowNotification("Preparing ~b~" + dish + "~w~...");
-			}
+		#endregion
 
-		};
-	}
+		#region Scaleforms SubMenu
 
-	public void AddScaleformMenu(UIMenu menu)
-	{
-		var scaleformMenu = _menuPool.AddSubMenu(menu, "Scaleforms Showdown");
+		var scaleformMenu = _menuPool.AddSubMenu(exampleMenu, "Scaleforms Showdown");
 		UIMenuItem showSimplePopup = new UIMenuItem("Show PopupWarning example", "You can customize it to your needs");
 		UIMenuItem showPopupButtons = new UIMenuItem("Show PopupWarning with buttons", "It waits until a button has been pressed!");
 		UIMenuListItem customInstr = new UIMenuListItem("SavingNotification", Enum.GetNames(typeof(LoadingSpinnerType)).Cast<dynamic>().ToList(), 0, "InstructionalButtons now give you the ability to dynamically edit, add, remove, customize your buttons, you can even use them outside the menu ~y~without having to run multiple instances of the same scaleform~w~, aren't you happy??");
@@ -97,50 +124,11 @@ public class MenuExample : BaseScript
 		scaleformMenu.AddItem(customInstr);
 		scaleformMenu.AddItem(customInstr2);
 
-		scaleformMenu.OnItemSelect += async (sender, item, index) =>
-		{
-			if(item == showSimplePopup)
-			{
-                ScaleformUI.ScaleformUI.Warning.ShowWarning("This is the title", "This is the subtitle", "This is the prompt.. you have 6 seconds left", "This is the error message, ScaleformUI Ver. 3.0");
-				await Delay(1000);
-				for (int i=5; i > -1; i--)
-				{
-                    ScaleformUI.ScaleformUI.Warning.UpdateWarning("This is the title", "This is the subtitle", $"This is the prompt.. you have {i} seconds left", "This is the error message, ScaleformUI Ver. 3.0");
-					await Delay(1000);
-				}
-                ScaleformUI.ScaleformUI.Warning.Dispose();
-			}
-			else if (item == showPopupButtons)
-			{
-				List<InstructionalButton> buttons = new List<InstructionalButton>()
-				{
-					new InstructionalButton(Control.FrontendAccept, "Accept only with Keyboard", PadCheck.Keyboard),
-					new InstructionalButton(Control.FrontendY, "Cancel only with GamePad", PadCheck.Controller),
-					new InstructionalButton(Control.FrontendX, Control.Detonate, "This will change button if you're using gamepad or keyboard"),
-					new InstructionalButton(new List<Control> { Control.MoveUpOnly, Control.MoveLeftOnly , Control.MoveDownOnly , Control.MoveRightOnly }, "Woow multiple buttons at once??")
-				};
-                ScaleformUI.ScaleformUI.Warning.ShowWarningWithButtons("This is the title", "This is the subtitle", "This is the prompt, press any button", buttons, "This is the error message, ScaleformUI Ver. 3.0");
-                ScaleformUI.ScaleformUI.Warning.OnButtonPressed += (button) =>
-				{
-                    Debug.WriteLine($"You pressed a Button => {button.Text}");
-				};
-			}
-			else if (item == customInstr2)
-			{
-				if (ScaleformUI.ScaleformUI.InstructionalButtons.ControlButtons.Count >= 6) return;
-                ScaleformUI.ScaleformUI.InstructionalButtons.AddInstructionalButton(new InstructionalButton((Control)new Random().Next(0, 250), "I'm a new button look at me!"));
-			}
-		};
+		#endregion
 
-		customInstr.OnListSelected += (item, index) =>
-		{
-			if (ScaleformUI.ScaleformUI.InstructionalButtons.IsSaving) return;
-            ScaleformUI.ScaleformUI.InstructionalButtons.AddSavingText((LoadingSpinnerType)(index + 1), "I'm a saving text", 3000);
-		};
-	}
-	public void NotificationShowdown(UIMenu menu)
-	{
-		UIMenu notifications = _menuPool.AddSubMenu(menu, "Notifications Showdown");
+		#region Notifications SubMenu
+
+		UIMenu notifications = _menuPool.AddSubMenu(exampleMenu, "Notifications Showdown");
 		var colors = Enum.GetNames(typeof(NotificationColor)).ToList<dynamic>();
 		colors.Add("Classic");
 		var char_sprites = new List<dynamic>() { "Abigail", "Amanda", "Ammunation", "Andreas", "Antonia", "Ashley", "BankOfLiberty", "BankFleeca", "BankMaze", "Barry", "Beverly", "BikeSite", "BlankEntry", "Blimp", "Blocked", "BoatSite", "BrokenDownGirl", "BugStars", "Call911", "LegendaryMotorsport", "SSASuperAutos", "Castro", "ChatCall", "Chef", "Cheng", "ChengSenior", "Chop", "Cris", "Dave", "Default", "Denise", "DetonateBomb", "DetonatePhone", "Devin", "SubMarine", "Dom", "DomesticGirl", "Dreyfuss", "DrFriedlander", "Epsilon", "EstateAgent", "Facebook", "FilmNoire", "Floyd", "Franklin", "FranklinTrevor", "GayMilitary", "Hao", "HitcherGirl", "Hunter", "Jimmy", "JimmyBoston", "Joe", "Josef", "Josh", "LamarDog", "Lester", "Skull", "LesterFranklin", "LesterMichael", "LifeInvader", "LsCustoms", "LSTI", "Manuel", "Marnie", "Martin", "MaryAnn", "Maude", "Mechanic", "Michael", "MichaelFranklin", "MichaelTrevor", "WarStock", "Minotaur", "Molly", "MorsMutual", "ArmyContact", "Brucie", "FibContact", "RockStarLogo", "Gerald", "Julio", "MechanicChinese", "MerryWeather", "Unicorn", "Mom", "MrsThornhill", "PatriciaTrevor", "PegasusDelivery", "ElitasTravel", "Sasquatch", "Simeon", "SocialClub", "Solomon", "Taxi", "Trevor", "YouTube", "Wade" };
@@ -162,10 +150,137 @@ public class MenuExample : BaseScript
 		notifications.AddItem(noti7);
 		notifications.AddItem(noti8);
 
+		#endregion
+
+		#region PauseMenu Enabler
+
+		UIMenuItem pause = new UIMenuItem("Open Pause Menu");
+		exampleMenu.AddItem(pause);
+		pause.Activated += (menu, item) =>
+		{
+			PauseMenuShowcase(menu);
+		};
+
+		#endregion
+
+		#endregion
+
+		#region Menu Events
+
+		// here you can handle all the events for the mainMenu and its submenus or items themselves.. there's not a real order and if you want you can place these events 
+		// right under the place where their menus/items were declared, i place them here for a creation order.
+
+		// ====================================================================
+		// =--------------------------- [Items] ------------------------------=
+		// ====================================================================
+
+		slider.OnSliderChanged += (item, index) =>
+		{
+			Screen.ShowSubtitle($"Slider changed => {index}");
+		};
+
+		progress.OnSliderChanged += (item, index) =>
+		{
+			Screen.ShowSubtitle($"Progress changed => {index}");
+		};
+
+		// ====================================================================
+		// =--------------------------- [Panels] -----------------------------=
+		// ====================================================================
+		// THERE ARE NOW EVENT FOR PANELS.. WHEN YOU CHANGE WHAT IS CHANGABLE THE PANEL ITSELF WILL DO WHATEVER YOU TELL HIM TO DO
+
+		ColorPanel.OnColorPanelChange += (item, panel, index) =>
+		{
+			Notifications.ShowNotification($"ColorPanel index => {index}");
+		};
+
+		PercentagePanel.OnPercentagePanelChange += (item, panel, index) => {
+			Screen.ShowSubtitle("Percentage = " + index + "...");
+		};
+
+		GridPanel.OnGridPanelChange += (item, panel, value) => {
+			Screen.ShowSubtitle("GridPosition = " + value + "...");
+		};
+
+		HorizontalGridPanel.OnGridPanelChange += (item, panel, value) => {
+			Screen.ShowSubtitle("HorizontalGridPosition = " + value + "...");
+		};
+
+		// ====================================================================
+		// =---------------------- [Heritage SubMenu] ------------------------=
+		// ====================================================================
+
+		int MomIndex = 0;
+		int DadIndex = 0;
+
+		heritagemenu.OnListChange += (_sender, _listItem, _newIndex) =>
+		{
+			if (_listItem == mom)
+			{
+				MomIndex = _newIndex;
+				heritageWindow.Index(MomIndex, DadIndex);
+			}
+			else if (_listItem == dad)
+			{
+				DadIndex = _newIndex;
+				heritageWindow.Index(MomIndex, DadIndex);
+			}
+			// This way the heritage window changes only if you change a list item!
+		};
+
+		// ====================================================================
+		// =--------------------- [Scaleforms SubMenu] -----------------------=
+		// ====================================================================
+
+		scaleformMenu.OnItemSelect += async (sender, item, index) =>
+		{
+			if (item == showSimplePopup)
+			{
+				ScaleformUI.ScaleformUI.Warning.ShowWarning("This is the title", "This is the subtitle", "This is the prompt.. you have 6 seconds left", "This is the error message, ScaleformUI Ver. 3.0");
+				await Delay(1000);
+				for (int i = 5; i > -1; i--)
+				{
+					ScaleformUI.ScaleformUI.Warning.UpdateWarning("This is the title", "This is the subtitle", $"This is the prompt.. you have {i} seconds left", "This is the error message, ScaleformUI Ver. 3.0");
+					await Delay(1000);
+				}
+				ScaleformUI.ScaleformUI.Warning.Dispose();
+			}
+			else if (item == showPopupButtons)
+			{
+				List<InstructionalButton> buttons = new List<InstructionalButton>()
+				{
+					new InstructionalButton(Control.FrontendAccept, "Accept only with Keyboard", PadCheck.Keyboard),
+					new InstructionalButton(Control.FrontendY, "Cancel only with GamePad", PadCheck.Controller),
+					new InstructionalButton(Control.FrontendX, Control.Detonate, "This will change button if you're using gamepad or keyboard"),
+					new InstructionalButton(new List<Control> { Control.MoveUpOnly, Control.MoveLeftOnly , Control.MoveDownOnly , Control.MoveRightOnly }, "Woow multiple buttons at once??")
+				};
+				ScaleformUI.ScaleformUI.Warning.ShowWarningWithButtons("This is the title", "This is the subtitle", "This is the prompt, press any button", buttons, "This is the error message, ScaleformUI Ver. 3.0");
+				ScaleformUI.ScaleformUI.Warning.OnButtonPressed += (button) =>
+				{
+					Debug.WriteLine($"You pressed a Button => {button.Text}");
+				};
+			}
+			else if (item == customInstr2)
+			{
+				if (ScaleformUI.ScaleformUI.InstructionalButtons.ControlButtons.Count >= 6) return;
+				ScaleformUI.ScaleformUI.InstructionalButtons.AddInstructionalButton(new InstructionalButton((Control)new Random().Next(0, 250), "I'm a new button look at me!"));
+			}
+		};
+
+		customInstr.OnListSelected += (item, index) =>
+		{
+			if (ScaleformUI.ScaleformUI.InstructionalButtons.IsSaving) return;
+			ScaleformUI.ScaleformUI.InstructionalButtons.AddSavingText((LoadingSpinnerType)(index + 1), "I'm a saving text", 3000);
+		};
+
+		// ====================================================================
+		// =------------------- [Notifications SubMenu] ----------------------=
+		// ====================================================================
+
 		ScaleformUI.ScaleformUINotification notification = null;
 		notifications.OnListChange += (_menu, _item, _index) =>
 		{
-			if(_item == noti1)
+			if (_item == noti1)
 			{
 				if (notification != null)
 					notification.Hide();
@@ -539,7 +654,7 @@ public class MenuExample : BaseScript
 			else if (_item == noti7)
 			{
 				_text = text;
-				_timer = Game.GameTime+1;
+				_timer = Game.GameTime + 1;
 				Tick += Text3DTimer;
 			}
 			else if (_item == noti8)
@@ -549,6 +664,58 @@ public class MenuExample : BaseScript
 				Tick += TextTimer;
 			}
 		};
+
+		// ====================================================================
+		// =------------------------- [Main Menu] ----------------------------=
+		// ====================================================================
+
+		exampleMenu.OnCheckboxChange += (sender, item, checked_) =>
+		{
+			if (item == ketchupItem)
+			{
+				ketchup = checked_;
+				Notifications.ShowNotification("~r~Ketchup status: ~b~" + ketchup);
+			}
+		};
+
+		exampleMenu.OnItemSelect += (sender, item, index) =>
+		{
+			if (item == cookItem)
+			{
+				string output = ketchup ? "You have ordered ~b~{0}~w~ ~r~with~w~ ketchup." : "You have ordered ~b~{0}~w~ ~r~without~w~ ketchup.";
+				Screen.ShowSubtitle(String.Format(output, dish));
+			}
+		};
+
+		exampleMenu.OnIndexChange += (sender, index) =>
+		{
+			if (sender.MenuItems[index] == cookItem)
+				cookItem.SetLeftBadge(BadgeIcon.NONE);
+		};
+
+		exampleMenu.OnMenuStateChanged += (oldMenu, newMenu, state) =>
+		{
+			if (state == MenuState.Opened)
+			{
+				Screen.ShowSubtitle($"{newMenu.Title} just opened!", 3000);
+			}
+			else if (state == MenuState.ChangeForward)
+			{
+				Screen.ShowSubtitle($"{oldMenu.Title} => {newMenu.Title}", 3000);
+			}
+			else if (state == MenuState.ChangeBackward)
+			{
+				Screen.ShowSubtitle($"{newMenu.Title} <= {oldMenu.Title}", 3000);
+			}
+			else if (state == MenuState.Closed)
+			{
+				Screen.ShowSubtitle($"{oldMenu.Title} just closed!", 3000);
+			}
+		};
+
+		#endregion
+
+		exampleMenu.Visible = true;
 	}
 
 	private int _timer = 0;
@@ -574,152 +741,6 @@ public class MenuExample : BaseScript
 		if (Game.GameTime - _timer > 5000) // this is a tricky yet simple way to count time without using Delay and pausing the Thread ;)
 			Tick -= FloatingHelpTimer;
 		await Task.FromResult(0);
-	}
-
-	public void AddMenuCook(UIMenu menu)
-	{
-		var newitem = new UIMenuItem("Cook!", "Cook the dish with the appropiate ingredients and ketchup.");
-		menu.AddItem(newitem);
-		newitem.SetLeftBadge(BadgeIcon.STAR);
-		newitem.SetRightBadge(BadgeIcon.TICK);
-		menu.OnItemSelect += (sender, item, index) =>
-		{
-			if (item == newitem)
-			{
-				string output = ketchup ? "You have ordered ~b~{0}~w~ ~r~with~w~ ketchup." : "You have ordered ~b~{0}~w~ ~r~without~w~ ketchup.";
-				Screen.ShowSubtitle(String.Format(output, dish));
-			}
-		};
-
-		menu.OnIndexChange += (sender, index) =>
-		{
-			if (sender.MenuItems[index] == newitem)
-				newitem.SetLeftBadge(BadgeIcon.NONE);
-		};
-
-		var colorItem = new UIMenuItem("UIMenuItem with Colors", "~b~Look!!~r~I can be colored ~y~too!!~w~", HudColor.HUD_COLOUR_PURPLE, HudColor.HUD_COLOUR_PINK);
-		menu.AddItem(colorItem);
-
-		var foods = new List<dynamic>
-		{
-			"Banana",
-			"Apple",
-			"Pizza",
-			"Quartilicious",
-			0xF00D, // Dynamic!
-        };
-
-		var BlankItem = new UIMenuSeparatorItem();
-		menu.AddItem(BlankItem);
-
-		var colorListItem = new UIMenuListItem("Colored ListItem.. Really?", foods, 0, "~b~Look!!~r~I can be colored ~y~too!!~w~", HudColor.HUD_COLOUR_PURPLE, HudColor.HUD_COLOUR_PINK);
-		menu.AddItem(colorListItem);
-
-		var Slider = new UIMenuSliderItem("Slider Item", "Cool!", true); // by default max is 100 and multipler 5 = 20 steps.
-		menu.AddItem(Slider);
-		Slider.OnSliderChanged += (item, index) =>
-		{
-			Screen.ShowSubtitle($"Slider changed => {index}");
-		};
-		var Progress = new UIMenuProgressItem("Slider Progress Item", 10, 0);
-		menu.AddItem(Progress);
-		Progress.OnSliderChanged += (item, index) =>
-		{
-			Screen.ShowSubtitle($"Progress changed => {index}");
-		};
-
-		var listPanelItem1 = new UIMenuItem("Change Color","It can be whatever item you want it to be");
-		var ColorPanel = new UIMenuColorPanel("Color Panel Example", ColorPanelType.Hair);
-		// you can choose between hair palette or makeup palette
-		menu.AddItem(listPanelItem1);
-		listPanelItem1.AddPanel(ColorPanel);
-
-		var listPanelItem2 = new UIMenuItem("Change Percentage", "It can be whatever item you want it to be");
-		var PercentagePanel = new UIMenuPercentagePanel("Percentage Panel Example", "0%", "100%");
-		// You can change every text in this Panel
-		menu.AddItem(listPanelItem2);
-		listPanelItem2.AddPanel(PercentagePanel);
-
-		var listPanelItem3 = new UIMenuItem("Change Grid Position", "It can be whatever item you want it to be");
-		var GridPanel = new UIMenuGridPanel("Up", "Left", "Right", "Down", new System.Drawing.PointF(.5f, .5f));
-		var HorizontalGridPanel = new UIMenuGridPanel("Left", "Right", new System.Drawing.PointF(.5f, .5f));
-		// you can choose the text in every position and where to place the starting position of the cirlce
-		menu.AddItem(listPanelItem3);
-		listPanelItem3.AddPanel(GridPanel);
-		listPanelItem3.AddPanel(HorizontalGridPanel);
-
-		var listPanelItem4 = new UIMenuListItem("Look at Statistics", new List<object> { "Example", "example2" }, 0);
-		var statistics = new UIMenuStatisticsPanel();
-		menu.AddItem(listPanelItem4);
-		listPanelItem4.AddPanel(statistics);
-		statistics.AddStatistics("Look at this!", 0);
-		statistics.AddStatistics("I'm a statistic too!", 0);
-		statistics.AddStatistics("Am i not?!", 0);
-		//you can add as menu statistics you want 
-		statistics.SetPercentage(0, 10f);
-		statistics.SetPercentage(1, 50f);
-		statistics.SetPercentage(2, 100f);
-		//and you can get / set their percentage
-
-
-		// THERE ARE NOW EVENT FOR PANELS.. WHEN YOU CHANGE WHAT IS CHANGABLE THE PANEL ITSELF WILL DO WHATEVER YOU TELL HIM TO DO
-
-		ColorPanel.OnColorPanelChange += (item, panel, index) =>
-		{
-			Notifications.ShowNotification($"ColorPanel index => {index}");
-		};
-		
-		PercentagePanel.OnPercentagePanelChange += (item, panel, index) => {
-			Screen.ShowSubtitle("Percentage = " + index + "...");
-		};
-		
-		GridPanel.OnGridPanelChange += (item, panel, value) => {
-			Screen.ShowSubtitle("GridPosition = " + value + "...");
-		};
-
-		HorizontalGridPanel.OnGridPanelChange += (item, panel, value) => {
-			Screen.ShowSubtitle("HorizontalGridPosition = " + value + "...");
-		};
-	}
-
-	public void AddMenuAnotherMenu(UIMenu menu)
-	{
-		var submenu = _menuPool.AddSubMenu(menu, "Another Menu");
-		for (int i = 0; i < 20; i++)
-			submenu.AddItem(new UIMenuItem("PageFiller", "Sample description that takes more than one line. Moreso, it takes way more than two lines since it's so long. Wow, check out this length!"));
-	}
-
-	public void HandleMenuEvents(UIMenu menu)
-	{
-		menu.OnMenuStateChanged += (oldMenu, newMenu, state) =>
-		{
-			if(state == MenuState.Opened)
-			{
-				Debug.WriteLine($"{newMenu.Title} just opened!");
-			}
-			else if (state == MenuState.ChangeForward)
-			{
-				Debug.WriteLine($"{oldMenu.Title} => {newMenu.Title}");
-			}
-			else if (state == MenuState.ChangeBackward)
-			{
-				Debug.WriteLine($"{newMenu.Title} <= {oldMenu.Title}");
-			}
-			else if (state == MenuState.Closed)
-			{
-				Debug.WriteLine($"{oldMenu.Title} just closed!");
-			}
-		};
-	}
-
-	public void PauseMenuExample(UIMenu menu)
-    {
-		UIMenuItem pause = new UIMenuItem("Open Pause Menu");
-		menu.AddItem(pause);
-		pause.Activated += (a, b) =>
-		{
-			PauseMenuShowcase(a);
-		};
 	}
 
 	public void PauseMenuShowcase(UIMenu mainMenu)
@@ -845,19 +866,7 @@ public class MenuExample : BaseScript
 	public MenuExample()
 	{
 		_menuPool = new MenuPool();
-		var mainMenu = new UIMenu("Native UI", "ScaleformUI SHOWCASE", new PointF(20, 20), true); // true means add menu Glare scaleform to the menu
-		_menuPool.Add(mainMenu);
-		HeritageMenu(mainMenu);
-		AddScaleformMenu(mainMenu);
-		NotificationShowdown(mainMenu);
-		AddMenuKetchup(mainMenu);
-		AddMenuFoods(mainMenu);
-		AddMenuCook(mainMenu);
-		HandleMenuEvents(mainMenu);
-		AddMenuAnotherMenu(mainMenu);
-		PauseMenuExample(mainMenu);
 		_menuPool.RefreshIndex();
-
 
 		// We create a marker on the peds position, adds it to the MarkerHandler
 		Marker playerMarker = new Marker(MarkerType.VerticalCylinder, Game.PlayerPed.Position, new Vector3(1.5f), 5f, Colors.Cyan, true);
@@ -871,9 +880,8 @@ public class MenuExample : BaseScript
 			if(playerMarker.IsInRange)
 				Notifications.DrawText($"IsInMarker => {playerMarker.IsInMarker}");
 
-			if (Game.IsControlJustPressed(0, Control.SelectCharacterMichael)) // Our menu on/off switch
-				//ExampleMenu();
-				mainMenu.Visible = !mainMenu.Visible;
+			if (Game.IsControlJustPressed(0, Control.SelectCharacterMichael)) // Our menu enabler (to exit menu simply press Back on the main menu)
+				ExampleMenu();
 			await Task.FromResult(0);
 		};
 	}
