@@ -804,34 +804,22 @@ namespace ScaleformUI
 	}
 
 	public delegate void IndexChangedEvent(UIMenu sender, int newIndex);
-
 	public delegate void ListChangedEvent(UIMenu sender, UIMenuListItem listItem, int newIndex);
-
 	public delegate void SliderChangedEvent(UIMenu sender, UIMenuSliderItem listItem, int newIndex);
-
 	public delegate void ListSelectedEvent(UIMenu sender, UIMenuListItem listItem, int newIndex);
-
 	public delegate void CheckboxChangeEvent(UIMenu sender, UIMenuCheckboxItem checkboxItem, bool Checked);
-
 	public delegate void ItemSelectEvent(UIMenu sender, UIMenuItem selectedItem, int index);
-
 	public delegate void ItemActivatedEvent(UIMenu sender, UIMenuItem selectedItem);
-
 	public delegate void ItemCheckboxEvent(UIMenuCheckboxItem sender, bool Checked);
-
 	public delegate void ItemListEvent(UIMenuListItem sender, int newIndex);
-
 	public delegate void ItemSliderEvent(UIMenuSliderItem sender, int newIndex);
-
 	public delegate void ItemSliderProgressEvent(UIMenuProgressItem sender, int newIndex);
-
 	public delegate void OnProgressChanged(UIMenu menu, UIMenuProgressItem item, int newIndex);
-
 	public delegate void OnProgressSelected(UIMenu menu, UIMenuProgressItem item, int newIndex);
-
-	public delegate void ColorPanelChangedEvent(UIMenuItem item, UIMenuColorPanel panel, int index);
-	public delegate void PercentagePanelChangedEvent(UIMenuItem item, UIMenuPercentagePanel panel, float value);
-	public delegate void GridPanelChangedEvent(UIMenuItem item, UIMenuGridPanel panel, PointF value);
+	public delegate void StatItemProgressChange(UIMenu menu, UIMenuStatsItem item, int value);
+	public delegate void ColorPanelChangedEvent(UIMenuItem menu, UIMenuColorPanel panel, int index);
+	public delegate void PercentagePanelChangedEvent(UIMenuItem menu, UIMenuPercentagePanel panel, float value);
+	public delegate void GridPanelChangedEvent(UIMenuItem menu, UIMenuGridPanel panel, PointF value);
 
 	#endregion
 
@@ -990,6 +978,10 @@ namespace ScaleformUI
 		/// </summary>
 		public event MenuStateChangeEvent OnMenuStateChanged;
 
+		/// <summary>
+		/// Called every time a Stat item changes value
+		/// </summary>
+		public event StatItemProgressChange OnStatsItemChanged;
 		#endregion
 
 		#region Constructors
@@ -1765,8 +1757,8 @@ namespace ScaleformUI
 				case UIMenuStatsItem:
 					{
 						UIMenuStatsItem it = (UIMenuStatsItem)MenuItems[CurrentSelection];
-						it.Value=res;
-						// aggiungere evento
+						it.Value = res;
+						StatItemChange(it, it.Value);
 						break;
 					}
 			}
@@ -1807,7 +1799,7 @@ namespace ScaleformUI
                     {
 						UIMenuStatsItem it = (UIMenuStatsItem)MenuItems[CurrentSelection];
 						it.Value = res;
-						// aggiungere evento
+						StatItemChange(it, it.Value);
 						break;
                     }
 			}
@@ -2043,7 +2035,7 @@ namespace ScaleformUI
 							break;
 						case UIMenuPercentagePanel:
 							UIMenuPercentagePanel pp = (UIMenuPercentagePanel)panel;
-							ScaleformUI._ui.CallFunction("ADD_PANEL", it, 1, pp.Title, "0%", "100%", pp.Percentage);
+							ScaleformUI._ui.CallFunction("ADD_PANEL", it, 1, pp.Title, pp.Min, pp.Max, pp.Percentage);
 							break;
 						case UIMenuGridPanel:
 							UIMenuGridPanel gp = (UIMenuGridPanel)panel;
@@ -2179,6 +2171,11 @@ namespace ScaleformUI
 		protected virtual void CheckboxChange(UIMenuCheckboxItem sender, bool Checked)
 		{
 			OnCheckboxChange?.Invoke(this, sender, Checked);
+		}
+
+		public virtual void StatItemChange(UIMenuStatsItem item, int value)
+		{
+			OnStatsItemChanged?.Invoke(this, item, value);
 		}
 
 		protected virtual void MenuChangeEv(UIMenu oldmenu, UIMenu newmenu, MenuState state)
