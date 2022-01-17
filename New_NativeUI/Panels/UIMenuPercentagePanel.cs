@@ -34,11 +34,11 @@ namespace ScaleformUI
 		}
 
 
-		public UIMenuPercentagePanel(string title, string MinText, string MaxText, float initialValue = 0)
+		public UIMenuPercentagePanel(string title, string MinText = "0%", string MaxText = "100%", float initialValue = 0)
 		{
-			Min = MinText != "" || MinText != null ? MinText : "0%";
-			Max = MaxText != "" || MaxText != null ? MaxText : "100%";
-			Title = title != "" || title != null ? title : "Opacity";
+			Min = MinText;
+			Max = MaxText;
+			Title = !string.IsNullOrWhiteSpace(title) ? title : "Opacity";
 			_value = initialValue;
 		}
 
