@@ -68,7 +68,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>copy /y G:\Progetti\source\repos\New_NativeUI\MenuExample\bin\Debug\NativeUI.dll L:\FiveM\ManuGamemode\resources\[nuova_gamemode_old]\NativeUI\
-copy /y G:\Progetti\source\repos\New_NativeUI\MenuExample\bin\Debug\MenuExample.net.dll L:\FiveM\ManuGamemode\resources\[nuova_gamemode_old]\NativeUI\</PostBuildEvent>
+    <PostBuildEvent>copy /y G:\Progetti\source\repos\New_NativeUI\MenuExample\bin\Debug\ScaleformUI.dll L:\FiveM\ManuGamemode\resources\[nuova_gamemode_old]\ScaleformUI\
+copy /y G:\Progetti\source\repos\New_NativeUI\MenuExample\bin\Debug\MenuExample.net.dll L:\FiveM\ManuGamemode\resources\[nuova_gamemode_old]\ScaleformUI\</PostBuildEvent>
   </PropertyGroup>
 </Project>
