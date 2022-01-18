@@ -210,6 +210,8 @@ namespace ScaleformUI
         private string _formatLeftLabel;
         private string _rightLabel = "";
         private string _formatRightLabel;
+        private bool _enabled;
+        private bool blinkDescription;
 
 
         // Allows you to attach data to a menu item if you want to identify the menu item without having to put identification info in the visible text or description.
@@ -247,7 +249,7 @@ namespace ScaleformUI
         /// <param name="description">Button label.</param>
         public UIMenuItem(string text, string description, HudColor color, HudColor highlightColor, HudColor textColor, HudColor highlightedTextColor)
         {
-            Enabled = true;
+            _enabled = true;
             MainColor = color;
             HighlightColor = highlightColor;
             TextColor = textColor;
@@ -257,6 +259,21 @@ namespace ScaleformUI
             Description = description;
         }
 
+        /// <summary>
+        /// Should the Info symbol blink?
+        /// </summary>
+        public bool BlinkDescription
+        {
+            get => blinkDescription;
+            set
+            {
+                blinkDescription = value;
+                if (Parent is not null)
+                {
+                    ScaleformUI._ui.CallFunction("SET_BLINK_DESC", Parent.MenuItems.IndexOf(this), blinkDescription);
+                }
+            }
+        }
 
         /// <summary>
         /// Whether this item is currently selected.
@@ -322,7 +339,19 @@ namespace ScaleformUI
         /// <summary>
         /// Whether this item is enabled or disabled (text is greyed out and you cannot select it).
         /// </summary>
-        public virtual bool Enabled { get; set; }
+        public virtual bool Enabled
+        {
+            get => _enabled;
+            set
+            {
+                _enabled = value;
+                if (Parent != null)
+                {
+                    var it = Parent.MenuItems.IndexOf(this);
+                    ScaleformUI._ui.CallFunction("ENABLE_ITEM", it, _enabled);
+                }
+            }
+        }
 
         internal virtual void ItemActivate(UIMenu sender)
         {
