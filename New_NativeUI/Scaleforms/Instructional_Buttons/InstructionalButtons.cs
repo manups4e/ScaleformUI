@@ -237,7 +237,6 @@ namespace ScaleformUI
         public bool IsSaving
         {
             get => _isSaving;
-            set => _isSaving = value;
         }
 
         public List<InstructionalButton> ControlButtons { get; private set; }
