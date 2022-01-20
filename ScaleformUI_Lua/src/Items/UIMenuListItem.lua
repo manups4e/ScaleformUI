@@ -72,7 +72,7 @@ function UIMenuListItem:Description(str)
 end
 
 function UIMenuListItem:BlinkDescription(bool)
-    if(bool ~= nil) then
+    if bool ~= nil then
 		self.Base:BlinkDescription(bool)
 	else
 		return self.Base:BlinkDescription()
@@ -189,5 +189,5 @@ function UIMenuListItem:ChangeList(list)
 	if type(list) ~= "table" then return end
 	self.Items = {}
 	self.Items = list
-	ScaleformUI.Scaleforms._ui.CallFunction("UPDATE_LISTITEM_LIST", IndexOf(self.Base.ParentMenu.Items, self) - 1, table.concat(self.Items, ","), self._Index);
+	ScaleformUI.Scaleforms._ui.CallFunction("UPDATE_LISTITEM_LIST", IndexOf(self.Base.ParentMenu.Items, self) - 1, table.concat(self.Items, ","), self._Index)
 end

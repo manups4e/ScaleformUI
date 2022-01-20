@@ -72,7 +72,7 @@ function UIMenuSliderItem:Description(str)
 end
 
 function UIMenuSliderItem:BlinkDescription(bool)
-    if(bool ~= nil) then
+    if bool ~= nil then
 		self.Base:BlinkDescription(bool)
 	else
 		return self.Base:BlinkDescription()

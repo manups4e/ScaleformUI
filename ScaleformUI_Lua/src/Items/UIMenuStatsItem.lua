@@ -82,7 +82,7 @@ function UIMenuStatsItem:Label(Text)
 end
 
 function UIMenuStatsItem:BlinkDescription(bool)
-    if(bool ~= nil) then
+    if bool ~= nil then
 		self.Base:BlinkDescription(bool)
 	else
 		return self.Base:BlinkDescription()
@@ -93,16 +93,16 @@ end
 ---@param Index table
 function UIMenuStatsItem:Index(Index)
 	if tonumber(Index) then
-		if(Index > 100) then
+		if Index > 100 then
 			self._Index = 100
-		elseif (Index < 0) then
+		elseif Index < 0 then
 			self._Index = 0
 		else
 			self._Index = Index
 		end
 		self.OnStatsChanged(self._Index)
-        if(self.Base.ParentMenu ~= nil)then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_VALUE", IndexOf(self.Base.ParentMenu.Items, self) - 1, self._Index);
+        if self.Base.ParentMenu ~= nil then
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_VALUE", IndexOf(self.Base.ParentMenu.Items, self) - 1, self._Index)
         end
 	else
 		return self._Index

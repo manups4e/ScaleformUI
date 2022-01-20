@@ -48,14 +48,14 @@ end
 
 function button:GetButtonId()
     if (self.KeyboardButtons ~= nil or self.GamepadButtons ~= nil) then
-        local retVal = "";
+        local retVal = ""
         if (self:IsUsingController()) then
             if(self.GamepadButtons ~= nil)then
                 for i=#self.GamepadButtons, 1, -1 do
                     if (i == 1) then
-                        retVal = retVal .. GetControlInstructionalButton(2, self.GamepadButtons[i], 1);
+                        retVal = retVal .. GetControlInstructionalButton(2, self.GamepadButtons[i], 1)
                     else
-                        retVal = retVal .. GetControlInstructionalButton(2, self.GamepadButtons[i], 1) .. "%";
+                        retVal = retVal .. GetControlInstructionalButton(2, self.GamepadButtons[i], 1) .. "%"
                     end
                 end
             end
@@ -63,16 +63,16 @@ function button:GetButtonId()
             if (self.KeyboardButtons ~= nil) then
                 for i=#self.KeyboardButtons, 1, -1 do
                     if (i == 1) then
-                        retVal = retVal .. GetControlInstructionalButton(2, self.KeyboardButtons[i], 1);
+                        retVal = retVal .. GetControlInstructionalButton(2, self.KeyboardButtons[i], 1)
                     else
-                        retVal = retVal .. GetControlInstructionalButton(2, self.KeyboardButtons[i], 1) .. "%";
+                        retVal = retVal .. GetControlInstructionalButton(2, self.KeyboardButtons[i], 1) .. "%"
                     end
                 end
             end
         end
-        return retVal;
+        return retVal
     elseif (self.InputGroupButton ~= -1) then 
-        return "~"..self.InputGroupButton.."~";
+        return "~"..self.InputGroupButton.."~"
     end
     if(self:IsUsingController()) then
         return GetControlInstructionalButton(2, self.GamepadButton, 1)

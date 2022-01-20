@@ -37,7 +37,7 @@ function UIMenuHeritageWindow:Index(Mom, Dad)
 	self.Mom = Mom
 	self.Dad = Dad
 
-	while (not HasStreamedTextureDictLoaded("char_creator_portraits")) do
+	while not HasStreamedTextureDictLoaded("char_creator_portraits") do
 		Citizen.Wait(0)
 		RequestStreamedTextureDict("char_creator_portraits", true)
 	end

@@ -14,8 +14,8 @@ Citizen.CreateThread(function()
     ScaleformUI.Scaleforms.MidMessageInstance = MidMessageInstance.New()
     ScaleformUI.Scaleforms.Warning = WarningInstance.New()
     ScaleformUI.Scaleforms.InstructionalButtons = ButtonsHandler.New()
-    while(true)do
-        Wait(0)
+    while true do
+        Citizen.Wait(0)
         ScaleformUI.Scaleforms.BigMessageInstance:Update()
         ScaleformUI.Scaleforms.MidMessageInstance:Update()
         ScaleformUI.Scaleforms.InstructionalButtons:Update()
@@ -27,9 +27,9 @@ Citizen.CreateThread(function()
 end)
 
 Citizen.CreateThread(function()
-    while(true)do
-        Wait(0)
-        if(IsControlJustPressed(0, 47)) then
+    while true do
+        Citizen.Wait(0)
+        if IsControlJustPressed(0, 47) then
             -- INSTRUCTIONAL BUTTONS
             --[[ 
             local bts = {

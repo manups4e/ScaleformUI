@@ -1,8 +1,8 @@
 local pool = MenuPool.New()
 Citizen.CreateThread(function()
 	pool:RefreshIndex()
-	while(true) do
-		Wait(0)
+	while true do
+		Citizen.Wait(0)
         pool:ProcessMenus()
 	end
 end)
@@ -28,7 +28,7 @@ Citizen.CreateThread(function()
 	menu:AddItem(stats)
 
 	menu.OnMenuChanged = function(old, new, type)
-		if(type == "opened")then
+		if type == "opened" then
 			print("Menu opened!")
 		elseif(type == "closed")then
 			print("Menu closed!")
@@ -39,12 +39,12 @@ Citizen.CreateThread(function()
 		end
 	end
 
-	while(true) do
-		Wait(0)
-		if(IsControlJustPressed(0, 51)) then
+	while true do
+		Citizen.Wait(0)
+		if IsControlJustPressed(0, 51) then
 			menu:Visible(true)
 		end
-		if(IsControlJustPressed(0, 0)) then
+		if IsControlJustPressed(0, 0) then
 			ScaleformUI.Scaleforms._ui:Dispose()
 			ScaleformUI.Scaleforms._ui = 0
 		end

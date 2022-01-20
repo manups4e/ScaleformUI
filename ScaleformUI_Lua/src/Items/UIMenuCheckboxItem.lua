@@ -68,7 +68,7 @@ function UIMenuCheckboxItem:Description(str)
 end
 
 function UIMenuCheckboxItem:BlinkDescription(bool)
-    if(bool ~= nil) then
+    if bool ~= nil then
 		self.Base:BlinkDescription(bool)
 	else
 		return self.Base:BlinkDescription()
@@ -101,10 +101,10 @@ function UIMenuCheckboxItem:RightLabel()
 end
 
 function UIMenuCheckboxItem:Checked(bool)
-	if(bool ~= nil) then
+	if bool ~= nil then
 		self._Checked = tobool(bool)
 		local it = IndexOf(self.Base.ParentMenu.Items, self) - 1
-		ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", 16, it, self._Checked);
+		ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", 16, it, self._Checked)
 	else
 		return self._Checked
 	end
