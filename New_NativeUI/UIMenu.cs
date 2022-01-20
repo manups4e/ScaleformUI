@@ -1823,8 +1823,7 @@ namespace ScaleformUI
 				return;
 			}
 
-			if(playSound)
-				Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
+			if(playSound) Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
 			switch (MenuItems[CurrentSelection])
 			{
 				case UIMenuCheckboxItem:
@@ -2023,7 +2022,7 @@ namespace ScaleformUI
 
 					case UIMenuStatsItem:
 						UIMenuStatsItem statsItem = (UIMenuStatsItem)item;
-						ScaleformUI._ui.CallFunction("ADD_ITEM", 5, statsItem.Label, statsItem.Description, statsItem.Value, statsItem.Type, (int)statsItem.Color, statsItem.Enabled, statsItem.BlinkDescription);
+						ScaleformUI._ui.CallFunction("ADD_ITEM", 5, statsItem.Label, statsItem.Description, statsItem.Value, statsItem.Type, (int)statsItem.Color, (int)statsItem.MainColor, (int)statsItem.HighlightColor, (int)statsItem.TextColor, (int)statsItem.HighlightedTextColor, statsItem.Enabled, statsItem.BlinkDescription);
 						break;
 					default:
 						ScaleformUI._ui.CallFunction("ADD_ITEM", item._itemId, item.Label, item.Description, (int)item.MainColor, (int)item.HighlightColor, (int)item.TextColor, (int)item.HighlightedTextColor, item.Enabled, item.BlinkDescription);

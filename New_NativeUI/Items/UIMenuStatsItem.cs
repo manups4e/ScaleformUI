@@ -13,7 +13,8 @@ namespace ScaleformUI
 
         public int Value
         {
-            get => _value; set
+            get => _value; 
+            set
             {
                 _value = value;
                 SetValue(_value);
