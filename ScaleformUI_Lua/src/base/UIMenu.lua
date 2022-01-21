@@ -336,24 +336,24 @@ function UIMenu:LoadScaleform()
     RequestStreamedTextureDict(TxtDictionary, true)
     RequestStreamedTextureDict("char_creator_portraits", true)
 
-    while (not HasStreamedTextureDictLoaded("commonmenu") and 
+    while not HasStreamedTextureDictLoaded("commonmenu") and 
         not HasStreamedTextureDictLoaded("pause_menu_pages_char_mom_dad") and 
         not HasStreamedTextureDictLoaded(TxtDictionary) and 
-        not HasStreamedTextureDictLoaded("char_creator_portraits")) do
+        not HasStreamedTextureDictLoaded("char_creator_portraits") do
         Citizen.Wait(0)
     end
 end
 
 function UIMenu:BuildUpMenu()
     self:LoadScaleform()
-    while (not ScaleformUI.Scaleforms._ui:IsLoaded()) do Citizen.Wait(0) end
+    while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
     ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", self.Title, self.Subtitle, self.TxtDictionary, self.TxtName)
     if #self.Windows > 0 then
        ScaleformUI.Scaleforms._ui:CallFunction("ADD_HERITAGE_WINDOW", Windows[1].Mom, Windows[1].Dad)
     end
     local timer = GetGameTimer()
     if #self.Items == 0 then
-        while (#self.Items == 0) do
+        while #self.Items == 0 do
             Citizen.Wait(0)
             if GetGameTimer() - timer > 150 then
                 ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", self:CurrentSelection())
@@ -372,7 +372,7 @@ function UIMenu:BuildUpMenu()
         if SubType == "UIMenuListItem" then
             ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", 1, item:Label(), item:Description(), table.concat(item.Items, ","), item:Index()-1, item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor, item:Enabled(), item:BlinkDescription())
         elseif SubType == "UIMenuCheckboxItem" then
-            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", 2, item:Label(), item:Description(), item.CheckBoxStyle, item.Checked, item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor, item:Enabled(), item:BlinkDescription())
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", 2, item:Label(), item:Description(), item.CheckBoxStyle, item._Checked, item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor, item:Enabled(), item:BlinkDescription())
         elseif SubType == "UIMenuSliderItem" then
             ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", 3, item:Label(), item:Description(), item._Max, item._Multiplier, item:Index(), item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor, item.BackgroundSliderColor, item.SliderColor, item._heritage, item:Enabled(), item:BlinkDescription())
         elseif SubType == "UIMenuProgressItem" then
@@ -521,7 +521,7 @@ function UIMenu:GoUp()
     BeginScaleformMovieMethod(ScaleformUI.Scaleforms._ui.handle, "SET_INPUT_EVENT")
     ScaleformMovieMethodAddParamInt(8)
     local ret = EndScaleformMovieMethodReturnValue()
-    while (not IsScaleformMovieMethodReturnValueReady(ret)) do Wait(0) end
+    while not IsScaleformMovieMethodReturnValueReady(ret) do Wait(0) end
     self.ActiveItem = GetScaleformMovieFunctionReturnInt(ret)
     self.Items[self:CurrentSelection()]:Selected(true)
     PlaySoundFrontend(-1, self.Settings.Audio.UpDown, self.Settings.Audio.Library, true)
@@ -534,7 +534,7 @@ function UIMenu:GoDown()
     BeginScaleformMovieMethod(ScaleformUI.Scaleforms._ui.handle, "SET_INPUT_EVENT")
     ScaleformMovieMethodAddParamInt(9)
     local ret = EndScaleformMovieMethodReturnValue()
-    while (not IsScaleformMovieMethodReturnValueReady(ret)) do Wait(0) end
+    while not IsScaleformMovieMethodReturnValueReady(ret) do Wait(0) end
     self.ActiveItem = GetScaleformMovieFunctionReturnInt(ret)
     self.Items[self:CurrentSelection()]:Selected(true)
     PlaySoundFrontend(-1, self.Settings.Audio.UpDown, self.Settings.Audio.Library, true)
@@ -556,7 +556,7 @@ function UIMenu:GoLeft()
     BeginScaleformMovieMethod(ScaleformUI.Scaleforms._ui.handle, "SET_INPUT_EVENT")
     ScaleformMovieMethodAddParamInt(10)
     local ret = EndScaleformMovieMethodReturnValue()
-    while (not IsScaleformMovieMethodReturnValueReady(ret)) do Wait(0) end
+    while not IsScaleformMovieMethodReturnValueReady(ret) do Wait(0) end
     local res = GetScaleformMovieFunctionReturnInt(ret)
 
     if subtype == "UIMenuListItem" then
@@ -596,7 +596,7 @@ function UIMenu:GoRight()
     BeginScaleformMovieMethod(ScaleformUI.Scaleforms._ui.handle, "SET_INPUT_EVENT")
     ScaleformMovieMethodAddParamInt(11)
     local ret = EndScaleformMovieMethodReturnValue()
-    while (not IsScaleformMovieMethodReturnValueReady(ret)) do Wait(0) end
+    while not IsScaleformMovieMethodReturnValueReady(ret) do Wait(0) end
     local res = GetScaleformMovieFunctionReturnInt(ret)
 
     if subtype == "UIMenuListItem" then
@@ -706,7 +706,7 @@ end
 ---Draw
 function UIMenu:Draw()
     if not self._Visible or ScaleformUI.Scaleforms.Warning:IsShowing() then return end
-    while(not ScaleformUI.Scaleforms._ui:IsLoaded()) do Citizen.Wait(0) end
+    while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
 
     HideHudComponentThisFrame(19)
 
@@ -775,7 +775,7 @@ function UIMenu:ProcessMouse()
         ScaleformMovieMethodAddParamFloat(mouse.X)
         ScaleformMovieMethodAddParamFloat(mouse.Y)
         local ret = EndScaleformMovieMethodReturnValue()
-        while (not IsScaleformMovieMethodReturnValueReady(ret)) do Citizen.Wait(0) end
+        while not IsScaleformMovieMethodReturnValueReady(ret) do Citizen.Wait(0) end
         local res = GetScaleformMovieMethodReturnValueString(ret)
         local split = split(res, ",")
         local type = split[1]
@@ -820,7 +820,7 @@ function UIMenu:ProcessMouse()
         ScaleformMovieMethodAddParamFloat(mouse.X)
         ScaleformMovieMethodAddParamFloat(mouse.Y)
         local ret = EndScaleformMovieMethodReturnValue()
-        while (not IsScaleformMovieMethodReturnValueReady(ret)) do Citizen.Wait(0) end
+        while not IsScaleformMovieMethodReturnValueReady(ret) do Citizen.Wait(0) end
         local res = GetScaleformMovieMethodReturnValueString(ret)
         local split = split(res, ",")
 
