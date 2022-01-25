@@ -1,7 +1,7 @@
 # NativeUI all done with Scaleforms
 ![NativeUI Example](https://i.imgur.com/EtR18jZ.png)
 
-NativeUI is a library that helps you quickly and easily build Rockstar-like menus and Pause Menus.
+ScaleformUI is a library that helps you quickly and easily build Rockstar-like menus and Pause Menus.
 
 ### Documentation
 Take a look at our wiki page (WIP).
