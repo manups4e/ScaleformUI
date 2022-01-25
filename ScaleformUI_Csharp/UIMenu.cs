@@ -1445,14 +1445,15 @@ namespace ScaleformUI
 					case UIMenuSliderItem:
 						{
 							var it = (UIMenuSliderItem)item;
-							ScaleformUI._ui.CallFunction("UPDATE_ITEM", MenuItems.IndexOf(it), it.Description, (int)it.MainColor, (int)it.HighlightColor, (int)it.TextColor, (int)it.HighlightedTextColor, (int)it.SliderColor, (int)it.BackgroundSliderColor);
+							ScaleformUI._ui.CallFunction("UPDATE_ITEM", MenuItems.IndexOf(it), it.Description, (int)it.MainColor, (int)it.HighlightColor, (int)it.TextColor, (int)it.HighlightedTextColor, (int)it.SliderColor);
 							break;
 						}
 
 					case UIMenuProgressItem:
 						{
 							var it = (UIMenuProgressItem)item;
-							ScaleformUI._ui.CallFunction("UPDATE_ITEM", MenuItems.IndexOf(it), it.Description, (int)it.MainColor, (int)it.HighlightColor, (int)it.TextColor, (int)it.HighlightedTextColor, (int)it.SliderColor, (int)it.BackgroundSliderColor);
+							it.SliderColor = (HudColor)new Random(GetGameTimer()).Next(5, 150);
+							ScaleformUI._ui.CallFunction("UPDATE_ITEM", MenuItems.IndexOf(it), it.Description, (int)it.MainColor, (int)it.HighlightColor, (int)it.TextColor, (int)it.HighlightedTextColor, (int)it.SliderColor);
 							break;
 						}
 
@@ -2005,27 +2006,27 @@ namespace ScaleformUI
 				{
 					case UIMenuListItem:
 						UIMenuListItem it = (UIMenuListItem)item;
-						ScaleformUI._ui.CallFunction("ADD_ITEM", it._itemId, it.Label, it.Description, string.Join(",", it.Items), it.Index, (int)it.MainColor, (int)it.HighlightColor, (int)it.TextColor, (int)it.HighlightedTextColor, it.Enabled, it.BlinkDescription);
+						ScaleformUI._ui.CallFunction("ADD_ITEM", it._itemId, it.Label, it.Description, it.Enabled, it.BlinkDescription, string.Join(",", it.Items), it.Index, (int)it.MainColor, (int)it.HighlightColor, (int)it.TextColor, (int)it.HighlightedTextColor);
 						break;
 					case UIMenuCheckboxItem:
 						UIMenuCheckboxItem check = (UIMenuCheckboxItem)item;
-						ScaleformUI._ui.CallFunction("ADD_ITEM", check._itemId, check.Label, check.Description, (int)check.Style, check.Checked, (int)check.MainColor, (int)check.HighlightColor, (int)check.TextColor, (int)check.HighlightedTextColor, check.Enabled, check.BlinkDescription);
+						ScaleformUI._ui.CallFunction("ADD_ITEM", check._itemId, check.Label, check.Description, check.Enabled, check.BlinkDescription, (int)check.Style, check.Checked, (int)check.MainColor, (int)check.HighlightColor, (int)check.TextColor, (int)check.HighlightedTextColor);
 						break;
 					case UIMenuSliderItem:
 						UIMenuSliderItem prItem = (UIMenuSliderItem)item;
-						ScaleformUI._ui.CallFunction("ADD_ITEM", prItem._itemId, prItem.Label, prItem.Description, prItem._max, prItem._multiplier, prItem.Value, (int)prItem.MainColor, (int)prItem.HighlightColor, (int)prItem.TextColor, (int)prItem.HighlightedTextColor, (int)prItem.BackgroundSliderColor, (int)prItem.SliderColor, prItem._heritage, prItem.Enabled, prItem.BlinkDescription);
+						ScaleformUI._ui.CallFunction("ADD_ITEM", prItem._itemId, prItem.Label, prItem.Description, prItem.Enabled, prItem.BlinkDescription, prItem._max, prItem._multiplier, prItem.Value, (int)prItem.MainColor, (int)prItem.HighlightColor, (int)prItem.TextColor, (int)prItem.HighlightedTextColor, (int)prItem.SliderColor, prItem._heritage);
 						break;
 					case UIMenuProgressItem:
 						UIMenuProgressItem slItem = (UIMenuProgressItem)item;
-						ScaleformUI._ui.CallFunction("ADD_ITEM", slItem._itemId, slItem.Label, slItem.Description, slItem._max, slItem._multiplier, slItem.Value, (int)slItem.MainColor, (int)slItem.HighlightColor, (int)slItem.TextColor, (int)slItem.HighlightedTextColor, (int)slItem.SliderColor, slItem.Enabled, slItem.BlinkDescription);
+						ScaleformUI._ui.CallFunction("ADD_ITEM", slItem._itemId, slItem.Label, slItem.Description, slItem.Enabled, slItem.BlinkDescription, slItem._max, slItem._multiplier, slItem.Value, (int)slItem.MainColor, (int)slItem.HighlightColor, (int)slItem.TextColor, (int)slItem.HighlightedTextColor, (int)slItem.SliderColor);
 						break;
 
 					case UIMenuStatsItem:
 						UIMenuStatsItem statsItem = (UIMenuStatsItem)item;
-						ScaleformUI._ui.CallFunction("ADD_ITEM", 5, statsItem.Label, statsItem.Description, statsItem.Value, statsItem.Type, (int)statsItem.Color, (int)statsItem.MainColor, (int)statsItem.HighlightColor, (int)statsItem.TextColor, (int)statsItem.HighlightedTextColor, statsItem.Enabled, statsItem.BlinkDescription);
+						ScaleformUI._ui.CallFunction("ADD_ITEM", 5, statsItem.Label, statsItem.Description, statsItem.Enabled, statsItem.BlinkDescription, statsItem.Value, statsItem.Type, (int)statsItem.Color, (int)statsItem.MainColor, (int)statsItem.HighlightColor, (int)statsItem.TextColor, (int)statsItem.HighlightedTextColor);
 						break;
 					default:
-						ScaleformUI._ui.CallFunction("ADD_ITEM", item._itemId, item.Label, item.Description, (int)item.MainColor, (int)item.HighlightColor, (int)item.TextColor, (int)item.HighlightedTextColor, item.Enabled, item.BlinkDescription);
+						ScaleformUI._ui.CallFunction("ADD_ITEM", item._itemId, item.Label, item.Description, item.Enabled, item.BlinkDescription, (int)item.MainColor, (int)item.HighlightColor, (int)item.TextColor, (int)item.HighlightedTextColor);
 						ScaleformUI._ui.CallFunction("SET_RIGHT_LABEL", MenuItems.IndexOf(item), item.RightLabel);
 						if (item.RightBadge != BadgeIcon.NONE)
 							ScaleformUI._ui.CallFunction("SET_RIGHT_BADGE", MenuItems.IndexOf(item), UIMenuItem.GetSpriteDictionary(item.RightBadge), (int)item.RightBadge);
