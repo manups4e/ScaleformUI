@@ -883,7 +883,7 @@ public class MenuExample : BaseScript
 			if(playerMarker.IsInRange)
 				Notifications.DrawText($"IsInMarker => {playerMarker.IsInMarker}");
 
-			if (Game.IsControlJustPressed(0, Control.SelectCharacterMichael)) // Our menu enabler (to exit menu simply press Back on the main menu)
+			if (Game.IsControlJustPressed(0, Control.SelectCharacterMichael) && !_menuPool.IsAnyMenuOpen) // Our menu enabler (to exit menu simply press Back on the main menu)
 				ExampleMenu();
 			await Task.FromResult(0);
 		};

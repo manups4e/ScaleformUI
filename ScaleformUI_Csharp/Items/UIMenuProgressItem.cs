@@ -15,11 +15,10 @@ namespace ScaleformUI
 		protected internal UIMenuGridAudio Audio;
 
 		protected internal int _value = 0;
-		protected internal int _max;
+		protected internal int _max = 100;
 		protected internal int _multiplier = 5;
 		protected internal bool Divider;
 		protected internal HudColor SliderColor;
-		protected internal HudColor BackgroundSliderColor;
 
 		public UIMenuProgressItem(string text, int maxCount, int startIndex) : this(text, maxCount, startIndex, "")
 		{
@@ -27,16 +26,15 @@ namespace ScaleformUI
 			_value = startIndex;
 		}
 
-		public UIMenuProgressItem(string text, int maxCount, int startIndex, string description, bool heritage = false) : this(text, maxCount, startIndex, description, HudColor.HUD_COLOUR_FREEMODE, HudColor.HUD_COLOUR_PAUSE_BG)
+		public UIMenuProgressItem(string text, int maxCount, int startIndex, string description, bool heritage = false) : this(text, maxCount, startIndex, description, HudColor.HUD_COLOUR_FREEMODE)
 		{
 		}
 
-		public UIMenuProgressItem(string text, int maxCount, int startIndex, string description, HudColor sliderColor, HudColor backgroundSliderColor) : base(text, description)
+		public UIMenuProgressItem(string text, int maxCount, int startIndex, string description, HudColor sliderColor) : base(text, description)
 		{
 			_max = maxCount;
 			_value = startIndex;
 			SliderColor = sliderColor;
-			BackgroundSliderColor = backgroundSliderColor;
 			Audio = new UIMenuGridAudio("CONTINUOUS_SLIDER", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0);
 			_itemId = 4;
 		}

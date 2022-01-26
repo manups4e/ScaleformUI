@@ -10,7 +10,6 @@ namespace ScaleformUI
 		protected internal int _max = 100;
 		protected internal int _multiplier = 5;
 		protected internal HudColor SliderColor;
-		protected internal HudColor BackgroundSliderColor;
 		internal bool _heritage;
 
 		/// <summary>
@@ -79,7 +78,7 @@ namespace ScaleformUI
 		/// <param name="text">Item label.</param>
 		/// <param name="items">List that contains your items.</param>
 		/// <param name="index">Index in the list. If unsure user 0.</param>
-		public UIMenuSliderItem(string text) : this(text, "", HudColor.HUD_COLOUR_FREEMODE, HudColor.HUD_COLOUR_PAUSE_BG, false)
+		public UIMenuSliderItem(string text) : this(text, "", 100, 5, 0, HudColor.HUD_COLOUR_FREEMODE, false)
 		{
 		}
 
@@ -90,18 +89,15 @@ namespace ScaleformUI
 		/// <param name="items">List that contains your items.</param>
 		/// <param name="index">Index in the list. If unsure user 0.</param>
 		/// <param name="description">Description for this item.</param>
-		public UIMenuSliderItem(string text, string description) : this(text, description, HudColor.HUD_COLOUR_FREEMODE, HudColor.HUD_COLOUR_PAUSE_BG, false)
+		public UIMenuSliderItem(string text, string description) : this(text, description, 100, 5, 0, HudColor.HUD_COLOUR_FREEMODE, false)
 		{
 		}
-		public UIMenuSliderItem(string text, string description, bool heritage) : this(text, description, HudColor.HUD_COLOUR_FREEMODE, HudColor.HUD_COLOUR_PAUSE_BG, heritage)
+		public UIMenuSliderItem(string text, string description, bool heritage) : this(text, description, 100, 5, 0, HudColor.HUD_COLOUR_FREEMODE, heritage)
 		{
 		}
 
-		public UIMenuSliderItem(string text, string description, int max, int mult, int startVal, bool heritage) : this(text, description, HudColor.HUD_COLOUR_FREEMODE, HudColor.HUD_COLOUR_PAUSE_BG, heritage)
+		public UIMenuSliderItem(string text, string description, int max, int mult, int startVal, bool heritage) : this(text, description, max, mult, startVal, HudColor.HUD_COLOUR_FREEMODE, heritage)
 		{
-			Maximum = max;
-			Multiplier = mult;
-			Value = startVal;
 		}
 		/// <summary>
 		/// List item, with slider.
@@ -111,12 +107,14 @@ namespace ScaleformUI
 		/// <param name="index">Index in the list. If unsure user 0.</param>
 		/// <param name="description">Description for this item.</param>
 		/// /// <param name="divider">Put a divider in the center of the slider</param>
-		public UIMenuSliderItem(string text, string description, HudColor sliderColor, HudColor backgroundSliderColor, bool heritage = false) : base(text, description)
+		public UIMenuSliderItem(string text, string description, int max, int mult, int startVal, HudColor sliderColor, bool heritage = false) : base(text, description)
 		{
 			SliderColor = sliderColor;
-			BackgroundSliderColor = backgroundSliderColor;
 			_itemId = 3;
 			_heritage = heritage;
+			Maximum = max;
+			Multiplier = mult;
+			Value = startVal;
 		}
 
 		internal virtual void SliderChanged(int value)

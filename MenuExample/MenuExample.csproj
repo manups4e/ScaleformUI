@@ -36,6 +36,10 @@
     <Reference Include="CitizenFX.Core.Client, Version=0.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <HintPath>..\packages\CitizenFX.Core.Client.1.0.5020\lib\net45\CitizenFX.Core.Client.dll</HintPath>
     </Reference>
+    <Reference Include="ScaleformUI, Version=1.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ScaleformUI_Csharp\bin\Debug\ScaleformUI.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -49,12 +53,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MenuExample.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\New_NativeUI\ScaleformUI.csproj">
-      <Project>{f5614594-90fd-4f4c-9c68-c9dc90060f8d}</Project>
-      <Name>ScaleformUI</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
