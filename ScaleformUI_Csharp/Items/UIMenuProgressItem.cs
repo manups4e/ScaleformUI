@@ -15,7 +15,7 @@ namespace ScaleformUI
 		protected internal UIMenuGridAudio Audio;
 
 		protected internal int _value = 0;
-		protected internal int _max;
+		protected internal int _max = 100;
 		protected internal int _multiplier = 5;
 		protected internal bool Divider;
 		protected internal HudColor SliderColor;
