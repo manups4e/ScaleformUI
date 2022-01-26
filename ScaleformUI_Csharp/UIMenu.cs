@@ -1452,7 +1452,6 @@ namespace ScaleformUI
 					case UIMenuProgressItem:
 						{
 							var it = (UIMenuProgressItem)item;
-							it.SliderColor = (HudColor)new Random(GetGameTimer()).Next(5, 150);
 							ScaleformUI._ui.CallFunction("UPDATE_ITEM", MenuItems.IndexOf(it), it.Description, (int)it.MainColor, (int)it.HighlightColor, (int)it.TextColor, (int)it.HighlightedTextColor, (int)it.SliderColor);
 							break;
 						}
@@ -1596,39 +1595,6 @@ namespace ScaleformUI
 				var value = Convert.ToSingle(split[3]);
 				switch (split[0])
 				{
-					case "it":
-						{
-							switch (_type)
-							{
-								case 3:
-									{
-										UIMenuSliderItem it = (UIMenuSliderItem)MenuItems[CurrentSelection];
-										it.Value = (int)(Convert.ToSingle(split[3]));
-										it.SliderChanged(it.Value);
-										SliderChange(it, it.Value);
-										if (HasSoundFinished(menuSound))
-										{
-											menuSound = GetSoundId();
-											API.PlaySoundFrontend(menuSound, "CONTINUOUS_SLIDER", "HUD_FRONTEND_DEFAULT_SOUNDSET", true);
-										}
-									}
-									break;
-								case 4:
-									{
-										UIMenuProgressItem it = (UIMenuProgressItem)MenuItems[CurrentSelection];
-										it.Value = (int)(Convert.ToSingle(split[3]));
-										it.ProgressChanged(it.Value);
-										ProgressChange(it, it.Value);
-										if (HasSoundFinished(menuSound))
-										{
-											menuSound = GetSoundId();
-											API.PlaySoundFrontend(menuSound, "CONTINUOUS_SLIDER", "HUD_FRONTEND_DEFAULT_SOUNDSET", true);
-										}
-									}
-									break;
-							}
-							break;
-						}
 					case "pan":
 						switch (_type)
 						{
