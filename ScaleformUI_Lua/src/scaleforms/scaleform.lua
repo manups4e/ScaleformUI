@@ -15,7 +15,7 @@ function Scaleform.Request(Name)
 	return setmetatable(data, scaleform)
 end
 
-function scaleform:CallFunction(theFunction, ...)
+function scaleform:CallFunction(theFunction, returndata, ...)
     BeginScaleformMovieMethod(self.handle, theFunction)
     local arg = {...}
     if arg ~= nil then
@@ -34,7 +34,12 @@ function scaleform:CallFunction(theFunction, ...)
             end
 		end
 	end
-	return EndScaleformMovieMethod()
+
+	if not returndata then
+		return EndScaleformMovieMethod()
+	else
+		return EndScaleformMovieMethodReturnValue()
+	end
 end
 
 function scaleform:Render2D()

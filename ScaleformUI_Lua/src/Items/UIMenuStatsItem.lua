@@ -10,7 +10,7 @@ UIMenuStatsItem.__call = function() return "UIMenuItem", "UIMenuStatsItem" end
 ---@param Counter boolean
 function UIMenuStatsItem.New(Text, Description, Index, barColor, type, mainColor, highlightColor, textColor, highlightedTextColor)
 	local _UIMenuStatsItem = {
-		Base = UIMenuItem.New(Text or "", Description or "", mainColor or 2, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
+		Base = UIMenuItem.New(Text or "", Description or "", mainColor or 117, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
 		_Index = Index or 0,
 		Panels = {},
 		_Color = barColor or 116,
@@ -102,7 +102,7 @@ function UIMenuStatsItem:Index(Index)
 		end
 		self.OnStatsChanged(self._Index)
         if self.Base.ParentMenu ~= nil then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_VALUE", IndexOf(self.Base.ParentMenu.Items, self) - 1, self._Index)
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_VALUE", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self._Index);
         end
 	else
 		return self._Index

@@ -15,12 +15,12 @@ Citizen.CreateThread(function()
     ScaleformUI.Scaleforms.Warning = WarningInstance.New()
     ScaleformUI.Scaleforms.InstructionalButtons = ButtonsHandler.New()
     while true do
-        Citizen.Wait(0)
+        Wait(0)
         ScaleformUI.Scaleforms.BigMessageInstance:Update()
         ScaleformUI.Scaleforms.MidMessageInstance:Update()
         ScaleformUI.Scaleforms.InstructionalButtons:Update()
         ScaleformUI.Scaleforms.Warning:Update()
-        if (ScaleformUI.Scaleforms._ui == 0 or ScaleformUI.Scaleforms._ui == nil) then
+        if ScaleformUI.Scaleforms._ui == 0 or ScaleformUI.Scaleforms._ui == nil then
             ScaleformUI.Scaleforms._ui = Scaleform.Request("scaleformui")
         end
     end
@@ -28,7 +28,7 @@ end)
 
 Citizen.CreateThread(function()
     while true do
-        Citizen.Wait(0)
+        Wait(0)
         if IsControlJustPressed(0, 47) then
             -- INSTRUCTIONAL BUTTONS
             --[[ 

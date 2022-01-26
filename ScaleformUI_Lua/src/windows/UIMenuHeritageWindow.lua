@@ -42,6 +42,6 @@ function UIMenuHeritageWindow:Index(Mom, Dad)
 		RequestStreamedTextureDict("char_creator_portraits", true)
 	end
 	local wid = IndexOf(self.ParentMenu.Items, self) - 1
-	ScaleformUI.Scaleforms._ui.CallFunction("UPDATE_HERITAGE_WINDOW", wid, self.Mom, self.Dad)
+	ScaleformUI.Scaleforms._ui.CallFunction("UPDATE_HERITAGE_WINDOW", false, wid, self.Mom, self.Dad)
 	SetStreamedTextureDictAsNoLongerNeeded("char_creator_portraits")
 end

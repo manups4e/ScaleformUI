@@ -16,7 +16,7 @@ function UIMenuItem.New(text, description, color, highlightColor, textColor, hig
         _rightLabel = "",
         _formatRightLabel = "",
         RightBadge = 0,
-        MainColor = color or 2,
+        MainColor = color or 117,
         HighlightColor = highlightColor or 1,
         TextColor = textColor or 1,
         HighlightedTextColor = highlightedTextColor or 2,
@@ -41,35 +41,35 @@ function UIMenuItem:Selected(bool, id)
         self._Selected = tobool(bool)
         if self._Selected then
             if not self._formatLeftLabel:StartsWith("~") then
-                self._formatLeftLabel = self._formatLeftLabel:Insert(0, "~l~")
+                self._formatLeftLabel = self._formatLeftLabel:Insert(0, "~l~");
             end
             if self._formatLeftLabel:find("~", 1, true) then
-                self._formatLeftLabel = self._formatLeftLabel:gsub("~w~", "~l~")
-                self._formatLeftLabel = self._formatLeftLabel:gsub("~s~", "~l~")
+                self._formatLeftLabel = self._formatLeftLabel:gsub("~w~", "~l~");
+                self._formatLeftLabel = self._formatLeftLabel:gsub("~s~", "~l~");
             end
             if not string.IsNullOrEmpty(self._formatRightLabel) then
                 if not self._formatRightLabel:StartsWith("~") then
-                    self._formatRightLabel = self._formatRightLabel:Insert(0, "~l~")
+                    self._formatRightLabel = self._formatRightLabel:Insert(0, "~l~");
                 end
-                if (self._formatRightLabel:find("~", 1, true)) then
-                    self._formatRightLabel = self._formatRightLabel:gsub("~w~", "~l~")
-                    self._formatRightLabel = self._formatRightLabel:gsub("~s~", "~l~")
+                if self._formatRightLabel:find("~", 1, true) then
+                    self._formatRightLabel = self._formatRightLabel:gsub("~w~", "~l~");
+                    self._formatRightLabel = self._formatRightLabel:gsub("~s~", "~l~");
                 end
             end
         else
-            self._formatLeftLabel = self._formatLeftLabel:gsub("~l~", "~s~")
+            self._formatLeftLabel = self._formatLeftLabel:gsub("~l~", "~s~");
             if not self._formatLeftLabel:StartsWith("~") then
-                self._formatLeftLabel = self._formatLeftLabel:Insert(0, "~s~")
+                self._formatLeftLabel = self._formatLeftLabel:Insert(0, "~s~");
             end
             if not string.IsNullOrEmpty(self._formatRightLabel) then
-                self._formatRightLabel = self._formatRightLabel:gsub("~l~", "~s~")
+                self._formatRightLabel = self._formatRightLabel:gsub("~l~", "~s~");
                 if not self._formatRightLabel:StartsWith("~") then
-                    self._formatRightLabel = self._formatRightLabel:Insert(0, "~s~")
+                    self._formatRightLabel = self._formatRightLabel:Insert(0, "~s~");
                 end
             end
         end
         if self.ParentMenu ~= nil then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABELS", IndexOf(self.ParentMenu.Items, self) - 1,  self._formatLeftLabel, self._formatRightLabel)
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABELS", false, IndexOf(self.ParentMenu.Items, self) - 1,  self._formatLeftLabel, self._formatRightLabel)
         end
     else
         return self._Selected
@@ -88,7 +88,7 @@ function UIMenuItem:Enabled(bool)
     if bool ~= nil then
         self._Enabled = tobool(bool)
         if self.ParentMenu ~= nil then
-            ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_ITEM", IndexOf(self.ParentMenu.Items, self) - 1,  self._Enabled)
+            ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_ITEM", false, IndexOf(self.ParentMenu.Items, self) - 1,  self._Enabled)
         end
     else
         return self._Enabled
@@ -109,20 +109,20 @@ function UIMenuItem:Label(Text)
         self._formatLeftLabel = (tostring(Text))
         if self:Selected() then
             if self._formatLeftLabel:find("~") then
-                self._formatLeftLabel = self._formatLeftLabel:gsub("~w~", "~l~")
-                self._formatLeftLabel = self._formatLeftLabel:gsub("~s~", "~l~")
-                if (not self._formatLeftLabel:StartsWith("~"))then
-                    self._formatLeftLabel = self._formatLeftLabel:Insert(0, "~l~")
+                self._formatLeftLabel = self._formatLeftLabel:gsub("~w~", "~l~");
+                self._formatLeftLabel = self._formatLeftLabel:gsub("~s~", "~l~");
+                if not self._formatLeftLabel:StartsWith("~") then
+                    self._formatLeftLabel = self._formatLeftLabel:Insert(0, "~l~");
                 end
             end
         else
-            self._formatLeftLabel = self._formatLeftLabel:gsub("~l~", "~s~")
+            self._formatLeftLabel = self._formatLeftLabel:gsub("~l~", "~s~");
             if not self._formatLeftLabel:StartsWith("~") then
-                self._formatLeftLabel = self._formatLeftLabel:Insert(0, "~s~")
+                self._formatLeftLabel = self._formatLeftLabel:Insert(0, "~s~");
             end
         end
         if self.ParentMenu ~= nil then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_LABEL", IndexOf(self.ParentMenu.Items, self) - 1,  self._formatLeftLabel)
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_LABEL", false, IndexOf(self.ParentMenu.Items, self) - 1,  self._formatLeftLabel)
         end
     else
         return self._label
@@ -135,20 +135,20 @@ function UIMenuItem:RightLabel(Text)
         self._formatRightLabel = tostring(Text)
         if self:Selected() then
             if self._formatRightLabel:find("~") then
-                self._formatRightLabel = self._formatRightLabel:gsub("~w~", "~l~")
-                self._formatRightLabel = self._formatRightLabel:gsub("~s~", "~l~")
+                self._formatRightLabel = self._formatRightLabel:gsub("~w~", "~l~");
+                self._formatRightLabel = self._formatRightLabel:gsub("~s~", "~l~");
                 if not self._formatRightLabel:StartsWith("~") then
-                    self._formatRightLabel = self._formatRightLabel:Insert(0, "~l~")
+                    self._formatRightLabel = self._formatRightLabel:Insert(0, "~l~");
                 end
             end
         else
-            self._formatRightLabel = self._formatRightLabel:gsub("~l~", "~s~")
+            self._formatRightLabel = self._formatRightLabel:gsub("~l~", "~s~");
             if not self._formatRightLabel:StartsWith("~") then
-                self._formatRightLabel = self._formatRightLabel:Insert(0, "~s~")
+                self._formatRightLabel = self._formatRightLabel:Insert(0, "~s~");
             end
         end
         if self.ParentMenu ~= nil then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_LABEL", IndexOf(self.ParentMenu.Items, self) - 1,  self._formatRightLabel)
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_LABEL", false, IndexOf(self.ParentMenu.Items, self) - 1,  self._formatRightLabel)
         end
     else
         return self._rightLabel
@@ -159,15 +159,15 @@ function UIMenuItem:SetRightBadge(Badge)
     if tonumber(Badge) then
         self.RightBadge = tonumber(Badge)
         if self.ParentMenu ~= nil then
-            local dict = GetSpriteDictionary(badge)
+            local dict = GetSpriteDictionary(badge);
             while not HasStreamedTextureDictLoaded(dict) do
                 Citizen.Wait(0)
                 RequestStreamedTextureDict(dict, true)
             end
-            ScaleformUI.Scaleforms._ui.CallFunction("SET_RIGHT_BADGE", IndexOf(self.ParentMenu.Items, self) - 1, dict, self.RightBadge)
-            RemoveAnimDict(dict)
+            ScaleformUI.Scaleforms._ui.CallFunction("SET_RIGHT_BADGE", false, IndexOf(self.ParentMenu.Items, self) - 1, dict, self.RightBadge);
+            RemoveAnimDict(dict);
         else
-            self.RightBadge = badge
+            self.RightBadge = badge;
         end
     else
         return self.RightBadge
@@ -213,7 +213,7 @@ function UIMenuItem:BlinkDescription(bool)
     if bool ~= nil then
         self.blinkDescription = bool
         if self.ParentMenu ~= nil then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_BLINK_DESC", IndexOf(self.ParentMenu.Items, self) - 1, self.blinkDescription)
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_BLINK_DESC", false, IndexOf(self.ParentMenu.Items, self) - 1, self.blinkDescription);
         end
     else
         return self.blinkDescription
