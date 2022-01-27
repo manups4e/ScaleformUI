@@ -52,7 +52,7 @@ public class MenuExample : BaseScript
 		var BlankItem = new UIMenuSeparatorItem();
 		exampleMenu.AddItem(BlankItem);
 
-		var colorListItem = new UIMenuListItem("Colored ListItem.. Really?", foodsList, 0, "~b~Look!!~r~I can be colored ~y~too!!~w~", HudColor.HUD_COLOUR_PURPLE, HudColor.HUD_COLOUR_PINK);
+		var colorListItem = new UIMenuListItem("Colored ListItem.. Really?", foodsList, 0, "~BLIP_BARBER~ ~BLIP_INFO_ICON~ ~BLIP_TANK~ ~BLIP_OFFICE~ ~BLIP_CRIM_DRUGS~ ~BLIP_WAYPOINT~ ~INPUTGROUP_MOVE~~n~You can use Blips and Inputs in description as you prefer!", HudColor.HUD_COLOUR_PURPLE, HudColor.HUD_COLOUR_PINK);
 		exampleMenu.AddItem(colorListItem);
 
 		var slider = new UIMenuSliderItem("Slider Item", "Cool!", true); // by default max is 100 and multipler 5 = 20 steps.
