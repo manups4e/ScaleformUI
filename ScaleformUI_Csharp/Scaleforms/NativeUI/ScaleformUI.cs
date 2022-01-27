@@ -30,7 +30,14 @@ namespace ScaleformUI
             InstructionalButtons = new();
             InstructionalButtons.Load();
             Tick += ScaleformUIThread_Tick;
-            EventHandlers["onResourceStop"] += new Action<string>((resName) => { if (resName == API.GetCurrentResourceName()) _ui.Dispose(); });
+
+            EventHandlers["onResourceStop"] += new Action<string>((resName) => {
+                if (resName == API.GetCurrentResourceName())
+                {
+                    _ui.Dispose();
+                    PauseMenu.Dispose();
+                }
+            });
 
         }
 
