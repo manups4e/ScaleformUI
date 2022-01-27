@@ -1,4 +1,5 @@
 ﻿using CitizenFX.Core;
+using CitizenFX.Core.Native;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,9 +30,11 @@ namespace ScaleformUI
             InstructionalButtons = new();
             InstructionalButtons.Load();
             Tick += ScaleformUIThread_Tick;
+            EventHandlers["onResourceStop"] += new Action<string>((resName) => { if (resName == API.GetCurrentResourceName()) _ui.Dispose(); });
+
         }
 
-        private async Task ScaleformUIThread_Tick()
+    private async Task ScaleformUIThread_Tick()
         {
             Warning.Update();
             MedMessageInstance.Update();
