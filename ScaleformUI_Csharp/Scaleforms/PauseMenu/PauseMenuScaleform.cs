@@ -27,6 +27,8 @@ namespace ScaleformUI
             _pause = new Scaleform("pausemenu");
         }
 
+        
+
         public void SetHeaderTitle(string title, string subtitle = "", bool shiftUpHeader = false)
         {
             _header.CallFunction("SET_HEADER_TITLE", title, subtitle, shiftUpHeader);
@@ -89,16 +91,14 @@ namespace ScaleformUI
 
         public void AddRightListLabel(int tab, int leftItem, string label)
         {
-            /*
+            AddTextEntry($"PauseMenu_{tab}_{leftItem}", label);
             BeginScaleformMovieMethod(_pause.Handle, "ADD_RIGHT_LIST_ITEM");
-            ScaleformMovieMethodAddParamInt(1);
-            ScaleformMovieMethodAddParamInt(1);
+            ScaleformMovieMethodAddParamInt(tab);
+            ScaleformMovieMethodAddParamInt(leftItem);
             ScaleformMovieMethodAddParamInt(0);
-            BeginTextCommandScaleformString("TOOLTIPS_88");
+            BeginTextCommandScaleformString($"PauseMenu_{tab}_{leftItem}");
             EndTextCommandScaleformString_2();
             EndScaleformMovieMethod();
-            */
-            _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 0, label);
         }
 
         public void AddRightStatItemLabel(int tab, int leftItem, string label, string rightLabel)

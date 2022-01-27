@@ -17,8 +17,20 @@ namespace ScaleformUI
 		protected internal int _value = 0;
 		protected internal int _max = 100;
 		protected internal int _multiplier = 5;
+        private HudColor sliderColor;
 		protected internal bool Divider;
-		protected internal HudColor SliderColor;
+		protected internal HudColor SliderColor
+		{
+			get => sliderColor;
+			set
+			{
+				sliderColor = value;
+				if (Parent is not null)
+				{
+					ScaleformUI._ui.CallFunction("UPDATE_COLORS", Parent.MenuItems.IndexOf(this), (int)MainColor, (int)HighlightColor, (int)TextColor, (int)HighlightedTextColor, (int)value);
+				}
+			}
+		}
 
 		public UIMenuProgressItem(string text, int maxCount, int startIndex) : this(text, maxCount, startIndex, "")
 		{
