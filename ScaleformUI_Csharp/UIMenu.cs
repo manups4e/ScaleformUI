@@ -1434,38 +1434,6 @@ namespace ScaleformUI
 
 				DrawScaleformMovie(_menuGlare.Handle, gl.X, gl.Y, _glareSize.Width, _glareSize.Height, 255, 255, 255, 255, 0);
 			}
-
-			foreach (var item in MenuItems)
-			{
-				switch (item)
-				{
-					case UIMenuSliderItem:
-						{
-							var it = (UIMenuSliderItem)item;
-							ScaleformUI._ui.CallFunction("UPDATE_ITEM", MenuItems.IndexOf(it), it.Description, (int)it.MainColor, (int)it.HighlightColor, (int)it.TextColor, (int)it.HighlightedTextColor, (int)it.SliderColor);
-							break;
-						}
-
-					case UIMenuProgressItem:
-						{
-							var it = (UIMenuProgressItem)item;
-							ScaleformUI._ui.CallFunction("UPDATE_ITEM", MenuItems.IndexOf(it), it.Description, (int)it.MainColor, (int)it.HighlightColor, (int)it.TextColor, (int)it.HighlightedTextColor, (int)it.SliderColor);
-							break;
-						}
-					default:
-						BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "UPDATE_ITEM");
-						PushScaleformMovieFunctionParameterInt(MenuItems.IndexOf(item));
-						BeginTextCommandScaleformString($"desc_{MenuItems.IndexOf(item)}");
-						EndTextCommandScaleformString_2();
-						PushScaleformMovieFunctionParameterInt((int)item.MainColor);
-						PushScaleformMovieFunctionParameterInt((int)item.HighlightColor);
-						PushScaleformMovieFunctionParameterInt((int)item.TextColor);
-						PushScaleformMovieFunctionParameterInt((int)item.HighlightedTextColor);
-						EndScaleformMovieMethod();
-						ScaleformUI._ui.CallFunction("UPDATE_ITEM", MenuItems.IndexOf(item), item.Description, (int)item.MainColor, (int)item.HighlightColor, (int)item.TextColor, (int)item.HighlightedTextColor);
-						break;
-				}
-			}
 		}
 
 		/// <summary>
@@ -2045,7 +2013,6 @@ namespace ScaleformUI
 						PushScaleformMovieFunctionParameterInt((int)item.TextColor);
 						PushScaleformMovieFunctionParameterInt((int)item.HighlightedTextColor);
 						EndScaleformMovieMethod();
-						//ScaleformUI._ui.CallFunction("ADD_ITEM", item._itemId, item.Label, item.Description, item.Enabled, item.BlinkDescription, (int)item.MainColor, (int)item.HighlightColor, (int)item.TextColor, (int)item.HighlightedTextColor);
 						ScaleformUI._ui.CallFunction("SET_RIGHT_LABEL", MenuItems.IndexOf(item), item.RightLabel);
 						if (item.RightBadge != BadgeIcon.NONE)
 							ScaleformUI._ui.CallFunction("SET_RIGHT_BADGE", MenuItems.IndexOf(item), UIMenuItem.GetSpriteDictionary(item.RightBadge), (int)item.RightBadge);
