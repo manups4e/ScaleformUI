@@ -369,18 +369,20 @@ function UIMenu:BuildUpMenu()
         self:LoadScaleform()
         local Type, SubType = item()
 
+        AddTextEntry("desc_{" .. it .."}", item:Description())
+
         if SubType == "UIMenuListItem" then
-            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 1, item:Label(), item:Description(), item:Enabled(), item:BlinkDescription(), table.concat(item.Items, ","), item:Index()-1, item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor)
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 1, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), table.concat(item.Items, ","), item:Index()-1, item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor)
         elseif SubType == "UIMenuCheckboxItem" then
-            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 2, item:Label(), item:Description(), item:Enabled(), item:BlinkDescription(), item.CheckBoxStyle, item._Checked, item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor)
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 2, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item.CheckBoxStyle, item._Checked, item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor)
         elseif SubType == "UIMenuSliderItem" then
-            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 3, item:Label(), item:Description(), item:Enabled(), item:BlinkDescription(), item._Max, item._Multiplier, item:Index(), item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor, item.SliderColor, item._heritage)
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 3, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item._Max, item._Multiplier, item:Index(), item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor, item.SliderColor, item._heritage)
         elseif SubType == "UIMenuProgressItem" then
-            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 4, item:Label(), item:Description(), item:Enabled(), item:BlinkDescription(), item._Max, item._Multiplier, item:Index(), item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor, item.SliderColor)
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 4, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item._Max, item._Multiplier, item:Index(), item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor, item.SliderColor)
         elseif SubType == "UIMenuStatsItem" then
-            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 5, item:Label(), item:Description(), item:Enabled(), item:BlinkDescription(), item:Index(), item._Type, item._Color, item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor)
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 5, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item:Index(), item._Type, item._Color, item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor)
         else
-            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 0, item:Label(), item:Description(), item:Enabled(), item:BlinkDescription(), item.MainColor, item.HighlightColor, item.TextColor, item.HighlightedTextColor)
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 0, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item.MainColor, item.HighlightColor, item.TextColor, item.HighlightedTextColor)
             ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_LABEL", false, it - 1, item:RightLabel())
             if item.RightBadge ~= BadgeStyle.NONE then
                 ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_BADGE", false, it - 1, GetSpriteDictionary(item.RightBadge), item.RightBadge)
@@ -390,16 +392,16 @@ function UIMenu:BuildUpMenu()
             for pan, panel in pairs (item.Panels) do
                 local pType, pSubType = panel()
                 if pSubType == "UIMenuColorPanel" then
-                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it, 0, panel.Title, panel.ColorPanelColorType, panel.CurrentSelection)
+                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it - 1, 0, panel.Title, panel.ColorPanelColorType, panel.CurrentSelection)
                 elseif pSubType == "UIMenuPercentagePanel" then
-                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it, 1, panel.Title, panel.Min, panel.Max, panel.Percentage)
+                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it - 1, 1, panel.Title, panel.Min, panel.Max, panel.Percentage)
                 elseif pSubType == "UIMenuGridPanel" then
-                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it, 2, panel.TopLabel, panel.RightLabel, panel.LeftLabel, panel.BottomLabel, panel.CirclePosition.x, panel.CirclePosition.y, true, panel.GridType)
+                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it - 1, 2, panel.TopLabel, panel.RightLabel, panel.LeftLabel, panel.BottomLabel, panel.CirclePosition.x, panel.CirclePosition.y, true, panel.GridType)
                 elseif pSubType == "UIMenuStatisticsPanel" then
-                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it, 3)
+                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it - 1, 3)
                     if #panel.Items then
                         for key, stat in pairs (panel.Items) do
-                            ScaleformUI.Scaleforms._ui:CallFunction("ADD_STATISTIC_TO_PANEL", it - 1, pan - 1, stat['name'], stat['value'])
+                            ScaleformUI.Scaleforms._ui:CallFunction("ADD_STATISTIC_TO_PANEL", false, it - 1, pan - 1, stat['name'], stat['value'])
                         end
                     end
                 end
@@ -732,10 +734,13 @@ function UIMenu:Draw()
 
     for k,item in pairs(self.Items) do
         local Type, SubType = item()
+
+        AddTextEntry("desc_{" .. k .."}", item:Description())
+
         if SubType == "UIMenuSliderItem" or SubType == "UIMenuProgressItem" then
-            ScaleformUI.Scaleforms._ui.CallFunction("UPDATE_ITEM", false, k-1, item:Description(), item.MainColor, item.HighlightColor, item.TextColor, item.HighlightedTextColor, item.SliderColor, item.BackgroundSliderColor)
+            ScaleformUI.Scaleforms._ui.CallFunction("UPDATE_ITEM", false, k-1, "desc_{" .. k .."}", item.MainColor, item.HighlightColor, item.TextColor, item.HighlightedTextColor, item.SliderColor, item.BackgroundSliderColor)
         else
-            ScaleformUI.Scaleforms._ui.CallFunction("UPDATE_ITEM", false, k-1, item:Description(), item.MainColor, item.HighlightColor, item.TextColor, item.HighlightedTextColor)
+            ScaleformUI.Scaleforms._ui.CallFunction("UPDATE_ITEM", false, k-1, "desc_{" .. k .."}", item.MainColor, item.HighlightColor, item.TextColor, item.HighlightedTextColor)
         end
     end
 end
@@ -812,6 +817,7 @@ function UIMenu:ProcessMouse()
             end
         elseif type == "pan" then
             if tonumber(split[3]) == 0 then
+                local panels = self.Items[self:CurrentSelection()]
                 local panel = self.Items[self:CurrentSelection()].Panels[selection+1]
                 panel._value = tonumber(split[4])
                 self:ColorPanelChange(panel.ParentItem, panel, panel:CurrentSelection())

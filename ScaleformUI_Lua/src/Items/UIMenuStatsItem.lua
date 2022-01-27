@@ -9,6 +9,7 @@ UIMenuStatsItem.__call = function() return "UIMenuItem", "UIMenuStatsItem" end
 ---@param Description string
 ---@param Counter boolean
 function UIMenuStatsItem.New(Text, Description, Index, barColor, type, mainColor, highlightColor, textColor, highlightedTextColor)
+	print("statsitem")
 	local _UIMenuStatsItem = {
 		Base = UIMenuItem.New(Text or "", Description or "", mainColor or 117, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
 		_Index = Index or 0,
