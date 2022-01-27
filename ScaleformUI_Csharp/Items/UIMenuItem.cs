@@ -198,11 +198,54 @@ namespace ScaleformUI
     {
 
         internal int _itemId = 0;
-        public HudColor MainColor { get; set; }
-        public HudColor HighlightColor { get; set; }
-
-        public HudColor TextColor { get; set; } = HudColor.HUD_COLOUR_WHITE;
-        public HudColor HighlightedTextColor { get; set; } = HudColor.HUD_COLOUR_BLACK;
+        public HudColor MainColor
+        {
+            get => mainColor;
+            set
+            {
+                mainColor = value;
+                if (Parent is not null)
+                {
+                    ScaleformUI._ui.CallFunction("UPDATE_COLORS", Parent.MenuItems.IndexOf(this), (int)value, (int)highlightColor, (int)textColor, (int)highlightedTextColor);
+                }
+            }
+        }
+        public HudColor HighlightColor
+        {
+            get => highlightColor;
+            set
+            {
+                highlightColor = value;
+                if (Parent is not null)
+                {
+                    ScaleformUI._ui.CallFunction("UPDATE_COLORS", Parent.MenuItems.IndexOf(this), (int)mainColor, (int)value, (int)textColor, (int)highlightedTextColor);
+                }
+            }
+        }
+        public HudColor TextColor
+        {
+            get => textColor;
+            set
+            {
+                textColor = value;
+                if (Parent is not null)
+                {
+                    ScaleformUI._ui.CallFunction("UPDATE_COLORS", Parent.MenuItems.IndexOf(this), (int)mainColor, (int)highlightColor, (int)value, (int)highlightedTextColor);
+                }
+            }
+        }
+        public HudColor HighlightedTextColor
+        {
+            get => highlightedTextColor;
+            set
+            {
+                highlightedTextColor = value;
+                if (Parent is not null)
+                {
+                    ScaleformUI._ui.CallFunction("UPDATE_COLORS", Parent.MenuItems.IndexOf(this), (int)mainColor, (int)highlightColor, (int)textColor, (int)value);
+                }
+            }
+        }
 
         public List<UIMenuPanel> Panels = new();
         private bool _selected;
@@ -212,6 +255,11 @@ namespace ScaleformUI
         private string _formatRightLabel;
         private bool _enabled;
         private bool blinkDescription;
+        private HudColor mainColor;
+        private HudColor highlightColor;
+        private HudColor textColor = HudColor.HUD_COLOUR_WHITE;
+        private HudColor highlightedTextColor = HudColor.HUD_COLOUR_BLACK;
+        private string description;
 
 
         // Allows you to attach data to a menu item if you want to identify the menu item without having to put identification info in the visible text or description.
@@ -333,7 +381,23 @@ namespace ScaleformUI
         /// <summary>
         /// This item's description.
         /// </summary>
-        public virtual string Description { get; set; }
+        public virtual string Description
+        {
+            get => description;
+            set 
+            { 
+                description = value;
+                if (Parent is not null)
+                {
+                    API.AddTextEntry($"desc_{Parent.MenuItems.IndexOf(this)}", description);
+                    API.BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "UPDATE_ITEM_DESCRIPTION");
+                    API.ScaleformMovieMethodAddParamInt(Parent.MenuItems.IndexOf(this));
+                    API.BeginTextCommandScaleformString($"desc_{Parent.MenuItems.IndexOf(this)}");
+                    API.EndTextCommandScaleformString_2();
+                    API.EndScaleformMovieMethod();
+                }
+            }
+        }
 
 
         /// <summary>
