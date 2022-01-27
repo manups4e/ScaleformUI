@@ -1430,10 +1430,7 @@ namespace ScaleformUI
 			{
 				_menuGlare.CallFunction("SET_DATA_SLOT", GameplayCamera.RelativeHeading);
 				SizeF _glareSize = new SizeF(1.0f, 1f);
-				PointF gl = new PointF(
-					(Offset.X / Screen.Width) + 0.4499f,
-					(Offset.Y / Screen.Height) + 0.449f
-				);
+				PointF gl = new PointF((Offset.X / Screen.Width) + 0.4499f, (Offset.Y / Screen.Height) + 0.449f);
 
 				DrawScaleformMovie(_menuGlare.Handle, gl.X, gl.Y, _glareSize.Width, _glareSize.Height, 255, 255, 255, 255, 0);
 			}
@@ -1455,8 +1452,16 @@ namespace ScaleformUI
 							ScaleformUI._ui.CallFunction("UPDATE_ITEM", MenuItems.IndexOf(it), it.Description, (int)it.MainColor, (int)it.HighlightColor, (int)it.TextColor, (int)it.HighlightedTextColor, (int)it.SliderColor);
 							break;
 						}
-
 					default:
+						BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "UPDATE_ITEM");
+						PushScaleformMovieFunctionParameterInt(MenuItems.IndexOf(item));
+						BeginTextCommandScaleformString($"desc_{MenuItems.IndexOf(item)}");
+						EndTextCommandScaleformString_2();
+						PushScaleformMovieFunctionParameterInt((int)item.MainColor);
+						PushScaleformMovieFunctionParameterInt((int)item.HighlightColor);
+						PushScaleformMovieFunctionParameterInt((int)item.TextColor);
+						PushScaleformMovieFunctionParameterInt((int)item.HighlightedTextColor);
+						EndScaleformMovieMethod();
 						ScaleformUI._ui.CallFunction("UPDATE_ITEM", MenuItems.IndexOf(item), item.Description, (int)item.MainColor, (int)item.HighlightColor, (int)item.TextColor, (int)item.HighlightedTextColor);
 						break;
 				}
@@ -1490,7 +1495,6 @@ namespace ScaleformUI
 				return;
 			}
 
-			PointF safezoneOffset = ScreenTools.SafezoneBounds;
 			ShowCursorThisFrame();
 
 			if (ScreenTools.IsMouseInBounds(new PointF(0, 0), new SizeF(30, 1080)) && MouseEdgeEnabled)
@@ -1967,32 +1971,81 @@ namespace ScaleformUI
 			}
 			foreach (var item in MenuItems)
 			{
+				AddTextEntry($"desc_{MenuItems.IndexOf(item)}", item.Description);
 				LoadScaleform();
+				BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "ADD_ITEM");
+				PushScaleformMovieFunctionParameterInt(item._itemId);
+				PushScaleformMovieMethodParameterString(item.Label);
+				BeginTextCommandScaleformString($"desc_{MenuItems.IndexOf(item)}");
+				EndTextCommandScaleformString_2();
+				PushScaleformMovieFunctionParameterBool(item.Enabled);
+				PushScaleformMovieFunctionParameterBool(item.BlinkDescription);
 				switch (item)
 				{
 					case UIMenuListItem:
 						UIMenuListItem it = (UIMenuListItem)item;
-						ScaleformUI._ui.CallFunction("ADD_ITEM", it._itemId, it.Label, it.Description, it.Enabled, it.BlinkDescription, string.Join(",", it.Items), it.Index, (int)it.MainColor, (int)it.HighlightColor, (int)it.TextColor, (int)it.HighlightedTextColor);
+						PushScaleformMovieMethodParameterString(string.Join(",", it.Items));
+						PushScaleformMovieFunctionParameterInt(it.Index);
+						PushScaleformMovieFunctionParameterInt((int)it.MainColor);
+						PushScaleformMovieFunctionParameterInt((int)it.HighlightColor);
+						PushScaleformMovieFunctionParameterInt((int)it.TextColor);
+						PushScaleformMovieFunctionParameterInt((int)it.HighlightedTextColor);
+						EndScaleformMovieMethod();
 						break;
 					case UIMenuCheckboxItem:
 						UIMenuCheckboxItem check = (UIMenuCheckboxItem)item;
-						ScaleformUI._ui.CallFunction("ADD_ITEM", check._itemId, check.Label, check.Description, check.Enabled, check.BlinkDescription, (int)check.Style, check.Checked, (int)check.MainColor, (int)check.HighlightColor, (int)check.TextColor, (int)check.HighlightedTextColor);
+						PushScaleformMovieFunctionParameterInt((int)check.Style);
+						PushScaleformMovieMethodParameterBool(check.Checked);
+						PushScaleformMovieFunctionParameterInt((int)check.MainColor);
+						PushScaleformMovieFunctionParameterInt((int)check.HighlightColor);
+						PushScaleformMovieFunctionParameterInt((int)check.TextColor);
+						PushScaleformMovieFunctionParameterInt((int)check.HighlightedTextColor);
+						EndScaleformMovieMethod();
 						break;
 					case UIMenuSliderItem:
 						UIMenuSliderItem prItem = (UIMenuSliderItem)item;
-						ScaleformUI._ui.CallFunction("ADD_ITEM", prItem._itemId, prItem.Label, prItem.Description, prItem.Enabled, prItem.BlinkDescription, prItem._max, prItem._multiplier, prItem.Value, (int)prItem.MainColor, (int)prItem.HighlightColor, (int)prItem.TextColor, (int)prItem.HighlightedTextColor, (int)prItem.SliderColor, prItem._heritage);
+						PushScaleformMovieFunctionParameterInt(prItem._max);
+						PushScaleformMovieFunctionParameterInt(prItem._multiplier);
+						PushScaleformMovieFunctionParameterInt(prItem.Value);
+						PushScaleformMovieFunctionParameterInt((int)prItem.MainColor);
+						PushScaleformMovieFunctionParameterInt((int)prItem.HighlightColor);
+						PushScaleformMovieFunctionParameterInt((int)prItem.TextColor);
+						PushScaleformMovieFunctionParameterInt((int)prItem.HighlightedTextColor);
+						PushScaleformMovieFunctionParameterInt((int)prItem.SliderColor);
+						PushScaleformMovieFunctionParameterBool(prItem._heritage);
+						EndScaleformMovieMethod();
 						break;
 					case UIMenuProgressItem:
 						UIMenuProgressItem slItem = (UIMenuProgressItem)item;
-						ScaleformUI._ui.CallFunction("ADD_ITEM", slItem._itemId, slItem.Label, slItem.Description, slItem.Enabled, slItem.BlinkDescription, slItem._max, slItem._multiplier, slItem.Value, (int)slItem.MainColor, (int)slItem.HighlightColor, (int)slItem.TextColor, (int)slItem.HighlightedTextColor, (int)slItem.SliderColor);
+						PushScaleformMovieFunctionParameterInt(slItem._max);
+						PushScaleformMovieFunctionParameterInt(slItem._multiplier);
+						PushScaleformMovieFunctionParameterInt(slItem.Value);
+						PushScaleformMovieFunctionParameterInt((int)slItem.MainColor);
+						PushScaleformMovieFunctionParameterInt((int)slItem.HighlightColor);
+						PushScaleformMovieFunctionParameterInt((int)slItem.TextColor);
+						PushScaleformMovieFunctionParameterInt((int)slItem.HighlightedTextColor);
+						PushScaleformMovieFunctionParameterInt((int)slItem.SliderColor);
+						EndScaleformMovieMethod();
 						break;
 
 					case UIMenuStatsItem:
 						UIMenuStatsItem statsItem = (UIMenuStatsItem)item;
-						ScaleformUI._ui.CallFunction("ADD_ITEM", 5, statsItem.Label, statsItem.Description, statsItem.Enabled, statsItem.BlinkDescription, statsItem.Value, statsItem.Type, (int)statsItem.Color, (int)statsItem.MainColor, (int)statsItem.HighlightColor, (int)statsItem.TextColor, (int)statsItem.HighlightedTextColor);
+						PushScaleformMovieFunctionParameterInt(statsItem.Value);
+						PushScaleformMovieFunctionParameterInt(statsItem.Type);
+						PushScaleformMovieFunctionParameterInt((int)statsItem.Color);
+						PushScaleformMovieFunctionParameterInt((int)statsItem.MainColor);
+						PushScaleformMovieFunctionParameterInt((int)statsItem.HighlightColor);
+						PushScaleformMovieFunctionParameterInt((int)statsItem.TextColor);
+						PushScaleformMovieFunctionParameterInt((int)statsItem.HighlightedTextColor);
+						EndScaleformMovieMethod();
 						break;
 					default:
-						ScaleformUI._ui.CallFunction("ADD_ITEM", item._itemId, item.Label, item.Description, item.Enabled, item.BlinkDescription, (int)item.MainColor, (int)item.HighlightColor, (int)item.TextColor, (int)item.HighlightedTextColor);
+						PushScaleformMovieFunctionParameterInt((int)item.MainColor);
+						PushScaleformMovieFunctionParameterInt((int)item.HighlightColor);
+						PushScaleformMovieFunctionParameterInt((int)item.TextColor);
+						PushScaleformMovieFunctionParameterInt((int)item.HighlightedTextColor);
+						EndScaleformMovieMethod();
+						//ScaleformUI._ui.CallFunction("ADD_ITEM", item._itemId, item.Label, item.Description, item.Enabled, item.BlinkDescription, (int)item.MainColor, (int)item.HighlightColor, (int)item.TextColor, (int)item.HighlightedTextColor);
 						ScaleformUI._ui.CallFunction("SET_RIGHT_LABEL", MenuItems.IndexOf(item), item.RightLabel);
 						if (item.RightBadge != BadgeIcon.NONE)
 							ScaleformUI._ui.CallFunction("SET_RIGHT_BADGE", MenuItems.IndexOf(item), UIMenuItem.GetSpriteDictionary(item.RightBadge), (int)item.RightBadge);
