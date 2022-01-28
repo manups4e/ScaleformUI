@@ -1939,12 +1939,12 @@ namespace ScaleformUI
 			}
 			foreach (var item in MenuItems)
 			{
-				AddTextEntry($"desc_{MenuItems.IndexOf(item)}", item.Description);
+				AddTextEntry($"menu_{_poolcontainer._menuList.IndexOf(this)}_desc_{MenuItems.IndexOf(item)}", item.Description);
 				LoadScaleform();
 				BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "ADD_ITEM");
 				PushScaleformMovieFunctionParameterInt(item._itemId);
 				PushScaleformMovieMethodParameterString(item.Label);
-				BeginTextCommandScaleformString($"desc_{MenuItems.IndexOf(item)}");
+				BeginTextCommandScaleformString($"menu_{_poolcontainer._menuList.IndexOf(this)}_desc_{MenuItems.IndexOf(item)}");
 				EndTextCommandScaleformString_2();
 				PushScaleformMovieFunctionParameterBool(item.Enabled);
 				PushScaleformMovieFunctionParameterBool(item.BlinkDescription);
@@ -1952,7 +1952,9 @@ namespace ScaleformUI
 				{
 					case UIMenuListItem:
 						UIMenuListItem it = (UIMenuListItem)item;
-						PushScaleformMovieMethodParameterString(string.Join(",", it.Items));
+						AddTextEntry($"listitem_{MenuItems.IndexOf(item)}_list", string.Join(",", it.Items));
+						BeginTextCommandScaleformString($"listitem_{MenuItems.IndexOf(item)}_list");
+						EndTextCommandScaleformString();
 						PushScaleformMovieFunctionParameterInt(it.Index);
 						PushScaleformMovieFunctionParameterInt((int)it.MainColor);
 						PushScaleformMovieFunctionParameterInt((int)it.HighlightColor);
@@ -1995,7 +1997,6 @@ namespace ScaleformUI
 						PushScaleformMovieFunctionParameterInt((int)slItem.SliderColor);
 						EndScaleformMovieMethod();
 						break;
-
 					case UIMenuStatsItem:
 						UIMenuStatsItem statsItem = (UIMenuStatsItem)item;
 						PushScaleformMovieFunctionParameterInt(statsItem.Value);
