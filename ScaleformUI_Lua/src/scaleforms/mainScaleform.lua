@@ -26,28 +26,28 @@ Citizen.CreateThread(function()
     end
 end)
 
-Citizen.CreateThread(function()
-    while true do
-        Wait(0)
-        if IsControlJustPressed(0, 47) then
-            -- INSTRUCTIONAL BUTTONS
-            --[[ 
-            local bts = {
-                InstructionalButton.New("Button 1", -1, 51, 51, -1),
-                InstructionalButton.New("Button 2", -1, -1, -1, "INPUTGROUP_LOOK"),
-                InstructionalButton.New("Button 3", -1, 51, 47, -1),
-                InstructionalButton.New("Button 4", -1, {32, 34, 33, 35}, {20, 52, 48, 51}, -1),
-            }
-            ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(bts)
-            ScaleformUI.Scaleforms.InstructionalButtons:Enabled(true)
-            Citizen.Wait(5000)
-            ScaleformUI.Scaleforms.InstructionalButtons:Enabled(false)
-            ScaleformUI.Scaleforms.InstructionalButtons:ClearButtonList()
-            ]]
-            -- WARNING
-            ScaleformUI.Scaleforms.Warning:ShowWarning("Title", "subtitle", "prompt", "errorMsg", 0)
-            Citizen.Wait(5000)
-            ScaleformUI.Scaleforms.Warning:Dispose()
-        end
-    end
-end)
+-- Citizen.CreateThread(function()
+--     while true do
+--         Wait(0)
+--         if IsControlJustPressed(0, 47) then
+--             -- INSTRUCTIONAL BUTTONS
+--             --[[ 
+--             local bts = {
+--                 InstructionalButton.New("Button 1", -1, 51, 51, -1),
+--                 InstructionalButton.New("Button 2", -1, -1, -1, "INPUTGROUP_LOOK"),
+--                 InstructionalButton.New("Button 3", -1, 51, 47, -1),
+--                 InstructionalButton.New("Button 4", -1, {32, 34, 33, 35}, {20, 52, 48, 51}, -1),
+--             }
+--             ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(bts)
+--             ScaleformUI.Scaleforms.InstructionalButtons:Enabled(true)
+--             Citizen.Wait(5000)
+--             ScaleformUI.Scaleforms.InstructionalButtons:Enabled(false)
+--             ScaleformUI.Scaleforms.InstructionalButtons:ClearButtonList()
+--             ]]
+--             -- WARNING
+--             ScaleformUI.Scaleforms.Warning:ShowWarning("Title", "subtitle", "prompt", "errorMsg", 0)
+--             Citizen.Wait(5000)
+--             ScaleformUI.Scaleforms.Warning:Dispose()
+--         end
+--     end
+-- end)

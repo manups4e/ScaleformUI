@@ -10,8 +10,9 @@ function UIMenuColorPanel.New(title, colorType, startIndex)
 	_UIMenuColorPanel = {
 		Title = title or "Color Panel",
 		ColorPanelColorType = colorType,
-		CurrentSelection = startIndex or 0,
+		value = startIndex or 0,
 		ParentItem = nil, -- required
+		PanelChanged = function(menu, item, newindex) end
 	}
 	return setmetatable(_UIMenuColorPanel, UIMenuColorPanel)
 end
@@ -23,5 +24,13 @@ function UIMenuColorPanel:SetParentItem(Item) -- required
 		self.ParentItem = Item
 	else
 		return self.ParentItem
+	end
+end
+
+function UIMenuColorPanel:CurrentSelection(new_value)
+	if new_value ~= nil then
+		self.value = new_value
+	else
+		return self.value
 	end
 end
