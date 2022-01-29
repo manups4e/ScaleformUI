@@ -30,6 +30,7 @@ namespace ScaleformUI
 
         public UIMenuStatsItem(string text, string subtitle, int value, HudColor color) : base(text, subtitle)
         {
+            _itemId = 5;
             Type = 0;
             _value = value;
             Color = color;
