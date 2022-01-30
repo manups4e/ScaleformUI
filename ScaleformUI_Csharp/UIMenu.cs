@@ -1569,6 +1569,7 @@ namespace ScaleformUI
                 var ret = EndScaleformMovieMethodReturnValue();
                 while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
                 var res = GetScaleformMovieMethodReturnValueString(ret);
+                if (res == "none") return;
                 var split = res.Split(',');
                 var type = split[0];
                 var selection = Convert.ToInt32(split[1]);
@@ -1637,8 +1638,8 @@ namespace ScaleformUI
                 var ret = EndScaleformMovieMethodReturnValue();
                 while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
                 var res = GetScaleformMovieMethodReturnValueString(ret);
+                if (res == "none") return;
                 var split = res.Split(',');
-
                 var selection = Convert.ToInt32(split[1]);
                 var _type = Convert.ToInt32(split[2]);
                 var value = Convert.ToSingle(split[3]);
