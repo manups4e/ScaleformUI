@@ -15,6 +15,7 @@ function UIMenuGridPanel.New(topText, leftText, rightText, bottomText, circlePos
 		CirclePosition = circlePosition or vector2(0.5, 0.5),
 		GridType = gridType or 0,
 		ParentItem = nil, -- required
+		PanelChanged = function(menu, item, newindex) end
 	}
 	return setmetatable(_UIMenuGridPanel, UIMenuGridPanel)
 end

@@ -13,6 +13,7 @@ function UIMenuPercentagePanel.New(title, minText, maxText, initialValue)
 		Title = title or "Opacity",
 		Percentage = initialValue or 0.0,
 		ParentItem = nil, -- required
+		PanelChanged = function(menu, item, newindex) end
 	}
 	return setmetatable(_UIMenuPercentagePanel, UIMenuPercentagePanel)
 end

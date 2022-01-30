@@ -23,7 +23,7 @@ end)
 
 Citizen.CreateThread(function()
 
-	local exampleMenu = UIMenu.New("Native UI", "ScaleformUI SHOWCASE", 20, 20)
+	local exampleMenu = UIMenu.New("Native UI", "ScaleformUI SHOWCASE", 50, 50, true)
 	pool:Add(exampleMenu)
 
 	local ketchupItem = UIMenuCheckboxItem.New("Add ketchup?", true, 0, "Do you wish to add ketchup?")
@@ -74,8 +74,7 @@ Citizen.CreateThread(function()
 	listPanelItem4:AddPanel(statisticsPanel)
 
 
-	local subMenuReturn = pool:AddSubMenu(exampleMenu, "Heritage Menu", "", true, true)
-	local heritageMenu = subMenuReturn.SubMenu
+	local heritageMenu = pool:AddSubMenu(exampleMenu, "Heritage Menu", "", true, true)
 	local heritageWindow = UIMenuHeritageWindow.New(0, 0)
 	heritageMenu:AddWindow(heritageWindow)
 	local momNames = {"Hannah", "Audrey", "Jasmine", "Giselle", "Amelia", "Isabella", "Zoe", "Ava", "Camilla", "Violet", "Sophia", "Eveline", "Nicole", "Ashley", "Grace", "Brianna", "Natalie", "Olivia", "Elizabeth", "Charlotte", "Emma", "Misty"}
@@ -87,6 +86,17 @@ Citizen.CreateThread(function()
 	heritageMenu:AddItem(momListItem)
 	heritageMenu:AddItem(dadListItem)
 	heritageMenu:AddItem(heritageSliderItem)
+
+	-- local scaleformMenu = pool:AddSubMenu(exampleMenu, "Scaleforms Showdown", "", true, true)
+	-- local showSimplePopupItem  = UIMenuItem.New("Show PopupWarning example", "You can customize it to your needs")
+	-- local showPopupButtonsItem  = UIMenuItem.New("Show PopupWarning with buttons", "It waits until a button has been pressed!")
+	-- local loadingSpinnerTypes = {}
+	-- local savingNotificationsItem  = UIMenuListItem.New("SavingNotification", loadingSpinnerTypes, 0, "InstructionalButtons now give you the ability to dynamically edit, add, remove, customize your buttons, you can even use them outside the menu ~y~without having to run multiple instances of the same scaleform~w~, aren't you happy??")
+	-- local randomInstructionalButtonItem  = UIMenuItem.New("Add a random InstructionalButton!", "InstructionalButtons now give you the ability to dynamically edit, add, remove, customize your buttons, you can even use them outside the menu ~y~without having to run multiple instances of the same scaleform~w~, aren't you happy??")
+	-- scaleformMenu:AddItem(showSimplePopupItem)
+	-- scaleformMenu:AddItem(showPopupButtonsItem)
+	-- scaleformMenu:AddItem(savingNotificationsItem)
+	-- scaleformMenu:AddItem(randomInstructionalButtonItem)
 
 	exampleMenu.OnMenuChanged = function(old, new, type)
 		if type == "opened" then
@@ -101,7 +111,25 @@ Citizen.CreateThread(function()
 	end
 
 	colorPanel.PanelChanged = function(menu, item, newindex)
-		print("ColorPanel index => " .. newindex + 1)
+		local message = "ColorPanel index => " .. newindex + 1
+		AddTextEntry("ScaleformUINotification", message)
+		BeginTextCommandThefeedPost("ScaleformUINotification")
+		EndTextCommandThefeedPostTicker(false, true)
+	end
+
+	percentagePanel.PanelChanged = function(menu, item, newpercentage)
+		local message = "PercentagePanel => " .. newpercentage
+		AddTextEntry("ScaleformUINotification", message)
+		BeginTextCommandThefeedPost("ScaleformUINotification")
+		EndTextCommandThefeedPostTicker(false, true)
+	end
+
+	gridPanel.PanelChanged = function(menu, item, newposition)
+		print(newposition)
+	end
+
+	horizontalGridPanel.PanelChanged = function(menu, item, newposition)
+		print(newposition)
 	end
 
 	while true do
