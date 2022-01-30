@@ -236,8 +236,6 @@ namespace ScaleformUI
         /// </summary>
         public bool IsSaving => _isSaving;
 
-        public bool Changed => _changed;
-
         public List<InstructionalButton> ControlButtons { get; private set; }
 
         internal async void Load()
