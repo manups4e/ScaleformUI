@@ -1697,7 +1697,7 @@ namespace ScaleformUI
                 _poolcontainer.MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
                 ParentMenu.MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
                 MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
-                ParentMenu.Visible = true;
+                ParentMenu._visible = true;
                 ParentMenu.BuildUpMenu();
             }
             Visible = false;
