@@ -82,7 +82,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scaleforms\MediumMessage\MediumMessage.cs" />
     <Compile Include="Scaleforms\MissionSelector\MissionSelectorHandler.cs" />
-    <Compile Include="Scaleforms\NativeUI\ScaleformUI.cs" />
+    <Compile Include="Scaleforms\ScaleformUI\ScaleformUI.cs" />
     <Compile Include="Scaleforms\PauseMenu\PauseMenuScaleform.cs" />
     <Compile Include="Scaleforms\PopupWarning\PopupWarning.cs" />
     <Compile Include="Scaleforms\Scoreboard\PlayerListHandler.cs" />
