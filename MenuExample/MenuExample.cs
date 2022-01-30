@@ -11,13 +11,13 @@ using ScaleformUI.PauseMenu;
 
 public class MenuExample : BaseScript
 {
-	private bool ketchup = true;
+	private bool enabled = true;
 	private string dish = "Banana";
 	private MenuPool _menuPool;
 
 	public void ExampleMenu()
     {
-		UIMenu exampleMenu = new UIMenu("Native UI", "ScaleformUI SHOWCASE", new PointF(20, 20), true); // true means add menu Glare scaleform to the menu
+		UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI SHOWCASE", new PointF(20, 20), true); // true means add menu Glare scaleform to the menu
 		// let's add the menu to the Pool
 		_menuPool.Add(exampleMenu);
 
@@ -25,7 +25,7 @@ public class MenuExample : BaseScript
 
 		#region Ketchup
 
-		var ketchupItem = new UIMenuCheckboxItem("Add ketchup?", UIMenuCheckboxStyle.Cross, ketchup, "Do you wish to add ketchup?");
+		var ketchupItem = new UIMenuCheckboxItem("Scrolling animation enabled?", UIMenuCheckboxStyle.Tick, enabled, "Do you wish to enable the scrolling animation?");
 		exampleMenu.AddItem(ketchupItem);
 
 		#endregion
@@ -37,22 +37,36 @@ public class MenuExample : BaseScript
 		cookItem.SetLeftBadge(BadgeIcon.STAR);
 		cookItem.SetRightBadge(BadgeIcon.TICK);
 
-		var colorItem = new UIMenuItem("UIMenuItem with Colors", "~b~Look!!~r~I can be colored ~y~too!!~w~", HudColor.HUD_COLOUR_PURPLE, HudColor.HUD_COLOUR_PINK);
+		var colorItem = new UIMenuItem("UIMenuItem with Colors", "~b~Look!!~r~I can be colored ~y~too!!~w~~n~Every item now supports custom colors!", HudColor.HUD_COLOUR_PURPLE, HudColor.HUD_COLOUR_PINK);
 		exampleMenu.AddItem(colorItem);
 
 		var foodsList = new List<dynamic>
 		{
-			"Banana",
-			"Apple",
-			"Pizza",
-			"Quartilicious",
-			0xF00D, // Dynamic!
-        };
+			"LINEAR",
+			"QUADRATIC_IN",
+			"QUADRATIC_OUT",
+			"QUADRATIC_INOUT",
+			"CUBIC_IN",
+			"CUBIC_OUT",
+			"CUBIC_INOUT",
+			"QUARTIC_IN",
+			"QUARTIC_OUT",
+			"QUARTIC_INOUT",
+			"SINE_IN",
+			"SINE_OUT",
+			"SINE_INOUT",
+			"BACK_IN",
+			"BACK_OUT",
+			"BACK_INOUT",
+			"CIRCULAR_IN",
+			"CIRCULAR_OUT",
+			"CIRCULAR_INOUT"
+		};
 
 		var BlankItem = new UIMenuSeparatorItem();
 		exampleMenu.AddItem(BlankItem);
 
-		var colorListItem = new UIMenuListItem("Colored ListItem.. Really?", foodsList, 0, "~BLIP_BARBER~ ~BLIP_INFO_ICON~ ~BLIP_TANK~ ~BLIP_OFFICE~ ~BLIP_CRIM_DRUGS~ ~BLIP_WAYPOINT~ ~INPUTGROUP_MOVE~~n~You can use Blips and Inputs in description as you prefer!", HudColor.HUD_COLOUR_PURPLE, HudColor.HUD_COLOUR_PINK);
+		var colorListItem = new UIMenuListItem("Choose the scrolling animation", foodsList, (int)exampleMenu.AnimationType, "~BLIP_BARBER~ ~BLIP_INFO_ICON~ ~BLIP_TANK~ ~BLIP_OFFICE~ ~BLIP_CRIM_DRUGS~ ~BLIP_WAYPOINT~ ~INPUTGROUP_MOVE~~n~You can use Blips and Inputs in description as you prefer!", HudColor.HUD_COLOUR_FREEMODE_DARK, HudColor.HUD_COLOUR_FREEMODE);
 		exampleMenu.AddItem(colorListItem);
 
 		var slider = new UIMenuSliderItem("Slider Item", "Cool!", true); // by default max is 100 and multipler 5 = 20 steps.
@@ -673,8 +687,10 @@ public class MenuExample : BaseScript
 		{
 			if (item == ketchupItem)
 			{
-				ketchup = checked_;
-				Notifications.ShowNotification("~r~Ketchup status: ~b~" + ketchup);
+				enabled = checked_;
+				sender.EnableAnimation = enabled;
+				colorListItem.Enabled = enabled;
+				Notifications.ShowNotification("~r~Menu animation: ~b~" + (enabled?"Enabled":"Disabled"));
 			}
 		};
 
@@ -682,7 +698,7 @@ public class MenuExample : BaseScript
 		{
 			if (item == cookItem)
 			{
-				string output = ketchup ? "You have ordered ~b~{0}~w~ ~r~with~w~ ketchup." : "You have ordered ~b~{0}~w~ ~r~without~w~ ketchup.";
+				string output = enabled ? "You have ordered ~b~{0}~w~ ~r~with~w~ ketchup." : "You have ordered ~b~{0}~w~ ~r~without~w~ ketchup.";
 				Screen.ShowSubtitle(String.Format(output, dish));
 			}
 		};
@@ -693,6 +709,11 @@ public class MenuExample : BaseScript
 				cookItem.SetLeftBadge(BadgeIcon.NONE);
 		};
 
+		exampleMenu.OnListChange += (sender, item, index) =>
+		{
+			if (item == colorListItem)
+				sender.AnimationType = (MenuAnimationType)index;
+		};
 		exampleMenu.OnMenuStateChanged += (oldMenu, newMenu, state) =>
 		{
 			if (state == MenuState.Opened)

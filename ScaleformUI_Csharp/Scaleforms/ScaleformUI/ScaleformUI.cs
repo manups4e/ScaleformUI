@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ScaleformUI
 {
-    public class ScaleformUI: BaseScript
+    public class ScaleformUI : BaseScript
     {
         public static PauseMenuScaleform PauseMenu { get; set; }
         public static MediumMessageHandler MedMessageInstance { get; set; }
@@ -17,6 +17,7 @@ namespace ScaleformUI
         public static PopupWarning Warning { get; set; }
         public static PlayerListHandler PlayerListInstance { get; set; }
         public static MissionSelectorHandler JobMissionSelection { get; set; }
+
         internal static Scaleform _ui { get; set; }
         public ScaleformUI()
         {
@@ -31,7 +32,8 @@ namespace ScaleformUI
             InstructionalButtons.Load();
             Tick += ScaleformUIThread_Tick;
 
-            EventHandlers["onResourceStop"] += new Action<string>((resName) => {
+            EventHandlers["onResourceStop"] += new Action<string>((resName) =>
+            {
                 if (resName == API.GetCurrentResourceName())
                 {
                     _ui.Dispose();
@@ -41,14 +43,14 @@ namespace ScaleformUI
 
         }
 
-    private async Task ScaleformUIThread_Tick()
+        private async Task ScaleformUIThread_Tick()
         {
             Warning.Update();
             MedMessageInstance.Update();
             BigMessageInstance.Update();
             PlayerListInstance.Update();
             JobMissionSelection.Update();
-            InstructionalButtons.HandleScaleform();
+            InstructionalButtons.Update();
 
             if (_ui is null)
                 _ui = new Scaleform("ScaleformUI");

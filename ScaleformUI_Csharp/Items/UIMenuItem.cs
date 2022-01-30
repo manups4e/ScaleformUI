@@ -389,10 +389,10 @@ namespace ScaleformUI
                 description = value;
                 if (Parent is not null)
                 {
-                    API.AddTextEntry($"desc_{Parent.MenuItems.IndexOf(this)}", description);
+                    API.AddTextEntry($"menu_{Parent._poolcontainer._menuList.IndexOf(Parent)}_desc_{Parent.MenuItems.IndexOf(this)}", description);
                     API.BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "UPDATE_ITEM_DESCRIPTION");
                     API.ScaleformMovieMethodAddParamInt(Parent.MenuItems.IndexOf(this));
-                    API.BeginTextCommandScaleformString($"desc_{Parent.MenuItems.IndexOf(this)}");
+                    API.BeginTextCommandScaleformString($"menu_{Parent._poolcontainer._menuList.IndexOf(Parent)}_desc_{Parent.MenuItems.IndexOf(this)}");
                     API.EndTextCommandScaleformString_2();
                     API.EndScaleformMovieMethod();
                 }
