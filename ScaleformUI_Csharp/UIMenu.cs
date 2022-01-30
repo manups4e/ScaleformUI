@@ -862,7 +862,7 @@ namespace ScaleformUI
         internal KeyValuePair<string, string> _customTexture;
 
         //Pagination
-        private const int MaxItemsOnScreen = 9;
+        private const int MaxItemsOnScreen = 7;
         private int _minItem;
         private int _maxItem = MaxItemsOnScreen;
         private bool mouseWheelControlEnabled = true;
@@ -880,7 +880,7 @@ namespace ScaleformUI
 
         internal MenuPool _poolcontainer;
 
-        private bool Glare;
+        public bool Glare { get; set; }
 
         internal readonly static string _selectTextLocalized = Game.GetGXTEntry("HUD_INPUT2");
         internal readonly static string _backTextLocalized = Game.GetGXTEntry("HUD_INPUT3");
@@ -949,7 +949,6 @@ namespace ScaleformUI
         public bool ResetCursorOnOpen = true;
         [Obsolete("The description is now formated automatically by the game.")]
         public bool MouseControlsEnabled = true;
-        public bool ScaleWithSafezone = true;
 
         public PointF Offset { get; }
 
