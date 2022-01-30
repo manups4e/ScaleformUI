@@ -821,1390 +821,1467 @@ namespace ScaleformUI
 	public delegate void PercentagePanelChangedEvent(UIMenuItem menu, UIMenuPercentagePanel panel, float value);
 	public delegate void GridPanelChangedEvent(UIMenuItem menu, UIMenuGridPanel panel, PointF value);
 
-	#endregion
-
-	/// <summary>
-	/// Base class for ScaleformUI. Calls the next events: OnIndexChange, OnListChanged, OnCheckboxChange, OnItemSelect, OnMenuClose, OnMenuchange.
-	/// </summary>
-	public class UIMenu
+	public enum MenuAnimationType
 	{
-		#region Private Fields
-		private int _activeItem = 0;
-
-		private bool _visible;
-		private bool _buttonsEnabled = true;
-		private bool _justOpened = true;
-		private bool _itemsDirty = false;
-
-		internal KeyValuePair<string, string> _customTexture;
-
-		//Pagination
-		private const int MaxItemsOnScreen = 9;
-		private int _minItem;
-		private int _maxItem = MaxItemsOnScreen;
-		private bool mouseWheelControlEnabled = true;
-		private int menuSound;
-		//Keys
-		private readonly Dictionary<MenuControls, Tuple<List<Keys>, List<Tuple<Control, int>>>> _keyDictionary =
-			new Dictionary<MenuControls, Tuple<List<Keys>, List<Tuple<Control, int>>>>();
-
-		private List<string> spriteDicts = new();
-		private readonly Scaleform _menuGlare;
-
-		private static readonly MenuControls[] _menuControls = Enum.GetValues(typeof(MenuControls)).Cast<MenuControls>().ToArray();
-
-		internal MenuPool _poolcontainer;
-
-		private bool Glare;
-
-		internal readonly static string _selectTextLocalized = Game.GetGXTEntry("HUD_INPUT2");
-		internal readonly static string _backTextLocalized = Game.GetGXTEntry("HUD_INPUT3");
-		protected readonly SizeF Resolution = ScreenTools.ResolutionMaintainRatio;
-		protected internal int _pressingTimer = 0;
-		#endregion
-
-		#region Public Fields
-
-		public string AUDIO_LIBRARY = "HUD_FRONTEND_DEFAULT_SOUNDSET";
-
-		public string AUDIO_UPDOWN = "NAV_UP_DOWN";
-		public string AUDIO_LEFTRIGHT = "NAV_LEFT_RIGHT";
-		public string AUDIO_SELECT = "SELECT";
-		public string AUDIO_BACK = "BACK";
-		public string AUDIO_ERROR = "ERROR";
-
-		public List<UIMenuItem> MenuItems = new List<UIMenuItem>();
-
-		public bool MouseEdgeEnabled = true;
-		public bool ControlDisablingEnabled = true;
-		public bool MouseWheelControlEnabled
-		{
-			get => mouseWheelControlEnabled;
-			set
-			{
-				mouseWheelControlEnabled = value;
-				if (value)
-				{
-					SetKey(MenuControls.Up, Control.CursorScrollUp);
-					SetKey(MenuControls.Down, Control.CursorScrollDown);
-				}
-				else
-				{
-					ResetKey(MenuControls.Up);
-					ResetKey(MenuControls.Down);
-					SetKey(MenuControls.Up, Control.PhoneUp);
-					SetKey(MenuControls.Down, Control.PhoneDown);
-				}
-			}
-		}
-		public bool ResetCursorOnOpen = true;
-		[Obsolete("The description is now formated automatically by the game.")]
-		public bool MouseControlsEnabled = true;
-		public bool ScaleWithSafezone = true;
-
-		public PointF Offset { get; }
-
-		public string BannerTexture { get; private set; }
-
-		public List<UIMenuHeritageWindow> Windows = new List<UIMenuHeritageWindow>();
-
-		public List<InstructionalButton> InstructionalButtons = new List<InstructionalButton>()
-		{
-			new InstructionalButton(Control.PhoneSelect, _selectTextLocalized),
-			new InstructionalButton(Control.PhoneCancel, _backTextLocalized)
-		};
-
-		#endregion
-
-		#region Events
-
-		/// <summary>
-		/// Called when user presses up or down, changing current selection.
-		/// </summary>
-		public event IndexChangedEvent OnIndexChange;
-
-		/// <summary>
-		/// Called when user presses left or right, changing a list position.
-		/// </summary>
-		public event ListChangedEvent OnListChange;
-
-		/// <summary>
-		/// Called when user selects a list item.
-		/// </summary>
-		public event ListSelectedEvent OnListSelect;
-
-		/// <summary>
-		/// Called when user presses left or right, changing a slider position.
-		/// </summary>
-		public event SliderChangedEvent OnSliderChange;
-
-		/// <summary>
-		/// Called when user presses left or right, changing a the index of a color panel.
-		/// </summary>
-		public event ColorPanelChangedEvent OnColorPanelChange;
-
-		/// <summary>
-		/// Called when user changes the value of a percentage panel.
-		/// </summary>
-		public event PercentagePanelChangedEvent OnPercentagePanelChange;
-
-		/// <summary>
-		/// Called when user changes value of a grid panel.
-		/// </summary>
-		public event GridPanelChangedEvent OnGridPanelChange;
-
-		/// <summary>
-		/// Called When user changes progress in a ProgressItem.
-		/// </summary>
-		public event OnProgressChanged OnProgressChange;
-
-		/// <summary>
-		/// Called when user either clicks on a ProgressItem.
-		/// </summary>
-		public event OnProgressSelected OnProgressSelect;
-
-		/// <summary>
-		/// Called when user presses enter on a checkbox item.
-		/// </summary>
-		public event CheckboxChangeEvent OnCheckboxChange;
-
-		/// <summary>
-		/// Called when user selects a simple item.
-		/// </summary>
-		public event ItemSelectEvent OnItemSelect;
-
-		/// <summary>
-		/// Called when user either opens or closes the main menu, clicks on a binded button, goes back to a parent menu.
-		/// </summary>
-		public event MenuStateChangeEvent OnMenuStateChanged;
-
-		/// <summary>
-		/// Called every time a Stat item changes value
-		/// </summary>
-		public event StatItemProgressChange OnStatsItemChanged;
-		#endregion
-
-		#region Constructors
-
-		/// <summary>
-		/// Basic Menu constructor.
-		/// </summary>
-		/// <param name="title">Title that appears on the big banner.</param>
-		/// <param name="subtitle">Subtitle that appears in capital letters in a small black bar.</param>
-		/// <param name="glare">Add menu Glare scaleform?.</param>
-		public UIMenu(string title, string subtitle, bool glare = false) : this(title, subtitle, new PointF(0, 0), "commonmenu", "interaction_bgd", glare)
-		{
-		}
-
-
-		/// <summary>
-		/// Basic Menu constructor with an offset.
-		/// </summary>
-		/// <param name="title">Title that appears on the big banner.</param>
-		/// <param name="subtitle">Subtitle that appears in capital letters in a small black bar. Set to "" if you dont want a subtitle.</param>
-		/// <param name="offset">PointF object with X and Y data for offsets. Applied to all menu elements.</param>
-		/// <param name="glare">Add menu Glare scaleform?.</param>
-		public UIMenu(string title, string subtitle, PointF offset, bool glare = false) : this(title, subtitle, offset, "commonmenu", "interaction_bgd", glare)
-		{
-		}
-
-		/// <summary>
-		/// Initialise a menu with a custom texture banner.
-		/// </summary>
-		/// <param name="title">Title that appears on the big banner. Set to "" if you don't want a title.</param>
-		/// <param name="subtitle">Subtitle that appears in capital letters in a small black bar. Set to "" if you dont want a subtitle.</param>
-		/// <param name="offset">PointF object with X and Y data for offsets. Applied to all menu elements.</param>
-		/// <param name="customBanner">Path to your custom texture.</param>
-		/// <param name="glare">Add menu Glare scaleform?.</param>
-		public UIMenu(string title, string subtitle, PointF offset, KeyValuePair<string, string> customBanner, bool glare = false) : this(title, subtitle, offset, customBanner.Key, customBanner.Value, glare)
-		{
-		}
-
-
-		/// <summary>
-		/// Advanced Menu constructor that allows custom title banner.
-		/// </summary>
-		/// <param name="title">Title that appears on the big banner. Set to "" if you are using a custom banner.</param>
-		/// <param name="subtitle">Subtitle that appears in capital letters in a small black bar.</param>
-		/// <param name="offset">PointF object with X and Y data for offsets. Applied to all menu elements.</param>
-		/// <param name="spriteLibrary">Sprite library name for the banner.</param>
-		/// <param name="spriteName">Sprite name for the banner.</param>
-		/// <param name="glare">Add menu Glare scaleform?.</param>
-		public UIMenu(string title, string subtitle, PointF offset, string spriteLibrary, string spriteName, bool glare = false)
-		{
-			_customTexture = new KeyValuePair<string, string>(spriteLibrary, spriteName);
-			Offset = offset;
-			Children = new Dictionary<UIMenuItem, UIMenu>();
-			WidthOffset = 0;
-			Glare = glare;
-			_menuGlare = new Scaleform("mp_menu_glare");
-			Title = title;
-			Subtitle = subtitle;
-			MouseWheelControlEnabled = true;
-			LoadScaleform();
-			SetKey(MenuControls.Up, Control.PhoneUp);
-			SetKey(MenuControls.Down, Control.PhoneDown);
-
-			SetKey(MenuControls.Left, Control.PhoneLeft);
-			SetKey(MenuControls.Right, Control.PhoneRight);
-			SetKey(MenuControls.Select, Control.FrontendAccept);
-
-			SetKey(MenuControls.Back, Control.PhoneCancel);
-			SetKey(MenuControls.Back, Control.FrontendPause);
-		}
-
-		#endregion
-
-		#region Static Methods
-		/// <summary>
-		/// Toggles the availability of the controls.
-		/// It does not disable the basic movement and frontend controls.
-		/// </summary>
-		/// <param name="enable"></param>
-		/// <param name="toggle">If we want to enable or disable the controls.</param>
-		[Obsolete("Use Controls.Toggle instead.", true)]
-		public static void DisEnableControls(bool toggle) => Controls.Toggle(toggle);
-
-		/// <summary>
-		/// Returns the 1080pixels-based screen resolution while mantaining current aspect ratio.
-		/// </summary>
-		[Obsolete("Use ScreenTools.ResolutionMaintainRatio instead.", true)]
-		public static SizeF GetScreenResolutionMaintainRatio() => ScreenTools.ResolutionMaintainRatio;
-
-		/// <summary>
-		/// ScreenTools.ResolutionMaintainRatio for providing backwards compatibility.
-		/// </summary>
-		/// <returns></returns>
-		[Obsolete("Use ScreenTools.ResolutionMaintainRatio instead.", true)]
-		public static SizeF GetScreenResiolutionMantainRatio() => ScreenTools.ResolutionMaintainRatio;
-
-		/// <summary>
-		/// Chech whether the mouse is inside the specified rectangle.
-		/// </summary>
-		/// <param name="topLeft">Start point of the rectangle at the top left.</param>
-		/// <param name="boxSize">size of your rectangle.</param>
-		/// <returns>true if the mouse is inside of the specified bounds, false otherwise.</returns>
-		[Obsolete("Use ScreenTools.IsMouseInBounds instead.", true)]
-		public static bool IsMouseInBounds(Point topLeft, Size boxSize) => ScreenTools.IsMouseInBounds(topLeft, boxSize);
-
-		/// <summary>
-		/// Returns the safezone bounds in pixel, relative to the 1080pixel based system.
-		/// </summary>
-		[Obsolete("Use ScreenTools.SafezoneBounds instead.", true)]
-		public static Point GetSafezoneBounds() => ScreenTools.SafezoneBounds;
-
-		#endregion
-
-		#region Public Methods
-		/// <summary>
-		/// Change the menu's width. The width is calculated as DefaultWidth + WidthOffset, so a width offset of 10 would enlarge the menu by 10 pixels.
-		/// </summary>
-		/// <param name="widthOffset">New width offset.</param>
-		public void SetMenuWidthOffset(int widthOffset)
-		{
-			WidthOffset = widthOffset;
-		}
-
-		/// <summary>
-		/// Enable or disable the instructional buttons.
-		/// </summary>
-		/// <param name="disable"></param>
-		public void DisableInstructionalButtons(bool disable)
-		{
-			ScaleformUI.InstructionalButtons.Enabled = !disable;
-		}
-
-		/// <summary>
-		/// Set the banner to your own custom texture. Set it to "" if you want to restore the banner.
-		/// </summary>
-		/// <param name="pathToCustomSprite">Path to your sprite image.</param>
-		public void SetBannerType(KeyValuePair<string, string> pathToCustomSprite)
-		{
-			_customTexture = pathToCustomSprite;
-		}
-
-		/// <summary>
-		/// Add an item to the menu.
-		/// </summary>
-		/// <param name="item">Item object to be added. Can be normal item, checkbox or list item.</param>
-		public async void AddItem(UIMenuItem item)
-		{
-			int selectedItem = CurrentSelection;
-			item.Parent = this;
-			MenuItems.Add(item);
-			CurrentSelection = selectedItem;
-		}
-
-		/// <summary>
-		/// Add a new Heritage Window to the Menu
-		/// </summary>
-		/// <param name="window"></param>
-		public void AddWindow(UIMenuHeritageWindow window)
-		{
-			window.ParentMenu = this;
-			Windows.Add(window);
-		}
-
-		/// <summary>
-		/// Removes Windows at given index
-		/// </summary>
-		/// <param name="index"></param>
-		public void RemoveWindowAt(int index)
-		{
-			Windows.RemoveAt(index);
-		}
-
-		/// <summary>
-		/// If a Description is changed during some events after the menu as been opened this updates the description live
-		/// </summary>
-		public void UpdateDescription()
-		{
-			// SCALEFORM FUNC PER AGG DESCRIZIONE
-		}
-
-		/// <summary>
-		/// Remove an item at index n.
-		/// </summary>
-		/// <param name="index">Index to remove the item at.</param>
-		public void RemoveItemAt(int index)
-		{
-			int selectedItem = CurrentSelection;
-			if (Size > MaxItemsOnScreen && _maxItem == Size - 1)
-			{
-				_maxItem--;
-				_minItem--;
-			}
-			MenuItems.RemoveAt(index);
-			CurrentSelection = selectedItem;
-		}
-
-		/// <summary>
-		/// Reset the current selected item to 0. Use this after you add or remove items dynamically.
-		/// </summary>
-		public void RefreshIndex()
-		{
-			if (MenuItems.Count == 0)
-			{
-				_activeItem = 1000;
-				_maxItem = MaxItemsOnScreen;
-				_minItem = 0;
-				return;
-			}
-			MenuItems[_activeItem % (MenuItems.Count)].Selected = false;
-			_activeItem = 1000 - (1000 % MenuItems.Count);
-			_maxItem = MaxItemsOnScreen;
-			_minItem = 0;
-		}
-
-		/// <summary>
-		/// Remove all items from the menu.
-		/// </summary>
-		public void Clear()
-		{
-			MenuItems.Clear();
-		}
-
-		/// <summary>
-		/// Removes the items that matches the predicate.
-		/// </summary>
-		/// <param name="predicate">The function to use as the check.</param>
-		public void Remove(Func<UIMenuItem, bool> predicate)
-		{
-			List<UIMenuItem> TempList = new List<UIMenuItem>(MenuItems);
-			foreach (UIMenuItem item in TempList)
-			{
-				if (predicate(item))
-				{
-					MenuItems.Remove(item);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Set a key to control a menu. Can be multiple keys for each control.
-		/// </summary>
-		/// <param name="control"></param>
-		/// <param name="keyToSet"></param>
-		public void SetKey(MenuControls control, Keys keyToSet)
-		{
-			if (_keyDictionary.ContainsKey(control))
-				_keyDictionary[control].Item1.Add(keyToSet);
-			else
-			{
-				_keyDictionary.Add(control,
-					new Tuple<List<Keys>, List<Tuple<Control, int>>>(new List<Keys>(), new List<Tuple<Control, int>>()));
-				_keyDictionary[control].Item1.Add(keyToSet);
-			}
-		}
-
-
-		/// <summary>
-		/// Set a GTA.Control to control a menu. Can be multiple controls. This applies it to all indexes.
-		/// </summary>
-		/// <param name="control"></param>
-		/// <param name="gtaControl"></param>
-		public void SetKey(MenuControls control, Control gtaControl)
-		{
-			SetKey(control, gtaControl, 0);
-			SetKey(control, gtaControl, 1);
-			SetKey(control, gtaControl, 2);
-		}
-
-
-		/// <summary>
-		/// Set a GTA.Control to control a menu only on a specific index.
-		/// </summary>
-		/// <param name="control"></param>
-		/// <param name="gtaControl"></param>
-		/// <param name="controlIndex"></param>
-		public void SetKey(MenuControls control, Control gtaControl, int controlIndex)
-		{
-			if (_keyDictionary.ContainsKey(control))
-				_keyDictionary[control].Item2.Add(new Tuple<Control, int>(gtaControl, controlIndex));
-			else
-			{
-				_keyDictionary.Add(control,
-					new Tuple<List<Keys>, List<Tuple<Control, int>>>(new List<Keys>(), new List<Tuple<Control, int>>()));
-				_keyDictionary[control].Item2.Add(new Tuple<Control, int>(gtaControl, controlIndex));
-			}
-
-		}
-
-
-		/// <summary>
-		/// Remove all controls on a control.
-		/// </summary>
-		/// <param name="control"></param>
-		public void ResetKey(MenuControls control)
-		{
-			_keyDictionary[control].Item1.Clear();
-			_keyDictionary[control].Item2.Clear();
-		}
-
-
-		/// <summary>
-		/// Check whether a menucontrol has been pressed.
-		/// </summary>
-		/// <param name="control">Control to check for.</param>
-		/// <param name="key">Key if you're using keys.</param>
-		/// <returns></returns>
-		public bool HasControlJustBeenPressed(MenuControls control, Keys key = Keys.None)
-		{
-			List<Keys> tmpKeys = new List<Keys>(_keyDictionary[control].Item1);
-			List<Tuple<Control, int>> tmpControls = new List<Tuple<Control, int>>(_keyDictionary[control].Item2);
-
-			if (key != Keys.None)
-			{
-				//if (tmpKeys.Any(Game.IsKeyPressed))
-				//    return true;
-			}
-			if (tmpControls.Any(tuple => Game.IsControlJustPressed(tuple.Item2, tuple.Item1)))
-				return true;
-			return false;
-		}
-
-
-		/// <summary>
-		/// Check whether a menucontrol has been released.
-		/// </summary>
-		/// <param name="control">Control to check for.</param>
-		/// <param name="key">Key if you're using keys.</param>
-		/// <returns></returns>
-		public bool HasControlJustBeenReleaseed(MenuControls control, Keys key = Keys.None)
-		{
-			List<Keys> tmpKeys = new List<Keys>(_keyDictionary[control].Item1);
-			List<Tuple<Control, int>> tmpControls = new List<Tuple<Control, int>>(_keyDictionary[control].Item2);
-
-			if (key != Keys.None)
-			{
-				//if (tmpKeys.Any(Game.IsKeyPressed))
-				//    return true;
-			}
-			if (tmpControls.Any(tuple => Game.IsControlJustReleased(tuple.Item2, tuple.Item1)))
-				return true;
-			return false;
-		}
-
-		private int _controlCounter;
-
-		/// <summary>
-		/// Check whether a menucontrol is being pressed.
-		/// </summary>
-		/// <param name="control"></param>
-		/// <param name="key"></param>
-		/// <returns></returns>
-		public bool IsControlBeingPressed(MenuControls control, Keys key = Keys.None)
-		{
-			List<Keys> tmpKeys = new List<Keys>(_keyDictionary[control].Item1);
-			List<Tuple<Control, int>> tmpControls = new List<Tuple<Control, int>>(_keyDictionary[control].Item2);
-			if (HasControlJustBeenReleaseed(control, key)) _controlCounter = 0;
-			if (_controlCounter > 0)
-			{
-				_controlCounter++;
-				if (_controlCounter > 30)
-					_controlCounter = 0;
-				return false;
-			}
-			if (key != Keys.None)
-			{
-				//if (tmpKeys.Any(Game.IsKeyPressed))
-				//{
-				//    _controlCounter = 1;
-				//    return true;
-				//}
-			}
-			if (tmpControls.Any(tuple => Game.IsControlPressed(tuple.Item2, tuple.Item1)))
-			{
-				_controlCounter = 1;
-				return true;
-			}
-			return false;
-		}
-
-		[Obsolete("Use InstructionalButtons.Add instead")]
-		public void AddInstructionalButton(InstructionalButton button)
-		{
-			//_instructionalButtons.Add(button);
-		}
-
-		[Obsolete("Use InstructionalButtons.Remove instead")]
-		public void RemoveInstructionalButton(InstructionalButton button)
-		{
-			//_instructionalButtons.Remove(button);
-		}
-
-		/// <summary>
-		/// Makes the specified item open a menu when is activated.
-		/// </summary>
-		/// <param name="menuToBind">The menu that is going to be opened when the item is activated.</param>
-		/// <param name="itemToBindTo">The item that is going to activate the menu.</param>
-		public void BindMenuToItem(UIMenu menuToBind, UIMenuItem itemToBindTo)
-		{
-			if (!MenuItems.Contains(itemToBindTo))
-				AddItem(itemToBindTo);
-			menuToBind.ParentMenu = this;
-			menuToBind.ParentItem = itemToBindTo;
-			if (Children.ContainsKey(itemToBindTo))
-				Children[itemToBindTo] = menuToBind;
-			else
-				Children.Add(itemToBindTo, menuToBind);
-		}
-
-
-		/// <summary>
-		/// Remove menu binding from button.
-		/// </summary>
-		/// <param name="releaseFrom">Button to release from.</param>
-		/// <returns>Returns true if the operation was successful.</returns>
-		public bool ReleaseMenuFromItem(UIMenuItem releaseFrom)
-		{
-			if (!Children.ContainsKey(releaseFrom)) return false;
-			Children[releaseFrom].ParentItem = null;
-			Children[releaseFrom].ParentMenu = null;
-			Children.Remove(releaseFrom);
-			return true;
-		}
-
-		#endregion
-
-		#region Drawing & Processing
-		/// <summary>
-		/// Draw the menu and all of it's components.
-		/// </summary>
-		public async Task Draw()
-		{
-			if (!Visible || ScaleformUI.Warning.IsShowing) return;
-			while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
-
-			if (ControlDisablingEnabled)
-				Controls.Toggle(false);
-
-			float x = Offset.X / Screen.Width;
-			float y = Offset.Y / Screen.Height;
-			float width = 1280 / Screen.ScaledWidth;
-			float height = 720 / Screen.Height;
-
-			DrawScaleformMovie(ScaleformUI._ui.Handle, x + (width / 2.0f), y + (height / 2.0f), width, height, 255, 255, 255, 255, 0);
-
-			if (Glare)
-			{
-				_menuGlare.CallFunction("SET_DATA_SLOT", GameplayCamera.RelativeHeading);
-				SizeF _glareSize = new SizeF(1.0f, 1f);
-				PointF gl = new PointF((Offset.X / Screen.Width) + 0.4499f, (Offset.Y / Screen.Height) + 0.449f);
-
-				DrawScaleformMovie(_menuGlare.Handle, gl.X, gl.Y, _glareSize.Width, _glareSize.Height, 255, 255, 255, 255, 0);
-			}
-		}
-
-		/// <summary>
-		/// Process the mouse's position and check if it's hovering over any UI element. Call this in OnTick
-		/// </summary>
-		public async void ProcessMouse()
-		{
-			if (!Visible || _justOpened || MenuItems.Count == 0 || IsUsingController || !MouseControlsEnabled)
-			{
-				Game.EnableControlThisFrame(0, Control.LookUpDown);
-				Game.EnableControlThisFrame(0, Control.LookLeftRight);
-				Game.EnableControlThisFrame(0, Control.Aim);
-				Game.EnableControlThisFrame(0, Control.Attack);
-				Game.EnableControlThisFrame(1, Control.LookUpDown);
-				Game.EnableControlThisFrame(1, Control.LookLeftRight);
-				Game.EnableControlThisFrame(1, Control.Aim);
-				Game.EnableControlThisFrame(1, Control.Attack);
-				Game.EnableControlThisFrame(2, Control.LookUpDown);
-				Game.EnableControlThisFrame(2, Control.LookLeftRight);
-				Game.EnableControlThisFrame(2, Control.Aim);
-				Game.EnableControlThisFrame(2, Control.Attack);
-				if (_itemsDirty)
-				{
-					MenuItems.Where(i => i.Hovered).ToList().ForEach(i => i.Hovered = false);
-					_itemsDirty = false;
-				}
-				return;
-			}
-
-			ShowCursorThisFrame();
-
-			if (ScreenTools.IsMouseInBounds(new PointF(0, 0), new SizeF(30, 1080)) && MouseEdgeEnabled)
-			{
-				GameplayCamera.RelativeHeading += 5f;
-				SetCursorSprite(6);
-			}
-			else if (ScreenTools.IsMouseInBounds(new PointF(Convert.ToInt32(Resolution.Width - 30f), 0), new SizeF(30, 1080)) && MouseEdgeEnabled)
-			{
-				GameplayCamera.RelativeHeading -= 5f;
-				SetCursorSprite(7);
-			}
-			else if (MouseEdgeEnabled)
-			{
-				SetCursorSprite(1);
-			}
-
-			// SE HOVERED
-			// SetMouseCursorSprite(5);
-
-			if (Game.IsControlJustPressed(0, Control.Attack))
-			{
-				PointF mouse = new PointF(GetDisabledControlNormal(0, 239) * Screen.ScaledWidth - Offset.X, GetDisabledControlNormal(0, 240) * Screen.Height - Offset.Y);
-				BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_INPUT_MOUSE_EVENT_SINGLE");
-				ScaleformMovieMethodAddParamFloat(mouse.X);
-				ScaleformMovieMethodAddParamFloat(mouse.Y);
-				var ret = EndScaleformMovieMethodReturnValue();
-				while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-				var res = GetScaleformMovieMethodReturnValueString(ret);
-				var split = res.Split(',');
-				var type = split[0];
-				var selection = Convert.ToInt32(split[1]);
-				switch (type)
-				{
-					case "it":
-						{
-							if (CurrentSelection != selection)
-							{
-								CurrentSelection = selection;
-							}
-							else
-							{
-								switch (Convert.ToInt32(split[2]))
-								{
-									case 0:
-									case 2:
-										Select(false);
-										break;
-									case 1:
-										{
-											UIMenuListItem it = (UIMenuListItem)MenuItems[CurrentSelection];
-											it.Index = Convert.ToInt32(split[3]);
-											ListChange(it, it.Index);
-											it.ListChangedTrigger(it.Index);
-										}
-										break;
-									case 3:
-										{
-											UIMenuSliderItem it = (UIMenuSliderItem)MenuItems[CurrentSelection];
-											it.Value = (int)(Convert.ToSingle(split[3]));
-											it.SliderChanged(it.Value);
-											SliderChange(it, it.Value);
-										}
-										break;
-									case 4:
-										{
-											UIMenuProgressItem it = (UIMenuProgressItem)MenuItems[CurrentSelection];
-											it.Value = (int)(Convert.ToSingle(split[3]));
-											it.ProgressChanged(it.Value);
-											ProgressChange(it, it.Value);
-										}
-										break;
-								}
-							}
-							break;
-						}
-
-					case "pan":
-						if (Convert.ToInt32(split[2]) == 0)
-						{
-							var panel = (UIMenuColorPanel)MenuItems[CurrentSelection].Panels[selection];
-							panel._value = Convert.ToInt32(split[3]);
-							ColorPanelChange(panel.ParentItem, panel, panel.CurrentSelection);
-							panel.PanelChanged();
-						}
-						break;
-				}
-			}
-			else if (Game.IsControlPressed(0, Control.Attack))
-			{
-				PointF mouse = new PointF(GetDisabledControlNormal(0, 239) * Screen.ScaledWidth - Offset.X, GetDisabledControlNormal(0, 240) * Screen.Height - Offset.Y);
-				BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_INPUT_MOUSE_EVENT_CONTINUE");
-				ScaleformMovieMethodAddParamFloat(mouse.X);
-				ScaleformMovieMethodAddParamFloat(mouse.Y);
-				var ret = EndScaleformMovieMethodReturnValue();
-				while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-				var res = GetScaleformMovieMethodReturnValueString(ret);
-				var split = res.Split(',');
-
-				var selection = Convert.ToInt32(split[1]);
-				var _type = Convert.ToInt32(split[2]);
-				var value = Convert.ToSingle(split[3]);
-				switch (split[0])
-				{
-					case "pan":
-						switch (_type)
-						{
-							case 1:
-								{
-									var panel = (UIMenuPercentagePanel)MenuItems[CurrentSelection].Panels[selection];
-									panel._value = value;
-									PercentagePanelChange(panel.ParentItem, panel, panel.Percentage);
-									panel.PercentagePanelChange();
-									if (HasSoundFinished(menuSound))
-									{
-										menuSound = GetSoundId();
-										API.PlaySoundFrontend(menuSound, "CONTINUOUS_SLIDER", "HUD_FRONTEND_DEFAULT_SOUNDSET", true);
-									}
-								}
-								break;
-							case 2:
-								{
-									var panel = (UIMenuGridPanel)MenuItems[CurrentSelection].Panels[selection];
-									panel._value = new(value, Convert.ToSingle(split[4]));
-									GridPanelChange(panel.ParentItem, panel, panel.CirclePosition);
-									panel.OnGridChange();
-									if (HasSoundFinished(menuSound))
-									{
-										menuSound = GetSoundId();
-										API.PlaySoundFrontend(menuSound, "CONTINUOUS_SLIDER", "HUD_FRONTEND_DEFAULT_SOUNDSET", true);
-									}
-								}
-								break;
-						}
-						break;
-				}
-			}
-			if (!HasSoundFinished(menuSound))
-			{
-				await BaseScript.Delay(1);
-				API.StopSound(menuSound);
-
-				API.ReleaseSoundId(menuSound);
-			}
-		}
-
-		public void GoBack()
-		{
-			Game.PlaySound(AUDIO_BACK, AUDIO_LIBRARY);
-			if (ParentMenu != null)
-			{
-				ScaleformUI._ui.CallFunction("CLEAR_ALL");
-				ScaleformUI.InstructionalButtons.Enabled = true;
-				ScaleformUI.InstructionalButtons.SetInstructionalButtons(ParentMenu.InstructionalButtons);
-				_poolcontainer.MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
-				ParentMenu.MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
-				MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
-				ParentMenu.Visible = true;
-				ParentMenu.BuildUpMenu();
-			}
-			Visible = false;
-		}
-
-		public async void GoUp()
-		{
-			try
-			{
-				MenuItems[CurrentSelection].Selected = false;
-				BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_INPUT_EVENT");
-				ScaleformMovieMethodAddParamInt(8);
-				var ret = EndScaleformMovieMethodReturnValue();
-				while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-				_activeItem = GetScaleformMovieFunctionReturnInt(ret);
-				MenuItems[CurrentSelection].Selected = true;
-				IndexChange(CurrentSelection);
-			}
-			catch(Exception e)
-            {
-				Debug.WriteLine(e.ToString());
-            }
-		}
-		public async void GoDown()
-		{
-			try
-			{
-				MenuItems[CurrentSelection].Selected = false;
-				BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_INPUT_EVENT");
-				ScaleformMovieMethodAddParamInt(9);
-				var ret = EndScaleformMovieMethodReturnValue();
-				while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-				_activeItem = GetScaleformMovieFunctionReturnInt(ret);
-				MenuItems[CurrentSelection].Selected = true;
-				IndexChange(CurrentSelection);
-			}
-			catch (Exception e)
-			{
-				Debug.WriteLine(e.ToString());
-			}
-		}
-		public async void GoLeft()
-		{
-			if (!MenuItems[CurrentSelection].Enabled)
-			{
-				Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
-				return;
-			}
-			BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_INPUT_EVENT");
-			ScaleformMovieMethodAddParamInt(10);
-			var ret = EndScaleformMovieMethodReturnValue();
-			while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-			var res = GetScaleformMovieFunctionReturnInt(ret);
-			switch (MenuItems[CurrentSelection])
-			{
-				case UIMenuListItem:
-					{
-						UIMenuListItem it = (UIMenuListItem)MenuItems[CurrentSelection];
-						it.Index = res;
-						ListChange(it, it.Index);
-						it.ListChangedTrigger(it.Index);
-						break;
-					}
-				case UIMenuSliderItem:
-					{
-						UIMenuSliderItem it = (UIMenuSliderItem)MenuItems[CurrentSelection];
-						it.Value = res;
-						SliderChange(it, it.Value);
-						break;
-					}
-				case UIMenuProgressItem:
-					{
-						UIMenuProgressItem it = (UIMenuProgressItem)MenuItems[CurrentSelection];
-						it.Value= res;
-						ProgressChange(it, it.Value);
-						break;
-					}
-				case UIMenuStatsItem:
-					{
-						UIMenuStatsItem it = (UIMenuStatsItem)MenuItems[CurrentSelection];
-						it.Value = res;
-						StatItemChange(it, it.Value);
-						break;
-					}
-			}
-		}
-
-		public async void GoRight()
-		{
-			if (!MenuItems[CurrentSelection].Enabled)
-			{
-				Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
-				return;
-			}
-			BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_INPUT_EVENT");
-			ScaleformMovieMethodAddParamInt(11);
-			var ret = EndScaleformMovieMethodReturnValue();
-			while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-			var res = GetScaleformMovieFunctionReturnInt(ret);
-			switch (MenuItems[CurrentSelection])
-			{
-				case UIMenuListItem:
-					{
-						UIMenuListItem it = (UIMenuListItem)MenuItems[CurrentSelection];
-						it.Index = res;
-						ListChange(it, it.Index);
-						it.ListChangedTrigger(it.Index);
-						break;
-					}
-				case UIMenuSliderItem:
-					{
-						UIMenuSliderItem it = (UIMenuSliderItem)MenuItems[CurrentSelection];
-						it.Value = res;
-						SliderChange(it, it.Value);
-						break;
-					}
-				case UIMenuProgressItem:
-					{
-						UIMenuProgressItem it = (UIMenuProgressItem)MenuItems[CurrentSelection];
-						it.Value = res;
-						ProgressChange(it, it.Value);
-						break;
-					}
-				case UIMenuStatsItem:
-                    {
-						UIMenuStatsItem it = (UIMenuStatsItem)MenuItems[CurrentSelection];
-						it.Value = res;
-						StatItemChange(it, it.Value);
-						break;
-                    }
-			}
-		}
-
-		public void Select(bool playSound)
-		{
-			if (!MenuItems[CurrentSelection].Enabled)
-			{
-				Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
-				return;
-			}
-
-			if(playSound) Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
-			switch (MenuItems[CurrentSelection])
-			{
-				case UIMenuCheckboxItem:
-					{
-						UIMenuCheckboxItem it = (UIMenuCheckboxItem)MenuItems[CurrentSelection];
-						it.Checked = !it.Checked;
-						CheckboxChange(it, it.Checked);
-						it.CheckboxEventTrigger();
-						break;
-					}
-
-				case UIMenuListItem:
-					{
-						UIMenuListItem it = (UIMenuListItem)MenuItems[CurrentSelection];
-						ListSelect(it, it.Index);
-						it.ListSelectedTrigger(it.Index);
-						break;
-					}
-
-				default:
-					ItemSelect(MenuItems[CurrentSelection], CurrentSelection);
-					MenuItems[CurrentSelection].ItemActivate(this);
-					if (!Children.ContainsKey(MenuItems[CurrentSelection])) return;
-					Visible = false;
-					ScaleformUI._ui.CallFunction("CLEAR_ALL");
-					ScaleformUI.InstructionalButtons.Enabled = true;
-					ScaleformUI.InstructionalButtons.SetInstructionalButtons(Children[MenuItems[CurrentSelection]].InstructionalButtons);
-					_poolcontainer.MenuChangeEv(this, Children[MenuItems[CurrentSelection]], MenuState.ChangeForward);
-					MenuChangeEv(this, Children[MenuItems[CurrentSelection]], MenuState.ChangeForward);
-					Children[MenuItems[CurrentSelection]].MenuChangeEv(this, Children[MenuItems[CurrentSelection]], MenuState.ChangeForward);
-					Children[MenuItems[CurrentSelection]].Visible = true;
-					Children[MenuItems[CurrentSelection]].BuildUpMenu();
-					Children[MenuItems[CurrentSelection]].MouseEdgeEnabled = MouseEdgeEnabled;
-					break;
-			}
-		}
-		/// <summary>
-		/// Process control-stroke. Call this in the OnTick event.
-		/// </summary>
-		public async void ProcessControl(Keys key = Keys.None)
-		{
-
-			while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
-			if (!Visible || ScaleformUI.Warning.IsShowing) return;
-			if (_justOpened)
-			{
-				_justOpened = false;
-				return;
-			}
-
-			if (HasControlJustBeenReleaseed(MenuControls.Back, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
-			{
-				GoBack();
-			}
-			if (MenuItems.Count == 0) return;
-			if (IsControlBeingPressed(MenuControls.Up, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
-			{
-				GoUp();
-			}
-
-			else if (IsControlBeingPressed(MenuControls.Down, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
-			{
-				GoDown();
-			}
-
-			else if (IsControlBeingPressed(MenuControls.Left, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
-			{
-				GoLeft();
-			}
-
-			else if (IsControlBeingPressed(MenuControls.Right, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
-			{
-				GoRight();
-			}
-
-			else if (HasControlJustBeenPressed(MenuControls.Select, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
-			{
-				Select(true);
-			}
-		}
-
-		/// <summary>
-		/// Process keystroke. Call this in the OnKeyDown event.
-		/// </summary>
-		/// <param name="key"></param>
-		public void ProcessKey(Keys key)
-		{
-			if ((from MenuControls menuControl in _menuControls
-				 select new List<Keys>(_keyDictionary[menuControl].Item1))
-				.Any(tmpKeys => tmpKeys.Any(k => k == key)))
-			{
-				ProcessControl(key);
-			}
-		}
-
-		#endregion
-
-		#region Properties
-
-		/// <summary>
-		/// Change whether this menu is visible to the user.
-		/// </summary>
-		public bool Visible
-		{
-			get { return _visible; }
-			set
-			{
-				LoadScaleform();
-				_visible = value;
-				_justOpened = value;
-				_itemsDirty = value;
-
-				if (ParentMenu is not null) return;
-				if (Children.Count > 0 && Children.ContainsKey(MenuItems[CurrentSelection]) && Children[MenuItems[CurrentSelection]].Visible) return;
-				ScaleformUI.InstructionalButtons.Enabled = value;
-				ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
-				if (value)
-				{
-					_poolcontainer.MenuChangeEv(null, this, MenuState.Opened);
-					MenuChangeEv(null, this, MenuState.Opened);
-					BuildUpMenu();
-				}
-				else
-				{
-					_poolcontainer.MenuChangeEv(this, null, MenuState.Closed);
-					MenuChangeEv(this, null, MenuState.Closed);
-					ScaleformUI._ui.CallFunction("CLEAR_ALL");
-				}
-				if (!value) return;
-				if (!ResetCursorOnOpen) return;
-				SetCursorLocation(0.5f, 0.5f);
-				Screen.Hud.CursorSprite = CursorSprite.Normal;
-			}
-		}
-
-		private async void LoadScaleform()
-		{
-
-			RequestStreamedTextureDict("commonmenu", true);
-			RequestStreamedTextureDict("pause_menu_pages_char_mom_dad", true);
-			RequestStreamedTextureDict(_customTexture.Key, true);
-			RequestStreamedTextureDict("char_creator_portraits", true);
-
-			while (!HasStreamedTextureDictLoaded("commonmenu") && 
-				!HasStreamedTextureDictLoaded("pause_menu_pages_char_mom_dad") && 
-				!HasStreamedTextureDictLoaded(_customTexture.Key) && 
-				!HasStreamedTextureDictLoaded("char_creator_portraits"))
-				await BaseScript.Delay(0);
-		}
-
-		internal async void BuildUpMenu()
-		{
-			LoadScaleform();
-			while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
-			ScaleformUI._ui.CallFunction("CREATE_MENU", Title, Subtitle, _customTexture.Key, _customTexture.Value);
-			if(Windows.Count > 0)
-				ScaleformUI._ui.CallFunction("ADD_HERITAGE_WINDOW", Windows[0].Mom, Windows[0].Dad);
-			var timer = GetGameTimer();
-			if (MenuItems.Count == 0)
-			{
-				while (MenuItems.Count == 0)
-				{
-					await BaseScript.Delay(0);
-					if (GetGameTimer() - timer > 150)
-					{
-						ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
-						SetStreamedTextureDictAsNoLongerNeeded(_customTexture.Key);
-						SetStreamedTextureDictAsNoLongerNeeded("commonmenu");
-						SetStreamedTextureDictAsNoLongerNeeded("pause_menu_pages_char_mom_dad");
-						SetStreamedTextureDictAsNoLongerNeeded("char_creator_portraits");
-						return;
-					}
-				}
-			}
-			foreach (var item in MenuItems)
-			{
-				AddTextEntry($"menu_{_poolcontainer._menuList.IndexOf(this)}_desc_{MenuItems.IndexOf(item)}", item.Description);
-				LoadScaleform();
-				BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "ADD_ITEM");
-				PushScaleformMovieFunctionParameterInt(item._itemId);
-				PushScaleformMovieMethodParameterString(item.Label);
-				BeginTextCommandScaleformString($"menu_{_poolcontainer._menuList.IndexOf(this)}_desc_{MenuItems.IndexOf(item)}");
-				EndTextCommandScaleformString_2();
-				PushScaleformMovieFunctionParameterBool(item.Enabled);
-				PushScaleformMovieFunctionParameterBool(item.BlinkDescription);
-				switch (item)
-				{
-					case UIMenuListItem:
-						UIMenuListItem it = (UIMenuListItem)item;
-						AddTextEntry($"listitem_{MenuItems.IndexOf(item)}_list", string.Join(",", it.Items));
-						BeginTextCommandScaleformString($"listitem_{MenuItems.IndexOf(item)}_list");
-						EndTextCommandScaleformString();
-						PushScaleformMovieFunctionParameterInt(it.Index);
-						PushScaleformMovieFunctionParameterInt((int)it.MainColor);
-						PushScaleformMovieFunctionParameterInt((int)it.HighlightColor);
-						PushScaleformMovieFunctionParameterInt((int)it.TextColor);
-						PushScaleformMovieFunctionParameterInt((int)it.HighlightedTextColor);
-						EndScaleformMovieMethod();
-						break;
-					case UIMenuCheckboxItem:
-						UIMenuCheckboxItem check = (UIMenuCheckboxItem)item;
-						PushScaleformMovieFunctionParameterInt((int)check.Style);
-						PushScaleformMovieMethodParameterBool(check.Checked);
-						PushScaleformMovieFunctionParameterInt((int)check.MainColor);
-						PushScaleformMovieFunctionParameterInt((int)check.HighlightColor);
-						PushScaleformMovieFunctionParameterInt((int)check.TextColor);
-						PushScaleformMovieFunctionParameterInt((int)check.HighlightedTextColor);
-						EndScaleformMovieMethod();
-						break;
-					case UIMenuSliderItem:
-						UIMenuSliderItem prItem = (UIMenuSliderItem)item;
-						PushScaleformMovieFunctionParameterInt(prItem._max);
-						PushScaleformMovieFunctionParameterInt(prItem._multiplier);
-						PushScaleformMovieFunctionParameterInt(prItem.Value);
-						PushScaleformMovieFunctionParameterInt((int)prItem.MainColor);
-						PushScaleformMovieFunctionParameterInt((int)prItem.HighlightColor);
-						PushScaleformMovieFunctionParameterInt((int)prItem.TextColor);
-						PushScaleformMovieFunctionParameterInt((int)prItem.HighlightedTextColor);
-						PushScaleformMovieFunctionParameterInt((int)prItem.SliderColor);
-						PushScaleformMovieFunctionParameterBool(prItem._heritage);
-						EndScaleformMovieMethod();
-						break;
-					case UIMenuProgressItem:
-						UIMenuProgressItem slItem = (UIMenuProgressItem)item;
-						PushScaleformMovieFunctionParameterInt(slItem._max);
-						PushScaleformMovieFunctionParameterInt(slItem._multiplier);
-						PushScaleformMovieFunctionParameterInt(slItem.Value);
-						PushScaleformMovieFunctionParameterInt((int)slItem.MainColor);
-						PushScaleformMovieFunctionParameterInt((int)slItem.HighlightColor);
-						PushScaleformMovieFunctionParameterInt((int)slItem.TextColor);
-						PushScaleformMovieFunctionParameterInt((int)slItem.HighlightedTextColor);
-						PushScaleformMovieFunctionParameterInt((int)slItem.SliderColor);
-						EndScaleformMovieMethod();
-						break;
-					case UIMenuStatsItem:
-						UIMenuStatsItem statsItem = (UIMenuStatsItem)item;
-						PushScaleformMovieFunctionParameterInt(statsItem.Value);
-						PushScaleformMovieFunctionParameterInt(statsItem.Type);
-						PushScaleformMovieFunctionParameterInt((int)statsItem.Color);
-						PushScaleformMovieFunctionParameterInt((int)statsItem.MainColor);
-						PushScaleformMovieFunctionParameterInt((int)statsItem.HighlightColor);
-						PushScaleformMovieFunctionParameterInt((int)statsItem.TextColor);
-						PushScaleformMovieFunctionParameterInt((int)statsItem.HighlightedTextColor);
-						EndScaleformMovieMethod();
-						break;
-					default:
-						PushScaleformMovieFunctionParameterInt((int)item.MainColor);
-						PushScaleformMovieFunctionParameterInt((int)item.HighlightColor);
-						PushScaleformMovieFunctionParameterInt((int)item.TextColor);
-						PushScaleformMovieFunctionParameterInt((int)item.HighlightedTextColor);
-						EndScaleformMovieMethod();
-						ScaleformUI._ui.CallFunction("SET_RIGHT_LABEL", MenuItems.IndexOf(item), item.RightLabel);
-						if (item.RightBadge != BadgeIcon.NONE)
-							ScaleformUI._ui.CallFunction("SET_RIGHT_BADGE", MenuItems.IndexOf(item), UIMenuItem.GetSpriteDictionary(item.RightBadge), (int)item.RightBadge);
-						break;
-				}
-				if (item.Panels.Count == 0) continue;
-				foreach (var panel in item.Panels)
-				{
-					var it = MenuItems.IndexOf(item);
-					var pan = item.Panels.IndexOf(panel);
-					switch (panel)
-					{
-						case UIMenuColorPanel:
-							UIMenuColorPanel cp = (UIMenuColorPanel)panel;
-							ScaleformUI._ui.CallFunction("ADD_PANEL", it, 0, cp.Title, (int)cp.ColorPanelColorType, cp.CurrentSelection);
-							break;
-						case UIMenuPercentagePanel:
-							UIMenuPercentagePanel pp = (UIMenuPercentagePanel)panel;
-							ScaleformUI._ui.CallFunction("ADD_PANEL", it, 1, pp.Title, pp.Min, pp.Max, pp.Percentage);
-							break;
-						case UIMenuGridPanel:
-							UIMenuGridPanel gp = (UIMenuGridPanel)panel;
-							ScaleformUI._ui.CallFunction("ADD_PANEL", it, 2, gp.TopLabel, gp.RightLabel, gp.LeftLabel, gp.BottomLabel, gp.CirclePosition.X, gp.CirclePosition.Y, true, (int)gp.GridType);
-							break;
-						case UIMenuStatisticsPanel:
-							UIMenuStatisticsPanel sp = (UIMenuStatisticsPanel)panel;
-							ScaleformUI._ui.CallFunction("ADD_PANEL", it, 3);
-							if (sp.Items.Count > 0)
-								foreach (var stat in sp.Items)
-									ScaleformUI._ui.CallFunction("ADD_STATISTIC_TO_PANEL", it, pan, stat.Text, stat.Value);
-							break;
-
-					}
-				}
-			}
-			ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
-			SetStreamedTextureDictAsNoLongerNeeded(_customTexture.Key);
-			SetStreamedTextureDictAsNoLongerNeeded("commonmenu");
-			SetStreamedTextureDictAsNoLongerNeeded("pause_menu_pages_char_mom_dad");
-			SetStreamedTextureDictAsNoLongerNeeded("char_creator_portraits");
-		}
-
-		/// <summary>
-		/// Returns the current selected item's index.
-		/// Change the current selected item to index. Use this after you add or remove items dynamically.
-		/// </summary>
-		public int CurrentSelection
-		{
-			get { return MenuItems.Count == 0 ? 0 : _activeItem % MenuItems.Count; }
-			set
-			{
-				if (MenuItems.Count == 0) _activeItem = 0;
-				MenuItems[_activeItem % (MenuItems.Count)].Selected = false;
-				_activeItem = 1000000 - (1000000 % MenuItems.Count) + value;
-				MenuItems[_activeItem % (MenuItems.Count)].Selected = true;
-				if (CurrentSelection > _maxItem)
-				{
-					_maxItem = CurrentSelection;
-					_minItem = CurrentSelection - MaxItemsOnScreen;
-				}
-				else if (CurrentSelection < _minItem)
-				{
-					_maxItem = MaxItemsOnScreen + CurrentSelection;
-					_minItem = CurrentSelection;
-				}
-				ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
-			}
-		}
-
-		/// <summary>
-		/// Returns false if last input was made with mouse and keyboard, true if it was made with a controller.
-		/// </summary>
-		public static bool IsUsingController => !IsInputDisabled(2);
-
-
-		/// <summary>
-		/// Returns the amount of items in the menu.
-		/// </summary>
-		public int Size => MenuItems.Count;
-
-
-		/// <summary>
-		/// Returns the title object.
-		/// </summary>
-		public string Title { get; }
-
-
-		/// <summary>
-		/// Returns the subtitle object.
-		/// </summary>
-		public string Subtitle { get; }
-
-
-		/// <summary>
-		/// String to pre-attach to the counter string. Useful for color codes.
-		/// </summary>
-		public string CounterPretext { get; set; }
-
-
-		/// <summary>
-		/// If this is a nested menu, returns the parent menu. You can also set it to a menu so when pressing Back it goes to that menu.
-		/// </summary>
-		public UIMenu ParentMenu { get; set; }
-
-
-		/// <summary>
-		/// If this is a nested menu, returns the item it was bound to.
-		/// </summary>
-		public UIMenuItem ParentItem { get; set; }
-
-		//Tree structure
-		public Dictionary<UIMenuItem, UIMenu> Children { get; }
-
-		/// <summary>
-		/// Returns the current width offset.
-		/// </summary>
-		public int WidthOffset { get; private set; }
-
-		#endregion
-
-		#region Event Invokers
-		protected virtual void IndexChange(int newindex)
-		{
-			OnIndexChange?.Invoke(this, newindex);
-		}
-
-		internal virtual void ListChange(UIMenuListItem sender, int newindex)
-		{
-			OnListChange?.Invoke(this, sender, newindex);
-		}
-
-		internal virtual void ProgressChange(UIMenuProgressItem sender, int newindex)
-		{
-			OnProgressChange?.Invoke(this, sender, newindex);
-		}
-
-		protected virtual void ListSelect(UIMenuListItem sender, int newindex)
-		{
-			OnListSelect?.Invoke(this, sender, newindex);
-		}
-
-		protected virtual void SliderChange(UIMenuSliderItem sender, int newindex)
-		{
-			OnSliderChange?.Invoke(this, sender, newindex);
-		}
-
-		protected virtual void ItemSelect(UIMenuItem selecteditem, int index)
-		{
-			OnItemSelect?.Invoke(this, selecteditem, index);
-		}
-
-		protected virtual void CheckboxChange(UIMenuCheckboxItem sender, bool Checked)
-		{
-			OnCheckboxChange?.Invoke(this, sender, Checked);
-		}
-
-		public virtual void StatItemChange(UIMenuStatsItem item, int value)
-		{
-			OnStatsItemChanged?.Invoke(this, item, value);
-		}
-
-		protected virtual void MenuChangeEv(UIMenu oldmenu, UIMenu newmenu, MenuState state)
-		{
-			OnMenuStateChanged?.Invoke(oldmenu, newmenu, state);
-		}
-
-		protected virtual void ColorPanelChange(UIMenuItem item, UIMenuColorPanel panel, int index)
-		{
-			OnColorPanelChange?.Invoke(item, panel, index);
-		}
-		protected virtual void PercentagePanelChange(UIMenuItem item, UIMenuPercentagePanel panel, float index)
-		{
-			OnPercentagePanelChange?.Invoke(item, panel, index);
-		}
-		protected virtual void GridPanelChange(UIMenuItem item, UIMenuGridPanel panel, PointF index)
-		{
-			OnGridPanelChange?.Invoke(item, panel, index);
-		}
-
-		#endregion
-
-		public enum MenuControls
-		{
-			Up,
-			Down,
-			Left,
-			Right,
-			Select,
-			Back
-		}
-
+		LINEAR = 0,
+		QUADRATIC_IN,
+		QUADRATIC_OUT,
+		QUADRATIC_INOUT,
+		CUBIC_IN,
+		CUBIC_OUT,
+		CUBIC_INOUT,
+		QUARTIC_IN,
+		QUARTIC_OUT,
+		QUARTIC_INOUT,
+		SINE_IN,
+		SINE_OUT,
+		SINE_INOUT,
+		BACK_IN,
+		BACK_OUT,
+		BACK_INOUT,
+		CIRCULAR_IN,
+		CIRCULAR_OUT,
+		CIRCULAR_INOUT
 	}
+
+    #endregion
+
+    /// <summary>
+    /// Base class for ScaleformUI. Calls the next events: OnIndexChange, OnListChanged, OnCheckboxChange, OnItemSelect, OnMenuClose, OnMenuchange.
+    /// </summary>
+    public class UIMenu
+    {
+        #region Private Fields
+        private int _activeItem = 0;
+
+        private bool _visible;
+        private bool _buttonsEnabled = true;
+        private bool _justOpened = true;
+        private bool _itemsDirty = false;
+
+        internal KeyValuePair<string, string> _customTexture;
+
+        //Pagination
+        private const int MaxItemsOnScreen = 9;
+        private int _minItem;
+        private int _maxItem = MaxItemsOnScreen;
+        private bool mouseWheelControlEnabled = true;
+        private int menuSound;
+        private bool _changed = true;
+        private bool keyboard = false;
+        //Keys
+        private readonly Dictionary<MenuControls, Tuple<List<Keys>, List<Tuple<Control, int>>>> _keyDictionary =
+            new Dictionary<MenuControls, Tuple<List<Keys>, List<Tuple<Control, int>>>>();
+
+        private List<string> spriteDicts = new();
+        private readonly Scaleform _menuGlare;
+
+        private static readonly MenuControls[] _menuControls = Enum.GetValues(typeof(MenuControls)).Cast<MenuControls>().ToArray();
+
+        internal MenuPool _poolcontainer;
+
+        private bool Glare;
+
+        internal readonly static string _selectTextLocalized = Game.GetGXTEntry("HUD_INPUT2");
+        internal readonly static string _backTextLocalized = Game.GetGXTEntry("HUD_INPUT3");
+        protected readonly SizeF Resolution = ScreenTools.ResolutionMaintainRatio;
+        protected internal int _pressingTimer = 0;
+        #endregion
+
+        #region Public Fields
+
+        public string AUDIO_LIBRARY = "HUD_FRONTEND_DEFAULT_SOUNDSET";
+
+        public string AUDIO_UPDOWN = "NAV_UP_DOWN";
+        public string AUDIO_LEFTRIGHT = "NAV_LEFT_RIGHT";
+        public string AUDIO_SELECT = "SELECT";
+        public string AUDIO_BACK = "BACK";
+        public string AUDIO_ERROR = "ERROR";
+
+        public List<UIMenuItem> MenuItems = new List<UIMenuItem>();
+
+        public bool MouseEdgeEnabled = true;
+        public bool ControlDisablingEnabled = true;
+        public bool EnableAnimation
+        {
+            get => enableAnimation;
+            set
+            {
+                enableAnimation = value;
+                if (Visible)
+                {
+                    ScaleformUI._ui.CallFunction("ENABLE_SCROLLING_ANIMATION", enableAnimation);
+                }
+            }
+        }
+        public MenuAnimationType AnimationType
+        {
+            get => animationType;
+            set
+            {
+                animationType = value;
+                if (Visible)
+                {
+                    ScaleformUI._ui.CallFunction("CHANGE_SCROLLING_ANIMATION_TYPE", (int)animationType);
+                }
+            }
+        }
+        public bool MouseWheelControlEnabled
+        {
+            get => mouseWheelControlEnabled;
+            set
+            {
+                mouseWheelControlEnabled = value;
+                if (value)
+                {
+                    SetKey(MenuControls.Up, Control.CursorScrollUp);
+                    SetKey(MenuControls.Down, Control.CursorScrollDown);
+                }
+                else
+                {
+                    ResetKey(MenuControls.Up);
+                    ResetKey(MenuControls.Down);
+                    SetKey(MenuControls.Up, Control.PhoneUp);
+                    SetKey(MenuControls.Down, Control.PhoneDown);
+                }
+            }
+        }
+        public bool ResetCursorOnOpen = true;
+        [Obsolete("The description is now formated automatically by the game.")]
+        public bool MouseControlsEnabled = true;
+        public bool ScaleWithSafezone = true;
+
+        public PointF Offset { get; }
+
+        public string BannerTexture { get; private set; }
+
+        public List<UIMenuHeritageWindow> Windows = new List<UIMenuHeritageWindow>();
+
+        public List<InstructionalButton> InstructionalButtons = new List<InstructionalButton>()
+        {
+            new InstructionalButton(Control.PhoneSelect, _selectTextLocalized),
+            new InstructionalButton(Control.PhoneCancel, _backTextLocalized)
+        };
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// Called when user presses up or down, changing current selection.
+        /// </summary>
+        public event IndexChangedEvent OnIndexChange;
+
+        /// <summary>
+        /// Called when user presses left or right, changing a list position.
+        /// </summary>
+        public event ListChangedEvent OnListChange;
+
+        /// <summary>
+        /// Called when user selects a list item.
+        /// </summary>
+        public event ListSelectedEvent OnListSelect;
+
+        /// <summary>
+        /// Called when user presses left or right, changing a slider position.
+        /// </summary>
+        public event SliderChangedEvent OnSliderChange;
+
+        /// <summary>
+        /// Called when user presses left or right, changing a the index of a color panel.
+        /// </summary>
+        public event ColorPanelChangedEvent OnColorPanelChange;
+
+        /// <summary>
+        /// Called when user changes the value of a percentage panel.
+        /// </summary>
+        public event PercentagePanelChangedEvent OnPercentagePanelChange;
+
+        /// <summary>
+        /// Called when user changes value of a grid panel.
+        /// </summary>
+        public event GridPanelChangedEvent OnGridPanelChange;
+
+        /// <summary>
+        /// Called When user changes progress in a ProgressItem.
+        /// </summary>
+        public event OnProgressChanged OnProgressChange;
+
+        /// <summary>
+        /// Called when user either clicks on a ProgressItem.
+        /// </summary>
+        public event OnProgressSelected OnProgressSelect;
+
+        /// <summary>
+        /// Called when user presses enter on a checkbox item.
+        /// </summary>
+        public event CheckboxChangeEvent OnCheckboxChange;
+
+        /// <summary>
+        /// Called when user selects a simple item.
+        /// </summary>
+        public event ItemSelectEvent OnItemSelect;
+
+        /// <summary>
+        /// Called when user either opens or closes the main menu, clicks on a binded button, goes back to a parent menu.
+        /// </summary>
+        public event MenuStateChangeEvent OnMenuStateChanged;
+
+        /// <summary>
+        /// Called every time a Stat item changes value
+        /// </summary>
+        public event StatItemProgressChange OnStatsItemChanged;
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Basic Menu constructor.
+        /// </summary>
+        /// <param name="title">Title that appears on the big banner.</param>
+        /// <param name="subtitle">Subtitle that appears in capital letters in a small black bar.</param>
+        /// <param name="glare">Add menu Glare scaleform?.</param>
+        public UIMenu(string title, string subtitle, bool glare = false) : this(title, subtitle, new PointF(0, 0), "commonmenu", "interaction_bgd", glare)
+        {
+        }
+
+
+        /// <summary>
+        /// Basic Menu constructor with an offset.
+        /// </summary>
+        /// <param name="title">Title that appears on the big banner.</param>
+        /// <param name="subtitle">Subtitle that appears in capital letters in a small black bar. Set to "" if you dont want a subtitle.</param>
+        /// <param name="offset">PointF object with X and Y data for offsets. Applied to all menu elements.</param>
+        /// <param name="glare">Add menu Glare scaleform?.</param>
+        public UIMenu(string title, string subtitle, PointF offset, bool glare = false) : this(title, subtitle, offset, "commonmenu", "interaction_bgd", glare)
+        {
+        }
+
+        /// <summary>
+        /// Initialise a menu with a custom texture banner.
+        /// </summary>
+        /// <param name="title">Title that appears on the big banner. Set to "" if you don't want a title.</param>
+        /// <param name="subtitle">Subtitle that appears in capital letters in a small black bar. Set to "" if you dont want a subtitle.</param>
+        /// <param name="offset">PointF object with X and Y data for offsets. Applied to all menu elements.</param>
+        /// <param name="customBanner">Path to your custom texture.</param>
+        /// <param name="glare">Add menu Glare scaleform?.</param>
+        public UIMenu(string title, string subtitle, PointF offset, KeyValuePair<string, string> customBanner, bool glare = false) : this(title, subtitle, offset, customBanner.Key, customBanner.Value, glare)
+        {
+        }
+
+
+        /// <summary>
+        /// Advanced Menu constructor that allows custom title banner.
+        /// </summary>
+        /// <param name="title">Title that appears on the big banner. Set to "" if you are using a custom banner.</param>
+        /// <param name="subtitle">Subtitle that appears in capital letters in a small black bar.</param>
+        /// <param name="offset">PointF object with X and Y data for offsets. Applied to all menu elements.</param>
+        /// <param name="spriteLibrary">Sprite library name for the banner.</param>
+        /// <param name="spriteName">Sprite name for the banner.</param>
+        /// <param name="glare">Add menu Glare scaleform?.</param>
+        public UIMenu(string title, string subtitle, PointF offset, string spriteLibrary, string spriteName, bool glare = false)
+        {
+            _customTexture = new KeyValuePair<string, string>(spriteLibrary, spriteName);
+            Offset = offset;
+            Children = new Dictionary<UIMenuItem, UIMenu>();
+            WidthOffset = 0;
+            Glare = glare;
+            _menuGlare = new Scaleform("mp_menu_glare");
+            Title = title;
+            Subtitle = subtitle;
+            MouseWheelControlEnabled = true;
+            LoadScaleform();
+            SetKey(MenuControls.Up, Control.PhoneUp);
+            SetKey(MenuControls.Down, Control.PhoneDown);
+
+            SetKey(MenuControls.Left, Control.PhoneLeft);
+            SetKey(MenuControls.Right, Control.PhoneRight);
+            SetKey(MenuControls.Select, Control.FrontendAccept);
+
+            SetKey(MenuControls.Back, Control.PhoneCancel);
+            SetKey(MenuControls.Back, Control.FrontendPause);
+        }
+
+        #endregion
+
+        #region Static Methods
+        /// <summary>
+        /// Toggles the availability of the controls.
+        /// It does not disable the basic movement and frontend controls.
+        /// </summary>
+        /// <param name="enable"></param>
+        /// <param name="toggle">If we want to enable or disable the controls.</param>
+        [Obsolete("Use Controls.Toggle instead.", true)]
+        public static void DisEnableControls(bool toggle) => Controls.Toggle(toggle);
+
+        /// <summary>
+        /// Returns the 1080pixels-based screen resolution while mantaining current aspect ratio.
+        /// </summary>
+        [Obsolete("Use ScreenTools.ResolutionMaintainRatio instead.", true)]
+        public static SizeF GetScreenResolutionMaintainRatio() => ScreenTools.ResolutionMaintainRatio;
+
+        /// <summary>
+        /// ScreenTools.ResolutionMaintainRatio for providing backwards compatibility.
+        /// </summary>
+        /// <returns></returns>
+        [Obsolete("Use ScreenTools.ResolutionMaintainRatio instead.", true)]
+        public static SizeF GetScreenResiolutionMantainRatio() => ScreenTools.ResolutionMaintainRatio;
+
+        /// <summary>
+        /// Chech whether the mouse is inside the specified rectangle.
+        /// </summary>
+        /// <param name="topLeft">Start point of the rectangle at the top left.</param>
+        /// <param name="boxSize">size of your rectangle.</param>
+        /// <returns>true if the mouse is inside of the specified bounds, false otherwise.</returns>
+        [Obsolete("Use ScreenTools.IsMouseInBounds instead.", true)]
+        public static bool IsMouseInBounds(Point topLeft, Size boxSize) => ScreenTools.IsMouseInBounds(topLeft, boxSize);
+
+        /// <summary>
+        /// Returns the safezone bounds in pixel, relative to the 1080pixel based system.
+        /// </summary>
+        [Obsolete("Use ScreenTools.SafezoneBounds instead.", true)]
+        public static Point GetSafezoneBounds() => ScreenTools.SafezoneBounds;
+
+        #endregion
+
+        #region Public Methods
+        /// <summary>
+        /// Change the menu's width. The width is calculated as DefaultWidth + WidthOffset, so a width offset of 10 would enlarge the menu by 10 pixels.
+        /// </summary>
+        /// <param name="widthOffset">New width offset.</param>
+        public void SetMenuWidthOffset(int widthOffset)
+        {
+            WidthOffset = widthOffset;
+        }
+
+        /// <summary>
+        /// Enable or disable the instructional buttons.
+        /// </summary>
+        /// <param name="disable"></param>
+        public void DisableInstructionalButtons(bool disable)
+        {
+            ScaleformUI.InstructionalButtons.Enabled = !disable;
+        }
+
+        /// <summary>
+        /// Set the banner to your own custom texture. Set it to "" if you want to restore the banner.
+        /// </summary>
+        /// <param name="pathToCustomSprite">Path to your sprite image.</param>
+        public void SetBannerType(KeyValuePair<string, string> pathToCustomSprite)
+        {
+            _customTexture = pathToCustomSprite;
+        }
+
+        /// <summary>
+        /// Add an item to the menu.
+        /// </summary>
+        /// <param name="item">Item object to be added. Can be normal item, checkbox or list item.</param>
+        public async void AddItem(UIMenuItem item)
+        {
+            int selectedItem = CurrentSelection;
+            item.Parent = this;
+            MenuItems.Add(item);
+            CurrentSelection = selectedItem;
+        }
+
+        /// <summary>
+        /// Add a new Heritage Window to the Menu
+        /// </summary>
+        /// <param name="window"></param>
+        public void AddWindow(UIMenuHeritageWindow window)
+        {
+            window.ParentMenu = this;
+            Windows.Add(window);
+        }
+
+        /// <summary>
+        /// Removes Windows at given index
+        /// </summary>
+        /// <param name="index"></param>
+        public void RemoveWindowAt(int index)
+        {
+            Windows.RemoveAt(index);
+        }
+
+        /// <summary>
+        /// If a Description is changed during some events after the menu as been opened this updates the description live
+        /// </summary>
+        public void UpdateDescription()
+        {
+            BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "UPDATE_ITEM_DESCRIPTION");
+            ScaleformMovieMethodAddParamInt(CurrentSelection);
+            BeginTextCommandScaleformString($"menu_{_poolcontainer._menuList.IndexOf(this)}_desc_{CurrentSelection}");
+            EndTextCommandScaleformString_2();
+            EndScaleformMovieMethod();
+        }
+
+        /// <summary>
+        /// Remove an item at index n.
+        /// </summary>
+        /// <param name="index">Index to remove the item at.</param>
+        public void RemoveItemAt(int index)
+        {
+            int selectedItem = CurrentSelection;
+            if (Size > MaxItemsOnScreen && _maxItem == Size - 1)
+            {
+                _maxItem--;
+                _minItem--;
+            }
+            MenuItems.RemoveAt(index);
+            CurrentSelection = selectedItem;
+        }
+
+        /// <summary>
+        /// Reset the current selected item to 0. Use this after you add or remove items dynamically.
+        /// </summary>
+        public void RefreshIndex()
+        {
+            if (MenuItems.Count == 0)
+            {
+                _activeItem = 1000;
+                _maxItem = MaxItemsOnScreen;
+                _minItem = 0;
+                return;
+            }
+            MenuItems[_activeItem % (MenuItems.Count)].Selected = false;
+            _activeItem = 1000 - (1000 % MenuItems.Count);
+            _maxItem = MaxItemsOnScreen;
+            _minItem = 0;
+        }
+
+        /// <summary>
+        /// Remove all items from the menu.
+        /// </summary>
+        public void Clear()
+        {
+            MenuItems.Clear();
+        }
+
+        /// <summary>
+        /// Removes the items that matches the predicate.
+        /// </summary>
+        /// <param name="predicate">The function to use as the check.</param>
+        public void Remove(Func<UIMenuItem, bool> predicate)
+        {
+            List<UIMenuItem> TempList = new List<UIMenuItem>(MenuItems);
+            foreach (UIMenuItem item in TempList)
+            {
+                if (predicate(item))
+                {
+                    MenuItems.Remove(item);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Set a key to control a menu. Can be multiple keys for each control.
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="keyToSet"></param>
+        public void SetKey(MenuControls control, Keys keyToSet)
+        {
+            if (_keyDictionary.ContainsKey(control))
+                _keyDictionary[control].Item1.Add(keyToSet);
+            else
+            {
+                _keyDictionary.Add(control,
+                    new Tuple<List<Keys>, List<Tuple<Control, int>>>(new List<Keys>(), new List<Tuple<Control, int>>()));
+                _keyDictionary[control].Item1.Add(keyToSet);
+            }
+        }
+
+
+        /// <summary>
+        /// Set a GTA.Control to control a menu. Can be multiple controls. This applies it to all indexes.
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="gtaControl"></param>
+        public void SetKey(MenuControls control, Control gtaControl)
+        {
+            SetKey(control, gtaControl, 0);
+            SetKey(control, gtaControl, 1);
+            SetKey(control, gtaControl, 2);
+        }
+
+
+        /// <summary>
+        /// Set a GTA.Control to control a menu only on a specific index.
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="gtaControl"></param>
+        /// <param name="controlIndex"></param>
+        public void SetKey(MenuControls control, Control gtaControl, int controlIndex)
+        {
+            if (_keyDictionary.ContainsKey(control))
+                _keyDictionary[control].Item2.Add(new Tuple<Control, int>(gtaControl, controlIndex));
+            else
+            {
+                _keyDictionary.Add(control,
+                    new Tuple<List<Keys>, List<Tuple<Control, int>>>(new List<Keys>(), new List<Tuple<Control, int>>()));
+                _keyDictionary[control].Item2.Add(new Tuple<Control, int>(gtaControl, controlIndex));
+            }
+
+        }
+
+
+        /// <summary>
+        /// Remove all controls on a control.
+        /// </summary>
+        /// <param name="control"></param>
+        public void ResetKey(MenuControls control)
+        {
+            _keyDictionary[control].Item1.Clear();
+            _keyDictionary[control].Item2.Clear();
+        }
+
+
+        /// <summary>
+        /// Check whether a menucontrol has been pressed.
+        /// </summary>
+        /// <param name="control">Control to check for.</param>
+        /// <param name="key">Key if you're using keys.</param>
+        /// <returns></returns>
+        public bool HasControlJustBeenPressed(MenuControls control, Keys key = Keys.None)
+        {
+            List<Keys> tmpKeys = new List<Keys>(_keyDictionary[control].Item1);
+            List<Tuple<Control, int>> tmpControls = new List<Tuple<Control, int>>(_keyDictionary[control].Item2);
+
+            if (key != Keys.None)
+            {
+                //if (tmpKeys.Any(Game.IsKeyPressed))
+                //    return true;
+            }
+            if (tmpControls.Any(tuple => Game.IsControlJustPressed(tuple.Item2, tuple.Item1)))
+                return true;
+            return false;
+        }
+
+
+        /// <summary>
+        /// Check whether a menucontrol has been released.
+        /// </summary>
+        /// <param name="control">Control to check for.</param>
+        /// <param name="key">Key if you're using keys.</param>
+        /// <returns></returns>
+        public bool HasControlJustBeenReleaseed(MenuControls control, Keys key = Keys.None)
+        {
+            List<Keys> tmpKeys = new List<Keys>(_keyDictionary[control].Item1);
+            List<Tuple<Control, int>> tmpControls = new List<Tuple<Control, int>>(_keyDictionary[control].Item2);
+
+            if (key != Keys.None)
+            {
+                //if (tmpKeys.Any(Game.IsKeyPressed))
+                //    return true;
+            }
+            if (tmpControls.Any(tuple => Game.IsControlJustReleased(tuple.Item2, tuple.Item1)))
+                return true;
+            return false;
+        }
+
+        private int _controlCounter;
+        private bool enableAnimation = true;
+        private MenuAnimationType animationType = MenuAnimationType.LINEAR;
+
+        /// <summary>
+        /// Check whether a menucontrol is being pressed.
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public bool IsControlBeingPressed(MenuControls control, Keys key = Keys.None)
+        {
+            List<Keys> tmpKeys = new List<Keys>(_keyDictionary[control].Item1);
+            List<Tuple<Control, int>> tmpControls = new List<Tuple<Control, int>>(_keyDictionary[control].Item2);
+            if (HasControlJustBeenReleaseed(control, key)) _controlCounter = 0;
+            if (_controlCounter > 0)
+            {
+                _controlCounter++;
+                if (_controlCounter > 30)
+                    _controlCounter = 0;
+                return false;
+            }
+            if (key != Keys.None)
+            {
+                //if (tmpKeys.Any(Game.IsKeyPressed))
+                //{
+                //    _controlCounter = 1;
+                //    return true;
+                //}
+            }
+            if (tmpControls.Any(tuple => Game.IsControlPressed(tuple.Item2, tuple.Item1)))
+            {
+                _controlCounter = 1;
+                return true;
+            }
+            return false;
+        }
+
+        [Obsolete("Use InstructionalButtons.Add instead")]
+        public void AddInstructionalButton(InstructionalButton button)
+        {
+            //_instructionalButtons.Add(button);
+        }
+
+        [Obsolete("Use InstructionalButtons.Remove instead")]
+        public void RemoveInstructionalButton(InstructionalButton button)
+        {
+            //_instructionalButtons.Remove(button);
+        }
+
+        /// <summary>
+        /// Makes the specified item open a menu when is activated.
+        /// </summary>
+        /// <param name="menuToBind">The menu that is going to be opened when the item is activated.</param>
+        /// <param name="itemToBindTo">The item that is going to activate the menu.</param>
+        public void BindMenuToItem(UIMenu menuToBind, UIMenuItem itemToBindTo)
+        {
+            if (!MenuItems.Contains(itemToBindTo))
+                AddItem(itemToBindTo);
+            menuToBind.ParentMenu = this;
+            menuToBind.ParentItem = itemToBindTo;
+            if (Children.ContainsKey(itemToBindTo))
+                Children[itemToBindTo] = menuToBind;
+            else
+                Children.Add(itemToBindTo, menuToBind);
+        }
+
+
+        /// <summary>
+        /// Remove menu binding from button.
+        /// </summary>
+        /// <param name="releaseFrom">Button to release from.</param>
+        /// <returns>Returns true if the operation was successful.</returns>
+        public bool ReleaseMenuFromItem(UIMenuItem releaseFrom)
+        {
+            if (!Children.ContainsKey(releaseFrom)) return false;
+            Children[releaseFrom].ParentItem = null;
+            Children[releaseFrom].ParentMenu = null;
+            Children.Remove(releaseFrom);
+            return true;
+        }
+
+        #endregion
+
+        #region Drawing & Processing
+        /// <summary>
+        /// Draw the menu and all of it's components.
+        /// </summary>
+        public async Task Draw()
+        {
+            if (!Visible || ScaleformUI.Warning.IsShowing) return;
+            while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
+
+            if (ControlDisablingEnabled)
+                Controls.Toggle(false);
+
+            float x = Offset.X / Screen.Width;
+            float y = Offset.Y / Screen.Height;
+            float width = 1280 / Screen.ScaledWidth;
+            float height = 720 / Screen.Height;
+
+            DrawScaleformMovie(ScaleformUI._ui.Handle, x + (width / 2.0f), y + (height / 2.0f), width, height, 255, 255, 255, 255, 0);
+
+            if (Glare)
+            {
+                _menuGlare.CallFunction("SET_DATA_SLOT", GameplayCamera.RelativeHeading);
+                SizeF _glareSize = new SizeF(1.0f, 1f);
+                PointF gl = new PointF((Offset.X / Screen.Width) + 0.4499f, (Offset.Y / Screen.Height) + 0.449f);
+
+                DrawScaleformMovie(_menuGlare.Handle, gl.X, gl.Y, _glareSize.Width, _glareSize.Height, 255, 255, 255, 255, 0);
+            }
+
+            if (IsUsingController)
+            {
+                if (keyboard)
+                {
+                    keyboard = false;
+                    _changed = true;
+                }
+            }
+            else
+            {
+                if (!keyboard)
+                {
+                    keyboard = true;
+                    _changed = true;
+                }
+            }
+            if (_changed)
+            {
+                UpdateDescription();
+                _changed = false;
+            }
+        }
+
+        /// <summary>
+        /// Process the mouse's position and check if it's hovering over any UI element. Call this in OnTick
+        /// </summary>
+        public async void ProcessMouse()
+        {
+            if (!Visible || _justOpened || MenuItems.Count == 0 || IsUsingController || !MouseControlsEnabled)
+            {
+                Game.EnableControlThisFrame(0, Control.LookUpDown);
+                Game.EnableControlThisFrame(0, Control.LookLeftRight);
+                Game.EnableControlThisFrame(0, Control.Aim);
+                Game.EnableControlThisFrame(0, Control.Attack);
+                Game.EnableControlThisFrame(1, Control.LookUpDown);
+                Game.EnableControlThisFrame(1, Control.LookLeftRight);
+                Game.EnableControlThisFrame(1, Control.Aim);
+                Game.EnableControlThisFrame(1, Control.Attack);
+                Game.EnableControlThisFrame(2, Control.LookUpDown);
+                Game.EnableControlThisFrame(2, Control.LookLeftRight);
+                Game.EnableControlThisFrame(2, Control.Aim);
+                Game.EnableControlThisFrame(2, Control.Attack);
+                if (_itemsDirty)
+                {
+                    MenuItems.Where(i => i.Hovered).ToList().ForEach(i => i.Hovered = false);
+                    _itemsDirty = false;
+                }
+                return;
+            }
+
+            ShowCursorThisFrame();
+
+            if (ScreenTools.IsMouseInBounds(new PointF(0, 0), new SizeF(30, 1080)) && MouseEdgeEnabled)
+            {
+                GameplayCamera.RelativeHeading += 5f;
+                SetCursorSprite(6);
+            }
+            else if (ScreenTools.IsMouseInBounds(new PointF(Convert.ToInt32(Resolution.Width - 30f), 0), new SizeF(30, 1080)) && MouseEdgeEnabled)
+            {
+                GameplayCamera.RelativeHeading -= 5f;
+                SetCursorSprite(7);
+            }
+            else if (MouseEdgeEnabled)
+            {
+                SetCursorSprite(1);
+            }
+
+            // SE HOVERED
+            // SetMouseCursorSprite(5);
+
+            if (Game.IsControlJustPressed(0, Control.Attack))
+            {
+                PointF mouse = new PointF(GetDisabledControlNormal(0, 239) * Screen.ScaledWidth - Offset.X, GetDisabledControlNormal(0, 240) * Screen.Height - Offset.Y);
+                BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_INPUT_MOUSE_EVENT_SINGLE");
+                ScaleformMovieMethodAddParamFloat(mouse.X);
+                ScaleformMovieMethodAddParamFloat(mouse.Y);
+                var ret = EndScaleformMovieMethodReturnValue();
+                while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+                var res = GetScaleformMovieMethodReturnValueString(ret);
+                var split = res.Split(',');
+                var type = split[0];
+                var selection = Convert.ToInt32(split[1]);
+                switch (type)
+                {
+                    case "it":
+                        {
+                            if (CurrentSelection != selection)
+                            {
+                                CurrentSelection = selection;
+                            }
+                            else
+                            {
+                                switch (Convert.ToInt32(split[2]))
+                                {
+                                    case 0:
+                                    case 2:
+                                        Select(false);
+                                        break;
+                                    case 1:
+                                        {
+                                            UIMenuListItem it = (UIMenuListItem)MenuItems[CurrentSelection];
+                                            it.Index = Convert.ToInt32(split[3]);
+                                            ListChange(it, it.Index);
+                                            it.ListChangedTrigger(it.Index);
+                                        }
+                                        break;
+                                    case 3:
+                                        {
+                                            UIMenuSliderItem it = (UIMenuSliderItem)MenuItems[CurrentSelection];
+                                            it.Value = (int)(Convert.ToSingle(split[3]));
+                                            it.SliderChanged(it.Value);
+                                            SliderChange(it, it.Value);
+                                        }
+                                        break;
+                                    case 4:
+                                        {
+                                            UIMenuProgressItem it = (UIMenuProgressItem)MenuItems[CurrentSelection];
+                                            it.Value = (int)(Convert.ToSingle(split[3]));
+                                            it.ProgressChanged(it.Value);
+                                            ProgressChange(it, it.Value);
+                                        }
+                                        break;
+                                }
+                            }
+                            break;
+                        }
+
+                    case "pan":
+                        if (Convert.ToInt32(split[2]) == 0)
+                        {
+                            var panel = (UIMenuColorPanel)MenuItems[CurrentSelection].Panels[selection];
+                            panel._value = Convert.ToInt32(split[3]);
+                            ColorPanelChange(panel.ParentItem, panel, panel.CurrentSelection);
+                            panel.PanelChanged();
+                        }
+                        break;
+                }
+            }
+            else if (Game.IsControlPressed(0, Control.Attack))
+            {
+                PointF mouse = new PointF(GetDisabledControlNormal(0, 239) * Screen.ScaledWidth - Offset.X, GetDisabledControlNormal(0, 240) * Screen.Height - Offset.Y);
+                BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_INPUT_MOUSE_EVENT_CONTINUE");
+                ScaleformMovieMethodAddParamFloat(mouse.X);
+                ScaleformMovieMethodAddParamFloat(mouse.Y);
+                var ret = EndScaleformMovieMethodReturnValue();
+                while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+                var res = GetScaleformMovieMethodReturnValueString(ret);
+                var split = res.Split(',');
+
+                var selection = Convert.ToInt32(split[1]);
+                var _type = Convert.ToInt32(split[2]);
+                var value = Convert.ToSingle(split[3]);
+                switch (split[0])
+                {
+                    case "pan":
+                        switch (_type)
+                        {
+                            case 1:
+                                {
+                                    var panel = (UIMenuPercentagePanel)MenuItems[CurrentSelection].Panels[selection];
+                                    panel._value = value;
+                                    PercentagePanelChange(panel.ParentItem, panel, panel.Percentage);
+                                    panel.PercentagePanelChange();
+                                    if (HasSoundFinished(menuSound))
+                                    {
+                                        menuSound = GetSoundId();
+                                        API.PlaySoundFrontend(menuSound, "CONTINUOUS_SLIDER", "HUD_FRONTEND_DEFAULT_SOUNDSET", true);
+                                    }
+                                }
+                                break;
+                            case 2:
+                                {
+                                    var panel = (UIMenuGridPanel)MenuItems[CurrentSelection].Panels[selection];
+                                    panel._value = new(value, Convert.ToSingle(split[4]));
+                                    GridPanelChange(panel.ParentItem, panel, panel.CirclePosition);
+                                    panel.OnGridChange();
+                                    if (HasSoundFinished(menuSound))
+                                    {
+                                        menuSound = GetSoundId();
+                                        API.PlaySoundFrontend(menuSound, "CONTINUOUS_SLIDER", "HUD_FRONTEND_DEFAULT_SOUNDSET", true);
+                                    }
+                                }
+                                break;
+                        }
+                        break;
+                }
+            }
+            if (!HasSoundFinished(menuSound))
+            {
+                await BaseScript.Delay(1);
+                API.StopSound(menuSound);
+
+                API.ReleaseSoundId(menuSound);
+            }
+        }
+
+        public void GoBack()
+        {
+            Game.PlaySound(AUDIO_BACK, AUDIO_LIBRARY);
+            if (ParentMenu != null)
+            {
+                ScaleformUI._ui.CallFunction("CLEAR_ALL");
+                ScaleformUI.InstructionalButtons.Enabled = true;
+                ScaleformUI.InstructionalButtons.SetInstructionalButtons(ParentMenu.InstructionalButtons);
+                _poolcontainer.MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
+                ParentMenu.MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
+                MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
+                ParentMenu.Visible = true;
+                ParentMenu.BuildUpMenu();
+            }
+            Visible = false;
+        }
+
+        public async void GoUp()
+        {
+            try
+            {
+                MenuItems[CurrentSelection].Selected = false;
+                BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_INPUT_EVENT");
+                ScaleformMovieMethodAddParamInt(8);
+                var ret = EndScaleformMovieMethodReturnValue();
+                while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+                _activeItem = GetScaleformMovieFunctionReturnInt(ret);
+                MenuItems[CurrentSelection].Selected = true;
+                IndexChange(CurrentSelection);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.ToString());
+            }
+        }
+        public async void GoDown()
+        {
+            try
+            {
+                MenuItems[CurrentSelection].Selected = false;
+                BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_INPUT_EVENT");
+                ScaleformMovieMethodAddParamInt(9);
+                var ret = EndScaleformMovieMethodReturnValue();
+                while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+                _activeItem = GetScaleformMovieFunctionReturnInt(ret);
+                MenuItems[CurrentSelection].Selected = true;
+                IndexChange(CurrentSelection);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.ToString());
+            }
+        }
+        public async void GoLeft()
+        {
+            if (!MenuItems[CurrentSelection].Enabled)
+            {
+                Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
+                return;
+            }
+            BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_INPUT_EVENT");
+            ScaleformMovieMethodAddParamInt(10);
+            var ret = EndScaleformMovieMethodReturnValue();
+            while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            var res = GetScaleformMovieFunctionReturnInt(ret);
+            switch (MenuItems[CurrentSelection])
+            {
+                case UIMenuListItem:
+                    {
+                        UIMenuListItem it = (UIMenuListItem)MenuItems[CurrentSelection];
+                        it.Index = res;
+                        ListChange(it, it.Index);
+                        it.ListChangedTrigger(it.Index);
+                        break;
+                    }
+                case UIMenuSliderItem:
+                    {
+                        UIMenuSliderItem it = (UIMenuSliderItem)MenuItems[CurrentSelection];
+                        it.Value = res;
+                        SliderChange(it, it.Value);
+                        break;
+                    }
+                case UIMenuProgressItem:
+                    {
+                        UIMenuProgressItem it = (UIMenuProgressItem)MenuItems[CurrentSelection];
+                        it.Value = res;
+                        ProgressChange(it, it.Value);
+                        break;
+                    }
+                case UIMenuStatsItem:
+                    {
+                        UIMenuStatsItem it = (UIMenuStatsItem)MenuItems[CurrentSelection];
+                        it.Value = res;
+                        StatItemChange(it, it.Value);
+                        break;
+                    }
+            }
+        }
+
+        public async void GoRight()
+        {
+            if (!MenuItems[CurrentSelection].Enabled)
+            {
+                Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
+                return;
+            }
+            BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_INPUT_EVENT");
+            ScaleformMovieMethodAddParamInt(11);
+            var ret = EndScaleformMovieMethodReturnValue();
+            while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            var res = GetScaleformMovieFunctionReturnInt(ret);
+            switch (MenuItems[CurrentSelection])
+            {
+                case UIMenuListItem:
+                    {
+                        UIMenuListItem it = (UIMenuListItem)MenuItems[CurrentSelection];
+                        it.Index = res;
+                        ListChange(it, it.Index);
+                        it.ListChangedTrigger(it.Index);
+                        break;
+                    }
+                case UIMenuSliderItem:
+                    {
+                        UIMenuSliderItem it = (UIMenuSliderItem)MenuItems[CurrentSelection];
+                        it.Value = res;
+                        SliderChange(it, it.Value);
+                        break;
+                    }
+                case UIMenuProgressItem:
+                    {
+                        UIMenuProgressItem it = (UIMenuProgressItem)MenuItems[CurrentSelection];
+                        it.Value = res;
+                        ProgressChange(it, it.Value);
+                        break;
+                    }
+                case UIMenuStatsItem:
+                    {
+                        UIMenuStatsItem it = (UIMenuStatsItem)MenuItems[CurrentSelection];
+                        it.Value = res;
+                        StatItemChange(it, it.Value);
+                        break;
+                    }
+            }
+        }
+
+        public void Select(bool playSound)
+        {
+            if (!MenuItems[CurrentSelection].Enabled)
+            {
+                Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
+                return;
+            }
+
+            if (playSound) Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
+            switch (MenuItems[CurrentSelection])
+            {
+                case UIMenuCheckboxItem:
+                    {
+                        UIMenuCheckboxItem it = (UIMenuCheckboxItem)MenuItems[CurrentSelection];
+                        it.Checked = !it.Checked;
+                        CheckboxChange(it, it.Checked);
+                        it.CheckboxEventTrigger();
+                        break;
+                    }
+
+                case UIMenuListItem:
+                    {
+                        UIMenuListItem it = (UIMenuListItem)MenuItems[CurrentSelection];
+                        ListSelect(it, it.Index);
+                        it.ListSelectedTrigger(it.Index);
+                        break;
+                    }
+
+                default:
+                    ItemSelect(MenuItems[CurrentSelection], CurrentSelection);
+                    MenuItems[CurrentSelection].ItemActivate(this);
+                    if (!Children.ContainsKey(MenuItems[CurrentSelection])) return;
+                    Visible = false;
+                    ScaleformUI._ui.CallFunction("CLEAR_ALL");
+                    ScaleformUI.InstructionalButtons.Enabled = true;
+                    ScaleformUI.InstructionalButtons.SetInstructionalButtons(Children[MenuItems[CurrentSelection]].InstructionalButtons);
+                    _poolcontainer.MenuChangeEv(this, Children[MenuItems[CurrentSelection]], MenuState.ChangeForward);
+                    MenuChangeEv(this, Children[MenuItems[CurrentSelection]], MenuState.ChangeForward);
+                    Children[MenuItems[CurrentSelection]].MenuChangeEv(this, Children[MenuItems[CurrentSelection]], MenuState.ChangeForward);
+                    Children[MenuItems[CurrentSelection]].Visible = true;
+                    Children[MenuItems[CurrentSelection]].BuildUpMenu();
+                    Children[MenuItems[CurrentSelection]].MouseEdgeEnabled = MouseEdgeEnabled;
+                    break;
+            }
+        }
+        /// <summary>
+        /// Process control-stroke. Call this in the OnTick event.
+        /// </summary>
+        public async void ProcessControl(Keys key = Keys.None)
+        {
+
+            while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
+            if (!Visible || ScaleformUI.Warning.IsShowing) return;
+            if (_justOpened)
+            {
+                _justOpened = false;
+                return;
+            }
+
+            if (HasControlJustBeenReleaseed(MenuControls.Back, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
+            {
+                GoBack();
+            }
+            if (MenuItems.Count == 0) return;
+            if (IsControlBeingPressed(MenuControls.Up, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
+            {
+                GoUp();
+            }
+
+            else if (IsControlBeingPressed(MenuControls.Down, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
+            {
+                GoDown();
+            }
+
+            else if (IsControlBeingPressed(MenuControls.Left, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
+            {
+                GoLeft();
+            }
+
+            else if (IsControlBeingPressed(MenuControls.Right, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
+            {
+                GoRight();
+            }
+
+            else if (HasControlJustBeenPressed(MenuControls.Select, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
+            {
+                Select(true);
+            }
+        }
+
+        /// <summary>
+        /// Process keystroke. Call this in the OnKeyDown event.
+        /// </summary>
+        /// <param name="key"></param>
+        public void ProcessKey(Keys key)
+        {
+            if ((from MenuControls menuControl in _menuControls
+                 select new List<Keys>(_keyDictionary[menuControl].Item1))
+                .Any(tmpKeys => tmpKeys.Any(k => k == key)))
+            {
+                ProcessControl(key);
+            }
+        }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Change whether this menu is visible to the user.
+        /// </summary>
+        public bool Visible
+        {
+            get { return _visible; }
+            set
+            {
+                LoadScaleform();
+                _visible = value;
+                _justOpened = value;
+                _itemsDirty = value;
+
+                if (ParentMenu is not null) return;
+                if (Children.Count > 0 && Children.ContainsKey(MenuItems[CurrentSelection]) && Children[MenuItems[CurrentSelection]].Visible) return;
+                ScaleformUI.InstructionalButtons.Enabled = value;
+                ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
+                if (value)
+                {
+                    _poolcontainer.MenuChangeEv(null, this, MenuState.Opened);
+                    MenuChangeEv(null, this, MenuState.Opened);
+                    BuildUpMenu();
+                }
+                else
+                {
+                    _poolcontainer.MenuChangeEv(this, null, MenuState.Closed);
+                    MenuChangeEv(this, null, MenuState.Closed);
+                    ScaleformUI._ui.CallFunction("CLEAR_ALL");
+                }
+                if (!value) return;
+                if (!ResetCursorOnOpen) return;
+                SetCursorLocation(0.5f, 0.5f);
+                Screen.Hud.CursorSprite = CursorSprite.Normal;
+            }
+        }
+
+        private async void LoadScaleform()
+        {
+
+            RequestStreamedTextureDict("commonmenu", true);
+            RequestStreamedTextureDict("pause_menu_pages_char_mom_dad", true);
+            RequestStreamedTextureDict(_customTexture.Key, true);
+            RequestStreamedTextureDict("char_creator_portraits", true);
+
+            while (!HasStreamedTextureDictLoaded("commonmenu") &&
+                !HasStreamedTextureDictLoaded("pause_menu_pages_char_mom_dad") &&
+                !HasStreamedTextureDictLoaded(_customTexture.Key) &&
+                !HasStreamedTextureDictLoaded("char_creator_portraits"))
+                await BaseScript.Delay(0);
+        }
+
+        internal async void BuildUpMenu()
+        {
+            LoadScaleform();
+            while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
+            ScaleformUI._ui.CallFunction("CREATE_MENU", Title, Subtitle, _customTexture.Key, _customTexture.Value, EnableAnimation, (int)AnimationType);
+            if (Windows.Count > 0)
+                ScaleformUI._ui.CallFunction("ADD_HERITAGE_WINDOW", Windows[0].Mom, Windows[0].Dad);
+            var timer = GetGameTimer();
+            if (MenuItems.Count == 0)
+            {
+                while (MenuItems.Count == 0)
+                {
+                    await BaseScript.Delay(0);
+                    if (GetGameTimer() - timer > 150)
+                    {
+                        ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
+                        SetStreamedTextureDictAsNoLongerNeeded(_customTexture.Key);
+                        SetStreamedTextureDictAsNoLongerNeeded("commonmenu");
+                        SetStreamedTextureDictAsNoLongerNeeded("pause_menu_pages_char_mom_dad");
+                        SetStreamedTextureDictAsNoLongerNeeded("char_creator_portraits");
+                        return;
+                    }
+                }
+            }
+            foreach (var item in MenuItems)
+            {
+                AddTextEntry($"menu_{_poolcontainer._menuList.IndexOf(this)}_desc_{MenuItems.IndexOf(item)}", item.Description);
+                LoadScaleform();
+                BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "ADD_ITEM");
+                PushScaleformMovieFunctionParameterInt(item._itemId);
+                PushScaleformMovieMethodParameterString(item.Label);
+                BeginTextCommandScaleformString($"menu_{_poolcontainer._menuList.IndexOf(this)}_desc_{MenuItems.IndexOf(item)}");
+                EndTextCommandScaleformString_2();
+                PushScaleformMovieFunctionParameterBool(item.Enabled);
+                PushScaleformMovieFunctionParameterBool(item.BlinkDescription);
+                switch (item)
+                {
+                    case UIMenuListItem:
+                        UIMenuListItem it = (UIMenuListItem)item;
+                        AddTextEntry($"listitem_{MenuItems.IndexOf(item)}_list", string.Join(",", it.Items));
+                        BeginTextCommandScaleformString($"listitem_{MenuItems.IndexOf(item)}_list");
+                        EndTextCommandScaleformString();
+                        PushScaleformMovieFunctionParameterInt(it.Index);
+                        PushScaleformMovieFunctionParameterInt((int)it.MainColor);
+                        PushScaleformMovieFunctionParameterInt((int)it.HighlightColor);
+                        PushScaleformMovieFunctionParameterInt((int)it.TextColor);
+                        PushScaleformMovieFunctionParameterInt((int)it.HighlightedTextColor);
+                        EndScaleformMovieMethod();
+                        break;
+                    case UIMenuCheckboxItem:
+                        UIMenuCheckboxItem check = (UIMenuCheckboxItem)item;
+                        PushScaleformMovieFunctionParameterInt((int)check.Style);
+                        PushScaleformMovieMethodParameterBool(check.Checked);
+                        PushScaleformMovieFunctionParameterInt((int)check.MainColor);
+                        PushScaleformMovieFunctionParameterInt((int)check.HighlightColor);
+                        PushScaleformMovieFunctionParameterInt((int)check.TextColor);
+                        PushScaleformMovieFunctionParameterInt((int)check.HighlightedTextColor);
+                        EndScaleformMovieMethod();
+                        break;
+                    case UIMenuSliderItem:
+                        UIMenuSliderItem prItem = (UIMenuSliderItem)item;
+                        PushScaleformMovieFunctionParameterInt(prItem._max);
+                        PushScaleformMovieFunctionParameterInt(prItem._multiplier);
+                        PushScaleformMovieFunctionParameterInt(prItem.Value);
+                        PushScaleformMovieFunctionParameterInt((int)prItem.MainColor);
+                        PushScaleformMovieFunctionParameterInt((int)prItem.HighlightColor);
+                        PushScaleformMovieFunctionParameterInt((int)prItem.TextColor);
+                        PushScaleformMovieFunctionParameterInt((int)prItem.HighlightedTextColor);
+                        PushScaleformMovieFunctionParameterInt((int)prItem.SliderColor);
+                        PushScaleformMovieFunctionParameterBool(prItem._heritage);
+                        EndScaleformMovieMethod();
+                        break;
+                    case UIMenuProgressItem:
+                        UIMenuProgressItem slItem = (UIMenuProgressItem)item;
+                        PushScaleformMovieFunctionParameterInt(slItem._max);
+                        PushScaleformMovieFunctionParameterInt(slItem._multiplier);
+                        PushScaleformMovieFunctionParameterInt(slItem.Value);
+                        PushScaleformMovieFunctionParameterInt((int)slItem.MainColor);
+                        PushScaleformMovieFunctionParameterInt((int)slItem.HighlightColor);
+                        PushScaleformMovieFunctionParameterInt((int)slItem.TextColor);
+                        PushScaleformMovieFunctionParameterInt((int)slItem.HighlightedTextColor);
+                        PushScaleformMovieFunctionParameterInt((int)slItem.SliderColor);
+                        EndScaleformMovieMethod();
+                        break;
+                    case UIMenuStatsItem:
+                        UIMenuStatsItem statsItem = (UIMenuStatsItem)item;
+                        PushScaleformMovieFunctionParameterInt(statsItem.Value);
+                        PushScaleformMovieFunctionParameterInt(statsItem.Type);
+                        PushScaleformMovieFunctionParameterInt((int)statsItem.Color);
+                        PushScaleformMovieFunctionParameterInt((int)statsItem.MainColor);
+                        PushScaleformMovieFunctionParameterInt((int)statsItem.HighlightColor);
+                        PushScaleformMovieFunctionParameterInt((int)statsItem.TextColor);
+                        PushScaleformMovieFunctionParameterInt((int)statsItem.HighlightedTextColor);
+                        EndScaleformMovieMethod();
+                        break;
+                    default:
+                        PushScaleformMovieFunctionParameterInt((int)item.MainColor);
+                        PushScaleformMovieFunctionParameterInt((int)item.HighlightColor);
+                        PushScaleformMovieFunctionParameterInt((int)item.TextColor);
+                        PushScaleformMovieFunctionParameterInt((int)item.HighlightedTextColor);
+                        EndScaleformMovieMethod();
+                        ScaleformUI._ui.CallFunction("SET_RIGHT_LABEL", MenuItems.IndexOf(item), item.RightLabel);
+                        if (item.RightBadge != BadgeIcon.NONE)
+                            ScaleformUI._ui.CallFunction("SET_RIGHT_BADGE", MenuItems.IndexOf(item), UIMenuItem.GetSpriteDictionary(item.RightBadge), (int)item.RightBadge);
+                        break;
+                }
+                if (item.Panels.Count == 0) continue;
+                foreach (var panel in item.Panels)
+                {
+                    var it = MenuItems.IndexOf(item);
+                    var pan = item.Panels.IndexOf(panel);
+                    switch (panel)
+                    {
+                        case UIMenuColorPanel:
+                            UIMenuColorPanel cp = (UIMenuColorPanel)panel;
+                            ScaleformUI._ui.CallFunction("ADD_PANEL", it, 0, cp.Title, (int)cp.ColorPanelColorType, cp.CurrentSelection);
+                            break;
+                        case UIMenuPercentagePanel:
+                            UIMenuPercentagePanel pp = (UIMenuPercentagePanel)panel;
+                            ScaleformUI._ui.CallFunction("ADD_PANEL", it, 1, pp.Title, pp.Min, pp.Max, pp.Percentage);
+                            break;
+                        case UIMenuGridPanel:
+                            UIMenuGridPanel gp = (UIMenuGridPanel)panel;
+                            ScaleformUI._ui.CallFunction("ADD_PANEL", it, 2, gp.TopLabel, gp.RightLabel, gp.LeftLabel, gp.BottomLabel, gp.CirclePosition.X, gp.CirclePosition.Y, true, (int)gp.GridType);
+                            break;
+                        case UIMenuStatisticsPanel:
+                            UIMenuStatisticsPanel sp = (UIMenuStatisticsPanel)panel;
+                            ScaleformUI._ui.CallFunction("ADD_PANEL", it, 3);
+                            if (sp.Items.Count > 0)
+                                foreach (var stat in sp.Items)
+                                    ScaleformUI._ui.CallFunction("ADD_STATISTIC_TO_PANEL", it, pan, stat.Text, stat.Value);
+                            break;
+
+                    }
+                }
+            }
+            ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
+            SetStreamedTextureDictAsNoLongerNeeded(_customTexture.Key);
+            SetStreamedTextureDictAsNoLongerNeeded("commonmenu");
+            SetStreamedTextureDictAsNoLongerNeeded("pause_menu_pages_char_mom_dad");
+            SetStreamedTextureDictAsNoLongerNeeded("char_creator_portraits");
+        }
+
+        /// <summary>
+        /// Returns the current selected item's index.
+        /// Change the current selected item to index. Use this after you add or remove items dynamically.
+        /// </summary>
+        public int CurrentSelection
+        {
+            get { return MenuItems.Count == 0 ? 0 : _activeItem % MenuItems.Count; }
+            set
+            {
+                if (MenuItems.Count == 0) _activeItem = 0;
+                MenuItems[_activeItem % (MenuItems.Count)].Selected = false;
+                _activeItem = 1000000 - (1000000 % MenuItems.Count) + value;
+                MenuItems[_activeItem % (MenuItems.Count)].Selected = true;
+                if (CurrentSelection > _maxItem)
+                {
+                    _maxItem = CurrentSelection;
+                    _minItem = CurrentSelection - MaxItemsOnScreen;
+                }
+                else if (CurrentSelection < _minItem)
+                {
+                    _maxItem = MaxItemsOnScreen + CurrentSelection;
+                    _minItem = CurrentSelection;
+                }
+                ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
+            }
+        }
+
+        /// <summary>
+        /// Returns false if last input was made with mouse and keyboard, true if it was made with a controller.
+        /// </summary>
+        public static bool IsUsingController => !IsInputDisabled(2);
+
+
+        /// <summary>
+        /// Returns the amount of items in the menu.
+        /// </summary>
+        public int Size => MenuItems.Count;
+
+
+        /// <summary>
+        /// Returns the title object.
+        /// </summary>
+        public string Title { get; }
+
+
+        /// <summary>
+        /// Returns the subtitle object.
+        /// </summary>
+        public string Subtitle { get; }
+
+
+        /// <summary>
+        /// String to pre-attach to the counter string. Useful for color codes.
+        /// </summary>
+        public string CounterPretext { get; set; }
+
+
+        /// <summary>
+        /// If this is a nested menu, returns the parent menu. You can also set it to a menu so when pressing Back it goes to that menu.
+        /// </summary>
+        public UIMenu ParentMenu { get; set; }
+
+
+        /// <summary>
+        /// If this is a nested menu, returns the item it was bound to.
+        /// </summary>
+        public UIMenuItem ParentItem { get; set; }
+
+        //Tree structure
+        public Dictionary<UIMenuItem, UIMenu> Children { get; }
+
+        /// <summary>
+        /// Returns the current width offset.
+        /// </summary>
+        public int WidthOffset { get; private set; }
+
+        #endregion
+
+        #region Event Invokers
+        protected virtual void IndexChange(int newindex)
+        {
+            OnIndexChange?.Invoke(this, newindex);
+        }
+
+        internal virtual void ListChange(UIMenuListItem sender, int newindex)
+        {
+            OnListChange?.Invoke(this, sender, newindex);
+        }
+
+        internal virtual void ProgressChange(UIMenuProgressItem sender, int newindex)
+        {
+            OnProgressChange?.Invoke(this, sender, newindex);
+        }
+
+        protected virtual void ListSelect(UIMenuListItem sender, int newindex)
+        {
+            OnListSelect?.Invoke(this, sender, newindex);
+        }
+
+        protected virtual void SliderChange(UIMenuSliderItem sender, int newindex)
+        {
+            OnSliderChange?.Invoke(this, sender, newindex);
+        }
+
+        protected virtual void ItemSelect(UIMenuItem selecteditem, int index)
+        {
+            OnItemSelect?.Invoke(this, selecteditem, index);
+        }
+
+        protected virtual void CheckboxChange(UIMenuCheckboxItem sender, bool Checked)
+        {
+            OnCheckboxChange?.Invoke(this, sender, Checked);
+        }
+
+        public virtual void StatItemChange(UIMenuStatsItem item, int value)
+        {
+            OnStatsItemChanged?.Invoke(this, item, value);
+        }
+
+        protected virtual void MenuChangeEv(UIMenu oldmenu, UIMenu newmenu, MenuState state)
+        {
+            OnMenuStateChanged?.Invoke(oldmenu, newmenu, state);
+        }
+
+        protected virtual void ColorPanelChange(UIMenuItem item, UIMenuColorPanel panel, int index)
+        {
+            OnColorPanelChange?.Invoke(item, panel, index);
+        }
+        protected virtual void PercentagePanelChange(UIMenuItem item, UIMenuPercentagePanel panel, float index)
+        {
+            OnPercentagePanelChange?.Invoke(item, panel, index);
+        }
+        protected virtual void GridPanelChange(UIMenuItem item, UIMenuGridPanel panel, PointF index)
+        {
+            OnGridPanelChange?.Invoke(item, panel, index);
+        }
+
+        #endregion
+
+        public enum MenuControls
+        {
+            Up,
+            Down,
+            Left,
+            Right,
+            Select,
+            Back
+        }
+
+    }
 }
 
