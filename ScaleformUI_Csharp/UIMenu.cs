@@ -1863,7 +1863,7 @@ namespace ScaleformUI
                     ItemSelect(MenuItems[CurrentSelection], CurrentSelection);
                     MenuItems[CurrentSelection].ItemActivate(this);
                     if (!Children.ContainsKey(MenuItems[CurrentSelection])) return;
-                    Visible = false;
+                    _visible = false;
                     ScaleformUI._ui.CallFunction("CLEAR_ALL");
                     ScaleformUI.InstructionalButtons.Enabled = true;
                     ScaleformUI.InstructionalButtons.SetInstructionalButtons(Children[MenuItems[CurrentSelection]].InstructionalButtons);
