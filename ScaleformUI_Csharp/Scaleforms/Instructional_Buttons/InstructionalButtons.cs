@@ -234,10 +234,9 @@ namespace ScaleformUI
         /// <summary>
         /// Returns true if the Saving button is showing
         /// </summary>
-        public bool IsSaving
-        {
-            get => _isSaving;
-        }
+        public bool IsSaving => _isSaving;
+
+        public bool Changed => _changed;
 
         public List<InstructionalButton> ControlButtons { get; private set; }
 
@@ -387,7 +386,7 @@ namespace ScaleformUI
             API.DrawScaleformMovie(_sc.Handle, 0.5f - Position.X, 0.5f - Position.Y, 1f, 1f, 255, 255, 255, 255, 0);
         }
 
-        internal void HandleScaleform()
+        internal void Update()
         {
             if (_sc == null || !_enabled) return;
             if ((ControlButtons == null || ControlButtons.Count == 0) && !_isSaving) return;
@@ -407,6 +406,7 @@ namespace ScaleformUI
                     _changed = true;
                 }
             }
+
             UpdateButtons();
 
             if (!ScaleformUI.Warning.IsShowing) Draw();
