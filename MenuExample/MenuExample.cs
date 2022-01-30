@@ -149,7 +149,7 @@ public class MenuExample : BaseScript
 
 		var noti1 = new UIMenuListItem("Simple Notification", colors, colors.Count - 1, "Can be colored too! Change color and / or select this item to show the notification.");
 		var noti2 = new UIMenuListItem("Advanced Notification", char_sprites, 0, "Change the char and see the notification example! (It can be colored too like the simple notification)");
-		var noti3 = new UIMenuItem("Help Notification", "Insert your text and see the example, you can insert buttons using ~INPUT_NAME~ (for example try using ~INPUT_CONTEXT~ and you'll get the E button)");
+		var noti3 = new UIMenuItem("Help Notification", "Insert your text and see the example.");
 		var noti4 = new UIMenuItem("Floating Help Notification", "This is tricky, it's a 3D notification, you'll have to input a Vector3 to show it!");
 		var noti5 = new UIMenuItem("Stats Notification", "This is the notification you see in GTA:O when you improve one of your skills.");
 		var noti6 = new UIMenuItem("VS Notification", "This is the notification you see in GTA:O when you kill someone or get revenge.");
@@ -719,18 +719,22 @@ public class MenuExample : BaseScript
 			if (state == MenuState.Opened)
 			{
 				Screen.ShowSubtitle($"{newMenu.Title} just opened!", 3000);
+				Debug.WriteLine($"{newMenu.Title} just opened!");
 			}
 			else if (state == MenuState.ChangeForward)
 			{
 				Screen.ShowSubtitle($"{oldMenu.Title} => {newMenu.Title}", 3000);
+				Debug.WriteLine($"{oldMenu.Title} => {newMenu.Title}");
 			}
 			else if (state == MenuState.ChangeBackward)
 			{
 				Screen.ShowSubtitle($"{newMenu.Title} <= {oldMenu.Title}", 3000);
+				Debug.WriteLine($"{newMenu.Title} <= {oldMenu.Title}");
 			}
 			else if (state == MenuState.Closed)
 			{
 				Screen.ShowSubtitle($"{oldMenu.Title} just closed!", 3000);
+				Debug.WriteLine($"{oldMenu.Title} just closed!");
 			}
 		};
 
