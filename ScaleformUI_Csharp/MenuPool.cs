@@ -142,6 +142,10 @@ namespace ScaleformUI
 			if (BannerInheritance && menu._customTexture.Key != null && menu._customTexture.Value != null)
 				submenu.SetBannerType(menu._customTexture);
             submenu.MouseEdgeEnabled = menu.MouseEdgeEnabled;
+            submenu.Glare = menu.Glare;
+            submenu.MouseEdgeEnabled = menu.MouseEdgeEnabled;
+            submenu.MouseWheelControlEnabled = menu.MouseWheelControlEnabled;
+            submenu.MouseControlsEnabled = menu.MouseControlsEnabled;
             Add(submenu);
 			menu.BindMenuToItem(submenu, item);
             menu._poolcontainer = this;

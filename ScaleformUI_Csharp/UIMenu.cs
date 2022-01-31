@@ -862,7 +862,7 @@ namespace ScaleformUI
         internal KeyValuePair<string, string> _customTexture;
 
         //Pagination
-        private const int MaxItemsOnScreen = 9;
+        private const int MaxItemsOnScreen = 7;
         private int _minItem;
         private int _maxItem = MaxItemsOnScreen;
         private bool mouseWheelControlEnabled = true;
@@ -880,7 +880,7 @@ namespace ScaleformUI
 
         internal MenuPool _poolcontainer;
 
-        private bool Glare;
+        public bool Glare { get; set; }
 
         internal readonly static string _selectTextLocalized = Game.GetGXTEntry("HUD_INPUT2");
         internal readonly static string _backTextLocalized = Game.GetGXTEntry("HUD_INPUT3");
@@ -949,7 +949,6 @@ namespace ScaleformUI
         public bool ResetCursorOnOpen = true;
         [Obsolete("The description is now formated automatically by the game.")]
         public bool MouseControlsEnabled = true;
-        public bool ScaleWithSafezone = true;
 
         public PointF Offset { get; }
 
@@ -1698,7 +1697,7 @@ namespace ScaleformUI
                 _poolcontainer.MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
                 ParentMenu.MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
                 MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
-                ParentMenu.Visible = true;
+                ParentMenu._visible = true;
                 ParentMenu.BuildUpMenu();
             }
             Visible = false;
@@ -1864,7 +1863,7 @@ namespace ScaleformUI
                     ItemSelect(MenuItems[CurrentSelection], CurrentSelection);
                     MenuItems[CurrentSelection].ItemActivate(this);
                     if (!Children.ContainsKey(MenuItems[CurrentSelection])) return;
-                    Visible = false;
+                    _visible = false;
                     ScaleformUI._ui.CallFunction("CLEAR_ALL");
                     ScaleformUI.InstructionalButtons.Enabled = true;
                     ScaleformUI.InstructionalButtons.SetInstructionalButtons(Children[MenuItems[CurrentSelection]].InstructionalButtons);
