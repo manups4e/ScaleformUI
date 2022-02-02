@@ -92,6 +92,7 @@
     <Compile Include="TimerBars\Bars\TimerBarBase.cs" />
     <Compile Include="TimerBars\TimerBarPool.cs" />
     <Compile Include="UIMenu.cs" />
+    <Compile Include="Windows\UIMenuDetailsWindow.cs" />
     <Compile Include="Windows\UIMenuHeritageWindow.cs" />
     <Compile Include="Windows\UIMenuWindow.cs" />
   </ItemGroup>
