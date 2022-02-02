@@ -9,11 +9,8 @@ namespace ScaleformUI
 	public class UIMenuWindow
 	{
 		public UIMenu ParentMenu { get; set; }
+		internal int id;
 
-		public virtual bool Enabled { get; set; }
-		internal virtual void Position(float y)
-		{
-		}
 		internal virtual void UpdateParent()
 		{
 		}
