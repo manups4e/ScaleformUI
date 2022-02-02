@@ -14,6 +14,7 @@ namespace ScaleformUI
 
 		public UIMenuHeritageWindow(int mom, int dad)
 		{
+			id = 0;
 			Mom = mom;
 			Dad = dad;
 		}
