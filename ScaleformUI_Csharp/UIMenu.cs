@@ -954,7 +954,7 @@ namespace ScaleformUI
 
         public string BannerTexture { get; private set; }
 
-        public List<UIMenuHeritageWindow> Windows = new List<UIMenuHeritageWindow>();
+        public List<UIMenuWindow> Windows = new List<UIMenuWindow>();
 
         public List<InstructionalButton> InstructionalButtons = new List<InstructionalButton>()
         {
@@ -1089,7 +1089,6 @@ namespace ScaleformUI
             Title = title;
             Subtitle = subtitle;
             MouseWheelControlEnabled = true;
-            LoadScaleform();
             SetKey(MenuControls.Up, Control.PhoneUp);
             SetKey(MenuControls.Down, Control.PhoneDown);
 
@@ -1187,7 +1186,7 @@ namespace ScaleformUI
         /// Add a new Heritage Window to the Menu
         /// </summary>
         /// <param name="window"></param>
-        public void AddWindow(UIMenuHeritageWindow window)
+        public void AddWindow(UIMenuWindow window)
         {
             window.ParentMenu = this;
             Windows.Add(window);
@@ -1947,7 +1946,6 @@ namespace ScaleformUI
             get { return _visible; }
             set
             {
-                LoadScaleform();
                 _visible = value;
                 _justOpened = value;
                 _itemsDirty = value;
@@ -1975,28 +1973,33 @@ namespace ScaleformUI
             }
         }
 
-        private async void LoadScaleform()
-        {
-
-            RequestStreamedTextureDict("commonmenu", true);
-            RequestStreamedTextureDict("pause_menu_pages_char_mom_dad", true);
-            RequestStreamedTextureDict(_customTexture.Key, true);
-            RequestStreamedTextureDict("char_creator_portraits", true);
-
-            while (!HasStreamedTextureDictLoaded("commonmenu") &&
-                !HasStreamedTextureDictLoaded("pause_menu_pages_char_mom_dad") &&
-                !HasStreamedTextureDictLoaded(_customTexture.Key) &&
-                !HasStreamedTextureDictLoaded("char_creator_portraits"))
-                await BaseScript.Delay(0);
-        }
-
         internal async void BuildUpMenu()
         {
-            LoadScaleform();
             while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
             ScaleformUI._ui.CallFunction("CREATE_MENU", Title, Subtitle, _customTexture.Key, _customTexture.Value, EnableAnimation, (int)AnimationType);
             if (Windows.Count > 0)
-                ScaleformUI._ui.CallFunction("ADD_HERITAGE_WINDOW", Windows[0].Mom, Windows[0].Dad);
+            {
+                foreach (var wind in Windows)
+                {
+                    switch (wind)
+                    {
+                        case UIMenuHeritageWindow:
+                            var her = (UIMenuHeritageWindow)wind;
+                            ScaleformUI._ui.CallFunction("ADD_WINDOW", her.id, her.Mom, her.Dad);
+                            break;
+                        case UIMenuDetailsWindow:
+                            var det = (UIMenuDetailsWindow)wind;
+                            ScaleformUI._ui.CallFunction("ADD_WINDOW", det.id, det.DetailBottom, det.DetailMid, det.DetailTop, det.DetailLeft.Txd, det.DetailLeft.Txn, det.DetailLeft.Pos.X, det.DetailLeft.Pos.Y, det.DetailLeft.Size.Width, det.DetailLeft.Size.Height);
+                            if (det.StatWheelEnabled)
+                            {
+                                foreach(var stat in det.DetailStats)
+                                    ScaleformUI._ui.CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", Windows.IndexOf(det), stat.Percentage, (int)stat.HudColor);
+                            }
+                            break;
+                    }
+
+                }
+            }
             var timer = GetGameTimer();
             if (MenuItems.Count == 0)
             {
@@ -2006,10 +2009,6 @@ namespace ScaleformUI
                     if (GetGameTimer() - timer > 150)
                     {
                         ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
-                        SetStreamedTextureDictAsNoLongerNeeded(_customTexture.Key);
-                        SetStreamedTextureDictAsNoLongerNeeded("commonmenu");
-                        SetStreamedTextureDictAsNoLongerNeeded("pause_menu_pages_char_mom_dad");
-                        SetStreamedTextureDictAsNoLongerNeeded("char_creator_portraits");
                         return;
                     }
                 }
@@ -2017,7 +2016,7 @@ namespace ScaleformUI
             foreach (var item in MenuItems)
             {
                 AddTextEntry($"menu_{_poolcontainer._menuList.IndexOf(this)}_desc_{MenuItems.IndexOf(item)}", item.Description);
-                LoadScaleform();
+
                 BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "ADD_ITEM");
                 PushScaleformMovieFunctionParameterInt(item._itemId);
                 PushScaleformMovieMethodParameterString(item.Label);
@@ -2127,10 +2126,6 @@ namespace ScaleformUI
                 }
             }
             ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
-            SetStreamedTextureDictAsNoLongerNeeded(_customTexture.Key);
-            SetStreamedTextureDictAsNoLongerNeeded("commonmenu");
-            SetStreamedTextureDictAsNoLongerNeeded("pause_menu_pages_char_mom_dad");
-            SetStreamedTextureDictAsNoLongerNeeded("char_creator_portraits");
         }
 
         /// <summary>
