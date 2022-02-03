@@ -16,7 +16,7 @@ end
 ---@param G number
 ---@param B number
 ---@param A number
-function UIMenu.New(Title, Subtitle, X, Y, TxtDictionary, TxtName)
+function UIMenu.New(Title, Subtitle, X, Y, glare, TxtDictionary, TxtName)
     local X, Y = tonumber(X) or 0, tonumber(Y) or 0
     if Title ~= nil then
         Title = tostring(Title) or ""
@@ -48,6 +48,9 @@ function UIMenu.New(Title, Subtitle, X, Y, TxtDictionary, TxtName)
         Items = {},
         Windows = {},
         Children = {},
+        TxtDictionary = TxtDictionary,
+        TxtName = TxtName,
+        Glare = glare or false,
         _menuGlare = 0,
         Controls = {
             Back = {
@@ -95,6 +98,12 @@ function UIMenu.New(Title, Subtitle, X, Y, TxtDictionary, TxtName)
         OnItemSelect = function(menu, item, index)
         end,
         OnMenuChanged = function(oldmenu, newmenu, change)
+        end,
+        OnColorPanelChanged = function(oldmenu, newmenu, change)
+        end,
+        OnPercentagePanelChanged = function(oldmenu, newmenu, change)
+        end,
+        OnGridPanelChanged = function(oldmenu, newmenu, change)
         end,
         Settings = {
             InstructionalButtons = true,
@@ -155,7 +164,9 @@ function UIMenu.New(Title, Subtitle, X, Y, TxtDictionary, TxtName)
     if Subtitle ~= "" and Subtitle ~= nil then
         _UIMenu.Subtitle = Subtitle
     end
-    _UIMenu._menuGlare = Scaleform.Request("mp_menu_glare")
+    if(_UIMenu._menuGlare == 0)then
+        _UIMenu._menuGlare = Scaleform.Request("mp_menu_glare")
+    end
     return setmetatable(_UIMenu, UIMenu)
 end
 
@@ -313,13 +324,14 @@ function UIMenu:Visible(bool)
         self.Dirty = tobool(bool)
 
         if self.ParentMenu ~= nil then return end
-        if(#self.Children > 0 and self.Children[self.Items[self:CurrentSelection()]] ~= nil and self.Children[self.Items[self:CurrentSelection()]]:Visible()) then return end
-        if(bool) then
+
+        if #self.Children > 0 and self.Children[self.Items[self:CurrentSelection()]] ~= nil and self.Children[self.Items[self:CurrentSelection()]]:Visible() then return end
+        if bool then
             self.OnMenuChanged(nil, self, "opened")
             self:BuildUpMenu()
         else
             self.OnMenuChanged(self, nil, "closed")
-            ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL")
+            ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
         end
         if self.Settings.ResetCursorOnOpen then
             local W, H = GetScreenResolution()
@@ -330,33 +342,25 @@ function UIMenu:Visible(bool)
     end
 end
 
-function UIMenu:LoadScaleform()
-    RequestStreamedTextureDict("commonmenu", true)
-    RequestStreamedTextureDict("pause_menu_pages_char_mom_dad", true)
-    RequestStreamedTextureDict(TxtDictionary, true)
-    RequestStreamedTextureDict("char_creator_portraits", true)
-
-    while (not HasStreamedTextureDictLoaded("commonmenu") and 
-        not HasStreamedTextureDictLoaded("pause_menu_pages_char_mom_dad") and 
-        not HasStreamedTextureDictLoaded(TxtDictionary) and 
-        not HasStreamedTextureDictLoaded("char_creator_portraits")) do
-        Citizen.Wait(0)
-    end
-end
-
 function UIMenu:BuildUpMenu()
-    self:LoadScaleform()
-    while (not ScaleformUI.Scaleforms._ui:IsLoaded()) do Citizen.Wait(0) end
-    ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", self.Title, self.Subtitle, self.TxtDictionary, self.TxtName)
-    if(#self.Windows > 0) then
-       ScaleformUI.Scaleforms._ui:CallFunction("ADD_HERITAGE_WINDOW", Windows[1].Mom, Windows[1].Dad)
+    while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
+    ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self.Title, self.Subtitle, self.TxtDictionary, self.TxtName, true, 1)
+    if #self.Windows > 0 then
+        for w_id, window in pairs (self.Windows) do
+            local Type, SubType = window()
+            if SubType == "UIMenuHeritageWindow" then
+                ScaleformUI.Scaleforms._ui:CallFunction("ADD_WINDOW", false, window.id, window.Mom, window.Dad)
+            elseif SubType == "UIMenuDetailsWindow" then
+                ScaleformUI.Scaleforms._ui:CallFunction("ADD_WINDOW", false, window.id, window.DetailBottom, window.DetailMid, window.DetailTop, window.DetailLeft.Txd, window.DetailLeft.Txn, window.DetailLeft.Pos.x, window.DetailLeft.Pos.y, window.DetailLeft.Size.x, window.DetailLeft.Size.y)
+            end
+        end
     end
     local timer = GetGameTimer()
-    if (#self.Items == 0) then
-        while (#self.Items == 0) do
+    if #self.Items == 0 then
+        while #self.Items == 0 do
             Citizen.Wait(0)
-            if (GetGameTimer() - timer > 150) then
-                ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", self:CurrentSelection())
+            if GetGameTimer() - timer > 150 then
+                ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, self:CurrentSelection())
                 SetStreamedTextureDictAsNoLongerNeeded(self.TxtDictionary)
                 SetStreamedTextureDictAsNoLongerNeeded("commonmenu")
                 SetStreamedTextureDictAsNoLongerNeeded("pause_menu_pages_char_mom_dad")
@@ -366,47 +370,48 @@ function UIMenu:BuildUpMenu()
         end
     end
     for it, item in pairs (self.Items) do
-        self:LoadScaleform()
         local Type, SubType = item()
 
-        if(SubType == "UIMenuListItem") then
-            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", 1, item:Label(), item:Description(), table.concat(item.Items, ","), item:Index()-1, item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor, item:Enabled(), item:BlinkDescription())
-        elseif(SubType == "UIMenuCheckboxItem") then
-            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", 2, item:Label(), item:Description(), item.CheckBoxStyle, item.Checked, item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor, item:Enabled(), item:BlinkDescription())
-        elseif(SubType == "UIMenuSliderItem") then
-            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", 3, item:Label(), item:Description(), item._Max, item._Multiplier, item:Index(), item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor, item.BackgroundSliderColor, item.SliderColor, item._heritage, item:Enabled(), item:BlinkDescription())
-        elseif(SubType == "UIMenuProgressItem") then
-            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", 4, item:Label(), item:Description(), item._Max, item._Multiplier, item:Index(), item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor, item.SliderColor, item:Enabled(), item:BlinkDescription())
-        elseif(SubType == "UIMenuStatsItem") then
-            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", 5, item:Label(), item:Description(), item:Index(), item._Type, item._Color, item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor, item:Enabled(), item:BlinkDescription())
+        AddTextEntry("desc_{" .. it .."}", item:Description())
+
+        if SubType == "UIMenuListItem" then
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 1, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), table.concat(item.Items, ","), item:Index()-1, item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor)
+        elseif SubType == "UIMenuCheckboxItem" then
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 2, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item.CheckBoxStyle, item._Checked, item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor)
+        elseif SubType == "UIMenuSliderItem" then
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 3, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item._Max, item._Multiplier, item:Index(), item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor, item.SliderColor, item._heritage)
+        elseif SubType == "UIMenuProgressItem" then
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 4, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item._Max, item._Multiplier, item:Index(), item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor, item.SliderColor)
+        elseif SubType == "UIMenuStatsItem" then
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 5, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item:Index(), item._Type, item._Color, item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor)
         else
-            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", 0, item:Label(), item:Description(), item.MainColor, item.HighlightColor, item.TextColor, item.HighlightedTextColor, item:Enabled(), item:BlinkDescription())
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_LABEL", it - 1, item:RightLabel())
-            if (item.RightBadge ~= BadgeStyle.NONE) then
-                ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_BADGE", it - 1, GetSpriteDictionary(item.RightBadge), item.RightBadge)
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 0, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item.MainColor, item.HighlightColor, item.TextColor, item.HighlightedTextColor)
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_LABEL", false, it - 1, item:RightLabel())
+            if item.RightBadge ~= BadgeStyle.NONE then
+                ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_BADGE", false, it - 1, GetSpriteDictionary(item.RightBadge), item.RightBadge)
             end
         end
-        if (#item.Panels > 0) then
+        if #item.Panels > 0 then
             for pan, panel in pairs (item.Panels) do
                 local pType, pSubType = panel()
-                if(pSubType == "UIMenuColorPanel") then
-                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", it, 0, panel.Title, panel.ColorPanelColorType, panel.CurrentSelection)
-                elseif(pSubType == "UIMenuPercentagePanel") then
-                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", it, 1, panel.Title, panel.Min, panel.Max, panel.Percentage)
-                elseif(pSubType == "UIMenuGridPanel") then
-                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", it, 2, panel.TopLabel, panel.RightLabel, panel.LeftLabel, panel.BottomLabel, panel.CirclePosition.X, panel.CirclePosition.Y, true, panel.GridType)
-                elseif(pSubType == "UIMenuStatisticsPanel") then
-                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", it, 3)
-                    if (sp.Items.Count > 0) then
-                        for b,stat in pairs (panel.Items) do
-                            ScaleformUI.Scaleforms._ui:CallFunction("ADD_STATISTIC_TO_PANEL", it, pan, stat:Text(), stat:Value())
+                if pSubType == "UIMenuColorPanel" then
+                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it - 1, 0, panel.Title, panel.ColorPanelColorType, panel.value)
+                elseif pSubType == "UIMenuPercentagePanel" then
+                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it - 1, 1, panel.Title, panel.Min, panel.Max, panel.Percentage)
+                elseif pSubType == "UIMenuGridPanel" then
+                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it - 1, 2, panel.TopLabel, panel.RightLabel, panel.LeftLabel, panel.BottomLabel, panel.CirclePosition.x, panel.CirclePosition.y, true, panel.GridType)
+                elseif pSubType == "UIMenuStatisticsPanel" then
+                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it - 1, 3)
+                    if #panel.Items then
+                        for key, stat in pairs (panel.Items) do
+                            ScaleformUI.Scaleforms._ui:CallFunction("ADD_STATISTIC_TO_PANEL", false, it - 1, pan - 1, stat['name'], stat['value'])
                         end
                     end
                 end
             end
         end
     end
-    ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", 0)
+    ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, 0)
     SetStreamedTextureDictAsNoLongerNeeded(self.TxtDictionary)
     SetStreamedTextureDictAsNoLongerNeeded("commonmenu")
     SetStreamedTextureDictAsNoLongerNeeded("pause_menu_pages_char_mom_dad")
@@ -437,14 +442,14 @@ function UIMenu:ProcessControl()
             Citizen.CreateThread(function()
                 self.UpPressed = true
                 if #self.Items > self.Pagination.Total + 1 then
-                    self:GoUpOverflow()
+                    self:GoUp()
                 else
                     self:GoUp()
                 end
                 Citizen.Wait(175)
                 while self.Controls.Up.Enabled and (IsDisabledControlPressed(0, 172) or IsDisabledControlPressed(1, 172) or IsDisabledControlPressed(2, 172) or IsDisabledControlPressed(0, 241) or IsDisabledControlPressed(1, 241) or IsDisabledControlPressed(2, 241) or IsDisabledControlPressed(2, 241)) do
                     if #self.Items > self.Pagination.Total + 1 then
-                        self:GoUpOverflow()
+                        self:GoUp()
                     else
                         self:GoUp()
                     end
@@ -460,14 +465,14 @@ function UIMenu:ProcessControl()
             Citizen.CreateThread(function()
                 self.DownPressed = true
                 if #self.Items > self.Pagination.Total + 1 then
-                    self:GoDownOverflow()
+                    self:GoDown()
                 else
                     self:GoDown()
                 end
                 Citizen.Wait(175)
                 while self.Controls.Down.Enabled and (IsDisabledControlPressed(0, 173) or IsDisabledControlPressed(1, 173) or IsDisabledControlPressed(2, 173) or IsDisabledControlPressed(0, 242) or IsDisabledControlPressed(1, 242) or IsDisabledControlPressed(2, 242)) do
                     if #self.Items > self.Pagination.Total + 1 then
-                        self:GoDownOverflow()
+                        self:GoDown()
                     else
                         self:GoDown()
                     end
@@ -518,11 +523,11 @@ end
 ---GoUp
 function UIMenu:GoUp()
     self.Items[self:CurrentSelection()]:Selected(false)
-    BeginScaleformMovieMethod(ScaleformUI.Scaleforms._ui.handle, "SET_INPUT_EVENT")
-    ScaleformMovieMethodAddParamInt(8)
-    local ret = EndScaleformMovieMethodReturnValue()
-    while (not IsScaleformMovieMethodReturnValueReady(ret)) do Wait(0) end
-    self.ActiveItem = GetScaleformMovieFunctionReturnInt(ret)
+    local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", true, 8)
+    while not IsScaleformMovieMethodReturnValueReady(return_value) do
+        Citizen.Wait(0)
+    end
+    self.ActiveItem = GetScaleformMovieFunctionReturnInt(return_value)
     self.Items[self:CurrentSelection()]:Selected(true)
     PlaySoundFrontend(-1, self.Settings.Audio.UpDown, self.Settings.Audio.Library, true)
     self.OnIndexChange(self, self:CurrentSelection())
@@ -531,11 +536,11 @@ end
 ---GoDown
 function UIMenu:GoDown()
     self.Items[self:CurrentSelection()]:Selected(false)
-    BeginScaleformMovieMethod(ScaleformUI.Scaleforms._ui.handle, "SET_INPUT_EVENT")
-    ScaleformMovieMethodAddParamInt(9)
-    local ret = EndScaleformMovieMethodReturnValue()
-    while (not IsScaleformMovieMethodReturnValueReady(ret)) do Wait(0) end
-    self.ActiveItem = GetScaleformMovieFunctionReturnInt(ret)
+    local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", true, 9)
+    while not IsScaleformMovieMethodReturnValueReady(return_value) do
+        Citizen.Wait(0)
+    end
+    self.ActiveItem = GetScaleformMovieFunctionReturnInt(return_value)
     self.Items[self:CurrentSelection()]:Selected(true)
     PlaySoundFrontend(-1, self.Settings.Audio.UpDown, self.Settings.Audio.Library, true)
     self.OnIndexChange(self, self:CurrentSelection())
@@ -553,11 +558,11 @@ function UIMenu:GoLeft()
         return
     end
 
-    BeginScaleformMovieMethod(ScaleformUI.Scaleforms._ui.handle, "SET_INPUT_EVENT")
-    ScaleformMovieMethodAddParamInt(10)
-    local ret = EndScaleformMovieMethodReturnValue()
-    while (not IsScaleformMovieMethodReturnValueReady(ret)) do Wait(0) end
-    local res = GetScaleformMovieFunctionReturnInt(ret)
+    local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", true, 10)
+    while not IsScaleformMovieMethodReturnValueReady(return_value) do
+        Citizen.Wait(0)
+    end
+    local res = GetScaleformMovieFunctionReturnInt(return_value)
 
     if subtype == "UIMenuListItem" then
         Item:Index(res)
@@ -576,7 +581,7 @@ function UIMenu:GoLeft()
         PlaySoundFrontend(-1, self.Settings.Audio.LeftRight, self.Settings.Audio.Library, true)
     elseif subtype == "UIMenuStatsItem" then
         Item:Index(res)
-        --self.OnStatsChange(self, Item, Item:Index())
+        self.OnStatsChanged(self, Item, Item:Index())
         Item.OnStatsChanged(self, Item, Item._Index)
     end
 end
@@ -593,11 +598,11 @@ function UIMenu:GoRight()
         return
     end
 
-    BeginScaleformMovieMethod(ScaleformUI.Scaleforms._ui.handle, "SET_INPUT_EVENT")
-    ScaleformMovieMethodAddParamInt(11)
-    local ret = EndScaleformMovieMethodReturnValue()
-    while (not IsScaleformMovieMethodReturnValueReady(ret)) do Wait(0) end
-    local res = GetScaleformMovieFunctionReturnInt(ret)
+    local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", true, 11)
+    while not IsScaleformMovieMethodReturnValueReady(return_value) do
+        Citizen.Wait(0)
+    end
+    local res = GetScaleformMovieFunctionReturnInt(return_value)
 
     if subtype == "UIMenuListItem" then
         Item:Index(res)
@@ -616,7 +621,7 @@ function UIMenu:GoRight()
         PlaySoundFrontend(-1, self.Settings.Audio.LeftRight, self.Settings.Audio.Library, true)
     elseif subtype == "UIMenuStatsItem" then
         Item:Index(res)
-        --self.OnStatsChange(self, Item, Item:Index())
+        self.OnStatsChanged(self, Item, Item:Index())
         Item.OnStatsChanged(self, Item, Item._Index)
     end
 end
@@ -627,7 +632,7 @@ function UIMenu:SelectItem(play)
         PlaySoundFrontend(-1, self.Settings.Audio.Error, self.Settings.Audio.Library, true)
         return
     end
-    if(play)then
+    if play then
         PlaySoundFrontend(-1, self.Settings.Audio.Select, self.Settings.Audio.Library, true)
     end
 
@@ -645,19 +650,17 @@ function UIMenu:SelectItem(play)
         Item.OnListSelected(self, Item, Item._Index)
     else
         self.OnItemSelect(self, Item, self:CurrentSelection())
-        Item.Activated(self, Item)
+        Item:Activated(self, Item)
         if not self.Children[Item] then
             return
         end
-        self:Visible(false)
-        self.Children[Item]:Visible(true)
+        self._Visible = false
         self.OnMenuChanged(self, self.Children[self.Items[self:CurrentSelection()]], true)
-        ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL");
-        ScaleformUI.Scaleforms.InstructionalButtons:Enabled(true);
-        ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(Children[MenuItems[CurrentSelection]].InstructionalButtons);
-        --_poolcontainer.MenuChangeEv(this, Children[MenuItems[CurrentSelection]], MenuState.ChangeForward);
+        ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false);
+        ScaleformUI.Scaleforms.InstructionalButtons.Enabled = true;
+        ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.Children[self.Items[self:CurrentSelection()]].InstructionalButtons);
         self.OnMenuChanged(self, self.Children[Item], "forwards")
-        self.ParentMenu.OnMenuChanged(self, self.Children[Item], "forwards")
+        self.Children[Item].OnMenuChanged(self, self.Children[Item], "forwards")
         self.Children[Item]:Visible(true);
         self.Children[Item]:BuildUpMenu();
     end
@@ -667,10 +670,10 @@ end
 function UIMenu:GoBack()
     PlaySoundFrontend(-1, self.Settings.Audio.Back, self.Settings.Audio.Library, true)
     if self.ParentMenu ~= nil then
-        ScaleformUI.Scaleforms._ui.CallFunction("CLEAR_ALL")
+        ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
         ScaleformUI.Scaleforms.InstructionalButtons.Enabled = true
-        ScaleformUI.Scaleforms.InstructionalButtons.SetInstructionalButtons(ParentMenu.InstructionalButtons)
-        self.ParentMenu:Visible(true)
+        ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.ParentMenu.InstructionalButtons)
+        self.ParentMenu._Visible = true
         self.ParentMenu:BuildUpMenu()
         self.OnMenuChanged(self, self.ParentMenu, "backwards")
         self.ParentMenu.OnMenuChanged(self, self.ParentMenu, "backwards")
@@ -706,9 +709,10 @@ end
 ---Draw
 function UIMenu:Draw()
     if not self._Visible or ScaleformUI.Scaleforms.Warning:IsShowing() then return end
-    while(not ScaleformUI.Scaleforms._ui:IsLoaded()) do Citizen.Wait(0) end
+    while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
 
     HideHudComponentThisFrame(19)
+    ShowCursorThisFrame()
 
     if self.Settings.ControlDisablingEnabled then
         self:DisEnableControls(false)
@@ -720,27 +724,30 @@ function UIMenu:Draw()
     local height = 720 / 720
     ScaleformUI.Scaleforms._ui:Render2DNormal(x + (width / 2.0), y + (height / 2.0), width, height)
 
-    if(self.Glare)then
-        self._menuGlare:CallFunction("SET_DATA_SLOT", GetGameplayCamRelativeHeading())
+    if self.Glare then
+        self._menuGlare:CallFunction("SET_DATA_SLOT", false, GetGameplayCamRelativeHeading())
 
         local gx = self.Position.X / 1280 + 0.4499
         local gy = self.Position.Y / 720 + 0.449
 
-        self._menuGlare:Render2DNormal(gl.X, gl.Y, 1, 1)
+        self._menuGlare:Render2DNormal(gx, gy, 1.0, 1.0)
     end
 
     for k,item in pairs(self.Items) do
         local Type, SubType = item()
-        if(SubType == "UIMenuSliderItem" or SubType == "UIMenuProgressItem") then
-            ScaleformUI.Scaleforms._ui.CallFunction("UPDATE_ITEM", k-1, item:Description(), item.MainColor, item.HighlightColor, item.TextColor, item.HighlightedTextColor, item.SliderColor, item.BackgroundSliderColor)
+
+        AddTextEntry("desc_{" .. k .."}", item:Description())
+
+        if SubType == "UIMenuSliderItem" or SubType == "UIMenuProgressItem" then
+            ScaleformUI.Scaleforms._ui.CallFunction("UPDATE_ITEM", false, k-1, "desc_{" .. k .."}", item.MainColor, item.HighlightColor, item.TextColor, item.HighlightedTextColor, item.SliderColor, item.BackgroundSliderColor)
         else
-            ScaleformUI.Scaleforms._ui.CallFunction("UPDATE_ITEM", k-1, item:Description(), item.MainColor, item.HighlightColor, item.TextColor, item.HighlightedTextColor)
+            ScaleformUI.Scaleforms._ui.CallFunction("UPDATE_ITEM", false, k-1, "desc_{" .. k .."}", item.MainColor, item.HighlightColor, item.TextColor, item.HighlightedTextColor)
         end
     end
 end
 
 ---ProcessMouse
-function UIMenu:ProcessMouse()
+function UIMenu:ProcessMouseJustPressed()
     local menuSound = -1
     if not self._Visible or self.JustOpened or #self.Items == 0 or tobool(not IsInputDisabled(2)) or not self.Settings.MouseControlsEnabled then
         EnableControlAction(0, 2, true)
@@ -760,123 +767,125 @@ function UIMenu:ProcessMouse()
     local Limit = #self.Items
     local ItemOffset = 0
 
-    ShowCursorThisFrame()
-
-    if #self.Items > self.Pagination.Total + 1 then
+    if #self.Items > self.Pagination.Total then
         Limit = self.Pagination.Max
     end
 
-    if (IsControlJustPressed(0, 24)) then
+    if IsDisabledControlJustPressed(0, 24) then
         local mouse = { 
-            X = GetDisabledControlNormal(0, 239) * (720 * GetScreenAspectRatio(false)) - self.X,
-            Y = GetDisabledControlNormal(0, 240) * 720 - self.Y
+            X = GetDisabledControlNormal(0, 239) * (720 * GetScreenAspectRatio(false)) - self.Position.X,
+            Y = GetDisabledControlNormal(0, 240) * 720 - self.Position.Y
         }
-        BeginScaleformMovieMethod(ScaleformUI.Scaleforms._ui.handle, "SET_INPUT_MOUSE_EVENT_SINGLE")
-        ScaleformMovieMethodAddParamFloat(mouse.X)
-        ScaleformMovieMethodAddParamFloat(mouse.Y)
-        local ret = EndScaleformMovieMethodReturnValue()
-        while (not IsScaleformMovieMethodReturnValueReady(ret)) do Citizen.Wait(0) end
-        local res = GetScaleformMovieMethodReturnValueString(ret)
+
+        local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_MOUSE_EVENT_SINGLE", true, mouse.X, mouse.Y)
+        while not IsScaleformMovieMethodReturnValueReady(return_value) do
+            Citizen.Wait(0)
+            print("waiting")
+            if not self:Visible() then return end
+        end
+        local res = GetScaleformMovieFunctionReturnString(return_value)
+        if(res == "none") then return end
+        print(res)
         local split = split(res, ",")
         local type = split[1]
         local selection = tonumber(split[2])
-        if(type == "it") then
-            if (self:CurrentSelection() ~= selection) then
-                self:CurrentSelection(selection)
+        if type == "it" then
+            if self:CurrentSelection() ~= selection + 1 then
+                self:CurrentSelection(selection + 1)
             else
-                if(tonumber(split[3]) == 0 or tonumber(split[3]) == 2) then
-                    self:Select(false)
-                elseif(tonumber(split[3]) == 1) then
-                    local it = self.Items[self:CurrentSelection()]
-                    it:Index(tonumber(split[4]))
-                    self:OnListChange(self, it, it._Index)
-                    it.OnListChange(self, it, it._Index)
-                elseif(tonumber(split[3]) == 3) then
-                    local it = self.Items[self:CurrentSelection()]
+                local it = self.Items[self:CurrentSelection()]
+                local t, subt = it()
+                if tonumber(split[3]) == 0 or tonumber(split[3]) == 2 then
+                    self:SelectItem(false)
+                elseif tonumber(split[3]) == 1 then
+                    if subt == "UIMenuListItem" then
+                        it:Index(tonumber(split[4]))
+                        self:OnListChange(self, it, it._Index)
+                        it.OnListChanged(self, it, it._Index)
+                    end
+                elseif tonumber(split[3]) == 3 then
+                    if subt == "UIMenuSliderItem" then
                     it:Index(tonumber(split[4]))
                     it.OnSliderChanged(self, it, it._Index)
-                    self.OnSliderChange(self, it, it._Index)
-                elseif(tonumber(split[3]) == 4) then
-                    local it = self.Items[self:CurrentSelection()]
-                    it:Index(tonumber(split[4]))
-                    it.OnProgressChanged(self, Item, Item._Index)
-                    self:OnProgressChange(self, Item, Item._Index)
+                    self:OnSliderChange(self, it, it._Index)
+                    end
+                elseif tonumber(split[3]) == 4 then
+                    if subt == "UIMenuProgressItem" then
+                        local it = self.Items[self:CurrentSelection()]
+                        it:Index(tonumber(split[4]))
+                        it.OnProgressChanged(self, it, it._Index)
+                        self:OnProgressChange(self, it, it._Index)
+                    end
                 end
             end
-        elseif (type == "pan") then
-            if (tonumber(split[3]) == 0) then
+        elseif type == "pan" then
+            if tonumber(split[3]) == 0 then
+                local panels = self.Items[self:CurrentSelection()]
                 local panel = self.Items[self:CurrentSelection()].Panels[selection+1]
-                panel._value = tonumber(split[4])
-                self:ColorPanelChange(panel.ParentItem, panel, panel:CurrentSelection())
+                panel.value = tonumber(split[4])
+                self:OnColorPanelChanged(panel.ParentItem, panel, panel:CurrentSelection())
                 panel.PanelChanged(panel.ParentItem, panel, panel:CurrentSelection())
-            end
-        end
-    elseif (IsControlPressed(0, 24)) then
-        local mouse = { 
-            X = GetDisabledControlNormal(0, 239) * (720 * GetScreenAspectRatio(false)) - self.X,
-            Y = GetDisabledControlNormal(0, 240) * 720 - self.Y
-        }
-        BeginScaleformMovieMethod(ScaleformUI.Scaleforms._ui.Handle, "SET_INPUT_MOUSE_EVENT_CONTINUE")
-        ScaleformMovieMethodAddParamFloat(mouse.X)
-        ScaleformMovieMethodAddParamFloat(mouse.Y)
-        local ret = EndScaleformMovieMethodReturnValue()
-        while (not IsScaleformMovieMethodReturnValueReady(ret)) do Citizen.Wait(0) end
-        local res = GetScaleformMovieMethodReturnValueString(ret)
-        local split = split(res, ",")
-
-        local type = split[1]
-        local selection = tonumber(split[2])
-        local _type = tonumber(split[3])
-        local value = tonumber(split[4])
-        if(type == "it") then
-            if(_type == 3) then 
-                local it = self.Items[self:CurrentSelection()]
-                it.Value = tonumber(split[4])
-                it.OnSliderChanged(self, it, it._Index)
-                self.OnSliderChanged(self, it, it._Index)
-                if (HasSoundFinished(menuSound)) then
-                    menuSound = GetSoundId()
-                    PlaySoundFrontend(menuSound, "CONTINUOUS_SLIDER", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
-                end
-            elseif(_type == 4) then
-                local it = self.Items[self:CurrentSelection()]
-                it.Value = tonumber(split[4])
-                it.OnProgressChanged(self, Item, Item._Index)
-                self:OnProgressChange(self, Item, Item._Index)
-                if (HasSoundFinished(menuSound)) then
-                        menuSound = GetSoundId()
-                        PlaySoundFrontend(menuSound, "CONTINUOUS_SLIDER", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
-                end
-            end
-        elseif(type == "pan") then
-            if(_type == 1) then 
-                local panel = self.Items[self:CurrentSelection()].Panels[selection+1]
-                panel._value = value
-                self.PercentagePanelChange(panel.ParentItem, panel, panel.Percentage)
-                panel.PercentagePanelChange()
-                if (HasSoundFinished(menuSound)) then
-                    menuSound = GetSoundId()
-                    PlaySoundFrontend(menuSound, "CONTINUOUS_SLIDER", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
-                end
-            elseif(_type == 2) then 
-                local panel = self.Items[self:CurrentSelection()].Panels[selection+1]
-                panel._value = new(value, Convert.ToSingle(split[4]))
-                self.GridPanelChange(panel.ParentItem, panel, panel.CirclePosition)
-                panel.OnGridChange()
-                if (HasSoundFinished(menuSound)) then
-                    menuSound = GetSoundId()
-                    PlaySoundFrontend(menuSound, "CONTINUOUS_SLIDER", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
-                end
             end
         end
     end
 
-    if (not HasSoundFinished(menuSound)) then
+    if not HasSoundFinished(menuSound) then
         Citizen.Wait(1)
         StopSound(menuSound)
         ReleaseSoundId(menuSound)
     end
 end
+
+function UIMenu:ProcessMousePressed()
+    if IsDisabledControlPressed(1, 24) then
+        local mouse = { 
+            X = GetDisabledControlNormal(0, 239) * (720 * GetScreenAspectRatio(false)) - self.Position.X,
+            Y = GetDisabledControlNormal(0, 240) * 720 - self.Position.Y
+        }
+
+        local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_MOUSE_EVENT_CONTINUE", true, mouse.X, mouse.Y)
+        while not IsScaleformMovieMethodReturnValueReady(return_value) do
+            Citizen.Wait(0)
+            if not self:Visible() then return end
+        end
+        local res = GetScaleformMovieFunctionReturnString(return_value)
+        if(res == "none") then return end
+
+        local split = split(res, ",")
+        local itemType = split[1]
+        local selection = tonumber(split[2])
+        local _type = tonumber(split[3])
+        local value = split[4]
+        if itemType == "pan" then
+            if _type == 1 then
+                local panel = self.Items[self:CurrentSelection()].Panels[selection+1]
+                panel.Percentage = tonumber(value)
+                self:OnPercentagePanelChanged(panel.ParentItem, panel, panel.Percentage)
+                panel.PanelChanged(panel.ParentItem, panel, panel.Percentage)
+                if HasSoundFinished(menuSound) then
+                    menuSound = GetSoundId()
+                    PlaySoundFrontend(menuSound, "CONTINUOUS_SLIDER", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
+                end
+            elseif _type == 2 then 
+                local panel = self.Items[self:CurrentSelection()].Panels[selection+1]
+                panel.CirclePosition = vector2(tonumber(split[4]), tonumber(split[5]))
+                self.OnGridPanelChanged(panel.ParentItem, panel, panel.CirclePosition)
+                panel.PanelChanged(panel.ParentItem, panel, panel.CirclePosition)
+                if HasSoundFinished(menuSound) then
+                    menuSound = GetSoundId()
+                    PlaySoundFrontend(menuSound, "CONTINUOUS_SLIDER", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
+                end
+            end
+        end
+    end
+
+    if not HasSoundFinished(menuSound) then
+        Citizen.Wait(1)
+        StopSound(menuSound)
+        ReleaseSoundId(menuSound)
+    end
+end
+
 
 ---AddInstructionButton
 ---@param button table

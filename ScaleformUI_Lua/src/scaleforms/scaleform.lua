@@ -15,7 +15,7 @@ function Scaleform.Request(Name)
 	return setmetatable(data, scaleform)
 end
 
-function scaleform:CallFunction(theFunction, ...)
+function scaleform:CallFunction(theFunction, returndata, ...)
     BeginScaleformMovieMethod(self.handle, theFunction)
     local arg = {...}
     if arg ~= nil then
@@ -30,11 +30,24 @@ function scaleform:CallFunction(theFunction, ...)
 					PushScaleformMovieMethodParameterFloat(arg[i])
 				end
             elseif sType == "string" then
-                PushScaleformMovieMethodParameterString(arg[i])
+				if arg[i]:find("^desc_{") ~= nil then
+					BeginTextCommandScaleformString(arg[i])
+					EndTextCommandScaleformString_2()
+				elseif arg[i]:find("^PauseMenu_") ~= nil then
+					BeginTextCommandScaleformString(arg[i])
+					EndTextCommandScaleformString_2()
+				else
+					PushScaleformMovieMethodParameterString(arg[i])
+				end
             end
 		end
 	end
-	return EndScaleformMovieMethod()
+
+	if not returndata then
+		return EndScaleformMovieMethod()
+	else
+		return EndScaleformMovieMethodReturnValue()
+	end
 end
 
 function scaleform:Render2D()

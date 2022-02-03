@@ -21,9 +21,9 @@ function MenuPool:AddSubMenu(Menu, Text, Description, KeepPosition, KeepBanner)
         Menu:AddItem(Item)
         local SubMenu
         if KeepPosition then
-            SubMenu = UIMenu.New(Menu.Title:Text(), Text, Menu.Position.X, Menu.Position.Y)
+            SubMenu = UIMenu.New(Menu.Title, Text, Menu.Position.X, Menu.Position.Y)
         else
-            SubMenu = UIMenu.New(Menu.Title:Text(), Text)
+            SubMenu = UIMenu.New(Menu.Title, Text)
         end
         if KeepBanner then
             if Menu.Logo ~= nil then
@@ -34,13 +34,13 @@ function MenuPool:AddSubMenu(Menu, Text, Description, KeepPosition, KeepBanner)
             end
         end
 
+        SubMenu.Glare = Menu.Glare
+        SubMenu.Settings.MouseControlsEnabled = Menu.Settings.MouseControlsEnabled
+        SubMenu.Settings.MouseEdgeEnabled = Menu.Settings.MouseEdgeEnabled
 
         self:Add(SubMenu)
         Menu:BindMenuToItem(SubMenu, Item)
-        return {
-            SubMenu = SubMenu,
-            Item = Item
-        }
+        return SubMenu
     end
 end
 
@@ -172,7 +172,8 @@ end
 function MenuPool:ProcessMouse()
     for _, Menu in pairs(self.Menus) do
         if Menu:Visible() then
-            Menu:ProcessMouse()
+            Menu:ProcessMouseJustPressed()
+            Menu:ProcessMousePressed()
         end
     end
 end

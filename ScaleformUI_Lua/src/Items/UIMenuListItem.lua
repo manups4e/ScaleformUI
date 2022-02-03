@@ -11,7 +11,7 @@ function UIMenuListItem.New(Text, Items, Index, Description, color, highlightCol
 	if type(Items) ~= "table" then Items = {} end
 	if Index == 0 then Index = 1 end
 	local _UIMenuListItem = {
-		Base = UIMenuItem.New(Text or "", Description or "", color or 2, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
+		Base = UIMenuItem.New(Text or "", Description or "", color or 117, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
 		Items = Items,
 		_Index = tonumber(Index) or 1,
 		Panels = {},
@@ -72,7 +72,7 @@ function UIMenuListItem:Description(str)
 end
 
 function UIMenuListItem:BlinkDescription(bool)
-    if(bool ~= nil) then
+    if bool ~= nil then
 		self.Base:BlinkDescription(bool)
 	else
 		return self.Base:BlinkDescription()
@@ -189,5 +189,5 @@ function UIMenuListItem:ChangeList(list)
 	if type(list) ~= "table" then return end
 	self.Items = {}
 	self.Items = list
-	ScaleformUI.Scaleforms._ui.CallFunction("UPDATE_LISTITEM_LIST", IndexOf(self.Base.ParentMenu.Items, self) - 1, table.concat(self.Items, ","), self._Index);
+	ScaleformUI.Scaleforms._ui.CallFunction("UPDATE_LISTITEM_LIST", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, table.concat(self.Items, ","), self._Index);
 end

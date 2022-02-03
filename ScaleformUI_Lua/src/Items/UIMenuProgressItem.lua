@@ -10,7 +10,7 @@ UIMenuProgressItem.__call = function() return "UIMenuItem", "UIMenuProgressItem"
 ---@param Counter boolean
 function UIMenuProgressItem.New(Text, Max, Index, Description, color, highlightColor, textColor, highlightedTextColor, sliderColor, backgroundSliderColor)
 	local _UIMenuProgressItem = {
-		Base = UIMenuItem.New(Text or "", Description or "", color or 2, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
+		Base = UIMenuItem.New(Text or "", Description or "", color or 117, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
 		_Max = Max or 100,
 		_Multiplier = 5,
 		_Index = Index or 0,
@@ -85,7 +85,7 @@ function UIMenuProgressItem:Label(Text)
 end
 
 function UIMenuProgressItem:BlinkDescription(bool)
-    if(bool ~= nil) then
+    if bool ~= nil then
 		self.Base:BlinkDescription(bool)
 	else
 		return self.Base:BlinkDescription()
@@ -96,9 +96,9 @@ end
 ---@param Index table
 function UIMenuProgressItem:Index(Index)
 	if tonumber(Index) then
-		if(Index > self._Max) then
+		if Index > self._Max then
 			self._Index = self._Max
-		elseif (Index < 0) then
+		elseif Index < 0 then
 			self._Index = 0
 		else
 			self._Index = Index

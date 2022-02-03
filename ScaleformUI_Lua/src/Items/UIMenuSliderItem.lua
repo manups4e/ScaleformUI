@@ -12,7 +12,7 @@ UIMenuSliderItem.__call = function() return "UIMenuItem", "UIMenuSliderItem" end
 ---@param BackgroundSliderColors table
 function UIMenuSliderItem.New(Text, Max, Multiplier, Index, Heritage, Description, color, highlightColor, textColor, highlightedTextColor, sliderColor, backgroundSliderColor)
 	local _UIMenuSliderItem = {
-		Base = UIMenuItem.New(Text or "", Description or "", color or 2, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
+		Base = UIMenuItem.New(Text or "", Description or "", color or 117, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
 		_Index = tonumber(Index) or 0,
 		_Max = tonumber(Max) or 100,
 		_Multiplier = Multiplier or 5,
@@ -72,7 +72,7 @@ function UIMenuSliderItem:Description(str)
 end
 
 function UIMenuSliderItem:BlinkDescription(bool)
-    if(bool ~= nil) then
+    if bool ~= nil then
 		self.Base:BlinkDescription(bool)
 	else
 		return self.Base:BlinkDescription()
@@ -96,7 +96,7 @@ function UIMenuSliderItem:Index(Index)
 		else
 			self._Index = tonumber(Index)
 		end
-		self.OnSliderChanged(self._Index)
+		self.OnSliderChanged(self.ParentMenu, self, self._Index)
 	else
 		return self._Index
 	end
