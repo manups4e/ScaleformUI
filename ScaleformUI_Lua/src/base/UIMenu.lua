@@ -342,26 +342,18 @@ function UIMenu:Visible(bool)
     end
 end
 
-function UIMenu:LoadScaleform()
-    RequestStreamedTextureDict("commonmenu", true)
-    RequestStreamedTextureDict("pause_menu_pages_char_mom_dad", true)
-    RequestStreamedTextureDict(TxtDictionary, true)
-    RequestStreamedTextureDict("char_creator_portraits", true)
-
-    while not HasStreamedTextureDictLoaded("commonmenu") and 
-        not HasStreamedTextureDictLoaded("pause_menu_pages_char_mom_dad") and 
-        not HasStreamedTextureDictLoaded(TxtDictionary) and 
-        not HasStreamedTextureDictLoaded("char_creator_portraits") do
-        Citizen.Wait(0)
-    end
-end
-
 function UIMenu:BuildUpMenu()
-    self:LoadScaleform()
     while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
     ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self.Title, self.Subtitle, self.TxtDictionary, self.TxtName, true, 1)
     if #self.Windows > 0 then
-       ScaleformUI.Scaleforms._ui:CallFunction("ADD_HERITAGE_WINDOW", false, self.Windows[1].Mom, self.Windows[1].Dad)
+        for w_id, window in pairs (self.Windows) do
+            local Type, SubType = window()
+            if SubType == "UIMenuHeritageWindow" then
+                ScaleformUI.Scaleforms._ui:CallFunction("ADD_WINDOW", false, window.id, window.Mom, window.Dad)
+            elseif SubType == "UIMenuDetailsWindow" then
+                ScaleformUI.Scaleforms._ui:CallFunction("ADD_WINDOW", false, window.id, window.DetailBottom, window.DetailMid, window.DetailTop, window.DetailLeft.Txd, window.DetailLeft.Txn, window.DetailLeft.Pos.x, window.DetailLeft.Pos.y, window.DetailLeft.Size.x, window.DetailLeft.Size.y)
+            end
+        end
     end
     local timer = GetGameTimer()
     if #self.Items == 0 then
@@ -378,7 +370,6 @@ function UIMenu:BuildUpMenu()
         end
     end
     for it, item in pairs (self.Items) do
-        self:LoadScaleform()
         local Type, SubType = item()
 
         AddTextEntry("desc_{" .. it .."}", item:Description())
@@ -590,7 +581,7 @@ function UIMenu:GoLeft()
         PlaySoundFrontend(-1, self.Settings.Audio.LeftRight, self.Settings.Audio.Library, true)
     elseif subtype == "UIMenuStatsItem" then
         Item:Index(res)
-        --self.OnStatsChange(self, Item, Item:Index())
+        self.OnStatsChanged(self, Item, Item:Index())
         Item.OnStatsChanged(self, Item, Item._Index)
     end
 end
@@ -630,7 +621,7 @@ function UIMenu:GoRight()
         PlaySoundFrontend(-1, self.Settings.Audio.LeftRight, self.Settings.Audio.Library, true)
     elseif subtype == "UIMenuStatsItem" then
         Item:Index(res)
-        --self.OnStatsChange(self, Item, Item:Index())
+        self.OnStatsChanged(self, Item, Item:Index())
         Item.OnStatsChanged(self, Item, Item._Index)
     end
 end
@@ -659,7 +650,7 @@ function UIMenu:SelectItem(play)
         Item.OnListSelected(self, Item, Item._Index)
     else
         self.OnItemSelect(self, Item, self:CurrentSelection())
-        Item.Activated(self, Item)
+        Item:Activated(self, Item)
         if not self.Children[Item] then
             return
         end
@@ -886,6 +877,12 @@ function UIMenu:ProcessMousePressed()
                 end
             end
         end
+    end
+
+    if not HasSoundFinished(menuSound) then
+        Citizen.Wait(1)
+        StopSound(menuSound)
+        ReleaseSoundId(menuSound)
     end
 end
 

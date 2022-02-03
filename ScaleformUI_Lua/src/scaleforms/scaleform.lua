@@ -33,6 +33,9 @@ function scaleform:CallFunction(theFunction, returndata, ...)
 				if arg[i]:find("^desc_{") ~= nil then
 					BeginTextCommandScaleformString(arg[i])
 					EndTextCommandScaleformString_2()
+				elseif arg[i]:find("^PauseMenu_") ~= nil then
+					BeginTextCommandScaleformString(arg[i])
+					EndTextCommandScaleformString_2()
 				else
 					PushScaleformMovieMethodParameterString(arg[i])
 				end

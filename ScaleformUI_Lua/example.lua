@@ -74,29 +74,35 @@ Citizen.CreateThread(function()
 	listPanelItem4:AddPanel(statisticsPanel)
 
 
-	local heritageMenu = pool:AddSubMenu(exampleMenu, "Heritage Menu", "", true, true)
+	local windowSubmenu = pool:AddSubMenu(exampleMenu, "Heritage Menu", "", true, true)
 	local heritageWindow = UIMenuHeritageWindow.New(0, 0)
-	heritageMenu:AddWindow(heritageWindow)
+	local detailsWindow = UIMenuDetailsWindow.New("Parents resemblance", "Dad:", "Mom:", true, {})
+	windowSubmenu:AddWindow(heritageWindow)
+	windowSubmenu:AddWindow(detailsWindow)
 	local momNames = {"Hannah", "Audrey", "Jasmine", "Giselle", "Amelia", "Isabella", "Zoe", "Ava", "Camilla", "Violet", "Sophia", "Eveline", "Nicole", "Ashley", "Grace", "Brianna", "Natalie", "Olivia", "Elizabeth", "Charlotte", "Emma", "Misty"}
 	local dadNames = {"Benjamin", "Daniel", "Joshua", "Noah", "Andrew", "Joan", "Alex", "Isaac", "Evan", "Ethan", "Vincent", "Angel", "Diego", "Adrian", "Gabriel", "Michael", "Santiago", "Kevin", "Louis", "Samuel", "Anthony", "Claude", "Niko", "John"}
 
 	local momListItem  = UIMenuListItem.New("Mom", momNames, 0)
 	local dadListItem  = UIMenuListItem.New("Dad", dadNames, 0)
 	local heritageSliderItem = UIMenuSliderItem.New("Heritage Slider", 100, 5, 0, true, "This is Useful on heritage")
-	heritageMenu:AddItem(momListItem)
-	heritageMenu:AddItem(dadListItem)
-	heritageMenu:AddItem(heritageSliderItem)
+	windowSubmenu:AddItem(momListItem)
+	windowSubmenu:AddItem(dadListItem)
+	windowSubmenu:AddItem(heritageSliderItem)
 
-	-- local scaleformMenu = pool:AddSubMenu(exampleMenu, "Scaleforms Showdown", "", true, true)
-	-- local showSimplePopupItem  = UIMenuItem.New("Show PopupWarning example", "You can customize it to your needs")
-	-- local showPopupButtonsItem  = UIMenuItem.New("Show PopupWarning with buttons", "It waits until a button has been pressed!")
-	-- local loadingSpinnerTypes = {}
-	-- local savingNotificationsItem  = UIMenuListItem.New("SavingNotification", loadingSpinnerTypes, 0, "InstructionalButtons now give you the ability to dynamically edit, add, remove, customize your buttons, you can even use them outside the menu ~y~without having to run multiple instances of the same scaleform~w~, aren't you happy??")
-	-- local randomInstructionalButtonItem  = UIMenuItem.New("Add a random InstructionalButton!", "InstructionalButtons now give you the ability to dynamically edit, add, remove, customize your buttons, you can even use them outside the menu ~y~without having to run multiple instances of the same scaleform~w~, aren't you happy??")
-	-- scaleformMenu:AddItem(showSimplePopupItem)
-	-- scaleformMenu:AddItem(showPopupButtonsItem)
-	-- scaleformMenu:AddItem(savingNotificationsItem)
-	-- scaleformMenu:AddItem(randomInstructionalButtonItem)
+	detailsWindow.DetailMid = "Dad: " .. heritageSliderItem:Index() .. "%"
+	detailsWindow.DetailBottom = "Mom: " .. (100 - heritageSliderItem:Index()) .. "%"
+	detailsWindow.DetailStats = {
+		{
+			Percentage = 100,
+			HudColor = 6
+		},
+		{
+			Percentage = 0,
+			HudColor = 50
+		}
+	}
+
+	detailsWindow:UpdateStatsToWheel()
 
 	exampleMenu.OnMenuChanged = function(old, new, type)
 		if type == "opened" then
@@ -130,6 +136,21 @@ Citizen.CreateThread(function()
 
 	horizontalGridPanel.PanelChanged = function(menu, item, newposition)
 		print(newposition)
+	end
+
+	momListItem.OnListChanged = function(menu, item, newindex)
+		heritageWindow:Index(newindex, -1)
+	end
+
+	dadListItem.OnListChanged = function(menu, item, newindex)
+		heritageWindow:Index(-1, newindex)
+	end
+
+	heritageSliderItem.OnSliderChanged = function(menu, item, value)
+		detailsWindow.DetailStats[1].Percentage = 100 - value
+		detailsWindow.DetailStats[2].Percentage = value
+		detailsWindow:UpdateStatsToWheel()
+		detailsWindow:UpdateLabels("Parents resemblance", "Dad: " .. value .. "%", "Mom: " .. (100 - value) .. "%")
 	end
 
 	while true do

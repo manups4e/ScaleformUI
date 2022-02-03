@@ -96,7 +96,7 @@ function UIMenuSliderItem:Index(Index)
 		else
 			self._Index = tonumber(Index)
 		end
-		self.OnSliderChanged(self._Index)
+		self.OnSliderChanged(self.ParentMenu, self, self._Index)
 	else
 		return self._Index
 	end
