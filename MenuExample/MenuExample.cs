@@ -109,21 +109,29 @@ public class MenuExample : BaseScript
 
 		#endregion
 
-		#region Heritage SubMenu
-		var heritagemenu = _menuPool.AddSubMenu(exampleMenu, "Heritage Menu");
+		#region Windows SubMenu
+		var windowSubmenu = _menuPool.AddSubMenu(exampleMenu, "Windows Menu");
 		var heritageWindow = new UIMenuHeritageWindow(0, 0);
-		heritagemenu.AddWindow(heritageWindow);
+		var statsWindow = new UIMenuDetailsWindow("Parents resemblance", "Dad:", "Mom:", true, new List<UIDetailStat>());
+		windowSubmenu.AddWindow(heritageWindow);
+		windowSubmenu.AddWindow(statsWindow);
 		List<dynamic> momfaces = new List<dynamic>() { "Hannah", "Audrey", "Jasmine", "Giselle", "Amelia", "Isabella", "Zoe", "Ava", "Camilla", "Violet", "Sophia", "Eveline", "Nicole", "Ashley", "Grace", "Brianna", "Natalie", "Olivia", "Elizabeth", "Charlotte", "Emma", "Misty" };
 		List<dynamic> dadfaces = new List<dynamic>() { "Benjamin", "Daniel", "Joshua", "Noah", "Andrew", "Joan", "Alex", "Isaac", "Evan", "Ethan", "Vincent", "Angel", "Diego", "Adrian", "Gabriel", "Michael", "Santiago", "Kevin", "Louis", "Samuel", "Anthony", "Claude", "Niko", "John" };
 		List<dynamic> lista = new List<dynamic>();
 		for (int i = 0; i < 101; i++) lista.Add(i);
 		var mom = new UIMenuListItem("Mamma", momfaces, 0);
 		var dad = new UIMenuListItem("Papà", dadfaces, 0);
-		var newItem = new UIMenuSliderItem("Heritage Slider", "This is Useful on heritage", true);
-		heritagemenu.AddItem(mom);
-		heritagemenu.AddItem(dad);
-		heritagemenu.AddItem(newItem);
-
+		var newItem = new UIMenuSliderItem("Heritage Slider", "This is Useful on heritage", 100, 5, 50, true);
+		windowSubmenu.AddItem(mom);
+		windowSubmenu.AddItem(dad);
+		windowSubmenu.AddItem(newItem);
+		statsWindow.DetailMid = "Dad: " + newItem.Value + "%";
+		statsWindow.DetailBottom = "Mom: " + (100 - newItem.Value) + "%";
+		statsWindow.DetailStats = new List<UIDetailStat>()
+		{
+			new UIDetailStat(100-newItem.Value, HudColor.HUD_COLOUR_PINK),
+			new UIDetailStat(newItem.Value, HudColor.HUD_COLOUR_FREEMODE),
+		};
 		#endregion
 
 		#region Scaleforms SubMenu
@@ -227,7 +235,7 @@ public class MenuExample : BaseScript
 		int MomIndex = 0;
 		int DadIndex = 0;
 
-		heritagemenu.OnListChange += (_sender, _listItem, _newIndex) =>
+		windowSubmenu.OnListChange += async (_sender, _listItem, _newIndex) =>
 		{
 			if (_listItem == mom)
 			{
@@ -240,6 +248,16 @@ public class MenuExample : BaseScript
 				heritageWindow.Index(MomIndex, DadIndex);
 			}
 			// This way the heritage window changes only if you change a list item!
+		};
+
+		windowSubmenu.OnSliderChange += (sender, item, value) =>
+		{
+			statsWindow.DetailStats[0].Percentage = 100 - value;
+			statsWindow.DetailStats[0].HudColor = HudColor.HUD_COLOUR_PINK;
+			statsWindow.DetailStats[1].Percentage = value;
+			statsWindow.DetailStats[1].HudColor = HudColor.HUD_COLOUR_FREEMODE;
+            statsWindow.UpdateStatsToWheel();
+			statsWindow.UpdateLabels("Parents resemblance", "Dad: " + value + "%", "Mom: " + (100 - value) + "%");
 		};
 
 		// ====================================================================
