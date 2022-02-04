@@ -2093,7 +2093,7 @@ namespace ScaleformUI
                         EndScaleformMovieMethod();
                         ScaleformUI._ui.CallFunction("SET_RIGHT_LABEL", index, item.RightLabel);
                         if (item.RightBadge != BadgeIcon.NONE)
-                            ScaleformUI._ui.CallFunction("SET_RIGHT_BADGE", index, UIMenuItem.GetSpriteDictionary(item.RightBadge), (int)item.RightBadge);
+                            ScaleformUI._ui.CallFunction("SET_RIGHT_BADGE", index, (int)item.RightBadge);
                         break;
                 }
                 if (item.SidePanel != null)

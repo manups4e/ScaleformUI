@@ -491,14 +491,7 @@ namespace ScaleformUI
             if (Parent is not null)
             {
                 RightBadge = badge;
-                string dict = GetSpriteDictionary(badge);
-                while (!API.HasStreamedTextureDictLoaded(dict))
-                {
-                    await BaseScript.Delay(0);
-                    API.RequestStreamedTextureDict(dict, true);
-                }
-                ScaleformUI._ui.CallFunction("SET_RIGHT_BADGE", Parent.MenuItems.IndexOf(this), dict, (int)badge);
-                API.RemoveAnimDict(dict);
+                ScaleformUI._ui.CallFunction("SET_RIGHT_BADGE", Parent.MenuItems.IndexOf(this), (int)badge);
             }
             else
             {
