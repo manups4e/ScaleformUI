@@ -93,12 +93,13 @@ end
 ---@param Index table
 function UIMenuListItem:Index(Index)
 	if tonumber(Index) then
-		if tonumber(Index) > #self.Items then
+		local ind = Index+1
+		if tonumber(ind) > #self.Items then
 			self._Index = 1
-		elseif tonumber(Index) < 1 then
+		elseif tonumber(ind) < 1 then
 			self._Index = #self.Items
 		else
-			self._Index = tonumber(Index)
+			self._Index = tonumber(ind)
 		end
 	else
 		return self._Index

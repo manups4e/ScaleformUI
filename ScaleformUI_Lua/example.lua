@@ -138,12 +138,17 @@ Citizen.CreateThread(function()
 		print(newposition)
 	end
 
-	momListItem.OnListChanged = function(menu, item, newindex)
-		heritageWindow:Index(newindex, -1)
-	end
+	local MomIndex = 0;
+	local DadIndex = 0;
 
-	dadListItem.OnListChanged = function(menu, item, newindex)
-		heritageWindow:Index(-1, newindex)
+	windowSubmenu.OnListChange = function(menu, item, newindex)
+		print(newindex)
+		if (item == momListItem) then
+			MomIndex = newindex
+		elseif (item == dadListItem) then
+			DadIndex = newindex
+		end
+		heritageWindow:Index(MomIndex, DadIndex)
 	end
 
 	heritageSliderItem.OnSliderChanged = function(menu, item, value)

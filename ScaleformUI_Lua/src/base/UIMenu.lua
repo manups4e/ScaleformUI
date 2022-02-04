@@ -75,7 +75,7 @@ function UIMenu.New(Title, Subtitle, X, Y, glare, TxtDictionary, TxtName)
         ParentMenu = nil,
         ParentItem = nil,
         _Visible = false,
-        ActiveItem = 1000,
+        ActiveItem = 0,
         Dirty = false,
         ReDraw = true,
         InstructionalButtons = {},
@@ -231,13 +231,9 @@ function UIMenu:CurrentSelection(value)
         end
         self.Items[self:CurrentSelection()]:Selected(false)
         self.ActiveItem = 1000000 - (1000000 % #self.Items) + tonumber(value)
-        if self:CurrentSelection() > self.Pagination.Max then
-            self.Pagination.Min = self:CurrentSelection() - self.Pagination.Total
-            self.Pagination.Max = self:CurrentSelection()
-        elseif self:CurrentSelection() < self.Pagination.Min then
-            self.Pagination.Min = self:CurrentSelection()
-            self.Pagination.Max = self:CurrentSelection() + self.Pagination.Total
-        end
+        self.Items[self:CurrentSelection()]:Selected(true)
+        ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, self:CurrentSelection())
+        print(self.ActiveItem)
     else
         if #self.Items == 0 then
             return 1
@@ -245,7 +241,7 @@ function UIMenu:CurrentSelection(value)
             if self.ActiveItem % #self.Items == 0 then
                 return 1
             else
-                return self.ActiveItem % #self.Items + 1
+                return (self.ActiveItem % #self.Items) + 1
             end
         end
     end
@@ -299,7 +295,7 @@ end
 ---RefreshIndex
 function UIMenu:RefreshIndex()
     if #self.Items == 0 then
-        self.ActiveItem = 1000
+        self.ActiveItem = 0
         self.Pagination.Max = self.Pagination.Total + 1
         self.Pagination.Min = 0
         return
@@ -360,11 +356,8 @@ function UIMenu:BuildUpMenu()
         while #self.Items == 0 do
             Citizen.Wait(0)
             if GetGameTimer() - timer > 150 then
-                ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, self:CurrentSelection())
-                SetStreamedTextureDictAsNoLongerNeeded(self.TxtDictionary)
-                SetStreamedTextureDictAsNoLongerNeeded("commonmenu")
-                SetStreamedTextureDictAsNoLongerNeeded("pause_menu_pages_char_mom_dad")
-                SetStreamedTextureDictAsNoLongerNeeded("char_creator_portraits")
+                self.ActiveItem = 0
+                ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, self.ActiveItem)
                 return
             end
         end
@@ -411,11 +404,7 @@ function UIMenu:BuildUpMenu()
             end
         end
     end
-    ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, 0)
-    SetStreamedTextureDictAsNoLongerNeeded(self.TxtDictionary)
-    SetStreamedTextureDictAsNoLongerNeeded("commonmenu")
-    SetStreamedTextureDictAsNoLongerNeeded("pause_menu_pages_char_mom_dad")
-    SetStreamedTextureDictAsNoLongerNeeded("char_creator_portraits")
+    ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, self.ActiveItem)
 end
 
 ---ProcessControl
@@ -528,6 +517,7 @@ function UIMenu:GoUp()
         Citizen.Wait(0)
     end
     self.ActiveItem = GetScaleformMovieFunctionReturnInt(return_value)
+    print(self.ActiveItem)
     self.Items[self:CurrentSelection()]:Selected(true)
     PlaySoundFrontend(-1, self.Settings.Audio.UpDown, self.Settings.Audio.Library, true)
     self.OnIndexChange(self, self:CurrentSelection())
@@ -553,7 +543,7 @@ function UIMenu:GoLeft()
         return
     end
 
-    if not self.Items[self:CurrentSelection()]:Enabled() then
+    if not Item:Enabled() then
         PlaySoundFrontend(-1, self.Settings.Audio.Error, self.Settings.Audio.Library, true)
         return
     end
@@ -605,6 +595,8 @@ function UIMenu:GoRight()
     local res = GetScaleformMovieFunctionReturnInt(return_value)
 
     if subtype == "UIMenuListItem" then
+        print(res)
+        print(Item:Index())
         Item:Index(res)
         self.OnListChange(self, Item, Item._Index)
         Item.OnListChanged(self, Item, Item._Index)
@@ -762,13 +754,6 @@ function UIMenu:ProcessMouseJustPressed()
             end
         end
         return
-    end
-
-    local Limit = #self.Items
-    local ItemOffset = 0
-
-    if #self.Items > self.Pagination.Total then
-        Limit = self.Pagination.Max
     end
 
     if IsDisabledControlJustPressed(0, 24) then

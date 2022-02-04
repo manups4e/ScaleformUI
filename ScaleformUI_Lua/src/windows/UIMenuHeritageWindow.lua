@@ -39,15 +39,9 @@ function UIMenuHeritageWindow:Index(Mom, Dad)
 		Dad = self.Dad
 	end
 
-	self.Mom = Mom
-	self.Dad = Dad
-
-	while not HasStreamedTextureDictLoaded("char_creator_portraits") do
-		Citizen.Wait(0)
-		RequestStreamedTextureDict("char_creator_portraits", true)
-	end
+	self.Mom = Mom-1
+	self.Dad = Dad-1
 
 	local wid = IndexOf(self.ParentMenu.Windows, self) - 1
 	ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_HERITAGE_WINDOW", false, wid, self.Mom, self.Dad)
-	SetStreamedTextureDictAsNoLongerNeeded("char_creator_portraits")
 end
