@@ -1041,7 +1041,7 @@ namespace ScaleformUI
         /// <param name="title">Title that appears on the big banner.</param>
         /// <param name="subtitle">Subtitle that appears in capital letters in a small black bar.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
-        public UIMenu(string title, string subtitle, bool alternativeTitle, bool glare = false) : this(title, subtitle, new PointF(0, 0), "commonmenu", "interaction_bgd", alternativeTitle, glare)
+        public UIMenu(string title, string subtitle, bool glare = false, bool alternativeTitle = false) : this(title, subtitle, new PointF(0, 0), "commonmenu", "interaction_bgd", glare, alternativeTitle)
         {
         }
 
@@ -1053,7 +1053,7 @@ namespace ScaleformUI
         /// <param name="subtitle">Subtitle that appears in capital letters in a small black bar. Set to "" if you dont want a subtitle.</param>
         /// <param name="offset">PointF object with X and Y data for offsets. Applied to all menu elements.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
-        public UIMenu(string title, string subtitle, PointF offset, bool alternativeTitle, bool glare = false) : this(title, subtitle, offset, "commonmenu", "interaction_bgd", alternativeTitle, glare)
+        public UIMenu(string title, string subtitle, PointF offset, bool glare = false, bool alternativeTitle = false) : this(title, subtitle, offset, "commonmenu", "interaction_bgd", glare, alternativeTitle)
         {
         }
 
@@ -1065,7 +1065,7 @@ namespace ScaleformUI
         /// <param name="offset">PointF object with X and Y data for offsets. Applied to all menu elements.</param>
         /// <param name="customBanner">Path to your custom texture.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
-        public UIMenu(string title, string subtitle, PointF offset, KeyValuePair<string, string> customBanner, bool alternativeTitle, bool glare = false) : this(title, subtitle, offset, customBanner.Key, customBanner.Value, alternativeTitle, glare)
+        public UIMenu(string title, string subtitle, PointF offset, KeyValuePair<string, string> customBanner, bool glare = false, bool alternativeTitle=false) : this(title, subtitle, offset, customBanner.Key, customBanner.Value, glare, alternativeTitle)
         {
         }
 
@@ -1079,7 +1079,7 @@ namespace ScaleformUI
         /// <param name="spriteLibrary">Sprite library name for the banner.</param>
         /// <param name="spriteName">Sprite name for the banner.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
-        public UIMenu(string title, string subtitle, PointF offset, string spriteLibrary, string spriteName, bool alternativeTitle, bool glare = false)
+        public UIMenu(string title, string subtitle, PointF offset, string spriteLibrary, string spriteName, bool glare = false, bool alternativeTitle = false)
         {
             _customTexture = new KeyValuePair<string, string>(spriteLibrary, spriteName);
             Offset = offset;
