@@ -198,6 +198,9 @@ namespace ScaleformUI
     {
 
         internal int _itemId = 0;
+        /// <summary>
+        /// The item color when not highlighted
+        /// </summary>
         public HudColor MainColor
         {
             get => mainColor;
@@ -210,6 +213,9 @@ namespace ScaleformUI
                 }
             }
         }
+        /// <summary>
+        /// The item color when highlighted
+        /// </summary>
         public HudColor HighlightColor
         {
             get => highlightColor;
@@ -222,6 +228,10 @@ namespace ScaleformUI
                 }
             }
         }
+        /// <summary>
+        /// The item text color when not highlighted
+        /// </summary>
+
         public HudColor TextColor
         {
             get => textColor;
@@ -234,6 +244,9 @@ namespace ScaleformUI
                 }
             }
         }
+        /// <summary>
+        /// The item text color when highlighted
+        /// </summary>
         public HudColor HighlightedTextColor
         {
             get => highlightedTextColor;
@@ -248,6 +261,7 @@ namespace ScaleformUI
         }
 
         public List<UIMenuPanel> Panels = new();
+        public UIMenuSidePanel SidePanel { get; set; }
         private bool _selected;
         private string _label;
         private string _formatLeftLabel;
@@ -457,7 +471,7 @@ namespace ScaleformUI
             }
         }
 
-
+        /* CURRENTLY NOT WORKING
         /// <summary>
         /// Set the left badge. Set it to None to remove the badge.
         /// </summary>
@@ -466,7 +480,7 @@ namespace ScaleformUI
         {
             LeftBadge = badge;
         }
-
+        */
 
         /// <summary>
         /// Set the right badge. Set it to None to remove the badge.
@@ -559,6 +573,39 @@ namespace ScaleformUI
             Panels.RemoveAt(Index);
         }
 
+        /// <summary>
+        /// Adds a side panel to the menu binded to this item
+        /// </summary>
+        /// <param name="panel">the panel to add</param>
+        public virtual void AddSidePanel(UIMenuSidePanel panel)
+        {
+            panel.SetParentItem(this);
+            SidePanel = panel;
+            if (Parent is not null)
+            {
+                switch (panel)
+                {
+                    case UIMissionDetailsPanel:
+                        var mis = (UIMissionDetailsPanel)panel;
+                        ScaleformUI._ui.CallFunction("ADD_SIDE_PANEL_TO_ITEM", Parent.MenuItems.IndexOf(this), 0, (int)mis.PanelSide, (int)mis._titleType, mis.Title, (int)mis.TitleColor, mis.TextureDict, mis.TextureName);
+                        foreach (var _it in mis.Items)
+                            ScaleformUI._ui.CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", Parent.MenuItems.IndexOf(this), _it.Type, _it.TextLeft, _it.TextRight, (int)_it.Icon, (int)_it.IconColor, _it.Tick);
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Removes the side panel from this item
+        /// </summary>
+        public virtual void RemoveSidePanel()
+        {
+            SidePanel = null;
+            if (Parent is not null)
+            {
+                ScaleformUI._ui.CallFunction("REMOVE_SIDE_PANEL_TO_ITEM", Parent.MenuItems.IndexOf(this));
+            }
+        }
 
 
         /// <summary>
