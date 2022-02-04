@@ -1629,7 +1629,7 @@ namespace ScaleformUI
             }
             else if (Game.IsControlPressed(0, Control.Attack))
             {
-                PointF mouse = new PointF(GetDisabledControlNormal(0, 239) * Screen.ScaledWidth - Offset.X, GetDisabledControlNormal(0, 240) * Screen.Height - Offset.Y);
+                PointF mouse = new PointF(GetDisabledControlNormal(0, 239) * Screen.ScaledWidth - Offset.X, GetDisabledControlNormal(0, 240) * Screen.Height - (Offset.Y/2));
                 BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_INPUT_MOUSE_EVENT_CONTINUE");
                 ScaleformMovieMethodAddParamFloat(mouse.X);
                 ScaleformMovieMethodAddParamFloat(mouse.Y);
