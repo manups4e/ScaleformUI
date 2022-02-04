@@ -142,7 +142,6 @@ Citizen.CreateThread(function()
 	local DadIndex = 0;
 
 	windowSubmenu.OnListChange = function(menu, item, newindex)
-		print(newindex)
 		if (item == momListItem) then
 			MomIndex = newindex
 		elseif (item == dadListItem) then

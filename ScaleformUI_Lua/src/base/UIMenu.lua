@@ -233,7 +233,6 @@ function UIMenu:CurrentSelection(value)
         self.ActiveItem = 1000000 - (1000000 % #self.Items) + tonumber(value)
         self.Items[self:CurrentSelection()]:Selected(true)
         ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, self:CurrentSelection())
-        print(self.ActiveItem)
     else
         if #self.Items == 0 then
             return 1
@@ -517,7 +516,6 @@ function UIMenu:GoUp()
         Citizen.Wait(0)
     end
     self.ActiveItem = GetScaleformMovieFunctionReturnInt(return_value)
-    print(self.ActiveItem)
     self.Items[self:CurrentSelection()]:Selected(true)
     PlaySoundFrontend(-1, self.Settings.Audio.UpDown, self.Settings.Audio.Library, true)
     self.OnIndexChange(self, self:CurrentSelection())
@@ -595,8 +593,6 @@ function UIMenu:GoRight()
     local res = GetScaleformMovieFunctionReturnInt(return_value)
 
     if subtype == "UIMenuListItem" then
-        print(res)
-        print(Item:Index())
         Item:Index(res)
         self.OnListChange(self, Item, Item._Index)
         Item.OnListChanged(self, Item, Item._Index)
@@ -631,7 +627,6 @@ function UIMenu:SelectItem(play)
     local Item = self.Items[self:CurrentSelection()]
     local type, subtype = Item()
     if subtype == "UIMenuCheckboxItem" then
-        print(Item:Checked())
         Item:Checked(not Item:Checked())
         PlaySoundFrontend(-1, self.Settings.Audio.Select, self.Settings.Audio.Library, true)
         self.OnCheckboxChange(self, Item, Item.Checked)
@@ -765,12 +760,10 @@ function UIMenu:ProcessMouseJustPressed()
         local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_MOUSE_EVENT_SINGLE", true, mouse.X, mouse.Y)
         while not IsScaleformMovieMethodReturnValueReady(return_value) do
             Citizen.Wait(0)
-            print("waiting")
             if not self:Visible() then return end
         end
         local res = GetScaleformMovieFunctionReturnString(return_value)
         if(res == "none") then return end
-        print(res)
         local split = split(res, ",")
         local type = split[1]
         local selection = tonumber(split[2])
