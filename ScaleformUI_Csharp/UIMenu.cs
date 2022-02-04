@@ -1236,7 +1236,7 @@ namespace ScaleformUI
         {
             if (MenuItems.Count == 0)
             {
-                _activeItem = 1000;
+                _activeItem = 0;
                 _maxItem = MaxItemsOnScreen;
                 _minItem = 0;
                 return;
@@ -1472,8 +1472,8 @@ namespace ScaleformUI
             if (ControlDisablingEnabled)
                 Controls.Toggle(false);
 
-            float x = Offset.X / Screen.Width;
-            float y = Offset.Y / Screen.Height;
+            float x = 0 / Screen.Width;
+            float y = 0 / Screen.Height;
             float width = 1280 / Screen.ScaledWidth;
             float height = 720 / Screen.Height;
 
@@ -1976,7 +1976,7 @@ namespace ScaleformUI
         internal async void BuildUpMenu()
         {
             while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
-            ScaleformUI._ui.CallFunction("CREATE_MENU", Title, Subtitle, _customTexture.Key, _customTexture.Value, EnableAnimation, (int)AnimationType);
+            ScaleformUI._ui.CallFunction("CREATE_MENU", Title, Subtitle,Offset.X, Offset.Y, _customTexture.Key, _customTexture.Value, EnableAnimation, (int)AnimationType);
             if (Windows.Count > 0)
             {
                 foreach (var wind in Windows)
@@ -2015,12 +2015,13 @@ namespace ScaleformUI
             }
             foreach (var item in MenuItems)
             {
-                AddTextEntry($"menu_{_poolcontainer._menuList.IndexOf(this)}_desc_{MenuItems.IndexOf(item)}", item.Description);
+                var index = MenuItems.IndexOf(item);
+                AddTextEntry($"menu_{_poolcontainer._menuList.IndexOf(this)}_desc_{index}", item.Description);
 
                 BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "ADD_ITEM");
                 PushScaleformMovieFunctionParameterInt(item._itemId);
                 PushScaleformMovieMethodParameterString(item.Label);
-                BeginTextCommandScaleformString($"menu_{_poolcontainer._menuList.IndexOf(this)}_desc_{MenuItems.IndexOf(item)}");
+                BeginTextCommandScaleformString($"menu_{_poolcontainer._menuList.IndexOf(this)}_desc_{index}");
                 EndTextCommandScaleformString_2();
                 PushScaleformMovieFunctionParameterBool(item.Enabled);
                 PushScaleformMovieFunctionParameterBool(item.BlinkDescription);
@@ -2028,8 +2029,8 @@ namespace ScaleformUI
                 {
                     case UIMenuListItem:
                         UIMenuListItem it = (UIMenuListItem)item;
-                        AddTextEntry($"listitem_{MenuItems.IndexOf(item)}_list", string.Join(",", it.Items));
-                        BeginTextCommandScaleformString($"listitem_{MenuItems.IndexOf(item)}_list");
+                        AddTextEntry($"listitem_{index}_list", string.Join(",", it.Items));
+                        BeginTextCommandScaleformString($"listitem_{index}_list");
                         EndTextCommandScaleformString();
                         PushScaleformMovieFunctionParameterInt(it.Index);
                         PushScaleformMovieFunctionParameterInt((int)it.MainColor);
@@ -2090,38 +2091,51 @@ namespace ScaleformUI
                         PushScaleformMovieFunctionParameterInt((int)item.TextColor);
                         PushScaleformMovieFunctionParameterInt((int)item.HighlightedTextColor);
                         EndScaleformMovieMethod();
-                        ScaleformUI._ui.CallFunction("SET_RIGHT_LABEL", MenuItems.IndexOf(item), item.RightLabel);
+                        ScaleformUI._ui.CallFunction("SET_RIGHT_LABEL", index, item.RightLabel);
                         if (item.RightBadge != BadgeIcon.NONE)
-                            ScaleformUI._ui.CallFunction("SET_RIGHT_BADGE", MenuItems.IndexOf(item), UIMenuItem.GetSpriteDictionary(item.RightBadge), (int)item.RightBadge);
+                            ScaleformUI._ui.CallFunction("SET_RIGHT_BADGE", index, UIMenuItem.GetSpriteDictionary(item.RightBadge), (int)item.RightBadge);
                         break;
                 }
+                if (item.SidePanel != null)
+                {
+                    switch (item.SidePanel)
+                    {
+                        case UIMissionDetailsPanel:
+                            var mis = (UIMissionDetailsPanel)item.SidePanel;
+                            ScaleformUI._ui.CallFunction("ADD_SIDE_PANEL_TO_ITEM", index, 0, (int)mis.PanelSide, (int)mis._titleType, mis.Title, (int)mis.TitleColor, mis.TextureDict, mis.TextureName);
+                            foreach(var _it in mis.Items)
+                            {
+                                ScaleformUI._ui.CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", index, _it.Type, _it.TextLeft, _it.TextRight, (int)_it.Icon, (int)_it.IconColor, _it.Tick);
+                            }
+                            break;
+                    }
+                }
+
                 if (item.Panels.Count == 0) continue;
                 foreach (var panel in item.Panels)
                 {
-                    var it = MenuItems.IndexOf(item);
                     var pan = item.Panels.IndexOf(panel);
                     switch (panel)
                     {
                         case UIMenuColorPanel:
                             UIMenuColorPanel cp = (UIMenuColorPanel)panel;
-                            ScaleformUI._ui.CallFunction("ADD_PANEL", it, 0, cp.Title, (int)cp.ColorPanelColorType, cp.CurrentSelection);
+                            ScaleformUI._ui.CallFunction("ADD_PANEL", index, 0, cp.Title, (int)cp.ColorPanelColorType, cp.CurrentSelection);
                             break;
                         case UIMenuPercentagePanel:
                             UIMenuPercentagePanel pp = (UIMenuPercentagePanel)panel;
-                            ScaleformUI._ui.CallFunction("ADD_PANEL", it, 1, pp.Title, pp.Min, pp.Max, pp.Percentage);
+                            ScaleformUI._ui.CallFunction("ADD_PANEL", index, 1, pp.Title, pp.Min, pp.Max, pp.Percentage);
                             break;
                         case UIMenuGridPanel:
                             UIMenuGridPanel gp = (UIMenuGridPanel)panel;
-                            ScaleformUI._ui.CallFunction("ADD_PANEL", it, 2, gp.TopLabel, gp.RightLabel, gp.LeftLabel, gp.BottomLabel, gp.CirclePosition.X, gp.CirclePosition.Y, true, (int)gp.GridType);
+                            ScaleformUI._ui.CallFunction("ADD_PANEL", index, 2, gp.TopLabel, gp.RightLabel, gp.LeftLabel, gp.BottomLabel, gp.CirclePosition.X, gp.CirclePosition.Y, true, (int)gp.GridType);
                             break;
                         case UIMenuStatisticsPanel:
                             UIMenuStatisticsPanel sp = (UIMenuStatisticsPanel)panel;
-                            ScaleformUI._ui.CallFunction("ADD_PANEL", it, 3);
+                            ScaleformUI._ui.CallFunction("ADD_PANEL", index, 3);
                             if (sp.Items.Count > 0)
                                 foreach (var stat in sp.Items)
-                                    ScaleformUI._ui.CallFunction("ADD_STATISTIC_TO_PANEL", it, pan, stat.Text, stat.Value);
+                                    ScaleformUI._ui.CallFunction("ADD_STATISTIC_TO_PANEL", index, pan, stat.Text, stat.Value);
                             break;
-
                     }
                 }
             }
@@ -2141,16 +2155,6 @@ namespace ScaleformUI
                 MenuItems[_activeItem % (MenuItems.Count)].Selected = false;
                 _activeItem = 1000000 - (1000000 % MenuItems.Count) + value;
                 MenuItems[_activeItem % (MenuItems.Count)].Selected = true;
-                if (CurrentSelection > _maxItem)
-                {
-                    _maxItem = CurrentSelection;
-                    _minItem = CurrentSelection - MaxItemsOnScreen;
-                }
-                else if (CurrentSelection < _minItem)
-                {
-                    _maxItem = MaxItemsOnScreen + CurrentSelection;
-                    _minItem = CurrentSelection;
-                }
                 ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
             }
         }
