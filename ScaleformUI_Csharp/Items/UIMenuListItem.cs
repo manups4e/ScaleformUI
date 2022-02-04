@@ -119,6 +119,11 @@ namespace ScaleformUI
             OnListSelected?.Invoke(this, newindex);
         }
 
+        /// <summary>
+        /// Change list dinamically
+        /// </summary>
+        /// <param name="list">The list that will replace the current one</param>
+        /// <param name="index">Starting index</param>
         public void ChangeList(List<dynamic> list, int index)
         {
             _items.Clear();
