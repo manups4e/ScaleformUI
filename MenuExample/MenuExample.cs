@@ -21,7 +21,7 @@ public class MenuExample : BaseScript
 		var _titledui = API.CreateDui("https://i.imgur.com/3yrFYbF.gif", 288, 130);
 		API.CreateRuntimeTextureFromDuiHandle(txd, "bannerbackground", API.GetDuiHandle(_titledui));
 	
-		UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI SHOWCASE", new PointF(20, 20), "scaleformui", "bannerbackground", true); // true means add menu Glare scaleform to the menu
+		UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI SHOWCASE", new PointF(20, 20), "scaleformui", "bannerbackground", true, true); // true means add menu Glare scaleform to the menu
 		// let's add the menu to the Pool
 		_menuPool.Add(exampleMenu);
 

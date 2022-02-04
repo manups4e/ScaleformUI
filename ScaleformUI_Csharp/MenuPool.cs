@@ -138,7 +138,7 @@ namespace ScaleformUI
 		{
 			UIMenuItem item = new UIMenuItem(text, description);
 			menu.AddItem(item);
-			UIMenu submenu = new UIMenu(menu.Title, text, offset);
+			UIMenu submenu = new UIMenu(menu.Title, text, offset, menu.AlternativeTitle);
 			if (BannerInheritance && menu._customTexture.Key != null && menu._customTexture.Value != null)
 				submenu.SetBannerType(menu._customTexture);
             submenu.MouseEdgeEnabled = menu.MouseEdgeEnabled;

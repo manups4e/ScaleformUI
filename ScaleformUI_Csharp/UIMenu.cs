@@ -949,6 +949,7 @@ namespace ScaleformUI
         public bool ResetCursorOnOpen = true;
         [Obsolete("The description is now formated automatically by the game.")]
         public bool MouseControlsEnabled = true;
+        public bool AlternativeTitle = false;
 
         public PointF Offset { get; }
 
@@ -1040,7 +1041,7 @@ namespace ScaleformUI
         /// <param name="title">Title that appears on the big banner.</param>
         /// <param name="subtitle">Subtitle that appears in capital letters in a small black bar.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
-        public UIMenu(string title, string subtitle, bool glare = false) : this(title, subtitle, new PointF(0, 0), "commonmenu", "interaction_bgd", glare)
+        public UIMenu(string title, string subtitle, bool alternativeTitle, bool glare = false) : this(title, subtitle, new PointF(0, 0), "commonmenu", "interaction_bgd", alternativeTitle, glare)
         {
         }
 
@@ -1052,7 +1053,7 @@ namespace ScaleformUI
         /// <param name="subtitle">Subtitle that appears in capital letters in a small black bar. Set to "" if you dont want a subtitle.</param>
         /// <param name="offset">PointF object with X and Y data for offsets. Applied to all menu elements.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
-        public UIMenu(string title, string subtitle, PointF offset, bool glare = false) : this(title, subtitle, offset, "commonmenu", "interaction_bgd", glare)
+        public UIMenu(string title, string subtitle, PointF offset, bool alternativeTitle, bool glare = false) : this(title, subtitle, offset, "commonmenu", "interaction_bgd", alternativeTitle, glare)
         {
         }
 
@@ -1064,7 +1065,7 @@ namespace ScaleformUI
         /// <param name="offset">PointF object with X and Y data for offsets. Applied to all menu elements.</param>
         /// <param name="customBanner">Path to your custom texture.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
-        public UIMenu(string title, string subtitle, PointF offset, KeyValuePair<string, string> customBanner, bool glare = false) : this(title, subtitle, offset, customBanner.Key, customBanner.Value, glare)
+        public UIMenu(string title, string subtitle, PointF offset, KeyValuePair<string, string> customBanner, bool alternativeTitle, bool glare = false) : this(title, subtitle, offset, customBanner.Key, customBanner.Value, alternativeTitle, glare)
         {
         }
 
@@ -1078,7 +1079,7 @@ namespace ScaleformUI
         /// <param name="spriteLibrary">Sprite library name for the banner.</param>
         /// <param name="spriteName">Sprite name for the banner.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
-        public UIMenu(string title, string subtitle, PointF offset, string spriteLibrary, string spriteName, bool glare = false)
+        public UIMenu(string title, string subtitle, PointF offset, string spriteLibrary, string spriteName, bool alternativeTitle, bool glare = false)
         {
             _customTexture = new KeyValuePair<string, string>(spriteLibrary, spriteName);
             Offset = offset;
@@ -1088,6 +1089,7 @@ namespace ScaleformUI
             _menuGlare = new Scaleform("mp_menu_glare");
             Title = title;
             Subtitle = subtitle;
+            AlternativeTitle = alternativeTitle;
             MouseWheelControlEnabled = true;
             SetKey(MenuControls.Up, Control.PhoneUp);
             SetKey(MenuControls.Down, Control.PhoneDown);
@@ -1976,7 +1978,7 @@ namespace ScaleformUI
         internal async void BuildUpMenu()
         {
             while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
-            ScaleformUI._ui.CallFunction("CREATE_MENU", Title, Subtitle,Offset.X, Offset.Y, _customTexture.Key, _customTexture.Value, EnableAnimation, (int)AnimationType);
+            ScaleformUI._ui.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, EnableAnimation, (int)AnimationType);
             if (Windows.Count > 0)
             {
                 foreach (var wind in Windows)
