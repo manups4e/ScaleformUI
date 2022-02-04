@@ -17,7 +17,11 @@ public class MenuExample : BaseScript
 
 	public void ExampleMenu()
     {
-		UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI SHOWCASE", new PointF(20, 20), true); // true means add menu Glare scaleform to the menu
+		var txd = API.CreateRuntimeTxd("scaleformui");
+		var _titledui = API.CreateDui("https://i.imgur.com/3yrFYbF.gif", 288, 130);
+		API.CreateRuntimeTextureFromDuiHandle(txd, "bannerbackground", API.GetDuiHandle(_titledui));
+	
+		UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI SHOWCASE", new PointF(20, 20), "scaleformui", "bannerbackground", true); // true means add menu Glare scaleform to the menu
 		// let's add the menu to the Pool
 		_menuPool.Add(exampleMenu);
 
@@ -26,6 +30,20 @@ public class MenuExample : BaseScript
 		#region Ketchup
 
 		var ketchupItem = new UIMenuCheckboxItem("Scrolling animation enabled?", UIMenuCheckboxStyle.Tick, enabled, "Do you wish to enable the scrolling animation?");
+		var _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
+		API.CreateRuntimeTextureFromDuiHandle(txd, "panelbackground", API.GetDuiHandle(_paneldui));
+		UIMissionDetailsPanel sidePanel = new UIMissionDetailsPanel(PanelSide.Right, "Side Panel", true, "scaleformui", "panelbackground");
+		UIFreemodeDetailsItem detailItem1 = new UIFreemodeDetailsItem("Left Label", "Right Label", BadgeIcon.BRIEFCASE, HudColor.HUD_COLOUR_FREEMODE);
+		UIFreemodeDetailsItem detailItem2 = new UIFreemodeDetailsItem("Left Label", "Right Label", BadgeIcon.STAR, HudColor.HUD_COLOUR_GOLD);
+		UIFreemodeDetailsItem detailItem3 = new UIFreemodeDetailsItem("Left Label", "Right Label", BadgeIcon.ARMOR, HudColor.HUD_COLOUR_PURPLE);
+		UIFreemodeDetailsItem detailItem4 = new UIFreemodeDetailsItem("Left Label", "Right Label", BadgeIcon.BRAND_DILETTANTE, HudColor.HUD_COLOUR_GREEN);
+		UIFreemodeDetailsItem detailItem5 = new UIFreemodeDetailsItem("Left Label", "Right Label", BadgeIcon.COUNTRY_ITALY, HudColor.HUD_COLOUR_WHITE, true);
+		sidePanel.AddItem(detailItem1);
+		sidePanel.AddItem(detailItem2);
+		sidePanel.AddItem(detailItem3);
+		sidePanel.AddItem(detailItem4);
+		sidePanel.AddItem(detailItem5);
+		ketchupItem.AddSidePanel(sidePanel);
 		exampleMenu.AddItem(ketchupItem);
 
 		#endregion
@@ -33,8 +51,16 @@ public class MenuExample : BaseScript
 		#region Cook
 
 		var cookItem = new UIMenuItem("Cook!", "Cook the dish with the appropiate ingredients and ketchup.");
+
 		exampleMenu.AddItem(cookItem);
-		cookItem.SetLeftBadge(BadgeIcon.STAR);
+		UIMissionDetailsPanel sidePanelB = new UIMissionDetailsPanel(PanelSide.Right, "Side Panel", HudColor.HUD_COLOUR_GREEN, "shopui_title_graphics_michael", "shopui_title_graphics_michael");
+		sidePanelB.AddItem(detailItem1);
+		sidePanelB.AddItem(detailItem2);
+		sidePanelB.AddItem(detailItem3);
+		sidePanelB.AddItem(detailItem4);
+		sidePanelB.AddItem(detailItem5);
+		cookItem.AddSidePanel(sidePanelB);
+		//cookItem.SetLeftBadge(BadgeIcon.STAR);
 		cookItem.SetRightBadge(BadgeIcon.TICK);
 
 		var colorItem = new UIMenuItem("UIMenuItem with Colors", "~b~Look!!~r~I can be colored ~y~too!!~w~~n~Every item now supports custom colors!", HudColor.HUD_COLOUR_PURPLE, HudColor.HUD_COLOUR_PINK);
@@ -723,8 +749,8 @@ public class MenuExample : BaseScript
 
 		exampleMenu.OnIndexChange += (sender, index) =>
 		{
-			if (sender.MenuItems[index] == cookItem)
-				cookItem.SetLeftBadge(BadgeIcon.NONE);
+			//if (sender.MenuItems[index] == cookItem)
+				//cookItem.SetLeftBadge(BadgeIcon.NONE);
 		};
 
 		exampleMenu.OnListChange += (sender, item, index) =>
