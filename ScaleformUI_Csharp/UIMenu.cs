@@ -2090,6 +2090,15 @@ namespace ScaleformUI
                         PushScaleformMovieFunctionParameterInt((int)statsItem.HighlightedTextColor);
                         EndScaleformMovieMethod();
                         break;
+                    case UIMenuSeparatorItem:
+                        UIMenuSeparatorItem separatorItem = (UIMenuSeparatorItem)item;
+                        PushScaleformMovieFunctionParameterBool(separatorItem.Jumpable);
+                        PushScaleformMovieFunctionParameterInt((int)item.MainColor);
+                        PushScaleformMovieFunctionParameterInt((int)item.HighlightColor);
+                        PushScaleformMovieFunctionParameterInt((int)item.TextColor);
+                        PushScaleformMovieFunctionParameterInt((int)item.HighlightedTextColor);
+                        EndScaleformMovieMethod();
+                        break;
                     default:
                         PushScaleformMovieFunctionParameterInt((int)item.MainColor);
                         PushScaleformMovieFunctionParameterInt((int)item.HighlightColor);
