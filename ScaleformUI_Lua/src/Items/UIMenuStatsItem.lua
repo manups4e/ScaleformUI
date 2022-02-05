@@ -13,6 +13,7 @@ function UIMenuStatsItem.New(Text, Description, Index, barColor, type, mainColor
 		Base = UIMenuItem.New(Text or "", Description or "", mainColor or 117, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
 		_Index = Index or 0,
 		Panels = {},
+		SidePanel = nil,
 		_Color = barColor or 116,
         _Type = type or 0,
 		OnStatsChanged = function(menu, item, newindex) end,
@@ -29,6 +30,14 @@ function UIMenuStatsItem:SetParentMenu(Menu)
 	else
 		return self.Base.ParentMenu
 	end
+end
+
+function UIMenuStatsItem:AddSidePanel(sidePanel)
+    if sidePanel() == "UIMissionDetailsPanel" then
+        sidePanel:SetParentItem(self)
+        self.SidePanel = sidePanel
+        ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
+    end
 end
 
 ---Selected

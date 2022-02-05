@@ -21,7 +21,7 @@ function MenuPool:AddSubMenu(Menu, Text, Description, KeepPosition, KeepBanner)
         Menu:AddItem(Item)
         local SubMenu
         if KeepPosition then
-            SubMenu = UIMenu.New(Menu.Title, Text, Menu.Position.X, Menu.Position.Y)
+            SubMenu = UIMenu.New(Menu.Title, Text, Menu.Position.X, Menu.Position.Y, Menu.Glare, Menu.TextureDict, Menu.TextureName, Menu.AlternativeTitle)
         else
             SubMenu = UIMenu.New(Menu.Title, Text)
         end

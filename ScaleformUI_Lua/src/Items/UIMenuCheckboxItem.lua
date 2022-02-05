@@ -11,6 +11,7 @@ function UIMenuCheckboxItem.New(Text, Check, checkStyle, Description, color, hig
 		Base = UIMenuItem.New(Text or "", Description or "", color or 117, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
 		_Checked = tobool(Check),
 		Panels = {},
+		SidePanel = nil,
 		CheckBoxStyle = checkStyle or 0,
 		CheckboxEvent = function(menu, item, checked) end,
 	}
@@ -25,6 +26,14 @@ function UIMenuCheckboxItem:SetParentMenu(Menu)
 	else
 		return self.Base.ParentMenu
 	end
+end
+
+function UIMenuCheckboxItem:AddSidePanel(sidePanel)
+    if sidePanel() == "UIMissionDetailsPanel" then
+        sidePanel:SetParentItem(self)
+        self.SidePanel = sidePanel
+        ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
+    end
 end
 
 ---Selected

@@ -11,12 +11,8 @@ end
 ---@param Y number
 ---@param TxtDictionary string
 ---@param TxtName string
----@param Heading number
----@param R number
----@param G number
----@param B number
----@param A number
-function UIMenu.New(Title, Subtitle, X, Y, glare, TxtDictionary, TxtName)
+---@param AlternativeTitle boolean
+function UIMenu.New(Title, Subtitle, X, Y, glare, txtDictionary, txtName, alternativeTitle)
     local X, Y = tonumber(X) or 0, tonumber(Y) or 0
     if Title ~= nil then
         Title = tostring(Title) or ""
@@ -28,19 +24,25 @@ function UIMenu.New(Title, Subtitle, X, Y, glare, TxtDictionary, TxtName)
     else
         Subtitle = ""
     end
-    if TxtDictionary ~= nil then
-        TxtDictionary = tostring(TxtDictionary) or "commonmenu"
+    if txtDictionary ~= nil then
+        txtDictionary = tostring(txtDictionary) or "commonmenu"
     else
-        TxtDictionary = "commonmenu"
+        txtDictionary = "commonmenu"
     end
-    if TxtName ~= nil then
-        TxtName = tostring(TxtName) or "interaction_bgd"
+    if txtName ~= nil then
+        txtName = tostring(txtName) or "interaction_bgd"
     else
-        TxtName = "interaction_bgd"
+        txtName = "interaction_bgd"
+    end
+    if alternativeTitle == nil then
+        alternativeTitle = false
+    else
+        alternativeTitle = alternativeTitle
     end
     local _UIMenu = {
         Title = Title,
         Subtitle = Subtitle,
+        AlternativeTitle = alternativeTitle,
         Position = { X = X, Y = Y },
         Pagination = { Min = 0, Max = 7, Total = 7 },
         Extra = {},
@@ -48,8 +50,8 @@ function UIMenu.New(Title, Subtitle, X, Y, glare, TxtDictionary, TxtName)
         Items = {},
         Windows = {},
         Children = {},
-        TxtDictionary = TxtDictionary,
-        TxtName = TxtName,
+        TxtDictionary = txtDictionary,
+        TxtName = txtName,
         Glare = glare or false,
         _menuGlare = 0,
         Controls = {
@@ -246,7 +248,6 @@ function UIMenu:CurrentSelection(value)
     end
 end
 
-
 ---AddWindow
 ---@param Window table
 function UIMenu:AddWindow(Window)
@@ -337,9 +338,10 @@ function UIMenu:Visible(bool)
     end
 end
 
+---BuildUpMenu
 function UIMenu:BuildUpMenu()
     while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
-    ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self.Title, self.Subtitle, self.TxtDictionary, self.TxtName, true, 1)
+    ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self.Title, self.Subtitle, 0, 0, self.AlternativeTitle, self.TxtDictionary, self.TxtName, true, 1)
     if #self.Windows > 0 then
         for w_id, window in pairs (self.Windows) do
             local Type, SubType = window()
@@ -347,6 +349,11 @@ function UIMenu:BuildUpMenu()
                 ScaleformUI.Scaleforms._ui:CallFunction("ADD_WINDOW", false, window.id, window.Mom, window.Dad)
             elseif SubType == "UIMenuDetailsWindow" then
                 ScaleformUI.Scaleforms._ui:CallFunction("ADD_WINDOW", false, window.id, window.DetailBottom, window.DetailMid, window.DetailTop, window.DetailLeft.Txd, window.DetailLeft.Txn, window.DetailLeft.Pos.x, window.DetailLeft.Pos.y, window.DetailLeft.Size.x, window.DetailLeft.Size.y)
+                if window.StatWheelEnabled then
+                    for key, value in pairs(window.DetailStats) do
+                        ScaleformUI.Scaleforms._ui:CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", false, window.id, value.Percentage, value.HudColor)
+                    end
+                end
             end
         end
     end
@@ -363,7 +370,6 @@ function UIMenu:BuildUpMenu()
     end
     for it, item in pairs (self.Items) do
         local Type, SubType = item()
-
         AddTextEntry("desc_{" .. it .."}", item:Description())
 
         if SubType == "UIMenuListItem" then
@@ -376,11 +382,13 @@ function UIMenu:BuildUpMenu()
             ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 4, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item._Max, item._Multiplier, item:Index(), item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor, item.SliderColor)
         elseif SubType == "UIMenuStatsItem" then
             ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 5, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item:Index(), item._Type, item._Color, item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor)
+        elseif SubType == "UIMenuSeperatorItem" then
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 6, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item.Jumpable, item.Base.MainColor, item.Base.HighlightColor, item.Base.TextColor, item.Base.HighlightedTextColor)
         else
             ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 0, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item.MainColor, item.HighlightColor, item.TextColor, item.HighlightedTextColor)
             ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_LABEL", false, it - 1, item:RightLabel())
             if item.RightBadge ~= BadgeStyle.NONE then
-                ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_BADGE", false, it - 1, GetSpriteDictionary(item.RightBadge), item.RightBadge)
+                ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_BADGE", false, it - 1, item.RightBadge)
             end
         end
         if #item.Panels > 0 then
@@ -399,6 +407,14 @@ function UIMenu:BuildUpMenu()
                             ScaleformUI.Scaleforms._ui:CallFunction("ADD_STATISTIC_TO_PANEL", false, it - 1, pan - 1, stat['name'], stat['value'])
                         end
                     end
+                end
+            end
+        end
+        if item.SidePanel ~= nil then
+            if item.SidePanel() == "UIMissionDetailsPanel" then
+                ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, it - 1, 0, item.SidePanel.PanelSide, item.SidePanel.TitleType, item.SidePanel.Title, item.SidePanel.TitleColor, item.SidePanel.TextureDict, item.SidePanel.TextureName)
+                for key, value in pairs(item.SidePanel.Items) do
+                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", false, it - 1, value.Type, value.TextLeft, value.TextRight, value.Icon, value.IconColor, value.Tick)
                 end
             end
         end
@@ -534,6 +550,7 @@ function UIMenu:GoDown()
     self.OnIndexChange(self, self:CurrentSelection())
 end
 
+---GoLeft
 function UIMenu:GoLeft()
     local Item = self.Items[self:CurrentSelection()]
     local type, subtype = Item()
@@ -615,6 +632,7 @@ function UIMenu:GoRight()
 end
 
 ---SelectItem
+---@param play boolean
 function UIMenu:SelectItem(play)
     if not self.Items[self:CurrentSelection()]:Enabled() then
         PlaySoundFrontend(-1, self.Settings.Audio.Error, self.Settings.Audio.Library, true)
@@ -637,10 +655,10 @@ function UIMenu:SelectItem(play)
         Item.OnListSelected(self, Item, Item._Index)
     else
         self.OnItemSelect(self, Item, self:CurrentSelection())
-        Item:Activated(self, Item)
         if not self.Children[Item] then
             return
         end
+        Item:Activated(self, Item)
         self._Visible = false
         self.OnMenuChanged(self, self.Children[self.Items[self:CurrentSelection()]], true)
         ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false);
@@ -733,7 +751,7 @@ function UIMenu:Draw()
     end
 end
 
----ProcessMouse
+---ProcessMouseJustPressed
 function UIMenu:ProcessMouseJustPressed()
     local menuSound = -1
     if not self._Visible or self.JustOpened or #self.Items == 0 or tobool(not IsInputDisabled(2)) or not self.Settings.MouseControlsEnabled then
@@ -814,6 +832,7 @@ function UIMenu:ProcessMouseJustPressed()
     end
 end
 
+---ProcessMousePressed
 function UIMenu:ProcessMousePressed()
     if IsDisabledControlPressed(1, 24) then
         local mouse = { 
@@ -863,7 +882,6 @@ function UIMenu:ProcessMousePressed()
         ReleaseSoundId(menuSound)
     end
 end
-
 
 ---AddInstructionButton
 ---@param button table

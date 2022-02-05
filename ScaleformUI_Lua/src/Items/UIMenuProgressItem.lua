@@ -15,6 +15,7 @@ function UIMenuProgressItem.New(Text, Max, Index, Description, color, highlightC
 		_Multiplier = 5,
 		_Index = Index or 0,
 		Panels = {},
+		SidePanel = nil,
 		SliderColor = sliderColor or 116,
 		BackgroundSliderColor = backgroundSliderColor or 117,
 		OnProgressChanged = function(menu, item, newindex) end,
@@ -32,6 +33,14 @@ function UIMenuProgressItem:SetParentMenu(Menu)
 	else
 		return self.Base.ParentMenu
 	end
+end
+
+function UIMenuProgressItem:AddSidePanel(sidePanel)
+    if sidePanel() == "UIMissionDetailsPanel" then
+        sidePanel:SetParentItem(self)
+        self.SidePanel = sidePanel
+        ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
+    end
 end
 
 ---Selected

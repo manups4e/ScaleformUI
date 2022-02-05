@@ -22,6 +22,7 @@ function UIMenuItem.New(text, description, color, highlightColor, textColor, hig
         HighlightedTextColor = highlightedTextColor or 2,
         ParentMenu = nil,
         Panels = {},
+        SidePanel = nil,
         Activated = function(menu, item)
         end,
     }
@@ -95,6 +96,10 @@ function UIMenuItem:Enabled(bool)
     end
 end
 
+function UIMenuItem:Activated(menu, item)
+    self.Activated(menu, item)
+end
+
 function UIMenuItem:Description(str)
     if tostring(str) and str ~= nil then
         self._Description = tostring(str)
@@ -159,13 +164,7 @@ function UIMenuItem:SetRightBadge(Badge)
     if tonumber(Badge) then
         self.RightBadge = tonumber(Badge)
         if self.ParentMenu ~= nil then
-            local dict = GetSpriteDictionary(badge);
-            while not HasStreamedTextureDictLoaded(dict) do
-                Citizen.Wait(0)
-                RequestStreamedTextureDict(dict, true)
-            end
-            ScaleformUI.Scaleforms._ui.CallFunction("SET_RIGHT_BADGE", false, IndexOf(self.ParentMenu.Items, self) - 1, dict, self.RightBadge);
-            RemoveAnimDict(dict);
+            ScaleformUI.Scaleforms._ui.CallFunction("SET_RIGHT_BADGE", false, IndexOf(self.ParentMenu.Items, self) - 1, self.RightBadge);
         else
             self.RightBadge = badge;
         end
@@ -178,6 +177,14 @@ function UIMenuItem:AddPanel(Panel)
     if Panel() == "UIMenuPanel" then
         table.insert(self.Panels, Panel)
         Panel:SetParentItem(self)
+    end
+end
+
+function UIMenuItem:AddSidePanel(sidePanel)
+    if sidePanel() == "UIMissionDetailsPanel" then
+        sidePanel:SetParentItem(self)
+        self.SidePanel = sidePanel
+        ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
     end
 end
 
@@ -213,7 +220,7 @@ function UIMenuItem:BlinkDescription(bool)
     if bool ~= nil then
         self.blinkDescription = bool
         if self.ParentMenu ~= nil then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_BLINK_DESC", false, IndexOf(self.ParentMenu.Items, self) - 1, self.blinkDescription);
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_BLINK_DESC", false, IndexOf(self.ParentMenu.Items, self) - 1, self.blinkDescription)
         end
     else
         return self.blinkDescription
