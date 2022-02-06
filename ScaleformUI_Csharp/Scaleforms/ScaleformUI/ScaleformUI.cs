@@ -36,6 +36,7 @@ namespace ScaleformUI
             {
                 if (resName == API.GetCurrentResourceName())
                 {
+                    _ui.CallFunction("CLEAR_ALL");
                     _ui.Dispose();
                     PauseMenu.Dispose();
                 }

@@ -1469,7 +1469,7 @@ namespace ScaleformUI
         /// <summary>
         /// Draw the menu and all of it's components.
         /// </summary>
-        public async Task Draw()
+        public async void Draw()
         {
             if (!Visible || ScaleformUI.Warning.IsShowing) return;
             while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
@@ -2133,7 +2133,7 @@ namespace ScaleformUI
                     {
                         case UIMenuColorPanel:
                             UIMenuColorPanel cp = (UIMenuColorPanel)panel;
-                            ScaleformUI._ui.CallFunction("ADD_PANEL", index, 0, cp.Title, (int)cp.ColorPanelColorType, cp.CurrentSelection);
+                            ScaleformUI._ui.CallFunction("ADD_PANEL", index, 0, cp.Title, (int)cp.ColorPanelColorType, cp.CurrentSelection, cp.CustomColors is not null ? string.Join(",", cp.CustomColors) : "");
                             break;
                         case UIMenuPercentagePanel:
                             UIMenuPercentagePanel pp = (UIMenuPercentagePanel)panel;
