@@ -1469,7 +1469,7 @@ namespace ScaleformUI
         /// <summary>
         /// Draw the menu and all of it's components.
         /// </summary>
-        public async Task Draw()
+        public async void Draw()
         {
             if (!Visible || ScaleformUI.Warning.IsShowing) return;
             while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
