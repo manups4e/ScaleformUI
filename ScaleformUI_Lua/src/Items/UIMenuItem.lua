@@ -42,30 +42,30 @@ function UIMenuItem:Selected(bool, id)
         self._Selected = tobool(bool)
         if self._Selected then
             if not self._formatLeftLabel:StartsWith("~") then
-                self._formatLeftLabel = self._formatLeftLabel:Insert(0, "~l~");
+                self._formatLeftLabel = self._formatLeftLabel:Insert(0, "~l~")
             end
             if self._formatLeftLabel:find("~", 1, true) then
-                self._formatLeftLabel = self._formatLeftLabel:gsub("~w~", "~l~");
-                self._formatLeftLabel = self._formatLeftLabel:gsub("~s~", "~l~");
+                self._formatLeftLabel = self._formatLeftLabel:gsub("~w~", "~l~")
+                self._formatLeftLabel = self._formatLeftLabel:gsub("~s~", "~l~")
             end
             if not string.IsNullOrEmpty(self._formatRightLabel) then
                 if not self._formatRightLabel:StartsWith("~") then
-                    self._formatRightLabel = self._formatRightLabel:Insert(0, "~l~");
+                    self._formatRightLabel = self._formatRightLabel:Insert(0, "~l~")
                 end
                 if self._formatRightLabel:find("~", 1, true) then
-                    self._formatRightLabel = self._formatRightLabel:gsub("~w~", "~l~");
-                    self._formatRightLabel = self._formatRightLabel:gsub("~s~", "~l~");
+                    self._formatRightLabel = self._formatRightLabel:gsub("~w~", "~l~")
+                    self._formatRightLabel = self._formatRightLabel:gsub("~s~", "~l~")
                 end
             end
         else
-            self._formatLeftLabel = self._formatLeftLabel:gsub("~l~", "~s~");
+            self._formatLeftLabel = self._formatLeftLabel:gsub("~l~", "~s~")
             if not self._formatLeftLabel:StartsWith("~") then
-                self._formatLeftLabel = self._formatLeftLabel:Insert(0, "~s~");
+                self._formatLeftLabel = self._formatLeftLabel:Insert(0, "~s~")
             end
             if not string.IsNullOrEmpty(self._formatRightLabel) then
-                self._formatRightLabel = self._formatRightLabel:gsub("~l~", "~s~");
+                self._formatRightLabel = self._formatRightLabel:gsub("~l~", "~s~")
                 if not self._formatRightLabel:StartsWith("~") then
-                    self._formatRightLabel = self._formatRightLabel:Insert(0, "~s~");
+                    self._formatRightLabel = self._formatRightLabel:Insert(0, "~s~")
                 end
             end
         end
@@ -114,16 +114,16 @@ function UIMenuItem:Label(Text)
         self._formatLeftLabel = (tostring(Text))
         if self:Selected() then
             if self._formatLeftLabel:find("~") then
-                self._formatLeftLabel = self._formatLeftLabel:gsub("~w~", "~l~");
-                self._formatLeftLabel = self._formatLeftLabel:gsub("~s~", "~l~");
+                self._formatLeftLabel = self._formatLeftLabel:gsub("~w~", "~l~")
+                self._formatLeftLabel = self._formatLeftLabel:gsub("~s~", "~l~")
                 if not self._formatLeftLabel:StartsWith("~") then
-                    self._formatLeftLabel = self._formatLeftLabel:Insert(0, "~l~");
+                    self._formatLeftLabel = self._formatLeftLabel:Insert(0, "~l~")
                 end
             end
         else
-            self._formatLeftLabel = self._formatLeftLabel:gsub("~l~", "~s~");
+            self._formatLeftLabel = self._formatLeftLabel:gsub("~l~", "~s~")
             if not self._formatLeftLabel:StartsWith("~") then
-                self._formatLeftLabel = self._formatLeftLabel:Insert(0, "~s~");
+                self._formatLeftLabel = self._formatLeftLabel:Insert(0, "~s~")
             end
         end
         if self.ParentMenu ~= nil then
@@ -140,16 +140,16 @@ function UIMenuItem:RightLabel(Text)
         self._formatRightLabel = tostring(Text)
         if self:Selected() then
             if self._formatRightLabel:find("~") then
-                self._formatRightLabel = self._formatRightLabel:gsub("~w~", "~l~");
-                self._formatRightLabel = self._formatRightLabel:gsub("~s~", "~l~");
+                self._formatRightLabel = self._formatRightLabel:gsub("~w~", "~l~")
+                self._formatRightLabel = self._formatRightLabel:gsub("~s~", "~l~")
                 if not self._formatRightLabel:StartsWith("~") then
-                    self._formatRightLabel = self._formatRightLabel:Insert(0, "~l~");
+                    self._formatRightLabel = self._formatRightLabel:Insert(0, "~l~")
                 end
             end
         else
-            self._formatRightLabel = self._formatRightLabel:gsub("~l~", "~s~");
+            self._formatRightLabel = self._formatRightLabel:gsub("~l~", "~s~")
             if not self._formatRightLabel:StartsWith("~") then
-                self._formatRightLabel = self._formatRightLabel:Insert(0, "~s~");
+                self._formatRightLabel = self._formatRightLabel:Insert(0, "~s~")
             end
         end
         if self.ParentMenu ~= nil then
@@ -164,9 +164,9 @@ function UIMenuItem:SetRightBadge(Badge)
     if tonumber(Badge) then
         self.RightBadge = tonumber(Badge)
         if self.ParentMenu ~= nil then
-            ScaleformUI.Scaleforms._ui.CallFunction("SET_RIGHT_BADGE", false, IndexOf(self.ParentMenu.Items, self) - 1, self.RightBadge);
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_BADGE", false, IndexOf(self.ParentMenu.Items, self) - 1, self.RightBadge)
         else
-            self.RightBadge = badge;
+            self.RightBadge = Badge
         end
     else
         return self.RightBadge

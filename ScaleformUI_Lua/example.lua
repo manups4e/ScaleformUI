@@ -53,7 +53,7 @@ Citizen.CreateThread(function()
 
 	local cookItem = UIMenuItem.New("Cook!", "Cook the dish with the appropiate ingredients and ketchup.")
 	exampleMenu:AddItem(cookItem)
-	cookItem:SetRightBadge(26)
+	cookItem:SetRightBadge(BadgeStyle.STAR)
 
 	local colorItem = UIMenuItem.New("UIMenuItem with Colors", "~b~Look!!~r~I can be colored ~y~too!!~w~", 21, 24)
 	exampleMenu:AddItem(colorItem)
@@ -77,8 +77,10 @@ Citizen.CreateThread(function()
 
 	local listPanelItem1 = UIMenuItem.New("Change Color", "It can be whatever item you want it to be")
 	local colorPanel = UIMenuColorPanel.New("Color Panel Example", 1, 0)
+	local colorPanel2 = UIMenuColorPanel.New("Custom Palette Example", 1, 0, {"HUD_COLOUR_GREEN", "HUD_COLOUR_RED", "HUD_COLOUR_FREEMODE", "HUD_COLOUR_PURPLE", "HUD_COLOUR_TREVOR"})
 	exampleMenu:AddItem(listPanelItem1)
 	listPanelItem1:AddPanel(colorPanel)
+	listPanelItem1:AddPanel(colorPanel2)
 
 	local listPanelItem2 = UIMenuItem.New("Change Percentage", "It can be whatever item you want it to be")
 	local percentagePanel = UIMenuPercentagePanel.New("Percentage Panel Example", "0%", "100%")
@@ -171,8 +173,8 @@ Citizen.CreateThread(function()
 		print(newposition)
 	end
 
-	local MomIndex = 0;
-	local DadIndex = 0;
+	local MomIndex = 0
+	local DadIndex = 0
 
 	windowSubmenu.OnListChange = function(menu, item, newindex)
 		if (item == momListItem) then

@@ -395,7 +395,11 @@ function UIMenu:BuildUpMenu()
             for pan, panel in pairs (item.Panels) do
                 local pType, pSubType = panel()
                 if pSubType == "UIMenuColorPanel" then
-                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it - 1, 0, panel.Title, panel.ColorPanelColorType, panel.value)
+                    if panel.CustomColors ~= nil then
+                        ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it - 1, 0, panel.Title, panel.ColorPanelColorType, panel.value, table.concat(panel.CustomColors, ","))
+                    else
+                        ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it - 1, 0, panel.Title, panel.ColorPanelColorType, panel.value)
+                    end
                 elseif pSubType == "UIMenuPercentagePanel" then
                     ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it - 1, 1, panel.Title, panel.Min, panel.Max, panel.Percentage)
                 elseif pSubType == "UIMenuGridPanel" then
@@ -661,13 +665,13 @@ function UIMenu:SelectItem(play)
         Item:Activated(self, Item)
         self._Visible = false
         self.OnMenuChanged(self, self.Children[self.Items[self:CurrentSelection()]], true)
-        ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false);
-        ScaleformUI.Scaleforms.InstructionalButtons.Enabled = true;
-        ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.Children[self.Items[self:CurrentSelection()]].InstructionalButtons);
+        ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
+        ScaleformUI.Scaleforms.InstructionalButtons.Enabled = true
+        ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.Children[self.Items[self:CurrentSelection()]].InstructionalButtons)
         self.OnMenuChanged(self, self.Children[Item], "forwards")
         self.Children[Item].OnMenuChanged(self, self.Children[Item], "forwards")
-        self.Children[Item]:Visible(true);
-        self.Children[Item]:BuildUpMenu();
+        self.Children[Item]:Visible(true)
+        self.Children[Item]:BuildUpMenu()
     end
 end
 
@@ -744,9 +748,9 @@ function UIMenu:Draw()
         AddTextEntry("desc_{" .. k .."}", item:Description())
 
         if SubType == "UIMenuSliderItem" or SubType == "UIMenuProgressItem" then
-            ScaleformUI.Scaleforms._ui.CallFunction("UPDATE_ITEM", false, k-1, "desc_{" .. k .."}", item.MainColor, item.HighlightColor, item.TextColor, item.HighlightedTextColor, item.SliderColor, item.BackgroundSliderColor)
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_ITEM", false, k-1, "desc_{" .. k .."}", item.MainColor, item.HighlightColor, item.TextColor, item.HighlightedTextColor, item.SliderColor, item.BackgroundSliderColor)
         else
-            ScaleformUI.Scaleforms._ui.CallFunction("UPDATE_ITEM", false, k-1, "desc_{" .. k .."}", item.MainColor, item.HighlightColor, item.TextColor, item.HighlightedTextColor)
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_ITEM", false, k-1, "desc_{" .. k .."}", item.MainColor, item.HighlightColor, item.TextColor, item.HighlightedTextColor)
         end
     end
 end
@@ -933,3 +937,10 @@ function UIMenu:RemoveEnabledControl(Inputgroup, Control, Controller)
         end
     end
 end
+
+AddEventHandler('onResourceStop', function(resourceName)
+	if (GetCurrentResourceName() == resourceName) then
+        ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
+        ScaleformUI.Scaleforms._ui:Dispose()
+	end
+end)
