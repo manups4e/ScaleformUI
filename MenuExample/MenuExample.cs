@@ -101,11 +101,16 @@ public class MenuExample : BaseScript
 		var progress = new UIMenuProgressItem("Slider Progress Item", 10, 0);
 		exampleMenu.AddItem(progress);
 
-		var listPanelItem1 = new UIMenuItem("Change Color", "It can be whatever item you want it to be");
+		var listPanelItem0 = new UIMenuItem("Change Color", "It can be whatever item you want it to be");
 		var ColorPanel = new UIMenuColorPanel("Color Panel Example", ColorPanelType.Hair);
 		// you can choose between hair palette or makeup palette or custom
+		exampleMenu.AddItem(listPanelItem0);
+		listPanelItem0.AddPanel(ColorPanel);
+
+		var listPanelItem1 = new UIMenuItem("Custom palette panel");
+		var ColorPanelCustom = new UIMenuColorPanel("Custom Palette Example", new List<HudColor> { HudColor.HUD_COLOUR_GREEN, HudColor.HUD_COLOUR_RED, HudColor.HUD_COLOUR_FREEMODE, HudColor.HUD_COLOUR_PURPLE, HudColor.HUD_COLOUR_TREVOR }, 0);
 		exampleMenu.AddItem(listPanelItem1);
-		listPanelItem1.AddPanel(ColorPanel);
+		listPanelItem1.AddPanel(ColorPanelCustom);
 
 		var listPanelItem2 = new UIMenuItem("Change Percentage", "It can be whatever item you want it to be");
 		var PercentagePanel = new UIMenuPercentagePanel("Percentage Panel Example", "0%", "100%");
@@ -239,6 +244,11 @@ public class MenuExample : BaseScript
 		// THERE ARE NOW EVENT FOR PANELS.. WHEN YOU CHANGE WHAT IS CHANGABLE THE PANEL ITSELF WILL DO WHATEVER YOU TELL HIM TO DO
 
 		ColorPanel.OnColorPanelChange += (item, panel, index) =>
+		{
+			Notifications.ShowNotification($"ColorPanel index => {index}");
+		};
+
+		ColorPanelCustom.OnColorPanelChange += (item, panel, index) =>
 		{
 			Notifications.ShowNotification($"ColorPanel index => {index}");
 		};
