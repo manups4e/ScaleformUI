@@ -60,8 +60,7 @@ public class MenuExample : BaseScript
 		sidePanelB.AddItem(detailItem4);
 		sidePanelB.AddItem(detailItem5);
 		cookItem.AddSidePanel(sidePanelB);
-		//cookItem.SetLeftBadge(BadgeIcon.STAR);
-		cookItem.SetRightBadge(BadgeIcon.TICK);
+		cookItem.SetRightBadge(BadgeIcon.STAR);
 
 		var colorItem = new UIMenuItem("UIMenuItem with Colors", "~b~Look!!~r~I can be colored ~y~too!!~w~~n~Every item now supports custom colors!", HudColor.HUD_COLOUR_PURPLE, HudColor.HUD_COLOUR_PINK);
 		exampleMenu.AddItem(colorItem);
@@ -104,7 +103,7 @@ public class MenuExample : BaseScript
 
 		var listPanelItem1 = new UIMenuItem("Change Color", "It can be whatever item you want it to be");
 		var ColorPanel = new UIMenuColorPanel("Color Panel Example", ColorPanelType.Hair);
-		// you can choose between hair palette or makeup palette
+		// you can choose between hair palette or makeup palette or custom
 		exampleMenu.AddItem(listPanelItem1);
 		listPanelItem1.AddPanel(ColorPanel);
 
