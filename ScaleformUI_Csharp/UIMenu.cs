@@ -2133,7 +2133,7 @@ namespace ScaleformUI
                     {
                         case UIMenuColorPanel:
                             UIMenuColorPanel cp = (UIMenuColorPanel)panel;
-                            ScaleformUI._ui.CallFunction("ADD_PANEL", index, 0, cp.Title, (int)cp.ColorPanelColorType, cp.CurrentSelection);
+                            ScaleformUI._ui.CallFunction("ADD_PANEL", index, 0, cp.Title, (int)cp.ColorPanelColorType, cp.CurrentSelection, string.Join(",", cp.CustomColors));
                             break;
                         case UIMenuPercentagePanel:
                             UIMenuPercentagePanel pp = (UIMenuPercentagePanel)panel;

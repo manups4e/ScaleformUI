@@ -13,6 +13,7 @@ namespace ScaleformUI
 	{
 		public string Title { get; set; }
 		public ColorPanelType ColorPanelColorType { get; set; }
+		public List<HudColor> CustomColors { get; private set; }
 		internal int _value { get; set; }
 		public event ColorPanelChangedEvent OnColorPanelChange;
 		public int CurrentSelection
@@ -37,6 +38,14 @@ namespace ScaleformUI
 			Title = title??"Color Panel";
 			ColorPanelColorType = ColorType;
 			_value = startIndex;
+		}
+
+		public UIMenuColorPanel(string title, List<HudColor> colors, int startIndex = 0)
+		{
+			Title = title ?? "Color Panel";
+			ColorPanelColorType = (ColorPanelType)2;
+			_value = startIndex;
+			CustomColors = colors;
 		}
 
 		internal void PanelChanged()
