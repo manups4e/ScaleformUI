@@ -420,6 +420,8 @@ function UIMenu:BuildUpMenu()
                 for key, value in pairs(item.SidePanel.Items) do
                     ScaleformUI.Scaleforms._ui:CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", false, it - 1, value.Type, value.TextLeft, value.TextRight, value.Icon, value.IconColor, value.Tick)
                 end
+            elseif item.SidePanel() == "UIVehicleColorPickerPanel" then
+                ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, it - 1, 1, item.SidePanel.PanelSide, item.SidePanel.TitleType, item.SidePanel.Title, item.SidePanel.TitleColor)
             end
         end
     end
@@ -825,6 +827,14 @@ function UIMenu:ProcessMouseJustPressed()
                 panel.value = tonumber(split[4])
                 self:OnColorPanelChanged(panel.ParentItem, panel, panel:CurrentSelection())
                 panel.PanelChanged(panel.ParentItem, panel, panel:CurrentSelection())
+            end
+        elseif type == "sidepan" then
+            if tonumber(split[2]) == 1 then
+                local panel = self.Items[self:CurrentSelection()].SidePanel
+                if tonumber(split[3]) ~= -1 then
+                    panel.Value = tonumber(split[3])
+                    panel.PickerSelect(panel.ParentItem, panel, panel.Value)
+                end
             end
         end
     end

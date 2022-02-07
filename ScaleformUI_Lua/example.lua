@@ -57,6 +57,7 @@ Citizen.CreateThread(function()
 
 	local colorItem = UIMenuItem.New("UIMenuItem with Colors", "~b~Look!!~r~I can be colored ~y~too!!~w~", 21, 24)
 	exampleMenu:AddItem(colorItem)
+	local sidePanelVehicleColor = UIVehicleColorPickerPanel.New(1, "ColorPicker", 6)
 
 	local blankItem = UIMenuItem.New("", "")
 	exampleMenu:AddItem(blankItem)
@@ -104,7 +105,7 @@ Citizen.CreateThread(function()
 
 	ketchupItem:AddSidePanel(sidePanel)
 	cookItem:AddSidePanel(sidePanel)
-	colorItem:AddSidePanel(sidePanel)
+	colorItem:AddSidePanel(sidePanelVehicleColor)
 	blankItem:AddSidePanel(sidePanel)
 	colorListItem:AddSidePanel(sidePanel)
 	progressItem:AddSidePanel(sidePanel)
@@ -158,6 +159,13 @@ Citizen.CreateThread(function()
 		EndTextCommandThefeedPostTicker(false, true)
 	end
 
+	colorPanel2.PanelChanged = function(menu, item, newindex)
+		local message = "ColorPanel2 index => " .. newindex + 1
+		AddTextEntry("ScaleformUINotification", message)
+		BeginTextCommandThefeedPost("ScaleformUINotification")
+		EndTextCommandThefeedPostTicker(false, true)
+	end
+
 	percentagePanel.PanelChanged = function(menu, item, newpercentage)
 		local message = "PercentagePanel => " .. newpercentage
 		AddTextEntry("ScaleformUINotification", message)
@@ -171,6 +179,13 @@ Citizen.CreateThread(function()
 
 	horizontalGridPanel.PanelChanged = function(menu, item, newposition)
 		print(newposition)
+	end
+
+	sidePanelVehicleColor.PickerSelect = function(menu, item, newindex)
+		local message = "ColorPanel index => " .. newindex + 1
+		AddTextEntry("ScaleformUINotification", message)
+		BeginTextCommandThefeedPost("ScaleformUINotification")
+		EndTextCommandThefeedPostTicker(false, true)
 	end
 
 	local MomIndex = 0

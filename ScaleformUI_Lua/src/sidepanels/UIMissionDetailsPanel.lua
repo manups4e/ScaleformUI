@@ -31,7 +31,7 @@ function UIMissionDetailsPanel.New(side, title, color, inside, txd, txn)
 end
 
 function UIMissionDetailsPanel:SetParentItem(Item) -- required
-	if not Item() == nil then
+	if Item() == "UIMenuItem" then
 		self.ParentItem = Item
 	else
 		return self.ParentItem
@@ -43,15 +43,15 @@ function UIMissionDetailsPanel:UpdatePanelPicture(txd, txn)
     self.TextureName = txn
 
     if self.ParentItem ~= nil then
-        local item = IndexOf(self.ParentItem.ParentMenu.Items, self) - 1
-        ScaleformUI.Scaleforms._ui:CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", false, wid, item.Type, item.TextLeft, item.TextRight, item.Icon, item.IconColor, item.Ticked)
+        local item = IndexOf(self.ParentItem.Base.ParentMenu.Items, self.ParentItem) - 1
+        ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_MISSION_DETAILS_PANEL_IMG", false, item, txd, txn)
     end
 end
 
 function UIMissionDetailsPanel:AddItem(newitem)
     table.insert(self.Items, newitem)
     if self.ParentItem ~= nil then
-        local item = IndexOf(self.ParentItem.ParentMenu.Items, self) - 1
+        local item = IndexOf(self.ParentItem.Base.ParentMenu.Items, self.ParentItem) - 1
         ScaleformUI.Scaleforms._ui:CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", false, item, newitem.Type, newitem.TextLeft, newitem.TextRight, newitem.Icon, newitem.IconColor, newitem.Ticked)
     end
 end
