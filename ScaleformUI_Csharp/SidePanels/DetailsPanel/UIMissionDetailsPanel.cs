@@ -6,17 +6,11 @@ using System.Threading.Tasks;
 
 namespace ScaleformUI
 {
-    public enum MissionDetailsTitleType
-    {
-        Big,
-        Small,
-        Classic
-    }
     public class UIMissionDetailsPanel : UIMenuSidePanel
     {
         public string TextureDict;
         public string TextureName;
-        internal MissionDetailsTitleType _titleType;
+        internal SidePanelsTitleType _titleType;
         public string Title;
         public HudColor TitleColor;
         public List<UIFreemodeDetailsItem> Items = new();
@@ -33,9 +27,9 @@ namespace ScaleformUI
         {
             PanelSide = side;
             if(inside)
-                _titleType = MissionDetailsTitleType.Classic;
+                _titleType = SidePanelsTitleType.Classic;
             else
-                _titleType = MissionDetailsTitleType.Big;
+                _titleType = SidePanelsTitleType.Big;
             Title = title;
             TitleColor = HudColor.NONE;
             TextureDict = txd;
@@ -53,7 +47,7 @@ namespace ScaleformUI
         public UIMissionDetailsPanel(PanelSide side, string title, HudColor color, string txd = "", string txn = "")
         {
             PanelSide = side;
-            _titleType = MissionDetailsTitleType.Small;
+            _titleType = SidePanelsTitleType.Small;
             Title = title;
             TitleColor = color;
             TextureDict = txd;
