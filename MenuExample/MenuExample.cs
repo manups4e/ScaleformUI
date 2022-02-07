@@ -53,14 +53,13 @@ public class MenuExample : BaseScript
 		var cookItem = new UIMenuItem("Cook!", "Cook the dish with the appropiate ingredients and ketchup.");
 
 		exampleMenu.AddItem(cookItem);
-		UIMissionDetailsPanel sidePanelB = new UIMissionDetailsPanel(PanelSide.Right, "Side Panel", HudColor.HUD_COLOUR_GREEN, "shopui_title_graphics_michael", "shopui_title_graphics_michael");
-		sidePanelB.AddItem(detailItem1);
-		sidePanelB.AddItem(detailItem2);
-		sidePanelB.AddItem(detailItem3);
-		sidePanelB.AddItem(detailItem4);
-		sidePanelB.AddItem(detailItem5);
+		UIVehicleColourPickerPanel sidePanelB = new UIVehicleColourPickerPanel(PanelSide.Right, "ColorPicker");
 		cookItem.AddSidePanel(sidePanelB);
 		cookItem.SetRightBadge(BadgeIcon.STAR);
+		sidePanelB.OnVehicleColorPickerSelect += (item, panel, value) =>
+		{
+			Notifications.ShowNotification($"ColorPicker value => {value}");
+		};
 
 		var colorItem = new UIMenuItem("UIMenuItem with Colors", "~b~Look!!~r~I can be colored ~y~too!!~w~~n~Every item now supports custom colors!", HudColor.HUD_COLOUR_PURPLE, HudColor.HUD_COLOUR_PINK);
 		exampleMenu.AddItem(colorItem);

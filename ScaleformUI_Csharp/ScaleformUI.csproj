@@ -87,6 +87,7 @@
     <Compile Include="Scaleforms\PopupWarning\PopupWarning.cs" />
     <Compile Include="Scaleforms\Scoreboard\PlayerListHandler.cs" />
     <Compile Include="ScreenTools.cs" />
+    <Compile Include="SidePanels\ColorPicker\UIVehicleColourPickerPanel.cs" />
     <Compile Include="SidePanels\DetailsPanel\UIFreemodeDetailsItem.cs" />
     <Compile Include="SidePanels\UIMenuSidePanel.cs" />
     <Compile Include="SidePanels\DetailsPanel\UIMissionDetailsPanel.cs" />

@@ -11,7 +11,14 @@ namespace ScaleformUI
 		Left,
 		Right
     }
-    public class UIMenuSidePanel
+	public enum SidePanelsTitleType
+	{
+		Big,
+		Small,
+		Classic
+	}
+
+	public class UIMenuSidePanel
     {
 		public virtual bool Selected { get; set; }
 		public virtual bool Enabled { get; set; }

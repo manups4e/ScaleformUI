@@ -817,8 +817,9 @@ namespace ScaleformUI
 	public delegate void OnProgressChanged(UIMenu menu, UIMenuProgressItem item, int newIndex);
 	public delegate void OnProgressSelected(UIMenu menu, UIMenuProgressItem item, int newIndex);
 	public delegate void StatItemProgressChange(UIMenu menu, UIMenuStatsItem item, int value);
-	public delegate void ColorPanelChangedEvent(UIMenuItem menu, UIMenuColorPanel panel, int index);
-	public delegate void PercentagePanelChangedEvent(UIMenuItem menu, UIMenuPercentagePanel panel, float value);
+    public delegate void ColorPanelChangedEvent(UIMenuItem menu, UIMenuColorPanel panel, int index);
+    public delegate void VehicleColorPickerSelectEvent(UIMenuItem menu, UIVehicleColourPickerPanel panel, int index);
+    public delegate void PercentagePanelChangedEvent(UIMenuItem menu, UIMenuPercentagePanel panel, float value);
 	public delegate void GridPanelChangedEvent(UIMenuItem menu, UIMenuGridPanel panel, PointF value);
 
 	public enum MenuAnimationType
@@ -1630,6 +1631,21 @@ namespace ScaleformUI
                             panel.PanelChanged();
                         }
                         break;
+                    case "sidepan":
+                        {
+                            switch (selection)
+                            {
+                                case 1:
+                                    var panel = (UIVehicleColourPickerPanel)MenuItems[CurrentSelection].SidePanel;
+                                    if (Convert.ToInt32(split[2]) != -1)
+                                    {
+                                        panel._value = Convert.ToInt32(split[2]);
+                                        panel.PickerSelect();
+                                    }
+                                    break;
+                            }
+                        }
+                        break;
                 }
             }
             else if (Game.IsControlPressed(0, Control.Attack))
@@ -2121,6 +2137,10 @@ namespace ScaleformUI
                             {
                                 ScaleformUI._ui.CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", index, _it.Type, _it.TextLeft, _it.TextRight, (int)_it.Icon, (int)_it.IconColor, _it.Tick);
                             }
+                            break;
+                        case UIVehicleColourPickerPanel:
+                            var cp = (UIVehicleColourPickerPanel)item.SidePanel;
+                            ScaleformUI._ui.CallFunction("ADD_SIDE_PANEL_TO_ITEM", index, 1, (int)cp.PanelSide, (int)cp._titleType, cp.Title, (int)cp.TitleColor);
                             break;
                     }
                 }

@@ -23,6 +23,25 @@ namespace ScaleformUI
 				//_getValue();
 				return _value;
 			}
+			set
+			{
+				_value = value;
+				if (CustomColors is null)
+				{
+					if (value > 63)
+						_value -= 63;
+					if (value < 0)
+						_value += 63;
+				}
+				else
+				{
+					if (value > CustomColors.Count - 1)
+						_value -= CustomColors.Count - 1;
+					if (value < 0)
+						_value += CustomColors.Count - 1;
+				}
+				_setValue(_value);
+			}
 		}
 		public UIMenuColorPanel(string title, ColorPanelType ColorType, int startIndex = 0)
 		{
