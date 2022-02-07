@@ -6,11 +6,16 @@ UIMenuColorPanel.__call = function() return "UIMenuPanel", "UIMenuColorPanel" en
 ---@param title string
 ---@param colorType int
 ---@param startIndex number
-function UIMenuColorPanel.New(title, colorType, startIndex)
+function UIMenuColorPanel.New(title, colorType, startIndex, colors)
+	if colors ~= nil then
+		colorType = 2
+	end
+	
 	_UIMenuColorPanel = {
 		Title = title or "Color Panel",
 		ColorPanelColorType = colorType,
 		value = startIndex or 0,
+		CustomColors = colors or nil,
 		ParentItem = nil, -- required
 		PanelChanged = function(menu, item, newindex) end
 	}
