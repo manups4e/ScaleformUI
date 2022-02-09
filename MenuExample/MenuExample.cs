@@ -825,6 +825,7 @@ public class MenuExample : BaseScript
 	public void PauseMenuShowcase(UIMenu _menu)
     {
 		var mainMenu = _menu;
+		// tabview is the main menu.. the container of all the tabs.
 		TabView pauseMenu = new TabView("PauseMenu example", "Look there's a subtitle too!", "Detail 1", "Detail 2", "Detail 3");
 		_menuPool.Add(pauseMenu);
 		TabTextItem basicTab = new TabTextItem("TabTextItem", "This is the title!");
@@ -898,14 +899,16 @@ public class MenuExample : BaseScript
 		pauseMenu.OnPauseMenuOpen += (menu) =>
 		{
 			Screen.ShowSubtitle(menu.Title + " Opened!");
-			mainMenu.Visible = false;
+			if (mainMenu != null)
+				mainMenu.Visible = false;
 		};
 		pauseMenu.OnPauseMenuClose += async (menu) =>
 		{
 			Screen.ShowSubtitle(menu.Title + " Closed!");
 			// to prevent the pause menu to close the menu too!
 			await BaseScript.Delay(250);
-			mainMenu.Visible = true;
+			if (mainMenu != null)
+				mainMenu.Visible = true;
 		};
 
 		pauseMenu.OnPauseMenuTabChanged += (menu, tab, tabIndex) =>
@@ -964,6 +967,10 @@ public class MenuExample : BaseScript
 
 			if (Game.IsControlJustPressed(0, Control.SelectCharacterMichael) && !_menuPool.IsAnyMenuOpen) // Our menu enabler (to exit menu simply press Back on the main menu)
 				ExampleMenu();
+
+			// to open the pause menu without opening the normal menu.
+			if (Game.IsControlJustPressed(0, Control.SelectCharacterFranklin) && !_menuPool.IsAnyMenuOpen && !_menuPool.IsAnyPauseMenuOpen)
+				PauseMenuShowcase(null);
 			await Task.FromResult(0);
 		};
 	}
