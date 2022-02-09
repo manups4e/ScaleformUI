@@ -15,6 +15,7 @@ function UIMenuListItem.New(Text, Items, Index, Description, color, highlightCol
 		Items = Items,
 		_Index = tonumber(Index) or 1,
 		Panels = {},
+		SidePanel = nil,
 		OnListChanged = function(menu, item, newindex) end,
 		OnListSelected = function(menu, item, newindex) end,
 	}
@@ -29,6 +30,14 @@ function UIMenuListItem:SetParentMenu(Menu)
 	else
 		return self.Base.ParentMenu
 	end
+end
+
+function UIMenuListItem:AddSidePanel(sidePanel)
+    if sidePanel() == "UIMissionDetailsPanel" then
+        sidePanel:SetParentItem(self)
+        self.SidePanel = sidePanel
+        ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
+    end
 end
 
 ---Selected
@@ -190,5 +199,5 @@ function UIMenuListItem:ChangeList(list)
 	if type(list) ~= "table" then return end
 	self.Items = {}
 	self.Items = list
-	ScaleformUI.Scaleforms._ui.CallFunction("UPDATE_LISTITEM_LIST", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, table.concat(self.Items, ","), self._Index);
+	ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_LISTITEM_LIST", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, table.concat(self.Items, ","), self._Index)
 end

@@ -18,6 +18,7 @@ function UIMenuSliderItem.New(Text, Max, Multiplier, Index, Heritage, Descriptio
 		_Multiplier = Multiplier or 5,
 		_heritage = Heritage or false,
 		Panels = {},
+		SidePanel = nil,
 		SliderColor = sliderColor or 116,
 		BackgroundSliderColor = backgroundSliderColor or 117,
 		OnSliderChanged = function(menu, item, newindex) end,
@@ -34,6 +35,14 @@ function UIMenuSliderItem:SetParentMenu(Menu)
 	else
 		return self.Base.ParentMenu
 	end
+end
+
+function UIMenuSliderItem:AddSidePanel(sidePanel)
+    if sidePanel() == "UIMissionDetailsPanel" then
+        sidePanel:SetParentItem(self)
+        self.SidePanel = sidePanel
+        ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
+    end
 end
 
 ---Selected
