@@ -27,6 +27,7 @@ namespace ScaleformUI.PauseMenu
         public string SideStringMiddle { get; set; }
         public string SideStringBottom { get; set; }
         public Tuple<string, string> HeaderPicture { internal get; set; }
+        public Tuple<string, string> CrewPicture { internal get; set; }
         public List<BaseTab> Tabs { get; set; }
         public int LeftItemIndex
         {
@@ -151,14 +152,16 @@ namespace ScaleformUI.PauseMenu
             }
             if (HeaderPicture != null)
                 _pause.SetHeaderCharImg(HeaderPicture.Item2, HeaderPicture.Item2, true);
-/*
-            else
-            {
-                var mugshot = await Notifications.GetPedMugshotAsync(Game.PlayerPed);
-                _pause.SetHeaderCharImg(mugshot.Item2, mugshot.Item2, true);
-                API.ReleasePedheadshotImgUpload(mugshot.Item1);
-            }
-*/
+            if (CrewPicture != null)
+                _pause.SetHeaderSecondaryImg(CrewPicture.Item1, CrewPicture.Item2, true);
+            /*
+                        else
+                        {
+                            var mugshot = await Notifications.GetPedMugshotAsync(Game.PlayerPed);
+                            _pause.SetHeaderCharImg(mugshot.Item2, mugshot.Item2, true);
+                            API.ReleasePedheadshotImgUpload(mugshot.Item1);
+                        }
+            */
             _pause.SetHeaderDetails(SideStringTop, SideStringMiddle, SideStringBottom);
             _loaded = true;
         }
