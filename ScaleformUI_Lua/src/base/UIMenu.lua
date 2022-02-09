@@ -653,8 +653,8 @@ function UIMenu:SelectItem(play)
     if subtype == "UIMenuCheckboxItem" then
         Item:Checked(not Item:Checked())
         PlaySoundFrontend(-1, self.Settings.Audio.Select, self.Settings.Audio.Library, true)
-        self.OnCheckboxChange(self, Item, Item.Checked)
-        Item.CheckboxEvent(self, Item, Item.Checked)
+        self.OnCheckboxChange(self, Item, Item:Checked())
+        Item.OnCheckboxChanged(self, Item, Item:Checked())
     elseif subtype == "UIMenuListItem" then
         PlaySoundFrontend(-1, self.Settings.Audio.Select, self.Settings.Audio.Library, true)
         self.OnListSelect(self, Item, Item._Index)

@@ -55,3 +55,11 @@ function UIMissionDetailsPanel:AddItem(newitem)
         ScaleformUI.Scaleforms._ui:CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", false, item, newitem.Type, newitem.TextLeft, newitem.TextRight, newitem.Icon, newitem.IconColor, newitem.Ticked)
     end
 end
+
+function UIMissionDetailsPanel:RemoveItemAt(index)	
+    print(#self.Items)	
+    table.remove(self.Items, index)	
+    if self.ParentItem ~= nil then	
+        ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_MISSION_DETAILS_DESC_ITEM", false, index - 1)	
+    end	
+end
