@@ -58,7 +58,8 @@ public class MenuExample : BaseScript
 		cookItem.SetRightBadge(BadgeIcon.STAR);
 		sidePanelB.OnVehicleColorPickerSelect += (item, panel, value) =>
 		{
-			Notifications.ShowNotification($"ColorPicker value => {value}");
+			Notifications.ShowNotification($"Vehicle Color: {(VehicleColor)value}");
+			sidePanelB.Title = ((VehicleColor)value).ToString();
 		};
 
 		var colorItem = new UIMenuItem("UIMenuItem with Colors", "~b~Look!!~r~I can be colored ~y~too!!~w~~n~Every item now supports custom colors!", HudColor.HUD_COLOUR_PURPLE, HudColor.HUD_COLOUR_PINK);

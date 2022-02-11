@@ -9,7 +9,19 @@ namespace ScaleformUI
 
     public class UIVehicleColourPickerPanel : UIMenuSidePanel
     {
-        public string Title;
+        private string title;
+        public string Title
+        {
+            get => title;
+            set
+            {
+                title = value;
+                if (ParentItem is not null)
+                {
+                    ScaleformUI._ui.CallFunction("UPDATE_SIDE_PANEL_TITLE", ParentItem.Parent.MenuItems.IndexOf(ParentItem), title);
+                }
+            }
+        }
         public HudColor TitleColor;
         internal SidePanelsTitleType _titleType;
         internal int _value;
