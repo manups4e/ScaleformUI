@@ -8,10 +8,22 @@ namespace ScaleformUI
 {
     public class UIMissionDetailsPanel : UIMenuSidePanel
     {
+        private string title;
         public string TextureDict;
         public string TextureName;
         internal SidePanelsTitleType _titleType;
-        public string Title;
+        public string Title
+        {
+            get => title;
+            set
+            {
+                title = value;
+                if(ParentItem is not null)
+                {
+                    ScaleformUI._ui.CallFunction("UPDATE_SIDE_PANEL_TITLE", ParentItem.Parent.MenuItems.IndexOf(ParentItem), title);
+                }
+            }
+        }
         public HudColor TitleColor;
         public List<UIFreemodeDetailsItem> Items = new();
 
@@ -26,7 +38,7 @@ namespace ScaleformUI
         public UIMissionDetailsPanel(PanelSide side, string title, bool inside, string txd = "", string txn = "")
         {
             PanelSide = side;
-            if(inside)
+            if (inside)
                 _titleType = SidePanelsTitleType.Classic;
             else
                 _titleType = SidePanelsTitleType.Big;
