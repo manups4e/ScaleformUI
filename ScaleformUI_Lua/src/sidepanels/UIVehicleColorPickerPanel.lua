@@ -36,3 +36,12 @@ function UIVehicleColorPickerPanel:SetParentItem(Item) -- required
 		return self.ParentItem
 	end
 end
+
+function UIVehicleColorPickerPanel:UpdatePanelTitle(title)
+    self.Title = title
+
+    if self.ParentItem ~= nil then
+        local item = IndexOf(self.ParentItem.Base.ParentMenu.Items, self.ParentItem) - 1
+        ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_SIDE_PANEL_TITLE", false, item, title)
+    end
+end

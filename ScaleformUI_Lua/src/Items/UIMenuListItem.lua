@@ -107,12 +107,12 @@ end
 function UIMenuListItem:Index(Index)
 	if tonumber(Index) then
 		local ind = Index+1
-		if tonumber(ind) > #self.Items then
+		if ind > #self.Items then
 			self._Index = 1
-		elseif tonumber(ind) < 1 then
+		elseif ind < 1 then
 			self._Index = #self.Items
 		else
-			self._Index = tonumber(ind)
+			self._Index = ind
 		end
 	else
 		return self._Index

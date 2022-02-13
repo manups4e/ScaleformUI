@@ -104,11 +104,6 @@ Citizen.CreateThread(function()
 	listPanelItem4:AddPanel(statisticsPanel)
 
 	ketchupItem:AddSidePanel(sidePanel)
-	cookItem:AddSidePanel(sidePanel)
-	colorItem:AddSidePanel(sidePanelVehicleColor)
-	blankItem:AddSidePanel(sidePanel)
-	colorListItem:AddSidePanel(sidePanel)
-	progressItem:AddSidePanel(sidePanel)
 
 	local windowSubmenu = pool:AddSubMenu(exampleMenu, "Heritage Menu", "", true, true)
 	local heritageWindow = UIMenuHeritageWindow.New(0, 0)
@@ -150,6 +145,10 @@ Citizen.CreateThread(function()
 		elseif type == "forwards" then
 			print("Menu going forwards!")
 		end
+	end
+
+	ketchupItem.OnCheckboxChanged = function(menu, item, checked)
+		sidePanel:UpdatePanelTitle(tostring(checked))
 	end
 
 	colorPanel.PanelChanged = function(menu, item, newindex)
