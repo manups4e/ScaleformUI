@@ -38,6 +38,15 @@ function UIMissionDetailsPanel:SetParentItem(Item) -- required
 	end
 end
 
+function UIMissionDetailsPanel:UpdatePanelTitle(title)
+    self.Title = title
+
+    if self.ParentItem ~= nil then
+        local item = IndexOf(self.ParentItem.Base.ParentMenu.Items, self.ParentItem) - 1
+        ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_SIDE_PANEL_TITLE", false, item, title)
+    end
+end
+
 function UIMissionDetailsPanel:UpdatePanelPicture(txd, txn)
     self.TextureDict = txd
     self.TextureName = txn
@@ -54,4 +63,12 @@ function UIMissionDetailsPanel:AddItem(newitem)
         local item = IndexOf(self.ParentItem.Base.ParentMenu.Items, self.ParentItem) - 1
         ScaleformUI.Scaleforms._ui:CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", false, item, newitem.Type, newitem.TextLeft, newitem.TextRight, newitem.Icon, newitem.IconColor, newitem.Ticked)
     end
+end
+
+function UIMissionDetailsPanel:RemoveItemAt(index)	
+    print(#self.Items)	
+    table.remove(self.Items, index)	
+    if self.ParentItem ~= nil then	
+        ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_MISSION_DETAILS_DESC_ITEM", false, index - 1)	
+    end	
 end

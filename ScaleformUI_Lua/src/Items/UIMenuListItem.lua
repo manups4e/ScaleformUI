@@ -37,7 +37,11 @@ function UIMenuListItem:AddSidePanel(sidePanel)
         sidePanel:SetParentItem(self)
         self.SidePanel = sidePanel
         ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
-    end
+    elseif sidePanel() == "UIVehicleColorPickerPanel" then	
+        sidePanel:SetParentItem(self)	
+        self.SidePanel = sidePanel	
+        ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.ParentMenu.Items, self) - 1, 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor)
+	end
 end
 
 ---Selected
@@ -103,12 +107,12 @@ end
 function UIMenuListItem:Index(Index)
 	if tonumber(Index) then
 		local ind = Index+1
-		if tonumber(ind) > #self.Items then
+		if ind > #self.Items then
 			self._Index = 1
-		elseif tonumber(ind) < 1 then
+		elseif ind < 1 then
 			self._Index = #self.Items
 		else
-			self._Index = tonumber(ind)
+			self._Index = ind
 		end
 	else
 		return self._Index

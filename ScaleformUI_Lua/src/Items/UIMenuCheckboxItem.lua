@@ -13,7 +13,7 @@ function UIMenuCheckboxItem.New(Text, Check, checkStyle, Description, color, hig
 		Panels = {},
 		SidePanel = nil,
 		CheckBoxStyle = checkStyle or 0,
-		CheckboxEvent = function(menu, item, checked) end,
+		OnCheckboxChanged = function(menu, item, checked) end,
 	}
 	return setmetatable(_UIMenuCheckboxItem, UIMenuCheckboxItem)
 end
@@ -33,7 +33,11 @@ function UIMenuCheckboxItem:AddSidePanel(sidePanel)
         sidePanel:SetParentItem(self)
         self.SidePanel = sidePanel
         ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
-    end
+    elseif sidePanel() == "UIVehicleColorPickerPanel" then	
+        sidePanel:SetParentItem(self)	
+        self.SidePanel = sidePanel	
+        ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.ParentMenu.Items, self) - 1, 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor)
+	end
 end
 
 ---Selected

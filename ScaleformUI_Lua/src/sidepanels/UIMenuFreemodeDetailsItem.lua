@@ -2,7 +2,7 @@ UIMenuFreemodeDetailsItem = setmetatable({}, UIMenuFreemodeDetailsItem)
 UIMenuFreemodeDetailsItem.__index = UIMenuFreemodeDetailsItem
 UIMenuFreemodeDetailsItem.__call = function() return "UIMenuFreemodeDetailsItem", "UIMenuFreemodeDetailsItem" end
 
-function UIMenuFreemodeDetailsItem.New(textRight, textLeft, seperator)
+function UIMenuFreemodeDetailsItem.New(textLeft, textRight, seperator)
     if seperator then
         _type = 3
     else
