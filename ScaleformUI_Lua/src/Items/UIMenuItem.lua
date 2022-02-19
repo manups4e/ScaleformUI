@@ -16,10 +16,10 @@ function UIMenuItem.New(text, description, color, highlightColor, textColor, hig
         _rightLabel = "",
         _formatRightLabel = "",
         RightBadge = 0,
-        MainColor = color or 117,
-        HighlightColor = highlightColor or 1,
-        TextColor = textColor or 1,
-        HighlightedTextColor = highlightedTextColor or 2,
+        _mainColor = color or 117,
+        _highlightColor = highlightColor or 1,
+        _textColor = textColor or 1,
+        _highlightedTextColor = highlightedTextColor or 2,
         ParentMenu = nil,
         Panels = {},
         SidePanel = nil,
@@ -105,6 +105,50 @@ function UIMenuItem:Description(str)
         self._Description = tostring(str)
     else
         return self._Description
+    end
+end
+
+function UIMenuItem:MainColor(color)
+    if(color)then
+        self._mainColor = color
+        if(self.ParentMenu ~= nil) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.ParentMenu.Items, self) - 1, self._mainColor, self._highlightColor, self._textColor, self._highlightedTextColor);
+        end
+    else
+        return self._mainColor
+    end
+end
+
+function UIMenuItem:TextColor(color)
+    if(color)then
+        self._textColor = color
+        if(self.ParentMenu ~= nil) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.ParentMenu.Items, self) - 1, self._mainColor, self._highlightColor, self._textColor, self._highlightedTextColor);
+        end
+    else
+        return self._textColor
+    end
+end
+
+function UIMenuItem:HighlightColor(color)
+    if(color)then
+        self._highlightColor = color
+        if(self.ParentMenu ~= nil) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.ParentMenu.Items, self) - 1, self._mainColor, self._highlightColor, self._textColor, self._highlightedTextColor);
+        end
+    else
+        return self._highlightColor
+    end
+end
+
+function UIMenuItem:HighlightedTextColor(color)
+    if(color)then
+        self._highlightedTextColor = color
+        if(self.ParentMenu ~= nil) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.ParentMenu.Items, self) - 1, self._mainColor, self._highlightColor, self._textColor, self._highlightedTextColor);
+        end
+    else
+        return self._highlightedTextColor
     end
 end
 

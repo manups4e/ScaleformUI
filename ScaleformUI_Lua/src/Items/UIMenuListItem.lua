@@ -102,6 +102,49 @@ function UIMenuListItem:Label(Text)
 	end
 end
 
+function UIMenuListItem:MainColor(color)
+    if(color)then
+        self.Base._mainColor = color
+        if(self.Base.ParentMenu ~= nil) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor);
+        end
+    else
+        return self.Base._mainColor
+    end
+end
+
+function UIMenuListItem:TextColor(color)
+    if(color)then
+        self.Base._textColor = color
+        if(self.Base.ParentMenu ~= nil) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor);
+        end
+    else
+        return self.Base._textColor
+    end
+end
+
+function UIMenuListItem:HighlightColor(color)
+    if(color)then
+        self.Base._highlightColor = color
+        if(self.Base.ParentMenu ~= nil) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor);
+        end
+    else
+        return self.Base._highlightColor
+    end
+end
+
+function UIMenuListItem:HighlightedTextColor(color)
+    if(color)then
+        self.Base._highlightedTextColor = color
+        if(self.Base.ParentMenu ~= nil) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor);
+        end
+    else
+        return self.Base._highlightedTextColor
+    end
+end
 ---Index
 ---@param Index table
 function UIMenuListItem:Index(Index)
