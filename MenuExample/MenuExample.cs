@@ -850,10 +850,12 @@ public class MenuExample : BaseScript
 		TabLeftItem second = new TabLeftItem("2 - Info", LeftItemType.Info);
 		TabLeftItem third = new TabLeftItem("3 - Statistics", LeftItemType.Statistics);
 		TabLeftItem fourth = new TabLeftItem("4 - Settings", LeftItemType.Settings);
+		TabLeftItem fifth = new TabLeftItem("5 - Keymaps", LeftItemType.Keymap);
 		multiItemTab.AddLeftItem(first);
 		multiItemTab.AddLeftItem(second);
 		multiItemTab.AddLeftItem(third);
 		multiItemTab.AddLeftItem(fourth);
+		multiItemTab.AddLeftItem(fifth);
 
 		second.TextTitle = "Info Title!!";
 		second.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
@@ -896,6 +898,20 @@ public class MenuExample : BaseScript
 		fourth.AddItem(_settings4);
 		fourth.AddItem(_settings5);
 		fourth.AddItem(_settings6);
+
+		fifth.TextTitle = "ACTION";
+		fifth.KeymapRightLabel_1 = "PRIMARY";
+		fifth.KeymapRightLabel_2 = "SECONDARY";
+		KeymapItem key1 = new KeymapItem("Simple Keymap", "~INPUT_FRONTEND_ACCEPT~", "~INPUT_VEH_EXIT~");
+		KeymapItem key2 = new KeymapItem("Advanced Keymap", "~INPUT_SPRINT~ + ~INPUT_CONTEXT~", "", "", "~INPUTGROUP_FRONTEND_TRIGGERS~");
+		fifth.AddItem(key1);
+		fifth.AddItem(key2);
+		fifth.AddItem(key1);
+		fifth.AddItem(key2);
+		fifth.AddItem(key1);
+		fifth.AddItem(key2);
+		fifth.AddItem(key1);
+		fifth.AddItem(key2);
 
 		pauseMenu.OnPauseMenuOpen += (menu) =>
 		{
