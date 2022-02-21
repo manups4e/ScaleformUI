@@ -194,7 +194,7 @@ namespace ScaleformUI.PauseMenu
 
                                 if (!string.IsNullOrWhiteSpace(item.TextTitle))
                                 {
-                                    if(item.ItemType == LeftItemType.Keymap)
+                                    if (item.ItemType == LeftItemType.Keymap)
                                         _pause.AddKeymapTitle(tabIndex, itemIndex, item.TextTitle, item.KeymapRightLabel_1, item.KeymapRightLabel_2);
                                     else
                                         _pause.AddRightTitle(tabIndex, itemIndex, item.TextTitle);
@@ -252,11 +252,11 @@ namespace ScaleformUI.PauseMenu
                                             break;
                                         case KeymapItem:
                                             var ki = ii as KeymapItem;
-                                            if(API.IsInputDisabled(2))
+                                            if (API.IsInputDisabled(2))
                                                 _pause.AddKeymapItem(tabIndex, itemIndex, ki.Label, ki.PrimaryKeyboard, ki.SecondaryKeyboard);
                                             else
                                                 _pause.AddKeymapItem(tabIndex, itemIndex, ki.Label, ki.PrimaryGamepad, ki.SecondaryGamepad);
-                                            controller = !API.IsInputDisabled(2);
+                                            UpdateKeymapItems();
                                             break;
                                     }
                                 }
@@ -272,6 +272,11 @@ namespace ScaleformUI.PauseMenu
         {
             if (!Visible || TemporarilyHidden) return;
             _pause.Draw();
+            UpdateKeymapItems();
+        }
+
+        private void UpdateKeymapItems()
+        {
             if (!API.IsInputDisabled(2))
             {
                 if (!controller)
@@ -279,12 +284,16 @@ namespace ScaleformUI.PauseMenu
                     controller = true;
                     if (Tabs[Index] is TabSubmenuItem)
                     {
-                        if ((Tabs[Index] as TabSubmenuItem).LeftItemList[LeftItemIndex].ItemType == LeftItemType.Keymap)
+                        foreach (var lItem in (Tabs[Index] as TabSubmenuItem).LeftItemList)
                         {
-                            for (int i = 0; i < ((TabSubmenuItem)Tabs[Index]).LeftItemList[LeftItemIndex].ItemList.Count; i++)
+                            var idx = (Tabs[Index] as TabSubmenuItem).LeftItemList.IndexOf(lItem);
+                            if (lItem.ItemType == LeftItemType.Keymap)
                             {
-                                KeymapItem item = (KeymapItem)((TabSubmenuItem)Tabs[Index]).LeftItemList[LeftItemIndex].ItemList[i];
-                                _pause.UpdateKeymap(Index, LeftItemIndex, i, item.PrimaryGamepad, item.SecondaryGamepad);
+                                for (int i = 0; i < lItem.ItemList.Count; i++)
+                                {
+                                    KeymapItem item = (KeymapItem)lItem.ItemList[i];
+                                    _pause.UpdateKeymap(Index, idx, i, item.PrimaryGamepad, item.SecondaryGamepad);
+                                }
                             }
                         }
                     }
@@ -295,14 +304,15 @@ namespace ScaleformUI.PauseMenu
                 if (controller)
                 {
                     controller = false;
-                    if (Tabs[Index] is TabSubmenuItem)
+                    foreach (var lItem in (Tabs[Index] as TabSubmenuItem).LeftItemList)
                     {
-                        if ((Tabs[Index] as TabSubmenuItem).LeftItemList[LeftItemIndex].ItemType == LeftItemType.Keymap)
+                        var idx = (Tabs[Index] as TabSubmenuItem).LeftItemList.IndexOf(lItem);
+                        if (lItem.ItemType == LeftItemType.Keymap)
                         {
-                            for (int i = 0; i < ((TabSubmenuItem)Tabs[Index]).LeftItemList[LeftItemIndex].ItemList.Count; i++)
+                            for (int i = 0; i < lItem.ItemList.Count; i++)
                             {
-                                KeymapItem item = (KeymapItem)((TabSubmenuItem)Tabs[Index]).LeftItemList[LeftItemIndex].ItemList[i];
-                                _pause.UpdateKeymap(Index, LeftItemIndex, i, item.PrimaryKeyboard, item.SecondaryKeyboard);
+                                KeymapItem item = (KeymapItem)lItem.ItemList[i];
+                                _pause.UpdateKeymap(Index, idx, i, item.PrimaryKeyboard, item.SecondaryKeyboard);
                             }
                         }
                     }
@@ -372,7 +382,7 @@ namespace ScaleformUI.PauseMenu
                 {
 
                     case 1:
-                        if(Tabs[Index].LeftItemList[leftItemIndex].ItemType == LeftItemType.Info || Tabs[Index].LeftItemList[leftItemIndex].ItemType == LeftItemType.Empty)
+                        if (Tabs[Index].LeftItemList[leftItemIndex].ItemType == LeftItemType.Info || Tabs[Index].LeftItemList[leftItemIndex].ItemType == LeftItemType.Empty)
                         {
                             Tabs[Index].LeftItemList[leftItemIndex].Activated();
                         }
