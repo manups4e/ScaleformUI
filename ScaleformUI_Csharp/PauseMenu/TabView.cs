@@ -193,7 +193,13 @@ namespace ScaleformUI.PauseMenu
                                 _pause.AddLeftItem(tabIndex, (int)item.ItemType, item.Label, item.MainColor, item.HighlightColor);
 
                                 if (!string.IsNullOrWhiteSpace(item.TextTitle))
-                                    _pause.AddRightTitle(tabIndex, itemIndex, item.TextTitle);
+                                {
+                                    if(item.ItemType == LeftItemType.Keymap)
+                                        _pause.AddKeymapTitle(tabIndex, itemIndex, item.TextTitle, item.KeymapRightLabel_1, item.KeymapRightLabel_2);
+                                    else
+                                        _pause.AddRightTitle(tabIndex, itemIndex, item.TextTitle);
+                                }
+
 
                                 foreach (var ii in item.ItemList)
                                 {
@@ -244,6 +250,14 @@ namespace ScaleformUI.PauseMenu
                                                 }
                                             }
                                             break;
+                                        case KeymapItem:
+                                            var ki = ii as KeymapItem;
+                                            if(API.IsInputDisabled(2))
+                                                _pause.AddKeymapItem(tabIndex, itemIndex, ki.Label, ki.PrimaryKeyboard, ki.SecondaryKeyboard);
+                                            else
+                                                _pause.AddKeymapItem(tabIndex, itemIndex, ki.Label, ki.PrimaryGamepad, ki.SecondaryGamepad);
+                                            controller = !API.IsInputDisabled(2);
+                                            break;
                                     }
                                 }
                             }
@@ -253,10 +267,47 @@ namespace ScaleformUI.PauseMenu
             }
         }
 
+        private bool controller = false;
         public async void Draw()
         {
             if (!Visible || TemporarilyHidden) return;
             _pause.Draw();
+            if (!API.IsInputDisabled(2))
+            {
+                if (!controller)
+                {
+                    controller = true;
+                    if (Tabs[Index] is TabSubmenuItem)
+                    {
+                        if ((Tabs[Index] as TabSubmenuItem).LeftItemList[LeftItemIndex].ItemType == LeftItemType.Keymap)
+                        {
+                            for (int i = 0; i < ((TabSubmenuItem)Tabs[Index]).LeftItemList[LeftItemIndex].ItemList.Count; i++)
+                            {
+                                KeymapItem item = (KeymapItem)((TabSubmenuItem)Tabs[Index]).LeftItemList[LeftItemIndex].ItemList[i];
+                                _pause.UpdateKeymap(Index, LeftItemIndex, i, item.PrimaryGamepad, item.SecondaryGamepad);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (controller)
+                {
+                    controller = false;
+                    if (Tabs[Index] is TabSubmenuItem)
+                    {
+                        if ((Tabs[Index] as TabSubmenuItem).LeftItemList[LeftItemIndex].ItemType == LeftItemType.Keymap)
+                        {
+                            for (int i = 0; i < ((TabSubmenuItem)Tabs[Index]).LeftItemList[LeftItemIndex].ItemList.Count; i++)
+                            {
+                                KeymapItem item = (KeymapItem)((TabSubmenuItem)Tabs[Index]).LeftItemList[LeftItemIndex].ItemList[i];
+                                _pause.UpdateKeymap(Index, LeftItemIndex, i, item.PrimaryKeyboard, item.SecondaryKeyboard);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private bool firstTick = true;

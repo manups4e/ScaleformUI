@@ -140,6 +140,40 @@ namespace ScaleformUI
             _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 2, 4, label, (int)style, check);
         }
 
+        public void AddKeymapTitle(int tab, int leftItem, string title, string rightLabel_1, string rightLabel_2)
+        {
+            _pause.CallFunction("ADD_RIGHT_TITLE", tab, leftItem, title, rightLabel_1, rightLabel_2);
+        }
+        public void AddKeymapItem(int tab, int leftItem, string label, string control1, string control2)
+        {
+            BeginScaleformMovieMethod(_pause.Handle, "ADD_RIGHT_LIST_ITEM");
+            ScaleformMovieMethodAddParamInt(tab);
+            ScaleformMovieMethodAddParamInt(leftItem);
+            ScaleformMovieMethodAddParamInt(3);
+            PushScaleformMovieFunctionParameterString(label);
+            BeginTextCommandScaleformString("string");
+            AddTextComponentScaleform(control1);
+            EndTextCommandScaleformString_2();
+            BeginTextCommandScaleformString("string");
+            AddTextComponentScaleform(control2);
+            EndTextCommandScaleformString_2();
+            EndScaleformMovieMethod();
+        }
+        public void UpdateKeymap(int tab, int leftItem, int rightItem, string control1, string control2)
+        {
+            BeginScaleformMovieMethod(_pause.Handle, "UPDATE_KEYMAP_ITEM");
+            ScaleformMovieMethodAddParamInt(tab);
+            ScaleformMovieMethodAddParamInt(leftItem);
+            ScaleformMovieMethodAddParamInt(rightItem);
+            BeginTextCommandScaleformString("string");
+            AddTextComponentScaleform(control1);
+            EndTextCommandScaleformString_2();
+            BeginTextCommandScaleformString("string");
+            AddTextComponentScaleform(control2);
+            EndTextCommandScaleformString_2();
+            EndScaleformMovieMethod();
+        }
+
         public void SetRightSettingsItemBool(int tab, int leftItem, int rightItem, bool value)
         {
             _pause.CallFunction("SET_RIGHT_SETTINGS_ITEM_VALUE", tab, leftItem, rightItem, value);

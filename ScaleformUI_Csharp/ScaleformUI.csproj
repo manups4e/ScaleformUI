@@ -50,6 +50,7 @@
     <Compile Include="Hud\Notifications\Notifications.cs" />
     <Compile Include="Items\UIMenuStatsItem.cs" />
     <Compile Include="PauseMenu\Items\BasicTabItem.cs" />
+    <Compile Include="PauseMenu\Items\KeymapItem.cs" />
     <Compile Include="PauseMenu\Items\SettingsTabItem.cs" />
     <Compile Include="PauseMenu\Items\StatsTabItem.cs" />
     <Compile Include="PauseMenu\Tabs\BaseTab.cs" />

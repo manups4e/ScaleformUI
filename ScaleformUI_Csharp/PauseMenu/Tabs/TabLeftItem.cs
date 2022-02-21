@@ -11,7 +11,8 @@ namespace ScaleformUI.PauseMenu
         Empty,
         Info,
         Statistics,
-        Settings
+        Settings,
+        Keymap
     }
 
     public delegate void IndexChangeEvent(SettingsTabItem item, int index);
@@ -28,6 +29,8 @@ namespace ScaleformUI.PauseMenu
         public int ItemIndex { get; set; }
         public List<BasicTabItem> ItemList = new List<BasicTabItem>();
         public string TextTitle { get; set; }
+        public string KeymapRightLabel_1 { get; set; }
+        public string KeymapRightLabel_2 { get; set; }
 
         public event IndexChangeEvent OnIndexChanged;
         public event ActivatedEvent OnActivated;
