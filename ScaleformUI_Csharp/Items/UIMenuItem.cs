@@ -348,37 +348,43 @@ namespace ScaleformUI
                 _selected = value;
                 if (value)
                 {
-                    if (!_formatLeftLabel.StartsWith("~"))
-                        _formatLeftLabel = _formatLeftLabel.Insert(0, "~l~");
-                    if (_formatLeftLabel.Contains("~"))
+                    if (highlightedTextColor == HudColor.HUD_COLOUR_BLACK)
                     {
-                        _formatLeftLabel = _formatLeftLabel.Replace("~w~", "~l~");
-                        _formatLeftLabel = _formatLeftLabel.Replace("~s~", "~l~");
-                    }
-                    if (!string.IsNullOrWhiteSpace(_formatRightLabel))
-                    {
-                        if (!_formatRightLabel.StartsWith("~"))
-                            _formatRightLabel = _formatRightLabel.Insert(0, "~l~");
-                        if (_formatRightLabel.Contains("~"))
+                        if (!_formatLeftLabel.StartsWith("~"))
+                            _formatLeftLabel = _formatLeftLabel.Insert(0, "~l~");
+                        if (_formatLeftLabel.Contains("~"))
                         {
-                            _formatRightLabel = _formatRightLabel.Replace("~w~", "~l~");
-                            _formatRightLabel = _formatRightLabel.Replace("~s~", "~l~");
+                            _formatLeftLabel = _formatLeftLabel.Replace("~w~", "~l~");
+                            _formatLeftLabel = _formatLeftLabel.Replace("~s~", "~l~");
+                        }
+                        if (!string.IsNullOrWhiteSpace(_formatRightLabel))
+                        {
+                            if (!_formatRightLabel.StartsWith("~"))
+                                _formatRightLabel = _formatRightLabel.Insert(0, "~l~");
+                            if (_formatRightLabel.Contains("~"))
+                            {
+                                _formatRightLabel = _formatRightLabel.Replace("~w~", "~l~");
+                                _formatRightLabel = _formatRightLabel.Replace("~s~", "~l~");
+                            }
                         }
                     }
                 }
                 else
                 {
-                    _formatLeftLabel = _formatLeftLabel.Replace("~l~", "~s~");
-                    if (!_formatLeftLabel.StartsWith("~"))
-                        _formatLeftLabel = _formatLeftLabel.Insert(0, "~s~");
-                    if (!string.IsNullOrWhiteSpace(_formatRightLabel))
+                    if (textColor == HudColor.HUD_COLOUR_WHITE)
                     {
-                        _formatRightLabel = _formatRightLabel.Replace("~l~", "~s~");
-                        if (!_formatRightLabel.StartsWith("~"))
-                            _formatRightLabel = _formatRightLabel.Insert(0, "~s~");
+                        _formatLeftLabel = _formatLeftLabel.Replace("~l~", "~s~");
+                        if (!_formatLeftLabel.StartsWith("~"))
+                            _formatLeftLabel = _formatLeftLabel.Insert(0, "~s~");
+                        if (!string.IsNullOrWhiteSpace(_formatRightLabel))
+                        {
+                            _formatRightLabel = _formatRightLabel.Replace("~l~", "~s~");
+                            if (!_formatRightLabel.StartsWith("~"))
+                                _formatRightLabel = _formatRightLabel.Insert(0, "~s~");
+                        }
                     }
                 }
-                if (Parent is not null)
+                if (Parent is not null && textColor == HudColor.HUD_COLOUR_WHITE && highlightedTextColor == HudColor.HUD_COLOUR_BLACK)
                 {
                     ScaleformUI._ui.CallFunction("SET_ITEM_LABELS", Parent.MenuItems.IndexOf(this), _formatLeftLabel, _rightLabel);
                 }
@@ -450,21 +456,27 @@ namespace ScaleformUI
                 _formatLeftLabel = value;
                 if (_selected)
                 {
-                    if (_formatLeftLabel.Contains("~"))
-                    {
-                        _formatLeftLabel = _formatLeftLabel.Replace("~w~", "~l~");
-                        _formatLeftLabel = _formatLeftLabel.Replace("~s~", "~l~");
-                        if (!_formatLeftLabel.StartsWith("~"))
-                            _formatLeftLabel = _formatLeftLabel.Insert(0, "~l~");
+                    if (highlightedTextColor == HudColor.HUD_COLOUR_BLACK) 
+                    { 
+                        if (_formatLeftLabel.Contains("~"))
+                        {
+                            _formatLeftLabel = _formatLeftLabel.Replace("~w~", "~l~");
+                            _formatLeftLabel = _formatLeftLabel.Replace("~s~", "~l~");
+                            if (!_formatLeftLabel.StartsWith("~"))
+                                _formatLeftLabel = _formatLeftLabel.Insert(0, "~l~");
+                        }
                     }
                 }
                 else
                 {
-                    _formatLeftLabel = _formatLeftLabel.Replace("~l~", "~s~");
-                    if (!_formatLeftLabel.StartsWith("~"))
-                        _formatLeftLabel = _formatLeftLabel.Insert(0, "~s~");
+                    if (textColor == HudColor.HUD_COLOUR_WHITE)
+                    {
+                        _formatLeftLabel = _formatLeftLabel.Replace("~l~", "~s~");
+                        if (!_formatLeftLabel.StartsWith("~"))
+                            _formatLeftLabel = _formatLeftLabel.Insert(0, "~s~");
+                    }
                 }
-                if (Parent is not null)
+                if (Parent is not null && textColor == HudColor.HUD_COLOUR_WHITE && highlightedTextColor == HudColor.HUD_COLOUR_BLACK)
                 {
                     ScaleformUI._ui.CallFunction("SET_LEFT_LABEL", Parent.MenuItems.IndexOf(this), _formatLeftLabel);
                 }
@@ -521,21 +533,27 @@ namespace ScaleformUI
                 _formatRightLabel = value;
                 if (_selected)
                 {
-                    if (_formatRightLabel.Contains("~"))
+                    if (highlightedTextColor == HudColor.HUD_COLOUR_BLACK)
                     {
-                        _formatRightLabel = _formatRightLabel.Replace("~w~", "~l~");
-                        _formatRightLabel = _formatRightLabel.Replace("~s~", "~l~");
-                        if (!_formatRightLabel.StartsWith("~"))
-                            _formatRightLabel = _formatRightLabel.Insert(0, "~l~");
+                        if (_formatRightLabel.Contains("~"))
+                        {
+                            _formatRightLabel = _formatRightLabel.Replace("~w~", "~l~");
+                            _formatRightLabel = _formatRightLabel.Replace("~s~", "~l~");
+                            if (!_formatRightLabel.StartsWith("~"))
+                                _formatRightLabel = _formatRightLabel.Insert(0, "~l~");
+                        }
                     }
                 }
                 else
                 {
-                    _formatRightLabel = _formatRightLabel.Replace("~l~", "~s~");
-                    if (!_formatRightLabel.StartsWith("~"))
-                        _formatRightLabel = _formatRightLabel.Insert(0, "~s~");
+                    if (textColor == HudColor.HUD_COLOUR_WHITE)
+                    {
+                        _formatRightLabel = _formatRightLabel.Replace("~l~", "~s~");
+                        if (!_formatRightLabel.StartsWith("~"))
+                            _formatRightLabel = _formatRightLabel.Insert(0, "~s~");
+                    }
                 }
-                if (Parent is not null)
+                if (Parent is not null && textColor == HudColor.HUD_COLOUR_WHITE && highlightedTextColor == HudColor.HUD_COLOUR_BLACK)
                 {
                     ScaleformUI._ui.CallFunction("SET_RIGHT_LABEL", Parent.MenuItems.IndexOf(this), _formatRightLabel);
                 }
