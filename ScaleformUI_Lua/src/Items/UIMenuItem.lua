@@ -41,35 +41,39 @@ function UIMenuItem:Selected(bool, id)
     if bool ~= nil then
         self._Selected = tobool(bool)
         if self._Selected then
-            if not self._formatLeftLabel:StartsWith("~") then
-                self._formatLeftLabel = self._formatLeftLabel:Insert(0, "~l~")
-            end
-            if self._formatLeftLabel:find("~", 1, true) then
-                self._formatLeftLabel = self._formatLeftLabel:gsub("~w~", "~l~")
-                self._formatLeftLabel = self._formatLeftLabel:gsub("~s~", "~l~")
-            end
-            if not string.IsNullOrEmpty(self._formatRightLabel) then
-                if not self._formatRightLabel:StartsWith("~") then
-                    self._formatRightLabel = self._formatRightLabel:Insert(0, "~l~")
+            if(self._highlightedTextColor == 2) then
+                if not self._formatLeftLabel:StartsWith("~") then
+                    self._formatLeftLabel = self._formatLeftLabel:Insert(0, "~l~")
                 end
-                if self._formatRightLabel:find("~", 1, true) then
-                    self._formatRightLabel = self._formatRightLabel:gsub("~w~", "~l~")
-                    self._formatRightLabel = self._formatRightLabel:gsub("~s~", "~l~")
+                if self._formatLeftLabel:find("~", 1, true) then
+                    self._formatLeftLabel = self._formatLeftLabel:gsub("~w~", "~l~")
+                    self._formatLeftLabel = self._formatLeftLabel:gsub("~s~", "~l~")
+                end
+                if not string.IsNullOrEmpty(self._formatRightLabel) then
+                    if not self._formatRightLabel:StartsWith("~") then
+                        self._formatRightLabel = self._formatRightLabel:Insert(0, "~l~")
+                    end
+                    if self._formatRightLabel:find("~", 1, true) then
+                        self._formatRightLabel = self._formatRightLabel:gsub("~w~", "~l~")
+                        self._formatRightLabel = self._formatRightLabel:gsub("~s~", "~l~")
+                    end
                 end
             end
         else
-            self._formatLeftLabel = self._formatLeftLabel:gsub("~l~", "~s~")
-            if not self._formatLeftLabel:StartsWith("~") then
-                self._formatLeftLabel = self._formatLeftLabel:Insert(0, "~s~")
-            end
-            if not string.IsNullOrEmpty(self._formatRightLabel) then
-                self._formatRightLabel = self._formatRightLabel:gsub("~l~", "~s~")
-                if not self._formatRightLabel:StartsWith("~") then
-                    self._formatRightLabel = self._formatRightLabel:Insert(0, "~s~")
+            if(self._textColor == 1) then
+                self._formatLeftLabel = self._formatLeftLabel:gsub("~l~", "~s~")
+                if not self._formatLeftLabel:StartsWith("~") then
+                    self._formatLeftLabel = self._formatLeftLabel:Insert(0, "~s~")
+                end
+                if not string.IsNullOrEmpty(self._formatRightLabel) then
+                    self._formatRightLabel = self._formatRightLabel:gsub("~l~", "~s~")
+                    if not self._formatRightLabel:StartsWith("~") then
+                        self._formatRightLabel = self._formatRightLabel:Insert(0, "~s~")
+                    end
                 end
             end
         end
-        if self.ParentMenu ~= nil then
+        if self.ParentMenu ~= nil and self._textColor == 1 and self._highlightedTextColor == 2 then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABELS", false, IndexOf(self.ParentMenu.Items, self) - 1,  self._formatLeftLabel, self._formatRightLabel)
         end
     else
@@ -157,20 +161,24 @@ function UIMenuItem:Label(Text)
         self._label = (tostring(Text))
         self._formatLeftLabel = (tostring(Text))
         if self:Selected() then
-            if self._formatLeftLabel:find("~") then
-                self._formatLeftLabel = self._formatLeftLabel:gsub("~w~", "~l~")
-                self._formatLeftLabel = self._formatLeftLabel:gsub("~s~", "~l~")
-                if not self._formatLeftLabel:StartsWith("~") then
-                    self._formatLeftLabel = self._formatLeftLabel:Insert(0, "~l~")
+            if(self._highlightedTextColor == 2) then
+                if self._formatLeftLabel:find("~") then
+                    self._formatLeftLabel = self._formatLeftLabel:gsub("~w~", "~l~")
+                    self._formatLeftLabel = self._formatLeftLabel:gsub("~s~", "~l~")
+                    if not self._formatLeftLabel:StartsWith("~") then
+                        self._formatLeftLabel = self._formatLeftLabel:Insert(0, "~l~")
+                    end
                 end
             end
         else
-            self._formatLeftLabel = self._formatLeftLabel:gsub("~l~", "~s~")
-            if not self._formatLeftLabel:StartsWith("~") then
-                self._formatLeftLabel = self._formatLeftLabel:Insert(0, "~s~")
+            if(self._textColor == 1) then
+                self._formatLeftLabel = self._formatLeftLabel:gsub("~l~", "~s~")
+                if not self._formatLeftLabel:StartsWith("~") then
+                    self._formatLeftLabel = self._formatLeftLabel:Insert(0, "~s~")
+                end
             end
         end
-        if self.ParentMenu ~= nil then
+        if self.ParentMenu ~= nil and self._textColor == 1 and self._highlightedTextColor == 2 then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_LABEL", false, IndexOf(self.ParentMenu.Items, self) - 1,  self._formatLeftLabel)
         end
     else
@@ -183,20 +191,24 @@ function UIMenuItem:RightLabel(Text)
         self._rightLabel = tostring(Text)
         self._formatRightLabel = tostring(Text)
         if self:Selected() then
-            if self._formatRightLabel:find("~") then
-                self._formatRightLabel = self._formatRightLabel:gsub("~w~", "~l~")
-                self._formatRightLabel = self._formatRightLabel:gsub("~s~", "~l~")
-                if not self._formatRightLabel:StartsWith("~") then
-                    self._formatRightLabel = self._formatRightLabel:Insert(0, "~l~")
+            if(self._highlightedTextColor == 2) then
+                if self._formatRightLabel:find("~") then
+                    self._formatRightLabel = self._formatRightLabel:gsub("~w~", "~l~")
+                    self._formatRightLabel = self._formatRightLabel:gsub("~s~", "~l~")
+                    if not self._formatRightLabel:StartsWith("~") then
+                        self._formatRightLabel = self._formatRightLabel:Insert(0, "~l~")
+                    end
                 end
             end
         else
-            self._formatRightLabel = self._formatRightLabel:gsub("~l~", "~s~")
-            if not self._formatRightLabel:StartsWith("~") then
-                self._formatRightLabel = self._formatRightLabel:Insert(0, "~s~")
+            if(self._textColor == 1) then
+                self._formatRightLabel = self._formatRightLabel:gsub("~l~", "~s~")
+                if not self._formatRightLabel:StartsWith("~") then
+                    self._formatRightLabel = self._formatRightLabel:Insert(0, "~s~")
+                end
             end
         end
-        if self.ParentMenu ~= nil then
+        if self.ParentMenu ~= nil and self._textColor == 1 and self._highlightedTextColor == 2 then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_LABEL", false, IndexOf(self.ParentMenu.Items, self) - 1,  self._formatRightLabel)
         end
     else
