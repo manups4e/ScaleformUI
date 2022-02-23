@@ -661,10 +661,10 @@ function UIMenu:SelectItem(play)
         Item.OnListSelected(self, Item, Item._Index)
     else
         self.OnItemSelect(self, Item, self:CurrentSelection())
+        Item:Activated(self, Item)
         if not self.Children[Item] then
             return
         end
-        Item:Activated(self, Item)
         self._Visible = false
         self.OnMenuChanged(self, self.Children[self.Items[self:CurrentSelection()]], true)
         ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
