@@ -25,7 +25,7 @@ public class MenuExample : BaseScript
 		// let's add the menu to the Pool
 		_menuPool.Add(exampleMenu);
 
-        #region Menu Declaration
+		#region Menu Declaration
 
 		#region Ketchup
 
@@ -318,7 +318,7 @@ public class MenuExample : BaseScript
 			{
 				List<InstructionalButton> buttons = new List<InstructionalButton>()
 				{
-					new InstructionalButton(Control.FrontendAccept, "Accept only with Keyboard", PadCheck.Keyboard),
+					new InstructionalButton(Control.FrontendDown, "Accept only with Keyboard", PadCheck.Keyboard),
 					new InstructionalButton(Control.FrontendY, "Cancel only with GamePad", PadCheck.Controller),
 					new InstructionalButton(Control.FrontendX, Control.Detonate, "This will change button if you're using gamepad or keyboard"),
 					new InstructionalButton(new List<Control> { Control.MoveUpOnly, Control.MoveLeftOnly , Control.MoveDownOnly , Control.MoveRightOnly }, "Woow multiple buttons at once??")
