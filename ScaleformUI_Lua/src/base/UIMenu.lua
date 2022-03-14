@@ -426,6 +426,12 @@ function UIMenu:BuildUpMenu()
         end
     end
     ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, self.ActiveItem)
+    local Type, SubType = self.Items[self.ActiveItem]
+    if SubType == "UIMenuSeparatorItem" then
+        if(self.Items[self.ActiveItem].Jumpable) then
+            self:GoDown()
+        end
+    end
 end
 
 ---ProcessControl
