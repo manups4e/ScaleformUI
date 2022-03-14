@@ -2174,6 +2174,13 @@ namespace ScaleformUI
                 }
             }
             ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
+            if(MenuItems[CurrentSelection] is UIMenuSeparatorItem)
+            {
+                if((MenuItems[CurrentSelection] as UIMenuSeparatorItem).Jumpable)
+                {
+                    GoDown();
+                }
+            }
         }
 
         /// <summary>
