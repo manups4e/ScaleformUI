@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CitizenFX.Core;
+using CitizenFX.Core.Native;
 
 namespace ScaleformUI
 {
@@ -27,6 +28,11 @@ namespace ScaleformUI
 			get => _warning != null;
 		}
 
+		public bool IsShowingWithButtons
+        {
+			get => _disableControls;
+        }
+
 		public event PopupWarningEvent OnButtonPressed;
 
 		private async Task Load()
@@ -43,6 +49,7 @@ namespace ScaleformUI
 		/// </summary>
 		public void Dispose()
 		{
+			if (_warning == null) return;
 			_warning.CallFunction("HIDE_POPUP_WARNING", 1000);
 			_warning.Dispose();
 			_warning = null;
@@ -98,29 +105,24 @@ namespace ScaleformUI
 			if (buttons == null || buttons.Count == 0) return;
 			ScaleformUI.InstructionalButtons.SetInstructionalButtons(_buttonList);
 			ScaleformUI.InstructionalButtons.UseMouseButtons = true;
+			ScaleformUI.InstructionalButtons.ControlButtons.ForEach(x => x.OnControlSelected += X_OnControlSelected);
 			_warning.CallFunction("SHOW_POPUP_WARNING", 1000, title, subtitle, prompt, true, (int)type, errorMsg);
 			ScaleformUI.InstructionalButtons.Enabled = true;
+		}
+
+        private void X_OnControlSelected(InstructionalButton control)
+        {
+			Dispose();
+			OnButtonPressed?.Invoke(control);
+			ScaleformUI.InstructionalButtons.Enabled = false;
+			ScaleformUI.InstructionalButtons.UseMouseButtons = false;
+			OnButtonPressed = null;
 		}
 
 		internal void Update()
 		{
 			if (_warning == null) return;
 			_warning.Render2D();
-			if (_disableControls)
-			{
-				ScaleformUI.InstructionalButtons.Draw();
-				foreach (var b in _buttonList)
-				{
-					if (Game.IsControlJustPressed(1, b.GamepadButton) || Game.IsControlJustPressed(1, b.KeyboardButton))
-					{
-						OnButtonPressed?.Invoke(b);
-						Dispose();
-						ScaleformUI.InstructionalButtons.Enabled = false;
-						ScaleformUI.InstructionalButtons.UseMouseButtons = false;
-						return;
-					}
-				}
-			}
 		}
 	}
 }
