@@ -19,8 +19,19 @@ namespace ScaleformUI
         protected UIResText _itemText;
         protected Sprite _arrowLeft;
         protected Sprite _arrowRight;
+        private string currentListItem;
 
-        public string CurrentListItem { get; internal set; }
+        public string CurrentListItem
+        {
+            get => currentListItem; internal set
+            {
+                currentListItem = value;
+                if(Parent is not null && Parent.Visible)
+                {
+                    ScaleformUI._ui.CallFunction("UPDATE_LISTITEM_LIST", Parent.MenuItems.IndexOf(this), currentListItem, 0);
+                }
+            }
+        }
         public DynamicListItemChangeCallback Callback { get; set; }
 
         /// <summary>
@@ -38,13 +49,8 @@ namespace ScaleformUI
         /// <param name="description">Item description</param>
         public UIMenuDynamicListItem(string text, string description, string startingItem, DynamicListItemChangeCallback changeCallback) : base(text, description)
         {
-            const int y = 0;
-            _arrowLeft = new Sprite("commonmenu", "arrowleft", new PointF(110, 105 + y), new SizeF(30, 30));
-            _arrowRight = new Sprite("commonmenu", "arrowright", new PointF(280, 105 + y), new SizeF(30, 30));
-            _itemText = new UIResText("", new PointF(290, y + 104), 0.35f, Colors.White, Font.ChaletLondon,
-                Alignment.Right);
-
-            CurrentListItem = startingItem;
+            _itemId = 1;
+            currentListItem = startingItem;
             Callback = changeCallback;
         }
 

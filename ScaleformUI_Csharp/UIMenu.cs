@@ -1781,6 +1781,13 @@ namespace ScaleformUI
                         it.ListChangedTrigger(it.Index);
                         break;
                     }
+                case UIMenuDynamicListItem:
+                    {
+                        UIMenuDynamicListItem it = (UIMenuDynamicListItem)MenuItems[CurrentSelection];
+                        string newItem = it.Callback(it, UIMenuDynamicListItem.ChangeDirection.Left);
+                        it.CurrentListItem = newItem;
+                        break;
+                    }
                 case UIMenuSliderItem:
                     {
                         UIMenuSliderItem it = (UIMenuSliderItem)MenuItems[CurrentSelection];
@@ -1825,6 +1832,13 @@ namespace ScaleformUI
                         it.Index = res;
                         ListChange(it, it.Index);
                         it.ListChangedTrigger(it.Index);
+                        break;
+                    }
+                case UIMenuDynamicListItem:
+                    {
+                        UIMenuDynamicListItem it = (UIMenuDynamicListItem)MenuItems[CurrentSelection];
+                        string newItem = it.Callback(it, UIMenuDynamicListItem.ChangeDirection.Right);
+                        it.CurrentListItem = newItem;
                         break;
                     }
                 case UIMenuSliderItem:
@@ -2048,6 +2062,15 @@ namespace ScaleformUI
                 PushScaleformMovieFunctionParameterBool(item.BlinkDescription);
                 switch (item)
                 {
+                    case UIMenuDynamicListItem:
+                        UIMenuDynamicListItem dit = (UIMenuDynamicListItem)item;
+                        PushScaleformMovieMethodParameterString(dit.CurrentListItem);
+                        PushScaleformMovieFunctionParameterInt(0);
+                        PushScaleformMovieFunctionParameterInt((int)dit.MainColor);
+                        PushScaleformMovieFunctionParameterInt((int)dit.HighlightColor);
+                        PushScaleformMovieFunctionParameterInt((int)dit.TextColor);
+                        PushScaleformMovieFunctionParameterInt((int)dit.HighlightedTextColor);
+                        break;
                     case UIMenuListItem:
                         UIMenuListItem it = (UIMenuListItem)item;
                         AddTextEntry($"listitem_{index}_list", string.Join(",", it.Items));

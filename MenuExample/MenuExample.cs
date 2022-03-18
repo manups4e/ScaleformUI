@@ -65,6 +65,16 @@ public class MenuExample : BaseScript
 		var colorItem = new UIMenuItem("UIMenuItem with Colors", "~b~Look!!~r~I can be colored ~y~too!!~w~~n~Every item now supports custom colors!", HudColor.HUD_COLOUR_PURPLE, HudColor.HUD_COLOUR_PINK);
 		exampleMenu.AddItem(colorItem);
 
+		float dynamicvalue = 0f;
+		var dynamicItem = new UIMenuDynamicListItem("Dynamic List Item", "Try pressing ~INPUT_FRONTEND_LEFT~ or ~INPUT_FRONTEND_RIGHT~", dynamicvalue.ToString("F3"), (sender, direction) =>
+		{
+			if (direction == UIMenuDynamicListItem.ChangeDirection.Left) dynamicvalue -= 0.01f;
+			else dynamicvalue += 0.01f;
+			return dynamicvalue.ToString("F3");
+		});
+		dynamicItem.BlinkDescription = true;
+		exampleMenu.AddItem(dynamicItem);
+
 		var foodsList = new List<dynamic>
 		{
 			"LINEAR",
@@ -94,6 +104,7 @@ public class MenuExample : BaseScript
 		exampleMenu.AddItem(BlankItem_2);
 
 		var colorListItem = new UIMenuListItem("Choose the scrolling animation", foodsList, (int)exampleMenu.AnimationType, "~BLIP_BARBER~ ~BLIP_INFO_ICON~ ~BLIP_TANK~ ~BLIP_OFFICE~ ~BLIP_CRIM_DRUGS~ ~BLIP_WAYPOINT~ ~INPUTGROUP_MOVE~~n~You can use Blips and Inputs in description as you prefer!~n~⚠ 🐌 ❤️ 🥺 💪🏻 You can use Emojis too!", HudColor.HUD_COLOUR_FREEMODE_DARK, HudColor.HUD_COLOUR_FREEMODE);
+		colorListItem.BlinkDescription = true;
 		exampleMenu.AddItem(colorListItem);
 
 		var slider = new UIMenuSliderItem("Slider Item", "Cool!", true); // by default max is 100 and multipler 5 = 20 steps.
