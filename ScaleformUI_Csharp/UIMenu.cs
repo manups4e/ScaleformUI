@@ -863,9 +863,17 @@ namespace ScaleformUI
         internal KeyValuePair<string, string> _customTexture;
 
         //Pagination
-        private const int MaxItemsOnScreen = 7;
+        public int MaxItemsOnScreen
+        {
+            get => _maxItem;
+            set
+            {
+                _maxItem = value;
+                RefreshIndex();
+            }
+        }
+        private int _maxItem = 7;
         private int _minItem;
-        private int _maxItem = MaxItemsOnScreen;
         private bool mouseWheelControlEnabled = true;
         private int menuSound;
         private bool _changed = true;
@@ -1068,7 +1076,7 @@ namespace ScaleformUI
         /// <param name="customBanner">Path to your custom texture.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
         /// <param name="alternativeTitle">Set the alternative type to the title?.</param>
-        public UIMenu(string title, string subtitle, PointF offset, KeyValuePair<string, string> customBanner, bool glare = false, bool alternativeTitle=false) : this(title, subtitle, offset, customBanner.Key, customBanner.Value, glare, alternativeTitle)
+        public UIMenu(string title, string subtitle, PointF offset, KeyValuePair<string, string> customBanner, bool glare = false, bool alternativeTitle = false) : this(title, subtitle, offset, customBanner.Key, customBanner.Value, glare, alternativeTitle)
         {
         }
 
@@ -1180,7 +1188,7 @@ namespace ScaleformUI
         /// Add an item to the menu.
         /// </summary>
         /// <param name="item">Item object to be added. Can be normal item, checkbox or list item.</param>
-        public async void AddItem(UIMenuItem item)
+        public void AddItem(UIMenuItem item)
         {
             int selectedItem = CurrentSelection;
             item.Parent = this;
@@ -1784,7 +1792,7 @@ namespace ScaleformUI
                 case UIMenuDynamicListItem:
                     {
                         UIMenuDynamicListItem it = (UIMenuDynamicListItem)MenuItems[CurrentSelection];
-                        string newItem = it.Callback(it, UIMenuDynamicListItem.ChangeDirection.Left);
+                        string newItem = await it.Callback(it, UIMenuDynamicListItem.ChangeDirection.Left);
                         it.CurrentListItem = newItem;
                         break;
                     }
@@ -1837,7 +1845,7 @@ namespace ScaleformUI
                 case UIMenuDynamicListItem:
                     {
                         UIMenuDynamicListItem it = (UIMenuDynamicListItem)MenuItems[CurrentSelection];
-                        string newItem = it.Callback(it, UIMenuDynamicListItem.ChangeDirection.Right);
+                        string newItem = await it.Callback(it, UIMenuDynamicListItem.ChangeDirection.Right);
                         it.CurrentListItem = newItem;
                         break;
                     }
@@ -1984,7 +1992,6 @@ namespace ScaleformUI
                 _visible = value;
                 _justOpened = value;
                 _itemsDirty = value;
-
                 if (ParentMenu is not null) return;
                 if (Children.Count > 0 && Children.ContainsKey(MenuItems[CurrentSelection]) && Children[MenuItems[CurrentSelection]].Visible) return;
                 ScaleformUI.InstructionalButtons.Enabled = value;
@@ -2011,7 +2018,7 @@ namespace ScaleformUI
         internal async void BuildUpMenu()
         {
             while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
-            ScaleformUI._ui.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, EnableAnimation, (int)AnimationType);
+            ScaleformUI._ui.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, EnableAnimation, (int)AnimationType);
             if (Windows.Count > 0)
             {
                 foreach (var wind in Windows)
@@ -2027,7 +2034,7 @@ namespace ScaleformUI
                             ScaleformUI._ui.CallFunction("ADD_WINDOW", det.id, det.DetailBottom, det.DetailMid, det.DetailTop, det.DetailLeft.Txd, det.DetailLeft.Txn, det.DetailLeft.Pos.X, det.DetailLeft.Pos.Y, det.DetailLeft.Size.Width, det.DetailLeft.Size.Height);
                             if (det.StatWheelEnabled)
                             {
-                                foreach(var stat in det.DetailStats)
+                                foreach (var stat in det.DetailStats)
                                     ScaleformUI._ui.CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", Windows.IndexOf(det), stat.Percentage, (int)stat.HudColor);
                             }
                             break;
@@ -2070,6 +2077,7 @@ namespace ScaleformUI
                         PushScaleformMovieFunctionParameterInt((int)dit.HighlightColor);
                         PushScaleformMovieFunctionParameterInt((int)dit.TextColor);
                         PushScaleformMovieFunctionParameterInt((int)dit.HighlightedTextColor);
+                        EndScaleformMovieMethod();
                         break;
                     case UIMenuListItem:
                         UIMenuListItem it = (UIMenuListItem)item;
@@ -2156,7 +2164,7 @@ namespace ScaleformUI
                         case UIMissionDetailsPanel:
                             var mis = (UIMissionDetailsPanel)item.SidePanel;
                             ScaleformUI._ui.CallFunction("ADD_SIDE_PANEL_TO_ITEM", index, 0, (int)mis.PanelSide, (int)mis._titleType, mis.Title, (int)mis.TitleColor, mis.TextureDict, mis.TextureName);
-                            foreach(var _it in mis.Items)
+                            foreach (var _it in mis.Items)
                             {
                                 ScaleformUI._ui.CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", index, _it.Type, _it.TextLeft, _it.TextRight, (int)_it.Icon, (int)_it.IconColor, _it.Tick);
                             }
@@ -2197,9 +2205,9 @@ namespace ScaleformUI
                 }
             }
             ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
-            if(MenuItems[CurrentSelection] is UIMenuSeparatorItem)
+            if (MenuItems[CurrentSelection] is UIMenuSeparatorItem)
             {
-                if((MenuItems[CurrentSelection] as UIMenuSeparatorItem).Jumpable)
+                if ((MenuItems[CurrentSelection] as UIMenuSeparatorItem).Jumpable)
                 {
                     GoDown();
                 }
