@@ -2049,8 +2049,17 @@ namespace ScaleformUI
                 BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "ADD_ITEM");
                 PushScaleformMovieFunctionParameterInt(item._itemId);
                 PushScaleformMovieMethodParameterString(item.Label);
-                BeginTextCommandScaleformString($"menu_{_poolcontainer._menuList.IndexOf(this)}_desc_{index}");
-                EndTextCommandScaleformString_2();
+                if (item.DescriptionHash != 0 && string.IsNullOrWhiteSpace(item.Description))
+                {
+                    BeginTextCommandScaleformString("STRTNM1");
+                    AddTextComponentSubstringTextLabelHashKey(item.DescriptionHash);
+                    EndTextCommandScaleformString_2();
+                }
+                else
+                {
+                    BeginTextCommandScaleformString($"menu_{_poolcontainer._menuList.IndexOf(this)}_desc_{index}");
+                    EndTextCommandScaleformString_2();
+                }
                 PushScaleformMovieFunctionParameterBool(item.Enabled);
                 PushScaleformMovieFunctionParameterBool(item.BlinkDescription);
                 switch (item)

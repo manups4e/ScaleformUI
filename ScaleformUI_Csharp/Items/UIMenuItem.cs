@@ -274,6 +274,7 @@ namespace ScaleformUI
         private HudColor textColor = HudColor.HUD_COLOUR_WHITE;
         private HudColor highlightedTextColor = HudColor.HUD_COLOUR_BLACK;
         private string description;
+        private uint descriptionHash;
 
 
         // Allows you to attach data to a menu item if you want to identify the menu item without having to put identification info in the visible text or description.
@@ -299,16 +300,25 @@ namespace ScaleformUI
         /// <param name="description">Description.</param>
         public UIMenuItem(string text, string description) : this(text, description, HudColor.HUD_COLOUR_PAUSE_BG, HudColor.HUD_COLOUR_WHITE, HudColor.HUD_COLOUR_WHITE, HudColor.HUD_COLOUR_BLACK) { }
 
-
-        public UIMenuItem(string text, string description, HudColor mainColor, HudColor highlightColor) : this(text, description, mainColor, highlightColor, HudColor.HUD_COLOUR_WHITE, HudColor.HUD_COLOUR_BLACK) { }
-
         /// <summary>
-        /// Basic menu button with description and colors.
+        /// Basic menu button with description.
         /// </summary>
         /// <param name="text">Button label.</param>
-        /// <param name="description">Button label.</param>
-        /// <param name="description">Button label.</param>
-        /// <param name="description">Button label.</param>
+        /// <param name="descriptionHash">Description label hash.</param>
+        public UIMenuItem(string text, uint descriptionHash) : this(text, descriptionHash, HudColor.HUD_COLOUR_PAUSE_BG, HudColor.HUD_COLOUR_WHITE, HudColor.HUD_COLOUR_WHITE, HudColor.HUD_COLOUR_BLACK) { }
+
+        public UIMenuItem(string text, string description, HudColor mainColor, HudColor highlightColor) : this(text, description, mainColor, highlightColor, HudColor.HUD_COLOUR_WHITE, HudColor.HUD_COLOUR_BLACK) { }
+        public UIMenuItem(string text, uint descriptionHash, HudColor mainColor, HudColor highlightColor) : this(text, descriptionHash, mainColor, highlightColor, HudColor.HUD_COLOUR_WHITE, HudColor.HUD_COLOUR_BLACK) { }
+
+        /// <summary>
+        /// Basic menu item with description and colors.
+        /// </summary>
+        /// <param name="text">Item's label.</param>
+        /// <param name="description">Item's description</param>
+        /// <param name="color">Main Color</param>
+        /// <param name="highlightColor">Highlighted Color</param>
+        /// <param name="textColor">Text's main color</param>
+        /// <param name="highlightedTextColor">Highlighted text color</param>
         public UIMenuItem(string text, string description, HudColor color, HudColor highlightColor, HudColor textColor, HudColor highlightedTextColor)
         {
             _enabled = true;
@@ -319,6 +329,28 @@ namespace ScaleformUI
 
             Label = text;
             Description = description;
+        }
+
+        /// <summary>
+        /// Basic menu item with description and colors.
+        /// </summary>
+        /// <param name="text">Item's label.</param>
+        /// <param name="descriptionHash">Item's description label hash obtained with (uint)GetHashKey(label)</param>
+        /// <param name="color">Main Color</param>
+        /// <param name="highlightColor">Highlighted Color</param>
+        /// <param name="textColor">Text's main color</param>
+        /// <param name="highlightedTextColor">Highlighted text color</param>
+        public UIMenuItem(string text, uint descriptionHash, HudColor color, HudColor highlightColor, HudColor textColor, HudColor highlightedTextColor)
+        {
+            _enabled = true;
+            MainColor = color;
+            HighlightColor = highlightColor;
+            TextColor = textColor;
+            HighlightedTextColor = highlightedTextColor;
+
+            Label = text;
+            this.description = string.Empty;
+            DescriptionHash = descriptionHash;
         }
 
         /// <summary>
@@ -404,15 +436,37 @@ namespace ScaleformUI
         public virtual string Description
         {
             get => description;
-            set 
-            { 
+            set
+            {
                 description = value;
+                if (descriptionHash != 0) descriptionHash = 0;
                 if (Parent is not null)
                 {
                     API.AddTextEntry($"menu_{Parent._poolcontainer._menuList.IndexOf(Parent)}_desc_{Parent.MenuItems.IndexOf(this)}", description);
                     API.BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "UPDATE_ITEM_DESCRIPTION");
                     API.ScaleformMovieMethodAddParamInt(Parent.MenuItems.IndexOf(this));
                     API.BeginTextCommandScaleformString($"menu_{Parent._poolcontainer._menuList.IndexOf(Parent)}_desc_{Parent.MenuItems.IndexOf(this)}");
+                    API.EndTextCommandScaleformString_2();
+                    API.EndScaleformMovieMethod();
+                }
+            }
+        }
+        /// <summary>
+        /// Sets the item's description by a label's hash (used by (uint)GetHashKey(label))
+        /// </summary>
+        public virtual uint DescriptionHash
+        {
+            get => descriptionHash;
+            set
+            {
+                descriptionHash = value;
+                if (!string.IsNullOrWhiteSpace(description))
+                    description = string.Empty;
+                if (Parent is not null)
+                {
+                    API.BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "UPDATE_ITEM_DESCRIPTION");
+                    API.BeginTextCommandScaleformString("STRTNM1");
+                    API.AddTextComponentSubstringTextLabelHashKey(descriptionHash);
                     API.EndTextCommandScaleformString_2();
                     API.EndScaleformMovieMethod();
                 }
@@ -456,8 +510,8 @@ namespace ScaleformUI
                 _formatLeftLabel = value;
                 if (_selected)
                 {
-                    if (highlightedTextColor == HudColor.HUD_COLOUR_BLACK) 
-                    { 
+                    if (highlightedTextColor == HudColor.HUD_COLOUR_BLACK)
+                    {
                         if (_formatLeftLabel.Contains("~"))
                         {
                             _formatLeftLabel = _formatLeftLabel.Replace("~w~", "~l~");
