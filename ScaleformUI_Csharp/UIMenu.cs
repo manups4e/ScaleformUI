@@ -856,7 +856,6 @@ namespace ScaleformUI
         private int _activeItem = 0;
 
         private bool _visible;
-        private bool _buttonsEnabled = true;
         private bool _justOpened = true;
         private bool _itemsDirty = false;
 
@@ -873,7 +872,7 @@ namespace ScaleformUI
             }
         }
         private int _maxItem = 7;
-        private int _minItem;
+
         private bool mouseWheelControlEnabled = true;
         private int menuSound;
         private bool _changed = true;
@@ -882,7 +881,6 @@ namespace ScaleformUI
         private readonly Dictionary<MenuControls, Tuple<List<Keys>, List<Tuple<Control, int>>>> _keyDictionary =
             new Dictionary<MenuControls, Tuple<List<Keys>, List<Tuple<Control, int>>>>();
 
-        private List<string> spriteDicts = new();
         private readonly Scaleform _menuGlare;
 
         private static readonly MenuControls[] _menuControls = Enum.GetValues(typeof(MenuControls)).Cast<MenuControls>().ToArray();
@@ -894,7 +892,6 @@ namespace ScaleformUI
         internal readonly static string _selectTextLocalized = Game.GetGXTEntry("HUD_INPUT2");
         internal readonly static string _backTextLocalized = Game.GetGXTEntry("HUD_INPUT3");
         protected readonly SizeF Resolution = ScreenTools.ResolutionMaintainRatio;
-        protected internal int _pressingTimer = 0;
         #endregion
 
         #region Public Fields
@@ -956,13 +953,10 @@ namespace ScaleformUI
             }
         }
         public bool ResetCursorOnOpen = true;
-        [Obsolete("The description is now formated automatically by the game.")]
         public bool MouseControlsEnabled = true;
         public bool AlternativeTitle = false;
 
         public PointF Offset { get; }
-
-        public string BannerTexture { get; private set; }
 
         public List<UIMenuWindow> Windows = new List<UIMenuWindow>();
 
@@ -1234,11 +1228,6 @@ namespace ScaleformUI
         public void RemoveItemAt(int index)
         {
             int selectedItem = CurrentSelection;
-            if (Size > MaxItemsOnScreen && _maxItem == Size - 1)
-            {
-                _maxItem--;
-                _minItem--;
-            }
             MenuItems.RemoveAt(index);
             CurrentSelection = selectedItem;
         }
@@ -1252,13 +1241,10 @@ namespace ScaleformUI
             {
                 _activeItem = 0;
                 _maxItem = MaxItemsOnScreen;
-                _minItem = 0;
                 return;
             }
             MenuItems[_activeItem % (MenuItems.Count)].Selected = false;
             _activeItem = 1000 - (1000 % MenuItems.Count);
-            _maxItem = MaxItemsOnScreen;
-            _minItem = 0;
         }
 
         /// <summary>
