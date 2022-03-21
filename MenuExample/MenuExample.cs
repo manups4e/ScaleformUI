@@ -125,7 +125,7 @@ public class MenuExample : BaseScript
 		listPanelItem1.AddPanel(ColorPanelCustom);
 
 		var listPanelItem2 = new UIMenuItem("Change Percentage", "It can be whatever item you want it to be");
-		var PercentagePanel = new UIMenuPercentagePanel("Percentage Panel Example", "0%", "100%");
+		var PercentagePanel = new UIMenuPercentagePanel("Percentage Panel", "0%", "100%");
 		// You can change every text in this Panel
 		exampleMenu.AddItem(listPanelItem2);
 		listPanelItem2.AddPanel(PercentagePanel);

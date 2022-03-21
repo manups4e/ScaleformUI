@@ -17,7 +17,6 @@ namespace ScaleformUI
 
 		public event PercentagePanelChangedEvent OnPercentagePanelChange;
 
-		private bool Pressed;
 		internal float _value;
 
 		public float Percentage
