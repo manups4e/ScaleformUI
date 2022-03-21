@@ -14,7 +14,7 @@ namespace ScaleformUI
             Right
         }
 
-        public delegate string DynamicListItemChangeCallback(UIMenuDynamicListItem sender, ChangeDirection direction);
+        public delegate Task<string> DynamicListItemChangeCallback(UIMenuDynamicListItem sender, ChangeDirection direction);
 
         protected UIResText _itemText;
         protected Sprite _arrowLeft;
