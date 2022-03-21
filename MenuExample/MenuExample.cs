@@ -22,6 +22,7 @@ public class MenuExample : BaseScript
 		API.CreateRuntimeTextureFromDuiHandle(txd, "bannerbackground", API.GetDuiHandle(_titledui));
 	
 		UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI SHOWCASE", new PointF(20, 20), "scaleformui", "bannerbackground", true, true); // true means add menu Glare scaleform to the menu
+		exampleMenu.MaxItemsOnScreen = 7; // To decide max items on screen at time, default 7
 		// let's add the menu to the Pool
 		_menuPool.Add(exampleMenu);
 
@@ -66,7 +67,7 @@ public class MenuExample : BaseScript
 		exampleMenu.AddItem(colorItem);
 
 		float dynamicvalue = 0f;
-		var dynamicItem = new UIMenuDynamicListItem("Dynamic List Item", "Try pressing ~INPUT_FRONTEND_LEFT~ or ~INPUT_FRONTEND_RIGHT~", dynamicvalue.ToString("F3"), (sender, direction) =>
+		var dynamicItem = new UIMenuDynamicListItem("Dynamic List Item", "Try pressing ~INPUT_FRONTEND_LEFT~ or ~INPUT_FRONTEND_RIGHT~", dynamicvalue.ToString("F3"), async (sender, direction) =>
 		{
 			if (direction == UIMenuDynamicListItem.ChangeDirection.Left) dynamicvalue -= 0.01f;
 			else dynamicvalue += 0.01f;
