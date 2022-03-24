@@ -45,14 +45,13 @@ public class MenuExample : BaseScript
 		sidePanel.AddItem(detailItem4);
 		sidePanel.AddItem(detailItem5);
 		ketchupItem.AddSidePanel(sidePanel);
+		ketchupItem.SetLeftBadge(BadgeIcon.STAR);
 		exampleMenu.AddItem(ketchupItem);
-		
 		#endregion
 
 		#region Cook
 
 		var cookItem = new UIMenuItem("Cook!", "Cook the dish with the appropiate ingredients and ketchup.");
-
 		exampleMenu.AddItem(cookItem);
 		UIVehicleColourPickerPanel sidePanelB = new UIVehicleColourPickerPanel(PanelSide.Right, "ColorPicker");
 		cookItem.AddSidePanel(sidePanelB);

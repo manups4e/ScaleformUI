@@ -6,7 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{79D9A09F-1999-4148-9BA0-20AEBA9B3C8B}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+  		<LangVersion>latest</LangVersion>
+  <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MenuExample</RootNamespace>
     <AssemblyName>MenuExample.net</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
