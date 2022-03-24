@@ -25,7 +25,7 @@ namespace ScaleformUI
 			set
 			{
 				sliderColor = value;
-				if (Parent is not null)
+				if (Parent is not null && Parent.Visible)
 				{
 					ScaleformUI._ui.CallFunction("UPDATE_COLORS", Parent.MenuItems.IndexOf(this), (int)MainColor, (int)HighlightColor, (int)TextColor, (int)HighlightedTextColor, (int)value);
 				}
