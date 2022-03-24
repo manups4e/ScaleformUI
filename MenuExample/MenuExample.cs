@@ -46,7 +46,7 @@ public class MenuExample : BaseScript
 		sidePanel.AddItem(detailItem5);
 		ketchupItem.AddSidePanel(sidePanel);
 		exampleMenu.AddItem(ketchupItem);
-
+		
 		#endregion
 
 		#region Cook
