@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Threading.Tasks;
 
@@ -132,5 +133,16 @@ namespace ScaleformUI
         {
             OnSliderChanged?.Invoke(this, value);
         }
+
+        public override void SetRightBadge(BadgeIcon badge)
+        {
+            throw new Exception("UIMenuSliderItem cannot have a right badge.");
+        }
+
+        public override void SetRightLabel(string text)
+        {
+            throw new Exception("UIMenuSliderItem cannot have a right label.");
+        }
+
     }
 }

@@ -537,22 +537,29 @@ namespace ScaleformUI
             }
         }
 
-        /* CURRENTLY NOT WORKING
+
         /// <summary>
         /// Set the left badge. Set it to None to remove the badge.
         /// </summary>
         /// <param name="badge"></param>
         public virtual void SetLeftBadge(BadgeIcon badge)
         {
-            LeftBadge = badge;
+            if (Parent is not null && Parent.Visible)
+            {
+                LeftBadge = badge;
+                ScaleformUI._ui.CallFunction("SET_LEFT_BADGE", Parent.MenuItems.IndexOf(this), (int)badge);
+            }
+            else
+            {
+                LeftBadge = badge;
+            }
         }
-        */
 
         /// <summary>
         /// Set the right badge. Set it to None to remove the badge.
         /// </summary>
         /// <param name="badge"></param>
-        public async virtual void SetRightBadge(BadgeIcon badge)
+        public virtual void SetRightBadge(BadgeIcon badge)
         {
             if (Parent is not null && Parent.Visible)
             {

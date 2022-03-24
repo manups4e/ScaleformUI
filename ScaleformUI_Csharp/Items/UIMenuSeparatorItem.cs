@@ -17,5 +17,18 @@ namespace ScaleformUI
 			_itemId = 6;
 			Jumpable = jumpable;
 		}
+
+		public override void SetLeftBadge(BadgeIcon badge)
+		{
+			throw new Exception("UIMenuSeparatorItem cannot have a left badge.");
+		}
+		public override void SetRightBadge(BadgeIcon badge)
+		{
+			throw new Exception("UIMenuSeparatorItem cannot have a right badge.");
+		}
+		public override void SetRightLabel(string text)
+		{
+			throw new Exception("UIMenuSeparatorItem cannot have a right label.");
+		}
 	}
 }

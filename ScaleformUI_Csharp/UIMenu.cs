@@ -2152,6 +2152,8 @@ namespace ScaleformUI
                             ScaleformUI._ui.CallFunction("SET_RIGHT_BADGE", index, (int)item.RightBadge);
                         break;
                 }
+                if (item.LeftBadge != BadgeIcon.NONE)
+                    ScaleformUI._ui.CallFunction("SET_LEFT_BADGE", index, (int)item.LeftBadge);
                 if (item.SidePanel != null)
                 {
                     switch (item.SidePanel)

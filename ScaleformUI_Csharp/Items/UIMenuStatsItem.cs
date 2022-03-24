@@ -41,5 +41,18 @@ namespace ScaleformUI
             ScaleformUI._ui.CallFunction("SET_ITEM_VALUE", Parent.MenuItems.IndexOf(this), value);
             OnStatChanged?.Invoke(value);
         }
+
+        public override void SetLeftBadge(BadgeIcon badge)
+        {
+            throw new Exception("UIMenuStatsItem cannot have a left badge.");
+        }
+        public override void SetRightBadge(BadgeIcon badge)
+        {
+            throw new Exception("UIMenuStatsItem cannot have a right badge.");
+        }
+        public override void SetRightLabel(string text)
+        {
+            throw new Exception("UIMenuStatsItem cannot have a right label.");
+        }
     }
 }

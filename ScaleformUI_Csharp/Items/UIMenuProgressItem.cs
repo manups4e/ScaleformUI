@@ -84,5 +84,15 @@ namespace ScaleformUI
 		{
 			OnSliderChanged?.Invoke(this, value);
 		}
+
+		public override void SetRightBadge(BadgeIcon badge)
+		{
+			throw new Exception("UIMenuProgressItem cannot have a right badge.");
+		}
+
+		public override void SetRightLabel(string text)
+		{
+			throw new Exception("UIMenuProgressItem cannot have a right label.");
+		}
 	}
 }
