@@ -37,7 +37,7 @@ function MenuPool:AddSubMenu(Menu, Text, Description, KeepPosition, KeepBanner)
         SubMenu.Glare = Menu.Glare
         SubMenu.Settings.MouseControlsEnabled = Menu.Settings.MouseControlsEnabled
         SubMenu.Settings.MouseEdgeEnabled = Menu.Settings.MouseEdgeEnabled
-
+        SubMenu:MaxItemsOnScreen(Menu:MaxItemsOnScreen())
         self:Add(SubMenu)
         Menu:BindMenuToItem(SubMenu, Item)
         return SubMenu

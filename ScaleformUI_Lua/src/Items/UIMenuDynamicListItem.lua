@@ -1,34 +1,46 @@
-UIMenuCheckboxItem = setmetatable({}, UIMenuCheckboxItem)
-UIMenuCheckboxItem.__index = UIMenuCheckboxItem
-UIMenuCheckboxItem.__call = function() return "UIMenuItem", "UIMenuCheckboxItem" end
+UIMenuDynamicListItem = setmetatable({}, UIMenuDynamicListItem)
+UIMenuDynamicListItem.__index = UIMenuDynamicListItem
+UIMenuDynamicListItem.__call = function() return "UIMenuItem", "UIMenuDynamicListItem" end
 
 ---New
 ---@param Text string
----@param Check boolean
+---@param Items table
+---@param Index number
 ---@param Description string
-function UIMenuCheckboxItem.New(Text, Check, checkStyle, Description, color, highlightColor, textColor, highlightedTextColor)
-	local _UIMenuCheckboxItem = {
+function UIMenuDynamicListItem.New(Text, Description, StartingItem, callback, color, highlightColor, textColor, highlightedTextColor)
+	local _UIMenuDynamicListItem = {
 		Base = UIMenuItem.New(Text or "", Description or "", color or 117, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
-		_Checked = tobool(Check),
 		Panels = {},
 		SidePanel = nil,
-		CheckBoxStyle = checkStyle or 0,
-		OnCheckboxChanged = function(menu, item, checked) end,
+        _currentItem = StartingItem,
+        Callback = callback,
+		OnListSelected = function(menu, item, newindex) end,
 	}
-	return setmetatable(_UIMenuCheckboxItem, UIMenuCheckboxItem)
+	return setmetatable(_UIMenuDynamicListItem, UIMenuDynamicListItem)
+end
+
+function UIMenuDynamicListItem:CurrentListItem(item)
+    if item == nil then
+        return tostring(self._currentItem)
+    else
+        self._currentItem = item
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_LISTITEM_LIST", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, tostring(self._currentItem), 0)
+        end
+    end
 end
 
 ---SetParentMenu
 ---@param Menu table
-function UIMenuCheckboxItem:SetParentMenu(Menu)
-	if Menu() == "UIMenu" then
+function UIMenuDynamicListItem:SetParentMenu(Menu)
+	if Menu ~= nil and Menu() == "UIMenu" then
 		self.Base.ParentMenu = Menu
 	else
 		return self.Base.ParentMenu
 	end
 end
 
-function UIMenuCheckboxItem:AddSidePanel(sidePanel)
+function UIMenuDynamicListItem:AddSidePanel(sidePanel)
     if sidePanel() == "UIMissionDetailsPanel" then
         sidePanel:SetParentItem(self)
         self.SidePanel = sidePanel
@@ -42,7 +54,7 @@ end
 
 ---Selected
 ---@param bool boolean
-function UIMenuCheckboxItem:Selected(bool)
+function UIMenuDynamicListItem:Selected(bool)
 	if bool ~= nil then
 		self.Base._Selected = tobool(bool)
 	else
@@ -52,7 +64,7 @@ end
 
 ---Hovered
 ---@param bool boolean
-function UIMenuCheckboxItem:Hovered(bool)
+function UIMenuDynamicListItem:Hovered(bool)
 	if bool ~= nil then
 		self.Base._Hovered = tobool(bool)
 	else
@@ -62,7 +74,7 @@ end
 
 ---Enabled
 ---@param bool boolean
-function UIMenuCheckboxItem:Enabled(bool)
+function UIMenuDynamicListItem:Enabled(bool)
 	if bool ~= nil then
 		self.Base._Enabled = tobool(bool)
 	else
@@ -72,7 +84,7 @@ end
 
 ---Description
 ---@param str string
-function UIMenuCheckboxItem:Description(str)
+function UIMenuDynamicListItem:Description(str)
 	if tostring(str) and str ~= nil then
 		self.Base._Description = tostring(str)
 	else
@@ -80,7 +92,7 @@ function UIMenuCheckboxItem:Description(str)
 	end
 end
 
-function UIMenuCheckboxItem:BlinkDescription(bool)
+function UIMenuDynamicListItem:BlinkDescription(bool)
     if bool ~= nil then
 		self.Base:BlinkDescription(bool)
 	else
@@ -90,7 +102,7 @@ end
 
 ---Text
 ---@param Text string
-function UIMenuCheckboxItem:Label(Text)
+function UIMenuDynamicListItem:Label(Text)
 	if tostring(Text) and Text ~= nil then
 		self.Base:Label(tostring(Text))
 	else
@@ -98,7 +110,7 @@ function UIMenuCheckboxItem:Label(Text)
 	end
 end
 
-function UIMenuCheckboxItem:MainColor(color)
+function UIMenuDynamicListItem:MainColor(color)
     if(color)then
         self.Base._mainColor = color
         if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
@@ -109,7 +121,7 @@ function UIMenuCheckboxItem:MainColor(color)
     end
 end
 
-function UIMenuCheckboxItem:TextColor(color)
+function UIMenuDynamicListItem:TextColor(color)
     if(color)then
         self.Base._textColor = color
         if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
@@ -120,7 +132,7 @@ function UIMenuCheckboxItem:TextColor(color)
     end
 end
 
-function UIMenuCheckboxItem:HighlightColor(color)
+function UIMenuDynamicListItem:HighlightColor(color)
     if(color)then
         self.Base._highlightColor = color
         if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
@@ -131,7 +143,7 @@ function UIMenuCheckboxItem:HighlightColor(color)
     end
 end
 
-function UIMenuCheckboxItem:HighlightedTextColor(color)
+function UIMenuDynamicListItem:HighlightedTextColor(color)
     if(color)then
         self.Base._highlightedTextColor = color
         if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
@@ -143,7 +155,7 @@ function UIMenuCheckboxItem:HighlightedTextColor(color)
 end
 
 ---SetLeftBadge
-function UIMenuCheckboxItem:SetLeftBadge(Badge)
+function UIMenuDynamicListItem:SetLeftBadge(Badge)
     if tonumber(Badge) then
         self.Base:SetLeftBadge(Badge)
     else
@@ -152,23 +164,53 @@ function UIMenuCheckboxItem:SetLeftBadge(Badge)
 end
 
 ---SetRightBadge
-function UIMenuCheckboxItem:SetRightBadge()
+function UIMenuDynamicListItem:SetRightBadge()
 	error("This item does not support badges")
 end
 
 ---RightLabel
-function UIMenuCheckboxItem:RightLabel()
+function UIMenuDynamicListItem:RightLabel()
 	error("This item does not support a right label")
 end
 
-function UIMenuCheckboxItem:Checked(bool)
-	if bool ~= nil then
-		self._Checked = tobool(bool)
-        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
-			local it = IndexOf(self.Base.ParentMenu.Items, self) - 1
-			ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", false, 16, it, self._Checked)
-		end
-	else
-		return self._Checked
+---AddPanel
+---@param Panel table
+function UIMenuDynamicListItem:AddPanel(Panel)
+	if Panel() == "UIMenuPanel" then
+		table.insert(self.Panels, Panel)
+		Panel:SetParentItem(self)
 	end
+end
+
+---RemovePanelAt
+---@param Index table
+function UIMenuDynamicListItem:RemovePanelAt(Index)
+	if tonumber(Index) then
+		if self.Panels[Index] then
+			table.remove(self.Panels, tonumber(Index))
+		end
+	end
+end
+
+---FindPanelIndex
+---@param Panel table
+function UIMenuDynamicListItem:FindPanelIndex(Panel)
+	if Panel() == "UIMenuPanel" then
+		for Index = 1, #self.Panels do
+			if self.Panels[Index] == Panel then
+				return Index
+			end
+		end
+	end
+	return nil
+end
+
+---FindPanelItem
+function UIMenuDynamicListItem:FindPanelItem()
+	for Index = #self.Items, 1, -1 do
+		if self.Items[Index].Panel then
+			return Index
+		end
+	end
+	return nil
 end

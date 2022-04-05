@@ -97,7 +97,7 @@ end
 function UIMenuItem:MainColor(color)
     if(color)then
         self.Base._mainColor = color
-        if(self.Base.ParentMenu ~= nil) then
+        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor);
         end
     else
@@ -108,7 +108,7 @@ end
 function UIMenuItem:TextColor(color)
     if(color)then
         self.Base._textColor = color
-        if(self.Base.ParentMenu ~= nil) then
+        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor);
         end
     else
@@ -119,7 +119,7 @@ end
 function UIMenuItem:HighlightColor(color)
     if(color)then
         self.Base._highlightColor = color
-        if(self.Base.ParentMenu ~= nil) then
+        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor);
         end
     else
@@ -130,7 +130,7 @@ end
 function UIMenuItem:HighlightedTextColor(color)
     if(color)then
         self.Base._highlightedTextColor = color
-        if(self.Base.ParentMenu ~= nil) then
+        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor);
         end
     else
@@ -158,7 +158,7 @@ function UIMenuStatsItem:Index(Index)
 			self._Index = Index
 		end
 		self.OnStatsChanged(self._Index)
-        if self.Base.ParentMenu ~= nil then
+        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_VALUE", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self._Index)
         end
 	else

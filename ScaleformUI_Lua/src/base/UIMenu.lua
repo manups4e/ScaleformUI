@@ -53,6 +53,7 @@ function UIMenu.New(Title, Subtitle, X, Y, glare, txtDictionary, txtName, altern
         TxtDictionary = txtDictionary,
         TxtName = txtName,
         Glare = glare or false,
+        _maxItem = 7,
         _menuGlare = 0,
         Controls = {
             Back = {
@@ -311,6 +312,15 @@ function UIMenu:Clear()
     self.Items = {}
 end
 
+function UIMenu:MaxItemsOnScreen(max)
+    if(max ~= nil) then
+        _maxItem = max
+        self:RefreshIndex()
+    else
+        return _maxItem
+    end
+end
+
 ---Visible
 ---@param bool boolean
 function UIMenu:Visible(bool)
@@ -341,7 +351,7 @@ end
 ---BuildUpMenu
 function UIMenu:BuildUpMenu()
     while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
-    ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self.Title, self.Subtitle, 0, 0, self.AlternativeTitle, self.TxtDictionary, self.TxtName, true, 1)
+    ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self.Title, self.Subtitle, 0, 0, self.AlternativeTitle, self.TxtDictionary, self.TxtName,self:MaxItemsOnScreen(), true, 1)
     if #self.Windows > 0 then
         for w_id, window in pairs (self.Windows) do
             local Type, SubType = window()
@@ -374,6 +384,8 @@ function UIMenu:BuildUpMenu()
 
         if SubType == "UIMenuListItem" then
             ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 1, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), table.concat(item.Items, ","), item:Index()-1, item.Base._mainColor, item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor)
+        elseif SubType == "UIMenuDynamicListItem" then -- dynamic list item are handled like list items in the scaleform.. so the type remains 1
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 1, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item:CurrentListItem(), 0, item.Base._mainColor, item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor)
         elseif SubType == "UIMenuCheckboxItem" then
             ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 2, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item.CheckBoxStyle, item._Checked, item.Base._mainColor, item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor)
         elseif SubType == "UIMenuSliderItem" then
@@ -389,6 +401,14 @@ function UIMenu:BuildUpMenu()
             ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_LABEL", false, it - 1, item:RightLabel())
             if item.RightBadge ~= BadgeStyle.NONE then
                 ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_BADGE", false, it - 1, item.RightBadge)
+            end
+        end
+        
+        if (SubType == "UIMenuItem" and item.LeftBadge ~= BadgeStyle.NONE) or (SubType ~= "UIMenuItem" and item.Base.LeftBadge ~= BadgeStyle.NONE) then
+            if SubType ~= "UIMenuItem" then
+                ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_BADGE", false, it - 1, item.Base.LeftBadge)
+            else
+                ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_BADGE", false, it - 1, item.LeftBadge)
             end
         end
         if #item.Panels > 0 then
@@ -566,7 +586,7 @@ end
 function UIMenu:GoLeft()
     local Item = self.Items[self:CurrentSelection()]
     local type, subtype = Item()
-    if subtype ~= "UIMenuListItem" and subtype ~= "UIMenuSliderItem" and subtype ~= "UIMenuProgressItem" and subtype ~= "UIMenuStatsItem" then
+    if subtype ~= "UIMenuListItem" and subtype ~= "UIMenuDynamicListItem" and subtype ~= "UIMenuSliderItem" and subtype ~= "UIMenuProgressItem" and subtype ~= "UIMenuStatsItem" then
         return
     end
 
@@ -586,6 +606,9 @@ function UIMenu:GoLeft()
         self.OnListChange(self, Item, Item._Index)
         Item.OnListChanged(self, Item, Item._Index)
         PlaySoundFrontend(-1, self.Settings.Audio.LeftRight, self.Settings.Audio.Library, true)
+    elseif(subtype == "UIMenuDynamicListItem") then
+        local result = tostring(Item.Callback(Item, "left"))
+        Item:CurrentListItem(result)
     elseif subtype == "UIMenuSliderItem" then
         Item:Index(res)
         self.OnSliderChange(self, Item, Item:Index())
@@ -607,7 +630,7 @@ end
 function UIMenu:GoRight()
     local Item = self.Items[self:CurrentSelection()]
     local type, subtype = Item()
-    if subtype ~= "UIMenuListItem" and subtype ~= "UIMenuSliderItem" and subtype ~= "UIMenuProgressItem" and subtype ~= "UIMenuStatsItem" then
+    if subtype ~= "UIMenuListItem" and subtype ~= "UIMenuDynamicListItem" and subtype ~= "UIMenuSliderItem" and subtype ~= "UIMenuProgressItem" and subtype ~= "UIMenuStatsItem" then
         return
     end
     if not Item:Enabled() then
@@ -626,7 +649,10 @@ function UIMenu:GoRight()
         self.OnListChange(self, Item, Item._Index)
         Item.OnListChanged(self, Item, Item._Index)
         PlaySoundFrontend(-1, self.Settings.Audio.LeftRight, self.Settings.Audio.Library, true)
-    elseif subtype == "UIMenuSliderItem" then
+    elseif(subtype == "UIMenuDynamicListItem") then
+        local result = tostring(Item.Callback(Item, "right"))
+        Item:CurrentListItem(result)
+   elseif subtype == "UIMenuSliderItem" then
         Item:Index(res)
         self.OnSliderChange(self, Item, Item:Index())
         Item.OnSliderChanged(self, Item, Item._Index)

@@ -16,6 +16,7 @@ function UIMenuItem.New(text, description, color, highlightColor, textColor, hig
         _rightLabel = "",
         _formatRightLabel = "",
         RightBadge = 0,
+        LeftBadge = 0,
         _mainColor = color or 117,
         _highlightColor = highlightColor or 1,
         _textColor = textColor or 1,
@@ -73,7 +74,7 @@ function UIMenuItem:Selected(bool, id)
                 end
             end
         end
-        if self.ParentMenu ~= nil and self._textColor == 1 and self._highlightedTextColor == 2 then
+        if self.ParentMenu ~= nil and self._textColor == 1 and self._highlightedTextColor == 2 and self.ParentMenu:Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABELS", false, IndexOf(self.ParentMenu.Items, self) - 1,  self._formatLeftLabel, self._formatRightLabel)
         end
     else
@@ -92,7 +93,7 @@ end
 function UIMenuItem:Enabled(bool)
     if bool ~= nil then
         self._Enabled = tobool(bool)
-        if self.ParentMenu ~= nil then
+        if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_ITEM", false, IndexOf(self.ParentMenu.Items, self) - 1,  self._Enabled)
         end
     else
@@ -115,7 +116,7 @@ end
 function UIMenuItem:MainColor(color)
     if(color)then
         self._mainColor = color
-        if(self.ParentMenu ~= nil) then
+        if(self.ParentMenu ~= nil and self.ParentMenu:Visible()) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.ParentMenu.Items, self) - 1, self._mainColor, self._highlightColor, self._textColor, self._highlightedTextColor);
         end
     else
@@ -126,7 +127,7 @@ end
 function UIMenuItem:TextColor(color)
     if(color)then
         self._textColor = color
-        if(self.ParentMenu ~= nil) then
+        if(self.ParentMenu ~= nil and self.ParentMenu:Visible()) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.ParentMenu.Items, self) - 1, self._mainColor, self._highlightColor, self._textColor, self._highlightedTextColor);
         end
     else
@@ -137,7 +138,7 @@ end
 function UIMenuItem:HighlightColor(color)
     if(color)then
         self._highlightColor = color
-        if(self.ParentMenu ~= nil) then
+        if(self.ParentMenu ~= nil and self.ParentMenu:Visible()) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.ParentMenu.Items, self) - 1, self._mainColor, self._highlightColor, self._textColor, self._highlightedTextColor);
         end
     else
@@ -148,7 +149,7 @@ end
 function UIMenuItem:HighlightedTextColor(color)
     if(color)then
         self._highlightedTextColor = color
-        if(self.ParentMenu ~= nil) then
+        if(self.ParentMenu ~= nil and self.ParentMenu:Visible()) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.ParentMenu.Items, self) - 1, self._mainColor, self._highlightColor, self._textColor, self._highlightedTextColor);
         end
     else
@@ -178,7 +179,7 @@ function UIMenuItem:Label(Text)
                 end
             end
         end
-        if self.ParentMenu ~= nil and self._textColor == 1 and self._highlightedTextColor == 2 then
+        if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self._textColor == 1 and self._highlightedTextColor == 2 then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_LABEL", false, IndexOf(self.ParentMenu.Items, self) - 1,  self._formatLeftLabel)
         end
     else
@@ -208,7 +209,7 @@ function UIMenuItem:RightLabel(Text)
                 end
             end
         end
-        if self.ParentMenu ~= nil and self._textColor == 1 and self._highlightedTextColor == 2 then
+        if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self._textColor == 1 and self._highlightedTextColor == 2 then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_LABEL", false, IndexOf(self.ParentMenu.Items, self) - 1,  self._formatRightLabel)
         end
     else
@@ -219,13 +220,22 @@ end
 function UIMenuItem:SetRightBadge(Badge)
     if tonumber(Badge) then
         self.RightBadge = tonumber(Badge)
-        if self.ParentMenu ~= nil then
+        if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_BADGE", false, IndexOf(self.ParentMenu.Items, self) - 1, self.RightBadge)
-        else
-            self.RightBadge = Badge
         end
     else
         return self.RightBadge
+    end
+end
+
+function UIMenuItem:SetLeftBadge(Badge)
+    if tonumber(Badge) then
+        self.LeftBadge = tonumber(Badge)
+        if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_BADGE", false, IndexOf(self.ParentMenu.Items, self) - 1, self.LeftBadge)
+        end
+    else
+        return self.LeftBadge
     end
 end
 
@@ -279,7 +289,7 @@ end
 function UIMenuItem:BlinkDescription(bool)
     if bool ~= nil then
         self.blinkDescription = bool
-        if self.ParentMenu ~= nil then
+        if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_BLINK_DESC", false, IndexOf(self.ParentMenu.Items, self) - 1, self.blinkDescription)
         end
     else

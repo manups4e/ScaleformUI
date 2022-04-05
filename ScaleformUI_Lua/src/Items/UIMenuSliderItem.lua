@@ -103,7 +103,7 @@ end
 function UIMenuItem:MainColor(color)
     if(color)then
         self.Base._mainColor = color
-        if(self.Base.ParentMenu ~= nil) then
+        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor);
         end
     else
@@ -114,7 +114,7 @@ end
 function UIMenuItem:TextColor(color)
     if(color)then
         self.Base._textColor = color
-        if(self.Base.ParentMenu ~= nil) then
+        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor);
         end
     else
@@ -125,7 +125,7 @@ end
 function UIMenuItem:HighlightColor(color)
     if(color)then
         self.Base._highlightColor = color
-        if(self.Base.ParentMenu ~= nil) then
+        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor);
         end
     else
@@ -136,7 +136,7 @@ end
 function UIMenuItem:HighlightedTextColor(color)
     if(color)then
         self.Base._highlightedTextColor = color
-        if(self.Base.ParentMenu ~= nil) then
+        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor);
         end
     else
@@ -159,8 +159,12 @@ function UIMenuSliderItem:Index(Index)
 	end
 end
 
-function UIMenuSliderItem:SetLeftBadge()
-	error("This item does not support badges")
+function UIMenuSliderItem:SetLeftBadge(Badge)
+    if tonumber(Badge) then
+        self.Base:SetLeftBadge(Badge)
+    else
+        return self.Base:SetLeftBadge()
+    end
 end
 
 function UIMenuSliderItem:SetRightBadge()

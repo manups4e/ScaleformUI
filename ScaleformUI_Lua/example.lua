@@ -28,10 +28,11 @@ Citizen.CreateThread(function()
 	local sidepanel_txn = CreateRuntimeTextureFromDuiHandle(txd, "sidepanel", GetDuiHandle(dui))
 
 	local exampleMenu = UIMenu.New("Native UI", "ScaleformUI SHOWCASE", 50, 50, true, nil, nil, true)
+	exampleMenu:MaxItemsOnScreen(4)
 	pool:Add(exampleMenu)
 
 	local ketchupItem = UIMenuCheckboxItem.New("Add ketchup?", true, 0, "Do you wish to add ketchup?")
-
+	ketchupItem:SetLeftBadge(BadgeStyle.STAR);
 	local sidePanel = UIMissionDetailsPanel.New(1, "Side Panel", 6, true, "scaleformui", "sidepanel")
 	local detailItem1 = UIMenuFreemodeDetailsImageItem.New("Left Label", "Right Label", BadgeStyle.BRIEFCASE, Colours.HUD_COLOUR_FREEMODE)
 	local detailItem2 = UIMenuFreemodeDetailsImageItem.New("Left Label", "Right Label", BadgeStyle.STAR, Colours.HUD_COLOUR_GOLD)
@@ -59,8 +60,16 @@ Citizen.CreateThread(function()
 	exampleMenu:AddItem(colorItem)
 	local sidePanelVehicleColor = UIVehicleColorPickerPanel.New(1, "ColorPicker", 6)
 
-	local blankItem = UIMenuItem.New("", "")
-	exampleMenu:AddItem(blankItem)
+	local dynamicValue = 0;
+	local dynamicListItem = UIMenuDynamicListItem.New("Dynamic List Item", "Try pressing ~INPUT_FRONTEND_LEFT~ or ~INPUT_FRONTEND_RIGHT~", tostring(dynamicValue), function(item, direction)
+		if(direction == "left") then
+			dynamicValue = dynamicValue -1
+		elseif(direction == "right") then
+			dynamicValue = dynamicValue +1
+		end
+		return tostring(dynamicValue)
+	end)
+	exampleMenu:AddItem(dynamicListItem)
 
 	local seperatorItem1 = UIMenuSeperatorItem.New("Separator (Jumped)", true)
 	local seperatorItem2 = UIMenuSeperatorItem.New("Separator (not Jumped)", false)
@@ -208,7 +217,7 @@ Citizen.CreateThread(function()
 
 	local pos = GetEntityCoords(PlayerPedId(), true)
 	--type, position, scale, distance, color, placeOnGround, bobUpDown, rotate, faceCamera, checkZ
-	local marker = Marker.New(2, pos, vector3(2,2,2), 100.0, {R=0, G= 100, B=50, A=255}, true, false, false, false, true)
+	local marker = Marker.New(1, pos, vector3(2,2,2), 100.0, {R=0, G= 100, B=50, A=255}, true, false, false, false, true)
 
 	while true do
 		Wait(0)
