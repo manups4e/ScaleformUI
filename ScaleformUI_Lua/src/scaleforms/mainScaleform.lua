@@ -1,5 +1,6 @@
 ScaleformUI = {}
 ScaleformUI.Scaleforms = {}
+ScaleformUI.Notifications = nil
 ScaleformUI.Scaleforms._ui = 0
 ScaleformUI.Scaleforms.PauseMenu = nil
 ScaleformUI.Scaleforms.MidMessageInstance = nil
@@ -14,6 +15,7 @@ Citizen.CreateThread(function()
     ScaleformUI.Scaleforms.MidMessageInstance = MidMessageInstance.New()
     ScaleformUI.Scaleforms.Warning = WarningInstance.New()
     ScaleformUI.Scaleforms.InstructionalButtons = ButtonsHandler.New()
+    ScaleformUI.Notifications = Notifications.New()
     while true do
         Wait(0)
         ScaleformUI.Scaleforms.BigMessageInstance:Update()

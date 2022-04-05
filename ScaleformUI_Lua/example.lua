@@ -206,6 +206,10 @@ Citizen.CreateThread(function()
 		detailsWindow:UpdateLabels("Parents resemblance", "Dad: " .. value .. "%", "Mom: " .. (100 - value) .. "%")
 	end
 
+	local pos = GetEntityCoords(PlayerPedId(), true)
+	--type, position, scale, distance, color, placeOnGround, bobUpDown, rotate, faceCamera, checkZ
+	local marker = Marker.New(2, pos, vector3(2,2,2), 100.0, {R=0, G= 100, B=50, A=255}, true, false, false, false, true)
+
 	while true do
 		Wait(0)
 		if IsControlJustPressed(0, 51) then
@@ -215,5 +219,8 @@ Citizen.CreateThread(function()
 			ScaleformUI.Scaleforms._ui:Dispose()
 			ScaleformUI.Scaleforms._ui = 0
 		end
+		marker:Draw()
+		ScaleformUI.Notifications:DrawText(0.3, 0.7, "Ped is in Range => " .. tostring(marker:IsInRange()))
+		ScaleformUI.Notifications:DrawText(0.3, 0.725, "Ped is in Marker =>" .. tostring(marker.IsInMarker))
 	end
 end)
