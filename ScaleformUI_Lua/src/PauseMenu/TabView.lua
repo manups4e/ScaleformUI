@@ -34,7 +34,7 @@ function TabView.New(title, subtitle, sideTop, sideMid, sideBot)
         end,
         OnPauseMenuTabChanged = function(menu, tab, tabIndex)
         end,
-        OnPauseMenuFocusChanged = function(menu, tabIndex, focusLevel, leftItem)
+        OnPauseMenuFocusChanged = function(menu, tab, focusLevel, leftItem)
         end,
         OnLeftItemChange = function(menu, tabIndex, focusLevel, leftItem)
         end,
@@ -65,7 +65,7 @@ end
 function TabView:FocusLevel(index)
     if index ~= nil then
         self.focusLevel = index
-        self.OnPauseMenuFocusChanged(self, self.Tabs[self.Index], index)
+        self.OnPauseMenuFocusChanged(self, self.Tabs[self.Index], index, self:LeftItemIndex())
     else
         return self.focusLevel
     end
@@ -298,8 +298,12 @@ function TabView:ProcessControl()
     if (IsControlJustPressed(2, 201)) then
         result = ScaleformUI.Scaleforms._pauseMenu:SendInputEvent(16)
         if self:FocusLevel() == 1 then
-            if (self.Tabs[self.Index].LeftItemList[self:LeftItemIndex()].ItemType == LeftItemType.Info or self.Tabs[self.Index].LeftItemList[self:LeftItemIndex()].ItemType == LeftItemType.Empty) then
-                self.Tabs[self.Index].LeftItemList[self:LeftItemIndex()].OnActivated(self.Tabs[self.Index].LeftItemList[self:LeftItemIndex()], self:LeftItemIndex())
+            local tab = self.Tabs[self.Index]
+            local _, subt = tab()
+            if(subt ~= "TabTextItem") then
+                if (tab.LeftItemList[self:LeftItemIndex()].ItemType == LeftItemType.Info or tab.LeftItemList[self:LeftItemIndex()].ItemType == LeftItemType.Empty) then
+                    tab.LeftItemList[self:LeftItemIndex()].OnActivated(tab.LeftItemList[self:LeftItemIndex()], self:LeftItemIndex())
+                end
             end
         elseif self:FocusLevel() == 2 then
             local aa, subt = self.Tabs[self.Index].LeftItemList[self:LeftItemIndex()].ItemList[self:RightItemIndex()]()
