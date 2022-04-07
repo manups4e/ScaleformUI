@@ -1469,6 +1469,8 @@ namespace ScaleformUI
             if (!Visible || ScaleformUI.Warning.IsShowing) return;
             while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
 
+            HideHudComponentThisFrame(19);
+
             if (ControlDisablingEnabled)
                 Controls.Toggle(false);
 
