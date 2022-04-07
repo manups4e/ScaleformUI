@@ -708,7 +708,7 @@ function UIMenu:SelectItem(play)
         self._Visible = false
         self.OnMenuChanged(self, self.Children[self.Items[self:CurrentSelection()]], true)
         ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
-        ScaleformUI.Scaleforms.InstructionalButtons.Enabled = true
+        ScaleformUI.Scaleforms.InstructionalButtons:Enabled(true)
         ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.Children[self.Items[self:CurrentSelection()]].InstructionalButtons)
         self.OnMenuChanged(self, self.Children[Item], "forwards")
         self.Children[Item].OnMenuChanged(self, self.Children[Item], "forwards")
@@ -722,7 +722,7 @@ function UIMenu:GoBack()
     PlaySoundFrontend(-1, self.Settings.Audio.Back, self.Settings.Audio.Library, true)
     if self.ParentMenu ~= nil then
         ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
-        ScaleformUI.Scaleforms.InstructionalButtons.Enabled = true
+        ScaleformUI.Scaleforms.InstructionalButtons:Enabled(true)
         ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.ParentMenu.InstructionalButtons)
         self.ParentMenu._Visible = true
         self.ParentMenu:BuildUpMenu()
