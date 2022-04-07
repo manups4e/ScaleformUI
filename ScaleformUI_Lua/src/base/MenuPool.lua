@@ -4,7 +4,8 @@ MenuPool.__index = MenuPool
 ---New
 function MenuPool.New()
     local _MenuPool = {
-        Menus = {}
+        Menus = {},
+        PauseMenus = {}
     }
     return setmetatable(_MenuPool, MenuPool)
 end
@@ -49,6 +50,12 @@ end
 function MenuPool:Add(Menu)
     if Menu() == "UIMenu" then
         table.insert(self.Menus, Menu)
+    end
+end
+
+function MenuPool:AddPauseMenu(Menu)
+    if Menu() == "PauseMenu" then
+        table.insert(self.PauseMenus, Menu)
     end
 end
 
@@ -166,6 +173,12 @@ function MenuPool:ProcessControl()
             Menu:ProcessControl()
         end
     end
+
+    for _, Menu in pairs(self.PauseMenus) do
+        if Menu:Visible() then
+            Menu:ProcessControl()
+        end
+    end
 end
 
 ---ProcessMouse
@@ -185,12 +198,34 @@ function MenuPool:Draw()
             Menu:Draw()
         end
     end
+    for _, Menu in pairs(self.PauseMenus) do
+        if Menu:Visible() then
+            Menu:Draw()
+        end
+    end
 end
 
 ---IsAnyMenuOpen
 function MenuPool:IsAnyMenuOpen()
     local open = false
     for _, Menu in pairs(self.Menus) do
+        if Menu:Visible() then
+            open = true
+            break
+        end
+    end
+    for _, Menu in pairs(self.PauseMenus) do
+        if Menu:Visible() then
+            open = true
+            break
+        end
+    end
+    return open
+end
+
+function MenuPool:IsAnyPauseMenuOpen()
+    local open = false
+    for _, Menu in pairs(self.PauseMenus) do
         if Menu:Visible() then
             open = true
             break

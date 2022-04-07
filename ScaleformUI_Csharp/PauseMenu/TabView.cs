@@ -111,7 +111,6 @@ namespace ScaleformUI.PauseMenu
                     SendPauseMenuOpen();
                     Screen.Effects.Start(ScreenEffect.FocusOut, 800);
                     API.TransitionToBlurred(700);
-
                     ScaleformUI.InstructionalButtons.SetInstructionalButtons(buttons);
                     API.SetPlayerControl(Game.Player.Handle, false, 0);
                 }
@@ -213,10 +212,15 @@ namespace ScaleformUI.PauseMenu
                                         case StatsTabItem:
                                             {
                                                 var sti = ii as StatsTabItem;
-                                                if (sti.Type == StatItemType.Basic)
-                                                    _pause.AddRightStatItemLabel(tabIndex, itemIndex, sti.Label, sti.RightLabel);
-                                                else if (sti.Type == StatItemType.ColoredBar)
-                                                    _pause.AddRightStatItemColorBar(tabIndex, itemIndex, sti.Label, sti.Value, sti.ColoredBarColor);
+                                                switch (sti.Type)
+                                                {
+                                                    case StatItemType.Basic:
+                                                        _pause.AddRightStatItemLabel(tabIndex, itemIndex, sti.Label, sti.RightLabel);
+                                                        break;
+                                                    case StatItemType.ColoredBar:
+                                                        _pause.AddRightStatItemColorBar(tabIndex, itemIndex, sti.Label, sti.Value, sti.ColoredBarColor);
+                                                        break;
+                                                }
                                             }
                                             break;
                                         case SettingsTabItem:
@@ -391,7 +395,7 @@ namespace ScaleformUI.PauseMenu
                         if (Tabs[Index].LeftItemList[leftItemIndex].ItemList[rightItemIndex] is SettingsTabItem)
                         {
                             var it = Tabs[Index].LeftItemList[leftItemIndex].ItemList[rightItemIndex] as SettingsTabItem;
-                            it.Activate();
+                            it.Activated();
                         }
                         break;
                 }

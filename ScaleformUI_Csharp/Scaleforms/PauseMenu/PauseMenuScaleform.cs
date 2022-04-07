@@ -27,8 +27,6 @@ namespace ScaleformUI
             _pause = new Scaleform("pausemenu");
         }
 
-        
-
         public void SetHeaderTitle(string title, string subtitle = "", bool shiftUpHeader = false)
         {
             _header.CallFunction("SET_HEADER_TITLE", title, subtitle, shiftUpHeader);

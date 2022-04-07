@@ -159,7 +159,7 @@ namespace ScaleformUI.PauseMenu
             ColoredBarColor = barColor;
         }
 
-        internal void Activate()
+        internal void Activated()
         {
             if(ItemType == SettingsItemType.Basic)
             {

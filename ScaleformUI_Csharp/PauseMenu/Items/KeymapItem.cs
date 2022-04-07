@@ -29,10 +29,5 @@ namespace ScaleformUI.PauseMenu
             SecondaryKeyboard = secondaryKeyboard;
             SecondaryGamepad = secondaryGamepad;
         }
-
-        public static explicit operator KeymapItem(TabLeftItem v)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
