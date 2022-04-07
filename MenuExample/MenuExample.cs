@@ -962,6 +962,9 @@ public class MenuExample : BaseScript
                     ScaleformUI.ScaleformUI.InstructionalButtons.SetInstructionalButtons(buttons);
                 }
             }
+			else if (focusLevel == 0)
+				ScaleformUI.ScaleformUI.InstructionalButtons.SetInstructionalButtons(menu.InstructionalButtons);
+
 		};
 
 		pauseMenu.OnLeftItemChange += (menu, tabIndex, focusLevel, leftItemIndex) =>

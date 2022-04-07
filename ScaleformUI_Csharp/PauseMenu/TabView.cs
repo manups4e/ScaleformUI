@@ -60,7 +60,7 @@ namespace ScaleformUI.PauseMenu
         public bool HideTabs { get; set; }
         public bool DisplayHeader = true;
 
-        public List<InstructionalButton> buttons = new()
+        public List<InstructionalButton> InstructionalButtons = new()
         {
             new InstructionalButton(Control.PhoneSelect, UIMenu._selectTextLocalized),
             new InstructionalButton(Control.PhoneCancel, UIMenu._backTextLocalized),
@@ -111,7 +111,7 @@ namespace ScaleformUI.PauseMenu
                     SendPauseMenuOpen();
                     Screen.Effects.Start(ScreenEffect.FocusOut, 800);
                     API.TransitionToBlurred(700);
-                    ScaleformUI.InstructionalButtons.SetInstructionalButtons(buttons);
+                    ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
                     API.SetPlayerControl(Game.Player.Handle, false, 0);
                 }
                 else
