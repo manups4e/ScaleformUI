@@ -1,19 +1,17 @@
 local pool = MenuPool.New()
+
+-- to handle controls and inputs to the menu
 Citizen.CreateThread(function()
 	pool:RefreshIndex()
 	while true do
 		Wait(0)
+        pool:ProcessMenus()
         pool:ProcessControl()
 	end
 end)
 
-Citizen.CreateThread(function()
-	while true do
-		Wait(0)
-        pool:ProcessMouse()
-	end
-end)
-
+-- to draw the menu... since the controls await response from the Scaleform..
+-- drawing in the same thread of the controls would lead to a blinking menu everytime a control is pressed.
 Citizen.CreateThread(function()
 	while true do
 		Wait(0)
@@ -21,18 +19,17 @@ Citizen.CreateThread(function()
 	end
 end)
 
-Citizen.CreateThread(function()
-
+function CreateMenu()
 	local txd = CreateRuntimeTxd("scaleformui")
 	local dui = CreateDui("https://sleeping-tears.xyz/img/gta5/hiccup_racing.png", 288, 160)
 	local sidepanel_txn = CreateRuntimeTextureFromDuiHandle(txd, "sidepanel", GetDuiHandle(dui))
 
-	local exampleMenu = UIMenu.New("Native UI", "ScaleformUI SHOWCASE", 50, 50, true, nil, nil, true)
+	local exampleMenu = UIMenu.New("ScaleformUI UI", "ScaleformUI SHOWCASE", 50, 50, true, nil, nil, true)
 	exampleMenu:MaxItemsOnScreen(4)
 	pool:Add(exampleMenu)
 
 	local ketchupItem = UIMenuCheckboxItem.New("Add ketchup?", true, 0, "Do you wish to add ketchup?")
-	ketchupItem:SetLeftBadge(BadgeStyle.STAR);
+	ketchupItem:SetLeftBadge(BadgeStyle.STAR)
 	local sidePanel = UIMissionDetailsPanel.New(1, "Side Panel", 6, true, "scaleformui", "sidepanel")
 	local detailItem1 = UIMenuFreemodeDetailsImageItem.New("Left Label", "Right Label", BadgeStyle.BRIEFCASE, Colours.HUD_COLOUR_FREEMODE)
 	local detailItem2 = UIMenuFreemodeDetailsImageItem.New("Left Label", "Right Label", BadgeStyle.STAR, Colours.HUD_COLOUR_GOLD)
@@ -55,12 +52,15 @@ Citizen.CreateThread(function()
 	local cookItem = UIMenuItem.New("Cook!", "Cook the dish with the appropiate ingredients and ketchup.")
 	exampleMenu:AddItem(cookItem)
 	cookItem:SetRightBadge(BadgeStyle.STAR)
+	cookItem:SetLeftBadge(BadgeStyle.STAR)
+
 
 	local colorItem = UIMenuItem.New("UIMenuItem with Colors", "~b~Look!!~r~I can be colored ~y~too!!~w~", 21, 24)
+	colorItem:SetLeftBadge(BadgeStyle.STAR)
 	exampleMenu:AddItem(colorItem)
 	local sidePanelVehicleColor = UIVehicleColorPickerPanel.New(1, "ColorPicker", 6)
 
-	local dynamicValue = 0;
+	local dynamicValue = 0
 	local dynamicListItem = UIMenuDynamicListItem.New("Dynamic List Item", "Try pressing ~INPUT_FRONTEND_LEFT~ or ~INPUT_FRONTEND_RIGHT~", tostring(dynamicValue), function(item, direction)
 		if(direction == "left") then
 			dynamicValue = dynamicValue -1
@@ -70,6 +70,7 @@ Citizen.CreateThread(function()
 		return tostring(dynamicValue)
 	end)
 	exampleMenu:AddItem(dynamicListItem)
+	dynamicListItem:SetLeftBadge(BadgeStyle.STAR)
 
 	local seperatorItem1 = UIMenuSeperatorItem.New("Separator (Jumped)", true)
 	local seperatorItem2 = UIMenuSeperatorItem.New("Separator (not Jumped)", false)
@@ -134,11 +135,11 @@ Citizen.CreateThread(function()
 	detailsWindow.DetailStats = {
 		{
 			Percentage = 100,
-			HudColor = 6
+			Colours = 6
 		},
 		{
 			Percentage = 0,
-			HudColor = 50
+			Colours = 50
 		}
 	}
 
@@ -215,21 +216,164 @@ Citizen.CreateThread(function()
 		detailsWindow:UpdateLabels("Parents resemblance", "Dad: " .. value .. "%", "Mom: " .. (100 - value) .. "%")
 	end
 
+	exampleMenu:Visible(true)
+end
+
+function CreatePauseMenu()
+	local pauseMenuExample = TabView.New("ScaleformUI LUA", "THE LUA API", GetPlayerName(PlayerId()), "String middle", "String bottom")
+
+	--[[
+	local handle = RegisterPedheadshot(PlayerPedId())
+    while not IsPedheadshotReady(handle) or not IsPedheadshotValid(handle) do Citizen.Wait(0) end
+    local txd = GetPedheadshotTxdString(handle)
+	pauseMenuExample:HeaderPicture(txd, txd) 	-- pauseMenuExample:CrewPicture used to add a picture on the left of the HeaderPicture
+	print("PedHandle => " .. handle)
+	UnregisterPedheadshot(handle) -- call it right after adding the menu.. this way the txd will be loaded correctly by the scaleform.. 
+	]]
+
+	pool:AddPauseMenu(pauseMenuExample)
+
+	local basicTab = TabTextItem.New("TABTEXTITEM", "This is the Title!")
+	basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+	basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~r~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+	basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~b~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+	basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~g~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+	basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+	basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+	basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+	basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+	basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+	basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+	basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+	basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"))
+	pauseMenuExample:AddTab(basicTab)
+
+	local multiItemTab = TabSubMenuItem.New("TabSubMenu") -- this is the tab with multiple sub menus in it.. each submenu has a different purpose
+	pauseMenuExample:AddTab(multiItemTab)
+	local first = TabLeftItem.New("1 - Empty", LeftItemType.Empty) -- empty item.. 
+	local second = TabLeftItem.New("2 - Info", LeftItemType.Info) -- info (like briefings..)
+	local third = TabLeftItem.New("3 - Statistics", LeftItemType.Statistics) -- for statistics
+	local fourth = TabLeftItem.New("4 - Settings", LeftItemType.Settings) -- well.. settings..
+	local fifth = TabLeftItem.New("5 - Keymaps", LeftItemType.Keymap) -- keymaps for custom keymapping 
+	multiItemTab:AddLeftItem(first)
+	multiItemTab:AddLeftItem(second)
+	multiItemTab:AddLeftItem(third)
+	multiItemTab:AddLeftItem(fourth)
+	multiItemTab:AddLeftItem(fifth)
+
+	second.TextTitle = "Info Title!!"
+	second:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+	second:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~r~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+	second:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~b~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+	second:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~g~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+	second:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+	second:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+	second:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+	second:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+	second:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+	second:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+	second:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+	second:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"))
+
+	local _labelStatItem = StatsTabItem.NewBasic("Item's Label", "Item's right label")
+	local _coloredBarStatItem0 = StatsTabItem.NewBar("Item's Label", 0, Colours.HUD_COLOUR_ORANGE)
+	local _coloredBarStatItem1 = StatsTabItem.NewBar("Item's Label", 25, Colours.HUD_COLOUR_RED)
+	local _coloredBarStatItem2 = StatsTabItem.NewBar("Item's Label", 50, Colours.HUD_COLOUR_BLUE)
+	local _coloredBarStatItem3 = StatsTabItem.NewBar("Item's Label", 75, Colours.HUD_COLOUR_GREEN)
+	local _coloredBarStatItem4 = StatsTabItem.NewBar("Item's Label", 100, Colours.HUD_COLOUR_PURPLE)
+
+	third:AddItem(_labelStatItem)
+	third:AddItem(_coloredBarStatItem0)
+	third:AddItem(_coloredBarStatItem1)
+	third:AddItem(_coloredBarStatItem2)
+	third:AddItem(_coloredBarStatItem3)
+	third:AddItem(_coloredBarStatItem4)
+
+	local itemList = { "This", "Is", "The", "List", "Super", "Power", "Wooow" }
+	-- different New for each type of setting
+	local _settings1 = SettingsTabItem.NewBasic("Item's Label", "Item's right Label") 
+	local _settings2 = SettingsTabItem.NewList("Item's Label", itemList, 0)
+	local _settings3 = SettingsTabItem.NewProgress("Item's Label", 100, 25, false, Colours.HUD_COLOUR_FREEMODE)
+	local _settings4 = SettingsTabItem.NewProgress("Item's Label", 100, 75, true, Colours.HUD_COLOUR_PINK)
+	local _settings5 = SettingsTabItem.NewCheckbox("Item's Label", 1, true) -- 0 = cross / 1 = tick
+	local _settings6 = SettingsTabItem.NewSlider("Item's Label", 100, 50, Colours.HUD_COLOUR_RED)
+	fourth:AddItem(_settings1)
+	fourth:AddItem(_settings2)
+	fourth:AddItem(_settings3)
+	fourth:AddItem(_settings4)
+	fourth:AddItem(_settings5)
+	fourth:AddItem(_settings6)
+
+	fifth.TextTitle = "ACTION"
+	fifth.KeymapRightLabel_1 = "PRIMARY"
+	fifth.KeymapRightLabel_2 = "SECONDARY"
+	local key1 = KeymapItem.New("Simple Keymap", "~INPUT_FRONTEND_ACCEPT~", "~INPUT_VEH_EXIT~")
+	local key2 = KeymapItem.New("Advanced Keymap", "~INPUT_SPRINT~ + ~INPUT_CONTEXT~", "", "", "~INPUTGROUP_FRONTEND_TRIGGERS~")
+	fifth:AddItem(key1)
+	fifth:AddItem(key2)
+	fifth:AddItem(key1)
+	fifth:AddItem(key2)
+	fifth:AddItem(key1)
+	fifth:AddItem(key2)
+	fifth:AddItem(key1)
+	fifth:AddItem(key2)
+
+	pauseMenuExample.OnPauseMenuOpen = function(menu)
+		Notifications:ShowSubtitle(menu.Title .. " Opened!")
+	end
+
+	pauseMenuExample.OnPauseMenuClose = function(menu)
+		Notifications:ShowSubtitle(menu.Title .. " Closed!")
+	end
+
+	pauseMenuExample.OnPauseMenuTabChanged = function(menu, tab, tabIndex)
+		Notifications:ShowSubtitle(tab.Label .. " Selected!")
+	end
+
+	pauseMenuExample.OnPauseMenuFocusChanged = function(menu, tab, focusLevel, leftItemIndex)
+		Notifications:ShowSubtitle(tab.Label .. " Focus at level =>~y~ " .. focusLevel .. " ~w~~s~!")
+		if focusLevel == 1 then
+			local _, subType = tab()
+			if subType == "TabTextItem" then
+				local buttons = {
+					InstructionalButton.New(GetLabelText("HUD_INPUT3"), -1, 177, 177, -1),
+					InstructionalButton.New("Scroll text", 0, 2, -1, -1),
+					InstructionalButton.New("Scroll text", 1, -1, -1, "INPUTGROUP_CURSOR_SCROLL")
+					-- cannot make difference between controller / keyboard here in 1 line because we are using the InputGroup for keyboard
+				}
+				ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(buttons)
+			end 
+		elseif focusLevel == 0 then
+			ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(menu.InstructionalButtons)
+		end
+	end
+
+	pauseMenuExample.OnLeftItemChange = function(menu, tabIndex, focusLevel, leftItemIndex)
+		Notifications:ShowSubtitle(menu.Tabs[tabIndex].Label .. " Focus at level => ~y~" .. focusLevel .. "~w~, and left Item ~o~N° " .. leftItemIndex .. "~w~ selected!")
+	end
+
+	pauseMenuExample.OnRightItemChange = function (menu, tabIndex, focusLevel, leftItemIndex, rightItemIndex)
+		Notifications:ShowSubtitle(menuTabs[tabIndex].Label .. " Focus at level => ~y~" .. focusLevel .. "~w~, left Item ~o~N° " .. leftItemIndex .. "~w~ and right Item ~b~N° " .. rightItemIndex .. "~w~ selected!")
+	end
+
+	pauseMenuExample:Visible(true)
+end
+
+Citizen.CreateThread(function()
 	local pos = GetEntityCoords(PlayerPedId(), true)
 	--type, position, scale, distance, color, placeOnGround, bobUpDown, rotate, faceCamera, checkZ
 	local marker = Marker.New(1, pos, vector3(2,2,2), 100.0, {R=0, G= 100, B=50, A=255}, true, false, false, false, true)
 
 	while true do
 		Wait(0)
-		if IsControlJustPressed(0, 51) then
-			exampleMenu:Visible(true)
-		end
-		if IsControlJustPressed(0, 0) then
-			ScaleformUI.Scaleforms._ui:Dispose()
-			ScaleformUI.Scaleforms._ui = 0
-		end
 		marker:Draw()
 		ScaleformUI.Notifications:DrawText(0.3, 0.7, "Ped is in Range => " .. tostring(marker:IsInRange()))
 		ScaleformUI.Notifications:DrawText(0.3, 0.725, "Ped is in Marker =>" .. tostring(marker.IsInMarker))
+		if IsControlJustPressed(0, 166) and not pool:IsAnyMenuOpen() then
+			CreateMenu()
+		end
+		if IsControlJustPressed(0, 167) and not pool:IsAnyMenuOpen() then
+			CreatePauseMenu()
+		end
 	end
 end)
