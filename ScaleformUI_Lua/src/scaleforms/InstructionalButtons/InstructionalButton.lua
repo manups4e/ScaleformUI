@@ -10,14 +10,12 @@ button.__index = button
 
 function InstructionalButton.New(text, padcheck, gamepadControls, keyboardControls, inputGroup)
     local _button = {
-        Text = "",
+        Text = text or "",
         GamepadButtons = nil,
         GamepadButton = -1,
         KeyboardButtons = nil,
         KeyboardButton = -1
     }
-    
-    _button.Text = text or ""
     
     if type(gamepadControls) == "table" then
         _button.GamepadButtons = gamepadControls
