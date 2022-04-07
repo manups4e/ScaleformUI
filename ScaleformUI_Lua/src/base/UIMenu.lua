@@ -53,8 +53,11 @@ function UIMenu.New(Title, Subtitle, X, Y, glare, txtDictionary, txtName, altern
         TxtDictionary = txtDictionary,
         TxtName = txtName,
         Glare = glare or false,
+        _keyboard = false,
+        _changed = false,
         _maxItem = 7,
         _menuGlare = 0,
+        _scaledWidth = (720 * GetScreenAspectRatio(false)),
         Controls = {
             Back = {
                 Enabled = true,
@@ -761,7 +764,9 @@ end
 ---Draw
 function UIMenu:Draw()
     if not self._Visible or ScaleformUI.Scaleforms.Warning:IsShowing() then return end
-    while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
+    if not ScaleformUI.Scaleforms._ui:IsLoaded() then
+        while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
+    end
 
     HideHudComponentThisFrame(19)
     ShowCursorThisFrame()
@@ -769,10 +774,10 @@ function UIMenu:Draw()
     if self.Settings.ControlDisablingEnabled then
         self:DisEnableControls(false)
     end
-
+    
     local x = self.Position.X / 1280
     local y = self.Position.Y / 720
-    local width = 1280 / (720 * GetScreenAspectRatio(false))
+    local width = 1280 / self._scaledWidth
     local height = 720 / 720
     ScaleformUI.Scaleforms._ui:Render2DNormal(x + (width / 2.0), y + (height / 2.0), width, height)
 
@@ -785,7 +790,7 @@ function UIMenu:Draw()
         self._menuGlare:Render2DNormal(gx, gy, 1.0, 1.0)
     end
 
-    if(not IsInputDisabled(2)) then
+    if not IsInputDisabled(2) then
         if self._keyboard then
             self._keyboard = false
             self._changed = true
