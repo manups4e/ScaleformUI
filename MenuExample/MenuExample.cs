@@ -834,11 +834,15 @@ public class MenuExample : BaseScript
 		await Task.FromResult(0);
 	}
 
-	public void PauseMenuShowcase(UIMenu _menu)
+	public async void PauseMenuShowcase(UIMenu _menu)
     {
 		var mainMenu = _menu;
 		// tabview is the main menu.. the container of all the tabs.
 		TabView pauseMenu = new TabView("PauseMenu example", "Look there's a subtitle too!", "Detail 1", "Detail 2", "Detail 3");
+		var mugshot = API.RegisterPedheadshot(Game.PlayerPed.Handle);
+		while (!API.IsPedheadshotReady(mugshot)) await BaseScript.Delay(1);
+		var txd = API.GetPedheadshotTxdString(mugshot);
+		pauseMenu.HeaderPicture = new(txd, txd);
 		_menuPool.Add(pauseMenu);
 		TabTextItem basicTab = new TabTextItem("TabTextItem", "This is the title!");
 		basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
@@ -977,6 +981,7 @@ public class MenuExample : BaseScript
 			Screen.ShowSubtitle(menu.Tabs[tabIndex].Title + " Focus at level => ~y~" + focusLevel + "~w~, left Item ~o~N° " + (leftItemIndex + 1) + "~w~ and right Item ~b~N° " + (rightItemIndex+1) + "~w~ selected!");
 		};
 		pauseMenu.Visible = true;
+		API.UnregisterPedheadshot(mugshot);
 	}
 
 	public MenuExample()
