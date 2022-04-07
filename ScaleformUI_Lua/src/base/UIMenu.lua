@@ -81,7 +81,10 @@ function UIMenu.New(Title, Subtitle, X, Y, glare, txtDictionary, txtName, altern
         ActiveItem = 0,
         Dirty = false,
         ReDraw = true,
-        InstructionalButtons = {},
+        InstructionalButtons = {
+            InstructionalButton.New(GetLabelText("HUD_INPUT2"), -1, 176, 176, -1),
+            InstructionalButton.New(GetLabelText("HUD_INPUT3"), -1, 177, 177, -1)
+        },
         OnIndexChange = function(menu, newindex)
         end,
         OnListChange = function(menu, list, newindex)
@@ -201,7 +204,7 @@ end
 ---@param bool boolean
 function UIMenu:InstructionalButtons(bool)
     if bool ~= nil then
-        self.Settings.InstrucitonalButtons = tobool(bool)
+        self.Settings.InstructionalButtons = tobool(bool)
     end
 end
 
@@ -333,12 +336,14 @@ function UIMenu:Visible(bool)
 
         if #self.Children > 0 and self.Children[self.Items[self:CurrentSelection()]] ~= nil and self.Children[self.Items[self:CurrentSelection()]]:Visible() then return end
         if bool then
+            ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
             self.OnMenuChanged(nil, self, "opened")
             self:BuildUpMenu()
         else
             self.OnMenuChanged(self, nil, "closed")
             ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
         end
+        ScaleformUI.Scaleforms.InstructionalButtons:Enabled(bool)
         if self.Settings.ResetCursorOnOpen then
             local W, H = GetScreenResolution()
             SetCursorLocation(W / 2, H / 2)
