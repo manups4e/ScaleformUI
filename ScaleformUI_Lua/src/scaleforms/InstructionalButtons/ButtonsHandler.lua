@@ -94,21 +94,23 @@ function handler:UpdateButtons()
 
     for k, button in pairs (self.ControlButtons) do
         if button:IsUsingController() then
-            if button.PadCheck == 1 then return end
-            if ScaleformUI.Scaleforms.Warning:IsShowing() then
-                self._sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text, 0, -1);
-            else
-                self._sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text);
-            end
-        else
-            if button.PadCheck == 0 then return end
-            if self.UseMouseButtons then
-                _sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text, 1, button.KeyboardButton);
-            else
+            if button.PadCheck == 0 or button.PadCheck == -1 then
                 if ScaleformUI.Scaleforms.Warning:IsShowing() then
                     self._sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text, 0, -1);
                 else
                     self._sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text);
+                end
+            end
+        else
+            if button.PadCheck == 1 or button.PadCheck == -1 then
+                if self.UseMouseButtons then
+                    _sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text, 1, button.KeyboardButton);
+                else
+                    if ScaleformUI.Scaleforms.Warning:IsShowing() then
+                        self._sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text, 0, -1);
+                    else
+                        self._sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text);
+                    end
                 end
             end
         end

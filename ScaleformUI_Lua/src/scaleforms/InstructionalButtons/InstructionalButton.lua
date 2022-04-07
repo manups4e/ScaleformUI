@@ -14,11 +14,14 @@ function InstructionalButton.New(text, padcheck, gamepadControls, keyboardContro
         GamepadButtons = nil,
         GamepadButton = -1,
         KeyboardButtons = nil,
-        KeyboardButton = -1
+        KeyboardButton = -1,
+        PadCheck = padcheck or -1
     }
     
     if type(gamepadControls) == "table" then
-        _button.GamepadButtons = gamepadControls
+        if padcheck == 0 or padcheck == -1 then
+            _button.GamepadButtons = gamepadControls
+        end
     else
         if padcheck == 0 or padcheck == -1 then
             _button.GamepadButton = gamepadControls
@@ -27,7 +30,9 @@ function InstructionalButton.New(text, padcheck, gamepadControls, keyboardContro
         end
     end
     if type(keyboardControls) == "table" then
-        _button.KeyboardButtons = keyboardControls
+        if padcheck == 1 or padcheck == -1 then
+            _button.KeyboardButtons = keyboardControls
+        end
     else
         if padcheck == 1 or padcheck == -1 then
             _button.KeyboardButton = keyboardControls 
@@ -36,7 +41,7 @@ function InstructionalButton.New(text, padcheck, gamepadControls, keyboardContro
         end
     end
     _button.InputGroupButton = inputGroup or -1
-    _button.PadCheck = padcheck or -1
+    
     return setmetatable(_button, button)
 end
 
