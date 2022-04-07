@@ -754,6 +754,10 @@ function UIMenu:ReleaseMenuFromItem(Item)
     end
 end
 
+function UIMenu:UpdateDescription()
+    ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_ITEM_DESCRIPTION", false, self:CurrentSelection()-1, "desc_{" .. self:CurrentSelection() .."}")
+end
+
 ---Draw
 function UIMenu:Draw()
     if not self._Visible or ScaleformUI.Scaleforms.Warning:IsShowing() then return end
@@ -781,16 +785,20 @@ function UIMenu:Draw()
         self._menuGlare:Render2DNormal(gx, gy, 1.0, 1.0)
     end
 
-    for k,item in pairs(self.Items) do
-        local Type, SubType = item()
-
-        AddTextEntry("desc_{" .. k .."}", item:Description())
-
-        if SubType == "UIMenuSliderItem" or SubType == "UIMenuProgressItem" then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_ITEM", false, k-1, "desc_{" .. k .."}", item._mainColor, item._highlightColor, item._textColor, item._highlightedTextColor, item.SliderColor, item.BackgroundSliderColor)
-        else
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_ITEM", false, k-1, "desc_{" .. k .."}", item._mainColor, item._highlightColor, item._textColor, item._highlightedTextColor)
+    if(not IsInputDisabled(2)) then
+        if self._keyboard then
+            self._keyboard = false
+            self._changed = true
         end
+    else
+        if not self._keyboard then
+            self._keyboard = true
+            self._changed = true
+        end
+    end
+    if self._changed then
+        self:UpdateDescription()
+        self._changed = false
     end
 end
 
@@ -885,6 +893,22 @@ end
 
 ---ProcessMousePressed
 function UIMenu:ProcessMousePressed()
+    local menuSound = -1
+    if not self._Visible or self.JustOpened or #self.Items == 0 or tobool(not IsInputDisabled(2)) or not self.Settings.MouseControlsEnabled then
+        EnableControlAction(0, 2, true)
+        EnableControlAction(0, 1, true)
+        EnableControlAction(0, 25, true)
+        EnableControlAction(0, 24, true)
+        if self.Dirty then
+            for _, Item in pairs(self.Items) do
+                if Item:Hovered() then
+                    Item:Hovered(false)
+                end
+            end
+        end
+        return
+    end
+
     if IsDisabledControlPressed(1, 24) then
         local mouse = { 
             X = GetDisabledControlNormal(0, 239) * (720 * GetScreenAspectRatio(false)) - self.Position.X,
