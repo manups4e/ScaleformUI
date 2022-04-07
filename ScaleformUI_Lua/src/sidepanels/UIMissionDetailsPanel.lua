@@ -66,7 +66,6 @@ function UIMissionDetailsPanel:AddItem(newitem)
 end
 
 function UIMissionDetailsPanel:RemoveItemAt(index)	
-    print(#self.Items)	
     table.remove(self.Items, index)	
     if self.ParentItem ~= nil then	
         ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_MISSION_DETAILS_DESC_ITEM", false, index - 1)	
