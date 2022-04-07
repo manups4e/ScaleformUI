@@ -221,6 +221,9 @@ function Notifications:ShowVSNotification(ped1, ped2, color1, color2)
 
     BeginTextCommandThefeedPost("")
     EndTextCommandThefeedPostVersusTu(txd_1, txd_1, 12, txd_2, txd_2, 1, color1, color2)
+
+    UnregisterPedheadshot(handle_1)
+    UnregisterPedheadshot(handle_2)
 end
 
 function Notifications:DrawText3D(coords, color, text, font, size)
@@ -276,4 +279,11 @@ function Notifications:DrawText(x, y, text, color, font, textAlignment, shadow, 
     BeginTextCommandDisplayText("jamyfafi")
     AddTextComponentSubstringPlayerName(text)
     EndTextCommandDisplayText(x, y)
+end
+
+function Notifications:ShowSubtitle(msg, time)
+    if(time == nil) then time = 2500 end
+    AddTextEntry("ScaleformUISubtitle", msg)
+    BeginTextCommandPrint("ScaleformUISubtitle")
+    EndTextCommandPrint(time, true)
 end
