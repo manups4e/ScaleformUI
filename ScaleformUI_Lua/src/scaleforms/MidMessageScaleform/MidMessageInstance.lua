@@ -34,7 +34,7 @@ function m:ShowColoredShard(msg, desc, textColor, useDarkerShard, useCondensedSh
     if time == nil then  time = 5000 end
     self:Load()
     self._start = GetGameTimer();
-    _sc.CallFunction("SHOW_SHARD_MIDSIZED_MESSAGE", false, msg, desc, bgColor, useDarkerShard, useCondensedShard);
+    _sc:CallFunction("SHOW_SHARD_MIDSIZED_MESSAGE", false, msg, desc, bgColor, useDarkerShard, useCondensedShard);
     self._timer = time;
     self._hasAnimatedOut = false;
 end
