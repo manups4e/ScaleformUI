@@ -319,11 +319,11 @@ function UIMenu:Clear()
 end
 
 function UIMenu:MaxItemsOnScreen(max)
-    if(max ~= nil) then
-        _maxItem = max
+    if max ~= nil then
+        self._maxItem = max
         self:RefreshIndex()
     else
-        return _maxItem
+        return self._maxItem
     end
 end
 
