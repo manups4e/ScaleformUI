@@ -724,7 +724,7 @@ function UIMenu:GoBack()
         ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
         ScaleformUI.Scaleforms.InstructionalButtons:Enabled(true)
         ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.ParentMenu.InstructionalButtons)
-        self.ParentMenu._Visible = true
+        self.ParentMenu:Visible(true)
         self.ParentMenu:BuildUpMenu()
         self.OnMenuChanged(self, self.ParentMenu, "backwards")
         self.ParentMenu.OnMenuChanged(self, self.ParentMenu, "backwards")
