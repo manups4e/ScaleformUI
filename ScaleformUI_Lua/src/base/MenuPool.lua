@@ -237,6 +237,11 @@ end
 ---CloseAllMenus
 function MenuPool:CloseAllMenus()
     for _, Menu in pairs(self.Menus) do
+        if #Menu.Children > 0 then
+            for k,v in pairs(Menu.Children) do
+                v:Visible(false)
+            end
+        end
         if Menu:Visible() then
             Menu:Visible(false)
             if ScaleformUI.Scaleforms.InstructionalButtons:Enabled() then
