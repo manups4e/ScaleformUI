@@ -244,10 +244,10 @@ function MenuPool:CloseAllMenus()
         end
         if Menu:Visible() then
             Menu:Visible(false)
-            if ScaleformUI.Scaleforms.InstructionalButtons:Enabled() then
-                ScaleformUI.Scaleforms.InstructionalButtons:Enabled(false)
-            end
         end
+    end
+    if ScaleformUI.Scaleforms.InstructionalButtons:Enabled() then
+        ScaleformUI.Scaleforms.InstructionalButtons:Enabled(false)
     end
 end
 
