@@ -17,14 +17,14 @@ string.Insert = function(self, pos, str2)
     return self:sub(1,pos)..str2..self:sub(pos+1)
 end
 
--- Return the first index with the given value (or nil if not found).
+-- Return the first index with the given value (or -1 if not found).
 function IndexOf(array, value)
     for i, v in ipairs(array) do
         if v == value then
             return i
         end
     end
-    return nil
+    return -1
 end
 
 -- Return a key with the given value (or nil if not found).  If there are
