@@ -185,8 +185,7 @@ end
 function MenuPool:ProcessMouse()
     for _, Menu in pairs(self.Menus) do
         if Menu:Visible() then
-            Menu:ProcessMouseJustPressed()
-            Menu:ProcessMousePressed()
+            Menu:ProcessMouse()
         end
     end
 end

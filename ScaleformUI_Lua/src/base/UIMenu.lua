@@ -769,7 +769,6 @@ function UIMenu:Draw()
     end
 
     HideHudComponentThisFrame(19)
-    ShowCursorThisFrame()
 
     if self.Settings.ControlDisablingEnabled then
         self:DisEnableControls(false)
@@ -807,10 +806,8 @@ function UIMenu:Draw()
     end
 end
 
----ProcessMouseJustPressed
-function UIMenu:ProcessMouseJustPressed()
-    local menuSound = -1
-    if not self._Visible or self.JustOpened or #self.Items == 0 or tobool(not IsInputDisabled(2)) or not self.Settings.MouseControlsEnabled then
+function self:ProcessMouse()
+    if not self._Visible or self.JustOpened or #self.Items == 0 or not IsInputDisabled(2) or not self.Settings.MouseControlsEnabled then
         EnableControlAction(0, 2, true)
         EnableControlAction(0, 1, true)
         EnableControlAction(0, 25, true)
@@ -824,6 +821,17 @@ function UIMenu:ProcessMouseJustPressed()
         end
         return
     end
+
+    ShowCursorThisFrame();
+
+    
+    self:ProcessMousePressed()
+    self:ProcessMouseJustPressed()
+end
+
+---ProcessMouseJustPressed
+function UIMenu:ProcessMouseJustPressed()
+    local menuSound = -1
 
     if IsDisabledControlJustPressed(0, 24) then
         local mouse = { 
@@ -899,20 +907,6 @@ end
 ---ProcessMousePressed
 function UIMenu:ProcessMousePressed()
     local menuSound = -1
-    if not self._Visible or self.JustOpened or #self.Items == 0 or tobool(not IsInputDisabled(2)) or not self.Settings.MouseControlsEnabled then
-        EnableControlAction(0, 2, true)
-        EnableControlAction(0, 1, true)
-        EnableControlAction(0, 25, true)
-        EnableControlAction(0, 24, true)
-        if self.Dirty then
-            for _, Item in pairs(self.Items) do
-                if Item:Hovered() then
-                    Item:Hovered(false)
-                end
-            end
-        end
-        return
-    end
 
     if IsDisabledControlPressed(1, 24) then
         local mouse = { 
