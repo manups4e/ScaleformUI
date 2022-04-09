@@ -159,13 +159,6 @@ function MenuPool:RefreshIndex()
     end
 end
 
----ProcessMenus
-function MenuPool:ProcessMenus()
-    self:ProcessControl()
-    self:ProcessMouse()
-    self:Draw()
-end
-
 ---ProcessControl
 function MenuPool:ProcessControl()
     for _, Menu in pairs(self.Menus) do
