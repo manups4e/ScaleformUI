@@ -1,11 +1,12 @@
 local pool = MenuPool.New()
+local animEnabled = true
 
 -- to handle controls and inputs to the menu
 Citizen.CreateThread(function()
 	pool:RefreshIndex()
 	while true do
 		Wait(0)
-        pool:ProcessMenus()
+        pool:ProcessMouse()
         pool:ProcessControl()
 	end
 end)
@@ -28,7 +29,7 @@ function CreateMenu()
 	exampleMenu:MaxItemsOnScreen(4)
 	pool:Add(exampleMenu)
 
-	local ketchupItem = UIMenuCheckboxItem.New("Add ketchup?", true, 0, "Do you wish to add ketchup?")
+	local ketchupItem = UIMenuCheckboxItem.New("Scrolling animation enabled?", animEnabled, 1, "Do you wish to enable the scrolling animation?")
 	ketchupItem:SetLeftBadge(BadgeStyle.STAR)
 	local sidePanel = UIMissionDetailsPanel.New(1, "Side Panel", 6, true, "scaleformui", "sidepanel")
 	local detailItem1 = UIMenuFreemodeDetailsImageItem.New("Left Label", "Right Label", BadgeStyle.BRIEFCASE, Colours.HUD_COLOUR_FREEMODE)
@@ -47,7 +48,17 @@ function CreateMenu()
 	sidePanel:AddItem(detailItem6)
 	sidePanel:AddItem(detailItem7)
 
+	ketchupItem:AddSidePanel(sidePanel)
 	exampleMenu:AddItem(ketchupItem)
+
+	local animations = {}
+	for k,v in pairs(MenuAnimationType) do
+		table.insert(animations, k)
+	end
+
+	local scrollingItem = UIMenuListItem.New("Choose the scrolling animation", animations, exampleMenu:AnimationType(), "~BLIP_BARBER~ ~BLIP_INFO_ICON~ ~BLIP_TANK~ ~BLIP_OFFICE~ ~BLIP_CRIM_DRUGS~ ~BLIP_WAYPOINT~ ~INPUTGROUP_MOVE~~n~You can use Blips and Inputs in description as you prefer!~n~⚠ 🐌 ❤️ 🥺 💪🏻 You can use Emojis too!", Colours.HUD_COLOUR_FREEMODE_DARK, Colours.HUD_COLOUR_FREEMODE);
+	scrollingItem:BlinkDescription(true);
+	exampleMenu:AddItem(scrollingItem);
 
 	local cookItem = UIMenuItem.New("Cook!", "Cook the dish with the appropiate ingredients and ketchup.")
 	exampleMenu:AddItem(cookItem)
@@ -113,8 +124,6 @@ function CreateMenu()
 	exampleMenu:AddItem(listPanelItem4)
 	listPanelItem4:AddPanel(statisticsPanel)
 
-	ketchupItem:AddSidePanel(sidePanel)
-
 	local windowSubmenu = pool:AddSubMenu(exampleMenu, "Heritage Menu", "", true, true)
 	local heritageWindow = UIMenuHeritageWindow.New(0, 0)
 	local detailsWindow = UIMenuDetailsWindow.New("Parents resemblance", "Dad:", "Mom:", true, {})
@@ -159,6 +168,17 @@ function CreateMenu()
 
 	ketchupItem.OnCheckboxChanged = function(menu, item, checked)
 		sidePanel:UpdatePanelTitle(tostring(checked))
+		menu:AnimationEnabled(checked)
+		scrollingItem:Enabled(checked)
+		if checked then
+			scrollingItem:SetLeftBadge(BadgeStyle.NONE)
+		else
+			scrollingItem:SetLeftBadge(1)
+		end
+	end
+
+	scrollingItem.OnListChanged = function(menu, item, index)
+		menu:AnimationType(index)
 	end
 
 	colorPanel.PanelChanged = function(menu, item, newindex)
