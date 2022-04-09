@@ -140,6 +140,12 @@ namespace ScaleformUI
             PadCheck = PadCheck.Any;
         }
 
+        /// <summary>
+        /// Add an InstructionalButton using the InputGroup to handle all the buttons needed automatically
+        /// </summary>
+        /// <param name="control">The InputGroup</param>
+        /// <param name="text">Help text that goes with the button.</param>
+        /// <param name="padFilter">Filter to show only with GamePad or Keyoboard (default both).</param>
         public InstructionalButton(InputGroup control, string text, PadCheck padFilter = PadCheck.Any)
 		{
             InputButton = control;

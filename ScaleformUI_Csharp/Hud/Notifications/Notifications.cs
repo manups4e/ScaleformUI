@@ -33,16 +33,6 @@ namespace ScaleformUI
 		Rose = 45
 	}
 
-	public enum IconType
-	{
-		ChatBox = 1,
-		Email = 2,
-		AdDFriendRequest = 3,
-		RightJumpingArrow = 7,
-		RPIcon = 8,
-		DollarIcon = 9
-	}
-
 	// Had to copy from Cfx API or i wouldn't have been able to use it
 	public sealed class ScaleformUINotification
 	{

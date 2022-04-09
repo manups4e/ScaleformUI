@@ -184,10 +184,14 @@ public class MenuExample : BaseScript
 		UIMenuItem showPopupButtons = new UIMenuItem("Show PopupWarning with buttons", "It waits until a button has been pressed!");
 		UIMenuListItem customInstr = new UIMenuListItem("SavingNotification", Enum.GetNames(typeof(LoadingSpinnerType)).Cast<dynamic>().ToList(), 0, "InstructionalButtons now give you the ability to dynamically edit, add, remove, customize your buttons, you can even use them outside the menu ~y~without having to run multiple instances of the same scaleform~w~, aren't you happy??");
 		UIMenuItem customInstr2 = new UIMenuItem("Add a random InstructionalButton!", "InstructionalButtons now give you the ability to dynamically edit, add, remove, customize your buttons, you can even use them outside the menu ~y~without having to run multiple instances of the same scaleform~w~, aren't you happy??");
+		UIMenuItem bigMessage = new UIMenuItem("BigMessage example", "");
+		UIMenuItem midMessage = new UIMenuItem("MediumMessage example", "");
 		scaleformMenu.AddItem(showSimplePopup);
 		scaleformMenu.AddItem(showPopupButtons);
 		scaleformMenu.AddItem(customInstr);
 		scaleformMenu.AddItem(customInstr2);
+		scaleformMenu.AddItem(bigMessage);
+		scaleformMenu.AddItem(midMessage);
 
 		#endregion
 
@@ -344,6 +348,14 @@ public class MenuExample : BaseScript
 			{
 				if (ScaleformUI.ScaleformUI.InstructionalButtons.ControlButtons.Count >= 6) return;
 				ScaleformUI.ScaleformUI.InstructionalButtons.AddInstructionalButton(new InstructionalButton((Control)new Random().Next(0, 250), "I'm a new button look at me!"));
+			}
+			else if (item == bigMessage)
+            {
+				ScaleformUI.ScaleformUI.BigMessageInstance.ShowSimpleShard("TITLE", "SUBTITLE");
+            }
+			else if (item == midMessage)
+            {
+				ScaleformUI.ScaleformUI.MedMessageInstance.ShowColoredShard("TITLE", "SUBTITLE", HudColor.HUD_COLOUR_FREEMODE);
 			}
 		};
 

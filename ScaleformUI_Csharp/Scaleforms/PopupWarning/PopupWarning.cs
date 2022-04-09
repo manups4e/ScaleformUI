@@ -70,11 +70,6 @@ namespace ScaleformUI
 			_warning.CallFunction("SHOW_POPUP_WARNING", 1000, title, subtitle, prompt, true, (int)type, errorMsg);
 		}
 
-		public async void ShowWarning(string title, string subtitle, int ms, string prompt = "", string errorMsg = "", WarningPopupType type = WarningPopupType.Classic)
-		{
-			await Load();
-			_warning.CallFunction("SHOW_POPUP_WARNING", ms, title, subtitle, prompt, true, (int)type, errorMsg);
-		}
 		/// <summary>
 		/// Updates the current Warning, this is used to change any text in the current warning screen.
 		/// </summary>
