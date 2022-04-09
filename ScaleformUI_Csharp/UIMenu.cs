@@ -1229,8 +1229,15 @@ namespace ScaleformUI
         {
             int selectedItem = CurrentSelection;
             MenuItems.RemoveAt(index);
+            if (Visible) ScaleformUI._ui.CallFunction("REMOVE_ITEM", index);
             CurrentSelection = selectedItem;
         }
+
+        public void RemoveItem(UIMenuItem item)
+        {
+            RemoveItemAt(MenuItems.IndexOf(item));
+        }
+
 
         /// <summary>
         /// Reset the current selected item to 0. Use this after you add or remove items dynamically.

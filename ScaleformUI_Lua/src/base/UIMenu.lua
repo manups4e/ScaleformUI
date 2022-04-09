@@ -313,13 +313,24 @@ function UIMenu:RemoveItemAt(Index)
     if tonumber(Index) then
         if self.Items[Index] then
             local SelectedItem = self:CurrentSelection()
-            if #self.Items > self.Pagination.Total and self.Pagination.Max == #self.Items - 1 then
-                self.Pagination.Min = self.Pagination.Min - 1
-                self.Pagination.Max = self.Pagination.Max + 1
-            end
             table.remove(self.Items, tonumber(Index))
+            if self:Visible() then
+                ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_ITEM", false, Index - 1) -- scaleform index starts at 0, better remove 1 to the index
+            end
             self:CurrentSelection(SelectedItem)
         end
+    end
+end
+
+function UIMenu:RemoveItem(item)
+    local idx = 0
+    for k,v in pairs(self.Items)do
+        if v:Label() == item:Label() then
+            idx = k
+        end
+    end
+    if idx > 0 then
+        self:RemoveItemAt(idx)
     end
 end
 
