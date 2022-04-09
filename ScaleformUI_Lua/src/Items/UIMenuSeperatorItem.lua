@@ -32,7 +32,7 @@ end
 ---@param str string
 function UIMenuSeperatorItem:Description(str)
 	if tostring(str) and str ~= nil then
-		self.Base._Description = tostring(str)
+		self.Base:Description(tostring(str), self)
 	else
 		return self.Base._Description
 	end
@@ -42,16 +42,16 @@ end
 ---@param Text string
 function UIMenuSeperatorItem:Label(Text)
 	if tostring(Text) and Text ~= nil then
-		self.Base:Label(tostring(Text))
+		self.Base:Label(tostring(Text), self)
 	else
 		return self.Base:Label()
 	end
 end
 
 function UIMenuItem:MainColor(color)
-    if(color)then
+    if color ~= nil then
         self.Base._mainColor = color
-        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor);
         end
     else
@@ -60,9 +60,9 @@ function UIMenuItem:MainColor(color)
 end
 
 function UIMenuItem:TextColor(color)
-    if(color)then
+    if color ~= nil then
         self.Base._textColor = color
-        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor);
         end
     else
@@ -71,9 +71,9 @@ function UIMenuItem:TextColor(color)
 end
 
 function UIMenuItem:HighlightColor(color)
-    if(color)then
+    if color ~= nil then
         self.Base._highlightColor = color
-        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor);
         end
     else
@@ -82,9 +82,9 @@ function UIMenuItem:HighlightColor(color)
 end
 
 function UIMenuItem:HighlightedTextColor(color)
-    if(color)then
+    if color ~= nil then
         self.Base._highlightedTextColor = color
-        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor);
         end
     else
@@ -96,7 +96,7 @@ end
 ---@param bool number
 function UIMenuSeperatorItem:Selected(bool)
 	if bool ~= nil then
-		self.Base._Selected = tobool(bool)
+		self.Base:Selected(tobool(bool), self)
 	else
 		return self.Base._Selected
 	end
@@ -116,7 +116,7 @@ end
 ---@param bool boolean
 function UIMenuSeperatorItem:Enabled(bool)
 	if bool ~= nil then
-		self.Base._Enabled = tobool(bool)
+		self.Base:Enabled(bool, self)
 	else
 		return self.Base._Enabled
 	end
@@ -124,7 +124,7 @@ end
 
 function UIMenuSeperatorItem:BlinkDescription(bool)
     if bool ~= nil then
-		self.Base:BlinkDescription(bool)
+		self.Base:BlinkDescription(bool, self)
 	else
 		return self.Base:BlinkDescription()
 	end

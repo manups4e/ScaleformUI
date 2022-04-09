@@ -32,11 +32,15 @@ function UIMenuCheckboxItem:AddSidePanel(sidePanel)
     if sidePanel() == "UIMissionDetailsPanel" then
         sidePanel:SetParentItem(self)
         self.SidePanel = sidePanel
-        ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
+		if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
+	        ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
+		end
     elseif sidePanel() == "UIVehicleColorPickerPanel" then	
         sidePanel:SetParentItem(self)	
         self.SidePanel = sidePanel	
-        ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.ParentMenu.Items, self) - 1, 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor)
+		if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
+			ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.ParentMenu.Items, self) - 1, 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor)
+		end
 	end
 end
 
@@ -44,7 +48,7 @@ end
 ---@param bool boolean
 function UIMenuCheckboxItem:Selected(bool)
 	if bool ~= nil then
-		self.Base._Selected = tobool(bool)
+		self.Base:Selected(tobool(bool), self)
 	else
 		return self.Base._Selected
 	end
@@ -64,7 +68,7 @@ end
 ---@param bool boolean
 function UIMenuCheckboxItem:Enabled(bool)
 	if bool ~= nil then
-		self.Base._Enabled = tobool(bool)
+		self.Base:Enabled(bool, self)
 	else
 		return self.Base._Enabled
 	end
@@ -74,7 +78,7 @@ end
 ---@param str string
 function UIMenuCheckboxItem:Description(str)
 	if tostring(str) and str ~= nil then
-		self.Base._Description = tostring(str)
+		self.Base:Description(tostring(str), self)
 	else
 		return self.Base._Description
 	end
@@ -82,7 +86,7 @@ end
 
 function UIMenuCheckboxItem:BlinkDescription(bool)
     if bool ~= nil then
-		self.Base:BlinkDescription(bool)
+		self.Base:BlinkDescription(bool, self)
 	else
 		return self.Base:BlinkDescription()
 	end
@@ -92,7 +96,7 @@ end
 ---@param Text string
 function UIMenuCheckboxItem:Label(Text)
 	if tostring(Text) and Text ~= nil then
-		self.Base:Label(tostring(Text))
+		self.Base:Label(tostring(Text), self)
 	else
 		return self.Base:Label()
 	end
@@ -145,7 +149,7 @@ end
 ---SetLeftBadge
 function UIMenuCheckboxItem:SetLeftBadge(Badge)
     if tonumber(Badge) then
-        self.Base:SetLeftBadge(Badge)
+        self.Base:SetLeftBadge(Badge, self)
     else
         return self.Base:SetLeftBadge()
     end
