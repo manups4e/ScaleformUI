@@ -45,6 +45,8 @@ function UIMenu.New(Title, Subtitle, X, Y, glare, txtDictionary, txtName, altern
         AlternativeTitle = alternativeTitle,
         Position = { X = X, Y = Y },
         Pagination = { Min = 0, Max = 7, Total = 7 },
+        enableAnimation = true,
+        animationType = 0,
         Extra = {},
         Description = {},
         Items = {},
@@ -228,6 +230,28 @@ function UIMenu:SetBannerSprite(Sprite, IncludeChildren)
                 Menu.Banner = nil
             end
         end
+    end
+end
+
+function UIMenu:AnimationEnabled(enable)
+    if enable ~= nil then
+        self.enableAnimation = enable
+        if self:Visible() then
+            ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_SCROLLING_ANIMATION", false, enable)
+        end
+    else
+        return self.enableAnimation
+    end
+end
+
+function UIMenu:AnimationType(animType)
+    if animType ~= nil then
+        self.animationType = animType
+        if self:Visible() then
+            ScaleformUI.Scaleforms._ui:CallFunction("CHANGE_SCROLLING_ANIMATION_TYPE", false, animType)
+        end
+    else
+        return self.animationType
     end
 end
 
@@ -806,7 +830,7 @@ function UIMenu:Draw()
     end
 end
 
-function self:ProcessMouse()
+function UIMenu:ProcessMouse()
     if not self._Visible or self.JustOpened or #self.Items == 0 or not IsInputDisabled(2) or not self.Settings.MouseControlsEnabled then
         EnableControlAction(0, 2, true)
         EnableControlAction(0, 1, true)
