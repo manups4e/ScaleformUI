@@ -20,8 +20,21 @@ namespace ScaleformUI
                 SetValue(_value);
             }
         }
-        public int Type { get; set; }
-        public HudColor Color { get; set; }
+        public int Type { get; private set; }
+        private HudColor sliderColor;
+        public HudColor Color 
+        {
+            get => sliderColor;
+            set
+            {
+                sliderColor = value;
+                if (Parent is not null && Parent.Visible)
+                {
+                    ScaleformUI._ui.CallFunction("UPDATE_COLORS", Parent.MenuItems.IndexOf(this), (int)MainColor, (int)HighlightColor, (int)TextColor, (int)HighlightedTextColor, (int)value);
+                }
+            }
+        }
+
         public event StatChanged OnStatChanged;
 
         public UIMenuStatsItem(string text) : this(text, "", 0, HudColor.HUD_COLOUR_FREEMODE)
@@ -33,7 +46,7 @@ namespace ScaleformUI
             _itemId = 5;
             Type = 0;
             _value = value;
-            Color = color;
+            sliderColor = color;
         }
 
         public void SetValue(int value)
