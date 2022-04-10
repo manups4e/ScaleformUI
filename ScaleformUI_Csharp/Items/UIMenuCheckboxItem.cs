@@ -21,7 +21,7 @@ namespace ScaleformUI
         /// </summary>
         public event ItemCheckboxEvent CheckboxEvent;
 
-        public UIMenuCheckboxStyle Style { get; set; }
+        public UIMenuCheckboxStyle Style { get; }
 
         /// <summary>
         /// Checkbox item with a toggleable checkbox.
