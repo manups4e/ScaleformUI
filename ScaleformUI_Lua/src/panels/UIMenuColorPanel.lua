@@ -17,7 +17,7 @@ function UIMenuColorPanel.New(title, colorType, startIndex, colors)
 		value = startIndex or 0,
 		CustomColors = colors or nil,
 		ParentItem = nil, -- required
-		PanelChanged = function(menu, item, newindex) end
+		OnColorPanelChanged = function(item, panel, newindex) end
 	}
 	return setmetatable(_UIMenuColorPanel, UIMenuColorPanel)
 end
@@ -35,6 +35,11 @@ end
 function UIMenuColorPanel:CurrentSelection(new_value)
 	if new_value ~= nil then
 		self.value = new_value
+		if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
+			local it = IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem)
+			local van = IndexOf(self.ParentItem.Panels, self)
+			ScaleformUI.Scaleforms._ui:CallFunction("SET_COLOR_PANEL_VALUE", false, it, van, new_value)
+		end
 	else
 		return self.value
 	end

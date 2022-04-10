@@ -34,5 +34,32 @@ function UIMenuStatisticsPanel:AddStatistic(name, value) -- required
             value = 0
         end
         table.insert(self.Items, {['name'] = name, ['value'] = value}) 
+		if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
+			local it = IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem)
+			local van = IndexOf(self.ParentItem.Panels, self)
+			ScaleformUI.Scaleforms._ui:CallFunction("ADD_STATISTIC_TO_PANEL", false, it, van, name, value)
+		end
+    end
+end
+
+function UIMenuStatisticsPanel:GetPercentage(id)
+	if id ~= nil then
+		return self.Items[id].value
+	end
+end
+
+function UIMenuStatisticsPanel:UpdateStatistic(id, value)
+    if value ~= nil then
+        if value > 100 then
+            value = 100
+        elseif value < 0 then
+            value = 0
+        end
+		self.Items[id].value = value
+		if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
+			local it = IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem)
+			local van = IndexOf(self.ParentItem.Panels, self)
+			ScaleformUI.Scaleforms._ui:CallFunction("SET_PANEL_STATS_ITEM_VALUE", false, it, van, id-1, value)
+		end
     end
 end

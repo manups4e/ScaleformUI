@@ -860,8 +860,8 @@ function UIMenu:ProcessMouse()
     ShowCursorThisFrame();
 
     
-    self:ProcessMousePressed()
     self:ProcessMouseJustPressed()
+    self:ProcessMousePressed()
 end
 
 ---ProcessMouseJustPressed
@@ -919,7 +919,7 @@ function UIMenu:ProcessMouseJustPressed()
                 local panel = self.Items[self:CurrentSelection()].Panels[selection+1]
                 panel.value = tonumber(split[4])
                 self:OnColorPanelChanged(panel.ParentItem, panel, panel:CurrentSelection())
-                panel.PanelChanged(panel.ParentItem, panel, panel:CurrentSelection())
+                panel.OnColorPanelChanged(panel.ParentItem, panel, panel:CurrentSelection())
             end
         elseif type == "sidepan" then
             if tonumber(split[2]) == 1 then
@@ -967,7 +967,7 @@ function UIMenu:ProcessMousePressed()
                 local panel = self.Items[self:CurrentSelection()].Panels[selection+1]
                 panel.Percentage = tonumber(value)
                 self:OnPercentagePanelChanged(panel.ParentItem, panel, panel.Percentage)
-                panel.PanelChanged(panel.ParentItem, panel, panel.Percentage)
+                panel.OnPercentagePanelChange(panel.ParentItem, panel, panel.Percentage)
                 if HasSoundFinished(menuSound) then
                     menuSound = GetSoundId()
                     PlaySoundFrontend(menuSound, "CONTINUOUS_SLIDER", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
@@ -976,7 +976,7 @@ function UIMenu:ProcessMousePressed()
                 local panel = self.Items[self:CurrentSelection()].Panels[selection+1]
                 panel.CirclePosition = vector2(tonumber(split[4]), tonumber(split[5]))
                 self.OnGridPanelChanged(panel.ParentItem, panel, panel.CirclePosition)
-                panel.PanelChanged(panel.ParentItem, panel, panel.CirclePosition)
+                panel.OnGridPanelChanged(panel.ParentItem, panel, panel.CirclePosition)
                 if HasSoundFinished(menuSound) then
                     menuSound = GetSoundId()
                     PlaySoundFrontend(menuSound, "CONTINUOUS_SLIDER", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
