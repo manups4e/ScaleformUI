@@ -248,7 +248,7 @@ public class MenuExample : BaseScript
 			Screen.ShowSubtitle($"Slider changed => {index}");
 		};
 
-		progress.OnSliderChanged += (item, index) =>
+		progress.OnProgressChanged += (item, index) =>
 		{
 			Screen.ShowSubtitle($"Progress changed => {index}");
 		};

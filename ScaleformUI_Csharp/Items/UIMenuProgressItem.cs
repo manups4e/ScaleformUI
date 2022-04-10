@@ -19,7 +19,7 @@ namespace ScaleformUI
 		protected internal int _multiplier = 5;
         private HudColor sliderColor;
 		protected internal bool Divider;
-		protected internal HudColor SliderColor
+		public HudColor SliderColor
 		{
 			get => sliderColor;
 			set
@@ -78,11 +78,11 @@ namespace ScaleformUI
 		/// <summary>
 		/// Triggered when the slider is changed.
 		/// </summary>
-		public event ItemSliderProgressEvent OnSliderChanged;
+		public event ItemSliderProgressEvent OnProgressChanged;
 
 		internal virtual void ProgressChanged(int value)
 		{
-			OnSliderChanged?.Invoke(this, value);
+			OnProgressChanged?.Invoke(this, value);
 		}
 
 		public override void SetRightBadge(BadgeIcon badge)
