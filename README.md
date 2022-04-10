@@ -4,7 +4,7 @@
 ScaleformUI is a library that helps you quickly and easily build Rockstar-like menus and Pause Menus.
 
 ### Documentation
-Take a look at our wiki page (WIP).
+Take a look at our Wiki here: https://github.com/manups4e/ScaleformUI/wiki
 
 ### Features
 * Support for simple buttons, checkboxes and lists.
