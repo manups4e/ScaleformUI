@@ -170,17 +170,17 @@ function UIMenuProgressItem:Index(Index)
 	end
 end
 
----SetLeftBadge
-function UIMenuProgressItem:SetLeftBadge(Badge)
+---LeftBadge
+function UIMenuProgressItem:LeftBadge(Badge)
     if tonumber(Badge) then
-        self.Base:SetLeftBadge(Badge, self)
+        self.Base:LeftBadge(Badge, self)
     else
-        return self.Base:SetLeftBadge()
+        return self.Base:LeftBadge()
     end
 end
 
----SetRightBadge
-function UIMenuProgressItem:SetRightBadge()
+---RightBadge
+function UIMenuProgressItem:RightBadge()
 	error("This item does not support badges")
 end
 

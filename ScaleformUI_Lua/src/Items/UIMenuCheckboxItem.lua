@@ -146,17 +146,17 @@ function UIMenuCheckboxItem:HighlightedTextColor(color)
     end
 end
 
----SetLeftBadge
-function UIMenuCheckboxItem:SetLeftBadge(Badge)
+---LeftBadge
+function UIMenuCheckboxItem:LeftBadge(Badge)
     if tonumber(Badge) then
-        self.Base:SetLeftBadge(Badge, self)
+        self.Base:LeftBadge(Badge, self)
     else
-        return self.Base:SetLeftBadge()
+        return self.Base:LeftBadge()
     end
 end
 
----SetRightBadge
-function UIMenuCheckboxItem:SetRightBadge()
+---RightBadge
+function UIMenuCheckboxItem:RightBadge()
 	error("This item does not support badges")
 end
 

@@ -170,13 +170,13 @@ function UIMenuStatsItem:Index(Index)
 	end
 end
 
----SetLeftBadge
-function UIMenuStatsItem:SetLeftBadge()
+---LeftBadge
+function UIMenuStatsItem:LeftBadge()
 	error("This item does not support badges")
 end
 
----SetRightBadge
-function UIMenuStatsItem:SetRightBadge()
+---RightBadge
+function UIMenuStatsItem:RightBadge()
 	error("This item does not support badges")
 end
 

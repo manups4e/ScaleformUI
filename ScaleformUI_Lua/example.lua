@@ -3,11 +3,9 @@ local animEnabled = true
 
 -- to handle controls and inputs to the menu
 Citizen.CreateThread(function()
-	pool:RefreshIndex()
 	while true do
 		Wait(0)
-        pool:ProcessMouse()
-        pool:ProcessControl()
+		pool:ProcessControl()
 	end
 end)
 
@@ -30,7 +28,7 @@ function CreateMenu()
 	pool:Add(exampleMenu)
 
 	local ketchupItem = UIMenuCheckboxItem.New("Scrolling animation enabled?", animEnabled, 1, "Do you wish to enable the scrolling animation?")
-	ketchupItem:SetLeftBadge(BadgeStyle.STAR)
+	ketchupItem:LeftBadge(BadgeStyle.STAR)
 	local sidePanel = UIMissionDetailsPanel.New(1, "Side Panel", 6, true, "scaleformui", "sidepanel")
 	local detailItem1 = UIMenuFreemodeDetailsImageItem.New("Left Label", "Right Label", BadgeStyle.BRIEFCASE, Colours.HUD_COLOUR_FREEMODE)
 	local detailItem2 = UIMenuFreemodeDetailsImageItem.New("Left Label", "Right Label", BadgeStyle.STAR, Colours.HUD_COLOUR_GOLD)
@@ -62,12 +60,12 @@ function CreateMenu()
 
 	local cookItem = UIMenuItem.New("Cook!", "Cook the dish with the appropiate ingredients and ketchup.")
 	exampleMenu:AddItem(cookItem)
-	cookItem:SetRightBadge(BadgeStyle.STAR)
-	cookItem:SetLeftBadge(BadgeStyle.STAR)
+	cookItem:RightBadge(BadgeStyle.STAR)
+	cookItem:LeftBadge(BadgeStyle.STAR)
 
 
 	local colorItem = UIMenuItem.New("UIMenuItem with Colors", "~b~Look!!~r~I can be colored ~y~too!!~w~", 21, 24)
-	colorItem:SetLeftBadge(BadgeStyle.STAR)
+	colorItem:LeftBadge(BadgeStyle.STAR)
 	exampleMenu:AddItem(colorItem)
 	local sidePanelVehicleColor = UIVehicleColorPickerPanel.New(1, "ColorPicker", 6)
 
@@ -81,7 +79,7 @@ function CreateMenu()
 		return tostring(dynamicValue)
 	end)
 	exampleMenu:AddItem(dynamicListItem)
-	dynamicListItem:SetLeftBadge(BadgeStyle.STAR)
+	dynamicListItem:LeftBadge(BadgeStyle.STAR)
 
 	local seperatorItem1 = UIMenuSeperatorItem.New("Separator (Jumped)", true)
 	local seperatorItem2 = UIMenuSeperatorItem.New("Separator (not Jumped)", false)
@@ -171,9 +169,9 @@ function CreateMenu()
 		menu:AnimationEnabled(checked)
 		scrollingItem:Enabled(checked)
 		if checked then
-			scrollingItem:SetLeftBadge(BadgeStyle.NONE)
+			scrollingItem:LeftBadge(BadgeStyle.NONE)
 		else
-			scrollingItem:SetLeftBadge(1)
+			scrollingItem:LeftBadge(1)
 		end
 	end
 

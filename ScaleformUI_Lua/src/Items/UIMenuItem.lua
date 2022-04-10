@@ -38,7 +38,7 @@ function UIMenuItem:SetParentMenu(Menu)
     end
 end
 
-function UIMenuItem:Selected(bool, id, item)
+function UIMenuItem:Selected(bool, item)
     if bool ~= nil then
         if item == nil then item = self end
        
@@ -230,7 +230,7 @@ function UIMenuItem:RightLabel(Text)
     end
 end
 
-function UIMenuItem:SetRightBadge(Badge, item)
+function UIMenuItem:RightBadge(Badge, item)
     if tonumber(Badge) then
         if item == nil then item = self end
         self.RightBadge = tonumber(Badge)
@@ -242,7 +242,7 @@ function UIMenuItem:SetRightBadge(Badge, item)
     end
 end
 
-function UIMenuItem:SetLeftBadge(Badge, item)
+function UIMenuItem:LeftBadge(Badge, item)
     if tonumber(Badge) then
         if item == nil then item = self end
         self.LeftBadge = tonumber(Badge)
@@ -265,17 +265,25 @@ function UIMenuItem:AddSidePanel(sidePanel)
     if sidePanel() == "UIMissionDetailsPanel" then
         sidePanel:SetParentItem(self)
         self.SidePanel = sidePanel
-		if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
+		if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
         end
     elseif sidePanel() == "UIVehicleColorPickerPanel" then
         sidePanel:SetParentItem(self)
         self.SidePanel = sidePanel
-		if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
+		if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.ParentMenu.Items, self) - 1, 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor)
         end
     end
 end
+
+function UIMenuItem:RemoveSidePanel()
+    self.SidePanel = nil
+    if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+        ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_SIDE_PANEL_TO_ITEM", false, IndexOf(self.ParentMenu.Items, self) - 1);
+    end
+end
+
 
 function UIMenuItem:RemovePanelAt(Index)
     if tonumber(Index) then

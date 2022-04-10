@@ -130,13 +130,13 @@ function UIMenuSeperatorItem:BlinkDescription(bool)
 	end
 end
 
----SetLeftBadge
-function UIMenuProgressItem:SetLeftBadge()
+---LeftBadge
+function UIMenuProgressItem:LeftBadge()
 	error("This item does not support badges")
 end
 
----SetRightBadge
-function UIMenuProgressItem:SetRightBadge()
+---RightBadge
+function UIMenuProgressItem:RightBadge()
 	error("This item does not support badges")
 end
 

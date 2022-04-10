@@ -163,15 +163,15 @@ function UIMenuSliderItem:Index(Index)
 	end
 end
 
-function UIMenuSliderItem:SetLeftBadge(Badge)
+function UIMenuSliderItem:LeftBadge(Badge)
     if tonumber(Badge) then
-        self.Base:SetLeftBadge(Badge, self)
+        self.Base:LeftBadge(Badge, self)
     else
-        return self.Base:SetLeftBadge()
+        return self.Base:LeftBadge()
     end
 end
 
-function UIMenuSliderItem:SetRightBadge()
+function UIMenuSliderItem:RightBadge()
 	error("This item does not support badges")
 end
 

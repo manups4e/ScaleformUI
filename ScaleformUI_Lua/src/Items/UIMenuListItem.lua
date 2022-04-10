@@ -189,17 +189,17 @@ function UIMenuListItem:IndexToItem(Index)
 	end
 end
 
----SetLeftBadge
-function UIMenuListItem:SetLeftBadge(Badge)
+---LeftBadge
+function UIMenuListItem:LeftBadge(Badge)
     if tonumber(Badge) then
-        self.Base:SetLeftBadge(Badge, self)
+        self.Base:LeftBadge(Badge, self)
     else
-        return self.Base:SetLeftBadge()
+        return self.Base:LeftBadge()
     end
 end
 
----SetRightBadge
-function UIMenuListItem:SetRightBadge()
+---RightBadge
+function UIMenuListItem:RightBadge()
 	error("This item does not support badges")
 end
 

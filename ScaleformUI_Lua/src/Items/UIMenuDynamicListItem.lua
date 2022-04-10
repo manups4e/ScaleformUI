@@ -158,17 +158,17 @@ function UIMenuDynamicListItem:HighlightedTextColor(color)
     end
 end
 
----SetLeftBadge
-function UIMenuDynamicListItem:SetLeftBadge(Badge)
+---LeftBadge
+function UIMenuDynamicListItem:LeftBadge(Badge)
     if tonumber(Badge) then
-        self.Base:SetLeftBadge(Badge, self)
+        self.Base:LeftBadge(Badge, self)
     else
-        return self.Base:SetLeftBadge()
+        return self.Base:LeftBadge()
     end
 end
 
----SetRightBadge
-function UIMenuDynamicListItem:SetRightBadge()
+---RightBadge
+function UIMenuDynamicListItem:RightBadge()
 	error("This item does not support badges")
 end
 
