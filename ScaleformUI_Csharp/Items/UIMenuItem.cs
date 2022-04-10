@@ -326,7 +326,6 @@ namespace ScaleformUI
             HighlightColor = highlightColor;
             TextColor = textColor;
             HighlightedTextColor = highlightedTextColor;
-
             Label = text;
             Description = description;
         }
@@ -1053,6 +1052,6 @@ namespace ScaleformUI
         /// <summary>
         /// Returns the menu this item is in.
         /// </summary>
-        public UIMenu Parent { get; set; }
+        public UIMenu Parent { get; internal set; }
     }
 }
