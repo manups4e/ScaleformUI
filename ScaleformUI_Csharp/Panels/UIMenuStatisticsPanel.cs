@@ -33,7 +33,7 @@ namespace ScaleformUI
 			return Items[ItemId].Value;
 		}
 
-		public void SetPercentage(int ItemId, float number)
+		public void UpdateStatistic(int ItemId, float number)
 		{
 			Items[ItemId].Value = number;
 			if (Items[ItemId].Value > 100)

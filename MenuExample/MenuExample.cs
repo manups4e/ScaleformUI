@@ -145,9 +145,9 @@ public class MenuExample : BaseScript
 		statistics.AddStatistics("I'm a statistic too!", 0);
 		statistics.AddStatistics("Am i not?!", 0);
 		//you can add as menu statistics you want 
-		statistics.SetPercentage(0, 10f);
-		statistics.SetPercentage(1, 50f);
-		statistics.SetPercentage(2, 100f);
+		statistics.UpdateStatistic(0, 10f);
+		statistics.UpdateStatistic(1, 50f);
+		statistics.UpdateStatistic(2, 100f);
 		//and you can get / set their percentage
 
 		#endregion
