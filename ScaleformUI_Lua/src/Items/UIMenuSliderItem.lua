@@ -10,7 +10,7 @@ UIMenuSliderItem.__call = function() return "UIMenuItem", "UIMenuSliderItem" end
 ---@param Divider boolean
 ---@param SliderColors table
 ---@param BackgroundSliderColors table
-function UIMenuSliderItem.New(Text, Max, Multiplier, Index, Heritage, Description, color, highlightColor, textColor, highlightedTextColor, sliderColor, backgroundSliderColor)
+function UIMenuSliderItem.New(Text, Max, Multiplier, Index, Heritage, Description, sliderColor, color, highlightColor, textColor, highlightedTextColor)
 	local _UIMenuSliderItem = {
 		Base = UIMenuItem.New(Text or "", Description or "", color or 117, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
 		_Index = tonumber(Index) or 0,
@@ -20,7 +20,6 @@ function UIMenuSliderItem.New(Text, Max, Multiplier, Index, Heritage, Descriptio
 		Panels = {},
 		SidePanel = nil,
 		SliderColor = sliderColor or 116,
-		BackgroundSliderColor = backgroundSliderColor or 117,
 		OnSliderChanged = function(menu, item, newindex) end,
 		OnSliderSelected = function(menu, item, newindex) end,
 	}
@@ -104,7 +103,7 @@ function UIMenuSliderItem:Label(Text)
 	end
 end
 
-function UIMenuItem:MainColor(color)
+function UIMenuSliderItem:MainColor(color)
     if(color)then
         self.Base._mainColor = color
         if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
@@ -115,7 +114,7 @@ function UIMenuItem:MainColor(color)
     end
 end
 
-function UIMenuItem:TextColor(color)
+function UIMenuSliderItem:TextColor(color)
     if(color)then
         self.Base._textColor = color
         if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
@@ -126,7 +125,7 @@ function UIMenuItem:TextColor(color)
     end
 end
 
-function UIMenuItem:HighlightColor(color)
+function UIMenuSliderItem:HighlightColor(color)
     if(color)then
         self.Base._highlightColor = color
         if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
@@ -137,7 +136,7 @@ function UIMenuItem:HighlightColor(color)
     end
 end
 
-function UIMenuItem:HighlightedTextColor(color)
+function UIMenuSliderItem:HighlightedTextColor(color)
     if(color)then
         self.Base._highlightedTextColor = color
         if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
@@ -145,6 +144,17 @@ function UIMenuItem:HighlightedTextColor(color)
         end
     else
         return self.Base._highlightedTextColor
+    end
+end
+
+function UIMenuSliderItem:SliderColor(color)
+    if(color)then
+        self.SliderColor = color
+        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor, self.SliderColor);
+        end
+    else
+        return self.SliderColor
     end
 end
 

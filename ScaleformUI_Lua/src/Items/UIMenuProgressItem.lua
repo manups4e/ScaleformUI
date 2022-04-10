@@ -8,7 +8,7 @@ UIMenuProgressItem.__call = function() return "UIMenuItem", "UIMenuProgressItem"
 ---@param Index number
 ---@param Description string
 ---@param Counter boolean
-function UIMenuProgressItem.New(Text, Max, Index, Description, color, highlightColor, textColor, highlightedTextColor, sliderColor, backgroundSliderColor)
+function UIMenuProgressItem.New(Text, Max, Index, Description, sliderColor, color, highlightColor, textColor, highlightedTextColor)
 	local _UIMenuProgressItem = {
 		Base = UIMenuItem.New(Text or "", Description or "", color or 117, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
 		_Max = Max or 100,
@@ -101,7 +101,7 @@ function UIMenuProgressItem:Label(Text)
 	end
 end
 
-function UIMenuItem:MainColor(color)
+function UIMenuProgressItem:MainColor(color)
     if(color)then
         self.Base._mainColor = color
         if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
@@ -112,7 +112,7 @@ function UIMenuItem:MainColor(color)
     end
 end
 
-function UIMenuItem:TextColor(color)
+function UIMenuProgressItem:TextColor(color)
     if(color)then
         self.Base._textColor = color
         if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
@@ -123,7 +123,7 @@ function UIMenuItem:TextColor(color)
     end
 end
 
-function UIMenuItem:HighlightColor(color)
+function UIMenuProgressItem:HighlightColor(color)
     if(color)then
         self.Base._highlightColor = color
         if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
@@ -134,7 +134,7 @@ function UIMenuItem:HighlightColor(color)
     end
 end
 
-function UIMenuItem:HighlightedTextColor(color)
+function UIMenuProgressItem:HighlightedTextColor(color)
     if(color)then
         self.Base._highlightedTextColor = color
         if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
@@ -144,6 +144,18 @@ function UIMenuItem:HighlightedTextColor(color)
         return self.Base._highlightedTextColor
     end
 end
+
+function UIMenuProgressItem:SliderColor(color)
+    if(color)then
+        self.SliderColor = color
+        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor, self.SliderColor);
+        end
+    else
+        return self.SliderColor
+    end
+end
+
 
 function UIMenuProgressItem:BlinkDescription(bool)
     if bool ~= nil then

@@ -48,7 +48,7 @@ function UIMenuSeperatorItem:Label(Text)
 	end
 end
 
-function UIMenuItem:MainColor(color)
+function UIMenuSeperatorItem:MainColor(color)
     if color ~= nil then
         self.Base._mainColor = color
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
@@ -59,7 +59,7 @@ function UIMenuItem:MainColor(color)
     end
 end
 
-function UIMenuItem:TextColor(color)
+function UIMenuSeperatorItem:TextColor(color)
     if color ~= nil then
         self.Base._textColor = color
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
@@ -70,7 +70,7 @@ function UIMenuItem:TextColor(color)
     end
 end
 
-function UIMenuItem:HighlightColor(color)
+function UIMenuSeperatorItem:HighlightColor(color)
     if color ~= nil then
         self.Base._highlightColor = color
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
@@ -81,7 +81,7 @@ function UIMenuItem:HighlightColor(color)
     end
 end
 
-function UIMenuItem:HighlightedTextColor(color)
+function UIMenuSeperatorItem:HighlightedTextColor(color)
     if color ~= nil then
         self.Base._highlightedTextColor = color
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
