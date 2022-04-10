@@ -1042,10 +1042,3 @@ function UIMenu:RemoveEnabledControl(Inputgroup, Control, Controller)
         end
     end
 end
-
-AddEventHandler('onResourceStop', function(resourceName)
-	if (GetCurrentResourceName() == resourceName) then
-        ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
-        ScaleformUI.Scaleforms._ui:Dispose()
-	end
-end)
