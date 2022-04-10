@@ -208,14 +208,19 @@ function MenuPool:IsAnyMenuOpen()
 end
 
 function MenuPool:IsAnyPauseMenuOpen()
-    local open = false
     for _, Menu in pairs(self.PauseMenus) do
+        if #Menu.Children > 0 then
+            for k,v in pairs(Menu.Children) do
+                if v:Visible then
+                    return true
+                end
+            end
+        end
         if Menu:Visible() then
-            open = true
-            break
+            return true
         end
     end
-    return open
+    return false
 end
 
 ---CloseAllMenus
