@@ -55,6 +55,7 @@ namespace ScaleformUI
 		public bool BannerInheritance = true;
 
 		public bool OffsetInheritance = true;
+        internal UIMenu currentMenu;
 
         /// <summary>
 		/// Called when user either opens or closes the main menu, clicks on a binded button, goes back to a parent menu.
@@ -71,6 +72,7 @@ namespace ScaleformUI
         public void Add(UIMenu menu)
         {
             _menuList.Add(menu);
+            currentMenu = menu;
             menu._poolcontainer = this;
         }
         public void Add(TabView menu)
@@ -278,10 +280,25 @@ namespace ScaleformUI
         /// </summary>
         public void CloseAllMenus()
         {
-            foreach (var menu in _menuList.Where(menu => menu.Visible))
+            if(currentMenu is not null)
             {
-                menu.Visible = false;
+                foreach (var menu in currentMenu.Children)
+                {
+                    if (menu.Value.Visible)
+                    {
+                        menu.Value.Visible = false;
+                    }
+                }
+                if (currentMenu.Visible)
+                    currentMenu.Visible = false;
+                else
+                {
+                    currentMenu.MenuChangeEv(currentMenu, null, MenuState.Closed);
+                    OnMenuStateChanged?.Invoke(currentMenu, null, MenuState.Closed);
+                }
             }
+            ScaleformUI._ui.CallFunction("CLEAR_ALL");
+            ScaleformUI.InstructionalButtons.Enabled = false;
         }
 
         public void SetKey(UIMenu.MenuControls menuControl, Control control)

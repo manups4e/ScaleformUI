@@ -1996,12 +1996,14 @@ namespace ScaleformUI
                     _poolcontainer.MenuChangeEv(null, this, MenuState.Opened);
                     MenuChangeEv(null, this, MenuState.Opened);
                     BuildUpMenu();
+                    _poolcontainer.currentMenu = this;
                 }
                 else
                 {
                     _poolcontainer.MenuChangeEv(this, null, MenuState.Closed);
                     MenuChangeEv(this, null, MenuState.Closed);
                     ScaleformUI._ui.CallFunction("CLEAR_ALL");
+                    _poolcontainer = null;
                 }
                 if (!value) return;
                 if (!ResetCursorOnOpen) return;
@@ -2329,7 +2331,7 @@ namespace ScaleformUI
             OnStatsItemChanged?.Invoke(this, item, value);
         }
 
-        protected virtual void MenuChangeEv(UIMenu oldmenu, UIMenu newmenu, MenuState state)
+        internal virtual void MenuChangeEv(UIMenu oldmenu, UIMenu newmenu, MenuState state)
         {
             OnMenuStateChanged?.Invoke(oldmenu, newmenu, state);
         }
