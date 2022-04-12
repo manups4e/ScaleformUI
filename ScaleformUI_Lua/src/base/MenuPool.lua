@@ -49,6 +49,7 @@ end
 ---@param Menu table
 function MenuPool:Add(Menu)
     if Menu() == "UIMenu" then
+        Menu.pool = self
         table.insert(self.Menus, Menu)
     end
 end
