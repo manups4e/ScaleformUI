@@ -226,14 +226,16 @@ end
 
 ---CloseAllMenus
 function MenuPool:CloseAllMenus()
-    for _, Menu in pairs(self.Menus) do
-        for _,subMenu in pairs(Menu.Children) do
+    if self.currentMenu ~= nil and self.currentMenu() == "UIMenu" then
+        for _,subMenu in pairs(self.currentMenu.Children) do
             if subMenu:Visible() then
                 subMenu:Visible(false)
             end
         end
-        if Menu:Visible() then
-            Menu:Visible(false)
+        if self.currentMenu:Visible() then
+            self.currentMenu:Visible(false)
+        else
+            self.currentMenu.OnMenuChanged(self.currentMenu, nil, "closed")
         end
     end
     ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
