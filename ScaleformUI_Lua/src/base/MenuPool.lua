@@ -211,7 +211,7 @@ function MenuPool:IsAnyPauseMenuOpen()
     for _, Menu in pairs(self.PauseMenus) do
         if #Menu.Children > 0 then
             for k,v in pairs(Menu.Children) do
-                if v:Visible then
+                if v:Visible() then
                     return true
                 end
             end
@@ -226,15 +226,16 @@ end
 ---CloseAllMenus
 function MenuPool:CloseAllMenus()
     for _, Menu in pairs(self.Menus) do
-        if #Menu.Children > 0 then
-            for k,v in pairs(Menu.Children) do
-                v:Visible(false)
+        for _,subMenu in pairs(Menu.Children) do
+            if subMenu:Visible() then
+                subMenu:Visible(false)
             end
         end
         if Menu:Visible() then
             Menu:Visible(false)
         end
     end
+    ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
     if ScaleformUI.Scaleforms.InstructionalButtons:Enabled() then
         ScaleformUI.Scaleforms.InstructionalButtons:Enabled(false)
     end
