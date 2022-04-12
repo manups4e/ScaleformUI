@@ -192,24 +192,7 @@ end
 
 ---IsAnyMenuOpen
 function MenuPool:IsAnyMenuOpen()
-    local open = false
     for _, Menu in pairs(self.Menus) do
-        if Menu:Visible() then
-            open = true
-            break
-        end
-    end
-    for _, Menu in pairs(self.PauseMenus) do
-        if Menu:Visible() then
-            open = true
-            break
-        end
-    end
-    return open
-end
-
-function MenuPool:IsAnyPauseMenuOpen()
-    for _, Menu in pairs(self.PauseMenus) do
         if #Menu.Children > 0 then
             for k,v in pairs(Menu.Children) do
                 if v:Visible() then
@@ -217,6 +200,22 @@ function MenuPool:IsAnyPauseMenuOpen()
                 end
             end
         end
+        if Menu:Visible() then
+            return true
+            break
+        end
+    end
+    for _, Menu in pairs(self.PauseMenus) do
+        if Menu:Visible() then
+            return true
+            break
+        end
+    end
+    return false
+end
+
+function MenuPool:IsAnyPauseMenuOpen()
+    for _, Menu in pairs(self.PauseMenus) do
         if Menu:Visible() then
             return true
         end
