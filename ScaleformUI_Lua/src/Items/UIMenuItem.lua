@@ -15,8 +15,8 @@ function UIMenuItem.New(text, description, color, highlightColor, textColor, hig
         _formatLeftLabel = tostring(text) or "",
         _rightLabel = "",
         _formatRightLabel = "",
-        RightBadge = 0,
-        LeftBadge = 0,
+        _rightBadge = 0,
+        _leftBadge = 0,
         _mainColor = color or 117,
         _highlightColor = highlightColor or 1,
         _textColor = textColor or 1,
@@ -233,24 +233,24 @@ end
 function UIMenuItem:RightBadge(Badge, item)
     if tonumber(Badge) then
         if item == nil then item = self end
-        self.RightBadge = tonumber(Badge)
+        self._rightBadge = tonumber(Badge)
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_BADGE", false, IndexOf(self.ParentMenu.Items, item) - 1, self.RightBadge)
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_BADGE", false, IndexOf(self.ParentMenu.Items, item) - 1, self._rightBadge)
         end
     else
-        return self.RightBadge
+        return self._rightBadge
     end
 end
 
 function UIMenuItem:LeftBadge(Badge, item)
     if tonumber(Badge) then
         if item == nil then item = self end
-        self.LeftBadge = tonumber(Badge)
+        self._leftBadge = tonumber(Badge)
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_BADGE", false, IndexOf(self.ParentMenu.Items, item) - 1, self.LeftBadge)
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_BADGE", false, IndexOf(self.ParentMenu.Items, item) - 1, self._leftBadge)
         end
     else
-        return self.LeftBadge
+        return self._leftBadge
     end
 end
 

@@ -442,16 +442,16 @@ function UIMenu:BuildUpMenu()
         else
             ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 0, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item._mainColor, item._highlightColor, item._textColor, item._highlightedTextColor)
             ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_LABEL", false, it - 1, item:RightLabel())
-            if item.RightBadge ~= BadgeStyle.NONE then
-                ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_BADGE", false, it - 1, item.RightBadge)
+            if item._rightBadge ~= BadgeStyle.NONE then
+                ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_BADGE", false, it - 1, item._rightBadge)
             end
         end
         
-        if (SubType == "UIMenuItem" and item.LeftBadge ~= BadgeStyle.NONE) or (SubType ~= "UIMenuItem" and item.Base.LeftBadge ~= BadgeStyle.NONE) then
+        if (SubType == "UIMenuItem" and item._leftBadge ~= BadgeStyle.NONE) or (SubType ~= "UIMenuItem" and item.Base._leftBadge ~= BadgeStyle.NONE) then
             if SubType ~= "UIMenuItem" then
-                ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_BADGE", false, it - 1, item.Base.LeftBadge)
+                ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_BADGE", false, it - 1, item.Base._leftBadge)
             else
-                ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_BADGE", false, it - 1, item.LeftBadge)
+                ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_BADGE", false, it - 1, item._leftBadge)
             end
         end
         if #item.Panels > 0 then
