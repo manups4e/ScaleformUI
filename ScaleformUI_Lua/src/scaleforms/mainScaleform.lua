@@ -13,7 +13,7 @@ ScaleformUI.Scaleforms._pauseMenu = nil
 AddEventHandler("onResourceStop", function(resName) 
     if resName == GetCurrentResourceName() then
         ScaleformUI.Scaleforms._pauseMenu:Dispose()
-        ScaleformUI.Scaleforms._ui:CallFunction("CLREA_ALL", false)
+        ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
         ScaleformUI.Scaleforms._ui:Dispose()
     end
 end)
