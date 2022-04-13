@@ -202,13 +202,11 @@ function MenuPool:IsAnyMenuOpen()
         end
         if Menu:Visible() then
             return true
-            break
         end
     end
     for _, Menu in pairs(self.PauseMenus) do
         if Menu:Visible() then
             return true
-            break
         end
     end
     return false
