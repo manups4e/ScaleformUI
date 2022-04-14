@@ -15,6 +15,9 @@ AddEventHandler("onResourceStop", function(resName)
         ScaleformUI.Scaleforms._pauseMenu:Dispose()
         ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
         ScaleformUI.Scaleforms._ui:Dispose()
+        if not IsPlayerControlOn(PlayerId()) then
+            SetPlayerControl(PlayerId(), true, 0)
+        end
     end
 end)
 

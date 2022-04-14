@@ -79,13 +79,13 @@ function TabView:Visible(visible)
             AnimpostfxPlay("FocusOut", 800, false)
             TriggerScreenblurFadeIn(700)
             ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
-            --SetPlayerControl(PlayerId(), false, 0)
+            SetPlayerControl(PlayerId(), false, 0)
         else
             ScaleformUI.Scaleforms._pauseMenu:Dispose()
             AnimpostfxPlay("FocusOut", 500, false)
             TriggerScreenblurFadeOut(400)
             self.OnPauseMenuClose(self)
-            --SetPlayerControl(PlayerId(), true, 0)
+            SetPlayerControl(PlayerId(), true, 0)
         end
         ScaleformUI.Scaleforms.InstructionalButtons:Enabled(visible)
         self._visible = visible
