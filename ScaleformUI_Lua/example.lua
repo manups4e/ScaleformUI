@@ -181,23 +181,17 @@ function CreateMenu()
 
 	colorPanel.PanelChanged = function(menu, item, newindex)
 		local message = "ColorPanel index => " .. newindex + 1
-		AddTextEntry("ScaleformUINotification", message)
-		BeginTextCommandThefeedPost("ScaleformUINotification")
-		EndTextCommandThefeedPostTicker(false, true)
+		ScaleformUI.Notifications:ShowNotification(message)
 	end
 
 	colorPanel2.PanelChanged = function(menu, item, newindex)
 		local message = "ColorPanel2 index => " .. newindex + 1
-		AddTextEntry("ScaleformUINotification", message)
-		BeginTextCommandThefeedPost("ScaleformUINotification")
-		EndTextCommandThefeedPostTicker(false, true)
+		ScaleformUI.Notifications:ShowNotification(message)
 	end
 
 	percentagePanel.PanelChanged = function(menu, item, newpercentage)
 		local message = "PercentagePanel => " .. newpercentage
-		AddTextEntry("ScaleformUINotification", message)
-		BeginTextCommandThefeedPost("ScaleformUINotification")
-		EndTextCommandThefeedPostTicker(false, true)
+		ScaleformUI.Notifications:ShowNotification(message)
 	end
 
 	gridPanel.PanelChanged = function(menu, item, newposition)
