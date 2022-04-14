@@ -229,19 +229,19 @@ end
 function Notifications:DrawText3D(coords, color, text, font, size)
     local cam = GetGameplayCamCoord()
     local dist = #(coords - cam)
-    local scaleInternal = (1 / dist) * scale
+    local scaleInternal = (1 / dist) * size
     local fov = (1 / GetGameplayCamFov()) * 100
     local _scale = scaleInternal * fov
     SetTextScale(0.1 * _scale, 0.15 * _scale)
     SetTextFont(font)
     SetTextProportional(true)
-    SetTextColour(color.r, color.g, color.b, color.a)
+    SetTextColour(color.R, color.G, color.B, color.A)
     SetTextDropshadow(5, 0, 0, 0, 255)
     SetTextEdge(2, 0, 0, 0, 150)
     SetTextDropShadow()
     SetTextOutline()
     SetTextCentre(true)
-    SetDrawOrigin(coord.x, coord.y, coord.z, 0)
+    SetDrawOrigin(coords.x, coords.y, coords.z, 0)
     BeginTextCommandDisplayText("STRING")
     AddTextComponentSubstringPlayerName(text)
     EndTextCommandDisplayText(0, 0)
