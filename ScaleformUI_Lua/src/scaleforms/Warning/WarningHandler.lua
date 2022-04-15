@@ -45,7 +45,7 @@ function warn:ShowWarning(title, subtitle, prompt, errorMsg, warningType)
 end
 
 function warn:UpdateWarning(title, subtitle, prompt, errorMsg, warningType)
-    self._sc:CallFunction("SHOW_POPUP_WARNING", false, 1000, title, subtitle, prompt, true, warningType, errorMsg);
+    self._sc:CallFunction("SHOW_POPUP_WARNING", false, 1000, title, subtitle, prompt, true, warningType, errorMsg)
 end
 
 function warn:ShowWarningWithButtons(title, subtitle, prompt, buttons, errorMsg, warningType)
@@ -54,7 +54,7 @@ function warn:ShowWarningWithButtons(title, subtitle, prompt, buttons, errorMsg,
     self._buttonList = buttons
     if buttons == nil or #buttons == 0 then return end
     ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self._buttonList)
-    ScaleformUI.Scaleforms.InstructionalButtons.UseMouseButtons = true;
+    ScaleformUI.Scaleforms.InstructionalButtons.UseMouseButtons = true
     self._sc:CallFunction("SHOW_POPUP_WARNING", false, 1000, title, subtitle, prompt, true, warningType, errorMsg)
     ScaleformUI.Scaleforms.InstructionalButtons:Enabled(true)
 end
@@ -69,7 +69,7 @@ function warn:Update()
                 self.OnButtonPressed(v)
                 self:Dispose()
                 ScaleformUI.Scaleforms.InstructionalButtons:Enabled(false)
-                ScaleformUI.Scaleforms.InstructionalButtons.UseMouseButtons = false;
+                ScaleformUI.Scaleforms.InstructionalButtons.UseMouseButtons = false
             end
         end
     end

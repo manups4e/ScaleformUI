@@ -860,7 +860,7 @@ function UIMenu:ProcessMouse()
         return
     end
 
-    ShowCursorThisFrame();
+    ShowCursorThisFrame()
 
     
     self:ProcessMouseJustPressed()
