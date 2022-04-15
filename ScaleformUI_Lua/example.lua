@@ -54,9 +54,9 @@ function CreateMenu()
 		table.insert(animations, k)
 	end
 
-	local scrollingItem = UIMenuListItem.New("Choose the scrolling animation", animations, exampleMenu:AnimationType(), "~BLIP_BARBER~ ~BLIP_INFO_ICON~ ~BLIP_TANK~ ~BLIP_OFFICE~ ~BLIP_CRIM_DRUGS~ ~BLIP_WAYPOINT~ ~INPUTGROUP_MOVE~~n~You can use Blips and Inputs in description as you prefer!~n~⚠ 🐌 ❤️ 🥺 💪🏻 You can use Emojis too!", Colours.HUD_COLOUR_FREEMODE_DARK, Colours.HUD_COLOUR_FREEMODE);
-	scrollingItem:BlinkDescription(true);
-	exampleMenu:AddItem(scrollingItem);
+	local scrollingItem = UIMenuListItem.New("Choose the scrolling animation", animations, exampleMenu:AnimationType(), "~BLIP_BARBER~ ~BLIP_INFO_ICON~ ~BLIP_TANK~ ~BLIP_OFFICE~ ~BLIP_CRIM_DRUGS~ ~BLIP_WAYPOINT~ ~INPUTGROUP_MOVE~~n~You can use Blips and Inputs in description as you prefer!~n~⚠ 🐌 ❤️ 🥺 💪🏻 You can use Emojis too!", Colours.HUD_COLOUR_FREEMODE_DARK, Colours.HUD_COLOUR_FREEMODE)
+	scrollingItem:BlinkDescription(true)
+	exampleMenu:AddItem(scrollingItem)
 
 	local cookItem = UIMenuItem.New("Cook!", "Cook the dish with the appropiate ingredients and ketchup.")
 	exampleMenu:AddItem(cookItem)

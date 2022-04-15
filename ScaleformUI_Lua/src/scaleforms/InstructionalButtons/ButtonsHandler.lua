@@ -70,54 +70,54 @@ end
 
 function handler:ShowBusySpinner(spinnerType, text, time)
     if time == nil or time < 0 then time = 3000 end
-    self.IsSaving = true;
-    self._changed = true;
-    self.savingTimer = GetGameTimer();
+    self.IsSaving = true
+    self._changed = true
+    self.savingTimer = GetGameTimer()
 
     if text == nil or text == "" then
         BeginTextCommandBusyString(nil)
     else
-        BeginTextCommandBusyString("STRING");
-        AddTextComponentSubstringPlayerName(text);
+        BeginTextCommandBusyString("STRING")
+        AddTextComponentSubstringPlayerName(text)
     end
     EndTextCommandBusyString(spinnerType)
     while GetGameTimer() - self.savingTimer <= time do Citizen.Wait(100) end
     RemoveLoadingPrompt()
-    self.IsSaving = false;
+    self.IsSaving = false
 end
 
 function handler:UpdateButtons()
     if not self._changed then return end
     self._sc:CallFunction("SET_DATA_SLOT_EMPTY", false)
-    self._sc:CallFunction("TOGGLE_MOUSE_BUTTONS", false, self.UseMouseButtons);
-    local count = 0;
+    self._sc:CallFunction("TOGGLE_MOUSE_BUTTONS", false, self.UseMouseButtons)
+    local count = 0
 
     for k, button in pairs (self.ControlButtons) do
         if button:IsUsingController() then
             if button.PadCheck == 0 or button.PadCheck == -1 then
                 if ScaleformUI.Scaleforms.Warning:IsShowing() then
-                    self._sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text, 0, -1);
+                    self._sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text, 0, -1)
                 else
-                    self._sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text);
+                    self._sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text)
                 end
             end
         else
             if button.PadCheck == 1 or button.PadCheck == -1 then
                 if self.UseMouseButtons then
-                    _sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text, 1, button.KeyboardButton);
+                    _sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text, 1, button.KeyboardButton)
                 else
                     if ScaleformUI.Scaleforms.Warning:IsShowing() then
-                        self._sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text, 0, -1);
+                        self._sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text, 0, -1)
                     else
-                        self._sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text);
+                        self._sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text)
                     end
                 end
             end
         end
         count = count + 1
     end
-    self._sc:CallFunction("DRAW_INSTRUCTIONAL_BUTTONS", false, -1);
-    self._changed = false;
+    self._sc:CallFunction("DRAW_INSTRUCTIONAL_BUTTONS", false, -1)
+    self._changed = false
 end
 
 function handler:Draw()
