@@ -2003,7 +2003,6 @@ namespace ScaleformUI
                     _poolcontainer.MenuChangeEv(this, null, MenuState.Closed);
                     MenuChangeEv(this, null, MenuState.Closed);
                     ScaleformUI._ui.CallFunction("CLEAR_ALL");
-                    _poolcontainer = null;
                 }
                 if (!value) return;
                 if (!ResetCursorOnOpen) return;
