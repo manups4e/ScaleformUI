@@ -363,7 +363,7 @@ function CreatePauseMenu()
 	end
 
 	pauseMenuExample.OnRightItemChange = function (menu, tabIndex, focusLevel, leftItemIndex, rightItemIndex)
-		Notifications:ShowSubtitle(menuTabs[tabIndex].Label .. " Focus at level => ~y~" .. focusLevel .. "~w~, left Item ~o~N° " .. leftItemIndex .. "~w~ and right Item ~b~N° " .. rightItemIndex .. "~w~ selected!")
+		Notifications:ShowSubtitle(menu.Tabs[tabIndex].Label .. " Focus at level => ~y~" .. focusLevel .. "~w~, left Item ~o~N° " .. leftItemIndex .. "~w~ and right Item ~b~N° " .. rightItemIndex .. "~w~ selected!")
 	end
 
 	pauseMenuExample:Visible(true)
