@@ -107,7 +107,7 @@ namespace ScaleformUI
 		/// <returns>The newly created submenu.</returns>
 		public UIMenu AddSubMenu(UIMenu menu, string text, PointF offset)
 		{
-			return AddSubMenu(menu, text, "", Point.Empty);
+			return AddSubMenu(menu, text, "", offset);
 		}
 
 		/// <summary>
