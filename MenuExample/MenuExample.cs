@@ -153,7 +153,8 @@ public class MenuExample : BaseScript
 		#endregion
 
 		#region Windows SubMenu
-		var windowSubmenu = _menuPool.AddSubMenu(exampleMenu, "Windows Menu");
+		var windowSubmenu = new UIMenu("Windows Menu", "subtitle");
+		exampleMenu.AddSubMenu(windowSubmenu, "Windows Menu super powa", "This is the submenu description");
 		var heritageWindow = new UIMenuHeritageWindow(0, 0);
 		var statsWindow = new UIMenuDetailsWindow("Parents resemblance", "Dad:", "Mom:", true, new List<UIDetailStat>());
 		windowSubmenu.AddWindow(heritageWindow);
