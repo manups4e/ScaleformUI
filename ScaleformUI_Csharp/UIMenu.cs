@@ -956,7 +956,7 @@ namespace ScaleformUI
         public bool MouseControlsEnabled = true;
         public bool AlternativeTitle = false;
 
-        public PointF Offset { get; }
+        public PointF Offset { get; internal set; }
 
         public List<UIMenuWindow> Windows = new List<UIMenuWindow>();
 
@@ -1238,6 +1238,41 @@ namespace ScaleformUI
             RemoveItemAt(MenuItems.IndexOf(item));
         }
 
+        public void AddSubMenu(UIMenu menu, string text, bool OffsetInheritance = true)
+        {
+            PointF Offset = PointF.Empty;
+            if (OffsetInheritance)
+                Offset = this.Offset;
+            AddSubMenu(menu, text, "", Offset);
+        }
+        public void AddSubMenu(UIMenu menu, string text, PointF offset)
+        {
+            AddSubMenu(menu, text, "", offset);
+        }
+        public void AddSubMenu(UIMenu menu, string text, string description, bool OffsetInheritance = true)
+        {
+            PointF Offset = PointF.Empty;
+            if (OffsetInheritance)
+                Offset = this.Offset;
+            AddSubMenu(menu, text, description, Offset);
+        }
+        public void AddSubMenu(UIMenu menu, string text, string description, PointF offset, bool BannerInheritance = true)
+        {
+            UIMenuItem item = new UIMenuItem(text, description);
+            this.AddItem(item);
+            menu.Offset = offset;
+
+            if (BannerInheritance && this._customTexture.Key != null && this._customTexture.Value != null)
+                menu.SetBannerType(this._customTexture);
+
+            menu.MouseEdgeEnabled = this.MouseEdgeEnabled;
+            menu.MouseWheelControlEnabled = this.MouseWheelControlEnabled;
+            menu.MouseControlsEnabled = this.MouseControlsEnabled;
+            menu.MaxItemsOnScreen = this.MaxItemsOnScreen;
+            _poolcontainer.Add(menu);
+            this.BindMenuToItem(menu, item);
+            menu._poolcontainer = this._poolcontainer;
+        }
 
         /// <summary>
         /// Reset the current selected item to 0. Use this after you add or remove items dynamically.
@@ -2253,13 +2288,13 @@ namespace ScaleformUI
         /// <summary>
         /// Returns the title object.
         /// </summary>
-        public string Title { get; }
+        public string Title { get; internal set; }
 
 
         /// <summary>
         /// Returns the subtitle object.
         /// </summary>
-        public string Subtitle { get; }
+        public string Subtitle { get; internal set; }
 
 
         /// <summary>
@@ -2280,7 +2315,7 @@ namespace ScaleformUI
         public UIMenuItem ParentItem { get; set; }
 
         //Tree structure
-        public Dictionary<UIMenuItem, UIMenu> Children { get; }
+        public Dictionary<UIMenuItem, UIMenu> Children { get; internal set; }
 
         /// <summary>
         /// Returns the current width offset.
