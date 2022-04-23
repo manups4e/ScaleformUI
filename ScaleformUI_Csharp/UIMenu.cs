@@ -892,6 +892,12 @@ namespace ScaleformUI
         internal readonly static string _selectTextLocalized = Game.GetGXTEntry("HUD_INPUT2");
         internal readonly static string _backTextLocalized = Game.GetGXTEntry("HUD_INPUT3");
         protected readonly SizeF Resolution = ScreenTools.ResolutionMaintainRatio;
+
+        // Button delay
+        private int time;
+        private int times;
+        private int delay;
+
         #endregion
 
         #region Public Fields
@@ -1436,7 +1442,7 @@ namespace ScaleformUI
             if (_controlCounter > 0)
             {
                 _controlCounter++;
-                if (_controlCounter > 30)
+                if (_controlCounter > 15)
                     _controlCounter = 0;
                 return false;
             }
@@ -1948,6 +1954,7 @@ namespace ScaleformUI
                     break;
             }
         }
+
         /// <summary>
         /// Process control-stroke. Call this in the OnTick event.
         /// </summary>
@@ -1969,28 +1976,78 @@ namespace ScaleformUI
             if (MenuItems.Count == 0) return;
             if (IsControlBeingPressed(MenuControls.Up, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
             {
-                GoUp();
+                if (GetGameTimer() - time > delay)
+                {
+                    ButtonDelay();
+                    GoUp();
+                }
             }
 
             else if (IsControlBeingPressed(MenuControls.Down, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
             {
-                GoDown();
+                if (GetGameTimer() - time > delay)
+                {
+                    ButtonDelay();
+                    GoDown();
+                }
             }
 
             else if (IsControlBeingPressed(MenuControls.Left, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
             {
-                GoLeft();
+                if (GetGameTimer() - time > delay)
+                {
+                    ButtonDelay();
+                    GoLeft();
+                }
             }
 
             else if (IsControlBeingPressed(MenuControls.Right, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
             {
-                GoRight();
+                if (GetGameTimer() - time > delay)
+                {
+                    ButtonDelay();
+                    GoRight();
+                }
             }
 
             else if (HasControlJustBeenPressed(MenuControls.Select, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
             {
                 Select(true);
             }
+
+            // IsControlBeingPressed doesn't run every frame so I had to use this
+            if (!Game.IsControlPressed(0, Control.FrontendUp) && !Game.IsControlPressed(0, Control.FrontendDown) && !Game.IsControlPressed(0, Control.FrontendLeft) && !Game.IsControlPressed(0, Control.FrontendRight))
+            {
+                times = 0;
+                delay = 200;
+            }
+        }
+
+        void ButtonDelay()
+        {
+            // Increment the "changed indexes" counter
+            times++;
+
+            // If the controls are still being held down after moving 3 indexes, reduce the delay between index changes.
+            if (times > 2)
+            {
+                delay = 150;
+            }
+            if (times > 5)
+            {
+                delay = 100;
+            }
+            if (times > 25)
+            {
+                delay = 50;
+            }
+            if (times > 60)
+            {
+                delay = 25;
+            }
+
+            // Reset the time to the current game timer.
+            time = GetGameTimer();
         }
 
         /// <summary>
