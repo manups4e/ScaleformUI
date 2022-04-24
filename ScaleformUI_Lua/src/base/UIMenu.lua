@@ -366,7 +366,7 @@ function UIMenu:MaxItemsOnScreen(max)
     end
 end
 
-function AddSubMenu(Menu, text, description, offset, KeepBanner)
+function UIMenu:AddSubMenu(Menu, text, description, offset, KeepBanner)
     if Menu() == "UIMenu" then
         local Item = UIMenuItem.New(tostring(text), description or "")
         self:AddItem(Item)
