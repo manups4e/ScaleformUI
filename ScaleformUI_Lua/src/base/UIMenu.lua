@@ -60,6 +60,9 @@ function UIMenu.New(Title, Subtitle, X, Y, glare, txtDictionary, txtName, altern
         _changed = false,
         _maxItem = 7,
         _menuGlare = 0,
+        _time = 0,
+        _times = 0,
+        _delay = 150,
         _scaledWidth = (720 * GetScreenAspectRatio(false)),
         Controls = {
             Back = {
@@ -538,6 +541,8 @@ function UIMenu:ProcessControl()
         return
     end
 
+    if UpdateOnscreenKeyboard() == 0 or IsWarningMessageActive() then return end
+
     if self.Controls.Back.Enabled and (IsDisabledControlJustReleased(0, 177) or IsDisabledControlJustReleased(1, 177) or IsDisabledControlJustReleased(2, 177) or IsDisabledControlJustReleased(0, 199) or IsDisabledControlJustReleased(1, 199) or IsDisabledControlJustReleased(2, 199)) then
         self:GoBack()
     end
@@ -546,93 +551,62 @@ function UIMenu:ProcessControl()
         return
     end
 
-    if not self.UpPressed then
-        if self.Controls.Up.Enabled and (IsDisabledControlJustPressed(0, 172) or IsDisabledControlJustPressed(1, 172) or IsDisabledControlJustPressed(2, 172) or IsDisabledControlJustPressed(0, 241) or IsDisabledControlJustPressed(1, 241) or IsDisabledControlJustPressed(2, 241) or IsDisabledControlJustPressed(2, 241)) then
-            Citizen.CreateThread(function()
-                self.UpPressed = true
-                if #self.Items > self.Pagination.Total + 1 then
-                    self:GoUp()
-                else
-                    self:GoUp()
-                end
-                Citizen.Wait(175)
-                while self.Controls.Up.Enabled and (IsDisabledControlPressed(0, 172) or IsDisabledControlPressed(1, 172) or IsDisabledControlPressed(2, 172) or IsDisabledControlPressed(0, 241) or IsDisabledControlPressed(1, 241) or IsDisabledControlPressed(2, 241) or IsDisabledControlPressed(2, 241)) do
-                    if #self.Items > self.Pagination.Total + 1 then
-                        self:GoUp()
-                    else
-                        self:GoUp()
-                    end
-                    Citizen.Wait(125)
-                end
-                self.UpPressed = false
-            end)
+    if self.Controls.Up.Enabled and (IsDisabledControlPressed(0, 172) or IsDisabledControlPressed(1, 172) or IsDisabledControlPressed(2, 172) or IsDisabledControlPressed(0, 241) or IsDisabledControlPressed(1, 241) or IsDisabledControlPressed(2, 241) or IsDisabledControlPressed(2, 241)) then
+        if GetGameTimer() - self._time > self._delay then
+            self:ButtonDelay(0)
+            self:GoUp()
         end
     end
 
-    if not self.DownPressed then
-        if self.Controls.Down.Enabled and (IsDisabledControlJustPressed(0, 173) or IsDisabledControlJustPressed(1, 173) or IsDisabledControlJustPressed(2, 173) or IsDisabledControlJustPressed(0, 242) or IsDisabledControlJustPressed(1, 242) or IsDisabledControlJustPressed(2, 242)) then
-            Citizen.CreateThread(function()
-                self.DownPressed = true
-                if #self.Items > self.Pagination.Total + 1 then
-                    self:GoDown()
-                else
-                    self:GoDown()
-                end
-                Citizen.Wait(175)
-                while self.Controls.Down.Enabled and (IsDisabledControlPressed(0, 173) or IsDisabledControlPressed(1, 173) or IsDisabledControlPressed(2, 173) or IsDisabledControlPressed(0, 242) or IsDisabledControlPressed(1, 242) or IsDisabledControlPressed(2, 242)) do
-                    if #self.Items > self.Pagination.Total + 1 then
-                        self:GoDown()
-                    else
-                        self:GoDown()
-                    end
-                    Citizen.Wait(125)
-                end
-                self.DownPressed = false
-            end)
+    if self.Controls.Down.Enabled and (IsDisabledControlPressed(0, 173) or IsDisabledControlPressed(1, 173) or IsDisabledControlPressed(2, 173) or IsDisabledControlPressed(0, 242) or IsDisabledControlPressed(1, 242) or IsDisabledControlPressed(2, 242)) then
+        if GetGameTimer() - self._time > self._delay then
+            self:ButtonDelay(0)
+            self:GoDown()
         end
     end
 
-    if not self.LeftPressed then
-        if self.Controls.Left.Enabled and (IsDisabledControlPressed(0, 174) or IsDisabledControlPressed(1, 174) or IsDisabledControlPressed(2, 174)) then
-            local type, subtype = self.Items[self:CurrentSelection()]()
-            Citizen.CreateThread(function()
-                self.LeftPressed = true
-                self:GoLeft()
-                Citizen.Wait(175)
-                while self.Controls.Left.Enabled and (IsDisabledControlPressed(0, 174) or IsDisabledControlPressed(1, 174) or IsDisabledControlPressed(2, 174)) do
-                    self:GoLeft()
-                    Citizen.Wait(125)
-                end
-                self.LeftPressed = false
-            end)
+    if self.Controls.Left.Enabled and (IsDisabledControlPressed(0, 174) or IsDisabledControlPressed(1, 174) or IsDisabledControlPressed(2, 174)) then
+        if GetGameTimer() - self._time > self._delay then
+            self:ButtonDelay(0)
+            self:GoLeft()
         end
     end
 
-    if not self.RightPressed then
-        if self.Controls.Right.Enabled and (IsDisabledControlPressed(0, 175) or IsDisabledControlPressed(1, 175) or IsDisabledControlPressed(2, 175)) then
-            Citizen.CreateThread(function()
-                local type, subtype = self.Items[self:CurrentSelection()]()
-                self.RightPressed = true
-                self:GoRight()
-                Citizen.Wait(175)
-                while self.Controls.Right.Enabled and (IsDisabledControlPressed(0, 175) or IsDisabledControlPressed(1, 175) or IsDisabledControlPressed(2, 175)) do
-                    self:GoRight()
-                    Citizen.Wait(125)
-                end
-                self.RightPressed = false
-            end)
+    if self.Controls.Right.Enabled and (IsDisabledControlPressed(0, 175) or IsDisabledControlPressed(1, 175) or IsDisabledControlPressed(2, 175)) then
+        if GetGameTimer() - self._time > self._delay then
+            self:ButtonDelay(0)
+            self:GoRight()
         end
     end
 
     if self.Controls.Select.Enabled and (IsDisabledControlJustPressed(0, 201) or IsDisabledControlJustPressed(1, 201) or IsDisabledControlJustPressed(2, 201)) then
         self:SelectItem()
     end
+
+    if (IsDisabledControlJustReleased(0, 172) or IsDisabledControlJustReleased(1, 172) or IsDisabledControlJustReleased(2, 172) or IsDisabledControlJustReleased(0, 241) or IsDisabledControlJustReleased(1, 241) or IsDisabledControlJustReleased(2, 241) or IsDisabledControlJustReleased(2, 241)) or
+    (IsDisabledControlJustReleased(0, 173) or IsDisabledControlJustReleased(1, 173) or IsDisabledControlJustReleased(2, 173) or IsDisabledControlJustReleased(0, 242) or IsDisabledControlJustReleased(1, 242) or IsDisabledControlJustReleased(2, 242)) or
+    (IsDisabledControlJustReleased(0, 174) or IsDisabledControlJustReleased(1, 174) or IsDisabledControlJustReleased(2, 174)) or
+    (IsDisabledControlJustReleased(0, 175) or IsDisabledControlJustReleased(1, 175) or IsDisabledControlJustReleased(2, 175)) 
+    then
+        self._times = 0
+        self._delay = 150
+    end
 end
 
+function UIMenu:ButtonDelay()
+    self._times = self._times + 1
+    if self._times % 5 == 0 then
+        self._delay = self._delay - 10
+        if self._delay < 50 then
+            self._delay = 50
+        end
+    end
+    self._time = GetGameTimer()
+end
 ---GoUp
 function UIMenu:GoUp()
     self.Items[self:CurrentSelection()]:Selected(false)
-    local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", true, 8)
+    local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", true, 8, self._delay)
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
@@ -645,7 +619,7 @@ end
 ---GoDown
 function UIMenu:GoDown()
     self.Items[self:CurrentSelection()]:Selected(false)
-    local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", true, 9)
+    local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", true, 9, self._delay)
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
