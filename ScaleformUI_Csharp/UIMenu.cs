@@ -1950,48 +1950,50 @@ namespace ScaleformUI
                 return;
             }
 
-            if (HasControlJustBeenReleased(MenuControls.Back, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
+            if (UpdateOnscreenKeyboard() == 0 || IsWarningMessageActive()) return;
+
+            if (HasControlJustBeenReleased(MenuControls.Back, key))
             {
                 GoBack();
             }
             if (MenuItems.Count == 0) return;
-            if (IsControlBeingPressed(MenuControls.Up, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
+            if (IsControlBeingPressed(MenuControls.Up, key))
             {
                 if (Game.GameTime - time > delay)
                 {
-                    ButtonDelay(0);
+                    ButtonDelay();
                     GoUp();
                 }
             }
 
-            else if (IsControlBeingPressed(MenuControls.Down, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
+            else if (IsControlBeingPressed(MenuControls.Down, key))
             {
                 if (Game.GameTime - time > delay)
                 {
-                    ButtonDelay(1);
+                    ButtonDelay();
                     GoDown();
                 }
             }
 
-            else if (IsControlBeingPressed(MenuControls.Left, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
+            else if (IsControlBeingPressed(MenuControls.Left, key))
             {
                 if (Game.GameTime - time > delay)
                 {
-                    ButtonDelay(2);
+                    ButtonDelay();
                     GoLeft();
                 }
             }
 
-            else if (IsControlBeingPressed(MenuControls.Right, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
+            else if (IsControlBeingPressed(MenuControls.Right, key))
             {
                 if (Game.GameTime - time > delay)
                 {
-                    ButtonDelay(3);
+                    ButtonDelay();
                     GoRight();
                 }
             }
 
-            else if (HasControlJustBeenPressed(MenuControls.Select, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
+            else if (HasControlJustBeenPressed(MenuControls.Select, key))
             {
                 Select(true);
             }
@@ -2004,7 +2006,7 @@ namespace ScaleformUI
             }
         }
 
-        void ButtonDelay(int direction)
+        void ButtonDelay()
         {
             // Increment the "changed indexes" counter
             times++;
