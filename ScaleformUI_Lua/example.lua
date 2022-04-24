@@ -122,6 +122,19 @@ function CreateMenu()
 	exampleMenu:AddItem(listPanelItem4)
 	listPanelItem4:AddPanel(statisticsPanel)
 
+	--[[
+		2 ways to add submenus.. 
+		- the old way => local submenu = pool:AddSubMenu(parent, ...)
+		example: local windowSubmenu = pool:AddSubMenu(exampleMenu, "Heritage Menu", "", true, true)
+		- NEW way => 
+			local subMenu = UIMenu.New()
+			parent:AddSubMenu(subMenu, itemText, itemDescription, offset, KeepBanner)
+		example:
+			local windowSubmenu = pool:AddSubMenu(exampleMenu, "Heritage Menu", "", true, true)
+			local heritageWindow = UIMenuHeritageWindow.New(0, 0)
+		the new approach lets you create the submenu, and add it when you want to, without the need to change your menu accordingly
+	]]
+
 	local windowSubmenu = pool:AddSubMenu(exampleMenu, "Heritage Menu", "", true, true)
 	local heritageWindow = UIMenuHeritageWindow.New(0, 0)
 	local detailsWindow = UIMenuDetailsWindow.New("Parents resemblance", "Dad:", "Mom:", true, {})
