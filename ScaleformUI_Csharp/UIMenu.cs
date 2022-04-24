@@ -892,6 +892,11 @@ namespace ScaleformUI
         internal readonly static string _selectTextLocalized = Game.GetGXTEntry("HUD_INPUT2");
         internal readonly static string _backTextLocalized = Game.GetGXTEntry("HUD_INPUT3");
         protected readonly SizeF Resolution = ScreenTools.ResolutionMaintainRatio;
+
+        // Button delay
+        private int time;
+        private int times;
+        private int delay = 150;
         #endregion
 
         #region Public Fields
@@ -1403,7 +1408,7 @@ namespace ScaleformUI
         /// <param name="control">Control to check for.</param>
         /// <param name="key">Key if you're using keys.</param>
         /// <returns></returns>
-        public bool HasControlJustBeenReleaseed(MenuControls control, Keys key = Keys.None)
+        public bool HasControlJustBeenReleased(MenuControls control, Keys key = Keys.None)
         {
             List<Keys> tmpKeys = new List<Keys>(_keyDictionary[control].Item1);
             List<Tuple<Control, int>> tmpControls = new List<Tuple<Control, int>>(_keyDictionary[control].Item2);
@@ -1432,27 +1437,9 @@ namespace ScaleformUI
         {
             List<Keys> tmpKeys = new List<Keys>(_keyDictionary[control].Item1);
             List<Tuple<Control, int>> tmpControls = new List<Tuple<Control, int>>(_keyDictionary[control].Item2);
-            if (HasControlJustBeenReleaseed(control, key)) _controlCounter = 0;
-            if (_controlCounter > 0)
-            {
-                _controlCounter++;
-                if (_controlCounter > 30)
-                    _controlCounter = 0;
-                return false;
-            }
-            if (key != Keys.None)
-            {
-                //if (tmpKeys.Any(Game.IsKeyPressed))
-                //{
-                //    _controlCounter = 1;
-                //    return true;
-                //}
-            }
+            if (HasControlJustBeenReleased(control, key)) _controlCounter = 0;
             if (tmpControls.Any(tuple => Game.IsControlPressed(tuple.Item2, tuple.Item1)))
-            {
-                _controlCounter = 1;
                 return true;
-            }
             return false;
         }
 
@@ -1768,6 +1755,7 @@ namespace ScaleformUI
                 MenuItems[CurrentSelection].Selected = false;
                 BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_INPUT_EVENT");
                 ScaleformMovieMethodAddParamInt(8);
+                ScaleformMovieMethodAddParamInt(delay);
                 var ret = EndScaleformMovieMethodReturnValue();
                 while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
                 _activeItem = GetScaleformMovieFunctionReturnInt(ret);
@@ -1786,6 +1774,7 @@ namespace ScaleformUI
                 MenuItems[CurrentSelection].Selected = false;
                 BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_INPUT_EVENT");
                 ScaleformMovieMethodAddParamInt(9);
+                ScaleformMovieMethodAddParamInt(delay);
                 var ret = EndScaleformMovieMethodReturnValue();
                 while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
                 _activeItem = GetScaleformMovieFunctionReturnInt(ret);
@@ -1951,10 +1940,9 @@ namespace ScaleformUI
         /// <summary>
         /// Process control-stroke. Call this in the OnTick event.
         /// </summary>
-        public async void ProcessControl(Keys key = Keys.None)
+        public void ProcessControl(Keys key = Keys.None)
         {
-
-            while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
+            if (!ScaleformUI._ui.IsLoaded) return;
             if (!Visible || ScaleformUI.Warning.IsShowing) return;
             if (_justOpened)
             {
@@ -1962,35 +1950,75 @@ namespace ScaleformUI
                 return;
             }
 
-            if (HasControlJustBeenReleaseed(MenuControls.Back, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
+            if (HasControlJustBeenReleased(MenuControls.Back, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
             {
                 GoBack();
             }
             if (MenuItems.Count == 0) return;
             if (IsControlBeingPressed(MenuControls.Up, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
             {
-                GoUp();
+                if (Game.GameTime - time > delay)
+                {
+                    ButtonDelay(0);
+                    GoUp();
+                }
             }
 
             else if (IsControlBeingPressed(MenuControls.Down, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
             {
-                GoDown();
+                if (Game.GameTime - time > delay)
+                {
+                    ButtonDelay(1);
+                    GoDown();
+                }
             }
 
             else if (IsControlBeingPressed(MenuControls.Left, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
             {
-                GoLeft();
+                if (Game.GameTime - time > delay)
+                {
+                    ButtonDelay(2);
+                    GoLeft();
+                }
             }
 
             else if (IsControlBeingPressed(MenuControls.Right, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
             {
-                GoRight();
+                if (Game.GameTime - time > delay)
+                {
+                    ButtonDelay(3);
+                    GoRight();
+                }
             }
 
             else if (HasControlJustBeenPressed(MenuControls.Select, key) && UpdateOnscreenKeyboard() != 0 && !IsWarningMessageActive())
             {
                 Select(true);
             }
+
+            // IsControlBeingPressed doesn't run every frame so I had to use this
+            if (HasControlJustBeenReleased(MenuControls.Up) || HasControlJustBeenReleased(MenuControls.Down) || HasControlJustBeenReleased(MenuControls.Left) || HasControlJustBeenReleased(MenuControls.Right))
+            {
+                times = 0;
+                delay = 150;
+            }
+        }
+
+        void ButtonDelay(int direction)
+        {
+            // Increment the "changed indexes" counter
+            times++;
+
+            // Each time "times" is a multiple of 5 we decrease the delay.
+            // Min delay for the scaleform is 50.. less won't change due to the
+            // awaiting time for the scaleform itself.
+            if (times % 5 == 0)
+            {
+                delay -= 10;
+                if (delay < 50) delay = 50;
+            }
+            // Reset the time to the current game timer.
+            time = Game.GameTime;
         }
 
         /// <summary>
@@ -2073,13 +2101,13 @@ namespace ScaleformUI
 
                 }
             }
-            var timer = GetGameTimer();
+            var timer = Game.GameTime;
             if (MenuItems.Count == 0)
             {
                 while (MenuItems.Count == 0)
                 {
                     await BaseScript.Delay(0);
-                    if (GetGameTimer() - timer > 150)
+                    if (Game.GameTime - timer > 150)
                     {
                         ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
                         return;

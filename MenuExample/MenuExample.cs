@@ -154,7 +154,7 @@ public class MenuExample : BaseScript
 
 		#region Windows SubMenu
 		var windowSubmenu = new UIMenu("Windows Menu", "submenu description");
-		exampleMenu.AddSubMenu(windowSubmenu, "Windows SubMenu binded item label", "this is the submenu binded item description");
+		exampleMenu.AddSubMenu(windowSubmenu, "Windows SubMenu item label", "this is the submenu binded item description");
 		windowSubmenu.ParentItem.SetRightLabel(">>>");
 		var heritageWindow = new UIMenuHeritageWindow(0, 0);
 		var statsWindow = new UIMenuDetailsWindow("Parents resemblance", "Dad:", "Mom:", true, new List<UIDetailStat>());
