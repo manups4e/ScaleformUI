@@ -363,6 +363,33 @@ function UIMenu:MaxItemsOnScreen(max)
     end
 end
 
+function AddSubMenu(Menu, text, description, offset, KeepBanner)
+    if Menu() == "UIMenu" then
+        local Item = UIMenuItem.New(tostring(text), description or "")
+        self:AddItem(Item)
+        if offset == nil then
+            Menu.Position = self.Position
+        else
+            Menu.Position = offset
+        end
+        if KeepBanner then
+            if self.Logo ~= nil then
+                Menu.Logo = self.Logo
+            else
+                Menu.Logo = nil
+                Menu.Banner = self.Banner
+            end
+        end
+        Menu.Glare = self.Glare
+        Menu.Settings.MouseControlsEnabled = self.Settings.MouseControlsEnabled
+        Menu.Settings.MouseEdgeEnabled = self.Settings.MouseEdgeEnabled
+        Menu:MaxItemsOnScreen(self:MaxItemsOnScreen())
+        self.pool:Add(Menu)
+        self:BindMenuToItem(Menu, Item)
+        return Menu
+    end
+end
+
 ---Visible
 ---@param bool boolean
 function UIMenu:Visible(bool)
