@@ -110,6 +110,8 @@ function UIMenu.New(Title, Subtitle, X, Y, glare, txtDictionary, txtName, altern
         end,
         OnProgressSelect = function(menu, progress, index)
         end,
+        OnStatsSelect = function(menu, progress, index)
+        end,
         OnItemSelect = function(menu, item, index)
         end,
         OnMenuChanged = function(oldmenu, newmenu, change)
@@ -738,6 +740,22 @@ function UIMenu:SelectItem(play)
         PlaySoundFrontend(-1, self.Settings.Audio.Select, self.Settings.Audio.Library, true)
         self.OnListSelect(self, Item, Item._Index)
         Item.OnListSelected(self, Item, Item._Index)
+    elseif subtype == "UIMenuDynamicListItem" then
+        PlaySoundFrontend(-1, self.Settings.Audio.Select, self.Settings.Audio.Library, true)
+        self.OnListSelect(self, Item, Item._currentItem)
+        Item.OnListSelected(self, Item, Item._currentItem)
+    elseif subtype == "UIMenuSliderItem" then
+        PlaySoundFrontend(-1, self.Settings.Audio.Select, self.Settings.Audio.Library, true)
+        self.OnSliderSelect(self, Item, Item._Index)
+        Item.OnSliderSelected(self, Item, Item._Index)
+    elseif subtype == "UIMenuProgressItem" then
+        PlaySoundFrontend(-1, self.Settings.Audio.Select, self.Settings.Audio.Library, true)
+        self.OnProgressSelect(self, Item, Item._Index)
+        Item.OnProgressSelected(self, Item, Item._Index)
+    elseif subtype == "UIMenuStatsItem" then
+        PlaySoundFrontend(-1, self.Settings.Audio.Select, self.Settings.Audio.Library, true)
+        self.OnStatsSelect(self, Item, Item._Index)
+        Item.OnStatsSelected(self, Item, Item._Index)
     else
         self.OnItemSelect(self, Item, self:CurrentSelection())
         Item:Activated(self, Item)
