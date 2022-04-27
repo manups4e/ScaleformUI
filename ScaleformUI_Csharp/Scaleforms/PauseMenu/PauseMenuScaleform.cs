@@ -66,10 +66,10 @@ namespace ScaleformUI
             _header.CallFunction("GO_LEFT");
         }
 
-        public void AddPauseMenuTab(string title, int type)
+        public void AddPauseMenuTab(string title, int tabType, int tabContentType)
         {
-            _header.CallFunction("ADD_HEADER_TAB", title);
-            _pause.CallFunction("ADD_TAB", type);
+            _header.CallFunction("ADD_HEADER_TAB", title, tabType);
+            _pause.CallFunction("ADD_TAB", tabContentType);
         }
 
         public void AddLeftItem(int tab, int type, string title, HudColor itemColor = HudColor.NONE, HudColor highlightColor = HudColor.NONE)

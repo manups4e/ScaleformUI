@@ -6,6 +6,7 @@ namespace ScaleformUI.PauseMenu
 {
     public class BaseTab
     {
+        internal int _type;
         public BaseTab(string name)
         {
             Title = name;

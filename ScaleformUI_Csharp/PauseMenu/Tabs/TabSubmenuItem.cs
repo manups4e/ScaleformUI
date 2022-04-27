@@ -10,6 +10,7 @@ namespace ScaleformUI.PauseMenu
         private bool _focused;
         public TabSubmenuItem(string name) : base(name)
         {
+            _type = 1;
         }
 
         public List<BasicTabItem> Items = new List<BasicTabItem>();

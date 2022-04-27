@@ -13,6 +13,7 @@ namespace ScaleformUI.PauseMenu
         public TabTextItem(string name, string title) : base(name)
         {
             TextTitle = title;
+            _type = 1;
         }
 
         public async void AddTitle(string title)
