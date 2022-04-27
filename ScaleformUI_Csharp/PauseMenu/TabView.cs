@@ -109,16 +109,19 @@ namespace ScaleformUI.PauseMenu
                 {
                     BuildPauseMenu();
                     SendPauseMenuOpen();
-                    Screen.Effects.Start(ScreenEffect.FocusOut, 800);
-                    API.TransitionToBlurred(700);
+                    API.DontRenderInGameUi(true);
+                    Screen.Effects.Start(ScreenEffect.FocusOut, 500);
+                    API.TriggerScreenblurFadeIn(800);
                     ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
                     API.SetPlayerControl(Game.Player.Handle, false, 0);
                 }
                 else
                 {
                     _pause.Dispose();
+                    API.DontRenderInGameUi(false);
                     Screen.Effects.Start(ScreenEffect.FocusOut, 500);
-                    API.TransitionFromBlurred(400);
+                    if (API.IsScreenblurFadeRunning()) API.DisableScreenblurFade();
+                    API.TriggerScreenblurFadeOut(100);
                     SendPauseMenuClose();
                     API.SetPlayerControl(Game.Player.Handle, true, 0);
                 }
@@ -153,14 +156,6 @@ namespace ScaleformUI.PauseMenu
                 _pause.SetHeaderCharImg(HeaderPicture.Item2, HeaderPicture.Item2, true);
             if (CrewPicture != null)
                 _pause.SetHeaderSecondaryImg(CrewPicture.Item1, CrewPicture.Item2, true);
-            /*
-                        else
-                        {
-                            var mugshot = await Notifications.GetPedMugshotAsync(Game.PlayerPed);
-                            _pause.SetHeaderCharImg(mugshot.Item2, mugshot.Item2, true);
-                            API.ReleasePedheadshotImgUpload(mugshot.Item1);
-                        }
-            */
             _pause.SetHeaderDetails(SideStringTop, SideStringMiddle, SideStringBottom);
             _loaded = true;
         }
@@ -176,7 +171,7 @@ namespace ScaleformUI.PauseMenu
                     case TabTextItem:
                         {
                             TabTextItem simpleTab = tab as TabTextItem;
-                            _pause.AddPauseMenuTab(tab.Title, 0);
+                            _pause.AddPauseMenuTab(tab.Title, tab._type, 0);
                             if (!string.IsNullOrWhiteSpace(simpleTab.TextTitle))
                                 _pause.AddRightTitle(tabIndex, 0, simpleTab.TextTitle);
                             foreach (var it in simpleTab.LabelsList)
@@ -185,7 +180,7 @@ namespace ScaleformUI.PauseMenu
                         break;
                     case TabSubmenuItem:
                         {
-                            _pause.AddPauseMenuTab(tab.Title, 1);
+                            _pause.AddPauseMenuTab(tab.Title, tab._type, 1);
                             foreach (var item in tab.LeftItemList)
                             {
                                 int itemIndex = tab.LeftItemList.IndexOf(item);
@@ -405,7 +400,10 @@ namespace ScaleformUI.PauseMenu
             {
                 if (FocusLevel > 0)
                     result = await _pause.SendInputEvent(17);
-                else Visible = false;
+                else
+                {
+                    Visible = false;
+                }
             }
 
             if (Game.IsControlJustPressed(1, Control.CursorScrollUp))
