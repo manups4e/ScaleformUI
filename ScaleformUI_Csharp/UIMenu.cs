@@ -1692,15 +1692,15 @@ namespace ScaleformUI
                         if (context == 0)
                         {
                             MenuItems[itemId].Hovered = false;
-                            SetMouseCursorSprite(1);
                         }
+                        SetMouseCursorSprite(1);
                         break;
                     case 9: // on hovered
                         if (context == 0)
                         {
                             MenuItems[itemId].Hovered = true;
-                            SetMouseCursorSprite(5);
                         }
+                        SetMouseCursorSprite(5);
                         break;
                     case 0: // dragged outside
                         cursorPressed = false;
