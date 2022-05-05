@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{79D9A09F-1999-4148-9BA0-20AEBA9B3C8B}</ProjectGuid>
     <OutputType>Library</OutputType>
-  		<LangVersion>latest</LangVersion>
-  <AppDesignerFolder>Properties</AppDesignerFolder>
+    <LangVersion>latest</LangVersion>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MenuExample</RootNamespace>
     <AssemblyName>MenuExample.net</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
@@ -34,8 +34,8 @@
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CitizenFX.Core.Client, Version=0.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\CitizenFX.Core.Client.1.0.5020\lib\net45\CitizenFX.Core.Client.dll</HintPath>
+    <Reference Include="CitizenFX.Core.Client, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CitizenFX.Core.Client.1.0.5539\lib\net45\CitizenFX.Core.Client.dll</HintPath>
     </Reference>
     <Reference Include="ScaleformUI, Version=1.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
