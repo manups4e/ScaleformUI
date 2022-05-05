@@ -27,6 +27,8 @@ namespace ScaleformUI
 			Control.CursorScrollUp,
 			Control.CursorX,
 			Control.CursorY,
+			Control.CursorAccept,
+			Control.CursorCancel,
 			Control.MoveUpDown,
 			Control.MoveLeftRight,
 			Control.Sprint,
@@ -41,6 +43,7 @@ namespace ScaleformUI
 			Control.FlyUpDown,
 			Control.VehicleFlyYawRight,
 			Control.VehicleHandbrake,
+
 		};
 		/// <summary>
 		/// All of the controls required for using a keyboard.
