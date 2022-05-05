@@ -1545,6 +1545,7 @@ namespace ScaleformUI
         int eventType = 0;
         int itemId = 0;
         int context = 0;
+        int unused = 0;
         bool cursorPressed;
 
         /// <summary>
@@ -1574,19 +1575,9 @@ namespace ScaleformUI
             SetInputExclusive(2, 237);
             SetInputExclusive(2, 238);
 
-            /* At the moment of writing this, the Native _GET_SCALEFORM_MOVIE_CURSOR_SELECTION (0x632B2940C67F4EA9) 
-             * has a wrong parameter declaration.. I already sent a pull request on Native Docs Github.
-             * You can see the PR here: https://github.com/citizenfx/natives/pull/758
-             */
-            OutputArgument _eventType = new();
-            OutputArgument _context = new();
-            OutputArgument _itemId = new();
-            bool success = Function.Call<bool>(Hash._GET_SCALEFORM_MOVIE_CURSOR_SELECTION, ScaleformUI._ui.Handle, _eventType, _context, _itemId);
+            var success = GetScaleformMovieCursorSelection(ScaleformUI._ui.Handle, ref eventType, ref context, ref itemId, ref unused);
             if (success)
             {
-                eventType = _eventType.GetResult<int>();
-                itemId = _itemId.GetResult<int>();
-                context = _context.GetResult<int>();
                 switch (eventType)
                 {
                     case 5: // on click
