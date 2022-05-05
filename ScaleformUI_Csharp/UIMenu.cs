@@ -958,7 +958,7 @@ namespace ScaleformUI
             }
         }
         public bool ResetCursorOnOpen = true;
-        public bool MouseControlsEnabled = true;
+        private bool mouseControlsEnabled = true;
         public bool AlternativeTitle = false;
 
         public PointF Offset { get; internal set; }
@@ -1542,6 +1542,11 @@ namespace ScaleformUI
             }
         }
 
+        int eventType = 0;
+        int itemId = 0;
+        int context = 0;
+        bool cursorPressed;
+
         /// <summary>
         /// Process the mouse's position and check if it's hovering over any UI element. Call this in OnTick
         /// </summary>
@@ -1551,16 +1556,10 @@ namespace ScaleformUI
             {
                 Game.EnableControlThisFrame(0, Control.LookUpDown);
                 Game.EnableControlThisFrame(0, Control.LookLeftRight);
-                Game.EnableControlThisFrame(0, Control.Aim);
-                Game.EnableControlThisFrame(0, Control.Attack);
                 Game.EnableControlThisFrame(1, Control.LookUpDown);
                 Game.EnableControlThisFrame(1, Control.LookLeftRight);
-                Game.EnableControlThisFrame(1, Control.Aim);
-                Game.EnableControlThisFrame(1, Control.Attack);
                 Game.EnableControlThisFrame(2, Control.LookUpDown);
                 Game.EnableControlThisFrame(2, Control.LookLeftRight);
-                Game.EnableControlThisFrame(2, Control.Aim);
-                Game.EnableControlThisFrame(2, Control.Attack);
                 if (_itemsDirty)
                 {
                     MenuItems.Where(i => i.Hovered).ToList().ForEach(i => i.Hovered = false);
@@ -1569,7 +1568,198 @@ namespace ScaleformUI
                 return;
             }
 
-            ShowCursorThisFrame();
+            SetMouseCursorActiveThisFrame();
+            SetInputExclusive(2, 239);
+            SetInputExclusive(2, 240);
+            SetInputExclusive(2, 237);
+            SetInputExclusive(2, 238);
+
+            /* At the moment of writing this, the Native _GET_SCALEFORM_MOVIE_CURSOR_SELECTION (0x632B2940C67F4EA9) 
+             * has a wrong parameter declaration.. I already sent a pull request on Native Docs Github.
+             * You can see the PR here: https://github.com/citizenfx/natives/pull/758
+             */
+            OutputArgument _eventType = new();
+            OutputArgument _context = new();
+            OutputArgument _itemId = new();
+            bool success = Function.Call<bool>(Hash._GET_SCALEFORM_MOVIE_CURSOR_SELECTION, ScaleformUI._ui.Handle, _eventType, _context, _itemId);
+            if (success)
+            {
+                eventType = _eventType.GetResult<int>();
+                itemId = _itemId.GetResult<int>();
+                context = _context.GetResult<int>();
+                switch (eventType)
+                {
+                    case 5: // on click
+                        switch (context)
+                        {
+                            case 0:
+                                {
+                                    var item = MenuItems[itemId];
+                                    if ((MenuItems[itemId] is UIMenuSeparatorItem && (MenuItems[itemId] as UIMenuSeparatorItem).Jumpable) || !MenuItems[itemId].Enabled)
+                                    {
+                                        Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
+                                        return;
+                                    }
+                                    if (item.Selected)
+                                    {
+                                        switch (item._itemId)
+                                        {
+                                            case 0:
+                                            case 2:
+                                                Select(false);
+                                                break;
+                                            case 1:
+                                                {
+                                                    BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SELECT_ITEM");
+                                                    ScaleformMovieMethodAddParamInt(itemId);
+                                                    var ret = EndScaleformMovieMethodReturnValue();
+                                                    while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+                                                    int value = GetScaleformMovieMethodReturnValueInt(ret);
+                                                    if (MenuItems[CurrentSelection] is UIMenuListItem)
+                                                    {
+                                                        var it = MenuItems[CurrentSelection] as UIMenuListItem;
+                                                        it.Index = value;
+                                                        ListChange(it, it.Index);
+                                                        it.ListChangedTrigger(it.Index);
+                                                    }
+                                                }
+                                                break;
+                                            case 3:
+                                                {
+                                                    BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SELECT_ITEM");
+                                                    ScaleformMovieMethodAddParamInt(itemId);
+                                                    var ret = EndScaleformMovieMethodReturnValue();
+                                                    while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+                                                    int value = GetScaleformMovieMethodReturnValueInt(ret);
+                                                    UIMenuSliderItem it = (UIMenuSliderItem)MenuItems[CurrentSelection];
+                                                    it.Value = value;
+                                                    it.SliderChanged(it.Value);
+                                                    SliderChange(it, it.Value);
+                                                }
+                                                break;
+                                            case 4:
+                                                {
+                                                    BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SELECT_ITEM");
+                                                    ScaleformMovieMethodAddParamInt(itemId);
+                                                    var ret = EndScaleformMovieMethodReturnValue();
+                                                    while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+                                                    int value = GetScaleformMovieMethodReturnValueInt(ret);
+                                                    UIMenuProgressItem it = (UIMenuProgressItem)MenuItems[CurrentSelection];
+                                                    it.Value = value;
+                                                    it.ProgressChanged(it.Value);
+                                                    ProgressChange(it, it.Value);
+                                                }
+                                                break;
+                                        }
+                                        return;
+                                    }
+                                    CurrentSelection = itemId;
+                                }
+                                break;
+                            case 10: // panels (10 => context 1, panel_type 0) // ColorPanel
+                                {
+                                    BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SELECT_PANEL");
+                                    ScaleformMovieMethodAddParamInt(CurrentSelection);
+                                    var ret = EndScaleformMovieMethodReturnValue();
+                                    while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+                                    var res = GetScaleformMovieMethodReturnValueString(ret);
+                                    var split = res.Split(',');
+                                    var panel = (UIMenuColorPanel)MenuItems[CurrentSelection].Panels[Convert.ToInt32(split[0])];
+                                    panel._value = Convert.ToInt32(split[1]);
+                                    ColorPanelChange(panel.ParentItem, panel, panel.CurrentSelection);
+                                    panel.PanelChanged();
+                                }
+                                break;
+                            case 11: // panels (11 => context 1, panel_type 1) // PercentagePanel
+                                cursorPressed = true;
+                                break;
+                            case 12: // panels (12 => context 1, panel_type 2) // GridPanel
+                                cursorPressed = true;
+                                break;
+                            case 2: // side panel
+                                {
+                                    var panel = (UIVehicleColourPickerPanel)MenuItems[CurrentSelection].SidePanel;
+                                    if (itemId != -1)
+                                    {
+                                        panel._value = itemId;
+                                        panel.PickerSelect();
+                                        Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
+                                    }
+                                }
+                                break;
+                        }
+                        break;
+                    case 6: // on click released
+                        cursorPressed = false;
+                        break;
+                    case 7: // on click released ouside
+                        cursorPressed = false;
+                        SetMouseCursorSprite(1);
+                        break;
+                    case 8: // on not hover
+                        cursorPressed = false;
+                        if (context == 0)
+                        {
+                            MenuItems[itemId].Hovered = false;
+                            SetMouseCursorSprite(1);
+                        }
+                        break;
+                    case 9: // on hovered
+                        if (context == 0)
+                        {
+                            MenuItems[itemId].Hovered = true;
+                            SetMouseCursorSprite(5);
+                        }
+                        break;
+                    case 0: // dragged outside
+                        cursorPressed = false;
+                        break;
+                    case 1: // dragged inside
+                        cursorPressed = true;
+                        break;
+                }
+            }
+
+            if (cursorPressed)
+            {
+                if (HasSoundFinished(menuSound))
+                {
+                    menuSound = GetSoundId();
+                    PlaySoundFrontend(menuSound, "CONTINUOUS_SLIDER", "HUD_FRONTEND_DEFAULT_SOUNDSET", true);
+                }
+
+                BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_INPUT_MOUSE_EVENT_CONTINUE");
+                var ret = EndScaleformMovieMethodReturnValue();
+                while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+                var res = GetScaleformMovieMethodReturnValueString(ret);
+                var split = res.Split(',');
+                var selection = Convert.ToInt32(split[0]);
+                var panel = MenuItems[CurrentSelection].Panels[selection];
+                switch (panel)
+                {
+                    case UIMenuGridPanel:
+                        var grid = panel as UIMenuGridPanel;
+                        grid._value = new(Convert.ToSingle(split[1]), Convert.ToSingle(split[2]));
+                        GridPanelChange(panel.ParentItem, grid, grid.CirclePosition);
+                        grid.OnGridChange();
+                        break;
+                    case UIMenuPercentagePanel:
+                        var perc = panel as UIMenuPercentagePanel;
+                        perc._value = Convert.ToSingle(split[1]);
+                        PercentagePanelChange(panel.ParentItem, perc, perc.Percentage);
+                        perc.PercentagePanelChange();
+                        break;
+                }
+            }
+            else
+            {
+                if (!HasSoundFinished(menuSound))
+                {
+                    await BaseScript.Delay(1);
+                    StopSound(menuSound);
+                    ReleaseSoundId(menuSound);
+                }
+            }
 
             if (ScreenTools.IsMouseInBounds(new PointF(0, 0), new SizeF(30, 1080)) && MouseEdgeEnabled)
             {
@@ -1581,153 +1771,9 @@ namespace ScaleformUI
                 GameplayCamera.RelativeHeading -= 5f;
                 SetCursorSprite(7);
             }
-            else if (MouseEdgeEnabled)
+            else if (MouseEdgeEnabled && !MenuItems.Any(x=>x.Hovered))
             {
                 SetCursorSprite(1);
-            }
-
-            // SE HOVERED
-            // SetMouseCursorSprite(5);
-
-            if (Game.IsControlJustPressed(0, Control.Attack))
-            {
-                PointF mouse = new PointF(GetDisabledControlNormal(0, 239) * Screen.ScaledWidth - Offset.X, GetDisabledControlNormal(0, 240) * Screen.Height - Offset.Y);
-                BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_INPUT_MOUSE_EVENT_SINGLE");
-                ScaleformMovieMethodAddParamFloat(mouse.X);
-                ScaleformMovieMethodAddParamFloat(mouse.Y);
-                var ret = EndScaleformMovieMethodReturnValue();
-                while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-                var res = GetScaleformMovieMethodReturnValueString(ret);
-                if (res == "none") return;
-                var split = res.Split(',');
-                var type = split[0];
-                var selection = Convert.ToInt32(split[1]);
-                switch (type)
-                {
-                    case "it":
-                        {
-                            if (CurrentSelection != selection)
-                            {
-                                CurrentSelection = selection;
-                            }
-                            else
-                            {
-                                switch (Convert.ToInt32(split[2]))
-                                {
-                                    case 0:
-                                    case 2:
-                                        Select(false);
-                                        break;
-                                    case 1:
-                                        {
-                                            UIMenuListItem it = (UIMenuListItem)MenuItems[CurrentSelection];
-                                            it.Index = Convert.ToInt32(split[3]);
-                                            ListChange(it, it.Index);
-                                            it.ListChangedTrigger(it.Index);
-                                        }
-                                        break;
-                                    case 3:
-                                        {
-                                            UIMenuSliderItem it = (UIMenuSliderItem)MenuItems[CurrentSelection];
-                                            it.Value = (int)(Convert.ToSingle(split[3]));
-                                            it.SliderChanged(it.Value);
-                                            SliderChange(it, it.Value);
-                                        }
-                                        break;
-                                    case 4:
-                                        {
-                                            UIMenuProgressItem it = (UIMenuProgressItem)MenuItems[CurrentSelection];
-                                            it.Value = (int)(Convert.ToSingle(split[3]));
-                                            it.ProgressChanged(it.Value);
-                                            ProgressChange(it, it.Value);
-                                        }
-                                        break;
-                                }
-                            }
-                            break;
-                        }
-
-                    case "pan":
-                        if (Convert.ToInt32(split[2]) == 0)
-                        {
-                            var panel = (UIMenuColorPanel)MenuItems[CurrentSelection].Panels[selection];
-                            panel._value = Convert.ToInt32(split[3]);
-                            ColorPanelChange(panel.ParentItem, panel, panel.CurrentSelection);
-                            panel.PanelChanged();
-                        }
-                        break;
-                    case "sidepan":
-                        {
-                            switch (selection)
-                            {
-                                case 1:
-                                    var panel = (UIVehicleColourPickerPanel)MenuItems[CurrentSelection].SidePanel;
-                                    if (Convert.ToInt32(split[2]) != -1)
-                                    {
-                                        panel._value = Convert.ToInt32(split[2]);
-                                        panel.PickerSelect();
-                                    }
-                                    break;
-                            }
-                        }
-                        break;
-                }
-            }
-            else if (Game.IsControlPressed(0, Control.Attack))
-            {
-                PointF mouse = new PointF(GetDisabledControlNormal(0, 239) * Screen.ScaledWidth - Offset.X, GetDisabledControlNormal(0, 240) * Screen.Height);
-                BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_INPUT_MOUSE_EVENT_CONTINUE");
-                ScaleformMovieMethodAddParamFloat(mouse.X);
-                ScaleformMovieMethodAddParamFloat(mouse.Y);
-                var ret = EndScaleformMovieMethodReturnValue();
-                while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-                var res = GetScaleformMovieMethodReturnValueString(ret);
-                if (res == "none") return;
-                var split = res.Split(',');
-                var selection = Convert.ToInt32(split[1]);
-                var _type = Convert.ToInt32(split[2]);
-                var value = Convert.ToSingle(split[3]);
-                switch (split[0])
-                {
-                    case "pan":
-                        switch (_type)
-                        {
-                            case 1:
-                                {
-                                    var panel = (UIMenuPercentagePanel)MenuItems[CurrentSelection].Panels[selection];
-                                    panel._value = value;
-                                    PercentagePanelChange(panel.ParentItem, panel, panel.Percentage);
-                                    panel.PercentagePanelChange();
-                                    if (HasSoundFinished(menuSound))
-                                    {
-                                        menuSound = GetSoundId();
-                                        API.PlaySoundFrontend(menuSound, "CONTINUOUS_SLIDER", "HUD_FRONTEND_DEFAULT_SOUNDSET", true);
-                                    }
-                                }
-                                break;
-                            case 2:
-                                {
-                                    var panel = (UIMenuGridPanel)MenuItems[CurrentSelection].Panels[selection];
-                                    panel._value = new(value, Convert.ToSingle(split[4]));
-                                    GridPanelChange(panel.ParentItem, panel, panel.CirclePosition);
-                                    panel.OnGridChange();
-                                    if (HasSoundFinished(menuSound))
-                                    {
-                                        menuSound = GetSoundId();
-                                        API.PlaySoundFrontend(menuSound, "CONTINUOUS_SLIDER", "HUD_FRONTEND_DEFAULT_SOUNDSET", true);
-                                    }
-                                }
-                                break;
-                        }
-                        break;
-                }
-            }
-            if (!HasSoundFinished(menuSound))
-            {
-                await BaseScript.Delay(1);
-                API.StopSound(menuSound);
-
-                API.ReleaseSoundId(menuSound);
             }
         }
 
@@ -2284,6 +2330,7 @@ namespace ScaleformUI
                     GoDown();
                 }
             }
+            ScaleformUI._ui.CallFunction("ENABLE_MOUSE", MouseControlsEnabled);
         }
 
         /// <summary>
@@ -2296,9 +2343,9 @@ namespace ScaleformUI
             set
             {
                 if (MenuItems.Count == 0) _activeItem = 0;
-                MenuItems[_activeItem % (MenuItems.Count)].Selected = false;
+                MenuItems[CurrentSelection].Selected = false;
                 _activeItem = 1000000 - (1000000 % MenuItems.Count) + value;
-                MenuItems[_activeItem % (MenuItems.Count)].Selected = true;
+                MenuItems[CurrentSelection].Selected = true;
                 ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
             }
         }
@@ -2351,6 +2398,18 @@ namespace ScaleformUI
         /// Returns the current width offset.
         /// </summary>
         public int WidthOffset { get; private set; }
+        public bool MouseControlsEnabled
+        {
+            get => mouseControlsEnabled;
+            set
+            {
+                mouseControlsEnabled = value;
+                if (Visible)
+                {
+                    ScaleformUI._ui.CallFunction("ENABLE_MOUSE", value);
+                }
+            }
+        }
 
         #endregion
 
