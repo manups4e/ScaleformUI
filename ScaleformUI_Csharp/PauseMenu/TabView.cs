@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
+using static CitizenFX.Core.Native.API;
 using CitizenFX.Core.UI;
 using Font = CitizenFX.Core.UI.Font;
 
@@ -321,6 +322,88 @@ namespace ScaleformUI.PauseMenu
         }
 
         private bool firstTick = true;
+        private int eventType = 0;
+        private int itemId = 0;
+        private int context = 0;
+        private int unused = 0;
+
+        public override async void ProcessMouse()
+        {
+            if (!IsUsingKeyboard(2))
+            {
+                return;
+            }
+            // check for is using keyboard (2) to use Mouse or not.
+            SetMouseCursorActiveThisFrame();
+            SetInputExclusive(2, 239);
+            SetInputExclusive(2, 240);
+            SetInputExclusive(2, 237);
+            SetInputExclusive(2, 238);
+
+            var successHeader = GetScaleformMovieCursorSelection(ScaleformUI.PauseMenu._header.Handle, ref eventType, ref context, ref itemId, ref unused);
+            if (successHeader)
+            {
+                switch (eventType)
+                {
+                    case 5: // on click pressed
+                        switch (context)
+                        {
+                            case -1:
+                                _pause.SelectTab(itemId);
+                                break;
+                            case 1:
+                                switch (itemId)
+                                {
+                                    case 0:
+                                        _pause.HeaderGoLeft();
+                                        break;
+                                    case 1:
+                                        _pause.HeaderGoRight();
+                                        break;
+                                }
+                                break;
+                        }
+                        break;
+                }
+            }
+
+            var successPause = GetScaleformMovieCursorSelection(ScaleformUI.PauseMenu._pause.Handle, ref eventType, ref context, ref itemId, ref unused);
+            if (successPause)
+            {
+                switch (eventType)
+                {
+                    case 5: // on click pressed
+                        switch (context)
+                        {
+                            case -1:
+                                break;
+                            case 0: // going from unfocused to focused
+                                break;
+                            case 1: // left item in subitem tab pressed
+                                break;
+                            case 2: // right settings item in subitem tab pressed
+                                break;
+                        }
+                        break;
+                    case 6: // on click released
+                        break;
+                    case 7: // on click released ouside
+                        break;
+                    case 8: // on not hover
+                        break;
+                    case 9: // on hovered
+                        break;
+                    case 0: // dragged outside
+                        break;
+                    case 1: // dragged inside
+                        break;
+                }
+            }
+            Notifications.DrawText(0.3f, 0.7f, "eventType:" + eventType);
+            Notifications.DrawText(0.3f, 0.725f, "context:" + context);
+            Notifications.DrawText(0.3f, 0.75f, "itemId:" + itemId);
+        }
+
         public override async void ProcessControls()
         {
             if (firstTick)
@@ -329,6 +412,7 @@ namespace ScaleformUI.PauseMenu
                 return;
                 // without this shit the menu goes on focus without need if opened from another menu.
             }
+
             if (!Visible || TemporarilyHidden) return;
             string result = "";
 
@@ -459,6 +543,7 @@ namespace ScaleformUI.PauseMenu
             }
             */
 
+            /*
             if (Game.IsControlJustPressed(0, Control.Attack) && API.IsInputDisabled(2))
             {
                 if (Game.GameTime - _timer > 250)
@@ -467,6 +552,7 @@ namespace ScaleformUI.PauseMenu
                     _timer = Game.GameTime;
                 }
             }
+            */
 
             if (!string.IsNullOrWhiteSpace(result) && result.Contains(","))
             {
