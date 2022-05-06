@@ -225,11 +225,15 @@ namespace ScaleformUI
                 menu.ProcessMouse();
             }*/
 
-            int count = _menuList.Count;
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < _menuList.Count; i++)
             {
                 if (_menuList[i].Visible)
                     _menuList[i].ProcessMouse();
+            }
+            for (int i = 0; i < _pauseMenuList.Count; i++)
+            {
+                if (_pauseMenuList[i].Visible)
+                    _pauseMenuList[i].ProcessMouse();
             }
         }
 
