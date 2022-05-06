@@ -350,6 +350,7 @@ namespace ScaleformUI.PauseMenu
                         {
                             case -1:
                                 _pause.SelectTab(itemId);
+                                FocusLevel = 1;
                                 break;
                             case 1:
                                 switch (itemId)
