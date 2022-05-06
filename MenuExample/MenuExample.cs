@@ -8,6 +8,7 @@ using CitizenFX.Core.Native;
 using System.Linq;
 using System.Threading.Tasks;
 using ScaleformUI.PauseMenu;
+using ScaleformUI.LobbyMenu;
 
 public class MenuExample : BaseScript
 {
@@ -998,6 +999,41 @@ public class MenuExample : BaseScript
 		API.UnregisterPedheadshot(mugshot);
 	}
 
+	public async void LobbyPauseMenuShowcase(UIMenu _menu)
+	{
+		var mainMenu = _menu;
+		// tabview is the main menu.. the container of all the tabs.
+		MainView pauseMenu = new ("PauseMenu example", "Look there's a subtitle too!", "Detail 1", "Detail 2", "Detail 3");
+
+		//var mugshot = API.RegisterPedheadshot(Game.PlayerPed.Handle);
+		//while (!API.IsPedheadshotReady(mugshot)) await BaseScript.Delay(1);
+		//var txd = API.GetPedheadshotTxdString(mugshot);
+		//pauseMenu.HeaderPicture = new(txd, txd);
+		_menuPool.Add(pauseMenu);
+
+		var item = new UIMenuItem("UIMenuItem", "UIMenuItem description");
+		var item1 = new UIMenuListItem("UIMenuListItem", new List<dynamic>() { "This", "is", "a", "Test"}, 0, "UIMenuListItem description");
+		var item2 = new UIMenuCheckboxItem("UIMenuCheckboxItem", true, "UIMenuCheckboxItem description");
+		var item3 = new UIMenuSliderItem("UIMenuSliderItem", "UIMenuSliderItem description", 100, 5, 50, false);
+		var item4 = new UIMenuProgressItem("UIMenuProgressItem", 10, 5, "UIMenuProgressItem description");
+		item.BlinkDescription = true;
+		pauseMenu.LeftItems.Add(item);
+		pauseMenu.LeftItems.Add(item1);
+		pauseMenu.LeftItems.Add(item2);
+		pauseMenu.LeftItems.Add(item3);
+		pauseMenu.LeftItems.Add(item4);
+
+		var friend = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_GREEN, true, Game.Player.ServerId, "Status", "CrewTag");
+		friend.SetLeftIcon(LobbyBadgeIcon.IS_CONSOLE_PLAYER);
+		pauseMenu.CenterItems.Add(friend);
+		pauseMenu.CenterItems.Add(friend);
+		pauseMenu.CenterItems.Add(friend);
+		pauseMenu.CenterItems.Add(friend);
+		pauseMenu.CenterItems.Add(friend);
+		pauseMenu.CenterItems.Add(friend);
+		pauseMenu.Visible = true;
+		//API.UnregisterPedheadshot(mugshot);
+	}
 	public MenuExample()
 	{
 		_menuPool = new MenuPool();
@@ -1021,6 +1057,9 @@ public class MenuExample : BaseScript
 			// to open the pause menu without opening the normal menu.
 			if (Game.IsControlJustPressed(0, Control.SelectCharacterFranklin) && !_menuPool.IsAnyMenuOpen && !_menuPool.IsAnyPauseMenuOpen)
 				PauseMenuShowcase(null);
+			if (Game.IsControlJustPressed(0, Control.SelectCharacterTrevor) && !_menuPool.IsAnyMenuOpen && !_menuPool.IsAnyPauseMenuOpen)
+				LobbyPauseMenuShowcase(null);
+
 			await Task.FromResult(0);
 		};
 	}
