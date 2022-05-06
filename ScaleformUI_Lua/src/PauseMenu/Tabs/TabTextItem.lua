@@ -6,7 +6,7 @@ end
 
 function TabTextItem.New(name, _title)
     data = {
-        Base = BaseTab.New(name or ""),
+        Base = BaseTab.New(name or "", 1),
         Label = name,
         TextTitle = _title or "",
         LabelsList = {},

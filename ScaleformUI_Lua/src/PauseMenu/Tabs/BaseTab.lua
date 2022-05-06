@@ -4,9 +4,10 @@ BaseTab.__call = function()
     return "BaseTab", "BaseTab"
 end
 
-function BaseTab.New(title)
+function BaseTab.New(title, type)
     data = {
         Title = title or "",
+        Type = type or 1,
         Visible = false,
         Focused = false,
         Active = false,

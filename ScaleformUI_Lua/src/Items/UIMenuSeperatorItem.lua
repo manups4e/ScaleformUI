@@ -13,7 +13,8 @@ function UIMenuSeperatorItem.New(Text, jumpable , mainColor, highlightColor, tex
 		Base = UIMenuItem.New(Text or "", "", mainColor or 117, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
 		Panels = {},
 		SidePanel = nil,
-        Jumpable = jumpable
+        Jumpable = jumpable,
+		ItemId = 6
 	}
 	return setmetatable(_UIMenuSeperatorItem, UIMenuSeperatorItem)
 end

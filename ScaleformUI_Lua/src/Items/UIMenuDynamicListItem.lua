@@ -14,6 +14,7 @@ function UIMenuDynamicListItem.New(Text, Description, StartingItem, callback, co
 		SidePanel = nil,
         _currentItem = StartingItem,
         Callback = callback,
+		ItemId = 1,
 		OnListSelected = function(menu, item, newindex) end,
 	}
 	return setmetatable(_UIMenuDynamicListItem, UIMenuDynamicListItem)

@@ -16,6 +16,7 @@ function UIMenuListItem.New(Text, Items, Index, Description, color, highlightCol
 		_Index = tonumber(Index) or 1,
 		Panels = {},
 		SidePanel = nil,
+		ItemId = 1,
 		OnListChanged = function(menu, item, newindex) end,
 		OnListSelected = function(menu, item, newindex) end,
 	}

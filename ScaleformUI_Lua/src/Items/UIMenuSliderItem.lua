@@ -20,6 +20,7 @@ function UIMenuSliderItem.New(Text, Max, Multiplier, Index, Heritage, Descriptio
 		Panels = {},
 		SidePanel = nil,
 		SliderColor = sliderColor or 116,
+		ItemId = 3,
 		OnSliderChanged = function(menu, item, newindex) end,
 		OnSliderSelected = function(menu, item, newindex) end,
 	}

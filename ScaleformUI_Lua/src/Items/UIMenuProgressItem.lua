@@ -18,6 +18,7 @@ function UIMenuProgressItem.New(Text, Max, Index, Description, sliderColor, colo
 		SidePanel = nil,
 		SliderColor = sliderColor or 116,
 		BackgroundSliderColor = backgroundSliderColor or 117,
+		ItemId = 4,
 		OnProgressChanged = function(menu, item, newindex) end,
 		OnProgressSelected = function(menu, item, newindex) end,
 	}
