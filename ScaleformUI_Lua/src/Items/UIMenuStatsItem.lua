@@ -16,6 +16,7 @@ function UIMenuStatsItem.New(Text, Description, Index, barColor, type, mainColor
 		SidePanel = nil,
 		_Color = barColor or 116,
         _Type = type or 0,
+		ItemId = 5,
 		OnStatsChanged = function(menu, item, newindex) end,
 		OnStatsSelected = function(menu, item, newindex) end,
 	}

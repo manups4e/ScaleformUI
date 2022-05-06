@@ -24,6 +24,7 @@ function UIMenuItem.New(text, description, color, highlightColor, textColor, hig
         ParentMenu = nil,
         Panels = {},
         SidePanel = nil,
+        ItemId = 0,
         Activated = function(menu, item)
         end,
     }

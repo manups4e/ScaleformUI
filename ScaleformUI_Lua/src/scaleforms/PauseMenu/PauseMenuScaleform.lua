@@ -68,9 +68,9 @@ function Pause:HeaderGoLeft()
     self._header:CallFunction("GO_LEFT", false)
 end
 
-function Pause:AddPauseMenuTab(title, _type)
-    self._header:CallFunction("ADD_HEADER_TAB", false, title)
-    self._pause:CallFunction("ADD_TAB", false, _type)
+function Pause:AddPauseMenuTab(title, _type, _tabContentType)
+    self._header:CallFunction("ADD_HEADER_TAB", false, title, _type)
+    self._pause:CallFunction("ADD_TAB", false, _tabContentType)
 end
 
 function Pause:AddLeftItem(tab, _type, title, itemColor, highlightColor)

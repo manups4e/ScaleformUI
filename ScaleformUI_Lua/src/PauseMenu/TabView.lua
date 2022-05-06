@@ -76,14 +76,16 @@ function TabView:Visible(visible)
         if(visible == true)then
             self:BuildPauseMenu()
             self.OnPauseMenuOpen(self)
-            AnimpostfxPlay("FocusOut", 800, false)
-            TriggerScreenblurFadeIn(700)
+            DontRenderInGameUi(true)
+            AnimpostfxPlay("FocusOut", 500, false)
+            TriggerScreenblurFadeIn(800)
             ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
             SetPlayerControl(PlayerId(), false, 0)
         else
             ScaleformUI.Scaleforms._pauseMenu:Dispose()
+            DontRenderInGameUi(false)
             AnimpostfxPlay("FocusOut", 500, false)
-            TriggerScreenblurFadeOut(400)
+            TriggerScreenblurFadeOut(100)
             self.OnPauseMenuClose(self)
             SetPlayerControl(PlayerId(), true, 0)
         end
@@ -138,7 +140,7 @@ function TabView:BuildPauseMenu()
         local tabIndex = k-1
         local type, subtype = tab()
         if subtype == "TabTextItem" then
-            ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 0)
+            ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, tab.Base.Type, 0)
             if not tostring(tab.TextTitle):IsNullOrEmpty() then
                 ScaleformUI.Scaleforms._pauseMenu:AddRightTitle(tabIndex, 0, tab.TextTitle)
             end
@@ -146,7 +148,7 @@ function TabView:BuildPauseMenu()
                 ScaleformUI.Scaleforms._pauseMenu:AddRightListLabel(tabIndex, 0, item.Label)
             end
         elseif subtype == "TabSubMenuItem" then
-            ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 1)
+            ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, tab.Base.Type, 1)
             for j,item in pairs(tab.LeftItemList) do
                 local itemIndex = j-1
                 ScaleformUI.Scaleforms._pauseMenu:AddLeftItem(tabIndex, item.ItemType, item.Label, item.MainColor, item.HighlightColor)

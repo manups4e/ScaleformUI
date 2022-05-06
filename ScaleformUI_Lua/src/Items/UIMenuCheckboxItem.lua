@@ -13,6 +13,7 @@ function UIMenuCheckboxItem.New(Text, Check, checkStyle, Description, color, hig
 		Panels = {},
 		SidePanel = nil,
 		CheckBoxStyle = checkStyle or 0,
+		ItemId = 2,
 		OnCheckboxChanged = function(menu, item, checked) end,
 	}
 	return setmetatable(_UIMenuCheckboxItem, UIMenuCheckboxItem)

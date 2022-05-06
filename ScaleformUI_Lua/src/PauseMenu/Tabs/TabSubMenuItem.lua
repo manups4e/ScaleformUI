@@ -6,7 +6,7 @@ end
 
 function TabSubMenuItem.New(name)
     data = {
-        Base = BaseTab.New(name or ""),
+        Base = BaseTab.New(name or "", 1),
         Label = name or "",
         TextTitle = "",
         LeftItemList = {},
