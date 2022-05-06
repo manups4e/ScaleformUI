@@ -1545,6 +1545,7 @@ namespace ScaleformUI
         int eventType = 0;
         int itemId = 0;
         int context = 0;
+        int unused = 0;
         bool cursorPressed;
 
         /// <summary>
@@ -1574,19 +1575,9 @@ namespace ScaleformUI
             SetInputExclusive(2, 237);
             SetInputExclusive(2, 238);
 
-            /* At the moment of writing this, the Native _GET_SCALEFORM_MOVIE_CURSOR_SELECTION (0x632B2940C67F4EA9) 
-             * has a wrong parameter declaration.. I already sent a pull request on Native Docs Github.
-             * You can see the PR here: https://github.com/citizenfx/natives/pull/758
-             */
-            OutputArgument _eventType = new();
-            OutputArgument _context = new();
-            OutputArgument _itemId = new();
-            bool success = Function.Call<bool>(Hash._GET_SCALEFORM_MOVIE_CURSOR_SELECTION, ScaleformUI._ui.Handle, _eventType, _context, _itemId);
+            var success = GetScaleformMovieCursorSelection(ScaleformUI._ui.Handle, ref eventType, ref context, ref itemId, ref unused);
             if (success)
             {
-                eventType = _eventType.GetResult<int>();
-                itemId = _itemId.GetResult<int>();
-                context = _context.GetResult<int>();
                 switch (eventType)
                 {
                     case 5: // on click
@@ -1609,34 +1600,7 @@ namespace ScaleformUI
                                                 Select(false);
                                                 break;
                                             case 1:
-                                                {
-                                                    BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SELECT_ITEM");
-                                                    ScaleformMovieMethodAddParamInt(itemId);
-                                                    var ret = EndScaleformMovieMethodReturnValue();
-                                                    while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-                                                    int value = GetScaleformMovieMethodReturnValueInt(ret);
-                                                    if (MenuItems[CurrentSelection] is UIMenuListItem)
-                                                    {
-                                                        var it = MenuItems[CurrentSelection] as UIMenuListItem;
-                                                        it.Index = value;
-                                                        ListChange(it, it.Index);
-                                                        it.ListChangedTrigger(it.Index);
-                                                    }
-                                                }
-                                                break;
                                             case 3:
-                                                {
-                                                    BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SELECT_ITEM");
-                                                    ScaleformMovieMethodAddParamInt(itemId);
-                                                    var ret = EndScaleformMovieMethodReturnValue();
-                                                    while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-                                                    int value = GetScaleformMovieMethodReturnValueInt(ret);
-                                                    UIMenuSliderItem it = (UIMenuSliderItem)MenuItems[CurrentSelection];
-                                                    it.Value = value;
-                                                    it.SliderChanged(it.Value);
-                                                    SliderChange(it, it.Value);
-                                                }
-                                                break;
                                             case 4:
                                                 {
                                                     BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SELECT_ITEM");
@@ -1644,10 +1608,33 @@ namespace ScaleformUI
                                                     var ret = EndScaleformMovieMethodReturnValue();
                                                     while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
                                                     int value = GetScaleformMovieMethodReturnValueInt(ret);
-                                                    UIMenuProgressItem it = (UIMenuProgressItem)MenuItems[CurrentSelection];
-                                                    it.Value = value;
-                                                    it.ProgressChanged(it.Value);
-                                                    ProgressChange(it, it.Value);
+                                                    switch (MenuItems[CurrentSelection])
+                                                    {
+                                                        case UIMenuListItem:
+                                                            {
+                                                                var it = MenuItems[CurrentSelection] as UIMenuListItem;
+                                                                it.Index = value;
+                                                                ListChange(it, it.Index);
+                                                                it.ListChangedTrigger(it.Index);
+                                                            }
+                                                            break;
+                                                        case UIMenuSliderItem:
+                                                            {
+                                                                UIMenuSliderItem it = (UIMenuSliderItem)MenuItems[CurrentSelection];
+                                                                it.Value = value;
+                                                                it.SliderChanged(it.Value);
+                                                                SliderChange(it, it.Value);
+                                                            }
+                                                            break;
+                                                        case UIMenuProgressItem:
+                                                            {
+                                                                UIMenuProgressItem it = (UIMenuProgressItem)MenuItems[CurrentSelection];
+                                                                it.Value = value;
+                                                                it.ProgressChanged(it.Value);
+                                                                ProgressChange(it, it.Value);
+                                                            }
+                                                            break;
+                                                    }
                                                 }
                                                 break;
                                         }
@@ -1701,15 +1688,15 @@ namespace ScaleformUI
                         if (context == 0)
                         {
                             MenuItems[itemId].Hovered = false;
-                            SetMouseCursorSprite(1);
                         }
+                        SetMouseCursorSprite(1);
                         break;
                     case 9: // on hovered
                         if (context == 0)
                         {
                             MenuItems[itemId].Hovered = true;
-                            SetMouseCursorSprite(5);
                         }
+                        SetMouseCursorSprite(5);
                         break;
                     case 0: // dragged outside
                         cursorPressed = false;
