@@ -54,6 +54,8 @@ namespace ScaleformUI.PauseMenu
             set
             {
                 focusLevel = value;
+                if(_pause is not null)
+                    _pause.SetFocus(value);
                 SendPauseMenuFocusChange();
             }
         }
@@ -78,6 +80,7 @@ namespace ScaleformUI.PauseMenu
         public event PauseMenuTabChanged OnPauseMenuTabChanged;
         public event PauseMenuFocusChanged OnPauseMenuFocusChanged;
         public event LeftItemSelect OnLeftItemChange;
+        public event LeftItemSelect OnLeftItemSelect;
         public event RightItemSelect OnRightItemChange;
 
         public TabView(string title) : this(title, "", "", "", "")
@@ -351,7 +354,9 @@ namespace ScaleformUI.PauseMenu
                             case -1:
                                 _pause.SelectTab(itemId);
                                 FocusLevel = 1;
+                                Index = itemId;
                                 break;
+                                /* TODO: CHANGE IT WITH SPRITE LIKE THE ACTUAL PAUSE MENU
                             case 1:
                                 switch (itemId)
                                 {
@@ -363,6 +368,7 @@ namespace ScaleformUI.PauseMenu
                                         break;
                                 }
                                 break;
+                                */
                         }
                         break;
                 }
@@ -376,13 +382,25 @@ namespace ScaleformUI.PauseMenu
                     case 5: // on click pressed
                         switch (context)
                         {
-                            case -1:
-                                break;
                             case 0: // going from unfocused to focused
+                                FocusLevel = 1;
                                 break;
                             case 1: // left item in subitem tab pressed
+                                if (focusLevel != 1)
+                                {
+                                    LeftItemIndex = itemId;
+                                    FocusLevel = 1;
+                                }
+                                else if(focusLevel == 1)
+                                {
+                                    if (Tabs[Index].LeftItemList[LeftItemIndex].ItemType == LeftItemType.Settings)
+                                        FocusLevel = 2;
+                                    LeftItemIndex = itemId;
+                                }
+                                Tabs[Index].LeftItemList[LeftItemIndex].Activated();
+                                SendPauseMenuLeftItemSelect();
                                 break;
-                            case 2: // right settings item in subitem tab pressed
+                            case 2:// right settings item in subitem tab pressed
                                 break;
                         }
                         break;
@@ -667,6 +685,11 @@ namespace ScaleformUI.PauseMenu
         internal void SendPauseMenuLeftItemChange()
         {
             OnLeftItemChange?.Invoke(this, Index, FocusLevel, LeftItemIndex);
+        }
+
+        internal void SendPauseMenuLeftItemSelect()
+        {
+            OnLeftItemSelect?.Invoke(this, Index, FocusLevel, LeftItemIndex);
         }
 
         internal void SendPauseMenuRightItemChange()

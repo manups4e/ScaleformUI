@@ -84,6 +84,11 @@ namespace ScaleformUI
             _pause.CallFunction("SET_TAB_INDEX", tab);
         }
 
+        public void SetFocus(int focus)
+        {
+            _pause.CallFunction("SET_FOCUS", focus);
+        }
+
         public void AddLeftItem(int tab, int type, string title, HudColor itemColor = HudColor.NONE, HudColor highlightColor = HudColor.NONE)
         {
             if (itemColor != HudColor.NONE)
