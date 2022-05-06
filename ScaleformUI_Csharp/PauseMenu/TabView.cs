@@ -16,7 +16,7 @@ namespace ScaleformUI.PauseMenu
     public delegate void LeftItemSelect(TabView menu, int tabIndex, int focusLevel, int leftItem);
     public delegate void RightItemSelect(TabView menu, int tabIndex, int focusLevel, int leftItem, int rightItem);
 
-    public class TabView
+    public class TabView : PauseMenuBase
     {
         /*
         API.ShowCursorThisFrame();
@@ -100,7 +100,7 @@ namespace ScaleformUI.PauseMenu
             _pause = ScaleformUI.PauseMenu;
         }
 
-        public bool Visible
+        public override bool Visible
         {
             get { return _visible; }
             set
@@ -267,8 +267,9 @@ namespace ScaleformUI.PauseMenu
         }
 
         private bool controller = false;
-        public async void Draw()
+        public override async void Draw()
         {
+            base.Draw();
             if (!Visible || TemporarilyHidden) return;
             _pause.Draw();
             UpdateKeymapItems();
@@ -320,7 +321,7 @@ namespace ScaleformUI.PauseMenu
         }
 
         private bool firstTick = true;
-        public async void ProcessControls()
+        public override async void ProcessControls()
         {
             if (firstTick)
             {
