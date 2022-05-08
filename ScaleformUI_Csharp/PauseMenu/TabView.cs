@@ -362,7 +362,7 @@ namespace ScaleformUI.PauseMenu
                     break;
                 case 2:
                     {
-                        _pause._pause.CallFunction("SET_INPUT_EVENT_NEW", 16);
+                        _pause._pause.CallFunction("SET_INPUT_EVENT", 16);
                         var leftItem = Tabs[Index].LeftItemList[LeftItemIndex];
                         if (leftItem.ItemType == LeftItemType.Settings)
                         {
@@ -407,7 +407,7 @@ namespace ScaleformUI.PauseMenu
 
         public async void GoUp()
         {
-            BeginScaleformMovieMethod(_pause._pause.Handle, "SET_INPUT_EVENT_NEW");
+            BeginScaleformMovieMethod(_pause._pause.Handle, "SET_INPUT_EVENT");
             ScaleformMovieMethodAddParamInt(8);
             var ret = EndScaleformMovieMethodReturnValue();
             while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
@@ -427,7 +427,7 @@ namespace ScaleformUI.PauseMenu
 
         public async void GoDown()
         {
-            BeginScaleformMovieMethod(_pause._pause.Handle, "SET_INPUT_EVENT_NEW");
+            BeginScaleformMovieMethod(_pause._pause.Handle, "SET_INPUT_EVENT");
             ScaleformMovieMethodAddParamInt(9);
             var ret = EndScaleformMovieMethodReturnValue();
             while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
@@ -447,7 +447,7 @@ namespace ScaleformUI.PauseMenu
 
         public async void GoLeft()
         {
-            BeginScaleformMovieMethod(_pause._pause.Handle, "SET_INPUT_EVENT_NEW");
+            BeginScaleformMovieMethod(_pause._pause.Handle, "SET_INPUT_EVENT");
             ScaleformMovieMethodAddParamInt(10);
             var ret = EndScaleformMovieMethodReturnValue();
             while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
@@ -484,7 +484,7 @@ namespace ScaleformUI.PauseMenu
 
         public async void GoRight()
         {
-            BeginScaleformMovieMethod(_pause._pause.Handle, "SET_INPUT_EVENT_NEW");
+            BeginScaleformMovieMethod(_pause._pause.Handle, "SET_INPUT_EVENT");
             ScaleformMovieMethodAddParamInt(11);
             var ret = EndScaleformMovieMethodReturnValue();
             while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
