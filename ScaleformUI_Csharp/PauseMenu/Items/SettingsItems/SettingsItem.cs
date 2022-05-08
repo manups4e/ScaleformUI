@@ -53,7 +53,7 @@ namespace ScaleformUI.PauseMenu
 
         internal void Activated()
         {
-            if(ItemType != SettingsItemType.Basic)
+            if(ItemType == SettingsItemType.Basic)
             {
                 OnActivate?.Invoke(this);
             }

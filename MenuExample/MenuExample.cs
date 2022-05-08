@@ -985,19 +985,24 @@ public class MenuExample : BaseScript
 
 		};
 
-		pauseMenu.OnLeftItemChange += (menu, tabIndex, focusLevel, leftItemIndex) =>
+		pauseMenu.OnLeftItemChange += (menu, leftItem, leftItemIndex) =>
 		{
-			Screen.ShowSubtitle(menu.Tabs[tabIndex].Title + " Focus at level => ~y~" + focusLevel + "~w~, and left Item ~o~N° " + (leftItemIndex + 1) + "~w~ selected!");
+			Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel+ "~w~, and left Item ~o~N° " + (leftItemIndex + 1) + "~w~ selected!");
 		};
 	
-		pauseMenu.OnLeftItemSelect += (menu, tabIndex, focusLevel, leftItemIndex) =>
+		pauseMenu.OnLeftItemSelect += (menu, leftItem, leftItemIndex) =>
 		{
-			Screen.ShowSubtitle(menu.Tabs[tabIndex].Title + " Focus at level => ~y~" + focusLevel + "~w~, and left Item ~o~N° " + (leftItemIndex + 1) + "~w~ selected!");
+			Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, and left Item ~o~N° " + (leftItemIndex + 1) + "~w~ selected!");
 		};
 
-		pauseMenu.OnRightItemChange += (menu, tabIndex, focusLevel, leftItemIndex, rightItemIndex) =>
+		pauseMenu.OnRightItemChange += (menu, item, leftItemIndex, rightItemIndex) =>
 		{
-			Screen.ShowSubtitle(menu.Tabs[tabIndex].Title + " Focus at level => ~y~" + focusLevel + "~w~, left Item ~o~N° " + (leftItemIndex + 1) + "~w~ and right Item ~b~N° " + (rightItemIndex+1) + "~w~ selected!");
+			Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, left Item ~o~N° " + (leftItemIndex + 1) + "~w~ and right Item ~b~N° " + (rightItemIndex+1) + "~w~ selected!");
+		};
+
+		pauseMenu.OnRightItemSelect += (menu, item, leftItemIndex, rightItemIndex) =>
+		{
+			Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + "~w~, left Item ~o~N° " + (leftItemIndex + 1) + "~w~ and right Item ~b~N° " + (rightItemIndex + 1) + "~w~ of type ~p~"+ item.ItemType +"~w~ selected!");
 		};
 		pauseMenu.Visible = true;
 		API.UnregisterPedheadshot(mugshot);
