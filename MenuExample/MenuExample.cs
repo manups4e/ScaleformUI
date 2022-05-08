@@ -858,7 +858,7 @@ public class MenuExample : BaseScript
 		var txd = API.GetPedheadshotTxdString(mugshot);
 		pauseMenu.HeaderPicture = new(txd, txd);
 		_menuPool.Add(pauseMenu);
-		TabTextItem basicTab = new TabTextItem("TabTextItem", "This is the title!");
+		TextTab basicTab = new TextTab("TabTextItem", "This is the title!");
 		basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
 		basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
 		basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~b~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
@@ -873,7 +873,7 @@ public class MenuExample : BaseScript
 		basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
 		pauseMenu.AddTab(basicTab);
 
-		TabSubmenuItem multiItemTab = new TabSubmenuItem("TabSubMenu");
+		SubmenuTab multiItemTab = new SubmenuTab("TabSubMenu");
 		pauseMenu.AddTab(multiItemTab);
 		TabLeftItem first = new TabLeftItem("1 - Empty", LeftItemType.Empty);
 		TabLeftItem second = new TabLeftItem("2 - Info", LeftItemType.Info);
@@ -967,7 +967,7 @@ public class MenuExample : BaseScript
 			Screen.ShowSubtitle(tab.Title + " Focus at level => ~y~"+ focusLevel +"~w~!");
 			if(focusLevel == 1)
             {
-				if(tab is TabTextItem)
+				if(tab is TextTab)
                 {
 					List<InstructionalButton> buttons = new List<InstructionalButton>()
 					{
