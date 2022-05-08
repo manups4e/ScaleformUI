@@ -870,6 +870,7 @@ end
 
 local cursor_pressed = false
 local menuSound = -1
+local success, event_type, context, item_id
 
 function UIMenu:ProcessMouse()
     if not self._Visible or self.JustOpened or #self.Items == 0 or not IsInputDisabled(2) or not self.Settings.MouseControlsEnabled then
@@ -894,48 +895,54 @@ function UIMenu:ProcessMouse()
     SetInputExclusive(2, 237)
     SetInputExclusive(2, 238)
 
-    local success, event_type, context, item_id = GetScaleformMovieCursorSelection(ScaleformUI.Scaleforms._ui.handle)
+    success, event_type, context, item_id = GetScaleformMovieCursorSelection(ScaleformUI.Scaleforms._ui.handle)
 
     if success == 1 then
         if event_type == 5 then --ON CLICK
             if context == 0 then -- normal menu items
-                local item = self.Items[item_id + 1]
-                local item_type, item_subtype = item()
-
-                if item_subtype == "UIMenuSeperatorItem" and item.Jumpable == true or not item:Enabled() then
-                    PlaySound(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", false, false, true)
-                    return
-                end
-                if item:Selected() then 
+                local item = self.Items[(item_id + 1)]
+                if(item == nil) then return end
+                if item:Selected() then
                     if item.ItemId == 0 or item.ItemId == 2 then
                         self:SelectItem(false)
                     elseif item.ItemId == 1 or item.ItemId == 3 or item.ItemId == 4 then
-                        local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SELECT_ITEM", true, item_id)
-                        while not IsScaleformMovieMethodReturnValueReady(return_value) do
-                            Citizen.Wait(0)
-                        end
-                        local value = GetScaleformMovieMethodReturnValueInt(return_value)
+                        Citizen.CreateThread(function()
+                            local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SELECT_ITEM", true, item_id)
+                            while not IsScaleformMovieMethodReturnValueReady(return_value) do
+                                Citizen.Wait(0)
+                            end
+                            local value = GetScaleformMovieMethodReturnValueInt(return_value)
 
-                        local curr_select_item = self.Items[self:CurrentSelection()]
-                        local item_type_curr, item_subtype_curr = curr_select_item()
-
-                        if item_subtype_curr == "UIMenuListItem" then
-                            curr_select_item:Index(value + 1)
-                            self:OnListChange(self, curr_select_item, curr_select_item._Index)
-                            curr_select_item.OnListChanged(self, curr_select_item, curr_select_item._Index)
-                        elseif item_subtype_curr == "UIMenuSliderItem" then
-                            curr_select_item:Index(value + 1)
-                            curr_select_item.OnSliderChanged(self, curr_select_item, curr_select_item._Index)
-                            self:OnSliderChange(self, curr_select_item, curr_select_item._Index)
-                        elseif item_subtype_curr == "UIMenuProgressItem" then
-                            curr_select_item:Index(value + 1)
-                            curr_select_item.OnProgressChanged(self, curr_select_item, curr_select_item._Index)
-                            self:OnProgressChange(self, curr_select_item, curr_select_item._Index)
-                        end
+                            local curr_select_item = self.Items[self:CurrentSelection()]
+                            local item_type_curr, item_subtype_curr = curr_select_item()
+                            if item.ItemId == 1 then
+                                curr_select_item:Index(value)
+                                self.OnListChange(self, curr_select_item, curr_select_item:Index())
+                                curr_select_item.OnListChanged(self, curr_select_item, curr_select_item:Index())
+                            elseif item.ItemId == 3 then
+                                if(value ~= curr_select_item:Index()) then
+                                    curr_select_item:Index(value)
+                                    curr_select_item.OnSliderChanged(self, curr_select_item, curr_select_item:Index())
+                                    self.OnSliderChange(self, curr_select_item, curr_select_item:Index())
+                                end
+                           elseif item.ItemId == 4 then
+                                if(value ~= curr_select_item:Index()) then
+                                    curr_select_item:Index(value)
+                                    curr_select_item.OnProgressChanged(self, curr_select_item, curr_select_item:Index())
+                                    self.OnProgressChange(self, curr_select_item, curr_select_item:Index())
+                                end
+                            end
+                            return
+                        end)
                     end
                     return
                 end
+                if (item.ItemId == 6 and item.Jumpable == true) or not item:Enabled() then
+                    PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
+                    return
+                end
                 self:CurrentSelection(item_id)
+                PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
             elseif context == 10 then -- panels (10 => context 1, panel_type 0) // ColorPanel
                 local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SELECT_PANEL", true, self:CurrentSelection() - 1)
                 while not IsScaleformMovieMethodReturnValueReady(return_value) do
