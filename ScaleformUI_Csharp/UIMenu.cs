@@ -1641,6 +1641,7 @@ namespace ScaleformUI
                                         return;
                                     }
                                     CurrentSelection = itemId;
+                                    Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
                                 }
                                 break;
                             case 10: // panels (10 => context 1, panel_type 0) // ColorPanel
