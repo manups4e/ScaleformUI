@@ -233,15 +233,9 @@ namespace ScaleformUI
             return res;
         }
 
-        public async Task<string> SendScrollEvent(int direction)
+        public void SendScrollEvent(int direction)
         {
-            BeginScaleformMovieMethod(_pause.Handle, "SET_SCROLL_EVENT");
-            ScaleformMovieMethodAddParamInt(direction);
-            ScaleformMovieMethodAddParamBool(!IsInputDisabled(2));
-            var ret = EndScaleformMovieMethodReturnValue();
-            while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            var res = GetScaleformMovieFunctionReturnString(ret);
-            return res;
+            _pause.CallFunction("SET_SCROLL_EVENT", direction);
         }
         public async Task<string> SendClickEvent()
         {

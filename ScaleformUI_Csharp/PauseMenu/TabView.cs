@@ -22,6 +22,14 @@ namespace ScaleformUI.PauseMenu
         /*
         API.ShowCursorThisFrame();
         */
+        public string AUDIO_LIBRARY = "HUD_FRONTEND_DEFAULT_SOUNDSET";
+
+        public string AUDIO_UPDOWN = "NAV_UP_DOWN";
+        public string AUDIO_LEFTRIGHT = "NAV_LEFT_RIGHT";
+        public string AUDIO_SELECT = "SELECT";
+        public string AUDIO_BACK = "BACK";
+        public string AUDIO_ERROR = "ERROR";
+
         public string Title { get; set; }
         public string SubTitle { get; set; }
         public string SideStringTop { get; set; }
@@ -30,6 +38,7 @@ namespace ScaleformUI.PauseMenu
         public Tuple<string, string> HeaderPicture { internal get; set; }
         public Tuple<string, string> CrewPicture { internal get; set; }
         public List<BaseTab> Tabs { get; set; }
+        public int Index;
         public int LeftItemIndex
         {
             get => leftItemIndex;
@@ -142,7 +151,6 @@ namespace ScaleformUI.PauseMenu
             item.Parent = this;
         }
 
-        public int Index;
         private bool _visible;
         private int focusLevel;
         private int rightItemIndex;
@@ -173,9 +181,9 @@ namespace ScaleformUI.PauseMenu
                 int tabIndex = Tabs.IndexOf(tab);
                 switch (tab)
                 {
-                    case TabTextItem:
+                    case TextTab:
                         {
-                            TabTextItem simpleTab = tab as TabTextItem;
+                            TextTab simpleTab = tab as TextTab;
                             _pause.AddPauseMenuTab(tab.Title, tab._type, 0);
                             if (!string.IsNullOrWhiteSpace(simpleTab.TextTitle))
                                 _pause.AddRightTitle(tabIndex, 0, simpleTab.TextTitle);
@@ -183,7 +191,7 @@ namespace ScaleformUI.PauseMenu
                                 _pause.AddRightListLabel(tabIndex, 0, it.Label);
                         }
                         break;
-                    case TabSubmenuItem:
+                    case SubmenuTab:
                         {
                             _pause.AddPauseMenuTab(tab.Title, tab._type, 1);
                             foreach (var item in tab.LeftItemList)
@@ -292,11 +300,11 @@ namespace ScaleformUI.PauseMenu
                 if (!controller)
                 {
                     controller = true;
-                    if (Tabs[Index] is TabSubmenuItem)
+                    if (Tabs[Index] is SubmenuTab)
                     {
-                        foreach (var lItem in (Tabs[Index] as TabSubmenuItem).LeftItemList)
+                        foreach (var lItem in (Tabs[Index] as SubmenuTab).LeftItemList)
                         {
-                            var idx = (Tabs[Index] as TabSubmenuItem).LeftItemList.IndexOf(lItem);
+                            var idx = (Tabs[Index] as SubmenuTab).LeftItemList.IndexOf(lItem);
                             if (lItem.ItemType == LeftItemType.Keymap)
                             {
                                 for (int i = 0; i < lItem.ItemList.Count; i++)
@@ -314,9 +322,9 @@ namespace ScaleformUI.PauseMenu
                 if (controller)
                 {
                     controller = false;
-                    foreach (var lItem in (Tabs[Index] as TabSubmenuItem).LeftItemList)
+                    foreach (var lItem in (Tabs[Index] as SubmenuTab).LeftItemList)
                     {
-                        var idx = (Tabs[Index] as TabSubmenuItem).LeftItemList.IndexOf(lItem);
+                        var idx = (Tabs[Index] as SubmenuTab).LeftItemList.IndexOf(lItem);
                         if (lItem.ItemType == LeftItemType.Keymap)
                         {
                             for (int i = 0; i < lItem.ItemList.Count; i++)
@@ -328,6 +336,188 @@ namespace ScaleformUI.PauseMenu
                     }
                 }
             }
+        }
+
+        public void Select(bool playSound)
+        {
+            switch (FocusLevel)
+            {
+                case 0:
+                    FocusLevel++;
+                    break;
+                case 1:
+                    {
+                        if (Tabs[Index] is SubmenuTab)
+                        {
+                            var leftItem = Tabs[Index].LeftItemList[LeftItemIndex];
+                            if (!leftItem.Enabled)
+                            {
+                                Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
+                                return;
+                            }
+                            if (leftItem.ItemType == LeftItemType.Settings) FocusLevel = 2;
+                            SendPauseMenuLeftItemSelect();
+                        }
+                    }
+                    break;
+                case 2:
+                    {
+                        _pause._pause.CallFunction("SET_INPUT_EVENT_NEW", 16);
+                        var leftItem = Tabs[Index].LeftItemList[LeftItemIndex];
+                        if (leftItem.ItemType == LeftItemType.Settings)
+                        {
+                            if (leftItem.ItemList[RightItemIndex] is SettingsItem rightItem)
+                            {
+                                switch (rightItem.ItemType)
+                                {
+                                    case SettingsItemType.ListItem:
+                                        (rightItem as SettingsListItem).ListSelected();
+                                        break;
+                                    case SettingsItemType.CheckBox:
+                                        (rightItem as SettingsCheckboxItem).IsChecked = !(rightItem as SettingsCheckboxItem).IsChecked!;
+                                        break;
+                                    case SettingsItemType.MaskedProgressBar:
+                                    case SettingsItemType.ProgressBar:
+                                        (rightItem as SettingsProgressItem).ProgressSelected();
+                                        break;
+                                    case SettingsItemType.SliderBar:
+                                        (rightItem as SettingsSliderItem).SliderSelected();
+                                        break;
+                                    default:
+                                        rightItem.Activated();
+                                        break;
+                                }
+                                SendPauseMenuRightItemSelect();
+                            }
+                        }
+                    }
+                    break;
+            }
+            if (playSound) Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
+        }
+        public void GoBack()
+        {
+            Game.PlaySound(AUDIO_BACK, AUDIO_LIBRARY);
+            if (FocusLevel > 0)
+            {
+                FocusLevel--;
+            }
+            else Visible = false;
+        }
+
+        public async void GoUp()
+        {
+            BeginScaleformMovieMethod(_pause._pause.Handle, "SET_INPUT_EVENT_NEW");
+            ScaleformMovieMethodAddParamInt(8);
+            var ret = EndScaleformMovieMethodReturnValue();
+            while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            var retVal = GetScaleformMovieFunctionReturnInt(ret);
+            if(retVal != -1)
+            {
+                if(FocusLevel == 1)
+                {
+                    LeftItemIndex = retVal;
+                }
+                else if (FocusLevel == 2)
+                {
+                    RightItemIndex = retVal;
+                }
+            }
+        }
+
+        public async void GoDown()
+        {
+            BeginScaleformMovieMethod(_pause._pause.Handle, "SET_INPUT_EVENT_NEW");
+            ScaleformMovieMethodAddParamInt(9);
+            var ret = EndScaleformMovieMethodReturnValue();
+            while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            var retVal = GetScaleformMovieFunctionReturnInt(ret);
+            if (retVal != -1)
+            {
+                if (FocusLevel == 1)
+                {
+                    LeftItemIndex = retVal;
+                }
+                else if (FocusLevel == 2)
+                {
+                    RightItemIndex = retVal;
+                }
+            }
+        }
+
+        public async void GoLeft()
+        {
+            BeginScaleformMovieMethod(_pause._pause.Handle, "SET_INPUT_EVENT_NEW");
+            ScaleformMovieMethodAddParamInt(10);
+            var ret = EndScaleformMovieMethodReturnValue();
+            while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            var retVal = GetScaleformMovieFunctionReturnInt(ret);
+            if (retVal != -1)
+            {
+                if (FocusLevel == 0)
+                {
+                    _pause.HeaderGoLeft();
+                    Index = retVal;
+                }
+                else if (FocusLevel == 2)
+                {
+                    var rightItem = Tabs[Index].LeftItemList[LeftItemIndex].ItemList[RightItemIndex] as SettingsItem;
+                    switch (rightItem.ItemType)
+                    {
+                        case SettingsItemType.ListItem:
+                            (rightItem as SettingsListItem).ItemIndex = retVal;
+                            (rightItem as SettingsListItem).ListChanged();
+                            break;
+                        case SettingsItemType.SliderBar:
+                            (rightItem as SettingsSliderItem).Value = retVal;
+                            (rightItem as SettingsSliderItem).SliderChanged();
+                            break;
+                        case SettingsItemType.ProgressBar:
+                        case SettingsItemType.MaskedProgressBar:
+                            (rightItem as SettingsProgressItem).Value = retVal;
+                            (rightItem as SettingsProgressItem).ProgressChanged();
+                            break;
+                    }
+                }
+            }
+        }
+
+        public async void GoRight()
+        {
+            BeginScaleformMovieMethod(_pause._pause.Handle, "SET_INPUT_EVENT_NEW");
+            ScaleformMovieMethodAddParamInt(11);
+            var ret = EndScaleformMovieMethodReturnValue();
+            while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            var retVal = GetScaleformMovieFunctionReturnInt(ret);
+            if (retVal != -1)
+            {
+                if (FocusLevel == 0)
+                {
+                    _pause.HeaderGoRight();
+                    Index = retVal;
+                }
+                else if (FocusLevel == 2)
+                {
+                    var rightItem = Tabs[Index].LeftItemList[LeftItemIndex].ItemList[RightItemIndex] as SettingsItem;
+                    switch (rightItem.ItemType)
+                    {
+                        case SettingsItemType.ListItem:
+                            (rightItem as SettingsListItem).ItemIndex = retVal;
+                            (rightItem as SettingsListItem).ListChanged();
+                            break;
+                        case SettingsItemType.SliderBar:
+                            (rightItem as SettingsSliderItem).Value = retVal;
+                            (rightItem as SettingsSliderItem).SliderChanged();
+                            break;
+                        case SettingsItemType.ProgressBar:
+                        case SettingsItemType.MaskedProgressBar:
+                            (rightItem as SettingsProgressItem).Value = retVal;
+                            (rightItem as SettingsProgressItem).ProgressChanged();
+                            break;
+                    }
+                }
+            }
+
         }
 
         private bool firstTick = true;
@@ -430,7 +620,7 @@ namespace ScaleformUI.PauseMenu
                                                 (item as SettingsListItem).ListSelected();
                                                 break;
                                             case SettingsItemType.CheckBox:
-                                                (item as SettingsCheckboxItem).IsChecked = (item as SettingsCheckboxItem).IsChecked!;
+                                                (item as SettingsCheckboxItem).IsChecked = !(item as SettingsCheckboxItem).IsChecked!;
                                                 break;
                                             case SettingsItemType.MaskedProgressBar:
                                             case SettingsItemType.ProgressBar:
@@ -478,7 +668,8 @@ namespace ScaleformUI.PauseMenu
                         switch (context)
                         {
                             case 1: // left item in subitem tab pressed
-                                Tabs[Index].LeftItemList[itemId].Hovered = true;
+                                foreach(var item in Tabs[Index].LeftItemList)
+                                    item.Hovered = Tabs[Index].LeftItemList.IndexOf(item) == itemId;
                                 break;
                             case 2:// right settings item in subitem tab pressed
                                 foreach (var curIt in Tabs[Index].LeftItemList[LeftItemIndex].ItemList)
@@ -498,9 +689,6 @@ namespace ScaleformUI.PauseMenu
                         break;
                 }
             }
-            Notifications.DrawText(0.3f, 0.7f, "eventType:" + eventType);
-            Notifications.DrawText(0.3f, 0.725f, "context:" + context);
-            Notifications.DrawText(0.3f, 0.75f, "itemId:" + itemId);
         }
 
         public override async void ProcessControls()
@@ -513,234 +701,54 @@ namespace ScaleformUI.PauseMenu
             }
 
             if (!Visible || TemporarilyHidden) return;
-            string result = "";
 
             if (Game.IsControlJustPressed(2, Control.PhoneUp))
-            {
-                if (FocusLevel == 0) return;
-                result = await _pause.SendInputEvent(8);
-            }
+                GoUp();
             else if (Game.IsControlJustPressed(2, Control.PhoneDown))
-            {
-                if (FocusLevel == 0) return;
-                result = await _pause.SendInputEvent(9);
-            }
-
+                GoDown();
             else if (Game.IsControlJustPressed(2, Control.PhoneLeft))
-            {
-                if (FocusLevel == 1) return;
-                if (FocusLevel == 0)
-                    _pause.HeaderGoLeft();
-                result = await _pause.SendInputEvent(10);
-            }
+                GoLeft();
             else if (Game.IsControlJustPressed(2, Control.PhoneRight))
-            {
-                if (FocusLevel == 1) return;
-                if (FocusLevel == 0)
-                    _pause.HeaderGoRight();
-                result = await _pause.SendInputEvent(11);
-            }
-
+                GoRight();
             else if (Game.IsControlJustPressed(2, Control.FrontendLb))
             {
                 if (FocusLevel == 0)
                 {
-                    _pause.HeaderGoLeft();
-                    result = await _pause.SendInputEvent(10);
+                    GoLeft();
                 }
             }
             else if (Game.IsControlJustPressed(2, Control.FrontendRb))
             {
                 if (FocusLevel == 0)
                 {
-                    _pause.HeaderGoRight();
-                    result = await _pause.SendInputEvent(11);
+                    GoRight();
                 }
             }
-
             else if (Game.IsControlJustPressed(2, Control.FrontendAccept))
-            {
-                result = await _pause.SendInputEvent(16);
-                switch (focusLevel)
-                {
-
-                    case 1:
-                        if (Tabs[Index].LeftItemList[leftItemIndex].ItemType == LeftItemType.Info || Tabs[Index].LeftItemList[leftItemIndex].ItemType == LeftItemType.Empty)
-                        {
-                            Tabs[Index].LeftItemList[leftItemIndex].Activated();
-                        }
-                        break;
-                    case 2:
-                        if (Tabs[Index].LeftItemList[leftItemIndex].ItemList[rightItemIndex] is SettingsItem)
-                        {
-                            var it = Tabs[Index].LeftItemList[leftItemIndex].ItemList[rightItemIndex] as SettingsItem;
-                            it.Activated();
-                        }
-                        break;
-                }
-            }
-
+                Select(false);
             else if (Game.IsControlJustPressed(2, Control.PhoneCancel))
-            {
-                if (FocusLevel > 0)
-                    result = await _pause.SendInputEvent(17);
-                else
-                {
-                    Visible = false;
-                }
-            }
+                GoBack();
 
             if (Game.IsControlJustPressed(1, Control.CursorScrollUp))
-            {
-                result = await _pause.SendScrollEvent(-1);
-            }
+                _pause.SendScrollEvent(-1);
             else if (Game.IsControlJustPressed(1, Control.CursorScrollDown))
-            {
-                result = await _pause.SendScrollEvent(1);
-            }
+                _pause.SendScrollEvent(1);
 
-
-            if (Game.IsControlPressed(2, Control.LookUpOnly))
+            if (Game.IsControlPressed(2, Control.LookUpOnly) && !IsUsingKeyboard(2))
             {
-                if (Game.GameTime - _timer > 250)
+                if (Game.GameTime - _timer > 175)
                 {
-                    result = await _pause.SendScrollEvent(-1);
+                    _pause.SendScrollEvent(-1);
                     _timer = Game.GameTime;
                 }
             }
-            else if (Game.IsControlPressed(2, Control.LookDownOnly))
+            else if (Game.IsControlPressed(2, Control.LookDownOnly) && !IsUsingKeyboard(2))
             {
-                if (Game.GameTime - _timer > 250)
+                if (Game.GameTime - _timer > 175)
                 {
-                    result = await _pause.SendScrollEvent(1);
+                    _pause.SendScrollEvent(1);
                     _timer = Game.GameTime;
                 }
-            }
-
-            /*
-            if (Game.IsControlPressed(2, Control.PhoneLeft))
-            {
-                if (FocusLevel == 2)
-                {
-                    if (Game.GameTime - _timer > 250)
-                    {
-                        result = await _pause.SendInputEvent(10);
-                        _timer = Game.GameTime;
-                    }
-                }
-            }
-            else if (Game.IsControlPressed(2, Control.PhoneRight))
-            {
-                if (FocusLevel == 2)
-                {
-                    if (Game.GameTime - _timer > 250)
-                    {
-                        result = await _pause.SendInputEvent(11);
-                        _timer = Game.GameTime;
-                    }
-                }
-            }
-            */
-
-            /*
-            if (Game.IsControlJustPressed(0, Control.Attack) && API.IsInputDisabled(2))
-            {
-                if (Game.GameTime - _timer > 250)
-                {
-                    result = await _pause.SendClickEvent();
-                    _timer = Game.GameTime;
-                }
-            }
-            */
-
-            if (!string.IsNullOrWhiteSpace(result) && result.Contains(","))
-            {
-                var split = result.Split(',');
-                var curTab = Convert.ToInt32(split[0]);
-                var focusLevel = Convert.ToInt32(split[1]);
-                int leftItemIndex = -1;
-                int rightPanelIndex = -1;
-                int retVal = -1;
-                bool retBool = false;
-                if (split.Length > 2)
-                {
-                    switch (split.Length)
-                    {
-                        case 3:
-                            leftItemIndex = split[2] != "undefined" ? Convert.ToInt32(split[2]) : -1;
-                            break;
-                        case 5:
-                            leftItemIndex = Convert.ToInt32(split[2]);
-                            rightPanelIndex = Convert.ToInt32(split[3]);
-                            if (split[4] == "true" || split[4] == "false")
-                                retBool = Convert.ToBoolean(split[4]);
-                            else
-                                retVal = Convert.ToInt32(split[4]);
-                            break;
-                    }
-                }
-
-                Index = curTab;
-                FocusLevel = focusLevel;
-
-                if (focusLevel == 0)
-                {
-                    foreach (var t in Tabs)
-                        t.Focused = Tabs.IndexOf(t) == Index;
-                    SendPauseMenuTabChange();
-                }
-
-                if (focusLevel == 1)
-                {
-                    var tab = Tabs[Index];
-                    if (tab is not TabTextItem)
-                    {
-                        (tab as TabSubmenuItem).Index = leftItemIndex;
-                        LeftItemIndex = leftItemIndex;
-                        foreach (var item in (tab as TabSubmenuItem).LeftItemList)
-                        {
-                            item.Selected = (tab as TabSubmenuItem).LeftItemList.IndexOf(item) == leftItemIndex;
-                        }
-                    }
-                }
-
-                if (focusLevel == 2)
-                {
-                    var leftItem = Tabs[Index].LeftItemList.SingleOrDefault(x => x.Enabled);
-                    if (leftItem.ItemType == LeftItemType.Settings)
-                    {
-                        leftItem.ItemIndex = rightPanelIndex;
-                        RightItemIndex = leftItem.ItemIndex;
-                        foreach (var it in leftItem.ItemList)
-                        {
-                            (it as SettingsItem).Selected = leftItem.ItemList.IndexOf(it) == rightPanelIndex;
-                            if ((it as SettingsItem).Selected)
-                            {
-                                var rightItem = it as SettingsItem;
-                                switch (rightItem.ItemType)
-                                {
-                                    case SettingsItemType.ListItem:
-                                        (rightItem as SettingsListItem).ItemIndex = retVal;
-                                        break;
-                                    case SettingsItemType.SliderBar:
-                                        (rightItem as SettingsSliderItem).Value = retVal;
-                                        break;
-                                    case SettingsItemType.ProgressBar:
-                                    case SettingsItemType.MaskedProgressBar:
-                                        (rightItem as SettingsProgressItem).Value = retVal;
-                                        break;
-                                    case SettingsItemType.CheckBox:
-                                        (rightItem as SettingsCheckboxItem).IsChecked = retBool;
-                                        break;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // DEBUG
-                //Debug.WriteLine("Scaleform [tabIndex, focusLevel, currentTabLeftItemIndex, currentRightPanelItemIndex, retVal] = " + result);
-                //Debug.WriteLine($"C# [tabIndex, focusLevel, currentTabLeftItemIndex, currentRightPanelItemIndex, retVal] = {Index},{FocusLevel},{leftItemIndex},{RightItemIndex}");
             }
         }
 
@@ -773,7 +781,6 @@ namespace ScaleformUI.PauseMenu
         {
             OnLeftItemSelect?.Invoke(this, Tabs[Index].LeftItemList[LeftItemIndex], LeftItemIndex);
         }
-
         internal void SendPauseMenuRightItemChange()
         {
             OnRightItemChange?.Invoke(this, Tabs[Index].LeftItemList[LeftItemIndex].ItemList[RightItemIndex] as SettingsItem, LeftItemIndex, RightItemIndex);
