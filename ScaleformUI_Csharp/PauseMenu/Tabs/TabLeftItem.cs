@@ -15,18 +15,19 @@ namespace ScaleformUI.PauseMenu
         Keymap
     }
 
-    public delegate void IndexChangeEvent(SettingsTabItem item, int index);
+    public delegate void IndexChangeEvent(SettingsItem item, int index);
     public delegate void ActivatedEvent(TabLeftItem item, int index);
 
     public class TabLeftItem
     {
-        public bool Highlighted { get; set; }
-        public LeftItemType ItemType { get; set; }
+        public LeftItemType ItemType { get; internal set; }
         public string Label { get; set; }
         public HudColor MainColor { get; set; }
         public HudColor HighlightColor { get; set; }
-
-        public int ItemIndex { get; set; }
+        public bool Enabled { get; set; }
+        public bool Hovered { get; internal set; }
+        public bool Selected { get; internal set; }
+        public int ItemIndex { get; internal set; }
         public List<BasicTabItem> ItemList = new List<BasicTabItem>();
         public string TextTitle { get; set; }
         public string KeymapRightLabel_1 { get; set; }
@@ -52,7 +53,7 @@ namespace ScaleformUI.PauseMenu
 
         internal void IndexChanged()
         {
-            OnIndexChanged?.Invoke(ItemList[ItemIndex] as SettingsTabItem, ItemIndex);
+            OnIndexChanged?.Invoke(ItemList[ItemIndex] as SettingsItem, ItemIndex);
         }
 
         internal void Activated()

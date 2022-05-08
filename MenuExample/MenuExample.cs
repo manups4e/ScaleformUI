@@ -915,12 +915,12 @@ public class MenuExample : BaseScript
 		third.AddItem(_coloredBarStatItem4);
 
 		List<dynamic> itemList = new List<dynamic>() { "This", "Is", "The", "List", "Super", "Power", "Wooow" };
-		SettingsTabItem _settings1 = new SettingsTabItem("Item's Label", "Item's right Label");
-		SettingsTabItem _settings2 = new SettingsTabItem("Item's Label", itemList, 0);
-		SettingsTabItem _settings3 = new SettingsTabItem("Item's Label", 100, 25, false, HudColor.HUD_COLOUR_FREEMODE);
-		SettingsTabItem _settings4 = new SettingsTabItem("Item's Label", 100, 75, true, HudColor.HUD_COLOUR_PINK);
-		SettingsTabItem _settings5 = new SettingsTabItem("Item's Label", UIMenuCheckboxStyle.Tick, true);
-		SettingsTabItem _settings6 = new SettingsTabItem("Item's Label", 100, 50, HudColor.HUD_COLOUR_RED);
+		SettingsItem _settings1 = new SettingsItem("Item's Label", "Item's right Label");
+		SettingsItem _settings2 = new SettingsListItem("Item's Label", itemList, 0);
+		SettingsItem _settings3 = new SettingsProgressItem("Item's Label", 100, 25, false, HudColor.HUD_COLOUR_FREEMODE);
+		SettingsItem _settings4 = new SettingsProgressItem("Item's Label", 100, 75, true, HudColor.HUD_COLOUR_PINK);
+		SettingsItem _settings5 = new SettingsCheckboxItem("Item's Label", UIMenuCheckboxStyle.Tick, true);
+		SettingsItem _settings6 = new SettingsSliderItem("Item's Label", 100, 50, HudColor.HUD_COLOUR_RED);
 		fourth.AddItem(_settings1);
 		fourth.AddItem(_settings2);
 		fourth.AddItem(_settings3);

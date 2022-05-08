@@ -222,22 +222,25 @@ namespace ScaleformUI.PauseMenu
                                                 }
                                             }
                                             break;
-                                        case SettingsTabItem:
+                                        case SettingsItem:
                                             {
-                                                var sti = ii as SettingsTabItem;
+                                                var sti = ii as SettingsItem;
                                                 switch (sti.ItemType)
                                                 {
                                                     case SettingsItemType.Basic:
                                                         _pause.AddRightSettingsBaseItem(tabIndex, itemIndex, sti.Label, sti.RightLabel);
                                                         break;
                                                     case SettingsItemType.ListItem:
-                                                        _pause.AddRightSettingsListItem(tabIndex, itemIndex, sti.Label, sti.ListItems, sti.ItemIndex);
+                                                        var lis = (SettingsListItem)sti;
+                                                        _pause.AddRightSettingsListItem(tabIndex, itemIndex, lis.Label, lis.ListItems, lis.ItemIndex);
                                                         break;
                                                     case SettingsItemType.ProgressBar:
-                                                        _pause.AddRightSettingsProgressItem(tabIndex, itemIndex, sti.Label, sti.MaxValue, sti.ColoredBarColor, sti.Value);
+                                                        var prog = (SettingsProgressItem)sti;
+                                                        _pause.AddRightSettingsProgressItem(tabIndex, itemIndex, prog.Label, prog.MaxValue, prog.ColoredBarColor, prog.Value);
                                                         break;
                                                     case SettingsItemType.MaskedProgressBar:
-                                                        _pause.AddRightSettingsProgressItemAlt(tabIndex, itemIndex, sti.Label, sti.MaxValue, sti.ColoredBarColor, sti.Value);
+                                                        var prog_alt = (SettingsProgressItem)sti;
+                                                        _pause.AddRightSettingsProgressItemAlt(tabIndex, itemIndex, sti.Label, prog_alt.MaxValue, prog_alt.ColoredBarColor, prog_alt.Value);
                                                         break;
                                                     case SettingsItemType.CheckBox:
                                                         while (!API.HasStreamedTextureDictLoaded("commonmenu"))
@@ -245,10 +248,12 @@ namespace ScaleformUI.PauseMenu
                                                             await BaseScript.Delay(0);
                                                             API.RequestStreamedTextureDict("commonmenu", true);
                                                         }
-                                                        _pause.AddRightSettingsCheckboxItem(tabIndex, itemIndex, sti.Label, sti.CheckBoxStyle, sti.IsChecked);
+                                                        var check = (SettingsCheckboxItem)sti;
+                                                        _pause.AddRightSettingsCheckboxItem(tabIndex, itemIndex, check.Label, check.CheckBoxStyle, check.IsChecked);
                                                         break;
                                                     case SettingsItemType.SliderBar:
-                                                        _pause.AddRightSettingsSliderItem(tabIndex, itemIndex, sti.Label, sti.MaxValue, sti.ColoredBarColor, sti.Value);
+                                                        var slid = (SettingsSliderItem)sti;
+                                                        _pause.AddRightSettingsSliderItem(tabIndex, itemIndex, slid.Label, slid.MaxValue, slid.ColoredBarColor, slid.Value);
                                                         break;
                                                 }
                                             }
@@ -330,7 +335,7 @@ namespace ScaleformUI.PauseMenu
         private int context = 0;
         private int unused = 0;
 
-        public override async void ProcessMouse()
+        public override void ProcessMouse()
         {
             if (!IsUsingKeyboard(2))
             {
@@ -388,19 +393,48 @@ namespace ScaleformUI.PauseMenu
                             case 1: // left item in subitem tab pressed
                                 if (focusLevel != 1)
                                 {
+                                    Tabs[Index].LeftItemList[LeftItemIndex].Selected = false;
                                     LeftItemIndex = itemId;
+                                    Tabs[Index].LeftItemList[LeftItemIndex].Selected = true;
                                     FocusLevel = 1;
                                 }
                                 else if(focusLevel == 1)
                                 {
                                     if (Tabs[Index].LeftItemList[LeftItemIndex].ItemType == LeftItemType.Settings)
+                                    {
                                         FocusLevel = 2;
+                                        _pause._pause.CallFunction("SELECT_RIGHT_ITEM_INDEX", 0);
+                                        RightItemIndex = 0;
+                                    }
+                                    Tabs[Index].LeftItemList[LeftItemIndex].Selected = false;
                                     LeftItemIndex = itemId;
+                                    Tabs[Index].LeftItemList[LeftItemIndex].Selected = true;
                                 }
+                                _pause._pause.CallFunction("SELECT_LEFT_ITEM_INDEX", itemId);
                                 Tabs[Index].LeftItemList[LeftItemIndex].Activated();
                                 SendPauseMenuLeftItemSelect();
                                 break;
                             case 2:// right settings item in subitem tab pressed
+                                if(FocusLevel != 2)
+                                    FocusLevel = 2;
+                                _pause._pause.CallFunction("SELECT_RIGHT_ITEM_INDEX", itemId);
+                                if (Tabs[Index].LeftItemList[leftItemIndex].ItemList[itemId] is SettingsItem)
+                                {
+                                    //(Tabs[Index].LeftItemList[leftItemIndex].ItemList[RightItemIndex] as SettingsTabItem).Activated();
+                                    if ((Tabs[Index].LeftItemList[leftItemIndex].ItemList[RightItemIndex] as SettingsItem).Selected)
+                                    {
+                                        (Tabs[Index].LeftItemList[leftItemIndex].ItemList[RightItemIndex] as SettingsItem).Activated();
+                                        return;
+                                    }
+
+                                    (Tabs[Index].LeftItemList[leftItemIndex].ItemList[RightItemIndex] as SettingsItem).Selected = false;
+                                    RightItemIndex = itemId;
+                                    (Tabs[Index].LeftItemList[leftItemIndex].ItemList[RightItemIndex] as SettingsItem).Selected = true;
+                                }
+
+                                /*
+                                 * aggiungere i vari check e poi gesire item copme nei menu
+                                 */
                                 break;
                         }
                         break;
@@ -409,8 +443,38 @@ namespace ScaleformUI.PauseMenu
                     case 7: // on click released ouside
                         break;
                     case 8: // on not hover
+                        switch (context)
+                        {
+                            case 1: // left item in subitem tab pressed
+                                Tabs[Index].LeftItemList[itemId].Hovered = false;
+                                break;
+                            case 2:// right settings item in subitem tab pressed
+                                var curIt = Tabs[Index].LeftItemList[LeftItemIndex].ItemList[itemId];
+                                if (curIt is SettingsItem)
+                                {
+                                    (curIt as SettingsItem).Hovered = false;
+                                    Debug.WriteLine(itemId+", "+(curIt as SettingsItem).Hovered.ToString());
+                                }
+                                break;
+                        }
                         break;
                     case 9: // on hovered
+                        switch (context)
+                        {
+                            case 1: // left item in subitem tab pressed
+                                Tabs[Index].LeftItemList[itemId].Hovered = true;
+                                break;
+                            case 2:// right settings item in subitem tab pressed
+                                foreach (var curIt in Tabs[Index].LeftItemList[LeftItemIndex].ItemList)
+                                {
+                                    var idx = Tabs[Index].LeftItemList[LeftItemIndex].ItemList.IndexOf(curIt);
+                                    if (curIt is SettingsItem)
+                                    {
+                                        (curIt as SettingsItem).Hovered = itemId == idx;
+                                    }
+                                }
+                                break;
+                        }
                         break;
                     case 0: // dragged outside
                         break;
@@ -421,6 +485,8 @@ namespace ScaleformUI.PauseMenu
             Notifications.DrawText(0.3f, 0.7f, "eventType:" + eventType);
             Notifications.DrawText(0.3f, 0.725f, "context:" + context);
             Notifications.DrawText(0.3f, 0.75f, "itemId:" + itemId);
+            if(focusLevel == 2)
+                Notifications.DrawText(0.3f, 0.775f, "item0 hovered:" + (Tabs[Index].LeftItemList[LeftItemIndex].ItemList[1] as SettingsItem).Hovered);
         }
 
         public override async void ProcessControls()
@@ -491,9 +557,9 @@ namespace ScaleformUI.PauseMenu
                         }
                         break;
                     case 2:
-                        if (Tabs[Index].LeftItemList[leftItemIndex].ItemList[rightItemIndex] is SettingsTabItem)
+                        if (Tabs[Index].LeftItemList[leftItemIndex].ItemList[rightItemIndex] is SettingsItem)
                         {
-                            var it = Tabs[Index].LeftItemList[leftItemIndex].ItemList[rightItemIndex] as SettingsTabItem;
+                            var it = Tabs[Index].LeftItemList[leftItemIndex].ItemList[rightItemIndex] as SettingsItem;
                             it.Activated();
                         }
                         break;
@@ -619,36 +685,38 @@ namespace ScaleformUI.PauseMenu
                         LeftItemIndex = leftItemIndex;
                         foreach (var item in (tab as TabSubmenuItem).LeftItemList)
                         {
-                            item.Highlighted = (tab as TabSubmenuItem).LeftItemList.IndexOf(item) == leftItemIndex;
+                            item.Selected = (tab as TabSubmenuItem).LeftItemList.IndexOf(item) == leftItemIndex;
                         }
                     }
                 }
 
                 if (focusLevel == 2)
                 {
-                    var leftItem = Tabs[Index].LeftItemList.SingleOrDefault(x => x.Highlighted);
+                    var leftItem = Tabs[Index].LeftItemList.SingleOrDefault(x => x.Enabled);
                     if (leftItem.ItemType == LeftItemType.Settings)
                     {
                         leftItem.ItemIndex = rightPanelIndex;
                         RightItemIndex = leftItem.ItemIndex;
                         foreach (var it in leftItem.ItemList)
                         {
-                            (it as SettingsTabItem).Highlighted = leftItem.ItemList.IndexOf(it) == rightPanelIndex;
-                            if ((it as SettingsTabItem).Highlighted)
+                            (it as SettingsItem).Selected = leftItem.ItemList.IndexOf(it) == rightPanelIndex;
+                            if ((it as SettingsItem).Selected)
                             {
-                                var rightItem = it as SettingsTabItem;
+                                var rightItem = it as SettingsItem;
                                 switch (rightItem.ItemType)
                                 {
                                     case SettingsItemType.ListItem:
-                                        rightItem.ItemIndex = retVal;
+                                        (rightItem as SettingsListItem).ItemIndex = retVal;
                                         break;
                                     case SettingsItemType.SliderBar:
+                                        (rightItem as SettingsSliderItem).Value = retVal;
+                                        break;
                                     case SettingsItemType.ProgressBar:
                                     case SettingsItemType.MaskedProgressBar:
-                                        rightItem.Value = retVal;
+                                        (rightItem as SettingsProgressItem).Value = retVal;
                                         break;
                                     case SettingsItemType.CheckBox:
-                                        rightItem.IsChecked = retBool;
+                                        (rightItem as SettingsCheckboxItem).IsChecked = retBool;
                                         break;
                                 }
                             }
