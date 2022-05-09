@@ -20,7 +20,7 @@ namespace ScaleformUI.PauseMenu
     public class TabView : PauseMenuBase
     {
         /*
-        API.ShowCursorThisFrame();
+        ShowCursorThisFrame();
         */
         public string AUDIO_LIBRARY = "HUD_FRONTEND_DEFAULT_SOUNDSET";
 
@@ -123,21 +123,21 @@ namespace ScaleformUI.PauseMenu
                 {
                     BuildPauseMenu();
                     SendPauseMenuOpen();
-                    API.DontRenderInGameUi(true);
+                    DontRenderInGameUi(true);
                     Screen.Effects.Start(ScreenEffect.FocusOut, 500);
-                    API.TriggerScreenblurFadeIn(800);
+                    TriggerScreenblurFadeIn(800);
                     ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
-                    API.SetPlayerControl(Game.Player.Handle, false, 0);
+                    SetPlayerControl(Game.Player.Handle, false, 0);
                 }
                 else
                 {
                     _pause.Dispose();
-                    API.DontRenderInGameUi(false);
+                    DontRenderInGameUi(false);
                     Screen.Effects.Start(ScreenEffect.FocusOut, 500);
-                    if (API.IsScreenblurFadeRunning()) API.DisableScreenblurFade();
-                    API.TriggerScreenblurFadeOut(100);
+                    if (IsScreenblurFadeRunning()) DisableScreenblurFade();
+                    TriggerScreenblurFadeOut(100);
                     SendPauseMenuClose();
-                    API.SetPlayerControl(Game.Player.Handle, true, 0);
+                    SetPlayerControl(Game.Player.Handle, true, 0);
                 }
                 Game.IsPaused = value;
                 ScaleformUI.InstructionalButtons.Enabled = value;
@@ -197,8 +197,7 @@ namespace ScaleformUI.PauseMenu
                             foreach (var item in tab.LeftItemList)
                             {
                                 int itemIndex = tab.LeftItemList.IndexOf(item);
-                                _pause.AddLeftItem(tabIndex, (int)item.ItemType, item.Label, item.MainColor, item.HighlightColor);
-
+                                _pause.AddLeftItem(tabIndex, (int)item.ItemType, item.Label, item.MainColor, item.HighlightColor, item.Enabled);
                                 if (!string.IsNullOrWhiteSpace(item.TextTitle))
                                 {
                                     if (item.ItemType == LeftItemType.Keymap)
@@ -237,39 +236,39 @@ namespace ScaleformUI.PauseMenu
                                                 switch (sti.ItemType)
                                                 {
                                                     case SettingsItemType.Basic:
-                                                        _pause.AddRightSettingsBaseItem(tabIndex, itemIndex, sti.Label, sti.RightLabel);
+                                                        _pause.AddRightSettingsBaseItem(tabIndex, itemIndex, sti.Label, sti.RightLabel, sti.Enabled);
                                                         break;
                                                     case SettingsItemType.ListItem:
                                                         var lis = (SettingsListItem)sti;
-                                                        _pause.AddRightSettingsListItem(tabIndex, itemIndex, lis.Label, lis.ListItems, lis.ItemIndex);
+                                                        _pause.AddRightSettingsListItem(tabIndex, itemIndex, lis.Label, lis.ListItems, lis.ItemIndex, lis.Enabled);
                                                         break;
                                                     case SettingsItemType.ProgressBar:
                                                         var prog = (SettingsProgressItem)sti;
-                                                        _pause.AddRightSettingsProgressItem(tabIndex, itemIndex, prog.Label, prog.MaxValue, prog.ColoredBarColor, prog.Value);
+                                                        _pause.AddRightSettingsProgressItem(tabIndex, itemIndex, prog.Label, prog.MaxValue, prog.ColoredBarColor, prog.Value, prog.Enabled);
                                                         break;
                                                     case SettingsItemType.MaskedProgressBar:
                                                         var prog_alt = (SettingsProgressItem)sti;
-                                                        _pause.AddRightSettingsProgressItemAlt(tabIndex, itemIndex, sti.Label, prog_alt.MaxValue, prog_alt.ColoredBarColor, prog_alt.Value);
+                                                        _pause.AddRightSettingsProgressItemAlt(tabIndex, itemIndex, sti.Label, prog_alt.MaxValue, prog_alt.ColoredBarColor, prog_alt.Value, prog_alt.Enabled);
                                                         break;
                                                     case SettingsItemType.CheckBox:
-                                                        while (!API.HasStreamedTextureDictLoaded("commonmenu"))
+                                                        while (!HasStreamedTextureDictLoaded("commonmenu"))
                                                         {
                                                             await BaseScript.Delay(0);
-                                                            API.RequestStreamedTextureDict("commonmenu", true);
+                                                            RequestStreamedTextureDict("commonmenu", true);
                                                         }
                                                         var check = (SettingsCheckboxItem)sti;
-                                                        _pause.AddRightSettingsCheckboxItem(tabIndex, itemIndex, check.Label, check.CheckBoxStyle, check.IsChecked);
+                                                        _pause.AddRightSettingsCheckboxItem(tabIndex, itemIndex, check.Label, check.CheckBoxStyle, check.IsChecked, check.Enabled);
                                                         break;
                                                     case SettingsItemType.SliderBar:
                                                         var slid = (SettingsSliderItem)sti;
-                                                        _pause.AddRightSettingsSliderItem(tabIndex, itemIndex, slid.Label, slid.MaxValue, slid.ColoredBarColor, slid.Value);
+                                                        _pause.AddRightSettingsSliderItem(tabIndex, itemIndex, slid.Label, slid.MaxValue, slid.ColoredBarColor, slid.Value, slid.Enabled);
                                                         break;
                                                 }
                                             }
                                             break;
                                         case KeymapItem:
                                             var ki = ii as KeymapItem;
-                                            if (API.IsInputDisabled(2))
+                                            if (IsInputDisabled(2))
                                                 _pause.AddKeymapItem(tabIndex, itemIndex, ki.Label, ki.PrimaryKeyboard, ki.SecondaryKeyboard);
                                             else
                                                 _pause.AddKeymapItem(tabIndex, itemIndex, ki.Label, ki.PrimaryGamepad, ki.SecondaryGamepad);
@@ -295,7 +294,7 @@ namespace ScaleformUI.PauseMenu
 
         private void UpdateKeymapItems()
         {
-            if (!API.IsInputDisabled(2))
+            if (!IsInputDisabled(2))
             {
                 if (!controller)
                 {
@@ -338,12 +337,19 @@ namespace ScaleformUI.PauseMenu
             }
         }
 
-        public void Select(bool playSound)
+        public async void Select(bool playSound)
         {
             switch (FocusLevel)
             {
                 case 0:
                     FocusLevel++;
+                    if (Tabs[Index].LeftItemList.All(x => !x.Enabled)) break;
+                    while (!Tabs[Index].LeftItemList[leftItemIndex].Enabled)
+                    {
+                        await BaseScript.Delay(0);
+                        leftItemIndex++;
+                        _pause._pause.CallFunction("SELECT_LEFT_ITEM_INDEX", leftItemIndex);
+                    }
                     break;
                 case 1:
                     {
@@ -355,7 +361,17 @@ namespace ScaleformUI.PauseMenu
                                 Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
                                 return;
                             }
-                            if (leftItem.ItemType == LeftItemType.Settings) FocusLevel = 2;
+                            if (leftItem.ItemType == LeftItemType.Settings)
+                            {
+                                FocusLevel = 2;
+                                if (leftItem.ItemList.All(x => !(x as SettingsItem).Enabled)) break;
+                                while(!(leftItem.ItemList[rightItemIndex] as SettingsItem).Enabled)
+                                {
+                                    await BaseScript.Delay(0);
+                                    rightItemIndex++;
+                                    _pause._pause.CallFunction("SELECT_RIGHT_ITEM_INDEX", rightItemIndex);
+                                }
+                            }
                             SendPauseMenuLeftItemSelect();
                         }
                     }
@@ -366,8 +382,15 @@ namespace ScaleformUI.PauseMenu
                         var leftItem = Tabs[Index].LeftItemList[LeftItemIndex];
                         if (leftItem.ItemType == LeftItemType.Settings)
                         {
+
                             if (leftItem.ItemList[RightItemIndex] is SettingsItem rightItem)
                             {
+                                if (!rightItem.Enabled)
+                                {
+                                    Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
+                                    return;
+                                }
+
                                 switch (rightItem.ItemType)
                                 {
                                     case SettingsItemType.ListItem:
@@ -584,6 +607,11 @@ namespace ScaleformUI.PauseMenu
                             case 1: // left item in subitem tab pressed
                                 if (focusLevel != 1)
                                 {
+                                    if (!Tabs[Index].LeftItemList[LeftItemIndex].Enabled)
+                                    {
+                                        Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
+                                        return;
+                                    }
                                     Tabs[Index].LeftItemList[LeftItemIndex].Selected = false;
                                     LeftItemIndex = itemId;
                                     Tabs[Index].LeftItemList[LeftItemIndex].Selected = true;
@@ -591,6 +619,11 @@ namespace ScaleformUI.PauseMenu
                                 }
                                 else if(focusLevel == 1)
                                 {
+                                    if (!Tabs[Index].LeftItemList[LeftItemIndex].Enabled)
+                                    {
+                                        Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
+                                        return;
+                                    }
                                     if (Tabs[Index].LeftItemList[LeftItemIndex].ItemType == LeftItemType.Settings)
                                     {
                                         FocusLevel = 2;
@@ -606,6 +639,12 @@ namespace ScaleformUI.PauseMenu
                                 SendPauseMenuLeftItemSelect();
                                 break;
                             case 2:// right settings item in subitem tab pressed
+                                if (!(Tabs[Index].LeftItemList[leftItemIndex].ItemList[itemId] as SettingsItem).Enabled)
+                                {
+                                    Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
+                                    return;
+                                }
+
                                 if (FocusLevel != 2)
                                     FocusLevel = 2;
                                 if (Tabs[Index].LeftItemList[leftItemIndex].ItemList[itemId] is SettingsItem)
@@ -669,7 +708,7 @@ namespace ScaleformUI.PauseMenu
                         {
                             case 1: // left item in subitem tab pressed
                                 foreach(var item in Tabs[Index].LeftItemList)
-                                    item.Hovered = Tabs[Index].LeftItemList.IndexOf(item) == itemId;
+                                    item.Hovered = Tabs[Index].LeftItemList.IndexOf(item) == itemId && item.Enabled;
                                 break;
                             case 2:// right settings item in subitem tab pressed
                                 foreach (var curIt in Tabs[Index].LeftItemList[LeftItemIndex].ItemList)
@@ -677,7 +716,7 @@ namespace ScaleformUI.PauseMenu
                                     var idx = Tabs[Index].LeftItemList[LeftItemIndex].ItemList.IndexOf(curIt);
                                     if (curIt is SettingsItem)
                                     {
-                                        (curIt as SettingsItem).Hovered = itemId == idx;
+                                        (curIt as SettingsItem).Hovered = itemId == idx && (curIt as SettingsItem).Enabled;
                                     }
                                 }
                                 break;

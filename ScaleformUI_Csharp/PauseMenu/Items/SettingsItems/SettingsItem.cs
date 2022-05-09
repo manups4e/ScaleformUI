@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CitizenFX.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,9 +22,31 @@ namespace ScaleformUI.PauseMenu
     public class SettingsItem : BasicTabItem
     {
         private string rightLabel;
+        private bool enabled = true;
+
         public event SettingsListItemChanged OnListItemChange;
         public event SettingsItemSelected OnActivate;
-        public bool Enabled { get; set; }
+        public bool Enabled
+        {
+            get => enabled;
+            set
+            {
+                enabled = value;
+                if (Parent!= null && Parent.Parent != null && Parent.Parent.Parent != null && Parent.Parent.Parent.Visible)
+                {
+                    if (Parent.Selected)
+                    {
+                        var tab = Parent.Parent.Parent.Tabs.IndexOf(Parent.Parent);
+                        var it = Parent.Parent.LeftItemList.IndexOf(Parent);
+                        var rIt = Parent.ItemList.IndexOf(this);
+                        Debug.WriteLine($"tab: {tab}");
+                        Debug.WriteLine($"it: {it}");
+                        Debug.WriteLine($"rIt: {rIt}");
+                        Parent.Parent.Parent._pause._pause.CallFunction("ENABLE_RIGHT_ITEM", tab, it, rIt, enabled);
+                    }
+                }
+            }
+        }
         public bool Hovered { get; internal set; }
         public bool Selected { get; internal set; }
         public SettingsItemType ItemType { get; set; }
@@ -53,7 +76,7 @@ namespace ScaleformUI.PauseMenu
 
         internal void Activated()
         {
-            if(ItemType == SettingsItemType.Basic)
+            if (ItemType == SettingsItemType.Basic)
             {
                 OnActivate?.Invoke(this);
             }
