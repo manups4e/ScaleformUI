@@ -61,6 +61,7 @@ function UIMenu.New(Title, Subtitle, X, Y, glare, txtDictionary, txtName, altern
         _changed = false,
         _maxItem = 7,
         _menuGlare = 0,
+        _canBuild = true,
         _time = 0,
         _times = 0,
         _delay = 150,
@@ -463,7 +464,8 @@ function UIMenu:BuildUpMenu()
         local items = self.Items
         local it = 1
         while it <= #items do
-            Wait(0)
+            Wait(1)
+            if not self._canBuild then return end
             local item = items[it]
             local Type, SubType = item()
             AddTextEntry("desc_{" .. it .."}", item:Description())
@@ -792,6 +794,7 @@ function UIMenu:SelectItem(play)
         if not self.Children[Item] then
             return
         end
+        self._canBuild = false
         self._Visible = false
         self.OnMenuChanged(self, self.Children[self.Items[self:CurrentSelection()]], true)
         ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
@@ -799,6 +802,7 @@ function UIMenu:SelectItem(play)
         ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.Children[self.Items[self:CurrentSelection()]].InstructionalButtons)
         self.OnMenuChanged(self, self.Children[Item], "forwards")
         self.Children[Item].OnMenuChanged(self, self.Children[Item], "forwards")
+        self.Children[Item]._canBuild = true
         self.Children[Item]:Visible(true)
         self.Children[Item]:BuildUpMenu()
     end
@@ -808,9 +812,11 @@ end
 function UIMenu:GoBack()
     PlaySoundFrontend(-1, self.Settings.Audio.Back, self.Settings.Audio.Library, true)
     if self.ParentMenu ~= nil then
+        self._canBuild = false
         ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
         ScaleformUI.Scaleforms.InstructionalButtons:Enabled(true)
         ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.ParentMenu.InstructionalButtons)
+        self.ParentMenu._canBuild = true
         self.ParentMenu._Visible = true
         self.ParentMenu:BuildUpMenu()
         self.OnMenuChanged(self, self.ParentMenu, "backwards")
