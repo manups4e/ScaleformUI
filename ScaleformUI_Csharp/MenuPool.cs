@@ -225,7 +225,8 @@ namespace ScaleformUI
                 menu.ProcessMouse();
             }*/
 
-            for (int i = 0; i < _menuList.Count; i++)
+            int count = _menuList.Count;
+            for (int i = 0; i < count; i++)
             {
                 if (_menuList[i].Visible)
                     _menuList[i].ProcessMouse();
