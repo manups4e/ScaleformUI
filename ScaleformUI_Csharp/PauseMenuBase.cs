@@ -15,6 +15,11 @@ namespace ScaleformUI
 
         }
 
+        public virtual void ProcessMouse()
+        {
+
+        }
+
         public virtual void Draw()
         {
 

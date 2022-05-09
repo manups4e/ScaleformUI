@@ -858,7 +858,7 @@ public class MenuExample : BaseScript
 		var txd = API.GetPedheadshotTxdString(mugshot);
 		pauseMenu.HeaderPicture = new(txd, txd);
 		_menuPool.Add(pauseMenu);
-		TabTextItem basicTab = new TabTextItem("TabTextItem", "This is the title!");
+		TextTab basicTab = new TextTab("TabTextItem", "This is the title!");
 		basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
 		basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
 		basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~b~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
@@ -873,7 +873,7 @@ public class MenuExample : BaseScript
 		basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
 		pauseMenu.AddTab(basicTab);
 
-		TabSubmenuItem multiItemTab = new TabSubmenuItem("TabSubMenu");
+		SubmenuTab multiItemTab = new SubmenuTab("TabSubMenu");
 		pauseMenu.AddTab(multiItemTab);
 		TabLeftItem first = new TabLeftItem("1 - Empty", LeftItemType.Empty);
 		TabLeftItem second = new TabLeftItem("2 - Info", LeftItemType.Info);
@@ -915,12 +915,12 @@ public class MenuExample : BaseScript
 		third.AddItem(_coloredBarStatItem4);
 
 		List<dynamic> itemList = new List<dynamic>() { "This", "Is", "The", "List", "Super", "Power", "Wooow" };
-		SettingsTabItem _settings1 = new SettingsTabItem("Item's Label", "Item's right Label");
-		SettingsTabItem _settings2 = new SettingsTabItem("Item's Label", itemList, 0);
-		SettingsTabItem _settings3 = new SettingsTabItem("Item's Label", 100, 25, false, HudColor.HUD_COLOUR_FREEMODE);
-		SettingsTabItem _settings4 = new SettingsTabItem("Item's Label", 100, 75, true, HudColor.HUD_COLOUR_PINK);
-		SettingsTabItem _settings5 = new SettingsTabItem("Item's Label", UIMenuCheckboxStyle.Tick, true);
-		SettingsTabItem _settings6 = new SettingsTabItem("Item's Label", 100, 50, HudColor.HUD_COLOUR_RED);
+		SettingsItem _settings1 = new SettingsItem("Item's Label", "Item's right Label");
+		SettingsItem _settings2 = new SettingsListItem("Item's Label", itemList, 0);
+		SettingsItem _settings3 = new SettingsProgressItem("Item's Label", 100, 25, false, HudColor.HUD_COLOUR_FREEMODE);
+		SettingsItem _settings4 = new SettingsProgressItem("Item's Label", 100, 75, true, HudColor.HUD_COLOUR_PINK);
+		SettingsItem _settings5 = new SettingsCheckboxItem("Item's Label", UIMenuCheckboxStyle.Tick, true);
+		SettingsItem _settings6 = new SettingsSliderItem("Item's Label", 100, 50, HudColor.HUD_COLOUR_RED);
 		fourth.AddItem(_settings1);
 		fourth.AddItem(_settings2);
 		fourth.AddItem(_settings3);
@@ -967,7 +967,7 @@ public class MenuExample : BaseScript
 			Screen.ShowSubtitle(tab.Title + " Focus at level => ~y~"+ focusLevel +"~w~!");
 			if(focusLevel == 1)
             {
-				if(tab is TabTextItem)
+				if(tab is TextTab)
                 {
 					List<InstructionalButton> buttons = new List<InstructionalButton>()
 					{
@@ -985,14 +985,24 @@ public class MenuExample : BaseScript
 
 		};
 
-		pauseMenu.OnLeftItemChange += (menu, tabIndex, focusLevel, leftItemIndex) =>
+		pauseMenu.OnLeftItemChange += (menu, leftItem, leftItemIndex) =>
 		{
-			Screen.ShowSubtitle(menu.Tabs[tabIndex].Title + " Focus at level => ~y~" + focusLevel + "~w~, and left Item ~o~N° " + (leftItemIndex+1) + "~w~ selected!");
+			Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel+ "~w~, and left Item ~o~N° " + (leftItemIndex + 1) + "~w~ selected!");
+		};
+	
+		pauseMenu.OnLeftItemSelect += (menu, leftItem, leftItemIndex) =>
+		{
+			Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, and left Item ~o~N° " + (leftItemIndex + 1) + "~w~ selected!");
 		};
 
-		pauseMenu.OnRightItemChange += (menu, tabIndex, focusLevel, leftItemIndex, rightItemIndex) =>
+		pauseMenu.OnRightItemChange += (menu, item, leftItemIndex, rightItemIndex) =>
 		{
-			Screen.ShowSubtitle(menu.Tabs[tabIndex].Title + " Focus at level => ~y~" + focusLevel + "~w~, left Item ~o~N° " + (leftItemIndex + 1) + "~w~ and right Item ~b~N° " + (rightItemIndex+1) + "~w~ selected!");
+			Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, left Item ~o~N° " + (leftItemIndex + 1) + "~w~ and right Item ~b~N° " + (rightItemIndex+1) + "~w~ selected!");
+		};
+
+		pauseMenu.OnRightItemSelect += (menu, item, leftItemIndex, rightItemIndex) =>
+		{
+			Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + "~w~, left Item ~o~N° " + (leftItemIndex + 1) + "~w~ and right Item ~b~N° " + (rightItemIndex + 1) + "~w~ of type ~p~"+ item.ItemType +"~w~ selected!");
 		};
 		pauseMenu.Visible = true;
 		API.UnregisterPedheadshot(mugshot);

@@ -11,8 +11,9 @@ namespace ScaleformUI
 {
     public class PauseMenuScaleform
     {
-        private Scaleform _header;
-        private Scaleform _pause;
+        internal Scaleform _header;
+        internal Scaleform _pause;
+        internal Scaleform _lobby;
         private bool _visible;
         internal bool Loaded => _header is not null && _header.IsLoaded && _pause is not null && _pause.IsLoaded;
         public bool Visible { get => _visible; set => _visible = value; }
@@ -25,6 +26,7 @@ namespace ScaleformUI
         {
             _header = new Scaleform("pausemenuheader");
             _pause = new Scaleform("pausemenu");
+            _lobby = new Scaleform("lobbymenu");
         }
 
         public void SetHeaderTitle(string title, string subtitle = "", bool shiftUpHeader = false)
@@ -66,20 +68,35 @@ namespace ScaleformUI
             _header.CallFunction("GO_LEFT");
         }
 
-        public void AddPauseMenuTab(string title, int tabType, int tabContentType)
+        public void AddPauseMenuTab(string title, int tabType, int tabContentType, HudColor color = HudColor.HUD_COLOUR_FREEMODE)
         {
-            _header.CallFunction("ADD_HEADER_TAB", title, tabType);
+            _header.CallFunction("ADD_HEADER_TAB", title, tabType, (int)color);
             _pause.CallFunction("ADD_TAB", tabContentType);
         }
+        public void AddLobbyMenuTab(string title, int tabType, int tabContentType, HudColor color = HudColor.HUD_COLOUR_FREEMODE)
+        {
+            _header.CallFunction("ADD_HEADER_TAB", title, tabType, (int)color);
+        }
 
-        public void AddLeftItem(int tab, int type, string title, HudColor itemColor = HudColor.NONE, HudColor highlightColor = HudColor.NONE)
+        public void SelectTab(int tab)
+        {
+            _header.CallFunction("SET_TAB_INDEX", tab);
+            _pause.CallFunction("SET_TAB_INDEX", tab);
+        }
+
+        public void SetFocus(int focus)
+        {
+            _pause.CallFunction("SET_FOCUS", focus);
+        }
+
+        public void AddLeftItem(int tab, int type, string title, HudColor itemColor = HudColor.NONE, HudColor highlightColor = HudColor.NONE, bool enabled = true)
         {
             if (itemColor != HudColor.NONE)
-                _pause.CallFunction("ADD_LEFT_ITEM", tab, type, title, (int)itemColor);
+                _pause.CallFunction("ADD_LEFT_ITEM", tab, type, title, enabled, (int)itemColor);
             else if (itemColor != HudColor.NONE && highlightColor != HudColor.NONE)
-                _pause.CallFunction("ADD_LEFT_ITEM", tab, type, title, (int)itemColor, (int)highlightColor);
+                _pause.CallFunction("ADD_LEFT_ITEM", tab, type, title, enabled, (int)itemColor, (int)highlightColor);
             else
-                _pause.CallFunction("ADD_LEFT_ITEM", tab, type, title);
+                _pause.CallFunction("ADD_LEFT_ITEM", tab, type, title, enabled);
         }
 
         public void AddRightTitle(int tab, int leftItem, string title)
@@ -109,33 +126,33 @@ namespace ScaleformUI
             _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 1, 1, label, value, (int)barColor);
         }
 
-        public void AddRightSettingsBaseItem(int tab, int leftItem, string label, string rightLabel)
+        public void AddRightSettingsBaseItem(int tab, int leftItem, string label, string rightLabel, bool enabled)
         {
-            _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 2, 0, label, rightLabel);
+            _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 2, 0, label, enabled, rightLabel);
         }
 
-        public void AddRightSettingsListItem(int tab, int leftItem, string label, List<dynamic> items, int startIndex)
+        public void AddRightSettingsListItem(int tab, int leftItem, string label, List<dynamic> items, int startIndex, bool enabled)
         {
             string stringList = string.Join(",", items);
-            _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 2, 1, label, stringList, startIndex);
+            _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 2, 1, label, enabled, stringList, startIndex);
         }
 
-        public void AddRightSettingsProgressItem(int tab, int leftItem, string label, int max, HudColor color, int index)
+        public void AddRightSettingsProgressItem(int tab, int leftItem, string label, int max, HudColor color, int index, bool enabled)
         {
-            _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 2, 2, label, max, (int)color, index);
+            _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 2, 2, label, enabled, max, (int)color, index);
         }
-        public void AddRightSettingsProgressItemAlt(int tab, int leftItem, string label, int max, HudColor color, int index)
+        public void AddRightSettingsProgressItemAlt(int tab, int leftItem, string label, int max, HudColor color, int index, bool enabled)
         {
-            _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 2, 3, label, max, (int)color, index);
+            _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 2, 3, label, enabled, max, (int)color, index);
         }
 
-        public void AddRightSettingsSliderItem(int tab, int leftItem, string label, int max, HudColor color, int index)
+        public void AddRightSettingsSliderItem(int tab, int leftItem, string label, int max, HudColor color, int index, bool enabled)
         {
-            _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 2, 5, label, max, (int)color, index);
+            _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 2, 5, label, enabled, max, (int)color, index);
         }
-        public void AddRightSettingsCheckboxItem(int tab, int leftItem, string label, UIMenuCheckboxStyle style, bool check)
+        public void AddRightSettingsCheckboxItem(int tab, int leftItem, string label, UIMenuCheckboxStyle style, bool check, bool enabled)
         {
-            _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 2, 4, label, (int)style, check);
+            _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 2, 4, label, enabled, (int)style, check);
         }
 
         public void AddKeymapTitle(int tab, int leftItem, string title, string rightLabel_1, string rightLabel_2)
@@ -206,7 +223,6 @@ namespace ScaleformUI
             else
                 _pause.CallFunction("UPDATE_COLORED_BAR_COLOR", tab, leftItem, rightItem, (int)color);
         }
-
         public async Task<string> SendInputEvent(int direction)
         {
             BeginScaleformMovieMethod(_pause.Handle, "SET_INPUT_EVENT");
@@ -217,15 +233,9 @@ namespace ScaleformUI
             return res;
         }
 
-        public async Task<string> SendScrollEvent(int direction)
+        public void SendScrollEvent(int direction)
         {
-            BeginScaleformMovieMethod(_pause.Handle, "SET_SCROLL_EVENT");
-            ScaleformMovieMethodAddParamInt(direction);
-            ScaleformMovieMethodAddParamBool(!IsInputDisabled(2));
-            var ret = EndScaleformMovieMethodReturnValue();
-            while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            var res = GetScaleformMovieFunctionReturnString(ret);
-            return res;
+            _pause.CallFunction("SET_SCROLL_EVENT", direction);
         }
         public async Task<string> SendClickEvent()
         {
@@ -239,20 +249,23 @@ namespace ScaleformUI
         public void Dispose()
         {
             _pause.CallFunction("CLEAR_ALL");
+            _lobby.CallFunction("CLEAR_ALL");
             _header.CallFunction("CLEAR_ALL");
             _pause.Dispose();
+            _lobby.Dispose();
             _header.Dispose();
             _visible = false;
         }
 
-        public void Draw()
+        public void Draw(bool isLobby = false)
         {
             if (_visible && !Game.IsPaused)
             {
-                if(IsInputDisabled(2))
-                    ShowCursorThisFrame();
                 DrawScaleformMovie(_header.Handle, 0.501f, 0.162f, 0.6782f, 0.145f, 255, 255, 255, 255, 0);
-                DrawScaleformMovie(_pause.Handle, 0.6617187f, 0.7166667f, 1, 1, 255, 255, 255, 255, 0);
+                if (!isLobby)
+                    DrawScaleformMovie(_pause.Handle, 0.6617187f, 0.7166667f, 1, 1, 255, 255, 255, 255, 0);
+                else
+                    DrawScaleformMovie(_lobby.Handle, 0.6617187f, 0.7166667f, 1, 1, 255, 255, 255, 255, 0);
             }
         }
     }
