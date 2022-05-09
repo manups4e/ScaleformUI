@@ -1015,10 +1015,10 @@ public class MenuExample : BaseScript
 		// tabview is the main menu.. the container of all the tabs.
 		MainView pauseMenu = new ("PauseMenu example", "Look there's a subtitle too!", "Detail 1", "Detail 2", "Detail 3");
 
-		//var mugshot = API.RegisterPedheadshot(Game.PlayerPed.Handle);
-		//while (!API.IsPedheadshotReady(mugshot)) await BaseScript.Delay(1);
-		//var txd = API.GetPedheadshotTxdString(mugshot);
-		//pauseMenu.HeaderPicture = new(txd, txd);
+		var mugshot = API.RegisterPedheadshot(Game.PlayerPed.Handle);
+		while (!API.IsPedheadshotReady(mugshot)) await BaseScript.Delay(1);
+		var txd = API.GetPedheadshotTxdString(mugshot);
+		pauseMenu.HeaderPicture = new(txd, txd);
 		_menuPool.Add(pauseMenu);
 
 		var item = new UIMenuItem("UIMenuItem", "UIMenuItem description");
