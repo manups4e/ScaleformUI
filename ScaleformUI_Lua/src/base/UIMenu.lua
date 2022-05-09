@@ -885,7 +885,9 @@ function UIMenu:ProcessMouse()
                     Item:Hovered(false)
                 end
             end
+            self.Dirty = false
         end
+        return
     end
 
     SetMouseCursorActiveThisFrame()
