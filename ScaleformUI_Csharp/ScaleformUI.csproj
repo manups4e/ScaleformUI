@@ -34,8 +34,8 @@
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CitizenFX.Core.Client, Version=0.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\CitizenFX.Core.Client.1.0.5020\lib\net45\CitizenFX.Core.Client.dll</HintPath>
+    <Reference Include="CitizenFX.Core.Client, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CitizenFX.Core.Client.1.0.5546\lib\net45\CitizenFX.Core.Client.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
@@ -49,14 +49,23 @@
     <Compile Include="Hud\Notifications\NotificationChars.cs" />
     <Compile Include="Hud\Notifications\Notifications.cs" />
     <Compile Include="Items\UIMenuStatsItem.cs" />
+    <Compile Include="LobbyMenu\Items\FriendItem.cs" />
+    <Compile Include="LobbyMenu\Items\LobbyItem.cs" />
+    <Compile Include="LobbyMenu\Items\MMPLayerItem.cs" />
+    <Compile Include="LobbyMenu\MainView.cs" />
+    <Compile Include="PauseMenuBase.cs" />
     <Compile Include="PauseMenu\Items\BasicTabItem.cs" />
     <Compile Include="PauseMenu\Items\KeymapItem.cs" />
-    <Compile Include="PauseMenu\Items\SettingsTabItem.cs" />
+    <Compile Include="PauseMenu\Items\SettingsItems\SettingsProgressItem.cs" />
+    <Compile Include="PauseMenu\Items\SettingsItems\SettingsCheckboxItem.cs" />
+    <Compile Include="PauseMenu\Items\SettingsItems\SettingsListItem.cs" />
+    <Compile Include="PauseMenu\Items\SettingsItems\SettingsSliderItem.cs" />
+    <Compile Include="PauseMenu\Items\SettingsItems\SettingsItem.cs" />
     <Compile Include="PauseMenu\Items\StatsTabItem.cs" />
     <Compile Include="PauseMenu\Tabs\BaseTab.cs" />
-    <Compile Include="PauseMenu\Tabs\TabSubmenuItem.cs" />
+    <Compile Include="PauseMenu\Tabs\SubmenuTab.cs" />
     <Compile Include="PauseMenu\Tabs\TabLeftItem.cs" />
-    <Compile Include="PauseMenu\Tabs\TabTextItem.cs" />
+    <Compile Include="PauseMenu\Tabs\TextTab.cs" />
     <Compile Include="PauseMenu\TabView.cs" />
     <Compile Include="Scaleforms\BigMessage\BigMessage.cs" />
     <Compile Include="Controls.cs" />

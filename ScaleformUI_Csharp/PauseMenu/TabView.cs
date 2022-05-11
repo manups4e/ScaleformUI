@@ -382,7 +382,6 @@ namespace ScaleformUI.PauseMenu
                         var leftItem = Tabs[Index].LeftItemList[LeftItemIndex];
                         if (leftItem.ItemType == LeftItemType.Settings)
                         {
-
                             if (leftItem.ItemList[RightItemIndex] is SettingsItem rightItem)
                             {
                                 if (!rightItem.Enabled)
@@ -549,7 +548,7 @@ namespace ScaleformUI.PauseMenu
         private int context = 0;
         private int unused = 0;
 
-        public override void ProcessMouse()
+        public override async void ProcessMouse()
         {
             if (!IsUsingKeyboard(2))
             {
@@ -574,6 +573,13 @@ namespace ScaleformUI.PauseMenu
                                 _pause.SelectTab(itemId);
                                 FocusLevel = 1;
                                 Index = itemId;
+                                if (Tabs[Index].LeftItemList.All(x => !x.Enabled)) break;
+                                while (!Tabs[Index].LeftItemList[leftItemIndex].Enabled)
+                                {
+                                    await BaseScript.Delay(0);
+                                    leftItemIndex++;
+                                    _pause._pause.CallFunction("SELECT_LEFT_ITEM_INDEX", leftItemIndex);
+                                }
                                 break;
                                 /* TODO: CHANGE IT WITH SPRITE LIKE THE ACTUAL PAUSE MENU
                             case 1:
@@ -603,6 +609,13 @@ namespace ScaleformUI.PauseMenu
                         {
                             case 0: // going from unfocused to focused
                                 FocusLevel = 1;
+                                if (Tabs[Index].LeftItemList.All(x => !x.Enabled)) break;
+                                while (!Tabs[Index].LeftItemList[leftItemIndex].Enabled)
+                                {
+                                    await BaseScript.Delay(0);
+                                    leftItemIndex++;
+                                    _pause._pause.CallFunction("SELECT_LEFT_ITEM_INDEX", leftItemIndex);
+                                }
                                 break;
                             case 1: // left item in subitem tab pressed
                                 if (focusLevel != 1)
