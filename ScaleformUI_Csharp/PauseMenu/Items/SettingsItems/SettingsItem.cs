@@ -24,7 +24,6 @@ namespace ScaleformUI.PauseMenu
         private string rightLabel;
         private bool enabled = true;
 
-        public event SettingsListItemChanged OnListItemChange;
         public event SettingsItemSelected OnActivate;
         public bool Enabled
         {
@@ -32,16 +31,13 @@ namespace ScaleformUI.PauseMenu
             set
             {
                 enabled = value;
-                if (Parent!= null && Parent.Parent != null && Parent.Parent.Parent != null && Parent.Parent.Parent.Visible)
+                if (Parent != null && Parent.Parent != null && Parent.Parent.Parent != null && Parent.Parent.Parent.Visible)
                 {
                     if (Parent.Selected)
                     {
                         var tab = Parent.Parent.Parent.Tabs.IndexOf(Parent.Parent);
                         var it = Parent.Parent.LeftItemList.IndexOf(Parent);
                         var rIt = Parent.ItemList.IndexOf(this);
-                        Debug.WriteLine($"tab: {tab}");
-                        Debug.WriteLine($"it: {it}");
-                        Debug.WriteLine($"rIt: {rIt}");
                         Parent.Parent.Parent._pause._pause.CallFunction("ENABLE_RIGHT_ITEM", tab, it, rIt, enabled);
                     }
                 }
