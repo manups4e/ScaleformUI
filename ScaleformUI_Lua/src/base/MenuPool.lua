@@ -172,6 +172,7 @@ function MenuPool:ProcessControl()
     for _, Menu in pairs(self.PauseMenus) do
         if Menu:Visible() then
             Menu:ProcessControl()
+            Menu:ProcessMouse()
         end
     end
 end

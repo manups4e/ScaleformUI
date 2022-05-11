@@ -44,7 +44,7 @@ function scaleform:CallFunction(theFunction, returndata, ...)
 	end
 
 	if not returndata then
-		return EndScaleformMovieMethod()
+		EndScaleformMovieMethod()
 	else
 		return EndScaleformMovieMethodReturnValue()
 	end

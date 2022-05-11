@@ -46,12 +46,12 @@ namespace ScaleformUI.PauseMenu
 
         public void ListSelected()
         {
-            OnListItemSelected?.Invoke(this, itemIndex, "" + ListItems[itemIndex]);
+            OnListItemSelected?.Invoke(this, itemIndex, CurrentItem());
         }
 
         public void ListChanged()
         {
-            OnListItemChanged?.Invoke(this, itemIndex, "" + ListItems[itemIndex]);
+            OnListItemChanged?.Invoke(this, itemIndex, "" + CurrentItem());
         }
     }
 }

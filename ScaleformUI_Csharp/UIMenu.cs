@@ -960,7 +960,7 @@ namespace ScaleformUI
         public bool ResetCursorOnOpen = true;
         private bool mouseControlsEnabled = true;
         public bool AlternativeTitle = false;
-
+        private bool canBuild = true;
         public PointF Offset { get; internal set; }
 
         public List<UIMenuWindow> Windows = new List<UIMenuWindow>();
@@ -1641,6 +1641,7 @@ namespace ScaleformUI
                                         return;
                                     }
                                     CurrentSelection = itemId;
+                                    Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
                                 }
                                 break;
                             case 10: // panels (10 => context 1, panel_type 0) // ColorPanel
@@ -1769,12 +1770,14 @@ namespace ScaleformUI
             Game.PlaySound(AUDIO_BACK, AUDIO_LIBRARY);
             if (ParentMenu != null)
             {
+                canBuild = false;
                 ScaleformUI._ui.CallFunction("CLEAR_ALL");
                 ScaleformUI.InstructionalButtons.Enabled = true;
                 ScaleformUI.InstructionalButtons.SetInstructionalButtons(ParentMenu.InstructionalButtons);
                 _poolcontainer.MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
                 ParentMenu.MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
                 MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
+                ParentMenu.canBuild = true;
                 ParentMenu._visible = true;
                 ParentMenu.BuildUpMenu();
             }
@@ -1957,6 +1960,7 @@ namespace ScaleformUI
                     ItemSelect(MenuItems[CurrentSelection], CurrentSelection);
                     MenuItems[CurrentSelection].ItemActivate(this);
                     if (!Children.ContainsKey(MenuItems[CurrentSelection])) return;
+                    canBuild = false;
                     _visible = false;
                     ScaleformUI._ui.CallFunction("CLEAR_ALL");
                     ScaleformUI.InstructionalButtons.Enabled = true;
@@ -1964,6 +1968,7 @@ namespace ScaleformUI
                     _poolcontainer.MenuChangeEv(this, Children[MenuItems[CurrentSelection]], MenuState.ChangeForward);
                     MenuChangeEv(this, Children[MenuItems[CurrentSelection]], MenuState.ChangeForward);
                     Children[MenuItems[CurrentSelection]].MenuChangeEv(this, Children[MenuItems[CurrentSelection]], MenuState.ChangeForward);
+                    Children[MenuItems[CurrentSelection]].canBuild = true;
                     Children[MenuItems[CurrentSelection]].Visible = true;
                     Children[MenuItems[CurrentSelection]].BuildUpMenu();
                     Children[MenuItems[CurrentSelection]].MouseEdgeEnabled = MouseEdgeEnabled;
@@ -2149,9 +2154,13 @@ namespace ScaleformUI
                     }
                 }
             }
-            foreach (var item in MenuItems)
+            var i = 0;
+            while (i < MenuItems.Count)
             {
-                var index = MenuItems.IndexOf(item);
+                await BaseScript.Delay(1);
+                if (!canBuild) break;
+                var item = MenuItems[i];
+                var index = i;
                 AddTextEntry($"menu_{_poolcontainer._menuList.IndexOf(this)}_desc_{index}", item.Description);
 
                 BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "ADD_ITEM");
@@ -2281,7 +2290,11 @@ namespace ScaleformUI
                     }
                 }
 
-                if (item.Panels.Count == 0) continue;
+                if (item.Panels.Count == 0)
+                {
+                    i++;
+                    continue;
+                }
                 foreach (var panel in item.Panels)
                 {
                     var pan = item.Panels.IndexOf(panel);
@@ -2308,7 +2321,9 @@ namespace ScaleformUI
                             break;
                     }
                 }
-            }
+                i++;
+            } 
+
             ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
             if (MenuItems[CurrentSelection] is UIMenuSeparatorItem)
             {
