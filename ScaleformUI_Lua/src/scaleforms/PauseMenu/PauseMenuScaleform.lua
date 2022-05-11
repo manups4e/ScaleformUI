@@ -68,21 +68,31 @@ function Pause:HeaderGoLeft()
     self._header:CallFunction("GO_LEFT", false)
 end
 
-function Pause:AddPauseMenuTab(title, _type, _tabContentType)
-    self._header:CallFunction("ADD_HEADER_TAB", false, title, _type)
+function Pause:AddPauseMenuTab(title, _type, _tabContentType, color)
+    if color == nil then color = 116 end
+    self._header:CallFunction("ADD_HEADER_TAB", false, title, _type, color)
     self._pause:CallFunction("ADD_TAB", false, _tabContentType)
 end
 
-function Pause:AddLeftItem(tab, _type, title, itemColor, highlightColor)
+function Pause:SelectTab(tab)
+    self._header:CallFunction("SET_TAB_INDEX", false, tab)
+    self._pause:CallFunction("SET_TAB_INDEX", false, tab)
+end
+
+function Pause:SetFocus(focus)
+    self._pause:CallFunction("SET_FOCUS", false, focus)
+end
+
+function Pause:AddLeftItem(tab, _type, title, itemColor, highlightColor, enabled)
     if itemColor == nil then itemColor = Colours.NONE end
     if highlightColor == nil then highlightColor = Colours.NONE end
 
     if itemColor ~= Colours.NONE and highlightColor == Colours.NONE then
-        self._pause:CallFunction("ADD_LEFT_ITEM", false, tab, _type, title, itemColor)
+        self._pause:CallFunction("ADD_LEFT_ITEM", false, tab, _type, title, enabled, itemColor)
     elseif (itemColor ~= Colours.NONE and highlightColor ~= Colours.NONE) then
-        self._pause:CallFunction("ADD_LEFT_ITEM", false, tab, _type, title, itemColor, highlightColor)
+        self._pause:CallFunction("ADD_LEFT_ITEM", false, tab, _type, title, enabled, itemColor, highlightColor)
     else
-        self._pause:CallFunction("ADD_LEFT_ITEM", false, tab, _type, title)
+        self._pause:CallFunction("ADD_LEFT_ITEM", false, tab, _type, title, enabled)
     end
 
 end
@@ -103,36 +113,36 @@ function Pause:AddRightListLabel(tab, leftItem, label)
 end
 
 function Pause:AddRightStatItemLabel(tab, leftItem, label, rightLabel)
-    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItem, 1, 0, label, rightLabel)
+    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItem, 1, 0, label, enabled, rightLabel)
 end
 
 function Pause:AddRightStatItemColorBar(tab, leftItem, label, value, barColor)
-    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItem, 1, 1, label, value, barColor)
+    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItem, 1, 1, label, enabled, value, barColor)
 end
 
-function Pause:AddRightSettingsBaseItem(tab, leftItem, label, rightLabel)
-    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItem, 2, 0, label, rightLabel)
+function Pause:AddRightSettingsBaseItem(tab, leftItem, label, rightLabel, enabled)
+    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItem, 2, 0, label, enabled, rightLabel)
 end
 
-function Pause:AddRightSettingsListItem(tab, leftItem, label, items, startIndex)
+function Pause:AddRightSettingsListItem(tab, leftItem, label, items, startIndex, enabled)
     stringList = table.concat(items, ",")
-    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItem, 2, 1, label, stringList, startIndex)
+    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItem, 2, 1, label, enabled, stringList, startIndex)
 end
 
-function Pause:AddRightSettingsProgressItem(tab, leftItem, label, max, color, index)
-    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItem, 2, 2, label, max, color, index)
+function Pause:AddRightSettingsProgressItem(tab, leftItem, label, max, color, index, enabled)
+    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItem, 2, 2, label, enabled, max, color, index)
 end
 
-function Pause:AddRightSettingsProgressItemAlt(tab, leftItem, label, max, color, index)
-    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItem, 2, 3, label, max, color, index)
+function Pause:AddRightSettingsProgressItemAlt(tab, leftItem, label, max, color, index, enabled)
+    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItem, 2, 3, label, enabled, max, color, index)
 end
 
-function Pause:AddRightSettingsSliderItem(tab, leftItem, label, max, color, index)
-    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItem, 2, 5, label, max, color, index)
+function Pause:AddRightSettingsSliderItem(tab, leftItem, label, max, color, index, enabled)
+    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItem, 2, 5, label, enabled, max, color, index)
 end
 
-function Pause:AddRightSettingsCheckboxItem(tab, leftItem, label, style, check)
-    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItem, 2, 4, label, style, check)
+function Pause:AddRightSettingsCheckboxItem(tab, leftItem, label, style, check, enabled)
+    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItem, 2, 4, label, enabled, style, check)
 end
 
 function Pause:AddKeymapTitle(tab, leftItem, title, rightLabel_1, rightLabel_2)
@@ -209,11 +219,7 @@ function Pause:SendInputEvent(direction) -- to be awaited
 end
 
 function Pause:SendScrollEvent(direction) -- to be awaited
-    local return_value = self._pause:CallFunction("SET_SCROLL_EVENT", true, direction, not IsInputDisabled(2))
-    while not IsScaleformMovieMethodReturnValueReady(return_value) do
-        Citizen.Wait(0)
-    end
-    return GetScaleformMovieFunctionReturnString(return_value)
+    self._pause:CallFunction("SET_SCROLL_EVENT", false, direction)
 end
 
 function Pause:SendClickEvent() -- to be awaited

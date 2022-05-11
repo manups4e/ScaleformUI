@@ -15,6 +15,9 @@ function TabLeftItem.New(label, _type, mainColor, highlightColor)
         ItemIndex = 0,
         ItemList = {},
         TextTitle = "",
+        _enabled = true,
+        _hovered = false,
+        _selected = false,
         KeymapRightLabel_1 = "",
         KeymapRightLabel_2 = "",
         OnIndexChanged = function(item, index) end,
@@ -28,4 +31,33 @@ end
 function TabLeftItem:AddItem(item)
     item.Parent = self
     table.insert(self.ItemList, item)
+end
+
+function TabLeftItem:Enabled(enabled)
+    if enabled ~= nil then
+        self._enabled = enabled
+        if self.Parent ~= nil and self.Parent.Base.Parent ~= nil and self.Parent.Base.Parent:Visible() then
+            local tab = IndexOf(self.Parent.Base.Parent.Tabs, self.Parent) - 1
+            local leftItem = IndexOf(self.Parent.LeftItemList, self) - 1
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ENABLE_LEFT_ITEM", false, tab, leftItem, self._enabled)
+        end
+    else
+        return self._enabled
+    end
+end
+
+function TabLeftItem:Hovered(hover)
+    if hover ~= nil then
+        self._hovered = hover
+    else
+        return self._hovered
+    end
+end
+
+function TabLeftItem:Selected(selected)
+    if selected ~= nil then
+        self._selected = selected
+    else
+        return self._selected
+    end
 end
