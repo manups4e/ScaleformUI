@@ -124,8 +124,7 @@ namespace ScaleformUI.PauseMenu
                     BuildPauseMenu();
                     SendPauseMenuOpen();
                     DontRenderInGameUi(true);
-                    Screen.Effects.Start(ScreenEffect.FocusOut, 500);
-                    TriggerScreenblurFadeIn(800);
+                    AnimpostfxPlay("PauseMenuIn", 500, true);
                     ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
                     SetPlayerControl(Game.Player.Handle, false, 0);
                 }
@@ -133,11 +132,11 @@ namespace ScaleformUI.PauseMenu
                 {
                     _pause.Dispose();
                     DontRenderInGameUi(false);
-                    Screen.Effects.Start(ScreenEffect.FocusOut, 500);
-                    if (IsScreenblurFadeRunning()) DisableScreenblurFade();
-                    TriggerScreenblurFadeOut(100);
+                    AnimpostfxStop("PauseMenuIn");
+                    AnimpostfxPlay("PauseMenuOut", 150, false);
                     SendPauseMenuClose();
                     SetPlayerControl(Game.Player.Handle, true, 0);
+                    ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY"), false, -1);
                 }
                 Game.IsPaused = value;
                 ScaleformUI.InstructionalButtons.Enabled = value;
@@ -286,8 +285,8 @@ namespace ScaleformUI.PauseMenu
         private bool controller = false;
         public override async void Draw()
         {
-            base.Draw();
             if (!Visible || TemporarilyHidden) return;
+            base.Draw();
             _pause.Draw();
             UpdateKeymapItems();
         }
