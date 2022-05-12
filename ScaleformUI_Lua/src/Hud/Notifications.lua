@@ -201,7 +201,7 @@ function Notifications:ShowStatNotification(newProgress, oldProgress, title, bli
     if(showBrief == nil) then showBrief = false end
     AddTextEntry("ScaleformUIStatsNotification", title)
     local handle = RegisterPedheadshot(PlayerPedId())
-    while not IsPedheadshotReady(handle) or not IsPedheadshotValid(handle) do Citizen.Wait(0) end
+    while not IsPedheadshotReady(handle) or not IsPedheadshotValid(handle) do Wait(0) end
     local txd = GetPedheadshotTxdString(handle)
     BeginTextCommandThefeedPost("PS_UPDATE")
     AddTextComponentInteger(newProgress)
@@ -212,11 +212,11 @@ end
 
 function Notifications:ShowVSNotification(ped1, ped2, color1, color2)
     local handle_1 = RegisterPedheadshot(ped1)
-    while not IsPedheadshotReady(handle_1) or not IsPedheadshotValid(handle_1) do Citizen.Wait(0) end
+    while not IsPedheadshotReady(handle_1) or not IsPedheadshotValid(handle_1) do Wait(0) end
     local txd_1 = GetPedheadshotTxdString(handle_1)
 
     local handle_2 = RegisterPedheadshot(ped2)
-    while not IsPedheadshotReady(handle_2) or not IsPedheadshotValid(handle_2) do Citizen.Wait(0) end
+    while not IsPedheadshotReady(handle_2) or not IsPedheadshotValid(handle_2) do Wait(0) end
     local txd_2 = GetPedheadshotTxdString(handle_2)
 
     BeginTextCommandThefeedPost("")

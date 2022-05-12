@@ -432,8 +432,8 @@ end
 
 ---BuildUpMenu
 function UIMenu:BuildUpMenu()
-    Citizen.CreateThread(function()
-        while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
+    CreateThread(function()
+        while not ScaleformUI.Scaleforms._ui:IsLoaded() do Wait(0) end
         ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self.Title, self.Subtitle, 0, 0, self.AlternativeTitle, self.TxtDictionary, self.TxtName,self:MaxItemsOnScreen(), true, 1)
         if #self.Windows > 0 then
             for w_id, window in pairs (self.Windows) do
@@ -453,7 +453,7 @@ function UIMenu:BuildUpMenu()
         local timer = GetGameTimer()
         if #self.Items == 0 then
             while #self.Items == 0 do
-                Citizen.Wait(0)
+                Wait(0)
                 if GetGameTimer() - timer > 150 then
                     self.ActiveItem = 0
                     ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, self.ActiveItem)
@@ -558,9 +558,9 @@ function UIMenu:ProcessControl()
     if UpdateOnscreenKeyboard() == 0 or IsWarningMessageActive() then return end
 
     if self.Controls.Back.Enabled and (IsDisabledControlJustReleased(0, 177) or IsDisabledControlJustReleased(1, 177) or IsDisabledControlJustReleased(2, 177) or IsDisabledControlJustReleased(0, 199) or IsDisabledControlJustReleased(1, 199) or IsDisabledControlJustReleased(2, 199)) then
-        Citizen.CreateThread(function()
+        CreateThread(function()
             self:GoBack()
-            Citizen.Wait(125)
+            Wait(125)
             return
         end)
     end
@@ -572,7 +572,7 @@ function UIMenu:ProcessControl()
     if self.Controls.Up.Enabled and (IsDisabledControlPressed(0, 172) or IsDisabledControlPressed(1, 172) or IsDisabledControlPressed(2, 172) or IsDisabledControlPressed(0, 241) or IsDisabledControlPressed(1, 241) or IsDisabledControlPressed(2, 241) or IsDisabledControlPressed(2, 241)) then
         if GetGameTimer() - self._time > self._delay then
             self:ButtonDelay()
-            Citizen.CreateThread(function()
+            CreateThread(function()
                 self:GoUp()
                 return
             end)
@@ -582,7 +582,7 @@ function UIMenu:ProcessControl()
     if self.Controls.Down.Enabled and (IsDisabledControlPressed(0, 173) or IsDisabledControlPressed(1, 173) or IsDisabledControlPressed(2, 173) or IsDisabledControlPressed(0, 242) or IsDisabledControlPressed(1, 242) or IsDisabledControlPressed(2, 242)) then
         if GetGameTimer() - self._time > self._delay then
             self:ButtonDelay(0)
-            Citizen.CreateThread(function()
+            CreateThread(function()
                 self:GoDown()
                 return
             end)
@@ -592,7 +592,7 @@ function UIMenu:ProcessControl()
     if self.Controls.Left.Enabled and (IsDisabledControlPressed(0, 174) or IsDisabledControlPressed(1, 174) or IsDisabledControlPressed(2, 174)) then
         if GetGameTimer() - self._time > self._delay then
             self:ButtonDelay()
-            Citizen.CreateThread(function()
+            CreateThread(function()
                 self:GoLeft()
                 return
             end)
@@ -602,7 +602,7 @@ function UIMenu:ProcessControl()
     if self.Controls.Right.Enabled and (IsDisabledControlPressed(0, 175) or IsDisabledControlPressed(1, 175) or IsDisabledControlPressed(2, 175)) then
         if GetGameTimer() - self._time > self._delay then
             self:ButtonDelay()
-            Citizen.CreateThread(function()
+            CreateThread(function()
                 self:GoRight()
                 return
             end)
@@ -610,9 +610,9 @@ function UIMenu:ProcessControl()
     end
 
     if self.Controls.Select.Enabled and (IsDisabledControlJustPressed(0, 201) or IsDisabledControlJustPressed(1, 201) or IsDisabledControlJustPressed(2, 201)) then
-        Citizen.CreateThread(function()
+        CreateThread(function()
             self:SelectItem()
-            Citizen.Wait(125)       
+            Wait(125)       
             return
         end)
     end
@@ -642,7 +642,7 @@ function UIMenu:GoUp()
     self.Items[self:CurrentSelection()]:Selected(false)
     local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", true, 8, self._delay)
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
-        Citizen.Wait(0)
+        Wait(0)
     end
     self.ActiveItem = GetScaleformMovieFunctionReturnInt(return_value)
     self.Items[self:CurrentSelection()]:Selected(true)
@@ -655,7 +655,7 @@ function UIMenu:GoDown()
     self.Items[self:CurrentSelection()]:Selected(false)
     local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", true, 9, self._delay)
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
-        Citizen.Wait(0)
+        Wait(0)
     end
     self.ActiveItem = GetScaleformMovieFunctionReturnInt(return_value)
     self.Items[self:CurrentSelection()]:Selected(true)
@@ -678,7 +678,7 @@ function UIMenu:GoLeft()
 
     local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", true, 10)
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
-        Citizen.Wait(0)
+        Wait(0)
     end
     local res = GetScaleformMovieFunctionReturnInt(return_value)
 
@@ -721,7 +721,7 @@ function UIMenu:GoRight()
 
     local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", true, 11)
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
-        Citizen.Wait(0)
+        Wait(0)
     end
     local res = GetScaleformMovieFunctionReturnInt(return_value)
 
@@ -858,7 +858,7 @@ end
 function UIMenu:Draw()
     if not self._Visible or ScaleformUI.Scaleforms.Warning:IsShowing() then return end
     if not ScaleformUI.Scaleforms._ui:IsLoaded() then
-        while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
+        while not ScaleformUI.Scaleforms._ui:IsLoaded() do Wait(0) end
     end
 
     HideHudComponentThisFrame(19)
@@ -939,10 +939,10 @@ function UIMenu:ProcessMouse()
                     if item.ItemId == 0 or item.ItemId == 2 then
                         self:SelectItem(false)
                     elseif item.ItemId == 1 or item.ItemId == 3 or item.ItemId == 4 then
-                        Citizen.CreateThread(function()
+                        CreateThread(function()
                             local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SELECT_ITEM", true, item_id)
                             while not IsScaleformMovieMethodReturnValueReady(return_value) do
-                                Citizen.Wait(0)
+                                Wait(0)
                             end
                             local value = GetScaleformMovieMethodReturnValueInt(return_value)
 
@@ -979,7 +979,7 @@ function UIMenu:ProcessMouse()
             elseif context == 10 then -- panels (10 => context 1, panel_type 0) // ColorPanel
                 local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SELECT_PANEL", true, self:CurrentSelection() - 1)
                 while not IsScaleformMovieMethodReturnValueReady(return_value) do
-                    Citizen.Wait(0)
+                    Wait(0)
                 end
                 local res = GetScaleformMovieMethodReturnValueString(return_value)
 
@@ -1029,10 +1029,10 @@ function UIMenu:ProcessMouse()
             PlaySoundFrontend(menuSound, "CONTINUOUS_SLIDER", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
         end
 
-        Citizen.CreateThread(function()
+        CreateThread(function()
             local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_MOUSE_EVENT_CONTINUE", true)
             while not IsScaleformMovieMethodReturnValueReady(return_value) do
-                Citizen.Wait(0)
+                Wait(0)
             end
             local value = GetScaleformMovieMethodReturnValueString(return_value)
     
@@ -1052,7 +1052,7 @@ function UIMenu:ProcessMouse()
         end)
     else 
         if not HasSoundFinished(menuSound) then
-            Citizen.Wait(1)
+            Wait(1)
             StopSound(menuSound)
             ReleaseSoundId(menuSound)
         end

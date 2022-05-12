@@ -213,7 +213,7 @@ end
 function Pause:SendInputEvent(direction) -- to be awaited
     local return_value = self._pause:CallFunction("SET_INPUT_EVENT", true, direction)
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
-        Citizen.Wait(0)
+        Wait(0)
     end
     return GetScaleformMovieFunctionReturnString(return_value)
 end
@@ -225,7 +225,7 @@ end
 function Pause:SendClickEvent() -- to be awaited
     local return_value = self._pause:CallFunction("MOUSE_CLICK_EVENT", true)
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
-        Citizen.Wait(0)
+        Wait(0)
     end
     return GetScaleformMovieFunctionReturnString(return_value)
 end

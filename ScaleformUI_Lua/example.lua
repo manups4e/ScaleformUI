@@ -2,7 +2,7 @@ local pool = MenuPool.New()
 local animEnabled = true
 
 -- to handle controls and inputs to the menu
-Citizen.CreateThread(function()
+CreateThread(function()
 	while true do
 		Wait(0)
 		pool:ProcessControl()
@@ -11,7 +11,7 @@ end)
 
 -- to draw the menu... since the controls await response from the Scaleform..
 -- drawing in the same thread of the controls would lead to a blinking menu everytime a control is pressed.
-Citizen.CreateThread(function()
+CreateThread(function()
 	while true do
 		Wait(0)
         pool:Draw()
@@ -249,7 +249,7 @@ function CreatePauseMenu()
 	local pauseMenuExample = TabView.New("ScaleformUI LUA", "THE LUA API", GetPlayerName(PlayerId()), "String middle", "String bottom")
 
 	local handle = RegisterPedheadshot(PlayerPedId())
-    while not IsPedheadshotReady(handle) or not IsPedheadshotValid(handle) do Citizen.Wait(0) end
+    while not IsPedheadshotReady(handle) or not IsPedheadshotValid(handle) do Wait(0) end
     local txd = GetPedheadshotTxdString(handle)
 	pauseMenuExample:HeaderPicture(txd, txd) 	-- pauseMenuExample:CrewPicture used to add a picture on the left of the HeaderPicture
 	print("PedHandle => " .. handle)
@@ -383,7 +383,7 @@ function CreatePauseMenu()
 	pauseMenuExample:Visible(true)
 end
 
-Citizen.CreateThread(function()
+CreateThread(function()
 	local pos = GetEntityCoords(PlayerPedId(), true)
 	--type, position, scale, distance, color, placeOnGround, bobUpDown, rotate, faceCamera, checkZ
 	local marker = Marker.New(1, pos, vector3(2,2,2), 100.0, {R=0, G= 100, B=50, A=255}, true, false, false, false, true)

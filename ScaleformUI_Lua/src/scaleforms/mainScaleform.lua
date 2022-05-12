@@ -21,7 +21,7 @@ AddEventHandler("onResourceStop", function(resName)
     end
 end)
 
-Citizen.CreateThread(function()
+CreateThread(function()
     ScaleformUI.Scaleforms._ui = Scaleform.Request("scaleformui")
     ScaleformUI.Scaleforms.BigMessageInstance = BigMessageInstance.New()
     ScaleformUI.Scaleforms.MidMessageInstance = MidMessageInstance.New()
@@ -46,7 +46,7 @@ Citizen.CreateThread(function()
     end
 end)
 
--- Citizen.CreateThread(function()
+-- CreateThread(function()
 --     while true do
 --         Wait(0)
 --         if IsControlJustPressed(0, 47) then
@@ -60,13 +60,13 @@ end)
 --             }
 --             ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(bts)
 --             ScaleformUI.Scaleforms.InstructionalButtons:Enabled(true)
---             Citizen.Wait(5000)
+--             Wait(5000)
 --             ScaleformUI.Scaleforms.InstructionalButtons:Enabled(false)
 --             ScaleformUI.Scaleforms.InstructionalButtons:ClearButtonList()
 --             ]]
 --             -- WARNING
 --             ScaleformUI.Scaleforms.Warning:ShowWarning("Title", "subtitle", "prompt", "errorMsg", 0)
---             Citizen.Wait(5000)
+--             Wait(5000)
 --             ScaleformUI.Scaleforms.Warning:Dispose()
 --         end
 --     end
