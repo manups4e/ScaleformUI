@@ -373,8 +373,11 @@ function UIMenu:MaxItemsOnScreen(max)
 end
 
 function UIMenu:AddSubMenu(Menu, text, description, offset, KeepBanner)
-    assert(Menu.Title ~= self.Title and Menu.Subtitle ~= self.Subtitle, "^1ScaleformUI [ERROR]: You're adding " .. Menu.Title .. " as a redundant submenu to itself!")
     if Menu() == "UIMenu" then
+        assert(Menu ~= self, "^1ScaleformUI [ERROR]: You're can't add a menu [" .. Menu.Title .. "] as a redundant submenu to itself!")
+        for k,v in pairs(self.Children) do
+            assert(Menu ~= v, "^1ScaleformUI [ERROR]: You can't add the same submenu [" .. Menu.Title .. "] more than once!")
+        end
         local Item = UIMenuItem.New(tostring(text), description or "")
         self:AddItem(Item)
         if offset == nil then
