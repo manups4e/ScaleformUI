@@ -854,10 +854,12 @@ public class MenuExample : BaseScript
 		var mainMenu = _menu;
 		// tabview is the main menu.. the container of all the tabs.
 		TabView pauseMenu = new TabView("PauseMenu example", "Look there's a subtitle too!", "Detail 1", "Detail 2", "Detail 3");
+		/*
 		var mugshot = API.RegisterPedheadshot(Game.PlayerPed.Handle);
 		while (!API.IsPedheadshotReady(mugshot)) await BaseScript.Delay(1);
 		var txd = API.GetPedheadshotTxdString(mugshot);
 		pauseMenu.HeaderPicture = new(txd, txd);
+		*/
 		_menuPool.Add(pauseMenu);
 		TextTab basicTab = new TextTab("TabTextItem", "This is the title!");
 		basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
@@ -1006,7 +1008,7 @@ public class MenuExample : BaseScript
 			Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + "~w~, left Item ~o~N° " + (leftItemIndex + 1) + "~w~ and right Item ~b~N° " + (rightItemIndex + 1) + "~w~ of type ~p~"+ item.ItemType +"~w~ selected!");
 		};
 		pauseMenu.Visible = true;
-		API.UnregisterPedheadshot(mugshot);
+		//API.UnregisterPedheadshot(mugshot);
 	}
 
 	public async void LobbyPauseMenuShowcase(UIMenu _menu)
@@ -1054,7 +1056,7 @@ public class MenuExample : BaseScript
 		MarkersHandler.AddMarker(playerMarker);
 
 		Tick += async () =>
-		{
+		{	
 			_menuPool.ProcessMenus();
 
 			//If the player is in drawing range for the marker, the marker will draw automatically and the DrawText will show itself (true if the ped enters the marker)
