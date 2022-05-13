@@ -121,22 +121,21 @@ namespace ScaleformUI.PauseMenu
             {
                 if (value)
                 {
-                    BuildPauseMenu();
                     SendPauseMenuOpen();
                     DontRenderInGameUi(true);
-                    AnimpostfxPlay("PauseMenuIn", 500, true);
+                    AnimpostfxPlay("PauseMenuIn", 800, true);
                     ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
                     SetPlayerControl(Game.Player.Handle, false, 0);
+                    BuildPauseMenu();
                 }
                 else
                 {
                     _pause.Dispose();
                     DontRenderInGameUi(false);
                     AnimpostfxStop("PauseMenuIn");
-                    AnimpostfxPlay("PauseMenuOut", 150, false);
+                    AnimpostfxPlay("PauseMenuOut", 800, false);
                     SendPauseMenuClose();
                     SetPlayerControl(Game.Player.Handle, true, 0);
-                    ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY"), false, -1);
                 }
                 Game.IsPaused = value;
                 ScaleformUI.InstructionalButtons.Enabled = value;
