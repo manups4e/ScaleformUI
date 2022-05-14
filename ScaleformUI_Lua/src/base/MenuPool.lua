@@ -16,9 +16,12 @@ end
 ---@param Description string
 ---@param KeepPosition boolean
 ---@param KeepBanner boolean
-function MenuPool:AddSubMenu(Menu, Text, Description, KeepPosition, KeepBanner)
+function MenuPool:AddSubMenu(Menu, Text, Description, KeepPosition, KeepBanner, sidePanel)
     if Menu() == "UIMenu" then
         local Item = UIMenuItem.New(tostring(Text), Description or "")
+        if sidePanel then
+            Item:AddSidePanel(sidePanel)
+        end
         Menu:AddItem(Item)
         local SubMenu
         if KeepPosition then
