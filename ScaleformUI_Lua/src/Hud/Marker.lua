@@ -41,12 +41,12 @@ function Marker:Draw()
     DrawMarker(self.MarkerType, self.Position, self.Direction, self.Rotation, self.Scale, self.Color.R, self.Color.G, self.Color.B, self.Color.A, self.BobUpDown, self.FaceCamera, 2, self.Rotate, nil,nil, false)
     local dist = vector3(0, 0, 0)
     if(self.CheckZ) then
-        self.IsInMarker = ((pedPos.x - self.Position.x)^2 + (pedPos.y - self.Position.y)^2 + (pedPos.z - self.Position.z)^2) < #self.Scale/2
+        self.IsInMarker = #(pedPos-self.Position) < #self.Scale/2
     else
-        self.IsInMarker = ((pedPos.x - self.Position.x)^2 + (pedPos.y - self.Position.y)^2) < #self.Scale/2
+        self.IsInMarker = #(pedPos.xy-self.Position.xy) < #self.Scale/2
     end
 end
-
+ 
 function Marker:IsInRange()
     local pos = GetEntityCoords(PlayerPedId(), true)
     local dist = vector3(0, 0, 0)
