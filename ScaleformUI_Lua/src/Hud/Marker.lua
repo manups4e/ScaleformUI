@@ -25,6 +25,10 @@ function Marker.New(type, position, scale, distance, color, placeOnGround, bobUp
 end
 
 function Marker:Draw()
+    -- [Position.Z != _height] means that we make the check only if we change position
+    -- but if we change position and the Z is still the same then we don't need to check again
+    -- We draw it with _height + 0.1 to ensure marker drawing (like horizontal circles)
+    
     local ped = PlayerPedId()
     local pedPos = GetEntityCoords(ped, true)
     if(self:IsInRange() and self.PlaceOnGround and self.Position.z ~= self._height +0.1) then
