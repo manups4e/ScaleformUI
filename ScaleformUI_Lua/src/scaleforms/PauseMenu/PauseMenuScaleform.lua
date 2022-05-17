@@ -113,11 +113,11 @@ function Pause:AddRightListLabel(tab, leftItem, label)
 end
 
 function Pause:AddRightStatItemLabel(tab, leftItem, label, rightLabel)
-    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItem, 1, 0, label, nil, rightLabel)
+    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItem, 1, 0, label, rightLabel)
 end
 
 function Pause:AddRightStatItemColorBar(tab, leftItem, label, value, barColor)
-    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItem, 1, 1, label, nil, value, barColor)
+    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItem, 1, 1, label, value, barColor)
 end
 
 function Pause:AddRightSettingsBaseItem(tab, leftItem, label, rightLabel, enabled)
