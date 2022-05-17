@@ -56,13 +56,13 @@ function SettingsListItem:Selected(selected)
 end
 
 function SettingsListItem:ItemIndex(index)
-    if index ~= nil then
+    if index ~= nil then 
         self._itemIndex = index
         local tab = IndexOf(self.Parent.Parent.Base.Parent.Tabs, self.Parent.Parent) - 1
         local leftItem = IndexOf(self.Parent.Parent.LeftItemList, self.Parent) - 1
         local rightIndex = IndexOf(self.Parent.ItemList, self) - 1
         ScaleformUI.Scaleforms._pauseMenu:SetRightSettingsItemIndex(tab, leftItem, rightIndex, index)
-        self.OnListChanged(self, itemIndex, tostring(self.ListItems[index]))
+        self.OnListChanged(self, self._itemIndex, tostring(self.ListItems[index]))
     else
         return self._itemIndex
     end

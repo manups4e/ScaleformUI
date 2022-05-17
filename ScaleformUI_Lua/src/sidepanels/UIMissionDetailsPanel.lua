@@ -3,6 +3,7 @@ UIMissionDetailsPanel.__index = UIMissionDetailsPanel
 UIMissionDetailsPanel.__call = function() return "UIMissionDetailsPanel", "UIMissionDetailsPanel" end
 
 function UIMissionDetailsPanel.New(side, title, color, inside, txd, txn)
+    local _titleType, _titleColor
 	if inside == -1 then
         _titleType = 1
     elseif inside then

@@ -5,7 +5,7 @@ KeymapItem.__call = function()
 end
 
 function KeymapItem.New(title, primaryKeyboard, primaryGamepad, secondaryKeyboard, secondaryGamepad)
-    data = {}
+    local data = {}
     if secondaryKeyboard == nil and secondaryGamepad == nil then
         data = {
             Label = title,

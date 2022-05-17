@@ -5,7 +5,7 @@ StatsTabItem.__call = function()
 end
 
 function StatsTabItem.NewBasic(label, rightLabel)
-    data = {
+    local data = {
         Base = BasicTabItem.New(label or ""),
         Type = StatItemType.Basic,
         Label = label or "", 
@@ -15,7 +15,7 @@ function StatsTabItem.NewBasic(label, rightLabel)
 end
 
 function StatsTabItem.NewBar(label, value, color)
-    data = {
+    local data = {
         Base = BasicTabItem.New(label or ""),
         Type = StatItemType.ColoredBar,
         Label = label or "", 
@@ -52,7 +52,7 @@ function StatsTabItem:Value(value)
             local tab = IndexOf(self.Base.Parent.Parent.Parent.Tabs, self.Base.Parent.Parent) - 1
             local leftItem = IndexOf(self.Base.Parent.Parent.LeftItemList, self.Base.Parent) - 1
             local rightIndex = IndexOf(self.Base.Parent.ItemList, self) - 1
-            self.Base.Parent.Parent.Parent._pause:UpdateStatsItemBar(tab, leftItem, rightIndex, _value)
+            self.Base.Parent.Parent.Parent._pause:UpdateStatsItemBar(tab, leftItem, rightIndex, self._value)
             self.OnBarChanged(self, value)
         else
             return self._value

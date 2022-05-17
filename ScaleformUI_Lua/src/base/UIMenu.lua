@@ -37,8 +37,6 @@ function UIMenu.New(Title, Subtitle, X, Y, glare, txtDictionary, txtName, altern
     end
     if alternativeTitle == nil then
         alternativeTitle = false
-    else
-        alternativeTitle = alternativeTitle
     end
     local _UIMenu = {
         Title = Title,

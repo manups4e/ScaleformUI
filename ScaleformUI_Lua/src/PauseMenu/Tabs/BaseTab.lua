@@ -5,7 +5,7 @@ BaseTab.__call = function()
 end
 
 function BaseTab.New(title, type)
-    data = {
+    local data = {
         Title = title or "",
         Type = type or 1,
         Visible = false,

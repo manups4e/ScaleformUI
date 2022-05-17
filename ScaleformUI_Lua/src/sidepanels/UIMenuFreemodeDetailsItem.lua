@@ -3,6 +3,7 @@ UIMenuFreemodeDetailsItem.__index = UIMenuFreemodeDetailsItem
 UIMenuFreemodeDetailsItem.__call = function() return "UIMenuFreemodeDetailsItem", "UIMenuFreemodeDetailsItem" end
 
 function UIMenuFreemodeDetailsItem.New(textLeft, textRight, seperator, icon, iconColor, tick)
+    local _type
     if seperator then
         _type = 3
     elseif icon ~= nil and iconColor ~= nil then

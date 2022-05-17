@@ -30,11 +30,11 @@ function m:Dispose()
     self._sc = 0
 end
 
-function m:ShowColoredShard(msg, desc, textColor, useDarkerShard, useCondensedShard, time)
+function m:ShowColoredShard(msg, desc, bgColor, useDarkerShard, useCondensedShard, time)
     if time == nil then  time = 5000 end
     self:Load()
     self._start = GetGameTimer()
-    _sc:CallFunction("SHOW_SHARD_MIDSIZED_MESSAGE", false, msg, desc, bgColor, useDarkerShard, useCondensedShard)
+    self._sc:CallFunction("SHOW_SHARD_MIDSIZED_MESSAGE", false, msg, desc, bgColor, useDarkerShard, useCondensedShard)
     self._timer = time
     self._hasAnimatedOut = false
 end
@@ -43,7 +43,7 @@ function m:Update()
     if self._sc == 0 or IsPauseMenuActive() then return end
     self._sc:Render2D()
     if self._start ~= 0 and GetGameTimer() - self._start > self._timer then
-        if not _hasAnimatedOut then
+        if not self._hasAnimatedOut then
             self._sc:CallFunction("SHARD_ANIM_OUT", false, 21, 750)
             self._hasAnimatedOut = true
             self._timer = self._timer + 750

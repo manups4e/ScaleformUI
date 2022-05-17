@@ -9,7 +9,7 @@ function SettingsProgressItem.New(label, max, startIndex, masked, barColor)
     if(masked) then
         _type = SettingsItemType.MaskedProgressBar
     end
-    data = {
+    local data = {
         Base = BasicTabItem.New(label or ""),
         ItemType = _type,
         Label = label or "", 

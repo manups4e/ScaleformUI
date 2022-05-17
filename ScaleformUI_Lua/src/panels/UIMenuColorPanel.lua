@@ -11,7 +11,7 @@ function UIMenuColorPanel.New(title, colorType, startIndex, colors)
 		colorType = 2
 	end
 	
-	_UIMenuColorPanel = {
+	local _UIMenuColorPanel = {
 		Title = title or "Color Panel",
 		ColorPanelColorType = colorType,
 		value = startIndex or 0,

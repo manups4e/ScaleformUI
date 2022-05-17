@@ -5,7 +5,7 @@ SettingsItem.__call = function()
 end
 
 function SettingsItem.New(label, rightLabel)
-    data = {
+    local data = {
         ItemType = SettingsItemType.Basic,
         Label = label or "", 
         _rightLabel = rightLabel or "",

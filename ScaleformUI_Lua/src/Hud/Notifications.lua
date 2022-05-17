@@ -147,14 +147,14 @@ end
 function Notifications:ShowNotification(msg, blink, showBrief)
     AddTextEntry("ScaleformUINotification", msg)
     BeginTextCommandThefeedPost("ScaleformUINotification")
-    _handle = EndTextCommandThefeedPostTicker(blink, showBriefing)
+    EndTextCommandThefeedPostTicker(blink, showBrief)
 end
 
 function Notifications:ShowNotificationWithColor(msg, color, blink, showBrief)
     AddTextEntry("ScaleformUINotification", msg)
     BeginTextCommandThefeedPost("ScaleformUINotification")
     ThefeedNextPostBackgroundColor(color)
-   _handle = EndTextCommandThefeedPostTicker(blink, showBriefing)
+    EndTextCommandThefeedPostTicker(blink, showBrief)
 end
 
 function Notifications:ShowHelpNotification(helpText, time)

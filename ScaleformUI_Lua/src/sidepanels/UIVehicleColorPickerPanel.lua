@@ -3,6 +3,7 @@ UIVehicleColorPickerPanel.__index = UIVehicleColorPickerPanel
 UIVehicleColorPickerPanel.__call = function() return "UIVehicleColorPickerPanel", "UIVehicleColorPickerPanel" end
 
 function UIVehicleColorPickerPanel.New(side, title, color)
+    local _titleColor
     if color ~= -1 then
         _titleColor = color
     else
@@ -13,7 +14,7 @@ function UIVehicleColorPickerPanel.New(side, title, color)
         PanelSide = side,
         Title = title,
         TitleColor = _titleColor,
-        TitleType = _titleType,
+        TitleType = nil,
         Value = 1,
         ParentItem = nil,
         PickerSelect = function(menu, item, newindex) end
