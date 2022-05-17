@@ -40,10 +40,12 @@ function Marker:Draw()
     end
     DrawMarker(self.MarkerType, self.Position, self.Direction, self.Rotation, self.Scale, self.Color.R, self.Color.G, self.Color.B, self.Color.A, self.BobUpDown, self.FaceCamera, 2, self.Rotate, nil,nil, false)
     local dist = vector3(0, 0, 0)
+    local posDif = pedPos - self.Position
+    local distanceSquared = (posDif.x * posDif.x) + (posDif.y * posDif.y) + (posDif.z * posDif.z)
     if(self.CheckZ) then
-        self.IsInMarker = #(pedPos-self.Position) < #self.Scale/2
+        self.IsInMarker = distanceSquared <= (self.Scale.x/2)^2 or distanceSquared <= (self.Scale.y/2)^2 or distanceSquared <= (self.Scale.z/2)^2
     else
-        self.IsInMarker = #(pedPos.xy-self.Position.xy) < #self.Scale.xy/2
+        self.IsInMarker = distanceSquared <= (self.Scale.x/2)^2 or distanceSquared <= (self.Scale.y/2)^2
     end
 end
  
