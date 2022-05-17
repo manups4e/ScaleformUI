@@ -14,7 +14,7 @@ function UIVehicleColorPickerPanel.New(side, title, color)
         PanelSide = side,
         Title = title,
         TitleColor = _titleColor,
-        TitleType = nil,
+        TitleType = 0,
         Value = 1,
         ParentItem = nil,
         PickerSelect = function(menu, item, newindex) end
