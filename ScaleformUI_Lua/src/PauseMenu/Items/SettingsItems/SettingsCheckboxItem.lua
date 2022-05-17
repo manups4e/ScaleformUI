@@ -5,7 +5,7 @@ SettingsCheckboxItem.__call = function()
 end
 
 function SettingsCheckboxItem.New(label, style, checked)
-    data = {
+    local data = {
         Base = SettingsItem.New(label),
         ItemType = SettingsItemType.CheckBox,
         Label = label or "", 

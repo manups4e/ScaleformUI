@@ -10,7 +10,7 @@ Pause.__index = Pause
 
 
 function PauseMenu.New()
-    _data = {
+    local _data = {
         _header = nil,
         _pause = nil,
         Loaded = false,
@@ -113,11 +113,11 @@ function Pause:AddRightListLabel(tab, leftItem, label)
 end
 
 function Pause:AddRightStatItemLabel(tab, leftItem, label, rightLabel)
-    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItem, 1, 0, label, enabled, rightLabel)
+    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItem, 1, 0, label, rightLabel)
 end
 
 function Pause:AddRightStatItemColorBar(tab, leftItem, label, value, barColor)
-    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItem, 1, 1, label, enabled, value, barColor)
+    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItem, 1, 1, label, value, barColor)
 end
 
 function Pause:AddRightSettingsBaseItem(tab, leftItem, label, rightLabel, enabled)
@@ -125,7 +125,7 @@ function Pause:AddRightSettingsBaseItem(tab, leftItem, label, rightLabel, enable
 end
 
 function Pause:AddRightSettingsListItem(tab, leftItem, label, items, startIndex, enabled)
-    stringList = table.concat(items, ",")
+    local stringList = table.concat(items, ",")
     self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItem, 2, 1, label, enabled, stringList, startIndex)
 end
 
@@ -235,7 +235,7 @@ function Pause:Dispose()
     self._header:CallFunction("CLEAR_ALL", false)
     self._pause:Dispose()
     self._header:Dispose()
-    _visible = false
+    self._visible = false
 end
 
 function Pause:Draw()

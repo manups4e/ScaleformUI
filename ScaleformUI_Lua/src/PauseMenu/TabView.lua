@@ -5,7 +5,7 @@ TabView.__call = function()
 end
 
 function TabView.New(title, subtitle, sideTop, sideMid, sideBot)
-    _data = {
+    local _data = {
         Title = title or "",
         Subtitle = subtitle or "",
         SideTop = sideTop or "",
@@ -428,7 +428,6 @@ function TabView:GoRight()
     end
 end
 
-local firstTick = true
 local successHeader, event_type_h, context_h, item_id_h
 local successPause, event_type, context, item_id
 

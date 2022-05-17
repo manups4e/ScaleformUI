@@ -7,7 +7,7 @@ UIMenuPercentagePanel.__call = function() return "UIMenuPanel", "UIMenuPercentag
 ---@param colorType int
 ---@param startIndex number
 function UIMenuPercentagePanel.New(title, minText, maxText, initialValue)
-	_UIMenuPercentagePanel = {
+	local _UIMenuPercentagePanel = {
 		Min = minText or "0%",
 		Max = maxText or "100%",
 		Title = title or "Opacity",

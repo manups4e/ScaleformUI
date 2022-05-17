@@ -5,7 +5,7 @@ TextTab.__call = function()
 end
 
 function TextTab.New(name, _title)
-    data = {
+    local data = {
         Base = BaseTab.New(name or "", 1),
         Label = name,
         TextTitle = _title or "",

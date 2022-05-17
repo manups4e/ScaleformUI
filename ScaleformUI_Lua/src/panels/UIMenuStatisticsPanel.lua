@@ -7,7 +7,7 @@ UIMenuStatisticsPanel.__call = function() return "UIMenuPanel", "UIMenuStatistic
 ---@param colorType int
 ---@param startIndex number
 function UIMenuStatisticsPanel.New(items)
-	_UIMenuStatisticsPanel = {
+	local _UIMenuStatisticsPanel = {
 		Items = items or {},
 		ParentItem = nil, -- required
 	}

@@ -5,7 +5,7 @@ Marker.__call = function()
 end
 
 function Marker.New(type, position, scale, distance, color, placeOnGround, bobUpDown, rotate, faceCamera, checkZ)
-    _marker = {
+    local _marker = {
         MarkerType = type or 0,
         Position = position or vector3(0,0,0),
         Scale = scale or vector3(1, 1, 1),
@@ -39,7 +39,6 @@ function Marker:Draw()
         end
     end
     DrawMarker(self.MarkerType, self.Position, self.Direction, self.Rotation, self.Scale, self.Color.R, self.Color.G, self.Color.B, self.Color.A, self.BobUpDown, self.FaceCamera, 2, self.Rotate, nil,nil, false)
-    local dist = vector3(0, 0, 0)
     local posDif = pedPos - self.Position
     local distanceSquared = (posDif.x * posDif.x) + (posDif.y * posDif.y) + (posDif.z * posDif.z)
     if(self.CheckZ) then

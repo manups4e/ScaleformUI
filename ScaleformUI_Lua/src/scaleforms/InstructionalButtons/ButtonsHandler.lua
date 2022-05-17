@@ -104,7 +104,7 @@ function handler:UpdateButtons()
         else
             if button.PadCheck == 1 or button.PadCheck == -1 then
                 if self.UseMouseButtons then
-                    _sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text, 1, button.KeyboardButton)
+                    self._sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text, 1, button.KeyboardButton)
                 else
                     if ScaleformUI.Scaleforms.Warning:IsShowing() then
                         self._sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text, 0, -1)

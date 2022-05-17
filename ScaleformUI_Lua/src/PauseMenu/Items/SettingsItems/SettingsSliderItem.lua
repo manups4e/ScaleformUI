@@ -5,7 +5,7 @@ SettingsSliderItem.__call = function()
 end
 
 function SettingsSliderItem.New(label, max, startIndex, barColor)
-    data = {
+    local data = {
         Base = BasicTabItem.New(label or ""),
         ItemType = SettingsItemType.SliderBar,
         Label = label or "", 

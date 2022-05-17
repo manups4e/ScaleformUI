@@ -5,7 +5,7 @@ SubmenuTab.__call = function()
 end
 
 function SubmenuTab.New(name)
-    data = {
+    local data = {
         Base = BaseTab.New(name or "", 1),
         Label = name or "",
         TextTitle = "",

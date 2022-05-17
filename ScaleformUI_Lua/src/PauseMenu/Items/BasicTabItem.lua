@@ -5,7 +5,7 @@ BasicTabItem.__call = function()
 end
 
 function BasicTabItem.New(label)
-    data = {
+    local data = {
         Label = label or "",
         Parent = nil
     }

@@ -5,7 +5,7 @@ TabLeftItem.__call = function()
 end
 
 function TabLeftItem.New(label, _type, mainColor, highlightColor)
-    data = {
+    local data = {
         Label = label or "",
         ItemType = _type,
         Focused = false,
