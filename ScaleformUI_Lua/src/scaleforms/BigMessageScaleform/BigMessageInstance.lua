@@ -57,7 +57,7 @@ function m:ShowSimpleShard(msg, subtitle, time)
     if time == nil then  time = 5000 end
     self:Load()
     self._start = GetGameTimer()
-    self._sc:CallFunction("SHOW_SHARD_CREW_RANKUP_MP_MESSAGE", false, subtitle)
+    self._sc:CallFunction("SHOW_SHARD_CREW_RANKUP_MP_MESSAGE", false, msg, subtitle)
     self._timer = time
 end
 
