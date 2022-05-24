@@ -10,6 +10,9 @@ using Font = CitizenFX.Core.UI.Font;
 
 namespace ScaleformUI.LobbyMenu
 {
+    public delegate void LobbyMenuOpenEvent(MainView menu);
+    public delegate void LobbyMenuCloseEvent(MainView menu);
+
     public class MainView : PauseMenuBase
     {
         // Button delay
@@ -20,6 +23,8 @@ namespace ScaleformUI.LobbyMenu
         internal PauseMenuScaleform _pause;
         internal bool _loaded;
         internal readonly static string _browseTextLocalized = Game.GetGXTEntry("HUD_INPUT1C");
+        public event LobbyMenuOpenEvent OnLobbyMenuOpen;
+        public event LobbyMenuCloseEvent OnLobbyMenuClose;
         public string Title { get; set; }
         public string SubTitle { get; set; }
         public string SideStringTop { get; set; }
@@ -76,24 +81,21 @@ namespace ScaleformUI.LobbyMenu
             {
                 if (value)
                 {
-                    //API.ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY"), false, -1);
                     BuildPauseMenu();
-                    //SendPauseMenuOpen();
-                    API.DontRenderInGameUi(true);
-                    Screen.Effects.Start(ScreenEffect.FocusOut, 500);
-                    API.TriggerScreenblurFadeIn(800);
+                    SendPauseMenuOpen();
+                    DontRenderInGameUi(true);
+                    AnimpostfxPlay("PauseMenuIn", 800, true);
                     ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
-                    API.SetPlayerControl(Game.Player.Handle, false, 0);
+                    SetPlayerControl(Game.Player.Handle, false, 0);
                 }
                 else
                 {
                     _pause.Dispose();
-                    API.DontRenderInGameUi(false);
-                    Screen.Effects.Start(ScreenEffect.FocusOut, 500);
-                    if (API.IsScreenblurFadeRunning()) API.DisableScreenblurFade();
-                    API.TriggerScreenblurFadeOut(100);
-                    //SendPauseMenuClose();
-                    API.SetPlayerControl(Game.Player.Handle, true, 0);
+                    DontRenderInGameUi(false);
+                    AnimpostfxStop("PauseMenuIn");
+                    AnimpostfxPlay("PauseMenuOut", 800, false);
+                    SendPauseMenuClose();
+                    SetPlayerControl(Game.Player.Handle, true, 0);
                 }
                 Game.IsPaused = value;
                 ScaleformUI.InstructionalButtons.Enabled = value;
@@ -664,6 +666,18 @@ namespace ScaleformUI.LobbyMenu
             // Reset the time to the current game timer.
             time = Game.GameTime;
         }
+
+        internal void SendPauseMenuOpen()
+        {
+            OnLobbyMenuOpen?.Invoke(this);
+        }
+
+        internal void SendPauseMenuClose()
+        {
+            OnLobbyMenuClose?.Invoke(this);
+        }
+
+
 
     }
 }
