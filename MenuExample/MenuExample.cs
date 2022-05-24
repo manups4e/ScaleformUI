@@ -15,10 +15,9 @@ public class MenuExample : BaseScript
 	private bool enabled = true;
 	private string dish = "Banana";
 	private MenuPool _menuPool;
-
+	private long txd;
 	public void ExampleMenu()
     {
-		var txd = API.CreateRuntimeTxd("scaleformui");
 		var _titledui = API.CreateDui("https://i.imgur.com/3yrFYbF.gif", 288, 130);
 		API.CreateRuntimeTextureFromDuiHandle(txd, "bannerbackground", API.GetDuiHandle(_titledui));
 	
@@ -1015,12 +1014,18 @@ public class MenuExample : BaseScript
 	{
 		var mainMenu = _menu;
 		// tabview is the main menu.. the container of all the tabs.
-		MainView pauseMenu = new ("PauseMenu example", "Look there's a subtitle too!", "Detail 1", "Detail 2", "Detail 3");
-
+		MainView pauseMenu = new("Lobby Menu", "ScaleformUI for you by Manups4e!", "Detail 1", "Detail 2", "Detail 3");
+		var columns = new List<Column>()
+		{
+			new SettingsListColumn("COLUMN SETTINGS", HudColor.HUD_COLOUR_RED),
+			new PlayerListColumn("COLUMN PLAYERS", HudColor.HUD_COLOUR_ORANGE),
+			new MissionDetailsPanel("COLUMN INFO PANEL", HudColor.HUD_COLOUR_GREEN),
+		};
+		pauseMenu.SetUpColumns(columns);
 		var mugshot = API.RegisterPedheadshot(Game.PlayerPed.Handle);
 		while (!API.IsPedheadshotReady(mugshot)) await BaseScript.Delay(1);
-		var txd = API.GetPedheadshotTxdString(mugshot);
-		pauseMenu.HeaderPicture = new(txd, txd);
+		var ped_txd = API.GetPedheadshotTxdString(mugshot);
+		pauseMenu.HeaderPicture = new(ped_txd, ped_txd);
 		_menuPool.Add(pauseMenu);
 
 		var item = new UIMenuItem("UIMenuItem", "UIMenuItem description");
@@ -1029,27 +1034,172 @@ public class MenuExample : BaseScript
 		var item3 = new UIMenuSliderItem("UIMenuSliderItem", "UIMenuSliderItem description", 100, 5, 50, false);
 		var item4 = new UIMenuProgressItem("UIMenuProgressItem", 10, 5, "UIMenuProgressItem description");
 		item.BlinkDescription = true;
-		pauseMenu.LeftItems.Add(item);
-		pauseMenu.LeftItems.Add(item1);
-		pauseMenu.LeftItems.Add(item2);
-		pauseMenu.LeftItems.Add(item3);
-		pauseMenu.LeftItems.Add(item4);
+		pauseMenu.SettingsColumn.AddSettings(item);
+		pauseMenu.SettingsColumn.AddSettings(item1);
+		pauseMenu.SettingsColumn.AddSettings(item2);
+		pauseMenu.SettingsColumn.AddSettings(item3);
+		pauseMenu.SettingsColumn.AddSettings(item4);
 
-		var friend = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_GREEN, true, Game.Player.ServerId, "Status", "CrewTag");
+		item1.OnListChanged += (item, idx) =>
+		{
+			Screen.ShowSubtitle("ListItem selected, Value => ~y~ " + item.Items[idx].ToString() + "~s~~w~");
+		};
+
+		item.Activated += (_, item) =>
+		{
+			Screen.ShowSubtitle($"~y~ {item.Label} ~s~~w~ has been selected!");
+
+		};
+
+		var friend = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_GREEN, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+		var friend1 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_MENU_YELLOW, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+		var friend2 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_PINK, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+		var friend3 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_BLUE, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+		var friend4 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_ORANGE, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+		var friend5 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_RED, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
 		friend.SetLeftIcon(LobbyBadgeIcon.IS_CONSOLE_PLAYER);
-		pauseMenu.CenterItems.Add(friend);
-		pauseMenu.CenterItems.Add(friend);
-		pauseMenu.CenterItems.Add(friend);
-		pauseMenu.CenterItems.Add(friend);
-		pauseMenu.CenterItems.Add(friend);
-		pauseMenu.CenterItems.Add(friend);
+		friend1.SetLeftIcon(LobbyBadgeIcon.IS_PC_PLAYER);
+		friend2.SetLeftIcon(LobbyBadgeIcon.SPECTATOR);
+		friend3.SetLeftIcon(LobbyBadgeIcon.INACTIVE_HEADSET);
+		friend4.SetLeftIcon(BadgeIcon.COUNTRY_ITALY);
+		friend5.SetLeftIcon(BadgeIcon.CASTLE);
+
+        var panel = new PlayerStatsPanel("Player 1", HudColor.HUD_COLOUR_GREEN)
+        {
+            Description = "This is the description for Player 1!!",
+			HasPlane = true,
+			HasHeli = true,
+        };
+		panel.RankInfo.RankLevel = 150;
+		panel.RankInfo.LowLabel = "This is the low label";
+		panel.RankInfo.MidLabel = "This is the middle label";
+		panel.RankInfo.UpLabel = "This is the upper label";
+		panel.AddStat(new PlayerStatsPanelStatItem("Statistic 1", "Description 1", API.GetRandomIntInRange(30, 150)));
+		panel.AddStat(new PlayerStatsPanelStatItem("Statistic 2", "Description 2", API.GetRandomIntInRange(30, 150)));
+		panel.AddStat(new PlayerStatsPanelStatItem("Statistic 3", "Description 3", API.GetRandomIntInRange(30, 150)));
+		panel.AddStat(new PlayerStatsPanelStatItem("Statistic 4", "Description 4", API.GetRandomIntInRange(30, 150)));
+		panel.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
+		friend.AddPanel(panel);
+
+		var panel1 = new PlayerStatsPanel("Player 2", HudColor.HUD_COLOUR_MENU_YELLOW)
+		{
+			Description = "This is the description for Player 2!!",
+			HasPlane = true,
+			HasVehicle = true,
+		};
+		panel1.RankInfo.RankLevel = 70;
+		panel1.RankInfo.LowLabel = "This is the low label";
+		panel1.RankInfo.MidLabel = "This is the middle label";
+		panel1.RankInfo.UpLabel = "This is the upper label";
+		panel1.AddStat(new PlayerStatsPanelStatItem("Statistic 1", "Description 1", API.GetRandomIntInRange(30, 150)));
+		panel1.AddStat(new PlayerStatsPanelStatItem("Statistic 2", "Description 2", API.GetRandomIntInRange(30, 150)));
+		panel1.AddStat(new PlayerStatsPanelStatItem("Statistic 3", "Description 3", API.GetRandomIntInRange(30, 150)));
+		panel1.AddStat(new PlayerStatsPanelStatItem("Statistic 4", "Description 4", API.GetRandomIntInRange(30, 150)));
+		panel1.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
+		friend1.AddPanel(panel1);
+
+		var panel3 = new PlayerStatsPanel("Player 3", HudColor.HUD_COLOUR_PINK)
+		{
+			Description = "This is the description for Player 3!!",
+			HasPlane = true,
+			HasHeli = true,
+			HasVehicle = true
+		};
+		panel3.RankInfo.RankLevel = 15;
+		panel3.RankInfo.LowLabel = "This is the low label";
+		panel3.RankInfo.MidLabel = "This is the middle label";
+		panel3.RankInfo.UpLabel = "This is the upper label";
+		panel3.AddStat(new PlayerStatsPanelStatItem("Statistic 1", "Description 1", API.GetRandomIntInRange(30, 150)));
+		panel3.AddStat(new PlayerStatsPanelStatItem("Statistic 2", "Description 2", API.GetRandomIntInRange(30, 150)));
+		panel3.AddStat(new PlayerStatsPanelStatItem("Statistic 3", "Description 3", API.GetRandomIntInRange(30, 150)));
+		panel3.AddStat(new PlayerStatsPanelStatItem("Statistic 4", "Description 4", API.GetRandomIntInRange(30, 150)));
+		panel3.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
+		friend2.AddPanel(panel3);
+
+		var panel4 = new PlayerStatsPanel("Player 4", HudColor.HUD_COLOUR_FREEMODE)
+		{
+			Description = "This is the description for Player 4!!",
+			HasPlane = true,
+			HasHeli = true,
+			HasBoat = true
+		};
+		panel4.RankInfo.RankLevel = 10;
+		panel4.RankInfo.LowLabel = "This is the low label";
+		panel4.RankInfo.MidLabel = "This is the middle label";
+		panel4.RankInfo.UpLabel = "This is the upper label";
+		panel4.AddStat(new PlayerStatsPanelStatItem("Statistic 1", "Description 1", API.GetRandomIntInRange(30, 150)));
+		panel4.AddStat(new PlayerStatsPanelStatItem("Statistic 2", "Description 2", API.GetRandomIntInRange(30, 150)));
+		panel4.AddStat(new PlayerStatsPanelStatItem("Statistic 3", "Description 3", API.GetRandomIntInRange(30, 150)));
+		panel4.AddStat(new PlayerStatsPanelStatItem("Statistic 4", "Description 4", API.GetRandomIntInRange(30, 150)));
+		panel4.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
+		friend3.AddPanel(panel4);
+
+		var panel5 = new PlayerStatsPanel("Player 5", HudColor.HUD_COLOUR_ORANGE)
+		{
+			Description = "This is the description for Player 5!!",
+			HasPlane = true,
+			HasHeli = true,
+		};
+		panel5.RankInfo.RankLevel = 1000;
+		panel5.RankInfo.LowLabel = "This is the low label";
+		panel5.RankInfo.MidLabel = "This is the middle label";
+		panel5.RankInfo.UpLabel = "This is the upper label";
+		panel5.AddStat(new PlayerStatsPanelStatItem("Statistic 1", "Description 1", API.GetRandomIntInRange(30, 150)));
+		panel5.AddStat(new PlayerStatsPanelStatItem("Statistic 2", "Description 2", API.GetRandomIntInRange(30, 150)));
+		panel5.AddStat(new PlayerStatsPanelStatItem("Statistic 3", "Description 3", API.GetRandomIntInRange(30, 150)));
+		panel5.AddStat(new PlayerStatsPanelStatItem("Statistic 4", "Description 4", API.GetRandomIntInRange(30, 150)));
+		panel5.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
+		friend4.AddPanel(panel5);
+
+		var panel6 = new PlayerStatsPanel("Player 6", HudColor.HUD_COLOUR_RED)
+		{
+			Description = "This is the description for Player 6!!",
+			HasPlane = true,
+			HasHeli = true,
+		};
+		panel6.RankInfo.RankLevel = 22;
+		panel6.RankInfo.LowLabel = "This is the low label";
+		panel6.RankInfo.MidLabel = "This is the middle label";
+		panel6.RankInfo.UpLabel = "This is the upper label";
+		panel6.AddStat(new PlayerStatsPanelStatItem("Statistic 1", "Description 1", API.GetRandomIntInRange(30, 150)));
+		panel6.AddStat(new PlayerStatsPanelStatItem("Statistic 2", "Description 2", API.GetRandomIntInRange(30, 150)));
+		panel6.AddStat(new PlayerStatsPanelStatItem("Statistic 3", "Description 3", API.GetRandomIntInRange(30, 150)));
+		panel6.AddStat(new PlayerStatsPanelStatItem("Statistic 4", "Description 4", API.GetRandomIntInRange(30, 150)));
+		panel6.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
+		friend5.AddPanel(panel6);
+
+		pauseMenu.PlayersColumn.AddPlayer(friend);
+		pauseMenu.PlayersColumn.AddPlayer(friend1);
+		pauseMenu.PlayersColumn.AddPlayer(friend2);
+		pauseMenu.PlayersColumn.AddPlayer(friend3);
+		pauseMenu.PlayersColumn.AddPlayer(friend4);
+		pauseMenu.PlayersColumn.AddPlayer(friend5);
+
+		var _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
+		API.CreateRuntimeTextureFromDuiHandle(txd, "lobby_panelbackground", API.GetDuiHandle(_paneldui));
+
+		pauseMenu.MissionPanel.UpdatePanelPicture("scaleformui", "lobby_panelbackground");
+		pauseMenu.MissionPanel.Title = "ScaleformUI - Title";
+		UIFreemodeDetailsItem missionItem1 = new("Hellooooo", "I'm here too!", false);
+		UIFreemodeDetailsItem missionItem2 = new("Hellooooo", "I'm here too!", BadgeIcon.COUNTRY_ITALY, HudColor.HUD_COLOUR_PURE_WHITE, true);
+		UIFreemodeDetailsItem missionItem3 = new("Hellooooo", "I'm here too!", true);
+		//UIFreemodeDetailsItem missionItem4 = new("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "", false);
+		pauseMenu.MissionPanel.AddItem(missionItem1);
+		pauseMenu.MissionPanel.AddItem(missionItem2);
+		pauseMenu.MissionPanel.AddItem(missionItem3);
+
 		pauseMenu.Visible = true;
 		//API.UnregisterPedheadshot(mugshot);
+
+
 	}
+
+	bool feedOpen = false;
 	public MenuExample()
 	{
 		_menuPool = new MenuPool();
 		_menuPool.RefreshIndex();
+		txd = API.CreateRuntimeTxd("scaleformui");
 
 		// We create a marker on the peds position, adds it to the MarkerHandler
 		Marker playerMarker = new Marker(MarkerType.VerticalCylinder, Game.PlayerPed.Position, new Vector3(1.5f), 5f, Colors.Cyan, true);
@@ -1071,8 +1221,18 @@ public class MenuExample : BaseScript
 				PauseMenuShowcase(null);
 			if (Game.IsControlJustPressed(0, Control.SelectCharacterTrevor) && !_menuPool.IsAnyMenuOpen && !_menuPool.IsAnyPauseMenuOpen)
 				LobbyPauseMenuShowcase(null);
-
 			await Task.FromResult(0);
+
+			if(Game.IsControlJustPressed(0, Control.Detonate))
+            {
+				feedOpen = !feedOpen;
+				ScaleformUI.ScaleformUI.BigFeed.Title = "Super Title!";
+				ScaleformUI.ScaleformUI.BigFeed.Subtitle = "Super Subtitle";
+				ScaleformUI.ScaleformUI.BigFeed.BodyText = "~input_context~ 🥳 ~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat";
+				ScaleformUI.ScaleformUI.BigFeed.UpdatePicture("", ""); // it doesn't support runtime textures!
+				ScaleformUI.ScaleformUI.BigFeed.RightAligned = true; // false to center align it
+				ScaleformUI.ScaleformUI.BigFeed.Enabled = feedOpen;
+			}
 		};
 	}
 }
