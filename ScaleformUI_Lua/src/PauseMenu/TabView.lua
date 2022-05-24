@@ -23,6 +23,7 @@ function TabView.New(title, subtitle, sideTop, sideMid, sideBot)
         controller = false,
         _loaded = false,
         _timer = 0,
+        _canHe = true,
         InstructionalButtons = {
             InstructionalButton.New(GetLabelText("HUD_INPUT2"), -1, 176, 176, -1),
             InstructionalButton.New(GetLabelText("HUD_INPUT3"), -1, 177, 177, -1),
@@ -78,7 +79,7 @@ end
 
 function TabView:Visible(visible)
     if(visible ~= nil) then
-        if(visible == true)then
+        if visible == true then
             self:BuildPauseMenu()
             self.OnPauseMenuOpen(self)
             DontRenderInGameUi(true)
@@ -118,6 +119,14 @@ function TabView:CrewPicture(Txd, Txn)
         self._crewPicture = {txd = Txd, txn = Txn}
     else
         return self._crewPicture
+    end
+end
+
+function TabView:CanPlayerCloseMenu(canHe)
+    if canHe == nil then
+        return self._canHe
+    else
+        self._canHe = canHe
     end
 end
 
@@ -332,7 +341,9 @@ function TabView:GoBack()
     if self:FocusLevel() > 0 then
         self:FocusLevel(self:FocusLevel() - 1)
     else
-        self:Visible(false)
+        if self:CanPlayerCloseMenu() then
+            self:Visible(false)
+        end
     end
 end
 

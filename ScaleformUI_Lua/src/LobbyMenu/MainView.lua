@@ -27,6 +27,7 @@ function MainView.New(title, subtitle, sideTop, sideMid, sideBot)
         _delay = 150,
         _listCol = {},
         _firstTick = true,
+        _canHe = true,
         InstructionalButtons = {
             InstructionalButton.New(GetLabelText("HUD_INPUT2"), -1, 176, 176, -1),
             InstructionalButton.New(GetLabelText("HUD_INPUT3"), -1, 177, 177, -1),
@@ -57,6 +58,15 @@ function MainView:FocusLevel(index)
         return self.focusLevel
     end
 end
+
+function MainView:CanPlayerCloseMenu(canHe)
+    if canHe == nil then
+        return self._canHe
+    else
+        self._canHe = canHe
+    end
+end
+
 
 function MainView:Visible(visible)
     if visible ~= nil then
@@ -382,8 +392,10 @@ function MainView:Select()
 end
 
 function MainView:GoBack()
-    PlaySoundFrontend(-1, "BACK", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
-    self:Visible(false)
+    if self:CanPlayerCloseMenu() then
+        PlaySoundFrontend(-1, "BACK", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
+        self:Visible(false)
+    end
 end
 
 function MainView:GoUp()

@@ -63,6 +63,7 @@ function UIMenu.New(Title, Subtitle, X, Y, glare, txtDictionary, txtName, altern
         _time = 0,
         _times = 0,
         _delay = 150,
+        _canHe = true,
         _scaledWidth = (720 * GetScreenAspectRatio(false)),
         Controls = {
             Back = {
@@ -220,6 +221,15 @@ function UIMenu:InstructionalButtons(bool)
         self.Settings.InstructionalButtons = tobool(bool)
     end
 end
+
+function UIMenu:CanPlayerCloseMenu(canHe)
+    if canHe == nil then
+        return self._canHe
+    else
+        self._canHe = canHe
+    end
+end
+
 
 ---SetBannerSprite
 ---@param Sprite string
@@ -815,6 +825,7 @@ function UIMenu:GoBack()
     PlaySoundFrontend(-1, self.Settings.Audio.Back, self.Settings.Audio.Library, true)
     if self.ParentMenu ~= nil then
         self._canBuild = false
+        self:Visible(false)
         ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
         ScaleformUI.Scaleforms.InstructionalButtons:Enabled(true)
         ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.ParentMenu.InstructionalButtons)
@@ -823,8 +834,11 @@ function UIMenu:GoBack()
         self.ParentMenu:BuildUpMenu()
         self.OnMenuChanged(self, self.ParentMenu, "backwards")
         self.ParentMenu.OnMenuChanged(self, self.ParentMenu, "backwards")
+    else
+        if self:CanPlayerCloseMenu() then
+            self:Visible(false)
+        end
     end
-    self:Visible(false)
 end
 
 ---BindMenuToItem
