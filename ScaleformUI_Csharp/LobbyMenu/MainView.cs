@@ -10,13 +10,6 @@ using Font = CitizenFX.Core.UI.Font;
 
 namespace ScaleformUI.LobbyMenu
 {
-    public enum ColumnType
-    {
-        Settings = 0,
-        Players,
-        Panels
-    }
-
     public class MainView : PauseMenuBase
     {
         // Button delay
@@ -286,10 +279,6 @@ namespace ScaleformUI.LobbyMenu
                 i++;
             }
             PlayersColumn.CurrentSelection = 0;
-        }
-        public void SetColumnsOrder(ColumnType left, ColumnType center, ColumnType right)
-        {
-            _pause._lobby.CallFunction("SET_PANELS_ORDER", (int)left, (int)center, (int)right);
         }
 
         private bool controller = false;
