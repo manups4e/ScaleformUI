@@ -40,7 +40,7 @@ Citizen.CreateThread(function()
         if ScaleformUI.Scaleforms._ui == 0 or ScaleformUI.Scaleforms._ui == nil then
             ScaleformUI.Scaleforms._ui = Scaleform.Request("scaleformui")
         end
-        if(not ScaleformUI.Scaleforms._pauseMenu.Loaded) then
+        if not ScaleformUI.Scaleforms._pauseMenu.Loaded then
             ScaleformUI.Scaleforms._pauseMenu:Load()
         end
     end

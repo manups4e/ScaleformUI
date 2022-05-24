@@ -13,6 +13,7 @@ function PauseMenu.New()
     local _data = {
         _header = nil,
         _pause = nil,
+        _lobby = nil,
         Loaded = false,
         _visible = false,
     }
@@ -28,10 +29,11 @@ function Pause:Visible(visible)
 end
 
 function Pause:Load()
-    if(self._header ~= nil and self._pause ~= nil) then return end
+    if(self._header ~= nil and self._pause ~= nil and self._lobby ~= nil) then return end
     self._header = Scaleform.Request("pausemenuheader")
     self._pause = Scaleform.Request("pausemenu")
-    self.Loaded = self._header:IsLoaded() and self._pause:IsLoaded()
+    self._lobby = Scaleform.Request("lobbymenu")
+    self.Loaded = self._header:IsLoaded() and self._pause:IsLoaded() and self._lobby:IsLoaded()
 end
 
 function Pause:SetHeaderTitle(title, subtitle, shiftUpHeader)
@@ -72,6 +74,11 @@ function Pause:AddPauseMenuTab(title, _type, _tabContentType, color)
     if color == nil then color = 116 end
     self._header:CallFunction("ADD_HEADER_TAB", false, title, _type, color)
     self._pause:CallFunction("ADD_TAB", false, _tabContentType)
+end
+
+function Pause:AddLobbyMenuTab(title, _type, _tabContentType, color)
+    if color == nil then color = 116 end
+    self._header:CallFunction("ADD_HEADER_TAB", false, title, _type, color)
 end
 
 function Pause:SelectTab(tab)
@@ -233,17 +240,30 @@ end
 function Pause:Dispose()
     self._pause:CallFunction("CLEAR_ALL", false)
     self._header:CallFunction("CLEAR_ALL", false)
-    self._pause:Dispose()
-    self._header:Dispose()
+    self._lobby:CallFunction("CLEAR_ALL", false)
+	SetScaleformMovieAsNoLongerNeeded(self._pause.handle)
+	SetScaleformMovieAsNoLongerNeeded(self._header.handle)
+	SetScaleformMovieAsNoLongerNeeded(self._lobby.handle)
+	self._pause = nil
+	self._header = nil
+	self._lobby = nil
     self._visible = false
+    print(self._pause == nil)
+    print(self._header == nil)
+    print(self._lobby == nil)
 end
 
-function Pause:Draw()
+function Pause:Draw(isLobby)
+    if isLobby == nil then isLobby = false end
     if self._visible and not IsPauseMenuActive() then
         if IsInputDisabled(2) then
             ShowCursorThisFrame()
         end
         self._header:Render2DNormal(0.501, 0.162, 0.6782, 0.145)
-        self._pause:Render2DNormal(0.6617187, 0.7166667, 1.0, 1.0)
+        if isLobby then
+            self._lobby:Render2DNormal(0.6617187, 0.7166667, 1.0, 1.0)
+        else
+            self._pause:Render2DNormal(0.6617187, 0.7166667, 1.0, 1.0)
+        end
     end
 end
