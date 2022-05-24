@@ -1,6 +1,7 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
+using ScaleformUI.LobbyMenu;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -1053,5 +1054,10 @@ namespace ScaleformUI
         /// Returns the menu this item is in.
         /// </summary>
         public UIMenu Parent { get; internal set; }
+        
+        /// <summary>
+        /// Returns the lobby this item is in.
+        /// </summary>
+        public SettingsListColumn ParentColumn { get; internal set; }
     }
 }

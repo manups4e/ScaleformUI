@@ -49,10 +49,15 @@
     <Compile Include="Hud\Notifications\NotificationChars.cs" />
     <Compile Include="Hud\Notifications\Notifications.cs" />
     <Compile Include="Items\UIMenuStatsItem.cs" />
-    <Compile Include="LobbyMenu\Items\FriendItem.cs" />
+    <Compile Include="LobbyMenu\Columns\Column.cs" />
+    <Compile Include="LobbyMenu\Columns\SettingsListColumn.cs" />
+    <Compile Include="LobbyMenu\Panels\PlayerStatsPanel.cs" />
+    <Compile Include="LobbyMenu\PlayerListColumn\FriendItem.cs" />
     <Compile Include="LobbyMenu\Items\LobbyItem.cs" />
-    <Compile Include="LobbyMenu\Items\MMPLayerItem.cs" />
+    <Compile Include="LobbyMenu\PlayerListColumn\MMPLayerItem.cs" />
     <Compile Include="LobbyMenu\MainView.cs" />
+    <Compile Include="LobbyMenu\Panels\MissionDetailsPanel.cs" />
+    <Compile Include="LobbyMenu\Columns\PlayerListColumn.cs" />
     <Compile Include="PauseMenuBase.cs" />
     <Compile Include="PauseMenu\Items\BasicTabItem.cs" />
     <Compile Include="PauseMenu\Items\KeymapItem.cs" />
@@ -67,6 +72,7 @@
     <Compile Include="PauseMenu\Tabs\TabLeftItem.cs" />
     <Compile Include="PauseMenu\Tabs\TextTab.cs" />
     <Compile Include="PauseMenu\TabView.cs" />
+    <Compile Include="Scaleforms\BigFeed\BigFeedHandler.cs" />
     <Compile Include="Scaleforms\BigMessage\BigMessage.cs" />
     <Compile Include="Controls.cs" />
     <Compile Include="Elements\Sprite.cs" />

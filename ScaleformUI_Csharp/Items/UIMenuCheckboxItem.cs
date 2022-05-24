@@ -73,12 +73,16 @@ namespace ScaleformUI
         /// <summary>
         /// Change or get whether the checkbox is checked.
         /// </summary>
-        public bool Checked { get => _checked; 
+        public bool Checked { 
+            get => _checked; 
             set
             {
                 _checked = value;
-                var it = Parent.MenuItems.IndexOf(this);
-                ScaleformUI._ui.CallFunction("SET_INPUT_EVENT", 16, it, value);
+                if (Parent != null && Parent.Visible)
+                {
+                    var it = Parent.MenuItems.IndexOf(this);
+                    ScaleformUI._ui.CallFunction("SET_INPUT_EVENT", 16, it, value);
+                }
             }
         }
 
