@@ -17,6 +17,7 @@ namespace ScaleformUI.LobbyMenu
     {
         // Button delay
         private int time;
+        private bool _firstDrawTick = true;
         private int times;
         private int delay = 150;
         internal List<Column> listCol;
@@ -87,6 +88,7 @@ namespace ScaleformUI.LobbyMenu
                     AnimpostfxPlay("PauseMenuIn", 800, true);
                     ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
                     SetPlayerControl(Game.Player.Handle, false, 0);
+                    _firstDrawTick = true;
                 }
                 else
                 {
@@ -283,7 +285,6 @@ namespace ScaleformUI.LobbyMenu
         }
 
         private bool controller = false;
-        private bool _firstDrawTick = true;
         public override async void Draw()
         {
             if (!Visible || TemporarilyHidden) return;

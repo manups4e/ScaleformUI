@@ -24,7 +24,7 @@ namespace ScaleformUI.LobbyMenu
                 }
             }
         }
-        public HudColor TitleColor;
+
         public List<UIFreemodeDetailsItem> Items {get; private set;}
         public MissionDetailsPanel(string label, HudColor color) : base(label, color)
         {

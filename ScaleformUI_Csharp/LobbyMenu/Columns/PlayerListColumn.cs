@@ -32,7 +32,8 @@ namespace ScaleformUI.LobbyMenu
                 Items[CurrentSelection].Selected = false;
                 currentSelection = 1000000 - (1000000 % Items.Count) + value;
                 Items[CurrentSelection].Selected = true;
-                Parent._pause._lobby.CallFunction("SET_PLAYERS_SELECTION", CurrentSelection);
+                if(Parent != null && Parent.Visible)
+                    Parent._pause._lobby.CallFunction("SET_PLAYERS_SELECTION", CurrentSelection);
             }
         }
 

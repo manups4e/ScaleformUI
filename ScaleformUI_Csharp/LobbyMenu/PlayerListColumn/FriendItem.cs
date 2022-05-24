@@ -151,7 +151,7 @@ namespace ScaleformUI.LobbyMenu
             if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
             {
                 var idx = ParentColumn.Items.IndexOf(this);
-                ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_RIGHT", idx, iconL, boolL);
+                ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_LEFT", idx, iconL, boolL);
             }
         }
         public void SetLeftIcon(BadgeIcon icon)
@@ -161,7 +161,7 @@ namespace ScaleformUI.LobbyMenu
             if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
             {
                 var idx = ParentColumn.Items.IndexOf(this);
-                ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_RIGHT", idx, iconL, boolL);
+                ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_LEFT", idx, iconL, boolL);
             }
         }
 
