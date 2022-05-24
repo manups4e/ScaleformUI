@@ -48,7 +48,6 @@ namespace ScaleformUI.LobbyMenu
         {
             new InstructionalButton(Control.PhoneSelect, UIMenu._selectTextLocalized),
             new InstructionalButton(Control.PhoneCancel, UIMenu._backTextLocalized),
-            new InstructionalButton(InputGroup.INPUTGROUP_FRONTEND_BUMPERS, _browseTextLocalized),
         };
 
         public MainView(string title) : this(title, "", "", "", "")
