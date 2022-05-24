@@ -248,9 +248,6 @@ function Pause:Dispose()
 	self._header = nil
 	self._lobby = nil
     self._visible = false
-    print(self._pause == nil)
-    print(self._header == nil)
-    print(self._lobby == nil)
 end
 
 function Pause:Draw(isLobby)
