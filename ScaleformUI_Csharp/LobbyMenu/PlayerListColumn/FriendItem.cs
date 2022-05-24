@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CitizenFX.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -34,17 +35,16 @@ namespace ScaleformUI.LobbyMenu
         internal bool boolL;
         internal bool boolR;
         private bool coloredTag;
-
         public string Label
         {
             get => label;
             set
             {
                 label = value;
-                if (ParentLobby != null && ParentLobby.Visible)
+                if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
                 {
-                    var idx = ParentLobby.CenterItems.IndexOf(this);
-                    ParentLobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_LABEL", idx, label);
+                    var idx = ParentColumn.Items.IndexOf(this);
+                    ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_LABEL", idx, label);
                 }
             }
         }
@@ -54,10 +54,10 @@ namespace ScaleformUI.LobbyMenu
             set
             {
                 itemColor = value;
-                if (ParentLobby != null && ParentLobby.Visible)
+                if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
                 {
-                    var idx = ParentLobby.CenterItems.IndexOf(this);
-                    ParentLobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_COLOUR", idx, itemColor, coloredTag);
+                    var idx = ParentColumn.Items.IndexOf(this);
+                    ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_COLOUR", idx, itemColor, coloredTag);
                 }
             }
         }
@@ -67,10 +67,10 @@ namespace ScaleformUI.LobbyMenu
             set
             {
                 coloredTag = value;
-                if (ParentLobby != null && ParentLobby.Visible)
+                if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
                 {
-                    var idx = ParentLobby.CenterItems.IndexOf(this);
-                    ParentLobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_COLOUR", idx, (int)itemColor, coloredTag);
+                    var idx = ParentColumn.Items.IndexOf(this);
+                    ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_COLOUR", idx, (int)itemColor, coloredTag);
                 }
             }
         }
@@ -80,10 +80,10 @@ namespace ScaleformUI.LobbyMenu
             set
             {
                 rank = value;
-                if (ParentLobby != null && ParentLobby.Visible)
+                if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
                 {
-                    var idx = ParentLobby.CenterItems.IndexOf(this);
-                    ParentLobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_RANK", idx, rank);
+                    var idx = ParentColumn.Items.IndexOf(this);
+                    ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_RANK", idx, rank);
                 }
             }
         }
@@ -93,10 +93,10 @@ namespace ScaleformUI.LobbyMenu
             set
             {
                 status = value;
-                if (ParentLobby != null && ParentLobby.Visible)
+                if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
                 {
-                    var idx = ParentLobby.CenterItems.IndexOf(this);
-                    ParentLobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_STATUS", idx, status, (int)statusColor);
+                    var idx = ParentColumn.Items.IndexOf(this);
+                    ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_STATUS", idx, status, (int)statusColor);
                 }
             }
         }
@@ -106,10 +106,10 @@ namespace ScaleformUI.LobbyMenu
             set
             {
                 statusColor = value;
-                if (ParentLobby != null && ParentLobby.Visible)
+                if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
                 {
-                    var idx = ParentLobby.CenterItems.IndexOf(this);
-                    ParentLobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_STATUS", idx, status, (int)statusColor);
+                    var idx = ParentColumn.Items.IndexOf(this);
+                    ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_STATUS", idx, status, (int)statusColor);
                 }
             }
         }
@@ -119,10 +119,10 @@ namespace ScaleformUI.LobbyMenu
             set
             {
                 crewTag = value;
-                if (ParentLobby != null && ParentLobby.Visible)
+                if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
                 {
-                    var idx = ParentLobby.CenterItems.IndexOf(this);
-                    ParentLobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_CREW", idx, crewTag);
+                    var idx = ParentColumn.Items.IndexOf(this);
+                    ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_CREW", idx, crewTag);
                 }
             }
         }
@@ -148,20 +148,20 @@ namespace ScaleformUI.LobbyMenu
         {
             iconL = (int)icon;
             boolL = false;
-            if (ParentLobby != null && ParentLobby.Visible)
+            if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
             {
-                var idx = ParentLobby.CenterItems.IndexOf(this);
-                ParentLobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_RIGHT", idx, iconL, boolL);
+                var idx = ParentColumn.Items.IndexOf(this);
+                ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_RIGHT", idx, iconL, boolL);
             }
         }
         public void SetLeftIcon(BadgeIcon icon)
         {
             iconL = (int)icon;
             boolL = true;
-            if (ParentLobby != null && ParentLobby.Visible)
+            if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
             {
-                var idx = ParentLobby.CenterItems.IndexOf(this);
-                ParentLobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_RIGHT", idx, iconL, boolL);
+                var idx = ParentColumn.Items.IndexOf(this);
+                ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_RIGHT", idx, iconL, boolL);
             }
         }
 
@@ -169,21 +169,27 @@ namespace ScaleformUI.LobbyMenu
         {
             iconR = (int)icon;
             boolR = false;
-            if (ParentLobby != null && ParentLobby.Visible)
+            if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
             {
-                var idx = ParentLobby.CenterItems.IndexOf(this);
-                ParentLobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_RIGHT", idx, iconR, boolR);
+                var idx = ParentColumn.Items.IndexOf(this);
+                ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_RIGHT", idx, iconR, boolR);
             }
         }
         public void SetRightIcon(BadgeIcon icon)
         {
             iconR = (int)icon;
             boolR = true;
-            if (ParentLobby != null && ParentLobby.Visible)
+            if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
             {
-                var idx = ParentLobby.CenterItems.IndexOf(this);
-                ParentLobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_RIGHT", idx, iconR, boolR);
+                var idx = ParentColumn.Items.IndexOf(this);
+                ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_RIGHT", idx, iconR, boolR);
             }
+        }
+
+        public void AddPanel(PlayerStatsPanel panel)
+        {
+            panel.ParentItem = this;
+            this.Panel = panel;
         }
 
     }

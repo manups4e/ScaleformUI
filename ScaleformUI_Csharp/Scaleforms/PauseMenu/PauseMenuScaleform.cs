@@ -13,7 +13,7 @@ namespace ScaleformUI
     {
         internal Scaleform _header;
         internal Scaleform _pause;
-        internal Scaleform _lobby;
+        public Scaleform _lobby;
         private bool _visible;
         internal bool Loaded => _header is not null && _header.IsLoaded && _pause is not null && _pause.IsLoaded;
         public bool Visible { get => _visible; set => _visible = value; }

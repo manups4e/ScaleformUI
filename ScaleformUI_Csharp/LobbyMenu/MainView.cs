@@ -10,8 +10,23 @@ using Font = CitizenFX.Core.UI.Font;
 
 namespace ScaleformUI.LobbyMenu
 {
+    public enum ColumnType
+    {
+        Settings = 0,
+        Players,
+        Panels
+    }
+
     public class MainView : PauseMenuBase
     {
+        // Button delay
+        private int time;
+        private int times;
+        private int delay = 150;
+        internal List<Column> listCol;
+        internal PauseMenuScaleform _pause;
+        internal bool _loaded;
+        internal readonly static string _browseTextLocalized = Game.GetGXTEntry("HUD_INPUT1C");
         public string Title { get; set; }
         public string SubTitle { get; set; }
         public string SideStringTop { get; set; }
@@ -19,33 +34,29 @@ namespace ScaleformUI.LobbyMenu
         public string SideStringBottom { get; set; }
         public Tuple<string, string> HeaderPicture { internal get; set; }
         public Tuple<string, string> CrewPicture { internal get; set; }
-        public bool IsLobby { get; set; }
-        public List<UIMenuItem> LeftItems { get; private set; }
-        public List<LobbyItem> CenterItems { get; private set; }
-        public int LeftItemIndex
+        public SettingsListColumn SettingsColumn { get; private set; }
+        public PlayerListColumn PlayersColumn { get; private set; }
+        public MissionDetailsPanel MissionPanel { get; private set; }
+        public int FocusLevel
         {
-            get => leftItemIndex;
+            get => focusLevel;
             set
             {
-                leftItemIndex = value;
-                //SendPauseMenuLeftItemChange();
+                focusLevel = value;
+                if (_pause is not null)
+                    _pause._lobby.CallFunction("SET_FOCUS", value);
             }
         }
 
         public bool TemporarilyHidden { get; set; }
         public bool HideTabs { get; set; }
         public bool DisplayHeader = true;
-
         public List<InstructionalButton> InstructionalButtons = new()
         {
             new InstructionalButton(Control.PhoneSelect, UIMenu._selectTextLocalized),
             new InstructionalButton(Control.PhoneCancel, UIMenu._backTextLocalized),
             new InstructionalButton(InputGroup.INPUTGROUP_FRONTEND_BUMPERS, _browseTextLocalized),
         };
-
-        internal PauseMenuScaleform _pause;
-        internal bool _loaded;
-        internal readonly static string _browseTextLocalized = Game.GetGXTEntry("HUD_INPUT1C");
 
         public MainView(string title) : this(title, "", "", "", "")
         {
@@ -64,8 +75,6 @@ namespace ScaleformUI.LobbyMenu
             Index = 0;
             TemporarilyHidden = false;
             _pause = ScaleformUI.PauseMenu;
-            LeftItems = new();
-            CenterItems = new();
         }
 
         public override bool Visible
@@ -104,9 +113,32 @@ namespace ScaleformUI.LobbyMenu
         public int Index;
         private bool _visible;
         private int focusLevel;
-        private int rightItemIndex;
-        private int leftItemIndex;
-        private int _timer;
+
+        public void SetUpColumns(List<Column> columns)
+        {
+            listCol = columns;
+            foreach (var col in columns)
+            {
+                switch (col)
+                {
+                    case SettingsListColumn:
+                        SettingsColumn = col as SettingsListColumn;
+                        SettingsColumn.Parent = this;
+                        SettingsColumn.Order = columns.IndexOf(col);
+                        break;
+                    case PlayerListColumn:
+                        PlayersColumn = col as PlayerListColumn;
+                        PlayersColumn.Parent = this;
+                        PlayersColumn.Order = columns.IndexOf(col);
+                        break;
+                    case MissionDetailsPanel:
+                        MissionPanel = col as MissionDetailsPanel;
+                        MissionPanel.Parent = this;
+                        MissionPanel.Order = columns.IndexOf(col);
+                        break;
+                }
+            }
+        }
         public async void ShowHeader()
         {
             if (String.IsNullOrEmpty(SubTitle) || String.IsNullOrWhiteSpace(SubTitle))
@@ -121,33 +153,39 @@ namespace ScaleformUI.LobbyMenu
             if (CrewPicture != null)
                 _pause.SetHeaderSecondaryImg(CrewPicture.Item1, CrewPicture.Item2, true);
             _pause.SetHeaderDetails(SideStringTop, SideStringMiddle, SideStringBottom);
-            _pause.AddLobbyMenuTab("SETTINGS", 2, 0, HudColor.HUD_COLOUR_RED);
-            _pause.AddLobbyMenuTab("PLAYERS", 2, 0, HudColor.HUD_COLOUR_ORANGE);
-            _pause.AddLobbyMenuTab("INFOS", 2, 0, HudColor.HUD_COLOUR_GREEN);
+            _pause.AddLobbyMenuTab(listCol[0].Label, 2, 0, listCol[0].Color);
+            _pause.AddLobbyMenuTab(listCol[1].Label, 2, 0, listCol[1].Color);
+            _pause.AddLobbyMenuTab(listCol[2].Label, 2, 0, listCol[2].Color);
             _pause._header.CallFunction("SET_ALL_HIGHLIGHTS", true, (int)HudColor.HUD_COLOUR_PAUSE_BG);
 
             _loaded = true;
         }
 
-        public void AddSettingsItem(UIMenuItem item)
-        {
-            item.ParentLobby = this;
-            LeftItems.Add(item);
-        }
-
-        public void AddPlayerItem(LobbyItem item)
-        {
-            item.ParentLobby = this;
-            CenterItems.Add(item);
-        }
-
+        private bool canBuild = true;
         public async void BuildPauseMenu()
         {
             ShowHeader();
-
-            foreach (var item in LeftItems)
+            _pause._lobby.CallFunction("CREATE_MENU", SettingsColumn.Order, PlayersColumn.Order, MissionPanel.Order);
+            buildSettings();
+            await BaseScript.Delay(50);
+            buildPlayers();
+            _pause._lobby.CallFunction("ADD_MISSION_PANEL_PICTURE", MissionPanel.TextureDict, MissionPanel.TextureName);
+            _pause._lobby.CallFunction("SET_MISSION_PANEL_TITLE", MissionPanel.Title);
+            foreach (var item in MissionPanel.Items)
             {
-                var index = LeftItems.IndexOf(item);
+                _pause._lobby.CallFunction("ADD_MISSION_PANEL_ITEM", item.Type, item.TextLeft, item.TextRight, (int)item.Icon, (int)item.IconColor, item.Tick);
+            }
+        }
+
+        public async void buildSettings()
+        {
+            var i = 0;
+            while (i < SettingsColumn.Items.Count)
+            {
+                await BaseScript.Delay(1);
+                if (!canBuild) break;
+                var item = SettingsColumn.Items[i];
+                var index = SettingsColumn.Items.IndexOf(item);
                 AddTextEntry($"menu_lobby_desc_{index}", item.Description);
                 BeginScaleformMovieMethod(_pause._lobby.Handle, "ADD_LEFT_ITEM");
                 PushScaleformMovieFunctionParameterInt(item._itemId);
@@ -222,314 +260,422 @@ namespace ScaleformUI.LobbyMenu
                         EndScaleformMovieMethod();
                         break;
                 }
+                i++;
             }
+            SettingsColumn.CurrentSelection = 0;
+        }
 
-            foreach (var item in CenterItems)
+        public async void buildPlayers()
+        {
+            var i = 0;
+            while (i < PlayersColumn.Items.Count)
             {
-                var index = CenterItems.IndexOf(item);
+                var item = PlayersColumn.Items[i];
+                var index = PlayersColumn.Items.IndexOf(item);
                 switch (item)
                 {
                     case FriendItem:
                         var fi = (FriendItem)item;
-                        Debug.WriteLine($"{fi.Label}, (int){fi.ItemColor}, {fi.ColoredTag}, {fi.iconL}, {fi.boolL}, {fi.iconR}, {fi.boolR}, {fi.Status}, (int){fi.StatusColor}, {fi.Rank}, {fi.CrewTag}");
                         _pause._lobby.CallFunction("ADD_PLAYER_ITEM", 1, 1, fi.Label, (int)fi.ItemColor, fi.ColoredTag, fi.iconL, fi.boolL, fi.iconR, fi.boolR, fi.Status, (int)fi.StatusColor, fi.Rank, fi.CrewTag);
                         break;
                 }
+                if (item.Panel != null)
+                {
+                    item.Panel.UpdatePanel(true);
+                }
+                i++;
             }
+            PlayersColumn.CurrentSelection = 0;
+        }
+        public void SetColumnsOrder(ColumnType left, ColumnType center, ColumnType right)
+        {
+            _pause._lobby.CallFunction("SET_PANELS_ORDER", (int)left, (int)center, (int)right);
         }
 
         private bool controller = false;
+        private bool _firstDrawTick = true;
         public override async void Draw()
         {
             if (!Visible || TemporarilyHidden) return;
             _pause.Draw(true);
-            //UpdateKeymapItems();
+            if (_firstDrawTick)
+            {
+                _pause._lobby.CallFunction("FADE_IN");
+                _firstDrawTick = false;
+            }
         }
 
-        /*
-        private void UpdateKeymapItems()
+        private int eventType = 0;
+        private int itemId = 0;
+        private int context = 0;
+        private int unused = 0;
+        private bool cursorPressed;
+        public override void ProcessMouse()
         {
-            if (!API.IsInputDisabled(2))
+            if (!IsInputDisabled(2))
             {
-                if (!controller)
-                {
-                    controller = true;
-                    if (Tabs[Index] is TabSubmenuItem)
-                    {
-                        foreach (var lItem in (Tabs[Index] as TabSubmenuItem).LeftItemList)
-                        {
-                            var idx = (Tabs[Index] as TabSubmenuItem).LeftItemList.IndexOf(lItem);
-                            if (lItem.ItemType == LeftItemType.Keymap)
-                            {
-                                for (int i = 0; i < lItem.ItemList.Count; i++)
-                                {
-                                    KeymapItem item = (KeymapItem)lItem.ItemList[i];
-                                    _pause.UpdateKeymap(Index, idx, i, item.PrimaryGamepad, item.SecondaryGamepad);
-                                }
-                            }
-                        }
-                    }
-                }
+                return;
             }
-            else
-            {
-                if (controller)
-                {
-                    controller = false;
-                    foreach (var lItem in (Tabs[Index] as TabSubmenuItem).LeftItemList)
-                    {
-                        var idx = (Tabs[Index] as TabSubmenuItem).LeftItemList.IndexOf(lItem);
-                        if (lItem.ItemType == LeftItemType.Keymap)
-                        {
-                            for (int i = 0; i < lItem.ItemList.Count; i++)
-                            {
-                                KeymapItem item = (KeymapItem)lItem.ItemList[i];
-                                _pause.UpdateKeymap(Index, idx, i, item.PrimaryKeyboard, item.SecondaryKeyboard);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        */
+            SetMouseCursorActiveThisFrame();
+            SetInputExclusive(2, 239);
+            SetInputExclusive(2, 240);
+            SetInputExclusive(2, 237);
+            SetInputExclusive(2, 238);
 
-        private bool firstTick = true;
+            var success = GetScaleformMovieCursorSelection(_pause._lobby.Handle, ref eventType, ref context, ref itemId, ref unused);
+            if (success)
+            {
+                switch (eventType)
+                {
+                    case 5:
+                        if (FocusLevel != context)
+                            FocusLevel = context;
+                        switch (listCol[context])
+                        {
+                            case SettingsListColumn:
+                                {
+                                    var col = listCol[context] as SettingsListColumn;
+                                    foreach (var p in PlayersColumn.Items) p.Selected = false;
+                                    if (!col.Items[col.CurrentSelection].Enabled)
+                                    {
+                                        Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
+                                        return;
+                                    }
+                                    if (col.Items[itemId].Selected)
+                                    {
+                                        BeginScaleformMovieMethod(_pause._lobby.Handle, "SET_INPUT_EVENT");
+                                        ScaleformMovieMethodAddParamInt(16);
+                                        EndScaleformMovieMethod();
+                                        var item = col.Items[itemId];
+                                        switch (item)
+                                        {
+                                            case UIMenuCheckboxItem:
+                                                var cbIt = item as UIMenuCheckboxItem;
+                                                cbIt.Checked = !cbIt.Checked;
+                                                cbIt.CheckboxEventTrigger();
+                                                break;
+                                            default:
+                                                item.ItemActivate(null);
+                                                break;
+                                        }
+                                        return;
+                                    }
+                                    col.CurrentSelection = itemId;
+                                }
+                                break;
+                            case PlayerListColumn:
+                                {
+                                    var col = listCol[context] as PlayerListColumn;
+                                    foreach (var p in SettingsColumn.Items) p.Selected = false;
+                                    if (!col.Items[col.CurrentSelection].Enabled)
+                                    {
+                                        Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
+                                        return;
+                                    }
+                                    if (col.Items[itemId].Selected)
+                                    {
+                                        // do something
+                                        return;
+                                    }
+                                    col.CurrentSelection = itemId;
+                                }
+                                break;
+                        }
+                        break;
+                }
+            }
+            /*
+            Notifications.DrawText(0.3f, 0.775f, $"success:{success}");
+            Notifications.DrawText(0.3f, 0.8f, $"eventType:{eventType}");
+            Notifications.DrawText(0.3f, 0.825f, $"itemId:{itemId}");
+            Notifications.DrawText(0.3f, 0.85f, $"context:{context}");
+            */
+        }
+
         public override async void ProcessControls()
         {
-            /*
-            if (firstTick)
-            {
-                firstTick = false;
-                return;
-                // without this shit the menu goes on focus without need if opened from another menu.
-            }
             if (!Visible || TemporarilyHidden) return;
-            string result = "";
-
-            if (Game.IsControlJustPressed(2, Control.PhoneUp))
+            if (Game.IsControlPressed(2, Control.PhoneUp))
             {
-                if (FocusLevel == 0) return;
-                result = await _pause.SendInputEvent(8);
-            }
-            else if (Game.IsControlJustPressed(2, Control.PhoneDown))
-            {
-                if (FocusLevel == 0) return;
-                result = await _pause.SendInputEvent(9);
-            }
-
-            else if (Game.IsControlJustPressed(2, Control.PhoneLeft))
-            {
-                if (FocusLevel == 1) return;
-                if (FocusLevel == 0)
-                    _pause.HeaderGoLeft();
-                result = await _pause.SendInputEvent(10);
-            }
-            else if (Game.IsControlJustPressed(2, Control.PhoneRight))
-            {
-                if (FocusLevel == 1) return;
-                if (FocusLevel == 0)
-                    _pause.HeaderGoRight();
-                result = await _pause.SendInputEvent(11);
-            }
-
-            else if (Game.IsControlJustPressed(2, Control.FrontendLb))
-            {
-                if (FocusLevel == 0)
+                if (Game.GameTime - time > delay)
                 {
-                    _pause.HeaderGoLeft();
-                    result = await _pause.SendInputEvent(10);
+                    ButtonDelay();
+                    GoUp();
                 }
             }
-            else if (Game.IsControlJustPressed(2, Control.FrontendRb))
+            else if (Game.IsControlPressed(2, Control.PhoneDown))
             {
-                if (FocusLevel == 0)
+                if (Game.GameTime - time > delay)
                 {
-                    _pause.HeaderGoRight();
-                    result = await _pause.SendInputEvent(11);
+                    ButtonDelay();
+                    GoDown();
+                }
+            }
+
+            else if (Game.IsControlPressed(2, Control.PhoneLeft))
+            {
+                if (Game.GameTime - time > delay)
+                {
+                    ButtonDelay();
+                    GoLeft();
+                }
+            }
+            else if (Game.IsControlPressed(2, Control.PhoneRight))
+            {
+                if (Game.GameTime - time > delay)
+                {
+                    ButtonDelay();
+                    GoRight();
                 }
             }
 
             else if (Game.IsControlJustPressed(2, Control.FrontendAccept))
             {
-                result = await _pause.SendInputEvent(16);
-                switch (focusLevel)
-                {
-
-                    case 1:
-                        if (Tabs[Index].LeftItemList[leftItemIndex].ItemType == LeftItemType.Info || Tabs[Index].LeftItemList[leftItemIndex].ItemType == LeftItemType.Empty)
-                        {
-                            Tabs[Index].LeftItemList[leftItemIndex].Activated();
-                        }
-                        break;
-                    case 2:
-                        if (Tabs[Index].LeftItemList[leftItemIndex].ItemList[rightItemIndex] is SettingsTabItem)
-                        {
-                            var it = Tabs[Index].LeftItemList[leftItemIndex].ItemList[rightItemIndex] as SettingsTabItem;
-                            it.Activated();
-                        }
-                        break;
-                }
+                Select();
             }
 
             else if (Game.IsControlJustPressed(2, Control.PhoneCancel))
             {
-                if (FocusLevel > 0)
-                    result = await _pause.SendInputEvent(17);
-                else
-                {
-                    Visible = false;
-                }
+                GoBack();
             }
 
             if (Game.IsControlJustPressed(1, Control.CursorScrollUp))
             {
-                result = await _pause.SendScrollEvent(-1);
+                _pause.SendScrollEvent(-1);
             }
             else if (Game.IsControlJustPressed(1, Control.CursorScrollDown))
             {
-                result = await _pause.SendScrollEvent(1);
+                _pause.SendScrollEvent(1);
             }
 
-
-            if (Game.IsControlPressed(2, Control.LookUpOnly))
+            // IsControlBeingPressed doesn't run every frame so I had to use this
+            if (!Game.IsControlPressed(2, Control.PhoneUp) && !Game.IsControlPressed(2, Control.PhoneDown) && !Game.IsControlPressed(2, Control.PhoneLeft) && !Game.IsControlPressed(2, Control.PhoneRight))
             {
-                if (Game.GameTime - _timer > 250)
-                {
-                    result = await _pause.SendScrollEvent(-1);
-                    _timer = Game.GameTime;
-                }
+                times = 0;
+                delay = 150;
             }
-            else if (Game.IsControlPressed(2, Control.LookDownOnly))
-            {
-                if (Game.GameTime - _timer > 250)
-                {
-                    result = await _pause.SendScrollEvent(1);
-                    _timer = Game.GameTime;
-                }
-            }
-            */
-            /*
-            if (Game.IsControlPressed(2, Control.PhoneLeft))
-            {
-                if (FocusLevel == 2)
-                {
-                    if (Game.GameTime - _timer > 250)
-                    {
-                        result = await _pause.SendInputEvent(10);
-                        _timer = Game.GameTime;
-                    }
-                }
-            }
-            else if (Game.IsControlPressed(2, Control.PhoneRight))
-            {
-                if (FocusLevel == 2)
-                {
-                    if (Game.GameTime - _timer > 250)
-                    {
-                        result = await _pause.SendInputEvent(11);
-                        _timer = Game.GameTime;
-                    }
-                }
-            }
-            */
-            /*
-            if (Game.IsControlJustPressed(0, Control.Attack) && API.IsInputDisabled(2))
-            {
-                if (Game.GameTime - _timer > 250)
-                {
-                    result = await _pause.SendClickEvent();
-                    _timer = Game.GameTime;
-                }
-            }
-
-            if (!string.IsNullOrWhiteSpace(result) && result.Contains(","))
-            {
-                var split = result.Split(',');
-                var curTab = Convert.ToInt32(split[0]);
-                var focusLevel = Convert.ToInt32(split[1]);
-                int leftItemIndex = -1;
-                int rightPanelIndex = -1;
-                int retVal = -1;
-                bool retBool = false;
-                if (split.Length > 2)
-                {
-                    switch (split.Length)
-                    {
-                        case 3:
-                            leftItemIndex = split[2] != "undefined" ? Convert.ToInt32(split[2]) : -1;
-                            break;
-                        case 5:
-                            leftItemIndex = Convert.ToInt32(split[2]);
-                            rightPanelIndex = Convert.ToInt32(split[3]);
-                            if (split[4] == "true" || split[4] == "false")
-                                retBool = Convert.ToBoolean(split[4]);
-                            else
-                                retVal = Convert.ToInt32(split[4]);
-                            break;
-                    }
-                }
-
-                Index = curTab;
-                FocusLevel = focusLevel;
-
-                if (focusLevel == 0)
-                {
-                    foreach (var t in Tabs)
-                        t.Focused = Tabs.IndexOf(t) == Index;
-                    SendPauseMenuTabChange();
-                }
-
-                if (focusLevel == 1)
-                {
-                    var tab = Tabs[Index];
-                    if (tab is not TabTextItem)
-                    {
-                        (tab as TabSubmenuItem).Index = leftItemIndex;
-                        LeftItemIndex = leftItemIndex;
-                        foreach (var item in (tab as TabSubmenuItem).LeftItemList)
-                        {
-                            item.Highlighted = (tab as TabSubmenuItem).LeftItemList.IndexOf(item) == leftItemIndex;
-                        }
-                    }
-                }
-
-                if (focusLevel == 2)
-                {
-                    var leftItem = Tabs[Index].LeftItemList.SingleOrDefault(x => x.Highlighted);
-                    if (leftItem.ItemType == LeftItemType.Settings)
-                    {
-                        leftItem.ItemIndex = rightPanelIndex;
-                        RightItemIndex = leftItem.ItemIndex;
-                        foreach (var it in leftItem.ItemList)
-                        {
-                            (it as SettingsTabItem).Highlighted = leftItem.ItemList.IndexOf(it) == rightPanelIndex;
-                            if ((it as SettingsTabItem).Highlighted)
-                            {
-                                var rightItem = it as SettingsTabItem;
-                                switch (rightItem.ItemType)
-                                {
-                                    case SettingsItemType.ListItem:
-                                        rightItem.ItemIndex = retVal;
-                                        break;
-                                    case SettingsItemType.SliderBar:
-                                    case SettingsItemType.ProgressBar:
-                                    case SettingsItemType.MaskedProgressBar:
-                                        rightItem.Value = retVal;
-                                        break;
-                                    case SettingsItemType.CheckBox:
-                                        rightItem.IsChecked = retBool;
-                                        break;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // DEBUG
-                //Debug.WriteLine("Scaleform [tabIndex, focusLevel, currentTabLeftItemIndex, currentRightPanelItemIndex, retVal] = " + result);
-                //Debug.WriteLine($"C# [tabIndex, focusLevel, currentTabLeftItemIndex, currentRightPanelItemIndex, retVal] = {Index},{FocusLevel},{leftItemIndex},{RightItemIndex}");
-            }
-            */
         }
+
+        public async void Select()
+        {
+            BeginScaleformMovieMethod(_pause._lobby.Handle, "SET_INPUT_EVENT");
+            ScaleformMovieMethodAddParamInt(16);
+            var ret = EndScaleformMovieMethodReturnValue();
+            while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            var result = GetScaleformMovieFunctionReturnString(ret);
+
+            var split = result.Split(',').Select(int.Parse).ToArray();
+            if (FocusLevel == SettingsColumn.Order)
+            {
+                var item = SettingsColumn.Items[SettingsColumn.CurrentSelection];
+                if (!item.Enabled)
+                {
+                    Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
+                    return;
+                }
+                switch (item)
+                {
+                    case UIMenuCheckboxItem:
+                        var cbIt = item as UIMenuCheckboxItem;
+                        cbIt.Checked = !cbIt.Checked;
+                        cbIt.CheckboxEventTrigger();
+                        break;
+                    default:
+                        item.ItemActivate(null);
+                        break;
+                }
+            }
+            else if (FocusLevel == PlayersColumn.Order)
+            {
+
+            }
+        }
+
+        public async void GoBack()
+        {
+            Visible = false;
+        }
+
+        public async void GoUp()
+        {
+            BeginScaleformMovieMethod(_pause._lobby.Handle, "SET_INPUT_EVENT");
+            ScaleformMovieMethodAddParamInt(8);
+            var ret = EndScaleformMovieMethodReturnValue();
+            while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            var result = GetScaleformMovieFunctionReturnString(ret);
+
+            var split = result.Split(',').Select(int.Parse).ToArray();
+            FocusLevel = split[0];
+            if (FocusLevel == SettingsColumn.Order)
+            {
+                SettingsColumn.CurrentSelection = split[1];
+                SettingsColumn.IndexChangedEvent();
+            }
+            else if (FocusLevel == PlayersColumn.Order)
+            {
+                PlayersColumn.CurrentSelection = split[1];
+                PlayersColumn.IndexChangedEvent();
+            }
+        }
+
+        public async void GoDown()
+        {
+            BeginScaleformMovieMethod(_pause._lobby.Handle, "SET_INPUT_EVENT");
+            ScaleformMovieMethodAddParamInt(9);
+            var ret = EndScaleformMovieMethodReturnValue();
+            while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            var result = GetScaleformMovieFunctionReturnString(ret);
+
+            var split = result.Split(',').Select(int.Parse).ToArray();
+            FocusLevel = split[0];
+            if (FocusLevel == SettingsColumn.Order)
+            {
+                SettingsColumn.CurrentSelection = split[1];
+                SettingsColumn.IndexChangedEvent();
+            }
+            else if (FocusLevel == PlayersColumn.Order)
+            {
+                PlayersColumn.CurrentSelection = split[1];
+                PlayersColumn.IndexChangedEvent();
+            }
+        }
+
+        public async void GoLeft()
+        {
+            BeginScaleformMovieMethod(_pause._lobby.Handle, "SET_INPUT_EVENT");
+            ScaleformMovieMethodAddParamInt(10);
+            var ret = EndScaleformMovieMethodReturnValue();
+            while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            var result = GetScaleformMovieFunctionReturnString(ret);
+
+            var split = result.Split(',').Select(int.Parse).ToArray();
+
+            if (split[2] == -1)
+            {
+                FocusLevel = split[0];
+                if (FocusLevel == SettingsColumn.Order)
+                {
+                    SettingsColumn.CurrentSelection = split[1];
+                    SettingsColumn.IndexChangedEvent();
+                }
+                else if (FocusLevel == PlayersColumn.Order)
+                {
+                    PlayersColumn.CurrentSelection = split[1];
+                    PlayersColumn.IndexChangedEvent();
+                }
+            }
+            else
+            {
+                var item = SettingsColumn.Items[SettingsColumn.CurrentSelection];
+                if (!item.Enabled)
+                {
+                    Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
+                    return;
+                }
+                switch (item)
+                {
+                    case UIMenuListItem:
+                        {
+                            UIMenuListItem it = (UIMenuListItem)item;
+                            it.Index = split[2];
+                            //ListChange(it, it.Index);
+                            it.ListChangedTrigger(it.Index);
+                            break;
+                        }
+                    case UIMenuSliderItem:
+                        {
+                            UIMenuSliderItem it = (UIMenuSliderItem)item;
+                            it.Value = split[2];
+                            //SliderChange(it, it.Value);
+                            break;
+                        }
+                    case UIMenuProgressItem:
+                        {
+                            UIMenuProgressItem it = (UIMenuProgressItem)item;
+                            it.Value = split[2];
+                            //ProgressChange(it, it.Value);
+                            break;
+                        }
+                }
+            }
+        }
+
+        public async void GoRight()
+        {
+            BeginScaleformMovieMethod(_pause._lobby.Handle, "SET_INPUT_EVENT");
+            ScaleformMovieMethodAddParamInt(11);
+            var ret = EndScaleformMovieMethodReturnValue();
+            while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            var result = GetScaleformMovieFunctionReturnString(ret);
+
+            var split = result.Split(',').Select(int.Parse).ToArray();
+
+            if (split[2] == -1)
+            {
+                FocusLevel = split[0];
+                if (FocusLevel == SettingsColumn.Order)
+                {
+                    SettingsColumn.CurrentSelection = split[1];
+                    SettingsColumn.IndexChangedEvent();
+                }
+                else if (FocusLevel == PlayersColumn.Order)
+                {
+                    PlayersColumn.CurrentSelection = split[1];
+                    PlayersColumn.IndexChangedEvent();
+                }
+            }
+            else
+            {
+                var item = SettingsColumn.Items[SettingsColumn.CurrentSelection];
+                if (!item.Enabled)
+                {
+                    Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
+                    return;
+                }
+                switch (item)
+                {
+                    case UIMenuListItem:
+                        {
+                            UIMenuListItem it = (UIMenuListItem)item;
+                            it.Index = split[2];
+                            //ListChange(it, it.Index);
+                            it.ListChangedTrigger(it.Index);
+                            break;
+                        }
+                    case UIMenuSliderItem:
+                        {
+                            UIMenuSliderItem it = (UIMenuSliderItem)item;
+                            it.Value = split[2];
+                            //SliderChange(it, it.Value);
+                            break;
+                        }
+                    case UIMenuProgressItem:
+                        {
+                            UIMenuProgressItem it = (UIMenuProgressItem)item;
+                            it.Value = split[2];
+                            //ProgressChange(it, it.Value);
+                            break;
+                        }
+                }
+            }
+        }
+
+        void ButtonDelay()
+        {
+            // Increment the "changed indexes" counter
+            times++;
+
+            // Each time "times" is a multiple of 5 we decrease the delay.
+            // Min delay for the scaleform is 50.. less won't change due to the
+            // awaiting time for the scaleform itself.
+            if (times % 5 == 0)
+            {
+                delay -= 10;
+                if (delay < 50) delay = 50;
+            }
+            // Reset the time to the current game timer.
+            time = Game.GameTime;
+        }
+
     }
 }

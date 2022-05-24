@@ -1058,6 +1058,6 @@ namespace ScaleformUI
         /// <summary>
         /// Returns the lobby this item is in.
         /// </summary>
-        public MainView ParentLobby { get; internal set; }
+        public SettingsListColumn ParentColumn { get; internal set; }
     }
 }

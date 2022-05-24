@@ -20,7 +20,7 @@ namespace ScaleformUI
             TextLeft = textLeft;
             TextRight = textRight;
         }
-        public UIFreemodeDetailsItem(string textLeft, string textRight, BadgeIcon icon, HudColor iconColor = HudColor.HUD_COLOUR_FREEMODE, bool tick = false)
+        public UIFreemodeDetailsItem(string textLeft, string textRight, BadgeIcon icon, HudColor iconColor = HudColor.NONE, bool tick = false)
         {
             Type = 2;
             TextLeft = textLeft;
