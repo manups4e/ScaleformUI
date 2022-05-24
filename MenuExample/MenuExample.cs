@@ -1015,6 +1015,8 @@ public class MenuExample : BaseScript
 		var mainMenu = _menu;
 		// tabview is the main menu.. the container of all the tabs.
 		MainView pauseMenu = new("Lobby Menu", "ScaleformUI for you by Manups4e!", "Detail 1", "Detail 2", "Detail 3");
+		pauseMenu.CanPlayerCloseMenu = true;
+		// this is a showcase... CanPlayerCloseMenu is always defaulted to true.. if false players won't be able to close the menu!
 		var columns = new List<Column>()
 		{
 			new SettingsListColumn("COLUMN SETTINGS", HudColor.HUD_COLOUR_RED),

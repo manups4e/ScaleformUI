@@ -422,7 +422,10 @@ namespace ScaleformUI.PauseMenu
             {
                 FocusLevel--;
             }
-            else Visible = false;
+            else
+            {
+                if(CanPlayerCloseMenu) Visible = false;
+            }
         }
 
         public async void GoUp()

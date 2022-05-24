@@ -484,7 +484,8 @@ namespace ScaleformUI.LobbyMenu
 
         public async void GoBack()
         {
-            Visible = false;
+            if(CanPlayerCloseMenu)
+                Visible = false;
         }
 
         public async void GoUp()

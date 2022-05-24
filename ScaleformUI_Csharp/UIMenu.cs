@@ -861,6 +861,10 @@ namespace ScaleformUI
 
         internal KeyValuePair<string, string> _customTexture;
 
+        /// <summary>
+        /// Players won't be able to close the menu if this is false! Make sure players can close the menu in some way!!!!!!
+        /// </summary>
+        public bool CanPlayerCloseMenu = true;
         //Pagination
         public int MaxItemsOnScreen
         {
@@ -1774,6 +1778,7 @@ namespace ScaleformUI
                 ScaleformUI._ui.CallFunction("CLEAR_ALL");
                 ScaleformUI.InstructionalButtons.Enabled = true;
                 ScaleformUI.InstructionalButtons.SetInstructionalButtons(ParentMenu.InstructionalButtons);
+                _visible = false;
                 _poolcontainer.MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
                 ParentMenu.MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
                 MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
@@ -1781,7 +1786,10 @@ namespace ScaleformUI
                 ParentMenu._visible = true;
                 ParentMenu.BuildUpMenu();
             }
-            Visible = false;
+            else
+            {
+                if (CanPlayerCloseMenu) Visible = false;
+            }
         }
 
         public async void GoUp()
