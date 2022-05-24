@@ -82,3 +82,6 @@ function split(pString, pPattern)
     return Table
  end
  
+function FormatXWYH(Value, Value2)
+    return Value/1920, Value2/1080
+end
