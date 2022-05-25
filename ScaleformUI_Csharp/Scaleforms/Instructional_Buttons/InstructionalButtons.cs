@@ -321,7 +321,7 @@ namespace ScaleformUI
 
 
         /// <summary>
-        /// Shows the Saving / Loading Button
+        /// Shows the Saving / Loading Button and hides it after some time automatically
         /// </summary>
         /// <param name="spinnerType">The type of Spinner to show</param>
         /// <param name="text">The text of the Button</param>
@@ -335,6 +335,31 @@ namespace ScaleformUI
             while (Game.GameTime - savingTimer <= time) await BaseScript.Delay(100);
             Screen.LoadingPrompt.Hide();
             _isSaving = false;
+        }
+
+        /// <summary>
+        /// Shows the Saving / Loading Button
+        /// </summary>
+        /// <param name="spinnerType">The type of Spinner to show</param>
+        /// <param name="text">The text of the Button</param>
+        public void AddSavingText(LoadingSpinnerType spinnerType, string text)
+        {
+            _isSaving = true;
+            _changed = true;
+            savingTimer = Game.GameTime;
+            Screen.LoadingPrompt.Show(text, spinnerType);
+        }
+
+        /// <summary>
+        /// Hides the saving button in case no time has been given
+        /// </summary>
+        public void HideSavingText()
+        {
+            if (_isSaving)
+            {
+                Screen.LoadingPrompt.Hide();
+                _isSaving = false;
+            }
         }
 
         internal void UpdateButtons()
