@@ -993,18 +993,18 @@ function UIMenu:ProcessMouse()
                 self:CurrentSelection(item_id)
                 PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
             elseif context == 10 then -- panels (10 => context 1, panel_type 0) // ColorPanel
-                local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SELECT_PANEL", true, self:CurrentSelection() - 1)
-                while not IsScaleformMovieMethodReturnValueReady(return_value) do
-                    Citizen.Wait(0)
-                end
-                local res = GetScaleformMovieMethodReturnValueString(return_value)
-
-                local split = split(res, ",")
-                local panels = self.Items[self:CurrentSelection()]
-                local panel = self.Items[self:CurrentSelection()].Panels[tonumber(split[1]) + 1]
-                panel.value = tonumber(split[2]) + 1
-                self:OnColorPanelChanged(panel.ParentItem, panel, panel:CurrentSelection())
-                panel.OnColorPanelChanged(panel.ParentItem, panel, panel:CurrentSelection())
+                Citizen.CreateThread(function()
+                    local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SELECT_PANEL", true, self:CurrentSelection() - 1)
+                    while not IsScaleformMovieMethodReturnValueReady(return_value) do
+                        Citizen.Wait(0)
+                    end
+                    local res = GetScaleformMovieMethodReturnValueString(return_value)
+                    local split = split(res, ",")
+                    local panel = self.Items[self:CurrentSelection()].Panels[tonumber(split[1]) + 1]
+                    panel.value = tonumber(split[2]) + 1
+                    self.OnColorPanelChanged(panel.ParentItem, panel, panel:CurrentSelection())
+                    panel.OnColorPanelChanged(panel.ParentItem, panel, panel:CurrentSelection())
+                end)
             elseif context == 11 then -- panels (11 => context 1, panel_type 1) // PercentagePanel
                 cursor_pressed = true
             elseif context == 12 then -- panels (12 => context 1, panel_type 2) // GridPanel
@@ -1068,7 +1068,6 @@ function UIMenu:ProcessMouse()
         end)
     else 
         if not HasSoundFinished(menuSound) then
-            Citizen.Wait(1)
             StopSound(menuSound)
             ReleaseSoundId(menuSound)
         end
