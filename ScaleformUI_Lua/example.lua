@@ -1,7 +1,10 @@
 local pool = MenuPool.New()
 local animEnabled = true
+local timerBarPool = TimerBarPool.New()
 
--- to handle controls, inputs and also draw the menu
+-- to handle controls and inputs to the menu
+-- to draw the menu... since the controls await response from the Scaleform..
+-- drawing in the same thread of the controls would lead to a blinking menu everytime a control is pressed.
 Citizen.CreateThread(function()
 	while true do
 		Wait(0)
@@ -9,6 +12,7 @@ Citizen.CreateThread(function()
         pool:Draw()
 	end
 end)
+
 
 function CreateMenu()
 	local txd = CreateRuntimeTxd("scaleformui")
@@ -118,17 +122,12 @@ function CreateMenu()
 	--[[
 		2 ways to add submenus.. 
 		- the old way => local submenu = pool:AddSubMenu(parent, ...)
-		example: local windowSubmenu = pool:AddSubMenu(exampleMenu, "Heritage Menu", "", true, true)
-		- NEW way => 
+		- way.New => 
 			local subMenu = UIMenu.New()
 			parent:AddSubMenu(subMenu, itemText, itemDescription, offset, KeepBanner)
-		example:
-			local windowSubmenu = pool:AddSubMenu(exampleMenu, "Heritage Menu", "", true, true)
-			local heritageWindow = UIMenuHeritageWindow.New(0, 0)
-		the new approach lets you create the submenu, and add it when you want to, without the need to change your menu accordingly
 	]]
-
-	local windowSubmenu = pool:AddSubMenu(exampleMenu, "Heritage Menu", "", true, true)
+	local windowSubmenu = UIMenu.New("Windows Submenu", "Windows Subtitle")
+	exampleMenu:AddSubMenu(windowSubmenu, "Windows Menu", "separate descriptions yeeeeah", nil, true)
 	local heritageWindow = UIMenuHeritageWindow.New(0, 0)
 	local detailsWindow = UIMenuDetailsWindow.New("Parents resemblance", "Dad:", "Mom:", true, {})
 	windowSubmenu:AddWindow(heritageWindow)
@@ -148,11 +147,11 @@ function CreateMenu()
 	detailsWindow.DetailStats = {
 		{
 			Percentage = 100,
-			HudColor = 6
+			Colours = 6
 		},
 		{
 			Percentage = 0,
-			HudColor = 50
+			Colours = 50
 		}
 	}
 
@@ -185,34 +184,39 @@ function CreateMenu()
 		menu:AnimationType(index)
 	end
 
-	colorPanel.PanelChanged = function(menu, item, newindex)
-		local message = "ColorPanel index => " .. newindex + 1
-		ScaleformUI.Notifications:ShowNotification(message)
-	end
-
-	colorPanel2.PanelChanged = function(menu, item, newindex)
-		local message = "ColorPanel2 index => " .. newindex + 1
-		ScaleformUI.Notifications:ShowNotification(message)
-	end
-
-	percentagePanel.PanelChanged = function(menu, item, newpercentage)
-		local message = "PercentagePanel => " .. newpercentage
-		ScaleformUI.Notifications:ShowNotification(message)
-	end
-
-	gridPanel.PanelChanged = function(menu, item, newposition)
-		print(newposition)
-	end
-
-	horizontalGridPanel.PanelChanged = function(menu, item, newposition)
-		print(newposition)
-	end
-
-	sidePanelVehicleColor.PickerSelect = function(menu, item, newindex)
+	colorPanel.OnColorPanelChanged = function(menu, item, newindex)
+		print(newindex)
 		local message = "ColorPanel index => " .. newindex + 1
 		AddTextEntry("ScaleformUINotification", message)
 		BeginTextCommandThefeedPost("ScaleformUINotification")
 		EndTextCommandThefeedPostTicker(false, true)
+	end
+
+	colorPanel2.OnColorPanelChanged = function(menu, item, newindex)
+		local message = "ColorPanel2 index => " .. newindex + 1
+		AddTextEntry("ScaleformUINotification", message)
+		BeginTextCommandThefeedPost("ScaleformUINotification")
+		EndTextCommandThefeedPostTicker(false, true)
+	end
+
+	percentagePanel.OnPercentagePanelChange = function(menu, item, newpercentage)
+		local message = "PercentagePanel => " .. newpercentage
+		ScaleformUI.Notifications:ShowSubtitle(message)
+	end
+
+	gridPanel.OnGridPanelChanged = function(menu, item, newposition)
+		local message = "PercentagePanel => " .. newposition
+		ScaleformUI.Notifications:ShowSubtitle(message)
+	end
+
+	horizontalGridPanel.OnGridPanelChanged = function(menu, item, newposition)
+		local message = "PercentagePanel => " .. newposition
+		ScaleformUI.Notifications:ShowSubtitle(message)
+	end
+
+	sidePanelVehicleColor.PickerSelect = function(menu, item, newindex)
+		local message = "ColorPanel index => " .. newindex + 1
+		ScaleformUI.Notificationss.ShowNotification(message)
 	end
 
 	local MomIndex = 0
@@ -249,7 +253,7 @@ function CreatePauseMenu()
 
 	pool:AddPauseMenu(pauseMenuExample)
 
-	local basicTab = TabTextItem.New("TABTEXTITEM", "This is the Title!")
+	local basicTab = TextTab.New("TEXTTAB", "This is the Title!")
 	basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
 	basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~r~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
 	basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~b~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
@@ -264,13 +268,14 @@ function CreatePauseMenu()
 	basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"))
 	pauseMenuExample:AddTab(basicTab)
 
-	local multiItemTab = TabSubMenuItem.New("TabSubMenu") -- this is the tab with multiple sub menus in it.. each submenu has a different purpose
+	local multiItemTab = SubmenuTab.New("SUBMENUTAB") -- this is the tab with multiple sub menus in it.. each submenu has a different purpose
 	pauseMenuExample:AddTab(multiItemTab)
 	local first = TabLeftItem.New("1 - Empty", LeftItemType.Empty) -- empty item.. 
 	local second = TabLeftItem.New("2 - Info", LeftItemType.Info) -- info (like briefings..)
 	local third = TabLeftItem.New("3 - Statistics", LeftItemType.Statistics) -- for statistics
 	local fourth = TabLeftItem.New("4 - Settings", LeftItemType.Settings) -- well.. settings..
 	local fifth = TabLeftItem.New("5 - Keymaps", LeftItemType.Keymap) -- keymaps for custom keymapping 
+	first:Enabled(false)
 	multiItemTab:AddLeftItem(first)
 	multiItemTab:AddLeftItem(second)
 	multiItemTab:AddLeftItem(third)
@@ -306,13 +311,12 @@ function CreatePauseMenu()
 	third:AddItem(_coloredBarStatItem4)
 
 	local itemList = { "This", "Is", "The", "List", "Super", "Power", "Wooow" }
-	-- different New for each type of setting
-	local _settings1 = SettingsTabItem.NewBasic("Item's Label", "Item's right Label") 
-	local _settings2 = SettingsTabItem.NewList("Item's Label", itemList, 0)
-	local _settings3 = SettingsTabItem.NewProgress("Item's Label", 100, 25, false, Colours.HUD_COLOUR_FREEMODE)
-	local _settings4 = SettingsTabItem.NewProgress("Item's Label", 100, 75, true, Colours.HUD_COLOUR_PINK)
-	local _settings5 = SettingsTabItem.NewCheckbox("Item's Label", 1, true) -- 0 = cross / 1 = tick
-	local _settings6 = SettingsTabItem.NewSlider("Item's Label", 100, 50, Colours.HUD_COLOUR_RED)
+	local _settings1 = SettingsItem.New("Item's Label", "Item's right Label") 
+	local _settings2 = SettingsListItem.New("Item's Label", itemList, 0)
+	local _settings3 = SettingsProgressItem.New("Item's Label", 100, 25, false, Colours.HUD_COLOUR_FREEMODE)
+	local _settings4 = SettingsProgressItem.New("Item's Label", 100, 75, true, Colours.HUD_COLOUR_PINK)
+	local _settings5 = SettingsCheckboxItem.New("Item's Label", 1, true) -- 0 = cross / 1 = tick
+	local _settings6 = SettingsSliderItem.New("Item's Label", 100, 50, Colours.HUD_COLOUR_RED)
 	fourth:AddItem(_settings1)
 	fourth:AddItem(_settings2)
 	fourth:AddItem(_settings3)
@@ -346,11 +350,11 @@ function CreatePauseMenu()
 		Notifications:ShowSubtitle(tab.Label .. " Selected!")
 	end
 
-	pauseMenuExample.OnPauseMenuFocusChanged = function(menu, tab, focusLevel, leftItemIndex)
+	pauseMenuExample.OnPauseMenuFocusChanged = function(menu, tab, focusLevel)
 		Notifications:ShowSubtitle(tab.Label .. " Focus at level =>~y~ " .. focusLevel .. " ~w~~s~!")
 		if focusLevel == 1 then
 			local _, subType = tab()
-			if subType == "TabTextItem" then
+			if subType == "TextTab" then
 				local buttons = {
 					InstructionalButton.New(GetLabelText("HUD_INPUT3"), -1, 177, 177, -1),
 					InstructionalButton.New("Scroll text", 0, 2, -1, -1),
@@ -364,15 +368,183 @@ function CreatePauseMenu()
 		end
 	end
 
-	pauseMenuExample.OnLeftItemChange = function(menu, tabIndex, focusLevel, leftItemIndex)
-		Notifications:ShowSubtitle(menu.Tabs[tabIndex].Label .. " Focus at level => ~y~" .. focusLevel .. "~w~, and left Item ~o~N° " .. leftItemIndex .. "~w~ selected!")
+	pauseMenuExample.OnLeftItemChange = function(menu, item, leftItemIndex)
+		Notifications:ShowSubtitle("OnLeftItemChange:"..menu.Tabs[menu.Index].Label .. " Focus at level =>~y~ " .. menu.focusLevel .. "~s~~w~, and left Item ~o~N° " .. leftItemIndex .. "~w~ selected!")
 	end
 
-	pauseMenuExample.OnRightItemChange = function (menu, tabIndex, focusLevel, leftItemIndex, rightItemIndex)
-		Notifications:ShowSubtitle(menu.Tabs[tabIndex].Label .. " Focus at level => ~y~" .. focusLevel .. "~w~, left Item ~o~N° " .. leftItemIndex .. "~w~ and right Item ~b~N° " .. rightItemIndex .. "~w~ selected!")
+	pauseMenuExample.OnRightItemChange = function (menu, item, rightItemIndex)
+		Notifications:ShowSubtitle(menu.Tabs[menu.Index].Label .. " Focus at level => ~y~ " .. menu:FocusLevel() .. "~w~, left Item ~o~N° " .. menu:LeftItemIndex() .. "~w~ and right Item ~b~N° " .. rightItemIndex .. "~w~ selected!")
 	end
 
 	pauseMenuExample:Visible(true)
+end
+
+function CreateLobbyMenu()
+		local lobbyMenu = MainView.New("Lobby Menu", "ScaleformUI for you by Manups4e!", "Detail 1", "Detail 2", "Detail 3")
+		local columns = {
+			SettingsListColumn.New("COLUMN SETTINGS", Colours.HUD_COLOUR_RED),
+			PlayerListColumn.New("COLUMN PLAYERS", Colours.HUD_COLOUR_ORANGE),
+			MissionDetailsPanel.New("COLUMN INFO PANEL", Colours.HUD_COLOUR_GREEN),
+		}
+		lobbyMenu:SetupColumns(columns)
+		local handle = RegisterPedheadshot(PlayerPedId())
+		while not IsPedheadshotReady(handle) or not IsPedheadshotValid(handle) do Citizen.Wait(0) end
+		local txd = GetPedheadshotTxdString(handle)
+		lobbyMenu:HeaderPicture(txd, txd) 	-- lobbyMenu:CrewPicture used to add a picture on the left of the HeaderPicture
+
+		UnregisterPedheadshot(handle) -- call it right after adding the menu.. this way the txd will be loaded correctly by the scaleform.. 
+
+		pool:AddPauseMenu(lobbyMenu)
+		lobbyMenu:CanPlayerCloseMenu(true)
+		-- this is just an example..CanPlayerCloseMenu is always defaulted to true.. if you set this to false.. be sure to give the players a way out of your menu!!! 
+		local item = UIMenuItem.New("UIMenuItem", "UIMenuItem description")
+		local item1 = UIMenuListItem.New("UIMenuListItem", { "This", "is", "a", "Test"}, 0, "UIMenuListItem description")
+		local item2 = UIMenuCheckboxItem.New("UIMenuCheckboxItem", true, 1, "UIMenuCheckboxItem description")
+		local item3 = UIMenuSliderItem.New("UIMenuSliderItem", 100, 5, 50, false, "UIMenuSliderItem description")
+		local item4 = UIMenuProgressItem.New("UIMenuProgressItem", 10, 5, "UIMenuProgressItem description")
+		item:BlinkDescription(true)
+		lobbyMenu.SettingsColumn:AddSettings(item)
+		lobbyMenu.SettingsColumn:AddSettings(item1)
+		lobbyMenu.SettingsColumn:AddSettings(item2)
+		lobbyMenu.SettingsColumn:AddSettings(item3)
+		lobbyMenu.SettingsColumn:AddSettings(item4)
+
+		local friend = FriendItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_GREEN, true, GetRandomIntInRange(15, 55), "Status", "CrewTag")
+		local friend1 = FriendItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_MENU_YELLOW, true, GetRandomIntInRange(15, 55), "Status", "CrewTag")
+		local friend2 = FriendItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_PINK, true, GetRandomIntInRange(15, 55), "Status", "CrewTag")
+		local friend3 = FriendItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_BLUE, true, GetRandomIntInRange(15, 55), "Status", "CrewTag")
+		local friend4 = FriendItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_ORANGE, true, GetRandomIntInRange(15, 55), "Status", "CrewTag")
+		local friend5 = FriendItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_RED, true, GetRandomIntInRange(15, 55), "Status", "CrewTag")
+		friend:SetLeftIcon(LobbyBadgeIcon.IS_CONSOLE_PLAYER, false)
+		friend1:SetLeftIcon(LobbyBadgeIcon.IS_PC_PLAYER, false)
+		friend2:SetLeftIcon(LobbyBadgeIcon.SPECTATOR, false)
+		friend3:SetLeftIcon(LobbyBadgeIcon.INACTIVE_HEADSET, false)
+		friend4:SetLeftIcon(BadgeStyle.COUNTRY_ITALY, true)
+		friend5:SetLeftIcon(BadgeStyle.CASTLE, true)
+
+        local panel = PlayerStatsPanel.New("Player 1", Colours.HUD_COLOUR_GREEN)
+		panel:Description("This is the description for Player 1!!")
+		panel:HasPlane(true)
+		panel:HasHeli(true)
+		panel.RankInfo:RankLevel(150)
+		panel.RankInfo:LowLabel("This is the low label")
+		panel.RankInfo:MidLabel("This is the middle label")
+		panel.RankInfo:UpLabel("This is the upper label")
+		panel:AddStat(PlayerStatsPanelStatItem.New("Statistic 1", "Description 1", GetRandomIntInRange(30, 150)))
+		panel:AddStat(PlayerStatsPanelStatItem.New("Statistic 2", "Description 2", GetRandomIntInRange(30, 150)))
+		panel:AddStat(PlayerStatsPanelStatItem.New("Statistic 3", "Description 3", GetRandomIntInRange(30, 150)))
+		panel:AddStat(PlayerStatsPanelStatItem.New("Statistic 4", "Description 4", GetRandomIntInRange(30, 150)))
+		panel:AddStat(PlayerStatsPanelStatItem.New("Statistic 5", "Description 5", GetRandomIntInRange(30, 150)))
+		friend:AddPanel(panel)
+
+		local panel1 = PlayerStatsPanel.New("Player 2", Colours.HUD_COLOUR_MENU_YELLOW)
+		panel:Description("This is the description for Player 2!!")
+		panel:HasPlane(true)
+		panel:HasVehicle(true)
+		panel1.RankInfo:RankLevel(70)
+		panel1.RankInfo:LowLabel("This is the low label")
+		panel1.RankInfo:MidLabel("This is the middle label")
+		panel1.RankInfo:UpLabel("This is the upper label")
+		panel1:AddStat(PlayerStatsPanelStatItem.New("Statistic 1", "Description 1", GetRandomIntInRange(30, 150)))
+		panel1:AddStat(PlayerStatsPanelStatItem.New("Statistic 2", "Description 2", GetRandomIntInRange(30, 150)))
+		panel1:AddStat(PlayerStatsPanelStatItem.New("Statistic 3", "Description 3", GetRandomIntInRange(30, 150)))
+		panel1:AddStat(PlayerStatsPanelStatItem.New("Statistic 4", "Description 4", GetRandomIntInRange(30, 150)))
+		panel1:AddStat(PlayerStatsPanelStatItem.New("Statistic 5", "Description 5", GetRandomIntInRange(30, 150)))
+		friend1:AddPanel(panel1)
+
+		local panel3 = PlayerStatsPanel.New("Player 3", Colours.HUD_COLOUR_PINK)
+		panel:Description("This is the description for Player 3!!")
+		panel:HasPlane(true)
+		panel:HasHeli(true)
+		panel:HasVehicle(true)
+		panel3.RankInfo:RankLevel(15)
+		panel3.RankInfo:LowLabel("This is the low label")
+		panel3.RankInfo:MidLabel("This is the middle label")
+		panel3.RankInfo:UpLabel("This is the upper label")
+		panel3:AddStat(PlayerStatsPanelStatItem.New("Statistic 1", "Description 1", GetRandomIntInRange(30, 150)))
+		panel3:AddStat(PlayerStatsPanelStatItem.New("Statistic 2", "Description 2", GetRandomIntInRange(30, 150)))
+		panel3:AddStat(PlayerStatsPanelStatItem.New("Statistic 3", "Description 3", GetRandomIntInRange(30, 150)))
+		panel3:AddStat(PlayerStatsPanelStatItem.New("Statistic 4", "Description 4", GetRandomIntInRange(30, 150)))
+		panel3:AddStat(PlayerStatsPanelStatItem.New("Statistic 5", "Description 5", GetRandomIntInRange(30, 150)))
+		friend2:AddPanel(panel3)
+
+		local panel4 = PlayerStatsPanel.New("Player 4", Colours.HUD_COLOUR_FREEMODE)
+		panel:Description("This is the description for Player 4!!")
+		panel:HasPlane(true)
+		panel:HasHeli(true)
+		panel:HasBoat(true)
+		panel4.RankInfo:RankLevel(10)
+		panel4.RankInfo:LowLabel("This is the low label")
+		panel4.RankInfo:MidLabel("This is the middle label")
+		panel4.RankInfo:UpLabel("This is the upper label")
+		panel4:AddStat(PlayerStatsPanelStatItem.New("Statistic 1", "Description 1", GetRandomIntInRange(30, 150)))
+		panel4:AddStat(PlayerStatsPanelStatItem.New("Statistic 2", "Description 2", GetRandomIntInRange(30, 150)))
+		panel4:AddStat(PlayerStatsPanelStatItem.New("Statistic 3", "Description 3", GetRandomIntInRange(30, 150)))
+		panel4:AddStat(PlayerStatsPanelStatItem.New("Statistic 4", "Description 4", GetRandomIntInRange(30, 150)))
+		panel4:AddStat(PlayerStatsPanelStatItem.New("Statistic 5", "Description 5", GetRandomIntInRange(30, 150)))
+		friend3:AddPanel(panel4)
+
+		local panel5 = PlayerStatsPanel.New("Player 5", Colours.HUD_COLOUR_ORANGE)
+		panel:Description("This is the description for Player 5!!")
+		panel:HasPlane(true)
+		panel:HasHeli(true)
+		panel5.RankInfo:RankLevel(1000)
+		panel5.RankInfo:LowLabel("This is the low label")
+		panel5.RankInfo:MidLabel("This is the middle label")
+		panel5.RankInfo:UpLabel("This is the upper label")
+		panel5:AddStat(PlayerStatsPanelStatItem.New("Statistic 1", "Description 1", GetRandomIntInRange(30, 150)))
+		panel5:AddStat(PlayerStatsPanelStatItem.New("Statistic 2", "Description 2", GetRandomIntInRange(30, 150)))
+		panel5:AddStat(PlayerStatsPanelStatItem.New("Statistic 3", "Description 3", GetRandomIntInRange(30, 150)))
+		panel5:AddStat(PlayerStatsPanelStatItem.New("Statistic 4", "Description 4", GetRandomIntInRange(30, 150)))
+		panel5:AddStat(PlayerStatsPanelStatItem.New("Statistic 5", "Description 5", GetRandomIntInRange(30, 150)))
+		friend4:AddPanel(panel5)
+
+		local panel6 = PlayerStatsPanel.New("Player 6", Colours.HUD_COLOUR_RED)
+		panel:Description("This is the description for Player 6!!")
+		panel:HasPlane(true)
+		panel:HasHeli(true)
+		panel6.RankInfo:RankLevel(22)
+		panel6.RankInfo:LowLabel("This is the low label")
+		panel6.RankInfo:MidLabel("This is the middle label")
+		panel6.RankInfo:UpLabel("This is the upper label")
+		panel6:AddStat(PlayerStatsPanelStatItem.New("Statistic 1", "Description 1", GetRandomIntInRange(30, 150)))
+		panel6:AddStat(PlayerStatsPanelStatItem.New("Statistic 2", "Description 2", GetRandomIntInRange(30, 150)))
+		panel6:AddStat(PlayerStatsPanelStatItem.New("Statistic 3", "Description 3", GetRandomIntInRange(30, 150)))
+		panel6:AddStat(PlayerStatsPanelStatItem.New("Statistic 4", "Description 4", GetRandomIntInRange(30, 150)))
+		panel6:AddStat(PlayerStatsPanelStatItem.New("Statistic 5", "Description 5", GetRandomIntInRange(30, 150)))
+		friend5:AddPanel(panel6)
+
+		lobbyMenu.PlayersColumn:AddPlayer(friend)
+		lobbyMenu.PlayersColumn:AddPlayer(friend1)
+		lobbyMenu.PlayersColumn:AddPlayer(friend2)
+		lobbyMenu.PlayersColumn:AddPlayer(friend3)
+		lobbyMenu.PlayersColumn:AddPlayer(friend4)
+		lobbyMenu.PlayersColumn:AddPlayer(friend5)
+
+		
+		local txd = CreateRuntimeTxd("scaleformui");
+		local _paneldui = CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160)
+		CreateRuntimeTextureFromDuiHandle(txd, "lobby_panelbackground", GetDuiHandle(_paneldui))
+
+		lobbyMenu.MissionPanel:UpdatePanelPicture("scaleformui", "lobby_panelbackground")
+		lobbyMenu.MissionPanel:Title("ScaleformUI - Title")
+		local detailItem1 = UIMenuFreemodeDetailsItem.New("Left Label", "Right Label", false, BadgeStyle.BRIEFCASE, Colours.HUD_COLOUR_FREEMODE)
+		local detailItem2 = UIMenuFreemodeDetailsItem.New("Left Label", "Right Label", false, BadgeStyle.STAR, Colours.HUD_COLOUR_GOLD)
+		local detailItem3 = UIMenuFreemodeDetailsItem.New("Left Label", "Right Label", false, BadgeStyle.ARMOR, Colours.HUD_COLOUR_PURPLE)
+		local detailItem4 = UIMenuFreemodeDetailsItem.New("Left Label", "Right Label", false, BadgeStyle.BRAND_DILETTANTE, Colours.HUD_COLOUR_GREEN)
+		local detailItem5 = UIMenuFreemodeDetailsItem.New("Left Label", "Right Label", false, BadgeStyle.COUNTRY_ITALY, Colours.HUD_COLOUR_WHITE, true)
+		local detailItem6 = UIMenuFreemodeDetailsItem.New("Left Label", "Right Label", true)
+		local detailItem7 = UIMenuFreemodeDetailsItem.New("Left Label", "Right Label", false)
+		--local missionItem4 = new("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "", false)
+		lobbyMenu.MissionPanel:AddItem(detailItem1)
+		lobbyMenu.MissionPanel:AddItem(detailItem2)
+		lobbyMenu.MissionPanel:AddItem(detailItem3)
+		lobbyMenu.MissionPanel:AddItem(detailItem4)
+		lobbyMenu.MissionPanel:AddItem(detailItem5)
+		lobbyMenu.MissionPanel:AddItem(detailItem6)
+		lobbyMenu.MissionPanel:AddItem(detailItem7)
+
+		lobbyMenu:Visible(true)
 end
 
 Citizen.CreateThread(function()
@@ -380,16 +552,28 @@ Citizen.CreateThread(function()
 	--type, position, scale, distance, color, placeOnGround, bobUpDown, rotate, faceCamera, checkZ
 	local marker = Marker.New(1, pos, vector3(2,2,2), 100.0, {R=0, G= 100, B=50, A=255}, true, false, false, false, true)
 
+	-- example for working timerBars.. you can disable them by setting :Enabled(false).. to hide and show them while drawing :)
+	local textBar = TextTimerBar.New("Label", "Caption")
+	local progrBar = ProgressTimerBar.New("Label")
+	progrBar:Percentage(0.5) -- goes from 0.0 to 1.0
+	timerBarPool:AddBar(textBar)
+	timerBarPool:AddBar(progrBar)
+
 	while true do
 		Wait(0)
 		marker:Draw()
-		ScaleformUI.Notifications:DrawText(0.3, 0.7, "Ped is in Range => " .. tostring(marker:IsInRange()))
-		ScaleformUI.Notifications:DrawText(0.3, 0.725, "Ped is in Marker =>" .. tostring(marker.IsInMarker))
+		ScaleformUI.Notifications:DrawText(0.3, 0.9, "Ped is in Range => " .. tostring(marker:IsInRange()))
+		ScaleformUI.Notifications:DrawText(0.3, 0.925, "Ped is in Marker =>" .. tostring(marker.IsInMarker))
+		timerBarPool:Draw()
+
 		if IsControlJustPressed(0, 166) and not pool:IsAnyMenuOpen() then
 			CreateMenu()
 		end
 		if IsControlJustPressed(0, 167) and not pool:IsAnyMenuOpen() then
 			CreatePauseMenu()
+		end
+		if IsControlJustPressed(0, 168) and not pool:IsAnyMenuOpen() then
+			CreateLobbyMenu()
 		end
 	end
 end)
