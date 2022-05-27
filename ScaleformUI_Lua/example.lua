@@ -4,7 +4,6 @@ local timerBarPool = TimerBarPool.New()
 
 -- to handle controls and inputs to the menu
 -- to draw the menu... since the controls await response from the Scaleform..
--- drawing in the same thread of the controls would lead to a blinking menu everytime a control is pressed.
 Citizen.CreateThread(function()
 	while true do
 		Wait(0)
@@ -17,7 +16,7 @@ end)
 function CreateMenu()
 	local txd = CreateRuntimeTxd("scaleformui")
 	local dui = CreateDui("https://sleeping-tears.xyz/img/gta5/hiccup_racing.png", 288, 160)
-	local sidepanel_txn = CreateRuntimeTextureFromDuiHandle(txd, "sidepanel", GetDuiHandle(dui))
+	CreateRuntimeTextureFromDuiHandle(txd, "sidepanel", GetDuiHandle(dui))
 
 	local exampleMenu = UIMenu.New("ScaleformUI UI", "ScaleformUI SHOWCASE", 50, 50, true, nil, nil, true)
 	exampleMenu:MaxItemsOnScreen(7)
@@ -185,18 +184,13 @@ function CreateMenu()
 	end
 
 	colorPanel.OnColorPanelChanged = function(menu, item, newindex)
-		print(newindex)
 		local message = "ColorPanel index => " .. newindex + 1
-		AddTextEntry("ScaleformUINotification", message)
-		BeginTextCommandThefeedPost("ScaleformUINotification")
-		EndTextCommandThefeedPostTicker(false, true)
+		ScaleformUI.Notifications.ShowNotification(message)
 	end
 
 	colorPanel2.OnColorPanelChanged = function(menu, item, newindex)
 		local message = "ColorPanel2 index => " .. newindex + 1
-		AddTextEntry("ScaleformUINotification", message)
-		BeginTextCommandThefeedPost("ScaleformUINotification")
-		EndTextCommandThefeedPostTicker(false, true)
+		ScaleformUI.Notifications.ShowNotification(message)
 	end
 
 	percentagePanel.OnPercentagePanelChange = function(menu, item, newpercentage)
@@ -216,7 +210,7 @@ function CreateMenu()
 
 	sidePanelVehicleColor.PickerSelect = function(menu, item, newindex)
 		local message = "ColorPanel index => " .. newindex + 1
-		ScaleformUI.Notificationss.ShowNotification(message)
+		ScaleformUI.Notifications.ShowNotification(message)
 	end
 
 	local MomIndex = 0
