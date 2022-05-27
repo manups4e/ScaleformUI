@@ -302,6 +302,7 @@ function TabView:Select()
                     end
                 end
                 if allDisabled then return end
+                PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
                 --[[ end check all disabled ]]--
                 while(not self.Tabs[self.Index].LeftItemList[self.leftItemIndex]:Enabled()) do
                     Citizen.Wait(0)
@@ -458,6 +459,7 @@ function TabView:ProcessMouse()
                 ScaleformUI.Scaleforms._pauseMenu:SelectTab(item_id_h)
                 self:FocusLevel(1)
                 self.Index = item_id_h + 1
+                PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
             end
         end
     end
@@ -484,6 +486,7 @@ function TabView:ProcessMouse()
                     self:LeftItemIndex(item_id+1)
                     self.Tabs[self.Index].LeftItemList[self.leftItemIndex]:Selected(true)
                     self:FocusLevel(1)
+                    PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
                 elseif self:FocusLevel() == 1 then
                     if not self.Tabs[self.Index].LeftItemList[item_id+1]:Enabled() then
                         PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
@@ -497,6 +500,7 @@ function TabView:ProcessMouse()
                     self.Tabs[self.Index].LeftItemList[self.leftItemIndex]:Selected(false)
                     self:LeftItemIndex(item_id+1)
                     self.Tabs[self.Index].LeftItemList[self.leftItemIndex]:Selected(true)
+                    PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
                 end
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_LEFT_ITEM_INDEX", false, item_id)
                 self.Tabs[self.Index].LeftItemList[self.leftItemIndex].OnActivated(self.Tabs[self.Index].LeftItemList[self.leftItemIndex], self.leftItemIndex)
@@ -529,6 +533,7 @@ function TabView:ProcessMouse()
                 self:RightItemIndex(item_id+1)
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_RIGHT_ITEM_INDEX", false, item_id)
                 self.Tabs[self.Index].LeftItemList[self.leftItemIndex].ItemList[self.rightItemIndex]:Selected(true)
+                PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
             end
         elseif event_type == 9 then
             if context == 1 then
