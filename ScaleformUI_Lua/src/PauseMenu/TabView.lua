@@ -468,6 +468,7 @@ function TabView:ProcessMouse()
             if context == 0 then
                 self:FocusLevel(1)
                 if #self.Tabs[self.Index].LeftItemList == 0 then return end
+                if not self.Tabs[self.Index].LeftItemList[self.leftItemList] then return end
                 while not self.Tabs[self.Index].LeftItemList[self.leftItemList]:Enabled() do
                     Citizen.Wait(0)
                     self.leftItemIndex = self.leftItemIndex+1
