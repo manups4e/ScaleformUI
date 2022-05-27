@@ -1,19 +1,11 @@
 local pool = MenuPool.New()
 local animEnabled = true
 
--- to handle controls and inputs to the menu
+-- to handle controls, inputs and also draw the menu
 Citizen.CreateThread(function()
 	while true do
 		Wait(0)
-		pool:ProcessControl()
-	end
-end)
-
--- to draw the menu... since the controls await response from the Scaleform..
--- drawing in the same thread of the controls would lead to a blinking menu everytime a control is pressed.
-Citizen.CreateThread(function()
-	while true do
-		Wait(0)
+        pool:ProcessControl()
         pool:Draw()
 	end
 end)
