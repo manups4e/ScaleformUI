@@ -99,7 +99,6 @@ function TabView:Visible(visible)
             self.OnPauseMenuClose(self)
             SetPlayerControl(PlayerId(), true, 0)
             self._internalpool:ProcessMenus(false)
-            self._internalpool:FlushPauseMenus()
         end
     else
         return self._visible

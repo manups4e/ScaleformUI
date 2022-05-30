@@ -91,7 +91,6 @@ function MainView:Visible(visible)
             self.OnLobbyMenuClose(self)
             SetPlayerControl(PlayerId(), true, 0)
             self._internalpool:ProcessMenus(false)
-            self._internalpool:FlushPauseMenus()
         end
     else
         return self._visible

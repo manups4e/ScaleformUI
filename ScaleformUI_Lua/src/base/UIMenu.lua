@@ -433,7 +433,6 @@ function UIMenu:Visible(bool)
             ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
             self._internalpool.currentMenu = nil
             self._internalpool:ProcessMenus(false)
-            self._internalpool:FlushMenus()
         end
         ScaleformUI.Scaleforms.InstructionalButtons:Enabled(bool)
         if self.Settings.ResetCursorOnOpen then
