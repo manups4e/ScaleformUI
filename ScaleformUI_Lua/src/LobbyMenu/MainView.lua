@@ -53,7 +53,7 @@ end
 function MainView:FocusLevel(index)
     if index ~= nil then
         self.focusLevel = index
-        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_FOCUS", false, index)
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_FOCUS", false, index-1)
     else
         return self.focusLevel
     end
@@ -242,8 +242,8 @@ function MainView:ProcessMouse()
     success, event_type, context, item_id = GetScaleformMovieCursorSelection(ScaleformUI.Scaleforms._pauseMenu._lobby.handle)
     if success then
         if event_type == 5 then
-            if self.focusLevel ~= context then
-                self:FocusLevel(context)
+            if self.focusLevel ~= context+1 then
+                self:FocusLevel(context + 1)
             end
             local col = self._listCol[context+1]
             local Type, SubType = col()
@@ -266,6 +266,7 @@ function MainView:ProcessMouse()
                     return
                 end
                 col:CurrentSelection(item_id)
+                col.OnIndexChanged(item_id+1)
             elseif SubType == "PlayerListColumn" then
                 for k,v in pairs(self.SettingsColumn.Items) do v:Selected(false) end
                 if not col.Items[col:CurrentSelection()]:Enabled() then
@@ -276,6 +277,7 @@ function MainView:ProcessMouse()
                     return
                 end
                 col:CurrentSelection(item_id)
+                col.OnIndexChanged(item_id+1)
             end
         end
     end
@@ -373,7 +375,7 @@ function MainView:Select()
     end
     local retVal = GetScaleformMovieMethodReturnValueString(return_value)
 
-    local split = retVal.split(",")
+    local splitted = split(retVal, ",")
     if self:FocusLevel() == self.SettingsColumn.Order then
         local item = self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]
         local type, subtype = item()
@@ -399,60 +401,58 @@ function MainView:GoBack()
 end
 
 function MainView:GoUp()
-    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 8)
+    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 8,self._delay)
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
     local retVal = GetScaleformMovieMethodReturnValueString(return_value)
 
-    local split = retVal.split(",")
-    self:FocusLevel(tonumber(split[1]))
+    local splitted = split(retVal, ",")
 
     if self:FocusLevel() == self.SettingsColumn.Order then
-        self.SettingsColumn:CurrentSelection(tonumber(split[2]))
-        self.SettingsColumn.OnIndexChanged();
+        self.SettingsColumn:CurrentSelection(tonumber(splitted[2]))
+        self.SettingsColumn.OnIndexChanged(self.SettingsColumn:CurrentSelection())
     elseif self:FocusLevel() == self.PlayersColumn.Order then
-        self.PlayersColumn:CurrentSelection(tonumber(split[2]))
-        self.PlayersColumn.OnIndexChanged(self.SettingsColumn:CurrentSelection())
+        self.PlayersColumn:CurrentSelection(tonumber(splitted[2]))
+        self.PlayersColumn.OnIndexChanged(self.PlayersColumn:CurrentSelection())
     end
 end
 
 function MainView:GoDown()
-    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 9)
+    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 9,self._delay)
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
     local retVal = GetScaleformMovieMethodReturnValueString(return_value)
 
-    local split = retVal.split(",")
-    self:FocusLevel(tonumber(split[1]))
+    local splitted = split(retVal, ",")
 
     if self:FocusLevel() == self.SettingsColumn.Order then
-        self. SettingsColumn:CurrentSelection(tonumber(split[2]))
-        self.SettingsColumn.OnIndexChanged(self.SettingsColumn:CurrentSelection());
+        self.SettingsColumn:CurrentSelection(tonumber(splitted[2]))
+        self.SettingsColumn.OnIndexChanged(self.SettingsColumn:CurrentSelection())
     elseif self:FocusLevel() == self.PlayersColumn.Order then
-        self. PlayersColumn:CurrentSelection(tonumber(split[2]))
-        self. PlayersColumn.OnIndexChanged(self.SettingsColumn:CurrentSelection())
+        self.PlayersColumn:CurrentSelection(tonumber(splitted[2]))
+        self.PlayersColumn.OnIndexChanged(self.PlayersColumn:CurrentSelection())
     end
 end
 
 function MainView:GoLeft()
-    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 10)
+    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 10,self._delay)
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
     local retVal = GetScaleformMovieMethodReturnValueString(return_value)
 
-    local split = retVal.split(",")
+    local splitted = split(retVal, ",")
 
-    if split[3] == -1 then
-        self:FocusLevel(tonumber(split[1]))
+    if tonumber(splitted[3]) == -1 then
+        self:FocusLevel(tonumber(splitted[1])+1)
         if self:FocusLevel() == self.SettingsColumn.Order then
-            self.SettingsColumn:CurrentSelection(tonumber(split[2]))
+            self.SettingsColumn:CurrentSelection(tonumber(splitted[2]))
             self.SettingsColumn.OnIndexChanged(self.SettingsColumn:CurrentSelection());
         elseif self:FocusLevel() == self.PlayersColumn.Order then
-            self.PlayersColumn:CurrentSelection(tonumber(split[2]))
-            self.PlayersColumn.OnIndexChanged(self.SettingsColumn:CurrentSelection())
+            self.PlayersColumn:CurrentSelection(tonumber(splitted[2]))
+        self.PlayersColumn.OnIndexChanged(self.PlayersColumn:CurrentSelection())
         end
     else
         local item = self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()];
@@ -462,13 +462,13 @@ function MainView:GoLeft()
         end
         local type, subtype = item() 
         if subtype == "UIMenuListItem" then
-            item:Index(tonumber(split[3]))
+            item:Index(tonumber(splitted[3]))
             item.OnListChanged(self, item, item._Index)
         elseif subtype == "UIMenuSliderItem" then
-            item:Index(tonumber(split[3]))
+            item:Index(tonumber(splitted[3]))
             item.OnSliderChanged(self, item, item._Index)
         elseif subtype == "UIMenuProgressItem" then
-            item:Index(tonumber(split[3]))
+            item:Index(tonumber(splitted[3]))
             item.OnProgressChanged(self, item, item:Index())
         end
         --PlaySoundFrontend(-1, self.Settings.Audio.LeftRight, "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
@@ -476,22 +476,22 @@ function MainView:GoLeft()
 end
 
 function MainView:GoRight()
-    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 11)
+    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 11,self._delay)
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
     local retVal = GetScaleformMovieMethodReturnValueString(return_value)
 
-    local split = retVal.split(",")
+    local splitted = split(retVal, ",")
 
-    if split[3] == -1 then
-        self:FocusLevel(tonumber(split[1]))
+    if tonumber(splitted[3]) == -1 then
+        self:FocusLevel(tonumber(splitted[1])+1)
         if self:FocusLevel() == self.SettingsColumn.Order then
-            self.SettingsColumn:CurrentSelection(tonumber(split[2]))
+            self.SettingsColumn:CurrentSelection(tonumber(splitted[2]))
             self.SettingsColumn.OnIndexChanged(self.SettingsColumn:CurrentSelection());
         elseif self:FocusLevel() == self.PlayersColumn.Order then
-            self.PlayersColumn:CurrentSelection(tonumber(split[2]))
-            self.PlayersColumn.OnIndexChanged(self.SettingsColumn:CurrentSelection())
+            self.PlayersColumn:CurrentSelection(tonumber(splitted[2]))
+            self.PlayersColumn.OnIndexChanged(self.PlayersColumn:CurrentSelection())
         end
     else
         local item = self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()];
@@ -501,13 +501,13 @@ function MainView:GoRight()
         end
         local type, subtype = item() 
         if subtype == "UIMenuListItem" then
-            item:Index(tonumber(split[3]))
+            item:Index(tonumber(splitted[3]))
             item.OnListChanged(self, item, item._Index)
         elseif subtype == "UIMenuSliderItem" then
-            item:Index(tonumber(split[3]))
+            item:Index(tonumber(splitted[3]))
             item.OnSliderChanged(self, item, item._Index)
         elseif subtype == "UIMenuProgressItem" then
-            item:Index(tonumber(split[3]))
+            item:Index(tonumber(splitted[3]))
             item.OnProgressChanged(self, item, item:Index())
         end
         --PlaySoundFrontend(-1, self.Settings.Audio.LeftRight, "HUD_FRONTEND_DEFAULT_SOUNDSET", true)

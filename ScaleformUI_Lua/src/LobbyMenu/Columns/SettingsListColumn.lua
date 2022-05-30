@@ -31,7 +31,7 @@ function SettingsListColumn:CurrentSelection(idx)
         end
     else
         if #self.Items == 0 then
-            self.ActiveItem = 0
+            self._currentSelection = 0
         end
         self.Items[self:CurrentSelection()]:Selected(false)
         self._currentSelection = 1000000 - (1000000 % #self.Items) + tonumber(idx)
