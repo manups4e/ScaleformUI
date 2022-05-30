@@ -146,11 +146,11 @@ function CreateMenu()
 	detailsWindow.DetailStats = {
 		{
 			Percentage = 100,
-			Colours = 6
+			HudColor = 6
 		},
 		{
 			Percentage = 0,
-			Colours = 50
+			HudColor = 50
 		}
 	}
 
