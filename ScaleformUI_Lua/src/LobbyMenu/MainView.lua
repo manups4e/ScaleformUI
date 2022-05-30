@@ -14,6 +14,7 @@ function MainView.New(title, subtitle, sideTop, sideMid, sideBot)
         _headerPicture = {},
         _crewPicture = {},
         _visible = false,
+        _internalpool = nil,
         SettingsColumn = {},
         PlayersColumn = {},
         MissionPanel = {},
@@ -70,6 +71,9 @@ end
 
 function MainView:Visible(visible)
     if visible ~= nil then
+        self._visible = visible
+        ScaleformUI.Scaleforms.InstructionalButtons:Enabled(visible)
+        ScaleformUI.Scaleforms._pauseMenu:Visible(visible)
         if visible == true then
             self:BuildPauseMenu()
             self.OnLobbyMenuOpen(self)
@@ -85,10 +89,8 @@ function MainView:Visible(visible)
             AnimpostfxPlay("PauseMenuOut", 800, false)
             self.OnLobbyMenuClose(self)
             SetPlayerControl(PlayerId(), true, 0)
+            self._internalpool:FlushPauseMenus()
         end
-        ScaleformUI.Scaleforms.InstructionalButtons:Enabled(visible)
-        self._visible = visible
-        ScaleformUI.Scaleforms._pauseMenu:Visible(visible)
     else
         return self._visible
     end

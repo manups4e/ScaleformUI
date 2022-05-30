@@ -16,6 +16,7 @@ function TabView.New(title, subtitle, sideTop, sideMid, sideBot)
         Tabs = {},
         Index = 1,
         _visible = false,
+        _internalpool = nil,
         focusLevel = 0,
         rightItemIndex = 1,
         leftItemIndex = 1,
@@ -78,7 +79,10 @@ function TabView:FocusLevel(index)
 end
 
 function TabView:Visible(visible)
-    if(visible ~= nil) then
+    if visible ~= nil then
+        ScaleformUI.Scaleforms.InstructionalButtons:Enabled(visible)
+        self._visible = visible
+        ScaleformUI.Scaleforms._pauseMenu:Visible(visible)
         if visible == true then
             self:BuildPauseMenu()
             self.OnPauseMenuOpen(self)
@@ -93,10 +97,8 @@ function TabView:Visible(visible)
             AnimpostfxPlay("PauseMenuOut", 800, false)
             self.OnPauseMenuClose(self)
             SetPlayerControl(PlayerId(), true, 0)
+            self._internalpool:FlushPauseMenus()
         end
-        ScaleformUI.Scaleforms.InstructionalButtons:Enabled(visible)
-        self._visible = visible
-        ScaleformUI.Scaleforms._pauseMenu:Visible(visible)
     else
         return self._visible
     end

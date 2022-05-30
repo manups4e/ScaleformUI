@@ -54,7 +54,7 @@ function UIMenu.New(Title, Subtitle, X, Y, glare, txtDictionary, txtName, altern
         TxtDictionary = txtDictionary,
         TxtName = txtName,
         Glare = glare or false,
-        pool = nil,
+        _internalpool = nil,
         _keyboard = false,
         _changed = false,
         _maxItem = 7,
@@ -405,7 +405,7 @@ function UIMenu:AddSubMenu(Menu, text, description, offset, KeepBanner)
         Menu.Settings.MouseControlsEnabled = self.Settings.MouseControlsEnabled
         Menu.Settings.MouseEdgeEnabled = self.Settings.MouseEdgeEnabled
         Menu:MaxItemsOnScreen(self:MaxItemsOnScreen())
-        self.pool:Add(Menu)
+        self._internalpool:Add(Menu)
         self:BindMenuToItem(Menu, Item)
         return Menu
     end
@@ -426,11 +426,12 @@ function UIMenu:Visible(bool)
             ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
             self.OnMenuChanged(nil, self, "opened")
             self:BuildUpMenu()
-            self.pool.currentMenu = self
+            self._internalpool.currentMenu = self
         else
             self.OnMenuChanged(self, nil, "closed")
             ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
-            self.pool.currentMenu = nil
+            self._internalpool.currentMenu = nil
+            self._internalpool:FlushMenus()
         end
         ScaleformUI.Scaleforms.InstructionalButtons:Enabled(bool)
         if self.Settings.ResetCursorOnOpen then

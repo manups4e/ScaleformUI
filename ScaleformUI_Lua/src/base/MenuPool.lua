@@ -49,13 +49,14 @@ end
 ---@param Menu table
 function MenuPool:Add(Menu)
     if Menu() == "UIMenu" then
-        Menu.pool = self
+        Menu._internalpool = self
         table.insert(self.Menus, Menu)
     end
 end
 
 function MenuPool:AddPauseMenu(Menu)
     if Menu() == "PauseMenu" then
+        Menu._internalpool = self,
         table.insert(self.PauseMenus, Menu)
     end
 end
@@ -259,5 +260,42 @@ function MenuPool:SetBannerRectangle(Rectangle)
         for _, Menu in pairs(self.Menus) do
             Menu:SetBannerRectangle(Rectangle)
         end
+    end
+end
+
+function MenuPool:FlushMenus()
+    local countMenu = #self.Menus
+    for i=0, countMenu do
+        if self.Menus[i] ~= nil and self.Menus[i]:Visible() then
+            self.Menus[i]:Visible(false)
+        end
+        self.Menus[i]=nil 
+    end
+end
+
+function MenuPool:FlushPauseMenus()
+    local countPause = #self.PauseMenus
+    for i=0, countPause do 
+        if self.PauseMenus[i] ~= nil and self.PauseMenus[i]:Visible() then
+            self.PauseMenus[i]:Visible(false)
+        end
+        self.PauseMenus[i]=nil
+    end
+end
+
+function MenuPool:FlushAllMenus()
+    local countMenu = #self.Menus
+    local countPause = #self.PauseMenus
+    for i=0, countMenu do
+        if self.Menus[i] ~= nil and self.Menus[i]:Visible() then
+            self.Menus[i]:Visible(false)
+        end
+        self.Menus[i]=nil 
+    end
+    for i=0, countPause do 
+        if self.PauseMenus[i] ~= nil and self.PauseMenus[i]:Visible() then
+            self.PauseMenus[i]:Visible(false)
+        end
+        self.PauseMenus[i]=nil
     end
 end
