@@ -251,9 +251,6 @@ namespace ScaleformUI
             _pause.CallFunction("CLEAR_ALL");
             _lobby.CallFunction("CLEAR_ALL");
             _header.CallFunction("CLEAR_ALL");
-            _pause.Dispose();
-            _lobby.Dispose();
-            _header.Dispose();
             _visible = false;
         }
 
