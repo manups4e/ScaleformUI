@@ -85,6 +85,7 @@ function TabView:Visible(visible)
         ScaleformUI.Scaleforms._pauseMenu:Visible(visible)
         if visible == true then
             self:BuildPauseMenu()
+            self._internalpool:ProcessMenus(true)
             self.OnPauseMenuOpen(self)
             DontRenderInGameUi(true)
             AnimpostfxPlay("PauseMenuIn", 800, true)
@@ -97,6 +98,7 @@ function TabView:Visible(visible)
             AnimpostfxPlay("PauseMenuOut", 800, false)
             self.OnPauseMenuClose(self)
             SetPlayerControl(PlayerId(), true, 0)
+            self._internalpool:ProcessMenus(false)
             self._internalpool:FlushPauseMenus()
         end
     else

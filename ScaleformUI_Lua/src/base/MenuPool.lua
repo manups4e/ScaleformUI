@@ -5,7 +5,8 @@ MenuPool.__index = MenuPool
 function MenuPool.New()
     local _MenuPool = {
         Menus = {},
-        PauseMenus = {}
+        PauseMenus = {},
+        ableToDraw = false
     }
     return setmetatable(_MenuPool, MenuPool)
 end
@@ -159,6 +160,18 @@ function MenuPool:RefreshIndex()
     for _, Menu in pairs(self.Menus) do
         Menu:RefreshIndex()
     end
+end
+
+function MenuPool:ProcessMenus(bool)
+    self.ableToDraw = bool
+    Citizen.CreateThread(function()
+        while self.ableToDraw do
+            Citizen.Wait(0)
+            self:ProcessControl()
+            self:Draw()
+        end
+        return
+    end)
 end
 
 ---ProcessControl

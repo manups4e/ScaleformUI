@@ -82,6 +82,7 @@ function MainView:Visible(visible)
             ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
             SetPlayerControl(PlayerId(), false, 0)
             self._firstTick = true
+            self._internalpool:ProcessMenus(true)
         else
             ScaleformUI.Scaleforms._pauseMenu:Dispose()
             DontRenderInGameUi(false)
@@ -89,6 +90,7 @@ function MainView:Visible(visible)
             AnimpostfxPlay("PauseMenuOut", 800, false)
             self.OnLobbyMenuClose(self)
             SetPlayerControl(PlayerId(), true, 0)
+            self._internalpool:ProcessMenus(false)
             self._internalpool:FlushPauseMenus()
         end
     else

@@ -427,10 +427,12 @@ function UIMenu:Visible(bool)
             self.OnMenuChanged(nil, self, "opened")
             self:BuildUpMenu()
             self._internalpool.currentMenu = self
+            self._internalpool:ProcessMenus(true)
         else
             self.OnMenuChanged(self, nil, "closed")
             ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
             self._internalpool.currentMenu = nil
+            self._internalpool:ProcessMenus(false)
             self._internalpool:FlushMenus()
         end
         ScaleformUI.Scaleforms.InstructionalButtons:Enabled(bool)
