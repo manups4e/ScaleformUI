@@ -2108,12 +2108,14 @@ namespace ScaleformUI
                     MenuChangeEv(null, this, MenuState.Opened);
                     BuildUpMenu();
                     _poolcontainer.currentMenu = this;
+                    _poolcontainer.ProcessMenus(true);
                 }
                 else
                 {
                     _poolcontainer.MenuChangeEv(this, null, MenuState.Closed);
                     MenuChangeEv(this, null, MenuState.Closed);
                     ScaleformUI._ui.CallFunction("CLEAR_ALL");
+                    _poolcontainer.ProcessMenus(false);
                     _poolcontainer.FlushMenus();
                 }
                 if (!value) return;

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using ScaleformUI.PauseMenu;
@@ -56,6 +57,7 @@ namespace ScaleformUI
 
 		public bool OffsetInheritance = true;
         internal UIMenu currentMenu;
+        internal bool ableToDraw;
 
         /// <summary>
 		/// Called when user either opens or closes the main menu, clicks on a binded button, goes back to a parent menu.
@@ -253,11 +255,16 @@ namespace ScaleformUI
         /// <summary>
         /// Process all of your menus' functions. Call this in a tick event.
         /// </summary>
-        public void ProcessMenus()
+        public async void ProcessMenus(bool draw)
         {
-            ProcessControl();
-            ProcessMouse();
-            Draw();
+            ableToDraw = draw;
+            while (ableToDraw)
+            {
+                await BaseScript.Delay(0);
+                ProcessControl();
+                ProcessMouse();
+                Draw();
+            }
         }
 
 

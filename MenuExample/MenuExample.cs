@@ -1339,8 +1339,6 @@ public class MenuExample : BaseScript
 
 		Tick += async () =>
 		{	
-			_menuPool.ProcessMenus();
-
 			//If the player is in drawing range for the marker, the marker will draw automatically and the DrawText will show itself (true if the ped enters the marker)
 			if(playerMarker.IsInRange)
 				Notifications.DrawText($"IsInMarker => {playerMarker.IsInMarker}");

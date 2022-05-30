@@ -132,6 +132,7 @@ namespace ScaleformUI.PauseMenu
                     ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
                     SetPlayerControl(Game.Player.Handle, false, 0);
                     BuildPauseMenu();
+                    _poolcontainer.ProcessMenus(true);
                 }
                 else
                 {
@@ -141,6 +142,7 @@ namespace ScaleformUI.PauseMenu
                     AnimpostfxPlay("PauseMenuOut", 800, false);
                     SendPauseMenuClose();
                     SetPlayerControl(Game.Player.Handle, true, 0);
+                    _poolcontainer.ProcessMenus(false);
                     _poolcontainer.FlushPauseMenus();
                 }
             }
