@@ -1,7 +1,6 @@
-# NativeUI all done with Scaleforms
-![NativeUI Example](https://i.imgur.com/EtR18jZ.png)
+# NativeUI alike all done with custom-made Scaleforms.
 
-ScaleformUI is a library that helps you quickly and easily build Rockstar-like menus and Pause Menus.
+ScaleformUI is a library that helps you quickly and easily build Rockstar-like menus Pause Menus and Lobby systems.
 
 ### Documentation
 Take a look at our Wiki here: https://github.com/manups4e/ScaleformUI/wiki
@@ -9,7 +8,8 @@ Take a look at our Wiki here: https://github.com/manups4e/ScaleformUI/wiki
 ### Features
 * Support for simple buttons, checkboxes and lists.
 * Support for custom banners from game sprites and your own textures.
-* Support for panels from grid panels to color panels.
+* Support for panels from grid panels to color panels and side panels.
+* Support for custom labels, texts, icons using ~ symbol and emojis!
 * Easy nested menus for fast and painless nested menu system.
 * Controller support.
 * Mouse controls.
@@ -19,6 +19,14 @@ Take a look at our Wiki here: https://github.com/manups4e/ScaleformUI/wiki
 * Rebindable keys and controls.
 * Badges to decorate your items.
 * Event-based callbacks.
+
+### Screenshots
+
+![NativeUI Example](https://i.imgur.com/K4FXOvR.png)
+![Lobby Menu Example](https://i.imgur.com/5pkLTnf.png)
+![Pause Menu Example](https://i.imgur.com/LMAHF4O.png)
+
+
 
 ### License
 Copyright (c) 2016 Phillipp
