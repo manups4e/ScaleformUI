@@ -944,6 +944,137 @@ public class MenuExample : BaseScript
 		fifth.AddItem(key1);
 		fifth.AddItem(key2);
 
+		PlayerListTab playersTab = new("PLAYERLIST");
+		pauseMenu.AddTab(playersTab);
+
+		UIMenuItem n1 = new("Base Item", "Basic Description");
+		UIMenuListItem n2 = new("List Item", new List<dynamic> { "item1", "item2", "item3"}, 0, "List Description");
+		UIMenuCheckboxItem n3 = new("Checkbox Item", UIMenuCheckboxStyle.Tick, true, "Checkbox Description");
+		UIMenuSliderItem n4 = new("Slider Item", "Slider Description", 100, 10, 50, false);
+		UIMenuProgressItem n5 = new("Progress Item", 100, 50, "Progress Description");
+		playersTab.SettingsColumn.AddSettings(n1);
+		playersTab.SettingsColumn.AddSettings(n2);
+		playersTab.SettingsColumn.AddSettings(n3);
+		playersTab.SettingsColumn.AddSettings(n4);
+		playersTab.SettingsColumn.AddSettings(n5);
+
+		var friend = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_GREEN, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+		var friend1 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_MENU_YELLOW, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+		var friend2 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_PINK, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+		var friend3 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_BLUE, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+		var friend4 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_ORANGE, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+		var friend5 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_RED, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+
+		playersTab.PlayersColumn.AddPlayer(friend);
+		playersTab.PlayersColumn.AddPlayer(friend2);
+		playersTab.PlayersColumn.AddPlayer(friend3);
+		playersTab.PlayersColumn.AddPlayer(friend4);
+		playersTab.PlayersColumn.AddPlayer(friend5);
+
+		var panel = new PlayerStatsPanel("Player 1", HudColor.HUD_COLOUR_GREEN)
+		{
+			Description = "This is the description for Player 1!!",
+			HasPlane = true,
+			HasHeli = true,
+		};
+		panel.RankInfo.RankLevel = 150;
+		panel.RankInfo.LowLabel = "This is the low label";
+		panel.RankInfo.MidLabel = "This is the middle label";
+		panel.RankInfo.UpLabel = "This is the upper label";
+		panel.AddStat(new PlayerStatsPanelStatItem("Statistic 1", "Description 1", API.GetRandomIntInRange(30, 150)));
+		panel.AddStat(new PlayerStatsPanelStatItem("Statistic 2", "Description 2", API.GetRandomIntInRange(30, 150)));
+		panel.AddStat(new PlayerStatsPanelStatItem("Statistic 3", "Description 3", API.GetRandomIntInRange(30, 150)));
+		panel.AddStat(new PlayerStatsPanelStatItem("Statistic 4", "Description 4", API.GetRandomIntInRange(30, 150)));
+		panel.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
+		friend.AddPanel(panel);
+
+		var panel1 = new PlayerStatsPanel("Player 2", HudColor.HUD_COLOUR_MENU_YELLOW)
+		{
+			Description = "This is the description for Player 2!!",
+			HasPlane = true,
+			HasVehicle = true,
+		};
+		panel1.RankInfo.RankLevel = 70;
+		panel1.RankInfo.LowLabel = "This is the low label";
+		panel1.RankInfo.MidLabel = "This is the middle label";
+		panel1.RankInfo.UpLabel = "This is the upper label";
+		panel1.AddStat(new PlayerStatsPanelStatItem("Statistic 1", "Description 1", API.GetRandomIntInRange(30, 150)));
+		panel1.AddStat(new PlayerStatsPanelStatItem("Statistic 2", "Description 2", API.GetRandomIntInRange(30, 150)));
+		panel1.AddStat(new PlayerStatsPanelStatItem("Statistic 3", "Description 3", API.GetRandomIntInRange(30, 150)));
+		panel1.AddStat(new PlayerStatsPanelStatItem("Statistic 4", "Description 4", API.GetRandomIntInRange(30, 150)));
+		panel1.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
+		friend1.AddPanel(panel1);
+
+		var panel3 = new PlayerStatsPanel("Player 3", HudColor.HUD_COLOUR_PINK)
+		{
+			Description = "This is the description for Player 3!!",
+			HasPlane = true,
+			HasHeli = true,
+			HasVehicle = true
+		};
+		panel3.RankInfo.RankLevel = 15;
+		panel3.RankInfo.LowLabel = "This is the low label";
+		panel3.RankInfo.MidLabel = "This is the middle label";
+		panel3.RankInfo.UpLabel = "This is the upper label";
+		panel3.AddStat(new PlayerStatsPanelStatItem("Statistic 1", "Description 1", API.GetRandomIntInRange(30, 150)));
+		panel3.AddStat(new PlayerStatsPanelStatItem("Statistic 2", "Description 2", API.GetRandomIntInRange(30, 150)));
+		panel3.AddStat(new PlayerStatsPanelStatItem("Statistic 3", "Description 3", API.GetRandomIntInRange(30, 150)));
+		panel3.AddStat(new PlayerStatsPanelStatItem("Statistic 4", "Description 4", API.GetRandomIntInRange(30, 150)));
+		panel3.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
+		friend2.AddPanel(panel3);
+
+		var panel4 = new PlayerStatsPanel("Player 4", HudColor.HUD_COLOUR_FREEMODE)
+		{
+			Description = "This is the description for Player 4!!",
+			HasPlane = true,
+			HasHeli = true,
+			HasBoat = true
+		};
+		panel4.RankInfo.RankLevel = 10;
+		panel4.RankInfo.LowLabel = "This is the low label";
+		panel4.RankInfo.MidLabel = "This is the middle label";
+		panel4.RankInfo.UpLabel = "This is the upper label";
+		panel4.AddStat(new PlayerStatsPanelStatItem("Statistic 1", "Description 1", API.GetRandomIntInRange(30, 150)));
+		panel4.AddStat(new PlayerStatsPanelStatItem("Statistic 2", "Description 2", API.GetRandomIntInRange(30, 150)));
+		panel4.AddStat(new PlayerStatsPanelStatItem("Statistic 3", "Description 3", API.GetRandomIntInRange(30, 150)));
+		panel4.AddStat(new PlayerStatsPanelStatItem("Statistic 4", "Description 4", API.GetRandomIntInRange(30, 150)));
+		panel4.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
+		friend3.AddPanel(panel4);
+
+		var panel5 = new PlayerStatsPanel("Player 5", HudColor.HUD_COLOUR_ORANGE)
+		{
+			Description = "This is the description for Player 5!!",
+			HasPlane = true,
+			HasHeli = true,
+		};
+		panel5.RankInfo.RankLevel = 1000;
+		panel5.RankInfo.LowLabel = "This is the low label";
+		panel5.RankInfo.MidLabel = "This is the middle label";
+		panel5.RankInfo.UpLabel = "This is the upper label";
+		panel5.AddStat(new PlayerStatsPanelStatItem("Statistic 1", "Description 1", API.GetRandomIntInRange(30, 150)));
+		panel5.AddStat(new PlayerStatsPanelStatItem("Statistic 2", "Description 2", API.GetRandomIntInRange(30, 150)));
+		panel5.AddStat(new PlayerStatsPanelStatItem("Statistic 3", "Description 3", API.GetRandomIntInRange(30, 150)));
+		panel5.AddStat(new PlayerStatsPanelStatItem("Statistic 4", "Description 4", API.GetRandomIntInRange(30, 150)));
+		panel5.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
+		friend4.AddPanel(panel5);
+
+		var panel6 = new PlayerStatsPanel("Player 6", HudColor.HUD_COLOUR_RED)
+		{
+			Description = "This is the description for Player 6!!",
+			HasPlane = true,
+			HasHeli = true,
+		};
+		panel6.RankInfo.RankLevel = 22;
+		panel6.RankInfo.LowLabel = "This is the low label";
+		panel6.RankInfo.MidLabel = "This is the middle label";
+		panel6.RankInfo.UpLabel = "This is the upper label";
+		panel6.AddStat(new PlayerStatsPanelStatItem("Statistic 1", "Description 1", API.GetRandomIntInRange(30, 150)));
+		panel6.AddStat(new PlayerStatsPanelStatItem("Statistic 2", "Description 2", API.GetRandomIntInRange(30, 150)));
+		panel6.AddStat(new PlayerStatsPanelStatItem("Statistic 3", "Description 3", API.GetRandomIntInRange(30, 150)));
+		panel6.AddStat(new PlayerStatsPanelStatItem("Statistic 4", "Description 4", API.GetRandomIntInRange(30, 150)));
+		panel6.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
+		friend5.AddPanel(panel6);
+
 		pauseMenu.OnPauseMenuOpen += (menu) =>
 		{
 			Screen.ShowSubtitle(menu.Title + " Opened!");
@@ -1050,7 +1181,6 @@ public class MenuExample : BaseScript
 		item.Activated += (_, item) =>
 		{
 			Screen.ShowSubtitle($"~y~ {item.Label} ~s~~w~ has been selected!");
-
 		};
 
 		var friend = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_GREEN, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");

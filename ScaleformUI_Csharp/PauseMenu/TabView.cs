@@ -7,6 +7,7 @@ using CitizenFX.Core.Native;
 using static CitizenFX.Core.Native.API;
 using CitizenFX.Core.UI;
 using Font = CitizenFX.Core.UI.Font;
+using ScaleformUI.LobbyMenu;
 
 namespace ScaleformUI.PauseMenu
 {
@@ -145,8 +146,16 @@ namespace ScaleformUI.PauseMenu
         }
         public void AddTab(BaseTab item)
         {
-            Tabs.Add(item);
             item.Parent = this;
+            if(item is PlayerListTab)
+            {
+                var it = item as PlayerListTab;
+                it.SettingsColumn.ParentTab = Tabs.Count;
+                it.SettingsColumn.Parent = it.Parent;
+                it.PlayersColumn.ParentTab = Tabs.Count;
+                it.PlayersColumn.Parent = it.Parent;
+            }
+            Tabs.Add(item);
         }
 
         private bool _visible;
@@ -182,7 +191,7 @@ namespace ScaleformUI.PauseMenu
                     case TextTab:
                         {
                             TextTab simpleTab = tab as TextTab;
-                            _pause.AddPauseMenuTab(tab.Title, tab._type, 0);
+                            _pause.AddPauseMenuTab(tab.Title, 0, tab._type);
                             if (!string.IsNullOrWhiteSpace(simpleTab.TextTitle))
                                 _pause.AddRightTitle(tabIndex, 0, simpleTab.TextTitle);
                             foreach (var it in simpleTab.LabelsList)
@@ -191,7 +200,7 @@ namespace ScaleformUI.PauseMenu
                         break;
                     case SubmenuTab:
                         {
-                            _pause.AddPauseMenuTab(tab.Title, tab._type, 1);
+                            _pause.AddPauseMenuTab(tab.Title, 1, tab._type);
                             foreach (var item in tab.LeftItemList)
                             {
                                 int itemIndex = tab.LeftItemList.IndexOf(item);
@@ -277,9 +286,131 @@ namespace ScaleformUI.PauseMenu
                             }
                         }
                         break;
+                    case PlayerListTab:
+                        {
+                            _pause.AddPauseMenuTab(tab.Title, 1, tab._type);
+                            buildSettings(tab as PlayerListTab);
+                            buildPlayers(tab as PlayerListTab);
+                        }
+                        break;
                 }
             }
         }
+
+        bool canBuild = true;
+        public async void buildSettings(PlayerListTab tab)
+        {
+            var i = 0;
+            while (i < tab.SettingsColumn.Items.Count)
+            {
+                await BaseScript.Delay(1);
+                if (!canBuild) break;
+                var item = tab.SettingsColumn.Items[i];
+                var index = tab.SettingsColumn.Items.IndexOf(item);
+                AddTextEntry($"menu_pause_playerTab[{Tabs.IndexOf(tab)}]_desc_{index}", item.Description);
+                BeginScaleformMovieMethod(_pause._pause.Handle, "ADD_PLAYERS_TAB_SETTINGS_ITEM");
+                PushScaleformMovieFunctionParameterInt(Tabs.IndexOf(tab));
+                PushScaleformMovieFunctionParameterInt(item._itemId);
+                PushScaleformMovieMethodParameterString(item.Label);
+                if (item.DescriptionHash != 0 && string.IsNullOrWhiteSpace(item.Description))
+                {
+                    BeginTextCommandScaleformString("STRTNM1");
+                    AddTextComponentSubstringTextLabelHashKey(item.DescriptionHash);
+                    EndTextCommandScaleformString_2();
+                }
+                else
+                {
+                    BeginTextCommandScaleformString($"menu_pause_playerTab[{Tabs.IndexOf(tab)}]_desc_{index}");
+                    EndTextCommandScaleformString_2();
+                }
+                PushScaleformMovieFunctionParameterBool(item.Enabled);
+                PushScaleformMovieFunctionParameterBool(item.BlinkDescription);
+                switch (item)
+                {
+                    case UIMenuListItem:
+                        UIMenuListItem it = (UIMenuListItem)item;
+                        AddTextEntry($"listitem_lobby_{index}_list", string.Join(",", it.Items));
+                        BeginTextCommandScaleformString($"listitem_lobby_{index}_list");
+                        EndTextCommandScaleformString();
+                        PushScaleformMovieFunctionParameterInt(it.Index);
+                        PushScaleformMovieFunctionParameterInt((int)it.MainColor);
+                        PushScaleformMovieFunctionParameterInt((int)it.HighlightColor);
+                        PushScaleformMovieFunctionParameterInt((int)it.TextColor);
+                        PushScaleformMovieFunctionParameterInt((int)it.HighlightedTextColor);
+                        EndScaleformMovieMethod();
+                        break;
+                    case UIMenuCheckboxItem:
+                        UIMenuCheckboxItem check = (UIMenuCheckboxItem)item;
+                        PushScaleformMovieFunctionParameterInt((int)check.Style);
+                        PushScaleformMovieMethodParameterBool(check.Checked);
+                        PushScaleformMovieFunctionParameterInt((int)check.MainColor);
+                        PushScaleformMovieFunctionParameterInt((int)check.HighlightColor);
+                        PushScaleformMovieFunctionParameterInt((int)check.TextColor);
+                        PushScaleformMovieFunctionParameterInt((int)check.HighlightedTextColor);
+                        EndScaleformMovieMethod();
+                        break;
+                    case UIMenuSliderItem:
+                        UIMenuSliderItem prItem = (UIMenuSliderItem)item;
+                        PushScaleformMovieFunctionParameterInt(prItem._max);
+                        PushScaleformMovieFunctionParameterInt(prItem._multiplier);
+                        PushScaleformMovieFunctionParameterInt(prItem.Value);
+                        PushScaleformMovieFunctionParameterInt((int)prItem.MainColor);
+                        PushScaleformMovieFunctionParameterInt((int)prItem.HighlightColor);
+                        PushScaleformMovieFunctionParameterInt((int)prItem.TextColor);
+                        PushScaleformMovieFunctionParameterInt((int)prItem.HighlightedTextColor);
+                        PushScaleformMovieFunctionParameterInt((int)prItem.SliderColor);
+                        PushScaleformMovieFunctionParameterBool(prItem._heritage);
+                        EndScaleformMovieMethod();
+                        break;
+                    case UIMenuProgressItem:
+                        UIMenuProgressItem slItem = (UIMenuProgressItem)item;
+                        PushScaleformMovieFunctionParameterInt(slItem._max);
+                        PushScaleformMovieFunctionParameterInt(slItem._multiplier);
+                        PushScaleformMovieFunctionParameterInt(slItem.Value);
+                        PushScaleformMovieFunctionParameterInt((int)slItem.MainColor);
+                        PushScaleformMovieFunctionParameterInt((int)slItem.HighlightColor);
+                        PushScaleformMovieFunctionParameterInt((int)slItem.TextColor);
+                        PushScaleformMovieFunctionParameterInt((int)slItem.HighlightedTextColor);
+                        PushScaleformMovieFunctionParameterInt((int)slItem.SliderColor);
+                        EndScaleformMovieMethod();
+                        break;
+                    default:
+                        PushScaleformMovieFunctionParameterInt((int)item.MainColor);
+                        PushScaleformMovieFunctionParameterInt((int)item.HighlightColor);
+                        PushScaleformMovieFunctionParameterInt((int)item.TextColor);
+                        PushScaleformMovieFunctionParameterInt((int)item.HighlightedTextColor);
+                        EndScaleformMovieMethod();
+                        break;
+                }
+                i++;
+            }
+            tab.SettingsColumn.CurrentSelection = 0;
+        }
+
+        public async void buildPlayers(PlayerListTab tab)
+        {
+            var i = 0;
+            var tab_id = Tabs.IndexOf(tab);
+            while (i < tab.PlayersColumn.Items.Count)
+            {
+                var item = tab.PlayersColumn.Items[i];
+                switch (item)
+                {
+                    case FriendItem:
+                        var fi = (FriendItem)item;
+                        _pause._pause.CallFunction("ADD_PLAYERS_TAB_PLAYER_ITEM", tab_id, 1, 1, fi.Label, (int)fi.ItemColor, fi.ColoredTag, fi.iconL, fi.boolL, fi.iconR, fi.boolR, fi.Status, (int)fi.StatusColor, fi.Rank, fi.CrewTag);
+                        break;
+                }
+                if (item.Panel != null)
+                {
+                    item.Panel.UpdatePanel(true);
+                }
+                i++;
+            }
+            tab.PlayersColumn.CurrentSelection = 0;
+        }
+
+
 
         private bool controller = false;
         public override async void Draw()
@@ -372,6 +503,42 @@ namespace ScaleformUI.PauseMenu
                             }
                             SendPauseMenuLeftItemSelect();
                         }
+                        else if (Tabs[Index] is PlayerListTab plTab)
+                        {
+                            if (plTab.Focus == 0)
+                                plTab.Focus = 1;
+                            else if (plTab.Focus == 1)
+                            {
+                                var item = plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection];
+                                if (!item.Enabled)
+                                {
+                                    Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
+                                    return;
+                                }
+                                switch (item)
+                                {
+                                    case UIMenuCheckboxItem:
+                                        {
+                                            UIMenuCheckboxItem it = item as UIMenuCheckboxItem;
+                                            it.Checked = !it.Checked;
+                                            it.CheckboxEventTrigger();
+                                            break;
+                                        }
+
+                                    case UIMenuListItem:
+                                        {
+                                            UIMenuListItem it = item as UIMenuListItem;
+                                            it.ListSelectedTrigger(it.Index);
+                                            break;
+                                        }
+
+                                    default:
+                                        item.ItemActivate(null);
+                                        break;
+                                }
+                                _pause._pause.CallFunction("SET_INPUT_EVENT", 16);
+                            }
+                        }
                     }
                     break;
                 case 2:
@@ -420,6 +587,16 @@ namespace ScaleformUI.PauseMenu
             Game.PlaySound(AUDIO_BACK, AUDIO_LIBRARY);
             if (FocusLevel > 0)
             {
+                if(FocusLevel == 1)
+                {
+                    if (Tabs[Index] is PlayerListTab plTab)
+                    {
+                        if (plTab.Focus == 1) {
+                            plTab.Focus = 0;
+                            return;
+                        }
+                    }
+                }
                 FocusLevel--;
             }
             else
@@ -439,6 +616,19 @@ namespace ScaleformUI.PauseMenu
             {
                 if(FocusLevel == 1)
                 {
+                    if (Tabs[Index] is PlayerListTab plTab)
+                    {
+                        switch (plTab.Focus)
+                        {
+                            case 0:
+                                plTab.PlayersColumn.CurrentSelection = retVal;
+                                break;
+                            case 1:
+                                plTab.SettingsColumn.CurrentSelection = retVal;
+                                break;
+                        }
+                        return;
+                    }
                     LeftItemIndex = retVal;
                 }
                 else if (FocusLevel == 2)
@@ -459,6 +649,19 @@ namespace ScaleformUI.PauseMenu
             {
                 if (FocusLevel == 1)
                 {
+                    if (Tabs[Index] is PlayerListTab plTab)
+                    {
+                        switch (plTab.Focus)
+                        {
+                            case 0:
+                                plTab.PlayersColumn.CurrentSelection = retVal;
+                                break;
+                            case 1:
+                                plTab.SettingsColumn.CurrentSelection = retVal;
+                                break;
+                        }
+                        return;
+                    }
                     LeftItemIndex = retVal;
                 }
                 else if (FocusLevel == 2)
@@ -477,30 +680,78 @@ namespace ScaleformUI.PauseMenu
             var retVal = GetScaleformMovieFunctionReturnInt(ret);
             if (retVal != -1)
             {
-                if (FocusLevel == 0)
+                switch (FocusLevel)
                 {
-                    _pause.HeaderGoLeft();
-                    Index = retVal;
-                }
-                else if (FocusLevel == 2)
-                {
-                    var rightItem = Tabs[Index].LeftItemList[LeftItemIndex].ItemList[RightItemIndex] as SettingsItem;
-                    switch (rightItem.ItemType)
-                    {
-                        case SettingsItemType.ListItem:
-                            (rightItem as SettingsListItem).ItemIndex = retVal;
-                            (rightItem as SettingsListItem).ListChanged();
+                    case 0:
+                        _pause.HeaderGoLeft();
+                        Index = retVal;
+                        break;
+                    case 1:
+                        {
+                            if (Tabs[Index] is PlayerListTab plTab)
+                            {
+                                switch (plTab.Focus)
+                                {
+                                    case 1:
+                                        var item = plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection];
+                                        if (!item.Enabled)
+                                        {
+                                            Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
+                                            return;
+                                        }
+                                        switch (item)
+                                        {
+                                            case UIMenuListItem:
+                                                {
+                                                    UIMenuListItem it = (UIMenuListItem)item;
+                                                    it.Index = retVal;
+                                                    //ListChange(it, it.Index);
+                                                    it.ListChangedTrigger(it.Index);
+                                                    break;
+                                                }
+                                            case UIMenuSliderItem:
+                                                {
+                                                    UIMenuSliderItem it = (UIMenuSliderItem)item;
+                                                    it.Value = retVal;
+                                                    //SliderChange(it, it.Value);
+                                                    break;
+                                                }
+                                            case UIMenuProgressItem:
+                                                {
+                                                    UIMenuProgressItem it = (UIMenuProgressItem)item;
+                                                    it.Value = retVal;
+                                                    //ProgressChange(it, it.Value);
+                                                    break;
+                                                }
+                                        }
+                                        break;
+                                }
+                            }
                             break;
-                        case SettingsItemType.SliderBar:
-                            (rightItem as SettingsSliderItem).Value = retVal;
-                            (rightItem as SettingsSliderItem).SliderChanged();
+                        }
+
+                    case 2:
+                        {
+                            var rightItem = Tabs[Index].LeftItemList[LeftItemIndex].ItemList[RightItemIndex] as SettingsItem;
+                            switch (rightItem.ItemType)
+                            {
+                                case SettingsItemType.ListItem:
+                                    (rightItem as SettingsListItem).ItemIndex = retVal;
+                                    (rightItem as SettingsListItem).ListChanged();
+                                    break;
+                                case SettingsItemType.SliderBar:
+                                    (rightItem as SettingsSliderItem).Value = retVal;
+                                    (rightItem as SettingsSliderItem).SliderChanged();
+                                    break;
+                                case SettingsItemType.ProgressBar:
+                                case SettingsItemType.MaskedProgressBar:
+                                    (rightItem as SettingsProgressItem).Value = retVal;
+                                    (rightItem as SettingsProgressItem).ProgressChanged();
+                                    break;
+                            }
+
                             break;
-                        case SettingsItemType.ProgressBar:
-                        case SettingsItemType.MaskedProgressBar:
-                            (rightItem as SettingsProgressItem).Value = retVal;
-                            (rightItem as SettingsProgressItem).ProgressChanged();
-                            break;
-                    }
+                        }
                 }
             }
         }
@@ -514,30 +765,78 @@ namespace ScaleformUI.PauseMenu
             var retVal = GetScaleformMovieFunctionReturnInt(ret);
             if (retVal != -1)
             {
-                if (FocusLevel == 0)
+                switch (FocusLevel)
                 {
-                    _pause.HeaderGoRight();
-                    Index = retVal;
-                }
-                else if (FocusLevel == 2)
-                {
-                    var rightItem = Tabs[Index].LeftItemList[LeftItemIndex].ItemList[RightItemIndex] as SettingsItem;
-                    switch (rightItem.ItemType)
-                    {
-                        case SettingsItemType.ListItem:
-                            (rightItem as SettingsListItem).ItemIndex = retVal;
-                            (rightItem as SettingsListItem).ListChanged();
+                    case 0:
+                        _pause.HeaderGoRight();
+                        Index = retVal;
+                        break;
+                    case 1:
+                        {
+                            if (Tabs[Index] is PlayerListTab plTab)
+                            {
+                                switch (plTab.Focus)
+                                {
+                                    case 1:
+                                        var item = plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection];
+                                        if (!item.Enabled)
+                                        {
+                                            Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
+                                            return;
+                                        }
+                                        switch (item)
+                                        {
+                                            case UIMenuListItem:
+                                                {
+                                                    UIMenuListItem it = (UIMenuListItem)item;
+                                                    it.Index = retVal;
+                                                    //ListChange(it, it.Index);
+                                                    it.ListChangedTrigger(it.Index);
+                                                    break;
+                                                }
+                                            case UIMenuSliderItem:
+                                                {
+                                                    UIMenuSliderItem it = (UIMenuSliderItem)item;
+                                                    it.Value = retVal;
+                                                    //SliderChange(it, it.Value);
+                                                    break;
+                                                }
+                                            case UIMenuProgressItem:
+                                                {
+                                                    UIMenuProgressItem it = (UIMenuProgressItem)item;
+                                                    it.Value = retVal;
+                                                    //ProgressChange(it, it.Value);
+                                                    break;
+                                                }
+                                        }
+                                        break;
+                                }
+                            }
                             break;
-                        case SettingsItemType.SliderBar:
-                            (rightItem as SettingsSliderItem).Value = retVal;
-                            (rightItem as SettingsSliderItem).SliderChanged();
+                        }
+
+                    case 2:
+                        {
+                            var rightItem = Tabs[Index].LeftItemList[LeftItemIndex].ItemList[RightItemIndex] as SettingsItem;
+                            switch (rightItem.ItemType)
+                            {
+                                case SettingsItemType.ListItem:
+                                    (rightItem as SettingsListItem).ItemIndex = retVal;
+                                    (rightItem as SettingsListItem).ListChanged();
+                                    break;
+                                case SettingsItemType.SliderBar:
+                                    (rightItem as SettingsSliderItem).Value = retVal;
+                                    (rightItem as SettingsSliderItem).SliderChanged();
+                                    break;
+                                case SettingsItemType.ProgressBar:
+                                case SettingsItemType.MaskedProgressBar:
+                                    (rightItem as SettingsProgressItem).Value = retVal;
+                                    (rightItem as SettingsProgressItem).ProgressChanged();
+                                    break;
+                            }
+
                             break;
-                        case SettingsItemType.ProgressBar:
-                        case SettingsItemType.MaskedProgressBar:
-                            (rightItem as SettingsProgressItem).Value = retVal;
-                            (rightItem as SettingsProgressItem).ProgressChanged();
-                            break;
-                    }
+                        }
                 }
             }
 
@@ -608,49 +907,94 @@ namespace ScaleformUI.PauseMenu
                     case 5: // on click pressed
                         switch (context)
                         {
-                            case 0: // going from unfocused to focused
+                            case 0: // going from unfocused to focused or playerListTab player selected
                                 FocusLevel = 1;
-                                if (Tabs[Index].LeftItemList.All(x => !x.Enabled)) break;
-                                while (!Tabs[Index].LeftItemList[leftItemIndex].Enabled)
+                                if (Tabs[Index] is not PlayerListTab)
                                 {
-                                    await BaseScript.Delay(0);
-                                    leftItemIndex++;
-                                    _pause._pause.CallFunction("SELECT_LEFT_ITEM_INDEX", leftItemIndex);
+                                    if (Tabs[Index].LeftItemList.All(x => !x.Enabled)) break;
+                                    while (!Tabs[Index].LeftItemList[leftItemIndex].Enabled)
+                                    {
+                                        await BaseScript.Delay(0);
+                                        leftItemIndex++;
+                                        _pause._pause.CallFunction("SELECT_LEFT_ITEM_INDEX", leftItemIndex);
+                                    }
+                                }
+                                else
+                                {
+                                    var tab = Tabs[Index] as PlayerListTab;
+                                    if (tab.Focus == 1)
+                                        tab.Focus = 0;
+                                    tab.PlayersColumn.CurrentSelection = itemId;
                                 }
                                 break;
-                            case 1: // left item in subitem tab pressed
-                                if (focusLevel != 1)
+                            case 1: // left item in subitem tab pressed or playerListTab settings selected
+                                if (Tabs[Index] is not PlayerListTab)
                                 {
-                                    if (!Tabs[Index].LeftItemList[LeftItemIndex].Enabled)
+                                    if (FocusLevel != 1)
                                     {
-                                        Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
+                                        if (!Tabs[Index].LeftItemList[LeftItemIndex].Enabled)
+                                        {
+                                            Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
+                                            return;
+                                        }
+                                        Tabs[Index].LeftItemList[LeftItemIndex].Selected = false;
+                                        LeftItemIndex = itemId;
+                                        Tabs[Index].LeftItemList[LeftItemIndex].Selected = true;
+                                        FocusLevel = 1;
+                                    }
+                                    else if (focusLevel == 1)
+                                    {
+                                        if (!Tabs[Index].LeftItemList[LeftItemIndex].Enabled)
+                                        {
+                                            Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
+                                            return;
+                                        }
+                                        if (Tabs[Index].LeftItemList[LeftItemIndex].ItemType == LeftItemType.Settings)
+                                        {
+                                            FocusLevel = 2;
+                                            _pause._pause.CallFunction("SELECT_RIGHT_ITEM_INDEX", 0);
+                                            RightItemIndex = 0;
+                                        }
+                                        Tabs[Index].LeftItemList[LeftItemIndex].Selected = false;
+                                        LeftItemIndex = itemId;
+                                        Tabs[Index].LeftItemList[LeftItemIndex].Selected = true;
+                                    }
+                                    _pause._pause.CallFunction("SELECT_LEFT_ITEM_INDEX", itemId);
+                                    Tabs[Index].LeftItemList[LeftItemIndex].Activated();
+                                    SendPauseMenuLeftItemSelect();
+                                }
+                                else
+                                {
+                                    var tab = Tabs[Index] as PlayerListTab;
+                                    if (!tab.SettingsColumn.Items[itemId].Enabled)
+                                    {
+                                        Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
                                         return;
                                     }
-                                    Tabs[Index].LeftItemList[LeftItemIndex].Selected = false;
-                                    LeftItemIndex = itemId;
-                                    Tabs[Index].LeftItemList[LeftItemIndex].Selected = true;
-                                    FocusLevel = 1;
-                                }
-                                else if(focusLevel == 1)
-                                {
-                                    if (!Tabs[Index].LeftItemList[LeftItemIndex].Enabled)
+
+                                    if (tab.Focus == 0)
+                                        tab.Focus = 1;
+                                    if (tab.SettingsColumn.Items[itemId].Selected)
                                     {
-                                        Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
+                                        BeginScaleformMovieMethod(_pause._pause.Handle, "SET_INPUT_EVENT");
+                                        ScaleformMovieMethodAddParamInt(16);
+                                        EndScaleformMovieMethod();
+                                        var item = tab.SettingsColumn.Items[itemId];
+                                        switch (item)
+                                        {
+                                            case UIMenuCheckboxItem:
+                                                var cbIt = item as UIMenuCheckboxItem;
+                                                cbIt.Checked = !cbIt.Checked;
+                                                cbIt.CheckboxEventTrigger();
+                                                break;
+                                            default:
+                                                item.ItemActivate(null);
+                                                break;
+                                        }
                                         return;
                                     }
-                                    if (Tabs[Index].LeftItemList[LeftItemIndex].ItemType == LeftItemType.Settings)
-                                    {
-                                        FocusLevel = 2;
-                                        _pause._pause.CallFunction("SELECT_RIGHT_ITEM_INDEX", 0);
-                                        RightItemIndex = 0;
-                                    }
-                                    Tabs[Index].LeftItemList[LeftItemIndex].Selected = false;
-                                    LeftItemIndex = itemId;
-                                    Tabs[Index].LeftItemList[LeftItemIndex].Selected = true;
+                                    tab.SettingsColumn.CurrentSelection = itemId;
                                 }
-                                _pause._pause.CallFunction("SELECT_LEFT_ITEM_INDEX", itemId);
-                                Tabs[Index].LeftItemList[LeftItemIndex].Activated();
-                                SendPauseMenuLeftItemSelect();
                                 break;
                             case 2:// right settings item in subitem tab pressed
                                 if (!(Tabs[Index].LeftItemList[leftItemIndex].ItemList[itemId] as SettingsItem).Enabled)
@@ -706,7 +1050,12 @@ namespace ScaleformUI.PauseMenu
                         switch (context)
                         {
                             case 1: // left item in subitem tab pressed
-                                Tabs[Index].LeftItemList[itemId].Hovered = false;
+                                if (Tabs[Index] is PlayerListTab plTab)
+                                {
+                                    plTab.SettingsColumn.Items[itemId].Hovered = false;
+                                }
+                                else
+                                    Tabs[Index].LeftItemList[itemId].Hovered = false;
                                 break;
                             case 2:// right settings item in subitem tab pressed
                                 var curIt = Tabs[Index].LeftItemList[LeftItemIndex].ItemList[itemId];
@@ -721,8 +1070,15 @@ namespace ScaleformUI.PauseMenu
                         switch (context)
                         {
                             case 1: // left item in subitem tab pressed
-                                foreach(var item in Tabs[Index].LeftItemList)
-                                    item.Hovered = Tabs[Index].LeftItemList.IndexOf(item) == itemId && item.Enabled;
+                                if (Tabs[Index] is PlayerListTab plTab)
+                                {
+                                    plTab.SettingsColumn.Items[itemId].Hovered = true;
+                                }
+                                else
+                                {
+                                    foreach (var item in Tabs[Index].LeftItemList)
+                                        item.Hovered = Tabs[Index].LeftItemList.IndexOf(item) == itemId && item.Enabled;
+                                }
                                 break;
                             case 2:// right settings item in subitem tab pressed
                                 foreach (var curIt in Tabs[Index].LeftItemList[LeftItemIndex].ItemList)
@@ -737,6 +1093,24 @@ namespace ScaleformUI.PauseMenu
                         }
                         break;
                     case 0: // dragged outside
+                        switch (context)
+                        {
+                            case 1: // left item in subitem tab pressed
+                                if (Tabs[Index] is PlayerListTab plTab)
+                                {
+                                    plTab.SettingsColumn.Items[itemId].Hovered = false;
+                                }
+                                else
+                                    Tabs[Index].LeftItemList[itemId].Hovered = false;
+                                break;
+                            case 2:// right settings item in subitem tab pressed
+                                var curIt = Tabs[Index].LeftItemList[LeftItemIndex].ItemList[itemId];
+                                if (curIt is SettingsItem)
+                                {
+                                    (curIt as SettingsItem).Hovered = false;
+                                }
+                                break;
+                        }
                         break;
                     case 1: // dragged inside
                         break;

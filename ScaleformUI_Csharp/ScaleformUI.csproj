@@ -68,6 +68,7 @@
     <Compile Include="PauseMenu\Items\SettingsItems\SettingsItem.cs" />
     <Compile Include="PauseMenu\Items\StatsTabItem.cs" />
     <Compile Include="PauseMenu\Tabs\BaseTab.cs" />
+    <Compile Include="PauseMenu\Tabs\PlayerListTab.cs" />
     <Compile Include="PauseMenu\Tabs\SubmenuTab.cs" />
     <Compile Include="PauseMenu\Tabs\TabLeftItem.cs" />
     <Compile Include="PauseMenu\Tabs\TextTab.cs" />

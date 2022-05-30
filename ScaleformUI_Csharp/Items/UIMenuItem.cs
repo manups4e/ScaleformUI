@@ -1054,7 +1054,7 @@ namespace ScaleformUI
         /// Returns the menu this item is in.
         /// </summary>
         public UIMenu Parent { get; internal set; }
-        
+
         /// <summary>
         /// Returns the lobby this item is in.
         /// </summary>

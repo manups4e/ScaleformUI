@@ -11,8 +11,8 @@ namespace ScaleformUI
 {
     public class PauseMenuScaleform
     {
-        internal Scaleform _header;
-        internal Scaleform _pause;
+        public Scaleform _header;
+        public Scaleform _pause;
         public Scaleform _lobby;
         private bool _visible;
         internal bool Loaded => _header is not null && _header.IsLoaded && _pause is not null && _pause.IsLoaded;

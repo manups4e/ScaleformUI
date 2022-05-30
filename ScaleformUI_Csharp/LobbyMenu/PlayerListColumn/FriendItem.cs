@@ -1,4 +1,5 @@
 ﻿using CitizenFX.Core;
+using ScaleformUI.PauseMenu;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,7 +45,10 @@ namespace ScaleformUI.LobbyMenu
                 if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
                 {
                     var idx = ParentColumn.Items.IndexOf(this);
-                    ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_LABEL", idx, label);
+                    if (ParentColumn.Parent is MainView lobby)
+                        lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_LABEL", idx, label);
+                    else if (ParentColumn.Parent is TabView pause)
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_LABEL", ParentColumn.ParentTab, idx, label);
                 }
             }
         }
@@ -57,7 +61,10 @@ namespace ScaleformUI.LobbyMenu
                 if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
                 {
                     var idx = ParentColumn.Items.IndexOf(this);
-                    ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_COLOUR", idx, itemColor, coloredTag);
+                    if (ParentColumn.Parent is MainView lobby)
+                        lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_COLOUR", idx, itemColor, coloredTag);
+                    else if (ParentColumn.Parent is TabView pause)
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_COLOUR", ParentColumn.ParentTab, idx, itemColor, coloredTag);
                 }
             }
         }
@@ -70,7 +77,10 @@ namespace ScaleformUI.LobbyMenu
                 if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
                 {
                     var idx = ParentColumn.Items.IndexOf(this);
-                    ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_COLOUR", idx, (int)itemColor, coloredTag);
+                    if (ParentColumn.Parent is MainView lobby)
+                        lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_COLOUR", idx, itemColor, coloredTag);
+                    else if (ParentColumn.Parent is TabView pause)
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_COLOUR", ParentColumn.ParentTab, idx, itemColor, coloredTag);
                 }
             }
         }
@@ -83,7 +93,10 @@ namespace ScaleformUI.LobbyMenu
                 if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
                 {
                     var idx = ParentColumn.Items.IndexOf(this);
-                    ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_RANK", idx, rank);
+                    if (ParentColumn.Parent is MainView lobby)
+                        lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_RANK", idx, rank);
+                    else if (ParentColumn.Parent is TabView pause)
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_RANK", ParentColumn.ParentTab, idx, rank);
                 }
             }
         }
@@ -96,7 +109,10 @@ namespace ScaleformUI.LobbyMenu
                 if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
                 {
                     var idx = ParentColumn.Items.IndexOf(this);
-                    ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_STATUS", idx, status, (int)statusColor);
+                    if (ParentColumn.Parent is MainView lobby)
+                        lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_STATUS", idx, status, (int)statusColor);
+                    else if (ParentColumn.Parent is TabView pause)
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_STATUS", ParentColumn.ParentTab, idx, status, (int)statusColor);
                 }
             }
         }
@@ -109,7 +125,10 @@ namespace ScaleformUI.LobbyMenu
                 if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
                 {
                     var idx = ParentColumn.Items.IndexOf(this);
-                    ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_STATUS", idx, status, (int)statusColor);
+                    if (ParentColumn.Parent is MainView lobby)
+                        lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_STATUS", idx, status, (int)statusColor);
+                    else if (ParentColumn.Parent is TabView pause)
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_STATUS", ParentColumn.ParentTab, idx, status, (int)statusColor);
                 }
             }
         }
@@ -122,7 +141,10 @@ namespace ScaleformUI.LobbyMenu
                 if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
                 {
                     var idx = ParentColumn.Items.IndexOf(this);
-                    ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_CREW", idx, crewTag);
+                    if (ParentColumn.Parent is MainView lobby)
+                        lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_CREW", idx, crewTag);
+                    else if (ParentColumn.Parent is TabView pause)
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_CREW", ParentColumn.ParentTab, idx, crewTag);
                 }
             }
         }
@@ -151,7 +173,10 @@ namespace ScaleformUI.LobbyMenu
             if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
             {
                 var idx = ParentColumn.Items.IndexOf(this);
-                ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_LEFT", idx, iconL, boolL);
+                if (ParentColumn.Parent is MainView lobby)
+                    lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_LEFT", idx, iconL, boolL);
+                else if (ParentColumn.Parent is TabView pause)
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ICON_LEFT", ParentColumn.ParentTab, idx, iconL, boolL);
             }
         }
         public void SetLeftIcon(BadgeIcon icon)
@@ -161,7 +186,10 @@ namespace ScaleformUI.LobbyMenu
             if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
             {
                 var idx = ParentColumn.Items.IndexOf(this);
-                ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_LEFT", idx, iconL, boolL);
+                if (ParentColumn.Parent is MainView lobby)
+                    lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_LEFT", idx, iconL, boolL);
+                else if (ParentColumn.Parent is TabView pause)
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ICON_LEFT", ParentColumn.ParentTab, idx, iconL, boolL);
             }
         }
 
@@ -172,7 +200,10 @@ namespace ScaleformUI.LobbyMenu
             if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
             {
                 var idx = ParentColumn.Items.IndexOf(this);
-                ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_RIGHT", idx, iconR, boolR);
+                if (ParentColumn.Parent is MainView lobby)
+                    lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_RIGHT", idx, iconR, boolR);
+                else if (ParentColumn.Parent is TabView pause)
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ICON_RIGHT", ParentColumn.ParentTab, idx, iconR, boolR);
             }
         }
         public void SetRightIcon(BadgeIcon icon)
@@ -182,7 +213,10 @@ namespace ScaleformUI.LobbyMenu
             if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
             {
                 var idx = ParentColumn.Items.IndexOf(this);
-                ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_RIGHT", idx, iconR, boolR);
+                if (ParentColumn.Parent is MainView lobby)
+                    lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_RIGHT", idx, iconR, boolR);
+                else if (ParentColumn.Parent is TabView pause)
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ICON_RIGHT", ParentColumn.ParentTab, idx, iconR, boolR);
             }
         }
 

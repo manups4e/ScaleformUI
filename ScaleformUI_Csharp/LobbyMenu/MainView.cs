@@ -375,12 +375,6 @@ namespace ScaleformUI.LobbyMenu
                         break;
                 }
             }
-            /*
-            Notifications.DrawText(0.3f, 0.775f, $"success:{success}");
-            Notifications.DrawText(0.3f, 0.8f, $"eventType:{eventType}");
-            Notifications.DrawText(0.3f, 0.825f, $"itemId:{itemId}");
-            Notifications.DrawText(0.3f, 0.85f, $"context:{context}");
-            */
         }
 
         public override async void ProcessControls()

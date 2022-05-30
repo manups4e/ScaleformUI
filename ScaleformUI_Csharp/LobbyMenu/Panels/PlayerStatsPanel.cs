@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CitizenFX.Core;
+using ScaleformUI.PauseMenu;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -102,11 +104,23 @@ namespace ScaleformUI.LobbyMenu
         {
             if ((ParentItem!= null && ParentItem.ParentColumn != null && ParentItem.ParentColumn.Parent != null && ParentItem.ParentColumn.Parent.Visible) || _override)
             {
-                ParentItem.ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_PANEL", ParentItem.ParentColumn.Items.IndexOf(ParentItem), 0, Title, Description, (int)TitleColor, RankInfo.RankLevel, HasPlane, HasHeli, HasBoat, HasVehicle, 0, RankInfo.LowLabel, 0, 0, RankInfo.MidLabel, 0, 0, RankInfo.UpLabel, 0, 0);
-                if (!string.IsNullOrWhiteSpace(Description))
-                    ParentItem.ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_PANEL_DESCRIPTION", ParentItem.ParentColumn.Items.IndexOf(ParentItem), Description, 0, "", false);
-                foreach (var stat in Items)
-                    ParentItem.ParentColumn.Parent._pause._lobby.CallFunction("SET_PLAYER_ITEM_PANEL_STAT", ParentItem.ParentColumn.Items.IndexOf(ParentItem), stat.idx, 0, stat.Label, stat.Description, stat.Value);
+                var idx = ParentItem.ParentColumn.Items.IndexOf(ParentItem);
+                if (ParentItem.ParentColumn.Parent is MainView lobby)
+                {
+                    lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_PANEL", idx, 0, Title, Description, (int)TitleColor, RankInfo.RankLevel, HasPlane, HasHeli, HasBoat, HasVehicle, 0, RankInfo.LowLabel, 0, 0, RankInfo.MidLabel, 0, 0, RankInfo.UpLabel, 0, 0);
+                    if (!string.IsNullOrWhiteSpace(Description))
+                        lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_PANEL_DESCRIPTION", idx, Description, 0, "", false);
+                    foreach (var stat in Items)
+                        lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_PANEL_STAT", idx, stat.idx, 0, stat.Label, stat.Description, stat.Value);
+                }
+                else if (ParentItem.ParentColumn.Parent is TabView pause)
+                {
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL", ParentItem.ParentColumn.ParentTab, idx, 0, Title, Description, (int)TitleColor, RankInfo.RankLevel, HasPlane, HasHeli, HasBoat, HasVehicle, 0, RankInfo.LowLabel, 0, 0, RankInfo.MidLabel, 0, 0, RankInfo.UpLabel, 0, 0);
+                    if (!string.IsNullOrWhiteSpace(Description))
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_DESCRIPTION", ParentItem.ParentColumn.ParentTab, idx, Description, 0, "", false);
+                    foreach (var stat in Items)
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_STAT", ParentItem.ParentColumn.ParentTab, idx, stat.idx, 0, stat.Label, stat.Description, stat.Value);
+                }
             }
         }
     }

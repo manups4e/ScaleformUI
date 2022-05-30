@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ScaleformUI.PauseMenu;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,9 +11,10 @@ namespace ScaleformUI.LobbyMenu
     {
         private int currentSelection;
 
+        public int ParentTab { get; internal set; }
         public IndexChanged OnIndexChanged;
         public List<UIMenuItem> Items { get; internal set; }
-        public MainView Parent { get; internal set; }
+        public PauseMenuBase Parent { get; internal set; }
         public SettingsListColumn(string label, HudColor color) : base(label, color)
         {
             Items = new List<UIMenuItem>();
@@ -32,7 +34,13 @@ namespace ScaleformUI.LobbyMenu
                 Items[CurrentSelection].Selected = false;
                 currentSelection = 1000000 - (1000000 % Items.Count) + value;
                 Items[CurrentSelection].Selected = true;
-                Parent._pause._lobby.CallFunction("SET_SETTINGS_SELECTION", CurrentSelection);
+                if (Parent != null && Parent.Visible)
+                {
+                    if (Parent is MainView lobby)
+                        lobby._pause._lobby.CallFunction("SET_SETTINGS_SELECTION", CurrentSelection);
+                    else if (Parent is TabView pause)
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", ParentTab, CurrentSelection);
+                }
             }
         }
 
