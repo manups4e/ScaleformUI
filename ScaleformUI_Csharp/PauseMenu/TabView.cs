@@ -120,6 +120,10 @@ namespace ScaleformUI.PauseMenu
             get { return _visible; }
             set
             {
+                Game.IsPaused = value;
+                ScaleformUI.InstructionalButtons.Enabled = value;
+                _pause.Visible = value;
+                _visible = value;
                 if (value)
                 {
                     SendPauseMenuOpen();
@@ -137,11 +141,8 @@ namespace ScaleformUI.PauseMenu
                     AnimpostfxPlay("PauseMenuOut", 800, false);
                     SendPauseMenuClose();
                     SetPlayerControl(Game.Player.Handle, true, 0);
+                    _poolcontainer.FlushPauseMenus();
                 }
-                Game.IsPaused = value;
-                ScaleformUI.InstructionalButtons.Enabled = value;
-                _pause.Visible = value;
-                _visible = value;
             }
         }
         public void AddTab(BaseTab item)

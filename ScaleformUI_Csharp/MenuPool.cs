@@ -77,6 +77,7 @@ namespace ScaleformUI
         }
         public void Add(PauseMenuBase menu)
         {
+            menu._poolcontainer = this;
             _pauseMenuList.Add(menu);
         }
 
@@ -183,8 +184,7 @@ namespace ScaleformUI
                 menu.ProcessControl();
             }*/
 
-            int count = _menuList.Count; // Cache count
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < _menuList.ToList().Count; i++)
             {
                 if (_menuList[i].Visible)
                     _menuList[i].ProcessControl();
@@ -201,13 +201,7 @@ namespace ScaleformUI
         /// <param name="key"></param>
         public void ProcessKey(Keys key)
         {
-            /*foreach (var menu in _menuList.Where(menu => menu.Visible))
-            {
-                menu.ProcessKey(key);
-            }*/
-
-            int count = _menuList.Count;
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < _menuList.ToList().Count; i++)
             {
                 if (_menuList[i].Visible)
                     _menuList[i].ProcessKey(key);
@@ -220,23 +214,15 @@ namespace ScaleformUI
         /// </summary>
         public void ProcessMouse()
         {
-            /*foreach (var menu in _menuList.Where(menu => menu.Visible))
-            {
-                menu.ProcessMouse();
-            }*/
-
-            int count = _menuList.Count;
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < _menuList.ToList().Count; i++)
             {
                 if (_menuList[i].Visible)
                     _menuList[i].ProcessMouse();
             }
 
-            for (int i = 0; i < _pauseMenuList.Count; i++)
-            {
-                if (_pauseMenuList[i].Visible)
-                    _pauseMenuList[i].ProcessMouse();
-            }
+            var pauseMenu = _pauseMenuList.SingleOrDefault(x => x.Visible);
+            if (pauseMenu is not null)
+                pauseMenu.ProcessMouse();
         }
 
 
@@ -245,13 +231,7 @@ namespace ScaleformUI
         /// </summary>
         public void Draw()
         {
-            /*foreach (var menu in _menuList.Where(menu => menu.Visible))
-            {
-                menu.Draw();
-            }*/
-
-            int count = _menuList.Count;
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < _menuList.ToList().Count; i++)
             {
                 if (_menuList[i].Visible)
                     _menuList[i].Draw();
@@ -305,6 +285,18 @@ namespace ScaleformUI
             }
             ScaleformUI._ui.CallFunction("CLEAR_ALL");
             ScaleformUI.InstructionalButtons.Enabled = false;
+        }
+
+        public void FlushMenus()
+        {
+            _menuList.ForEach(async menu => { if (menu.Visible) menu.Visible = false; });
+            _menuList.Clear();
+        }
+
+        public void FlushPauseMenus()
+        {
+            _pauseMenuList.ForEach(async menu => { if (menu.Visible) menu.Visible = false; });
+            _pauseMenuList.Clear();
         }
 
         public void SetKey(UIMenu.MenuControls menuControl, Control control)
