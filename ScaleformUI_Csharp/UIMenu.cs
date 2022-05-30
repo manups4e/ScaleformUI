@@ -2116,7 +2116,6 @@ namespace ScaleformUI
                     MenuChangeEv(this, null, MenuState.Closed);
                     ScaleformUI._ui.CallFunction("CLEAR_ALL");
                     _poolcontainer.ProcessMenus(false);
-                    _poolcontainer.FlushMenus();
                 }
                 if (!value) return;
                 if (!ResetCursorOnOpen) return;

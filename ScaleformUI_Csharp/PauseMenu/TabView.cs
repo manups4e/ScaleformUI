@@ -143,7 +143,6 @@ namespace ScaleformUI.PauseMenu
                     SendPauseMenuClose();
                     SetPlayerControl(Game.Player.Handle, true, 0);
                     _poolcontainer.ProcessMenus(false);
-                    _poolcontainer.FlushPauseMenus();
                 }
             }
         }
