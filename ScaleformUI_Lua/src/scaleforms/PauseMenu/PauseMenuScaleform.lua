@@ -241,12 +241,6 @@ function Pause:Dispose()
     self._pause:CallFunction("CLEAR_ALL", false)
     self._header:CallFunction("CLEAR_ALL", false)
     self._lobby:CallFunction("CLEAR_ALL", false)
-	SetScaleformMovieAsNoLongerNeeded(self._pause.handle)
-	SetScaleformMovieAsNoLongerNeeded(self._header.handle)
-	SetScaleformMovieAsNoLongerNeeded(self._lobby.handle)
-	self._pause = nil
-	self._header = nil
-	self._lobby = nil
     self._visible = false
 end
 
