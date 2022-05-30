@@ -46,8 +46,8 @@ end
 
 function TextTimerBar:Draw(interval)
     if not self._enabled then return end
-    local resx, resy = self:ResolutionMaintainRatio()
-    local safex, safey = self:SafezoneBounds()
+    local resx, resy = ResolutionMaintainRatio()
+    local safex, safey = SafezoneBounds()
 
     UIResText.New(self._label, resx - safex - 180, resy - safey - (30 + (4 * interval)), 0.3, 240, 240, 240, 255, 0, 2):Draw()
     Sprite.New("timerbars", "all_black_bg", resx - safex - 298, resy - safey - (40 + (4 * interval)), 300, 37, 0.0, 255, 255, 255, 180):Draw()
@@ -56,25 +56,4 @@ function TextTimerBar:Draw(interval)
     HideHudComponentThisFrame(6);
     HideHudComponentThisFrame(7);
     HideHudComponentThisFrame(9);
-end
-
-function TextTimerBar:ResolutionMaintainRatio()
-    local screenw,screenh = GetActiveScreenResolution()
-    local ratio = screenw / screenh
-    local width = 1080 * ratio
-    return width, 1080
-end
-
-function TextTimerBar:SafezoneBounds()
-    local t = GetSafeZoneSize();
-    local  g = math.round(t, 2);
-    g = (g * 100) - 90;
-    g = 10 - g;
-
-    local screenw = 720 * GetScreenAspectRatio(false)
-    local screenh = 720
-    local ratio = screenw / screenh;
-    local wmp = ratio * 5.4
-
-    return math.round(g * wmp), math.round(g * 5.4)
 end

@@ -80,8 +80,30 @@ function split(pString, pPattern)
        table.insert(Table, cap)
     end
     return Table
- end
- 
+end
+
+function ResolutionMaintainRatio()
+    local screenw,screenh = GetActiveScreenResolution()
+    local ratio = screenw / screenh
+    local width = 1080 * ratio
+    return width, 1080
+end
+
+function SafezoneBounds()
+    local t = GetSafeZoneSize();
+    local  g = math.round(t, 2);
+    g = (g * 100) - 90;
+    g = 10 - g;
+
+    local screenw = 720 * GetScreenAspectRatio(false)
+    local screenh = 720
+    local ratio = screenw / screenh;
+    local wmp = ratio * 5.4
+
+    return math.round(g * wmp), math.round(g * 5.4)
+end
+
 function FormatXWYH(Value, Value2)
-    return Value/1920, Value2/1080
+    local w,h = ResolutionMaintainRatio()
+    return Value/w, Value2/h
 end
