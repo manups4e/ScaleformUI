@@ -137,7 +137,7 @@ namespace ScaleformUI.LobbyMenu
                 }
             }
         }
-        public async void ShowHeader()
+        public void ShowHeader()
         {
             if (String.IsNullOrEmpty(SubTitle) || String.IsNullOrWhiteSpace(SubTitle))
                 _pause.SetHeaderTitle(Title);
@@ -160,130 +160,140 @@ namespace ScaleformUI.LobbyMenu
         }
 
         private bool canBuild = true;
-        public async void BuildPauseMenu()
+        public void BuildPauseMenu()
         {
             ShowHeader();
             _pause._lobby.CallFunction("CREATE_MENU", SettingsColumn.Order, PlayersColumn.Order, MissionPanel.Order);
             buildSettings();
-            await BaseScript.Delay(50);
+            //await BaseScript.Delay(50);
             buildPlayers();
+
             _pause._lobby.CallFunction("ADD_MISSION_PANEL_PICTURE", MissionPanel.TextureDict, MissionPanel.TextureName);
             _pause._lobby.CallFunction("SET_MISSION_PANEL_TITLE", MissionPanel.Title);
-            foreach (var item in MissionPanel.Items)
+            if (MissionPanel.Items.Count > 0)
             {
-                _pause._lobby.CallFunction("ADD_MISSION_PANEL_ITEM", item.Type, item.TextLeft, item.TextRight, (int)item.Icon, (int)item.IconColor, item.Tick);
+                foreach (var item in MissionPanel.Items)
+                {
+                    _pause._lobby.CallFunction("ADD_MISSION_PANEL_ITEM", item.Type, item.TextLeft, item.TextRight, (int)item.Icon, (int)item.IconColor, item.Tick);
+                }
             }
         }
 
         public async void buildSettings()
         {
-            var i = 0;
-            while (i < SettingsColumn.Items.Count)
+            if (SettingsColumn.Items.Count > 0)
             {
-                await BaseScript.Delay(1);
-                if (!canBuild) break;
-                var item = SettingsColumn.Items[i];
-                var index = SettingsColumn.Items.IndexOf(item);
-                AddTextEntry($"menu_lobby_desc_{index}", item.Description);
-                BeginScaleformMovieMethod(_pause._lobby.Handle, "ADD_LEFT_ITEM");
-                PushScaleformMovieFunctionParameterInt(item._itemId);
-                PushScaleformMovieMethodParameterString(item.Label);
-                if (item.DescriptionHash != 0 && string.IsNullOrWhiteSpace(item.Description))
+                var i = 0;
+                while (i < SettingsColumn.Items.Count)
                 {
-                    BeginTextCommandScaleformString("STRTNM1");
-                    AddTextComponentSubstringTextLabelHashKey(item.DescriptionHash);
-                    EndTextCommandScaleformString_2();
+                    await BaseScript.Delay(1);
+                    if (!canBuild) break;
+                    var item = SettingsColumn.Items[i];
+                    var index = SettingsColumn.Items.IndexOf(item);
+                    AddTextEntry($"menu_lobby_desc_{index}", item.Description);
+                    BeginScaleformMovieMethod(_pause._lobby.Handle, "ADD_LEFT_ITEM");
+                    PushScaleformMovieFunctionParameterInt(item._itemId);
+                    PushScaleformMovieMethodParameterString(item.Label);
+                    if (item.DescriptionHash != 0 && string.IsNullOrWhiteSpace(item.Description))
+                    {
+                        BeginTextCommandScaleformString("STRTNM1");
+                        AddTextComponentSubstringTextLabelHashKey(item.DescriptionHash);
+                        EndTextCommandScaleformString_2();
+                    }
+                    else
+                    {
+                        BeginTextCommandScaleformString($"menu_lobby_desc_{index}");
+                        EndTextCommandScaleformString_2();
+                    }
+                    PushScaleformMovieFunctionParameterBool(item.Enabled);
+                    PushScaleformMovieFunctionParameterBool(item.BlinkDescription);
+                    switch (item)
+                    {
+                        case UIMenuListItem:
+                            UIMenuListItem it = (UIMenuListItem)item;
+                            AddTextEntry($"listitem_lobby_{index}_list", string.Join(",", it.Items));
+                            BeginTextCommandScaleformString($"listitem_lobby_{index}_list");
+                            EndTextCommandScaleformString();
+                            PushScaleformMovieFunctionParameterInt(it.Index);
+                            PushScaleformMovieFunctionParameterInt((int)it.MainColor);
+                            PushScaleformMovieFunctionParameterInt((int)it.HighlightColor);
+                            PushScaleformMovieFunctionParameterInt((int)it.TextColor);
+                            PushScaleformMovieFunctionParameterInt((int)it.HighlightedTextColor);
+                            EndScaleformMovieMethod();
+                            break;
+                        case UIMenuCheckboxItem:
+                            UIMenuCheckboxItem check = (UIMenuCheckboxItem)item;
+                            PushScaleformMovieFunctionParameterInt((int)check.Style);
+                            PushScaleformMovieMethodParameterBool(check.Checked);
+                            PushScaleformMovieFunctionParameterInt((int)check.MainColor);
+                            PushScaleformMovieFunctionParameterInt((int)check.HighlightColor);
+                            PushScaleformMovieFunctionParameterInt((int)check.TextColor);
+                            PushScaleformMovieFunctionParameterInt((int)check.HighlightedTextColor);
+                            EndScaleformMovieMethod();
+                            break;
+                        case UIMenuSliderItem:
+                            UIMenuSliderItem prItem = (UIMenuSliderItem)item;
+                            PushScaleformMovieFunctionParameterInt(prItem._max);
+                            PushScaleformMovieFunctionParameterInt(prItem._multiplier);
+                            PushScaleformMovieFunctionParameterInt(prItem.Value);
+                            PushScaleformMovieFunctionParameterInt((int)prItem.MainColor);
+                            PushScaleformMovieFunctionParameterInt((int)prItem.HighlightColor);
+                            PushScaleformMovieFunctionParameterInt((int)prItem.TextColor);
+                            PushScaleformMovieFunctionParameterInt((int)prItem.HighlightedTextColor);
+                            PushScaleformMovieFunctionParameterInt((int)prItem.SliderColor);
+                            PushScaleformMovieFunctionParameterBool(prItem._heritage);
+                            EndScaleformMovieMethod();
+                            break;
+                        case UIMenuProgressItem:
+                            UIMenuProgressItem slItem = (UIMenuProgressItem)item;
+                            PushScaleformMovieFunctionParameterInt(slItem._max);
+                            PushScaleformMovieFunctionParameterInt(slItem._multiplier);
+                            PushScaleformMovieFunctionParameterInt(slItem.Value);
+                            PushScaleformMovieFunctionParameterInt((int)slItem.MainColor);
+                            PushScaleformMovieFunctionParameterInt((int)slItem.HighlightColor);
+                            PushScaleformMovieFunctionParameterInt((int)slItem.TextColor);
+                            PushScaleformMovieFunctionParameterInt((int)slItem.HighlightedTextColor);
+                            PushScaleformMovieFunctionParameterInt((int)slItem.SliderColor);
+                            EndScaleformMovieMethod();
+                            break;
+                        default:
+                            PushScaleformMovieFunctionParameterInt((int)item.MainColor);
+                            PushScaleformMovieFunctionParameterInt((int)item.HighlightColor);
+                            PushScaleformMovieFunctionParameterInt((int)item.TextColor);
+                            PushScaleformMovieFunctionParameterInt((int)item.HighlightedTextColor);
+                            EndScaleformMovieMethod();
+                            break;
+                    }
+                    i++;
                 }
-                else
-                {
-                    BeginTextCommandScaleformString($"menu_lobby_desc_{index}");
-                    EndTextCommandScaleformString_2();
-                }
-                PushScaleformMovieFunctionParameterBool(item.Enabled);
-                PushScaleformMovieFunctionParameterBool(item.BlinkDescription);
-                switch (item)
-                {
-                    case UIMenuListItem:
-                        UIMenuListItem it = (UIMenuListItem)item;
-                        AddTextEntry($"listitem_lobby_{index}_list", string.Join(",", it.Items));
-                        BeginTextCommandScaleformString($"listitem_lobby_{index}_list");
-                        EndTextCommandScaleformString();
-                        PushScaleformMovieFunctionParameterInt(it.Index);
-                        PushScaleformMovieFunctionParameterInt((int)it.MainColor);
-                        PushScaleformMovieFunctionParameterInt((int)it.HighlightColor);
-                        PushScaleformMovieFunctionParameterInt((int)it.TextColor);
-                        PushScaleformMovieFunctionParameterInt((int)it.HighlightedTextColor);
-                        EndScaleformMovieMethod();
-                        break;
-                    case UIMenuCheckboxItem:
-                        UIMenuCheckboxItem check = (UIMenuCheckboxItem)item;
-                        PushScaleformMovieFunctionParameterInt((int)check.Style);
-                        PushScaleformMovieMethodParameterBool(check.Checked);
-                        PushScaleformMovieFunctionParameterInt((int)check.MainColor);
-                        PushScaleformMovieFunctionParameterInt((int)check.HighlightColor);
-                        PushScaleformMovieFunctionParameterInt((int)check.TextColor);
-                        PushScaleformMovieFunctionParameterInt((int)check.HighlightedTextColor);
-                        EndScaleformMovieMethod();
-                        break;
-                    case UIMenuSliderItem:
-                        UIMenuSliderItem prItem = (UIMenuSliderItem)item;
-                        PushScaleformMovieFunctionParameterInt(prItem._max);
-                        PushScaleformMovieFunctionParameterInt(prItem._multiplier);
-                        PushScaleformMovieFunctionParameterInt(prItem.Value);
-                        PushScaleformMovieFunctionParameterInt((int)prItem.MainColor);
-                        PushScaleformMovieFunctionParameterInt((int)prItem.HighlightColor);
-                        PushScaleformMovieFunctionParameterInt((int)prItem.TextColor);
-                        PushScaleformMovieFunctionParameterInt((int)prItem.HighlightedTextColor);
-                        PushScaleformMovieFunctionParameterInt((int)prItem.SliderColor);
-                        PushScaleformMovieFunctionParameterBool(prItem._heritage);
-                        EndScaleformMovieMethod();
-                        break;
-                    case UIMenuProgressItem:
-                        UIMenuProgressItem slItem = (UIMenuProgressItem)item;
-                        PushScaleformMovieFunctionParameterInt(slItem._max);
-                        PushScaleformMovieFunctionParameterInt(slItem._multiplier);
-                        PushScaleformMovieFunctionParameterInt(slItem.Value);
-                        PushScaleformMovieFunctionParameterInt((int)slItem.MainColor);
-                        PushScaleformMovieFunctionParameterInt((int)slItem.HighlightColor);
-                        PushScaleformMovieFunctionParameterInt((int)slItem.TextColor);
-                        PushScaleformMovieFunctionParameterInt((int)slItem.HighlightedTextColor);
-                        PushScaleformMovieFunctionParameterInt((int)slItem.SliderColor);
-                        EndScaleformMovieMethod();
-                        break;
-                    default:
-                        PushScaleformMovieFunctionParameterInt((int)item.MainColor);
-                        PushScaleformMovieFunctionParameterInt((int)item.HighlightColor);
-                        PushScaleformMovieFunctionParameterInt((int)item.TextColor);
-                        PushScaleformMovieFunctionParameterInt((int)item.HighlightedTextColor);
-                        EndScaleformMovieMethod();
-                        break;
-                }
-                i++;
+                SettingsColumn.CurrentSelection = 0;
             }
-            SettingsColumn.CurrentSelection = 0;
         }
 
         public async void buildPlayers()
         {
-            var i = 0;
-            while (i < PlayersColumn.Items.Count)
+            if (PlayersColumn.Items.Count > 0)
             {
-                var item = PlayersColumn.Items[i];
-                var index = PlayersColumn.Items.IndexOf(item);
-                switch (item)
+                var i = 0;
+                while (i < PlayersColumn.Items.Count)
                 {
-                    case FriendItem:
-                        var fi = (FriendItem)item;
-                        _pause._lobby.CallFunction("ADD_PLAYER_ITEM", 1, 1, fi.Label, (int)fi.ItemColor, fi.ColoredTag, fi.iconL, fi.boolL, fi.iconR, fi.boolR, fi.Status, (int)fi.StatusColor, fi.Rank, fi.CrewTag);
-                        break;
+                    var item = PlayersColumn.Items[i];
+                    var index = PlayersColumn.Items.IndexOf(item);
+                    switch (item)
+                    {
+                        case FriendItem:
+                            var fi = (FriendItem)item;
+                            _pause._lobby.CallFunction("ADD_PLAYER_ITEM", 1, 1, fi.Label, (int)fi.ItemColor, fi.ColoredTag, fi.iconL, fi.boolL, fi.iconR, fi.boolR, fi.Status, (int)fi.StatusColor, fi.Rank, fi.CrewTag);
+                            break;
+                    }
+                    if (item.Panel != null)
+                    {
+                        item.Panel.UpdatePanel(true);
+                    }
+                    i++;
                 }
-                if (item.Panel != null)
-                {
-                    item.Panel.UpdatePanel(true);
-                }
-                i++;
+                PlayersColumn.CurrentSelection = 0;
             }
-            PlayersColumn.CurrentSelection = 0;
         }
 
         private bool controller = false;

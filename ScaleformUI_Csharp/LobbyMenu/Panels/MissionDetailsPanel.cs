@@ -8,9 +8,9 @@ namespace ScaleformUI.LobbyMenu
 {
     public class MissionDetailsPanel : Column
     {
-        private string title;
-        public string TextureDict;
-        public string TextureName;
+        private string title = "";
+        public string TextureDict = "";
+        public string TextureName = "";
         public MainView Parent { get; internal set; }
         public string Title
         {
@@ -18,7 +18,7 @@ namespace ScaleformUI.LobbyMenu
             set
             {
                 title = value;
-                if (Parent.Visible)
+                if (Parent != null && Parent.Visible)
                 {
                     ScaleformUI.PauseMenu._lobby.CallFunction("SET_MISSION_PANEL_TITLE", title);
                 }
@@ -40,7 +40,7 @@ namespace ScaleformUI.LobbyMenu
         {
             TextureDict = txd;
             TextureName = txn;
-            if (Parent.Visible)
+            if (Parent != null && Parent.Visible)
             {
                 ScaleformUI.PauseMenu._lobby.CallFunction("ADD_MISSION_PANEL_PICTURE", TextureDict, TextureName);
             }
@@ -54,7 +54,7 @@ namespace ScaleformUI.LobbyMenu
         public void AddItem(UIFreemodeDetailsItem item)
         {
             Items.Add(item);
-            if (Parent.Visible)
+            if (Parent != null && Parent.Visible)
             {
                 ScaleformUI.PauseMenu._lobby.CallFunction("ADD_MISSION_PANEL_ITEM", item.Type, item.TextLeft, item.TextRight, (int)item.Icon, (int)item.IconColor, item.Tick);
             }
@@ -67,7 +67,7 @@ namespace ScaleformUI.LobbyMenu
         public void RemoveItem(int idx)
         {
             Items.RemoveAt(idx);
-            if (Parent.Visible)
+            if (Parent != null && Parent.Visible)
             {
                 ScaleformUI.PauseMenu._lobby.CallFunction("REMOVE_MISSION_PANEL_ITEM", idx);
             }
