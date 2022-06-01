@@ -65,7 +65,7 @@ namespace ScaleformUI
         public event MenuStateChangeEvent OnMenuStateChanged;
 
         internal readonly List<UIMenu> _menuList = new List<UIMenu>();
-        public readonly List<PauseMenuBase> _pauseMenuList = new List<PauseMenuBase>();
+        internal readonly List<PauseMenuBase> _pauseMenuList = new List<PauseMenuBase>();
 
         /// <summary>
         /// Add your menu to the menu pool.
