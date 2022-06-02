@@ -55,3 +55,13 @@ function PlayerListColumn:AddPlayer(item)
         end
     end
 end
+
+function PlayerListColumn:RemovePlayer(id)
+    table.remove(self.Items, id)
+    if self.Parent ~= nil and self.Parent:Visible() then
+        local Type, SubType = item()
+        if SubType == "FriendItem" then
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("REMOVE_PLAYER_ITEM", id)
+        end
+    end
+end
