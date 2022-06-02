@@ -664,7 +664,7 @@ function TabView:ProcessMouse()
                     if tab:Focus() == 1 then
                         tab:Focus(0)
                     end
-                    tab.PlayersColumn.CurrentSelection(item_id+1)
+                    tab.PlayersColumn:CurrentSelection(item_id)
                 else
                     if #tab.LeftItemList == 0 then return end
                     if not tab.LeftItemList[self.leftItemList] then return end
@@ -704,7 +704,7 @@ function TabView:ProcessMouse()
                             _item:Activated(self, _item)
                         end                                
                     end
-                    tab.SettingsColumn:CurrentSelection(item_id+1)
+                    tab.SettingsColumn:CurrentSelection(item_id)
                 else
                     if self:FocusLevel() ~= 1 then
                         if not tab.LeftItemList[item_id+1]:Enabled() then
@@ -735,6 +735,7 @@ function TabView:ProcessMouse()
                     tab.LeftItemList[self.leftItemIndex].OnActivated(tab.LeftItemList[self.leftItemIndex], self.leftItemIndex)
                     self.OnLeftItemSelect(self, tab.LeftItemList[self.leftItemIndex], self.leftItemIndex)
                 end
+                PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
             elseif context == 2 then
                 local rightItem = tab.LeftItemList[self.leftItemIndex].ItemList[item_id+1]
                 if not rightItem:Enabled() then
@@ -768,7 +769,7 @@ function TabView:ProcessMouse()
         elseif event_type == 9 then
             if context == 1 then
                 if subT == "PlayerListTab" then
-                    tab.SettingsColumn.Items[item_id]:Hovered(true)
+                    tab.SettingsColumn.Items[item_id+1]:Hovered(true)
                 else
                     for i, item in ipairs(tab.LeftItemList) do
                         item:Hovered(item:Enabled() and i == item_id+1)
@@ -782,7 +783,7 @@ function TabView:ProcessMouse()
         elseif event_type == 8 or event_type == 0 then
             if context == 1 then
                 if subT == "PlayerListTab" then
-                    tab.SettingsColumn.Items[item_id]:Hovered(false)
+                    tab.SettingsColumn.Items[item_id+1]:Hovered(false)
                 end
             end
         end
