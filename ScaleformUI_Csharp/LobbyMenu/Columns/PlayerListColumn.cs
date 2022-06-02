@@ -43,6 +43,7 @@ namespace ScaleformUI.LobbyMenu
 
         public void RemovePlayer(int id)
         {
+            Items.RemoveAt(id);
             if (Parent != null && Parent.Visible)
             {
                 if (Parent is MainView lobby)
