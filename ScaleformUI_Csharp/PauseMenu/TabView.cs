@@ -1048,6 +1048,7 @@ namespace ScaleformUI.PauseMenu
                         break;
                     case 7: // on click released ouside
                         break;
+                    case 0: // dragged outside
                     case 8: // on not hover
                         switch (context)
                         {
@@ -1090,26 +1091,6 @@ namespace ScaleformUI.PauseMenu
                                     {
                                         (curIt as SettingsItem).Hovered = itemId == idx && (curIt as SettingsItem).Enabled;
                                     }
-                                }
-                                break;
-                        }
-                        break;
-                    case 0: // dragged outside
-                        switch (context)
-                        {
-                            case 1: // left item in subitem tab pressed
-                                if (Tabs[Index] is PlayerListTab plTab)
-                                {
-                                    plTab.SettingsColumn.Items[itemId].Hovered = false;
-                                }
-                                else
-                                    Tabs[Index].LeftItemList[itemId].Hovered = false;
-                                break;
-                            case 2:// right settings item in subitem tab pressed
-                                var curIt = Tabs[Index].LeftItemList[LeftItemIndex].ItemList[itemId];
-                                if (curIt is SettingsItem)
-                                {
-                                    (curIt as SettingsItem).Hovered = false;
                                 }
                                 break;
                         }
