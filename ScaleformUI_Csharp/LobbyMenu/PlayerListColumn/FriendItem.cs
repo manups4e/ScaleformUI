@@ -224,6 +224,7 @@ namespace ScaleformUI.LobbyMenu
         {
             panel.ParentItem = this;
             this.Panel = panel;
+            Panel.UpdatePanel();
         }
 
     }
