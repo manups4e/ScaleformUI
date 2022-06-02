@@ -1,7 +1,7 @@
 MainView = setmetatable({}, MainView)
 MainView.__index = MainView
 MainView.__call = function()
-    return "PauseMenu"
+    return "LobbyMenu"
 end
 
 function MainView.New(title, subtitle, sideTop, sideMid, sideBot)

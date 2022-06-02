@@ -30,10 +30,7 @@ function scaleform:CallFunction(theFunction, returndata, ...)
 					PushScaleformMovieMethodParameterFloat(arg[i])
 				end
             elseif sType == "string" then
-				if arg[i]:find("^desc_{") ~= nil or arg[i]:find("^menu_lobby_desc_{") ~= nil then
-					BeginTextCommandScaleformString(arg[i])
-					EndTextCommandScaleformString_2()
-				elseif arg[i]:find("^PauseMenu_") ~= nil then
+				if arg[i]:find("^desc_{") ~= nil or arg[i]:find("^menu_lobby_desc_{") ~= nil or arg[i]:find("^PauseMenu_") or arg[i]:find("^menu_pause_playerTab{") then
 					BeginTextCommandScaleformString(arg[i])
 					EndTextCommandScaleformString_2()
 				else

@@ -11,6 +11,7 @@ function SettingsListColumn.New(label, color)
         _currentSelection = 0,
         Order = 0,
         Parent = nil,
+        ParentTab = 0,
         Items = {},
         OnIndexChanged = function(index)
         end
@@ -37,7 +38,12 @@ function SettingsListColumn:CurrentSelection(idx)
         self._currentSelection = 1000000 - (1000000 % #self.Items) + tonumber(idx)
         self.Items[self:CurrentSelection()]:Selected(true)
         if self.Parent ~= nil and self.Parent:Visible() then
-            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_SELECTION", false, self:CurrentSelection()-1)
+            local pSubT = self.Parent()
+            if pSubT == "LobbyMenu" then
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_SELECTION", false, self:CurrentSelection()-1)
+            elseif pSubT == "PauseMenu" then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", false, self.ParentTab, self:CurrentSelection()-1)
+            end
         end
     end
 end

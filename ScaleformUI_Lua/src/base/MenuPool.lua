@@ -56,7 +56,7 @@ function MenuPool:Add(Menu)
 end
 
 function MenuPool:AddPauseMenu(Menu)
-    if Menu() == "PauseMenu" then
+    if Menu() == "PauseMenu" or Menu() == "LobbyMenu" then
         Menu._internalpool = self,
         table.insert(self.PauseMenus, Menu)
     end

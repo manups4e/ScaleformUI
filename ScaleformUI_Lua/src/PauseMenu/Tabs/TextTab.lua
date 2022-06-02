@@ -6,7 +6,7 @@ end
 
 function TextTab.New(name, _title)
     local data = {
-        Base = BaseTab.New(name or "", 1),
+        Base = BaseTab.New(name or "", 0),
         Label = name,
         TextTitle = _title or "",
         LabelsList = {},
