@@ -327,6 +327,12 @@ function TabView:Draw()
     if not self:Visible() or self.TemporarilyHidden then
         return 
     end
+    DisableControlAction(0, 199, true)
+    DisableControlAction(0, 200, true)
+    DisableControlAction(1, 199, true)
+    DisableControlAction(1, 200, true)
+    DisableControlAction(2, 199, true)
+    DisableControlAction(2, 200, true)
     ScaleformUI.Scaleforms._pauseMenu:Draw()
     self:UpdateKeymapItems()
 end
@@ -834,7 +840,7 @@ function TabView:ProcessControl()
             self:Select()
         end)
     end
-    if (IsControlJustPressed(2, 177)) then
+    if (IsControlJustReleased(2, 177)) then
         Citizen.CreateThread(function()
             self:GoBack()
         end)

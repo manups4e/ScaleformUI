@@ -1136,7 +1136,7 @@ namespace ScaleformUI.PauseMenu
             }
             else if (Game.IsControlJustPressed(2, Control.FrontendAccept))
                 Select(false);
-            else if (Game.IsControlJustPressed(2, Control.PhoneCancel))
+            else if (Game.IsControlJustReleased(2, Control.PhoneCancel))
                 GoBack();
 
             if (Game.IsControlJustPressed(1, Control.CursorScrollUp))

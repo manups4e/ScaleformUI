@@ -300,6 +300,7 @@ namespace ScaleformUI.LobbyMenu
         public override async void Draw()
         {
             if (!Visible || TemporarilyHidden) return;
+            base.Draw();
             _pause.Draw(true);
             if (_firstDrawTick)
             {
@@ -431,7 +432,7 @@ namespace ScaleformUI.LobbyMenu
                 Select();
             }
 
-            else if (Game.IsControlJustPressed(2, Control.PhoneCancel))
+            else if (Game.IsControlJustReleased(2, Control.PhoneCancel))
             {
                 GoBack();
             }

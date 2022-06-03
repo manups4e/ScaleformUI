@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CitizenFX.Core.Native;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,8 +26,12 @@ namespace ScaleformUI
         }
         public virtual void Draw()
         {
-
+            API.DisableControlAction(0, 199, true);
+            API.DisableControlAction(0, 200, true);
+            API.DisableControlAction(1, 199, true);
+            API.DisableControlAction(1, 200, true);
+            API.DisableControlAction(2, 199, true);
+            API.DisableControlAction(2, 200, true);
         }
-
     }
 }

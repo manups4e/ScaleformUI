@@ -223,6 +223,12 @@ function MainView:Draw()
     if not self:Visible() or self.TemporarilyHidden then
         return 
     end
+    DisableControlAction(0, 199, true)
+    DisableControlAction(0, 200, true)
+    DisableControlAction(1, 199, true)
+    DisableControlAction(1, 200, true)
+    DisableControlAction(2, 199, true)
+    DisableControlAction(2, 200, true)
     ScaleformUI.Scaleforms._pauseMenu:Draw(true)
     if self._firstTick then
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("FADE_IN")
@@ -333,7 +339,7 @@ function MainView:ProcessControl()
             self:Select()
         end)
     end
-    if (IsDisabledControlJustPressed(2, 177)) then
+    if (IsDisabledControlJustReleased(2, 177)) then
         Citizen.CreateThread(function()
             self:GoBack()
         end)

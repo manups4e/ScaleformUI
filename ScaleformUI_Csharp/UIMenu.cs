@@ -1504,8 +1504,7 @@ namespace ScaleformUI
 
             HideHudComponentThisFrame(19);
 
-            if (ControlDisablingEnabled)
-                Controls.Toggle(false);
+            Controls.Toggle(!ControlDisablingEnabled);
 
             float x = 0 / Screen.Width;
             float y = 0 / Screen.Height;
