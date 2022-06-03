@@ -5,8 +5,8 @@ local timerBarPool = TimerBarPool.New()
 function CreateMenu()
 	local txd = CreateRuntimeTxd("scaleformui")
 	local dui = CreateDui("https://sleeping-tears.xyz/img/gta5/hiccup_racing.png", 288, 160)
-	local sidepanel_txn = CreateRuntimeTextureFromDuiHandle(txd, "sidepanel", GetDuiHandle(dui))
-
+	CreateRuntimeTextureFromDuiHandle(txd, "sidepanel", GetDuiHandle(dui))
+	
 	local exampleMenu = UIMenu.New("ScaleformUI UI", "ScaleformUI SHOWCASE", 50, 50, true, nil, nil, true)
 	exampleMenu:MaxItemsOnScreen(7)
 	pool:Add(exampleMenu)
