@@ -80,11 +80,7 @@ namespace ScaleformUI
 
         public void AddRow(PlayerRow row)
         {
-            //if (PlayerRows.Any(x => x.ServerId == row.ServerId)) return;
             PlayerRows.Add(row);
-            //PlayerRows.Sort((row1, row2) => row1.ServerId.CompareTo(row2.ServerId));
-            if (PlayerRows.Any(x => x.RightText.ToLower() == "lobby")) return;
-            PlayerRows.Sort((row1, row2) => Convert.ToInt32(row1.RightText).CompareTo(Convert.ToInt32(row2.RightText)));
         }
 
         public void RemoveRow(PlayerRow row)
@@ -276,5 +272,4 @@ namespace ScaleformUI
         public string TextureString;
         public char FriendType;
     }
-
 }
