@@ -4,6 +4,7 @@ ScaleformUI.Notifications = nil
 ScaleformUI.Scaleforms._ui = 0
 ScaleformUI.Scaleforms._pauseMenu = nil
 ScaleformUI.Scaleforms.MidMessageInstance = nil
+ScaleformUI.Scaleforms.PlayerListScoreboard = nil
 ScaleformUI.Scaleforms.InstructionalButtons = nil
 ScaleformUI.Scaleforms.BigMessageInstance = nil
 ScaleformUI.Scaleforms.Warning = nil
@@ -26,6 +27,7 @@ Citizen.CreateThread(function()
     ScaleformUI.Scaleforms.BigMessageInstance = BigMessageInstance.New()
     ScaleformUI.Scaleforms.MidMessageInstance = MidMessageInstance.New()
     ScaleformUI.Scaleforms.Warning = WarningInstance.New()
+    ScaleformUI.Scaleforms.PlayerListScoreboard = PlayerListScoreboard.New()
     ScaleformUI.Scaleforms.InstructionalButtons = ButtonsHandler.New()
     ScaleformUI.Notifications = Notifications.New()
     ScaleformUI.Scaleforms._pauseMenu = PauseMenu.New()
@@ -36,6 +38,7 @@ Citizen.CreateThread(function()
         ScaleformUI.Scaleforms.BigMessageInstance:Update()
         ScaleformUI.Scaleforms.MidMessageInstance:Update()
         ScaleformUI.Scaleforms.InstructionalButtons:Update()
+        ScaleformUI.Scaleforms.PlayerListScoreboard:Update()
         ScaleformUI.Scaleforms.Warning:Update()
         if ScaleformUI.Scaleforms._ui == 0 or ScaleformUI.Scaleforms._ui == nil then
             ScaleformUI.Scaleforms._ui = Scaleform.Request("scaleformui")
