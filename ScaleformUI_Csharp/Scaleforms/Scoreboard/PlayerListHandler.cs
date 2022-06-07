@@ -116,8 +116,6 @@ namespace ScaleformUI
                 int min = CurrentPage * 16 - 16;
 
                 if (row >= min && row < max) return true;
-
-                return false;
             }
             return false;
         }
