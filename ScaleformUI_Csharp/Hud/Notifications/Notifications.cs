@@ -116,13 +116,13 @@ namespace ScaleformUI
 		/// <param name="msg">The text of the notification</param>
 		/// <param name="coords">World coordinates</param>
 		/// <param name="time"></param>
-		public static void ShowFloatingHelpNotification(string msg, Vector3 coords, int time = -1)
+		public static void ShowFloatingHelpNotification(string msg, Vector3 coords)
 		{
 			AddTextEntry("ScaleformUIFloatingHelpText", msg);
 			SetFloatingHelpTextWorldPosition(1, coords.X, coords.Y, coords.Z);
 			SetFloatingHelpTextStyle(1, 1, 2, -1, 3, 0);
 			BeginTextCommandDisplayHelp("ScaleformUIFloatingHelpText");
-			EndTextCommandDisplayHelp(2, false, false, time);
+			EndTextCommandDisplayHelp(2, true, false, -1);
 		}
 
 		/// <summary>
