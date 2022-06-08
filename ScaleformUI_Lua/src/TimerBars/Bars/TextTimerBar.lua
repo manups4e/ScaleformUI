@@ -29,7 +29,7 @@ function TextTimerBar:Caption(caption)
         self._caption = caption
     end
 end
-function TextTimerBar:Label(color)
+function TextTimerBar:Color(color)
     if color == nil then
         return self._captionColor
     else
