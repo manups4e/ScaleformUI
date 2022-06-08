@@ -114,6 +114,9 @@ namespace ScaleformUI.LobbyMenu
 
         public void SetUpColumns(List<Column> columns)
         {
+            if (columns.Count != 3)
+                throw new Exception("you must have 3 columns!");
+
             listCol = columns;
             foreach (var col in columns)
             {
