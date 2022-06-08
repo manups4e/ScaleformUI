@@ -32,14 +32,7 @@ namespace ScaleformUI
         HEIST,
         RACE_STUNT,
     }
-    public enum JobSelectionCardDetailType
-    {
-        NORMAL_TEXT = 1,
-        WITH_ICON,
-        WITH_CREWTAG,
-        WITH_BORDER,
-        MULTILINE
-    }
+
     public class MissionSelectorHandler
     {
         private Scaleform _sc;
@@ -49,7 +42,41 @@ namespace ScaleformUI
         public int VotedFor = -1;
         public int MaxVotes = 0;
         public int SelectedCard = 0;
-        public JobSelectionData JobData { get; set; }
+        public HudColor VotesColor = HudColor.HUD_COLOUR_BLUE;
+        public JobSelectionTitle JobTitle = new("", "");
+        public List<JobSelectionCard> Cards = new();
+        public List<JobSelectionButton> Buttons = new();
+
+        public void SetTitle(string title)
+        {
+            JobTitle.Title = title;
+        }
+
+        public void SetVotes(int actual, string label = "")
+        {
+            string tot = $"{actual} / {MaxVotes}";
+            if (!string.IsNullOrWhiteSpace(label)) JobTitle.Label = label;
+            JobTitle.Votes = tot + " " + JobTitle.Label;
+        }
+
+        public void AddCard(JobSelectionCard card)
+        {
+            if (Cards.Count < 9)
+            {
+                if (!Cards.Any(x => x.Title == card.Title))
+                {
+                    Cards.Add(card);
+                }
+            }
+        }
+        public void AddButton(JobSelectionButton button)
+        {
+            if (Buttons.Count < 3)
+            {
+                Buttons.Add(button);
+            }
+        }
+
         public bool Enabled
         {
             get => enabled;
@@ -67,7 +94,6 @@ namespace ScaleformUI
 
         public void Dispose()
         {
-            JobData = null;
             _sc.Dispose();
             _sc = null;
         }
@@ -75,8 +101,8 @@ namespace ScaleformUI
         public async void BuildMenu()
         {
             await Load();
-            SetTitle(JobData.JobTitle.Title, JobData.JobTitle.Votes);
-            foreach (var card in JobData.Cards)
+            SetTitle(JobTitle.Title, JobTitle.Votes);
+            foreach (var card in Cards)
             {
                 if (!string.IsNullOrWhiteSpace(card.Txd))
                 {
@@ -86,18 +112,19 @@ namespace ScaleformUI
                         API.RequestStreamedTextureDict(card.Txd, true);
                     }
                 }
-                SetGridItem(JobData.Cards.IndexOf(card), card.Title, card.Txd, card.Txn, 1, 0, (int)card.Icon, false, card.RpMultiplier, card.CashMultiplier, false, (int)card.IconColor, card.ApMultiplier);
+                SetGridItem(Cards.IndexOf(card), card.Title, card.Txd, card.Txn, 1, 0, (int)card.Icon, false, card.RpMultiplier, card.CashMultiplier, false, (int)card.IconColor, card.ApMultiplier);
                 API.SetStreamedTextureDictAsNoLongerNeeded(card.Txd);
             }
-            foreach (var button in JobData.Buttons)
-            {
-                SetButtonItem(JobData.Buttons.IndexOf(button) + 6, button.Text);
-            }
-            SetSelection(0, JobData.Cards[0].Title, JobData.Cards[0].Description);
 
-            foreach (var detail in JobData.Cards[0].Details)
+            foreach (var button in Buttons)
             {
-                SetDetailsItem(JobData.Cards.IndexOf(JobData.Cards[0]), 0, 0, (int)detail.Type, 0, 0, detail.LeftText, detail.RightText);
+                SetButtonItem(Buttons.IndexOf(button) + 6, button.Text);
+            }
+            SetSelection(0, Cards[0].Title, Cards[0].Description);
+
+            foreach (var detail in Cards[0].Details)
+            {
+                SetDetailsItem(Cards[0].Details.IndexOf(detail), 0, Cards[0].Details.IndexOf(detail), (int)detail.Type, 0, 0, detail.TextLeft, detail.TextRight, detail.Icon, detail.IconColor, detail.Tick);
             }
         }
 
@@ -105,37 +132,47 @@ namespace ScaleformUI
         {
             if (idx < 6)
             {
-
-                SetSelection(idx, JobData.Cards[idx].Title, JobData.Cards[idx].Description);
-
-                foreach (var detail in JobData.Cards[idx].Details)
+                SetSelection(idx, Cards[idx].Title, Cards[idx].Description);
+                foreach (var detail in Cards[idx].Details)
                 {
-                    SetDetailsItem(JobData.Cards.IndexOf(JobData.Cards[idx]), 0, 0, (int)detail.Type, 0, 0, detail.LeftText, detail.RightText);
+                    SetDetailsItem(Cards[idx].Details.IndexOf(detail), idx, Cards[idx].Details.IndexOf(detail), (int)detail.Type, 0, 0, detail.TextLeft, detail.TextRight, detail.Icon, detail.IconColor, detail.Tick);
                 }
             }
             else
             {
-                SetSelection(idx, JobData.Buttons[idx - 6].Text, "");
+                SetSelection(idx, Buttons[idx - 6].Text, Buttons[idx - 6].Description);
+                foreach (var detail in Cards[idx-6].Details)
+                {
+                    SetDetailsItem(Cards[idx - 6].Details.IndexOf(detail), idx, Cards[idx-6].Details.IndexOf(detail), (int)detail.Type, 0, 0, detail.TextLeft, detail.TextRight, detail.Icon, detail.IconColor, detail.Tick);
+                }
             }
         }
 
-        public void UpdateOwnVote(int idx)
+        public void UpdateOwnVote(int idx, int oldidx, bool showCheckMark = false, bool flashBG = false)
         {
-            if (alreadyVoted)
-            {
-                for (int i = 0; i < 9; i++)
-                    _sc.CallFunction("SET_GRID_ITEM_VOTE", i, Votes[VotedFor], 6, false, false);
-                _sc.CallFunction("SET_GRID_ITEM_VOTE", VotedFor, Votes[VotedFor]+1, 6, false, false);
-            }
-            else
-            {
-                _sc.CallFunction("SET_GRID_ITEM_VOTE", VotedFor, Votes[VotedFor] + 1, 6, false, false);
-            }
+            if (idx == oldidx) return;
 
+            for (int i = 0; i < 9; i++)
+            {
+                _sc.CallFunction("SET_GRID_ITEM_VOTE", i, Votes[i], (int)VotesColor, showCheckMark, flashBG);
+            }
             int votes = Votes.ToList().Count(x => x != 0);
-            JobData.SetVotes(votes, MaxVotes);
-            SetTitle(JobData.JobTitle.Title, JobData.JobTitle.Votes);
+            SetVotes(votes);
+            SetTitle(JobTitle.Title, JobTitle.Votes);
         }
+
+        public void ShowPlayerVote(int idx, string playerName, HudColor color, bool showCheckMark = false, bool flashBG = false)
+        {
+            Votes[idx]++;
+            int r = 0, g = 0, b = 0, a = 0;
+            API.GetHudColour((int)color, ref r, ref g, ref b, ref a);
+            _sc.CallFunction("SHOW_PLAYER_VOTE", idx, playerName, r, g, b);
+            int votes = Votes.ToList().Count(x => x != 0);
+            SetVotes(votes);
+            SetTitle(JobTitle.Title, JobTitle.Votes);
+            _sc.CallFunction("SET_GRID_ITEM_VOTE", idx, Votes[idx], (int)VotesColor, true, true);
+        }
+
 
         public async Task Load()
         {
@@ -153,7 +190,7 @@ namespace ScaleformUI
             Game.DisableAllControlsThisFrame(0);
             Game.DisableAllControlsThisFrame(1);
             Game.DisableAllControlsThisFrame(2);
-            if(Game.IsDisabledControlJustPressed(2, Control.PhoneUp))
+            if (Game.IsDisabledControlJustPressed(2, Control.PhoneUp))
             {
                 if ((SelectedCard - 3) >= 0 && (SelectedCard - 3) <= 8)
                 {
@@ -161,7 +198,7 @@ namespace ScaleformUI
                     SelectCard(SelectedCard);
                 }
             }
-            if(Game.IsDisabledControlJustPressed(2, Control.PhoneDown))
+            if (Game.IsDisabledControlJustPressed(2, Control.PhoneDown))
             {
                 if ((SelectedCard + 3) >= 0 && (SelectedCard + 3) <= 8)
                 {
@@ -188,14 +225,54 @@ namespace ScaleformUI
             }
             if (Game.IsDisabledControlJustPressed(2, Control.PhoneSelect))
             {
-                if (alreadyVoted)
-                    VotedFor = SelectedCard;
+                if (SelectedCard < 6)
+                {
+                    if (alreadyVoted)
+                    {
+                        var old = VotedFor;
+                        Votes[VotedFor]--;
+                        if (old != SelectedCard)
+                        {
+                            VotedFor = SelectedCard;
+                            Votes[VotedFor]++;
+                        }
+                        UpdateOwnVote(VotedFor, old);
+                    }
+                    else
+                    {
+                        alreadyVoted = true;
+                        VotedFor = SelectedCard;
+                        Votes[VotedFor]++;
+                        UpdateOwnVote(VotedFor, -1);
+                    }
+                }
                 else
                 {
-                    alreadyVoted = true;
-                    VotedFor = SelectedCard;
+                    var btn = Buttons[SelectedCard-6];
+
+                    if (btn.Selectable)
+                    {
+                        if (alreadyVoted)
+                        {
+                            var old = VotedFor;
+                            Votes[VotedFor]--;
+                            if (old != SelectedCard)
+                            {
+                                VotedFor = SelectedCard;
+                                Votes[VotedFor]++;
+                            }
+                            UpdateOwnVote(VotedFor, old);
+                        }
+                        else
+                        {
+                            alreadyVoted = true;
+                            VotedFor = SelectedCard;
+                            Votes[VotedFor]++;
+                            UpdateOwnVote(VotedFor, -1);
+                        }
+                    }
+                    btn.ButtonPressed();
                 }
-                UpdateOwnVote(VotedFor);
             }
             /*
         elseif IsControlJustPressed(2, 192) then --TAB
@@ -220,7 +297,6 @@ namespace ScaleformUI
         {
             _sc.CallFunction("SET_GRID_ITEM", id, title, txd, txn, loadtype, verified_type, icon, check, rp_multiplier, cash_multiplier, disabled, iconColor, ap_multiplier);
         }
-
         private void SetButtonItem(int id, string title)
         {
             _sc.CallFunction("SET_GRID_ITEM", id, title, "", "", -1, -1, -1, false, -1, -1, false, 1, -1);
@@ -231,48 +307,12 @@ namespace ScaleformUI
             _sc.CallFunction("SET_SELECTION", index, title, description, hideHighlight);
         }
 
-        private void SetDetailsItem(int id, int menu_id, int unique_id, int type, int initial_index, int is_selectable, string lText, string rText)
+        private void SetDetailsItem(int id, int menu_id, int unique_id, int type, int initial_index, int is_selectable, string lText, string rText, JobIcon icon, HudColor iconColor = HudColor.HUD_COLOUR_WHITE, bool tick = false)
         {
-            _sc.CallFunction("SET_DETAILS_ITEM", id, menu_id, unique_id, type, initial_index, is_selectable, lText, rText);
+            _sc.CallFunction("SET_DETAILS_ITEM", id, menu_id, unique_id, type == 3 ? 4 : type, initial_index, is_selectable, lText, rText, (int)icon, (int)iconColor, tick);
         }
     }
 
-    public class JobSelectionData
-    {
-        public JobSelectionTitle JobTitle = new("", "");
-        public List<JobSelectionCard> Cards = new();
-        public List<JobSelectionButton> Buttons = new();
-
-        public void SetTitle(string title)
-        {
-            JobTitle.Title = title;
-        }
-
-        public void SetVotes(int actual, int max, string label = "")
-        {
-            string tot = $"{actual} / {max}";
-            if (!string.IsNullOrWhiteSpace(label)) JobTitle.Label = label;
-            JobTitle.Votes = tot + " " + JobTitle.Label;
-        }
-
-        public void AddCard(JobSelectionCard card)
-        {
-            if(Cards.Count < 9)
-            {
-                if(!Cards.Any(x=>x.Title == card.Title))
-                {
-                    Cards.Add(card);
-                }
-            }
-        }
-        public void AddButton(JobSelectionButton button)
-        {
-            if (Buttons.Count < 3)
-            {
-                Buttons.Add(button);
-            }
-        }
-    }
 
     public class JobSelectionTitle
     {
@@ -298,9 +338,9 @@ namespace ScaleformUI
         public JobSelectionCardIcon Icon { get; set; }
         public HudColor IconColor { get; set; }
         public int ApMultiplier { get; set; }
-        public List<JobSelectionCardDetail> Details { get; set; } // NON PIU DI 4
+        public List<MissionDetailsItem> Details { get; set; } // NON PIU DI 4
 
-        public JobSelectionCard(string title, string description, string txd, string txn, int rpMult, int cashMult, JobSelectionCardIcon icon, HudColor iconColor, int apMultiplier, List<JobSelectionCardDetail> details)
+        public JobSelectionCard(string title, string description, string txd, string txn, int rpMult, int cashMult, JobSelectionCardIcon icon, HudColor iconColor, int apMultiplier, List<MissionDetailsItem> details)
         {
             this.Title = title;
             this.Description = description;
@@ -315,29 +355,69 @@ namespace ScaleformUI
         }
     }
 
-    public class JobSelectionCardDetail
-    {
-        public JobSelectionCardDetailType Type { get; set; }
-        public string LeftText { get; set; }
-        public string RightText { get; set; }
-        public JobSelectionCardDetail(JobSelectionCardDetailType type, string lText, string rText)
-        {
-            Type = type;
-            LeftText = lText;
-            RightText = rText;
-        }
-    }
-
+    public delegate void JobSelectionButtonEvent();
     public class JobSelectionButton
     {
         public string Text { get; set; }
-        public CallbackDelegate Callback { get; set; }
-
-        public JobSelectionButton(string text, CallbackDelegate action)
+        public string Description { get; set; }
+        public List<MissionDetailsItem> Details { get; set; } // NON PIU DI 5
+        public event JobSelectionButtonEvent OnButtonPressed;
+        public bool Selectable = true;
+        public JobSelectionButton(string text, string description, List<MissionDetailsItem> details)
         {
             Text = text;
-            Callback = action;
+            Description = description;
+            Details = details;
+        }
+        internal void ButtonPressed()
+        {
+            OnButtonPressed?.Invoke();
         }
     }
 
+    public enum JobIcon
+    {
+        GTAOMission = 0,
+        Deathmatch = 1,
+        RaceFinish = 2,
+        GTAOSurvival = 3,
+        TeamDeathmatch = 4,
+        Castle = 6,
+        Parachute = 8,
+        VehicleDeathmatch = 9,
+        RaceCar = 10,
+        RaceFoot = 11,
+        RaceSea = 12,
+        RaceBike = 13,
+        RaceAir = 14,
+        LastTeamStanding = 15,
+        Briefcase = 16,
+        RaceStunt = 18
+    }
+
+    public class MissionDetailsItem
+    {
+        public new JobIcon Icon;
+        public string TextLeft;
+        public string TextRight;
+        public HudColor IconColor;
+        public int Type;
+        public bool Tick;
+        public MissionDetailsItem(string textLeft, string textRight, bool separator)
+        {
+            Type = separator ? 4 : 0;
+            TextLeft = textLeft;
+            TextRight = textRight;
+        }
+
+        public MissionDetailsItem(string textLeft, string textRight, JobIcon icon, HudColor iconColor = HudColor.NONE, bool tick = false)
+        {
+            Type = 2;
+            TextLeft = textLeft;
+            TextRight = textRight;
+            Icon = icon;
+            IconColor = iconColor;
+            Tick = tick;
+        }
+    }
 }

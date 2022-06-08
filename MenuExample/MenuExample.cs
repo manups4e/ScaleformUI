@@ -1353,7 +1353,93 @@ public class MenuExample : BaseScript
 				LobbyPauseMenuShowcase(null);
 			await Task.FromResult(0);
 
-			if(Game.IsControlJustPressed(0, Control.Detonate))
+			if (Game.IsControlJustPressed(0, (Control)170))
+			{
+				var txd = API.CreateRuntimeTxd("test");
+				var _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
+				API.CreateRuntimeTextureFromDuiHandle(txd, "panelbackground", API.GetDuiHandle(_paneldui));
+
+				ScaleformUI.ScaleformUI.JobMissionSelection.SetTitle("MISSION SELECTOR");
+				ScaleformUI.ScaleformUI.JobMissionSelection.MaxVotes = 3;
+				ScaleformUI.ScaleformUI.JobMissionSelection.SetVotes(0, "VOTES");
+				ScaleformUI.ScaleformUI.JobMissionSelection.Cards = new List<JobSelectionCard>();
+
+				var card = new JobSelectionCard("Test 1", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, HudColor.HUD_COLOUR_FREEMODE, 2, new List<MissionDetailsItem>()
+				{
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)0, HudColor.HUD_COLOUR_FREEMODE),
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)1, HudColor.HUD_COLOUR_GOLD),
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)2, HudColor.HUD_COLOUR_PURPLE),
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)3, HudColor.HUD_COLOUR_GREEN),
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)4, HudColor.HUD_COLOUR_WHITE, true),
+				});
+				ScaleformUI.ScaleformUI.JobMissionSelection.AddCard(card);
+
+				var card1 = new JobSelectionCard("Test 2", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, HudColor.HUD_COLOUR_FREEMODE, 2, new List<MissionDetailsItem>()
+				{
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)5, HudColor.HUD_COLOUR_FREEMODE),
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)6, HudColor.HUD_COLOUR_GOLD),
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)7, HudColor.HUD_COLOUR_PURPLE),
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)8, HudColor.HUD_COLOUR_GREEN),
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)9, HudColor.HUD_COLOUR_WHITE, true),
+				});
+				ScaleformUI.ScaleformUI.JobMissionSelection.AddCard(card1);
+
+				var card2 = new JobSelectionCard("Test 3", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, HudColor.HUD_COLOUR_FREEMODE, 2, new List<MissionDetailsItem>()
+				{
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)10, HudColor.HUD_COLOUR_FREEMODE),
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)11, HudColor.HUD_COLOUR_GOLD),
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)12, HudColor.HUD_COLOUR_PURPLE),
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)13, HudColor.HUD_COLOUR_GREEN),
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)14, HudColor.HUD_COLOUR_WHITE, true),
+				});
+				ScaleformUI.ScaleformUI.JobMissionSelection.AddCard(card2);
+
+				var card3 = new JobSelectionCard("Test 4", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, HudColor.HUD_COLOUR_FREEMODE, 2, new List<MissionDetailsItem>()
+				{
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)15, HudColor.HUD_COLOUR_FREEMODE),
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)16, HudColor.HUD_COLOUR_GOLD),
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)17, HudColor.HUD_COLOUR_PURPLE),
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)18, HudColor.HUD_COLOUR_GREEN),
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)19, HudColor.HUD_COLOUR_WHITE, true),
+				});
+				ScaleformUI.ScaleformUI.JobMissionSelection.AddCard(card3);
+
+				var card4 = new JobSelectionCard("Test 5", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, HudColor.HUD_COLOUR_FREEMODE, 2, new List<MissionDetailsItem>()
+				{
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)20, HudColor.HUD_COLOUR_FREEMODE),
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)21, HudColor.HUD_COLOUR_GOLD),
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)22, HudColor.HUD_COLOUR_PURPLE),
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)23, HudColor.HUD_COLOUR_GREEN),
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)24, HudColor.HUD_COLOUR_WHITE, true),
+				});
+				ScaleformUI.ScaleformUI.JobMissionSelection.AddCard(card4);
+
+				var card5 = new JobSelectionCard("Test 6", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, HudColor.HUD_COLOUR_FREEMODE, 2, new List<MissionDetailsItem>()
+				{
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)0, HudColor.HUD_COLOUR_FREEMODE),
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)1, HudColor.HUD_COLOUR_GOLD),
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)2, HudColor.HUD_COLOUR_PURPLE),
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)3, HudColor.HUD_COLOUR_GREEN),
+					new MissionDetailsItem("Left Label", "Right Label", (JobIcon)4, HudColor.HUD_COLOUR_WHITE, true),
+				});
+				ScaleformUI.ScaleformUI.JobMissionSelection.AddCard(card5);
+
+				ScaleformUI.ScaleformUI.JobMissionSelection.Buttons = new List<JobSelectionButton>()
+				{
+					new JobSelectionButton("Test1", "description test", new List<MissionDetailsItem>()) {Selectable = false },
+
+					new JobSelectionButton("Test2", "description test", new List<MissionDetailsItem>()) {Selectable = false },
+
+					new JobSelectionButton("Test3", "description test", new List<MissionDetailsItem>()) {Selectable = true },
+				};
+				ScaleformUI.ScaleformUI.JobMissionSelection.Buttons[0].OnButtonPressed += () =>
+				{
+					Screen.ShowSubtitle($"Button Pressed => {ScaleformUI.ScaleformUI.JobMissionSelection.Buttons[0].Text}");
+				};
+				ScaleformUI.ScaleformUI.JobMissionSelection.Enabled = true;
+			}
+
+			if (Game.IsControlJustPressed(0, Control.Detonate))
             {
 				feedOpen = !feedOpen;
 				ScaleformUI.ScaleformUI.BigFeed.Title = "Super Title!";
