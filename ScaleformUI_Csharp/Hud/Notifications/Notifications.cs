@@ -122,7 +122,7 @@ namespace ScaleformUI
 			SetFloatingHelpTextWorldPosition(1, coords.X, coords.Y, coords.Z);
 			SetFloatingHelpTextStyle(1, 1, 2, -1, 3, 0);
 			BeginTextCommandDisplayHelp("ScaleformUIFloatingHelpText");
-			EndTextCommandDisplayHelp(2, true, false, -1);
+			EndTextCommandDisplayHelp(2, false, false, -1);
 		}
 
 		/// <summary>
