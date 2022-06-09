@@ -841,7 +841,7 @@ public class MenuExample : BaseScript
 	}
 	public async Task FloatingHelpTimer()
 	{
-		Notifications.ShowFloatingHelpNotification(_text, Game.PlayerPed.Bones[Bone.SKEL_Head].Position + new Vector3(0, 0, 0.5f), 5000);
+		Notifications.ShowFloatingHelpNotification(_text, Game.PlayerPed.Bones[Bone.SKEL_Head].Position + new Vector3(0, 0, 0.5f)	);
 		// this will show the 3d notification on the head of the ped in 3d world coords
 		if (Game.GameTime - _timer > 5000) // this is a tricky yet simple way to count time without using Delay and pausing the Thread ;)
 			Tick -= FloatingHelpTimer;
@@ -1353,7 +1353,7 @@ public class MenuExample : BaseScript
 				LobbyPauseMenuShowcase(null);
 			await Task.FromResult(0);
 
-			if (Game.IsControlJustPressed(0, (Control)170))
+			if (Game.IsControlJustPressed(0, (Control)170)) // F3
 			{
 				var txd = API.CreateRuntimeTxd("test");
 				var _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
@@ -1436,16 +1436,18 @@ public class MenuExample : BaseScript
 				{
 					Screen.ShowSubtitle($"Button Pressed => {ScaleformUI.ScaleformUI.JobMissionSelection.Buttons[0].Text}");
 				};
+
+
 				ScaleformUI.ScaleformUI.JobMissionSelection.Enabled = true;
 			}
 
-			if (Game.IsControlJustPressed(0, Control.Detonate))
+			if (Game.IsControlJustPressed(0, Control.DropWeapon)) // F9
             {
 				feedOpen = !feedOpen;
 				ScaleformUI.ScaleformUI.BigFeed.Title = "Super Title!";
 				ScaleformUI.ScaleformUI.BigFeed.Subtitle = "Super Subtitle";
 				ScaleformUI.ScaleformUI.BigFeed.BodyText = "~input_context~ 🥳 ~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat";
-				ScaleformUI.ScaleformUI.BigFeed.UpdatePicture("", ""); // it doesn't support runtime textures!
+				ScaleformUI.ScaleformUI.BigFeed.UpdatePicture("", ""); // it doesn't support DUI runtime textures!
 				ScaleformUI.ScaleformUI.BigFeed.RightAligned = true; // false to center align it
 				ScaleformUI.ScaleformUI.BigFeed.Enabled = feedOpen;
 			}
