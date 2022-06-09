@@ -818,7 +818,7 @@ Citizen.CreateThread(function()
 			CreateLobbyMenu()
 		end
 
-		if IsControlJustPressed(0, 170) and not pool:IsAnyMenuOpen() then -- F3
+		if IsControlJustPressed(0, 170) or IsDisabledControlJustPressed(0, 170) and not pool:IsAnyMenuOpen() then -- F3
 			CreateMissionSelectorMenu()
 		end
 		
