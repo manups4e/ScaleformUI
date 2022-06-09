@@ -9,6 +9,8 @@ ScaleformUI.Scaleforms.InstructionalButtons = nil
 ScaleformUI.Scaleforms.BigMessageInstance = nil
 ScaleformUI.Scaleforms.Warning = nil
 ScaleformUI.Scaleforms.PlayerListInstance = nil
+ScaleformUI.Scaleforms.JobMissionSelector = nil
+
 ScaleformUI.Scaleforms._pauseMenu = nil
 
 AddEventHandler("onResourceStop", function(resName) 
@@ -28,6 +30,7 @@ Citizen.CreateThread(function()
     ScaleformUI.Scaleforms.MidMessageInstance = MidMessageInstance.New()
     ScaleformUI.Scaleforms.Warning = WarningInstance.New()
     ScaleformUI.Scaleforms.PlayerListScoreboard = PlayerListScoreboard.New()
+    ScaleformUI.Scaleforms.JobMissionSelector = MissionSelectorHandler.New()
     ScaleformUI.Scaleforms.InstructionalButtons = ButtonsHandler.New()
     ScaleformUI.Notifications = Notifications.New()
     ScaleformUI.Scaleforms._pauseMenu = PauseMenu.New()
@@ -39,6 +42,7 @@ Citizen.CreateThread(function()
         ScaleformUI.Scaleforms.MidMessageInstance:Update()
         ScaleformUI.Scaleforms.InstructionalButtons:Update()
         ScaleformUI.Scaleforms.PlayerListScoreboard:Update()
+        ScaleformUI.Scaleforms.JobMissionSelector:Update()
         ScaleformUI.Scaleforms.Warning:Update()
         if ScaleformUI.Scaleforms._ui == 0 or ScaleformUI.Scaleforms._ui == nil then
             ScaleformUI.Scaleforms._ui = Scaleform.Request("scaleformui")

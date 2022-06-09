@@ -1,0 +1,243 @@
+MissionSelectorHandler = {}
+
+local m = {}
+m = setmetatable({}, m)
+
+m.__call = function()
+    return true
+end
+m.__index = m
+
+function MissionSelectorHandler.New()
+    local data = {
+        _sc = nil,
+        _start = 0,
+        _timer = 0,
+        enabled = false,
+        alreadyVoted = false,
+        Votes = {0, 0, 0, 0, 0, 0, 0, 0, 0},
+        VotedFor = -1,
+        MaxVotes = 0,
+        SelectedCard = 1,
+        VotesColor = Colours.HUD_COLOUR_BLUE,
+        JobTitle = {
+            Title = "",
+            Label = "",
+            Votes = "",
+        },
+        Cards = {},
+        Buttons = {},
+    }
+    return setmetatable(data, m)
+end
+
+function m:SetTitle(title)
+    self.JobTitle.Title = title
+end
+
+function m:SetVotes(actual, label)
+    local tot = actual .. " / " .. self.MaxVotes
+    if not string.IsNullOrEmpty(label) then
+        self.JobTitle.Label = label
+    end
+    self.JobTitle.Votes = tot .. " " .. self.JobTitle.Label
+end
+
+function m:AddCard(card)
+    if #self.Cards < 9 then
+        table.insert(self.Cards, card)
+    end
+end
+
+function m:AddButton(button)
+    if #self.Buttons < 3 then
+        table.insert(self.Buttons, button)
+    end
+end
+
+function m:Enabled(bool)
+    if bool == nil then 
+        return self.enabled
+    else
+        if bool then
+            self:BuildMenu()
+        else
+            self:Dispose()
+        end
+        self.enabled = bool
+    end
+end
+
+function m:AlreadyVoted()
+    return self.alreadyVoted
+end
+
+function m:Dispose()
+    self._sc:Dispose()
+    self._sc = nil
+end
+
+function m:BuildMenu()
+    self:Load()
+    while self._sc == nil or not self._sc:IsLoaded() do Citizen.Wait(0) end
+    self:_SetTitle(self.JobTitle.Title, self.JobTitle.Votes)
+    for i, card in ipairs (self.Cards) do 
+        if not string.IsNullOrEmpty(card.Txd) then
+            while not HasStreamedTextureDictLoaded(card.Txd) do
+                Citizen.Wait(0)
+                RequestStreamedTextureDict(card.Txd, true)
+            end
+        end
+        self:SetGridItem(i-1,card.Title, card.Txd, card.Txn, 1, 0, card.Icon, false, card.RpMultiplier, card.CashMultiplier, false, card.IconColor, card.ApMultiplier)
+        SetStreamedTextureDictAsNoLongerNeeded(card.Txd)
+    end
+
+    for i, button in ipairs(self.Buttons) do
+        self:SetButtonItem(i-1, button.Text)
+    end
+    self:SetSelection(0, self.Cards[1].Title, self.Cards[1].Description)
+    for i, detail in ipairs(self.Cards[1].Details) do
+        self:SetDetailsItem(i-1, 0, i-1, detail.Type, 0, 0, detail.TextLeft, detail.TextRight, detail.Icon, detail.IconColor, detail.Tick)
+    end
+end
+
+function m:SelectCard(idx)
+    if idx <= 6 then
+        self:SetSelection(idx-1, self.Cards[idx].Title, self.Cards[idx].Description)
+        for i, detail in pairs(self.Cards[idx].Details) do
+            self:SetDetailsItem(i-1, idx, i-1, detail.Type, 0, 0, detail.TextLeft, detail.TextRight, detail.Icon, detail.IconColor, detail.Tick)
+        end
+    else
+        self:SetSelection(idx-1, self.Buttons[idx-6].Text, self.Buttons[idx-6].Description)
+        for i, detail in pairs(self.Buttons[idx-6].Details) do
+            self:SetDetailsItem(i-1, idx, i-1, detail.Type, 0, 0, detail.TextLeft, detail.TextRight, detail.Icon, detail.IconColor, detail.Tick)
+        end
+    end
+end
+
+function m:UpdateOwnVote(idx, oldidx, showCheckMark, flashBG)
+    if showCheckMark == nil then showCheckMark = false end
+    if flashBG == nil then flashBG = false end
+    if idx == oldidx then return end
+    for i=1, 9 do
+        self._sc:CallFunction("SET_GRID_ITEM_VOTE", false, i-1, self.Votes[i], self.VotesColor, showCheckMark, flashBG)
+    end
+    local votes = 0
+    for k,v in ipairs(self.Votes) do
+        if v > 0 then votes = votes + 1 end
+    end
+    self:SetVotes(votes)
+    self:_SetTitle(self.JobTitle.Title, self.JobTitle.Votes)
+end
+
+function m:ShowPlayerVote(idx, playerName, color, showCheckMark, flashBG)
+    if showCheckMark == nil then showCheckMark = false end
+    if flashBG == nil then flashBG = false end
+
+    local r,g,b,a = GetHudColour(color)
+    self._sc:CallFunction("SHOW_PLAYER_VOTE",false, idx-1, playerName, r, g, b)
+    local votes = 0
+    for k,v in ipairs(self.Votes) do
+        if v > 0 then votes = votes + 1 end
+    end
+    self:SetVotes(votes)
+    self:_SetTitle(self.JobTitle.Title, self.JobTitle.Votes)
+    self._sc:CallFunction("SET_GRID_ITEM_VOTE", false, idx-1, self.Votes[idx], self.VotesColor, showCheckMark, flashBG)
+end
+
+function m:Load()
+    if self._sc ~= nil then return end
+    self._sc = Scaleform.Request("MP_NEXT_JOB_SELECTION")
+    local timeout = 1000
+    local start = GetGameTimer()
+    while not self._sc:IsLoaded() and GetGameTimer() - start < timeout do Citizen.Wait(0) end
+end
+
+function m:Update()
+    if not self.enabled or not self._sc or not self._sc:IsLoaded() then return end
+    self._sc:Render2D()
+    DisableAllControlActions(0)
+    DisableAllControlActions(1)
+    DisableAllControlActions(2)
+    
+    if IsDisabledControlJustPressed(2, 172) then
+        if self.SelectedCard - 3 >= 1 and self.SelectedCard - 3 <= 9 then
+            self.SelectedCard = self.SelectedCard - 3
+            self:SelectCard(self.SelectedCard)
+        end
+    elseif IsDisabledControlJustPressed(2, 173) then
+        if self.SelectedCard + 3 >= 1 and self.SelectedCard + 3 <= 9 then
+            self.SelectedCard = self.SelectedCard + 3
+            self:SelectCard(self.SelectedCard)
+        end
+    elseif IsDisabledControlJustPressed(2, 174) then
+        if self.SelectedCard - 1 >= 1 and self.SelectedCard - 1 <= 9 then
+            self.SelectedCard = self.SelectedCard - 1
+            self:SelectCard(self.SelectedCard)
+        end
+    elseif IsDisabledControlJustPressed(2, 175) then
+        if self.SelectedCard + 1 >= 1 and self.SelectedCard + 1 <= 9 then
+            self.SelectedCard = self.SelectedCard + 1
+            self:SelectCard(self.SelectedCard)
+        end
+    elseif IsDisabledControlJustPressed(2, 176) then
+        if self.SelectedCard <= 6 then
+            if self.alreadyVoted then
+                local old = self.VotedFor
+                self.Votes[self.VotedFor] = self.Votes[self.VotedFor] - 1
+                if(old ~= self.SelectedCard) then
+                    self.VotedFor = self.SelectedCard
+                    self.Votes[self.VotedFor] = self.Votes[self.VotedFor] + 1
+                end
+                self:UpdateOwnVote(self.VotedFor, old)
+            else
+                self.alreadyVoted = true
+                self.VotedFor = self.SelectedCard
+                self.Votes[self.VotedFor] = self.Votes[self.VotedFor] + 1
+                self:UpdateOwnVote(self.VotedFor, -1)
+            end
+        else
+            local btn = self.Buttons[self.SelectedCard-6]
+            if btn.Selectable then
+                if self.alreadyVoted then
+                    local old = self.VotedFor
+                    self.Votes[self.VotedFor] = self.Votes[self.VotedFor] - 1
+                    if(old ~= self.SelectedCard) then
+                        self.VotedFor = self.SelectedCard
+                        self.Votes[self.VotedFor] = self.Votes[self.VotedFor] + 1
+                    end
+                    self:UpdateOwnVote(self.VotedFor, old)
+                else
+                    self.alreadyVoted = true
+                    self.VotedFor = self.SelectedCard
+                    self.Votes[self.VotedFor] = self.Votes[self.VotedFor] + 1
+                    self:UpdateOwnVote(self.VotedFor, -1)
+                end
+            end
+            btn.OnButtonPressed()
+        end
+    end
+end
+
+function m:_SetTitle(left, votes)
+    self._sc:CallFunction("SET_TITLE", false, left, votes);
+end
+
+function m:SetGridItem(id, title, txd, txn, loadtype, verified_type, icon, check, rp_multiplier, cash_multiplier, disabled, iconColor, ap_multiplier)
+    self._sc:CallFunction("SET_GRID_ITEM", false, id, title, txd, txn, loadtype, verified_type, icon, check, rp_multiplier, cash_multiplier, disabled, iconColor, ap_multiplier);
+end
+
+function m:SetButtonItem(id, title)
+    self._sc:CallFunction("SET_GRID_ITEM", false, id+6, title, "", "", -1, -1, -1, false, -1, -1, false, -1, -1);
+end
+
+function m:SetSelection(index, title, description, hideHighlight)
+    if hideHighlight == nil then hideHighlight = false end
+    self._sc:CallFunction("SET_SELECTION", false, index, title, description, hideHighlight);
+end
+
+function m:SetDetailsItem(id, menu_id, unique_id, type, initial_index, is_selectable, lText, rText, icon, iconColor, tick)
+    if iconColor == nil then iconColor = Colours.HUD_COLOUR_WHITE end
+    if tick == nil then tick = false end
+    self._sc:CallFunction("SET_DETAILS_ITEM", false, id, menu_id, unique_id, type, initial_index, is_selectable, lText, rText, icon, iconColor, tick)
+end
