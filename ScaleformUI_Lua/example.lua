@@ -173,13 +173,18 @@ function CreateMenu()
 	end
 
 	colorPanel.OnColorPanelChanged = function(menu, item, newindex)
+		print(newindex)
 		local message = "ColorPanel index => " .. newindex + 1
-		ScaleformUI.Notifications.ShowNotification(message)
+		AddTextEntry("ScaleformUINotification", message)
+		BeginTextCommandThefeedPost("ScaleformUINotification")
+		EndTextCommandThefeedPostTicker(false, true)
 	end
 
 	colorPanel2.OnColorPanelChanged = function(menu, item, newindex)
 		local message = "ColorPanel2 index => " .. newindex + 1
-		ScaleformUI.Notifications.ShowNotification(message)
+		AddTextEntry("ScaleformUINotification", message)
+		BeginTextCommandThefeedPost("ScaleformUINotification")
+		EndTextCommandThefeedPostTicker(false, true)
 	end
 
 	percentagePanel.OnPercentagePanelChange = function(menu, item, newpercentage)
@@ -199,7 +204,7 @@ function CreateMenu()
 
 	sidePanelVehicleColor.PickerSelect = function(menu, item, newindex)
 		local message = "ColorPanel index => " .. newindex + 1
-		ScaleformUI.Notifications.ShowNotification(message)
+		ScaleformUI.Notificationss.ShowNotification(message)
 	end
 
 	local MomIndex = 0
@@ -226,13 +231,14 @@ end
 
 function CreatePauseMenu()
 	local pauseMenuExample = TabView.New("ScaleformUI LUA", "THE LUA API", GetPlayerName(PlayerId()), "String middle", "String bottom")
+--[[
 	local handle = RegisterPedheadshot(PlayerPedId())
     while not IsPedheadshotReady(handle) or not IsPedheadshotValid(handle) do Citizen.Wait(0) end
     local txd = GetPedheadshotTxdString(handle)
 	pauseMenuExample:HeaderPicture(txd, txd) 	-- pauseMenuExample:CrewPicture used to add a picture on the left of the HeaderPicture
 	print("PedHandle => " .. handle)
 	UnregisterPedheadshot(handle) -- call it right after adding the menu.. this way the txd will be loaded correctly by the scaleform.. 
-
+--]]
 	pool:AddPauseMenu(pauseMenuExample)
 
 	local basicTab = TextTab.New("TEXTTAB", "This is the Title!")
@@ -674,6 +680,112 @@ function CreateLobbyMenu()
 		lobbyMenu:Visible(true)
 end
 
+local MissionSelectorVisible = false
+function CreateMissionSelectorMenu()
+
+	MissionSelectorVisible = not MissionSelectorVisible
+
+	if not MissionSelectorVisible then 
+		ScaleformUI.Scaleforms.JobMissionSelector:Enabled(false) 
+		return
+	end
+
+	local txd = CreateRuntimeTxd("test");
+	local _paneldui = CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
+	CreateRuntimeTextureFromDuiHandle(txd, "panelbackground", GetDuiHandle(_paneldui));
+
+	ScaleformUI.Scaleforms.JobMissionSelector:SetTitle("MISSION SELECTOR")
+	ScaleformUI.Scaleforms.JobMissionSelector.MaxVotes = 3
+	ScaleformUI.Scaleforms.JobMissionSelector:SetVotes(0, "VOTED")
+	ScaleformUI.Scaleforms.JobMissionSelector.Cards = {}
+
+	local card = JobSelectionCard.New("Test 1", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, Colours.HUD_COLOUR_FREEMODE, 2, {
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOMission, Colours.HUD_COLOUR_FREEMODE),
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.Deathmatch, Colours.HUD_COLOUR_GOLD),
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.RaceFinish, Colours.HUD_COLOUR_PURPLE),
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOSurvival, Colours.HUD_COLOUR_GREEN),
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.TeamDeathmatch, Colours.HUD_COLOUR_WHITE, true),
+	})
+	ScaleformUI.Scaleforms.JobMissionSelector:AddCard(card)
+
+	local card1 = JobSelectionCard.New("Test 2", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, Colours.HUD_COLOUR_FREEMODE, 2, {
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOMission, Colours.HUD_COLOUR_FREEMODE),
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.Deathmatch, Colours.HUD_COLOUR_GOLD),
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.RaceFinish, Colours.HUD_COLOUR_PURPLE),
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOSurvival, Colours.HUD_COLOUR_GREEN),
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.TeamDeathmatch, Colours.HUD_COLOUR_WHITE, true),
+	})
+	ScaleformUI.Scaleforms.JobMissionSelector:AddCard(card1)
+
+	local card2 = JobSelectionCard.New("Test 3", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, Colours.HUD_COLOUR_FREEMODE, 2, {
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOMission, Colours.HUD_COLOUR_FREEMODE),
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.Deathmatch, Colours.HUD_COLOUR_GOLD),
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.RaceFinish, Colours.HUD_COLOUR_PURPLE),
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOSurvival, Colours.HUD_COLOUR_GREEN),
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.TeamDeathmatch, Colours.HUD_COLOUR_WHITE, true),
+	})
+	ScaleformUI.Scaleforms.JobMissionSelector:AddCard(card2)
+
+	local card3 = JobSelectionCard.New("Test 4", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, Colours.HUD_COLOUR_FREEMODE, 2, {
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOMission, Colours.HUD_COLOUR_FREEMODE),
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.Deathmatch, Colours.HUD_COLOUR_GOLD),
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.RaceFinish, Colours.HUD_COLOUR_PURPLE),
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOSurvival, Colours.HUD_COLOUR_GREEN),
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.TeamDeathmatch, Colours.HUD_COLOUR_WHITE, true),
+	})
+	ScaleformUI.Scaleforms.JobMissionSelector:AddCard(card3)
+
+	local card4 = JobSelectionCard.New("Test 5", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, Colours.HUD_COLOUR_FREEMODE, 2, {
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOMission, Colours.HUD_COLOUR_FREEMODE),
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.Deathmatch, Colours.HUD_COLOUR_GOLD),
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.RaceFinish, Colours.HUD_COLOUR_PURPLE),
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOSurvival, Colours.HUD_COLOUR_GREEN),
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.TeamDeathmatch, Colours.HUD_COLOUR_WHITE, true),
+	})
+	ScaleformUI.Scaleforms.JobMissionSelector:AddCard(card4)
+
+	local card5 = JobSelectionCard.New("Test 6", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, Colours.HUD_COLOUR_FREEMODE, 2, {
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOMission, Colours.HUD_COLOUR_FREEMODE),
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.Deathmatch, Colours.HUD_COLOUR_GOLD),
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.RaceFinish, Colours.HUD_COLOUR_PURPLE),
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOSurvival, Colours.HUD_COLOUR_GREEN),
+		MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.TeamDeathmatch, Colours.HUD_COLOUR_WHITE, true),
+	})
+	ScaleformUI.Scaleforms.JobMissionSelector:AddCard(card5)
+
+	ScaleformUI.Scaleforms.JobMissionSelector.Buttons = {
+		JobSelectionButton.New("Button 1", "description test", {
+			MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOMission, Colours.HUD_COLOUR_FREEMODE),
+			MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.Deathmatch, Colours.HUD_COLOUR_GOLD),
+			MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.RaceFinish, Colours.HUD_COLOUR_PURPLE),
+			MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOSurvival, Colours.HUD_COLOUR_GREEN),
+			MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.TeamDeathmatch, Colours.HUD_COLOUR_WHITE, true),
+		}),
+		JobSelectionButton.New("Button 2", "description test", {
+			MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOMission, Colours.HUD_COLOUR_FREEMODE),
+			MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.Deathmatch, Colours.HUD_COLOUR_GOLD),
+			MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.RaceFinish, Colours.HUD_COLOUR_PURPLE),
+			MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOSurvival, Colours.HUD_COLOUR_GREEN),
+			MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.TeamDeathmatch, Colours.HUD_COLOUR_WHITE, true),
+		}),
+		JobSelectionButton.New("Button 3", "description test", {
+			MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOMission, Colours.HUD_COLOUR_FREEMODE),
+			MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.Deathmatch, Colours.HUD_COLOUR_GOLD),
+			MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.RaceFinish, Colours.HUD_COLOUR_PURPLE),
+			MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOSurvival, Colours.HUD_COLOUR_GREEN),
+			MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.TeamDeathmatch, Colours.HUD_COLOUR_WHITE, true),
+		}),
+	}
+	ScaleformUI.Scaleforms.JobMissionSelector.Buttons[1].Selectable = false
+	ScaleformUI.Scaleforms.JobMissionSelector.Buttons[2].Selectable = false
+	ScaleformUI.Scaleforms.JobMissionSelector.Buttons[3].Selectable = true
+
+	ScaleformUI.Scaleforms.JobMissionSelector.Buttons[1].OnButtonPressed = function()
+		ScaleformUI.Notifications:ShowSubtitle("Button Pressed => " .. ScaleformUI.Scaleforms.JobMissionSelector.Buttons[1].Text)
+	end
+	ScaleformUI.Scaleforms.JobMissionSelector:Enabled(true)
+end
+
 Citizen.CreateThread(function()
 	local pos = GetEntityCoords(PlayerPedId(), true)
 	--type, position, scale, distance, color, placeOnGround, bobUpDown, rotate, faceCamera, checkZ
@@ -706,9 +818,35 @@ Citizen.CreateThread(function()
 			CreateLobbyMenu()
 		end
 
+		if IsControlJustPressed(0, 170) and not pool:IsAnyMenuOpen() then -- F3
+			CreateMissionSelectorMenu()
+		end
+		
+		if IsControlJustPressed(0, 56) and not pool:IsAnyMenuOpen() then -- F9
+			local handle = RegisterPedheadshot(PlayerPedId())
+			while not IsPedheadshotReady(handle) or not IsPedheadshotValid(handle) do Citizen.Wait(0) end
+			local txd = GetPedheadshotTxdString(handle)
+				
+			ScaleformUI.Scaleforms.PlayerListScoreboard:SetTitle("Title", "leftLabel", 2)
+
+			local row1 = SCPlayerItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_GREEN, 65, 50, "", "hello", "", 0, "", 1, txd)
+			local row2 = SCPlayerItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_RED, 65, 100, "", "hello", "", 0, "", 1, txd)
+			local row3 = SCPlayerItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_BLUE, 65, 200, "", "hello", "", 0, "", 1, txd)
+			local row4 = SCPlayerItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_PURPLE, 65, 250, "", "hello", "", 0, "", 1, txd)
+			ScaleformUI.Scaleforms.PlayerListScoreboard:AddRow(row1)
+			ScaleformUI.Scaleforms.PlayerListScoreboard:AddRow(row2)
+			ScaleformUI.Scaleforms.PlayerListScoreboard:AddRow(row3)
+			ScaleformUI.Scaleforms.PlayerListScoreboard:AddRow(row4)
+
+			ScaleformUI.Scaleforms.PlayerListScoreboard:CurrentPage(1)
+			ScaleformUI.Scaleforms.PlayerListScoreboard.Enabled = true
+			UnregisterPedheadshot(handle) -- call it right after adding the menu.. this way the txd will be loaded correctly by the scaleform.. 
+
+		end
+
 		-- this is used to free memory from all the menus in the MenuPool emptying its tables.
 		-- YOU WILL NEED TO REBUILD YOUR MENUS IN CODE TO MAKE THEM WORK AGAIN!
-		if IsControlJustPressed(0, 170) then -- F3
+		if IsControlJustPressed(0, 47) then -- G
 			pool:FlushAllMenus()
 		end
 	end
