@@ -141,9 +141,9 @@ namespace ScaleformUI
             else
             {
                 SetSelection(idx, Buttons[idx - 6].Text, Buttons[idx - 6].Description);
-                foreach (var detail in Cards[idx-6].Details)
+                foreach (var detail in Buttons[idx-6].Details)
                 {
-                    SetDetailsItem(Cards[idx - 6].Details.IndexOf(detail), idx, Cards[idx-6].Details.IndexOf(detail), (int)detail.Type, 0, 0, detail.TextLeft, detail.TextRight, detail.Icon, detail.IconColor, detail.Tick);
+                    SetDetailsItem(Buttons[idx - 6].Details.IndexOf(detail), idx, Buttons[idx-6].Details.IndexOf(detail), (int)detail.Type, 0, 0, detail.TextLeft, detail.TextRight, detail.Icon, detail.IconColor, detail.Tick);
                 }
             }
         }
@@ -170,7 +170,7 @@ namespace ScaleformUI
             int votes = Votes.ToList().Count(x => x != 0);
             SetVotes(votes);
             SetTitle(JobTitle.Title, JobTitle.Votes);
-            _sc.CallFunction("SET_GRID_ITEM_VOTE", idx, Votes[idx], (int)VotesColor, true, true);
+            _sc.CallFunction("SET_GRID_ITEM_VOTE", idx, Votes[idx], (int)VotesColor, showCheckMark, flashBG);
         }
 
 
