@@ -1437,8 +1437,10 @@ public class MenuExample : BaseScript
 					Screen.ShowSubtitle($"Button Pressed => {ScaleformUI.ScaleformUI.JobMissionSelection.Buttons[0].Text}");
 				};
 
-
 				ScaleformUI.ScaleformUI.JobMissionSelection.Enabled = true;
+
+				await Delay(1000);
+				ScaleformUI.ScaleformUI.JobMissionSelection.ShowPlayerVote(2, "PlayerName", HudColor.HUD_COLOUR_GREEN, true, true);
 			}
 
 			if (Game.IsControlJustPressed(0, Control.DropWeapon)) // F9

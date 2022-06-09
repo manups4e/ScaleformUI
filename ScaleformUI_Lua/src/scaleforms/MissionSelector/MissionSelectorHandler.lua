@@ -131,6 +131,7 @@ function m:UpdateOwnVote(idx, oldidx, showCheckMark, flashBG)
 end
 
 function m:ShowPlayerVote(idx, playerName, color, showCheckMark, flashBG)
+    self.Votes[idx] = self.Votes[idx] + 1
     if showCheckMark == nil then showCheckMark = false end
     if flashBG == nil then flashBG = false end
 

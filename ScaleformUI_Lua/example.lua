@@ -784,6 +784,9 @@ function CreateMissionSelectorMenu()
 		ScaleformUI.Notifications:ShowSubtitle("Button Pressed => " .. ScaleformUI.Scaleforms.JobMissionSelector.Buttons[1].Text)
 	end
 	ScaleformUI.Scaleforms.JobMissionSelector:Enabled(true)
+	
+	Citizen.Wait(1000)
+	ScaleformUI.Scaleforms.JobMissionSelector:ShowPlayerVote(3, "PlayerName", Colours.HUD_COLOUR_GREEN, true, true)
 end
 
 Citizen.CreateThread(function()
