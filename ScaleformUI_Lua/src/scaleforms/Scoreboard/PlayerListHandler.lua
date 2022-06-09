@@ -82,7 +82,6 @@ function PlayerListScoreboard:IsSupposedToShow(row_id)
     if self:CurrentPage() == 0 then return false end
     local max = self:CurrentPage() * 16
     local min = self:CurrentPage() * 16 - 15
-    print(row_id >= min and row_id <= max)
     return row_id >= min and row_id <= max
 end
 
@@ -162,7 +161,6 @@ function PlayerListScoreboard:BuildMenu()
     end
     self.Index = 0
     for k,row in pairs(rows) do
-        print(self.Index, row.RightText, row.Name, row.Color, row.RightIcon, row.IconOverlayText, row.JobPointsText, "", row.JobPointsDisplayType, row.TextureString, row.TextureString, row.FriendType)
         if string.IsNullOrEmpty(row.CrewLabelText) then
             self._sc:CallFunction("SET_DATA_SLOT", false, self.Index, row.RightText, row.Name, row.Color, row.RightIcon, row.IconOverlayText, row.JobPointsText, "", row.JobPointsDisplayType, row.TextureString, row.TextureString, row.FriendType)
         else
