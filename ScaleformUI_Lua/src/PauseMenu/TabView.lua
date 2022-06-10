@@ -846,12 +846,12 @@ function TabView:ProcessControl()
         end)
     end
 
-    if (IsControlJustPressed(1, 241)) then
+    if (IsControlJustPressed(2, 241) or IsDisabledControlJustPressed(2, 241)) then
         Citizen.CreateThread(function()
             ScaleformUI.Scaleforms._pauseMenu:SendScrollEvent(-1)
         end)
     end
-    if (IsControlJustPressed(1, 242)) then
+    if (IsControlJustPressed(2, 242) or IsDisabledControlJustPressed(2, 242)) then
         Citizen.CreateThread(function()
             ScaleformUI.Scaleforms._pauseMenu:SendScrollEvent(1)
         end)
