@@ -917,6 +917,7 @@ namespace ScaleformUI
 
         public bool MouseEdgeEnabled = true;
         public bool ControlDisablingEnabled = true;
+        public bool BuildAsync = true;
         public bool EnableAnimation
         {
             get => enableAnimation;
@@ -1053,7 +1054,7 @@ namespace ScaleformUI
         /// <param name="title">Title that appears on the big banner.</param>
         /// <param name="subtitle">Subtitle that appears in capital letters in a small black bar.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
-        public UIMenu(string title, string subtitle, bool glare = false, bool alternativeTitle = false) : this(title, subtitle, new PointF(0, 0), "commonmenu", "interaction_bgd", glare, alternativeTitle)
+        public UIMenu(string title, string subtitle, bool glare = false, bool alternativeTitle = false, bool buildAsync = true) : this(title, subtitle, new PointF(0, 0), "commonmenu", "interaction_bgd", glare, alternativeTitle, buildAsync)
         {
         }
 
@@ -1066,7 +1067,7 @@ namespace ScaleformUI
         /// <param name="offset">PointF object with X and Y data for offsets. Applied to all menu elements.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
         /// <param name="alternativeTitle">Set the alternative type to the title?.</param>
-        public UIMenu(string title, string subtitle, PointF offset, bool glare = false, bool alternativeTitle = false) : this(title, subtitle, offset, "commonmenu", "interaction_bgd", glare, alternativeTitle)
+        public UIMenu(string title, string subtitle, PointF offset, bool glare = false, bool alternativeTitle = false, bool buildAsync = true) : this(title, subtitle, offset, "commonmenu", "interaction_bgd", glare, alternativeTitle, buildAsync)
         {
         }
 
@@ -1079,7 +1080,7 @@ namespace ScaleformUI
         /// <param name="customBanner">Path to your custom texture.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
         /// <param name="alternativeTitle">Set the alternative type to the title?.</param>
-        public UIMenu(string title, string subtitle, PointF offset, KeyValuePair<string, string> customBanner, bool glare = false, bool alternativeTitle = false) : this(title, subtitle, offset, customBanner.Key, customBanner.Value, glare, alternativeTitle)
+        public UIMenu(string title, string subtitle, PointF offset, KeyValuePair<string, string> customBanner, bool glare = false, bool alternativeTitle = false, bool buildAsync = true) : this(title, subtitle, offset, customBanner.Key, customBanner.Value, glare, alternativeTitle, buildAsync)
         {
         }
 
@@ -1094,7 +1095,7 @@ namespace ScaleformUI
         /// <param name="spriteName">Sprite name for the banner.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
         /// <param name="alternativeTitle">Set the alternative type to the title?.</param>
-        public UIMenu(string title, string subtitle, PointF offset, string spriteLibrary, string spriteName, bool glare = false, bool alternativeTitle = false)
+        public UIMenu(string title, string subtitle, PointF offset, string spriteLibrary, string spriteName, bool glare = false, bool alternativeTitle = false, bool buildAsync = true)
         {
             _customTexture = new KeyValuePair<string, string>(spriteLibrary, spriteName);
             Offset = offset;
@@ -1106,6 +1107,8 @@ namespace ScaleformUI
             Subtitle = subtitle;
             AlternativeTitle = alternativeTitle;
             MouseWheelControlEnabled = true;
+            BuildAsync = buildAsync;
+
             SetKey(MenuControls.Up, Control.PhoneUp);
             SetKey(MenuControls.Down, Control.PhoneDown);
 
@@ -1278,6 +1281,7 @@ namespace ScaleformUI
             menu.MouseWheelControlEnabled = this.MouseWheelControlEnabled;
             menu.MouseControlsEnabled = this.MouseControlsEnabled;
             menu.MaxItemsOnScreen = this.MaxItemsOnScreen;
+            menu.BuildAsync = this.BuildAsync;
             _poolcontainer.Add(menu);
             this.BindMenuToItem(menu, item);
             menu._poolcontainer = this._poolcontainer;
@@ -1783,7 +1787,10 @@ namespace ScaleformUI
                 MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
                 ParentMenu.canBuild = true;
                 ParentMenu._visible = true;
-                ParentMenu.BuildUpMenu();
+                if (ParentMenu.BuildAsync)
+                    ParentMenu.BuildUpMenuAsync();
+                else
+                    ParentMenu.BuildUpMenuSync();
             }
             else
             {
@@ -1977,7 +1984,10 @@ namespace ScaleformUI
                     Children[MenuItems[CurrentSelection]].MenuChangeEv(this, Children[MenuItems[CurrentSelection]], MenuState.ChangeForward);
                     Children[MenuItems[CurrentSelection]].canBuild = true;
                     Children[MenuItems[CurrentSelection]].Visible = true;
-                    Children[MenuItems[CurrentSelection]].BuildUpMenu();
+                    if (Children[MenuItems[CurrentSelection]].BuildAsync)
+                        Children[MenuItems[CurrentSelection]].BuildUpMenuAsync();
+                    else
+                        Children[MenuItems[CurrentSelection]].BuildUpMenuSync();
                     Children[MenuItems[CurrentSelection]].MouseEdgeEnabled = MouseEdgeEnabled;
                     break;
             }
@@ -2105,7 +2115,10 @@ namespace ScaleformUI
                 {
                     _poolcontainer.MenuChangeEv(null, this, MenuState.Opened);
                     MenuChangeEv(null, this, MenuState.Opened);
-                    BuildUpMenu();
+                    if (BuildAsync)
+                        BuildUpMenuAsync();
+                    else
+                        BuildUpMenuSync();
                     _poolcontainer.currentMenu = this;
                     _poolcontainer.ProcessMenus(true);
                 }
@@ -2123,7 +2136,7 @@ namespace ScaleformUI
             }
         }
 
-        internal async void BuildUpMenu()
+        internal async void BuildUpMenuAsync()
         {
             while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
             ScaleformUI._ui.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, EnableAnimation, (int)AnimationType);
@@ -2331,7 +2344,220 @@ namespace ScaleformUI
                     }
                 }
                 i++;
-            } 
+            }
+
+            ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
+            if (MenuItems[CurrentSelection] is UIMenuSeparatorItem)
+            {
+                if ((MenuItems[CurrentSelection] as UIMenuSeparatorItem).Jumpable)
+                {
+                    GoDown();
+                }
+            }
+            ScaleformUI._ui.CallFunction("ENABLE_MOUSE", MouseControlsEnabled);
+        }
+
+        internal async void BuildUpMenuSync()
+        {
+            while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
+            ScaleformUI._ui.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, EnableAnimation, (int)AnimationType);
+            if (Windows.Count > 0)
+            {
+                foreach (var wind in Windows)
+                {
+                    switch (wind)
+                    {
+                        case UIMenuHeritageWindow:
+                            var her = (UIMenuHeritageWindow)wind;
+                            ScaleformUI._ui.CallFunction("ADD_WINDOW", her.id, her.Mom, her.Dad);
+                            break;
+                        case UIMenuDetailsWindow:
+                            var det = (UIMenuDetailsWindow)wind;
+                            ScaleformUI._ui.CallFunction("ADD_WINDOW", det.id, det.DetailBottom, det.DetailMid, det.DetailTop, det.DetailLeft.Txd, det.DetailLeft.Txn, det.DetailLeft.Pos.X, det.DetailLeft.Pos.Y, det.DetailLeft.Size.Width, det.DetailLeft.Size.Height);
+                            if (det.StatWheelEnabled)
+                            {
+                                foreach (var stat in det.DetailStats)
+                                    ScaleformUI._ui.CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", Windows.IndexOf(det), stat.Percentage, (int)stat.HudColor);
+                            }
+                            break;
+                    }
+
+                }
+            }
+            var timer = Game.GameTime;
+            if (MenuItems.Count == 0)
+            {
+                while (MenuItems.Count == 0)
+                {
+                    await BaseScript.Delay(0);
+                    if (Game.GameTime - timer > 150)
+                    {
+                        ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
+                        return;
+                    }
+                }
+            }
+
+            foreach (var item in MenuItems)
+            {
+                var index = MenuItems.IndexOf(item);
+                AddTextEntry($"menu_{_poolcontainer._menuList.IndexOf(this)}_desc_{index}", item.Description);
+
+                BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "ADD_ITEM");
+                PushScaleformMovieFunctionParameterInt(item._itemId);
+                PushScaleformMovieMethodParameterString(item.Label);
+                if (item.DescriptionHash != 0 && string.IsNullOrWhiteSpace(item.Description))
+                {
+                    BeginTextCommandScaleformString("STRTNM1");
+                    AddTextComponentSubstringTextLabelHashKey(item.DescriptionHash);
+                    EndTextCommandScaleformString_2();
+                }
+                else
+                {
+                    BeginTextCommandScaleformString($"menu_{_poolcontainer._menuList.IndexOf(this)}_desc_{index}");
+                    EndTextCommandScaleformString_2();
+                }
+                PushScaleformMovieFunctionParameterBool(item.Enabled);
+                PushScaleformMovieFunctionParameterBool(item.BlinkDescription);
+                switch (item)
+                {
+                    case UIMenuDynamicListItem:
+                        UIMenuDynamicListItem dit = (UIMenuDynamicListItem)item;
+                        PushScaleformMovieMethodParameterString(dit.CurrentListItem);
+                        PushScaleformMovieFunctionParameterInt(0);
+                        PushScaleformMovieFunctionParameterInt((int)dit.MainColor);
+                        PushScaleformMovieFunctionParameterInt((int)dit.HighlightColor);
+                        PushScaleformMovieFunctionParameterInt((int)dit.TextColor);
+                        PushScaleformMovieFunctionParameterInt((int)dit.HighlightedTextColor);
+                        EndScaleformMovieMethod();
+                        break;
+                    case UIMenuListItem:
+                        UIMenuListItem it = (UIMenuListItem)item;
+                        AddTextEntry($"listitem_{index}_list", string.Join(",", it.Items));
+                        BeginTextCommandScaleformString($"listitem_{index}_list");
+                        EndTextCommandScaleformString();
+                        PushScaleformMovieFunctionParameterInt(it.Index);
+                        PushScaleformMovieFunctionParameterInt((int)it.MainColor);
+                        PushScaleformMovieFunctionParameterInt((int)it.HighlightColor);
+                        PushScaleformMovieFunctionParameterInt((int)it.TextColor);
+                        PushScaleformMovieFunctionParameterInt((int)it.HighlightedTextColor);
+                        EndScaleformMovieMethod();
+                        break;
+                    case UIMenuCheckboxItem:
+                        UIMenuCheckboxItem check = (UIMenuCheckboxItem)item;
+                        PushScaleformMovieFunctionParameterInt((int)check.Style);
+                        PushScaleformMovieMethodParameterBool(check.Checked);
+                        PushScaleformMovieFunctionParameterInt((int)check.MainColor);
+                        PushScaleformMovieFunctionParameterInt((int)check.HighlightColor);
+                        PushScaleformMovieFunctionParameterInt((int)check.TextColor);
+                        PushScaleformMovieFunctionParameterInt((int)check.HighlightedTextColor);
+                        EndScaleformMovieMethod();
+                        break;
+                    case UIMenuSliderItem:
+                        UIMenuSliderItem prItem = (UIMenuSliderItem)item;
+                        PushScaleformMovieFunctionParameterInt(prItem._max);
+                        PushScaleformMovieFunctionParameterInt(prItem._multiplier);
+                        PushScaleformMovieFunctionParameterInt(prItem.Value);
+                        PushScaleformMovieFunctionParameterInt((int)prItem.MainColor);
+                        PushScaleformMovieFunctionParameterInt((int)prItem.HighlightColor);
+                        PushScaleformMovieFunctionParameterInt((int)prItem.TextColor);
+                        PushScaleformMovieFunctionParameterInt((int)prItem.HighlightedTextColor);
+                        PushScaleformMovieFunctionParameterInt((int)prItem.SliderColor);
+                        PushScaleformMovieFunctionParameterBool(prItem._heritage);
+                        EndScaleformMovieMethod();
+                        break;
+                    case UIMenuProgressItem:
+                        UIMenuProgressItem slItem = (UIMenuProgressItem)item;
+                        PushScaleformMovieFunctionParameterInt(slItem._max);
+                        PushScaleformMovieFunctionParameterInt(slItem._multiplier);
+                        PushScaleformMovieFunctionParameterInt(slItem.Value);
+                        PushScaleformMovieFunctionParameterInt((int)slItem.MainColor);
+                        PushScaleformMovieFunctionParameterInt((int)slItem.HighlightColor);
+                        PushScaleformMovieFunctionParameterInt((int)slItem.TextColor);
+                        PushScaleformMovieFunctionParameterInt((int)slItem.HighlightedTextColor);
+                        PushScaleformMovieFunctionParameterInt((int)slItem.SliderColor);
+                        EndScaleformMovieMethod();
+                        break;
+                    case UIMenuStatsItem:
+                        UIMenuStatsItem statsItem = (UIMenuStatsItem)item;
+                        PushScaleformMovieFunctionParameterInt(statsItem.Value);
+                        PushScaleformMovieFunctionParameterInt(statsItem.Type);
+                        PushScaleformMovieFunctionParameterInt((int)statsItem.Color);
+                        PushScaleformMovieFunctionParameterInt((int)statsItem.MainColor);
+                        PushScaleformMovieFunctionParameterInt((int)statsItem.HighlightColor);
+                        PushScaleformMovieFunctionParameterInt((int)statsItem.TextColor);
+                        PushScaleformMovieFunctionParameterInt((int)statsItem.HighlightedTextColor);
+                        EndScaleformMovieMethod();
+                        break;
+                    case UIMenuSeparatorItem:
+                        UIMenuSeparatorItem separatorItem = (UIMenuSeparatorItem)item;
+                        PushScaleformMovieFunctionParameterBool(separatorItem.Jumpable);
+                        PushScaleformMovieFunctionParameterInt((int)item.MainColor);
+                        PushScaleformMovieFunctionParameterInt((int)item.HighlightColor);
+                        PushScaleformMovieFunctionParameterInt((int)item.TextColor);
+                        PushScaleformMovieFunctionParameterInt((int)item.HighlightedTextColor);
+                        EndScaleformMovieMethod();
+                        break;
+                    default:
+                        PushScaleformMovieFunctionParameterInt((int)item.MainColor);
+                        PushScaleformMovieFunctionParameterInt((int)item.HighlightColor);
+                        PushScaleformMovieFunctionParameterInt((int)item.TextColor);
+                        PushScaleformMovieFunctionParameterInt((int)item.HighlightedTextColor);
+                        EndScaleformMovieMethod();
+                        ScaleformUI._ui.CallFunction("SET_RIGHT_LABEL", index, item.RightLabel);
+                        if (item.RightBadge != BadgeIcon.NONE)
+                            ScaleformUI._ui.CallFunction("SET_RIGHT_BADGE", index, (int)item.RightBadge);
+                        break;
+                }
+                if (item.LeftBadge != BadgeIcon.NONE)
+                    ScaleformUI._ui.CallFunction("SET_LEFT_BADGE", index, (int)item.LeftBadge);
+                if (item.SidePanel != null)
+                {
+                    switch (item.SidePanel)
+                    {
+                        case UIMissionDetailsPanel:
+                            var mis = (UIMissionDetailsPanel)item.SidePanel;
+                            ScaleformUI._ui.CallFunction("ADD_SIDE_PANEL_TO_ITEM", index, 0, (int)mis.PanelSide, (int)mis._titleType, mis.Title, (int)mis.TitleColor, mis.TextureDict, mis.TextureName);
+                            foreach (var _it in mis.Items)
+                            {
+                                ScaleformUI._ui.CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", index, _it.Type, _it.TextLeft, _it.TextRight, (int)_it.Icon, (int)_it.IconColor, _it.Tick);
+                            }
+                            break;
+                        case UIVehicleColourPickerPanel:
+                            var cp = (UIVehicleColourPickerPanel)item.SidePanel;
+                            ScaleformUI._ui.CallFunction("ADD_SIDE_PANEL_TO_ITEM", index, 1, (int)cp.PanelSide, (int)cp._titleType, cp.Title, (int)cp.TitleColor);
+                            break;
+                    }
+                }
+
+                if (item.Panels.Count == 0) continue;
+                foreach (var panel in item.Panels)
+                {
+                    var pan = item.Panels.IndexOf(panel);
+                    switch (panel)
+                    {
+                        case UIMenuColorPanel:
+                            UIMenuColorPanel cp = (UIMenuColorPanel)panel;
+                            ScaleformUI._ui.CallFunction("ADD_PANEL", index, 0, cp.Title, (int)cp.ColorPanelColorType, cp.CurrentSelection, cp.CustomColors is not null ? string.Join(",", cp.CustomColors) : "");
+                            break;
+                        case UIMenuPercentagePanel:
+                            UIMenuPercentagePanel pp = (UIMenuPercentagePanel)panel;
+                            ScaleformUI._ui.CallFunction("ADD_PANEL", index, 1, pp.Title, pp.Min, pp.Max, pp.Percentage);
+                            break;
+                        case UIMenuGridPanel:
+                            UIMenuGridPanel gp = (UIMenuGridPanel)panel;
+                            ScaleformUI._ui.CallFunction("ADD_PANEL", index, 2, gp.TopLabel, gp.RightLabel, gp.LeftLabel, gp.BottomLabel, gp.CirclePosition.X, gp.CirclePosition.Y, true, (int)gp.GridType);
+                            break;
+                        case UIMenuStatisticsPanel:
+                            UIMenuStatisticsPanel sp = (UIMenuStatisticsPanel)panel;
+                            ScaleformUI._ui.CallFunction("ADD_PANEL", index, 3);
+                            if (sp.Items.Count > 0)
+                                foreach (var stat in sp.Items)
+                                    ScaleformUI._ui.CallFunction("ADD_STATISTIC_TO_PANEL", index, pan, stat.Text, stat.Value);
+                            break;
+                    }
+                }
+            }
 
             ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
             if (MenuItems[CurrentSelection] is UIMenuSeparatorItem)

@@ -23,6 +23,7 @@ public class MenuExample : BaseScript
 	
 		UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI SHOWCASE", new PointF(20, 20), "scaleformui", "bannerbackground", true, true); // true means add menu Glare scaleform to the menu
 		exampleMenu.MaxItemsOnScreen = 7; // To decide max items on screen at time, default 7
+		exampleMenu.BuildAsync = false;
 		// let's add the menu to the Pool
 		_menuPool.Add(exampleMenu);
 
@@ -30,7 +31,7 @@ public class MenuExample : BaseScript
 
 		#region Ketchup
 
-		var ketchupItem = new UIMenuCheckboxItem("Scrolling animation enabled?", UIMenuCheckboxStyle.Tick, enabled, "Do you wish to enable the scrolling animation?");
+		var ketchupItem = new UIMenuCheckboxItem("Scrolling animation enabled? in a very long label to test the text scrolling feature!", UIMenuCheckboxStyle.Tick, enabled, "Do you wish to enable the scrolling animation?");
 		var _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
 		API.CreateRuntimeTextureFromDuiHandle(txd, "panelbackground", API.GetDuiHandle(_paneldui));
 		UIMissionDetailsPanel sidePanel = new UIMissionDetailsPanel(PanelSide.Right, "Side Panel", true, "scaleformui", "panelbackground");
@@ -51,7 +52,8 @@ public class MenuExample : BaseScript
 
 		#region Cook
 
-		var cookItem = new UIMenuItem("Cook!", "Cook the dish with the appropiate ingredients and ketchup.");
+		var cookItem = new UIMenuItem("Cook! in a very long label to test the text scrolling feature!", "Cook the dish with the appropiate ingredients and ketchup.");
+		cookItem.SetRightLabel("rightLabel");
 		exampleMenu.AddItem(cookItem);
 		UIVehicleColourPickerPanel sidePanelB = new UIVehicleColourPickerPanel(PanelSide.Right, "ColorPicker");
 		cookItem.AddSidePanel(sidePanelB);
