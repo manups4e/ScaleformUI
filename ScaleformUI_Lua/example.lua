@@ -204,7 +204,7 @@ function CreateMenu()
 
 	sidePanelVehicleColor.PickerSelect = function(menu, item, newindex)
 		local message = "ColorPanel index => " .. newindex + 1
-		ScaleformUI.Notificationss.ShowNotification(message)
+		ScaleformUI.Notifications:ShowNotification(message)
 	end
 
 	local MomIndex = 0
