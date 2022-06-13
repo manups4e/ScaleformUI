@@ -1583,7 +1583,7 @@ namespace ScaleformUI
             SetInputExclusive(2, 238);
 
             var success = GetScaleformMovieCursorSelection(ScaleformUI._ui.Handle, ref eventType, ref context, ref itemId, ref unused);
-            if (success)
+            if (success && !isBuilding)
             {
                 switch (eventType)
                 {
@@ -2012,7 +2012,7 @@ namespace ScaleformUI
                 GoBack();
             }
             if (MenuItems.Count == 0) return;
-            if (IsControlBeingPressed(MenuControls.Up, key))
+            if (IsControlBeingPressed(MenuControls.Up, key) && !isBuilding)
             {
                 if (Game.GameTime - time > delay)
                 {
@@ -2021,7 +2021,7 @@ namespace ScaleformUI
                 }
             }
 
-            else if (IsControlBeingPressed(MenuControls.Down, key))
+            else if (IsControlBeingPressed(MenuControls.Down, key) && !isBuilding)
             {
                 if (Game.GameTime - time > delay)
                 {
@@ -2030,7 +2030,7 @@ namespace ScaleformUI
                 }
             }
 
-            else if (IsControlBeingPressed(MenuControls.Left, key))
+            else if (IsControlBeingPressed(MenuControls.Left, key) && !isBuilding)
             {
                 if (Game.GameTime - time > delay)
                 {
@@ -2039,7 +2039,7 @@ namespace ScaleformUI
                 }
             }
 
-            else if (IsControlBeingPressed(MenuControls.Right, key))
+            else if (IsControlBeingPressed(MenuControls.Right, key) && !isBuilding)
             {
                 if (Game.GameTime - time > delay)
                 {
@@ -2136,8 +2136,12 @@ namespace ScaleformUI
             }
         }
 
+        private bool isBuilding = false;
         internal async void BuildUpMenuAsync()
         {
+            isBuilding = true;
+            var _animEnabled = EnableAnimation;
+            EnableAnimation = false;
             while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
             ScaleformUI._ui.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, EnableAnimation, (int)AnimationType);
             if (Windows.Count > 0)
@@ -2177,12 +2181,16 @@ namespace ScaleformUI
                 }
             }
             var i = 0;
+
+            ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
+
             while (i < MenuItems.Count)
             {
-                await BaseScript.Delay(1);
+                await BaseScript.Delay(0);
                 if (!canBuild) break;
                 var item = MenuItems[i];
-                var index = i;
+                var index = i; // to be corrected 
+
                 AddTextEntry($"menu_{_poolcontainer._menuList.IndexOf(this)}_desc_{index}", item.Description);
 
                 BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "ADD_ITEM");
@@ -2355,6 +2363,8 @@ namespace ScaleformUI
                 }
             }
             ScaleformUI._ui.CallFunction("ENABLE_MOUSE", MouseControlsEnabled);
+            EnableAnimation = _animEnabled;
+            isBuilding = false;
         }
 
         internal async void BuildUpMenuSync()
