@@ -124,7 +124,7 @@ function m:UpdateOwnVote(idx, oldidx, showCheckMark, flashBG)
     end
     local votes = 0
     for k,v in ipairs(self.Votes) do
-        if v > 0 then votes = votes + 1 end
+        if v > 0 then votes = votes + v end
     end
     self:SetVotes(votes)
     self:_SetTitle(self.JobTitle.Title, self.JobTitle.Votes)
@@ -139,7 +139,7 @@ function m:ShowPlayerVote(idx, playerName, color, showCheckMark, flashBG)
     self._sc:CallFunction("SHOW_PLAYER_VOTE",false, idx-1, playerName, r, g, b)
     local votes = 0
     for k,v in ipairs(self.Votes) do
-        if v > 0 then votes = votes + 1 end
+        if v > 0 then votes = votes + v end
     end
     self:SetVotes(votes)
     self:_SetTitle(self.JobTitle.Title, self.JobTitle.Votes)
@@ -154,34 +154,92 @@ function m:Load()
     while not self._sc:IsLoaded() and GetGameTimer() - start < timeout do Citizen.Wait(0) end
 end
 
+local success, event_type, context, item_id
+
 function m:Update()
     if not self.enabled or not self._sc or not self._sc:IsLoaded() then return end
     self._sc:Render2D()
     DisableAllControlActions(0)
     DisableAllControlActions(1)
     DisableAllControlActions(2)
+
+    if IsUsingKeyboard(2) then
+        SetMouseCursorActiveThisFrame();
+        SetInputExclusive(2, 239);
+        SetInputExclusive(2, 240);
+        SetInputExclusive(2, 237);
+        SetInputExclusive(2, 238);
+
+        success, event_type, context, item_id = GetScaleformMovieCursorSelection(self._sc.handle)
+        if success then
+            print(event_type, context, item_id)
+            if event_type == 5 then
+                if self.SelectedCard ~= context+1 then
+                    self.SelectedCard = context+1
+                    self:SelectCard(self.SelectedCard)
+                    return
+                else
+                    if self.SelectedCard <= 6 then
+                        if self.alreadyVoted then
+                            local old = self.VotedFor
+                            self.Votes[self.VotedFor] = self.Votes[self.VotedFor] - 1
+                            if(old ~= self.SelectedCard) then
+                                self.VotedFor = self.SelectedCard
+                                self.Votes[self.VotedFor] = self.Votes[self.VotedFor] + 1
+                            end
+                            self:UpdateOwnVote(self.VotedFor, old)
+                        else
+                            self.alreadyVoted = true
+                            self.VotedFor = self.SelectedCard
+                            self.Votes[self.VotedFor] = self.Votes[self.VotedFor] + 1
+                            self:UpdateOwnVote(self.VotedFor, -1)
+                        end
+                    else
+                        local btn = self.Buttons[self.SelectedCard-6]
+                        if btn.Selectable then
+                            if self.alreadyVoted then
+                                local old = self.VotedFor
+                                self.Votes[self.VotedFor] = self.Votes[self.VotedFor] - 1
+                                if(old ~= self.SelectedCard) then
+                                    self.VotedFor = self.SelectedCard
+                                    self.Votes[self.VotedFor] = self.Votes[self.VotedFor] + 1
+                                end
+                                self:UpdateOwnVote(self.VotedFor, old)
+                            else
+                                self.alreadyVoted = true
+                                self.VotedFor = self.SelectedCard
+                                self.Votes[self.VotedFor] = self.Votes[self.VotedFor] + 1
+                                self:UpdateOwnVote(self.VotedFor, -1)
+                            end
+                        end
+                        btn.OnButtonPressed()
+                    end
+                end
+            end
+        end
+    end
     
-    if IsDisabledControlJustPressed(2, 172) then
+    if IsDisabledControlJustPressed(2, 188) then
         if self.SelectedCard - 3 >= 1 and self.SelectedCard - 3 <= 9 then
             self.SelectedCard = self.SelectedCard - 3
             self:SelectCard(self.SelectedCard)
         end
-    elseif IsDisabledControlJustPressed(2, 173) then
+    elseif IsDisabledControlJustPressed(2, 187) then
         if self.SelectedCard + 3 >= 1 and self.SelectedCard + 3 <= 9 then
             self.SelectedCard = self.SelectedCard + 3
             self:SelectCard(self.SelectedCard)
         end
-    elseif IsDisabledControlJustPressed(2, 174) then
+    elseif IsDisabledControlJustPressed(2, 189) then
         if self.SelectedCard - 1 >= 1 and self.SelectedCard - 1 <= 9 then
             self.SelectedCard = self.SelectedCard - 1
             self:SelectCard(self.SelectedCard)
         end
-    elseif IsDisabledControlJustPressed(2, 175) then
+    elseif IsDisabledControlJustPressed(2, 190) then
         if self.SelectedCard + 1 >= 1 and self.SelectedCard + 1 <= 9 then
             self.SelectedCard = self.SelectedCard + 1
             self:SelectCard(self.SelectedCard)
         end
-    elseif IsDisabledControlJustPressed(2, 176) then
+    elseif IsDisabledControlJustPressed(2, 201) then
         if self.SelectedCard <= 6 then
             if self.alreadyVoted then
                 local old = self.VotedFor

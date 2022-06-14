@@ -154,9 +154,10 @@ namespace ScaleformUI
 
             for (int i = 0; i < 9; i++)
             {
+                if (Votes[i] < 0) Votes[i] = 0;
                 _sc.CallFunction("SET_GRID_ITEM_VOTE", i, Votes[i], (int)VotesColor, showCheckMark, flashBG);
             }
-            int votes = Votes.ToList().Count(x => x != 0);
+            int votes = Votes.ToList().Sum();
             SetVotes(votes);
             SetTitle(JobTitle.Title, JobTitle.Votes);
         }
@@ -167,7 +168,7 @@ namespace ScaleformUI
             int r = 0, g = 0, b = 0, a = 0;
             API.GetHudColour((int)color, ref r, ref g, ref b, ref a);
             _sc.CallFunction("SHOW_PLAYER_VOTE", idx, playerName, r, g, b);
-            int votes = Votes.ToList().Count(x => x != 0);
+            int votes = Votes.ToList().Sum();
             SetVotes(votes);
             SetTitle(JobTitle.Title, JobTitle.Votes);
             _sc.CallFunction("SET_GRID_ITEM_VOTE", idx, Votes[idx], (int)VotesColor, showCheckMark, flashBG);
@@ -183,6 +184,10 @@ namespace ScaleformUI
             while (!_sc.IsLoaded && DateTime.Now.Subtract(start).TotalMilliseconds < timeout) await BaseScript.Delay(0);
         }
 
+        int eventType = 0;
+        int itemId = 0;
+        int context = 0;
+        int unused = 0;
         public void Update()
         {
             if (!enabled || _sc is null) return;
@@ -190,7 +195,87 @@ namespace ScaleformUI
             Game.DisableAllControlsThisFrame(0);
             Game.DisableAllControlsThisFrame(1);
             Game.DisableAllControlsThisFrame(2);
-            if (Game.IsDisabledControlJustPressed(2, Control.PhoneUp))
+            if (API.IsUsingKeyboard(2))
+            {
+                API.SetMouseCursorActiveThisFrame();
+                API.SetInputExclusive(2, 239);
+                API.SetInputExclusive(2, 240);
+                API.SetInputExclusive(2, 237);
+                API.SetInputExclusive(2, 238);
+
+                var success = API.GetScaleformMovieCursorSelection(_sc.Handle, ref eventType, ref context, ref itemId, ref unused);
+                if (success)
+                {
+                    switch (eventType)
+                    {
+                        case 5:
+                            if (SelectedCard != context)
+                            {
+                                SelectedCard = context;
+                                SelectCard(context);
+                            }
+                            else
+                            {
+                                if (SelectedCard < 6)
+                                {
+                                    if (alreadyVoted)
+                                    {
+                                        var old = VotedFor;
+                                        Votes[VotedFor] -= 1;
+                                        if (old != SelectedCard)
+                                        {
+                                            VotedFor = SelectedCard;
+                                            Votes[VotedFor] += 1;
+                                        }
+                                        UpdateOwnVote(VotedFor, old);
+                                    }
+                                    else
+                                    {
+                                        alreadyVoted = true;
+                                        VotedFor = SelectedCard;
+                                        Votes[VotedFor] += 1;
+                                        UpdateOwnVote(VotedFor, -1);
+                                    }
+                                }
+                                else
+                                {
+                                    var btn = Buttons[SelectedCard - 6];
+
+                                    if (btn.Selectable)
+                                    {
+                                        if (alreadyVoted)
+                                        {
+                                            var old = VotedFor;
+                                            Votes[VotedFor] -= 1;
+                                            if (old != SelectedCard)
+                                            {
+                                                VotedFor = SelectedCard;
+                                                Votes[VotedFor] += 1;
+                                            }
+                                            UpdateOwnVote(VotedFor, old);
+                                        }
+                                        else
+                                        {
+                                            alreadyVoted = true;
+                                            VotedFor = SelectedCard;
+                                            Votes[VotedFor] += 1;
+                                            UpdateOwnVote(VotedFor, -1);
+                                        }
+                                    }
+                                    btn.ButtonPressed();
+                                }
+                            }
+                            break;
+                    }
+                }
+
+                Notifications.DrawText(0.3f, 0.775f, $"success:{success}");
+                Notifications.DrawText(0.3f, 0.8f, $"eventType:{eventType}");
+                Notifications.DrawText(0.3f, 0.825f, $"context:{context}");
+                Notifications.DrawText(0.3f, 0.85f, $"itemId:{itemId}");
+
+            }
+            if (Game.IsDisabledControlJustPressed(2, Control.FrontendUp))
             {
                 if ((SelectedCard - 3) >= 0 && (SelectedCard - 3) <= 8)
                 {
@@ -198,7 +283,7 @@ namespace ScaleformUI
                     SelectCard(SelectedCard);
                 }
             }
-            if (Game.IsDisabledControlJustPressed(2, Control.PhoneDown))
+            if (Game.IsDisabledControlJustPressed(2, Control.FrontendDown))
             {
                 if ((SelectedCard + 3) >= 0 && (SelectedCard + 3) <= 8)
                 {
@@ -206,7 +291,7 @@ namespace ScaleformUI
                     SelectCard(SelectedCard);
                 }
             }
-            if (Game.IsDisabledControlJustPressed(2, Control.PhoneLeft))
+            if (Game.IsDisabledControlJustPressed(2, Control.FrontendLeft))
             {
                 if ((SelectedCard - 1) >= 0 && (SelectedCard - 1) <= 8)
                 {
@@ -215,7 +300,7 @@ namespace ScaleformUI
                 }
 
             }
-            if (Game.IsDisabledControlJustPressed(2, Control.PhoneRight))
+            if (Game.IsDisabledControlJustPressed(2, Control.FrontendRight))
             {
                 if ((SelectedCard + 1) >= 0 && (SelectedCard + 1) <= 8)
                 {
@@ -223,18 +308,18 @@ namespace ScaleformUI
                     SelectCard(SelectedCard);
                 }
             }
-            if (Game.IsDisabledControlJustPressed(2, Control.PhoneSelect))
+            if (Game.IsDisabledControlJustPressed(2, Control.FrontendAccept))
             {
                 if (SelectedCard < 6)
                 {
                     if (alreadyVoted)
                     {
                         var old = VotedFor;
-                        Votes[VotedFor]--;
+                        Votes[VotedFor] -= 1;
                         if (old != SelectedCard)
                         {
                             VotedFor = SelectedCard;
-                            Votes[VotedFor]++;
+                            Votes[VotedFor] += 1;
                         }
                         UpdateOwnVote(VotedFor, old);
                     }
@@ -242,24 +327,24 @@ namespace ScaleformUI
                     {
                         alreadyVoted = true;
                         VotedFor = SelectedCard;
-                        Votes[VotedFor]++;
+                        Votes[VotedFor] += 1;
                         UpdateOwnVote(VotedFor, -1);
                     }
                 }
                 else
                 {
-                    var btn = Buttons[SelectedCard-6];
+                    var btn = Buttons[SelectedCard - 6];
 
                     if (btn.Selectable)
                     {
                         if (alreadyVoted)
                         {
                             var old = VotedFor;
-                            Votes[VotedFor]--;
+                            Votes[VotedFor] -= 1;
                             if (old != SelectedCard)
                             {
                                 VotedFor = SelectedCard;
-                                Votes[VotedFor]++;
+                                Votes[VotedFor] += 1;
                             }
                             UpdateOwnVote(VotedFor, old);
                         }
@@ -267,7 +352,7 @@ namespace ScaleformUI
                         {
                             alreadyVoted = true;
                             VotedFor = SelectedCard;
-                            Votes[VotedFor]++;
+                            Votes[VotedFor] += 1;
                             UpdateOwnVote(VotedFor, -1);
                         }
                     }
