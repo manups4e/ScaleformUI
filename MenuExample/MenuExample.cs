@@ -23,23 +23,13 @@ public class MenuExample : BaseScript
 	
 		UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI SHOWCASE", new PointF(20, 20), "scaleformui", "bannerbackground", true, true); // true means add menu Glare scaleform to the menu
 		exampleMenu.MaxItemsOnScreen = 7; // To decide max items on screen at time, default 7
-		//exampleMenu.BuildAsync = false;
+		exampleMenu.BuildAsync = true; // set to false might freeze the game a couple of milliseconds to load high N items menus. (default true)
 		// let's add the menu to the Pool
 		_menuPool.Add(exampleMenu);
 
 		#region Menu Declaration
 
 		#region Ketchup
-
-		var _menu = new UIMenu("sub", "subtitle");
-		exampleMenu.AddSubMenu(_menu, "test item");
-
-		for(int i=0; i<300; i++)
-        {
-			_menu.AddItem(new UIMenuItem("item " + i));
-        }
-
-
 		var ketchupItem = new UIMenuCheckboxItem("Scrolling animation enabled? in a very long label to test the text scrolling feature!", UIMenuCheckboxStyle.Tick, enabled, "Do you wish to enable the scrolling animation?");
 		var _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
 		API.CreateRuntimeTextureFromDuiHandle(txd, "panelbackground", API.GetDuiHandle(_paneldui));
@@ -830,7 +820,6 @@ public class MenuExample : BaseScript
 		};
 
 		#endregion
-
 		exampleMenu.Visible = true;
 	}
 

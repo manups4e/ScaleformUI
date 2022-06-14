@@ -2048,7 +2048,7 @@ namespace ScaleformUI
                 }
             }
 
-            else if (HasControlJustBeenPressed(MenuControls.Select, key))
+            else if (HasControlJustBeenPressed(MenuControls.Select, key) && !isBuilding)
             {
                 Select(true);
             }
@@ -2189,7 +2189,7 @@ namespace ScaleformUI
                 await BaseScript.Delay(0);
                 if (!canBuild) break;
                 var item = MenuItems[i];
-                var index = i; // to be corrected 
+                var index = i;
 
                 AddTextEntry($"menu_{_poolcontainer._menuList.IndexOf(this)}_desc_{index}", item.Description);
 
@@ -2589,7 +2589,11 @@ namespace ScaleformUI
             get { return MenuItems.Count == 0 ? 0 : _activeItem % MenuItems.Count; }
             set
             {
-                if (MenuItems.Count == 0) _activeItem = 0;
+                if (MenuItems.Count == 0)
+                {
+                    _activeItem = value;
+                    return;
+                }
                 MenuItems[CurrentSelection].Selected = false;
                 _activeItem = 1000000 - (1000000 % MenuItems.Count) + value;
                 MenuItems[CurrentSelection].Selected = true;
