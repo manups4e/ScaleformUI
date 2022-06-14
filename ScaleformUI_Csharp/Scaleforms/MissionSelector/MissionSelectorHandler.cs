@@ -268,12 +268,6 @@ namespace ScaleformUI
                             break;
                     }
                 }
-
-                Notifications.DrawText(0.3f, 0.775f, $"success:{success}");
-                Notifications.DrawText(0.3f, 0.8f, $"eventType:{eventType}");
-                Notifications.DrawText(0.3f, 0.825f, $"context:{context}");
-                Notifications.DrawText(0.3f, 0.85f, $"itemId:{itemId}");
-
             }
             if (Game.IsDisabledControlJustPressed(2, Control.FrontendUp))
             {

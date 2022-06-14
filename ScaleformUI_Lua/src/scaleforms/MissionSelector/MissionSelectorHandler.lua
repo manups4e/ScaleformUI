@@ -172,7 +172,6 @@ function m:Update()
 
         success, event_type, context, item_id = GetScaleformMovieCursorSelection(self._sc.handle)
         if success then
-            print(event_type, context, item_id)
             if event_type == 5 then
                 if self.SelectedCard ~= context+1 then
                     self.SelectedCard = context+1
