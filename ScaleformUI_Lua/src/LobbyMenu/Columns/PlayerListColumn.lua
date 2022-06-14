@@ -68,16 +68,17 @@ function PlayerListColumn:AddPlayer(item)
 end
 
 function PlayerListColumn:RemovePlayer(id)
-    table.remove(self.Items, id)
     if self.Parent ~= nil and self.Parent:Visible() then
+        local item = self.Items[id]
         local Type, SubType = item()
         if SubType == "FriendItem" then
             local pSubT = self.Parent()
             if pSubT == "LobbyMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("REMOVE_PLAYER_ITEM", false, id)
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("REMOVE_PLAYER_ITEM", false, id-1)
             elseif pSubT == "PauseMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("REMOVE_PLAYERS_TAB_PLAYER_ITEM", false, self.ParentTab, id)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("REMOVE_PLAYERS_TAB_PLAYER_ITEM", false, self.ParentTab, id-1)
             end
         end
     end
+    table.remove(self.Items, id)
 end
