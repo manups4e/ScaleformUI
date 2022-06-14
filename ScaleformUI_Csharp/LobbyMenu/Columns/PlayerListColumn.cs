@@ -42,7 +42,6 @@ namespace ScaleformUI.LobbyMenu
 
         public void RemovePlayer(int id)
         {
-            Items.RemoveAt(id);
             if (Parent != null && Parent.Visible)
             {
                 if (Parent is MainView lobby)
@@ -50,6 +49,7 @@ namespace ScaleformUI.LobbyMenu
                 else if (Parent is TabView pause)
                     pause._pause._lobby.CallFunction("REMOVE_PLAYERS_TAB_PLAYER_ITEM", ParentTab, id);
             }
+            Items.RemoveAt(id);
         }
 
         public int CurrentSelection
