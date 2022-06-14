@@ -60,6 +60,8 @@ function UIMenu.New(Title, Subtitle, X, Y, glare, txtDictionary, txtName, altern
         _maxItem = 7,
         _menuGlare = 0,
         _canBuild = true,
+        _buildAsync = true,
+        _isBuilding = false,
         _time = 0,
         _times = 0,
         _delay = 150,
@@ -214,6 +216,14 @@ function UIMenu:DisEnableControls(bool)
     end
 end
 
+function UIMenu:BuildAsync(bool)
+    if bool == nil then
+        return self._buildAsync
+    else
+        self._buildAsync = bool
+    end
+end
+
 ---InstructionalButtons
 ---@param bool boolean
 function UIMenu:InstructionalButtons(bool)
@@ -276,9 +286,10 @@ end
 ---CurrentSelection
 ---@param value number
 function UIMenu:CurrentSelection(value)
-    if tonumber(value) then
+    if value ~= nil then
         if #self.Items == 0 then
-            self.ActiveItem = 0
+            self.ActiveItem = value
+            return
         end
         self.Items[self:CurrentSelection()]:Selected(false)
         self.ActiveItem = 1000000 - (1000000 % #self.Items) + tonumber(value)
@@ -425,8 +436,12 @@ function UIMenu:Visible(bool)
         if bool then
             ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
             self.OnMenuChanged(nil, self, "opened")
-            self:BuildUpMenu()
-            self._internalpool.currentMenu = self
+            if self:BuildAsync() then
+                self:BuildUpMenuAsync()
+            else
+                self:BuildUpMenuSync()
+            end
+                self._internalpool.currentMenu = self
             self._internalpool:ProcessMenus(true)
         else
             self.OnMenuChanged(self, nil, "closed")
@@ -445,8 +460,11 @@ function UIMenu:Visible(bool)
 end
 
 ---BuildUpMenu
-function UIMenu:BuildUpMenu()
+function UIMenu:BuildUpMenuAsync()
     Citizen.CreateThread(function()
+        self._isBuilding = true
+        local enab = self:AnimationEnabled()
+        self:AnimationEnabled(false)
         while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
         ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self.Title, self.Subtitle, 0, 0, self.AlternativeTitle, self.TxtDictionary, self.TxtName,self:MaxItemsOnScreen(), true, 1)
         if #self.Windows > 0 then
@@ -555,6 +573,119 @@ function UIMenu:BuildUpMenu()
                 self:GoDown()
             end
         end
+        ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_MOUSE", false, self.Settings.MouseControlsEnabled)
+        self:AnimationEnabled(enab)
+        self._isBuilding = false
+    end)
+end
+
+function UIMenu:BuildUpMenuSync()
+    Citizen.CreateThread(function()
+        while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
+        ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self.Title, self.Subtitle, 0, 0, self.AlternativeTitle, self.TxtDictionary, self.TxtName,self:MaxItemsOnScreen(), true, 1)
+        if #self.Windows > 0 then
+            for w_id, window in pairs (self.Windows) do
+                local Type, SubType = window()
+                if SubType == "UIMenuHeritageWindow" then
+                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_WINDOW", false, window.id, window.Mom, window.Dad)
+                elseif SubType == "UIMenuDetailsWindow" then
+                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_WINDOW", false, window.id, window.DetailBottom, window.DetailMid, window.DetailTop, window.DetailLeft.Txd, window.DetailLeft.Txn, window.DetailLeft.Pos.x, window.DetailLeft.Pos.y, window.DetailLeft.Size.x, window.DetailLeft.Size.y)
+                    if window.StatWheelEnabled then
+                        for key, value in pairs(window.DetailStats) do
+                            ScaleformUI.Scaleforms._ui:CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", false, window.id, value.Percentage, value.HudColor)
+                        end
+                    end
+                end
+            end
+        end
+        local timer = GetGameTimer()
+        if #self.Items == 0 then
+            while #self.Items == 0 do
+                Citizen.Wait(0)
+                if GetGameTimer() - timer > 150 then
+                    self.ActiveItem = 0
+                    ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, self.ActiveItem)
+                    return
+                end
+            end
+        end
+        local items = self.Items
+
+        for it,item in pairs(items) do
+            local Type, SubType = item()
+            AddTextEntry("desc_{" .. it .."}", item:Description())
+
+            if SubType == "UIMenuListItem" then
+                ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 1, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), table.concat(item.Items, ","), item:Index()-1, item.Base._mainColor, item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor)
+            elseif SubType == "UIMenuDynamicListItem" then -- dynamic list item are handled like list items in the scaleform.. so the type remains 1
+                ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 1, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item:CurrentListItem(), 0, item.Base._mainColor, item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor)
+            elseif SubType == "UIMenuCheckboxItem" then
+                ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 2, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item.CheckBoxStyle, item._Checked, item.Base._mainColor, item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor)
+            elseif SubType == "UIMenuSliderItem" then
+                ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 3, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item._Max, item._Multiplier, item:Index(), item.Base._mainColor, item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor, item.SliderColor, item._heritage)
+            elseif SubType == "UIMenuProgressItem" then
+                ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 4, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item._Max, item._Multiplier, item:Index(), item.Base._mainColor, item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor, item.SliderColor)
+            elseif SubType == "UIMenuStatsItem" then
+                ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 5, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item:Index(), item._Type, item._Color, item.Base._mainColor, item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor)
+            elseif SubType == "UIMenuSeperatorItem" then
+                ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 6, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item.Jumpable, item.Base._mainColor, item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor)
+            else
+                ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, 0, item:Label(), "desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item._mainColor, item._highlightColor, item._textColor, item._highlightedTextColor)
+                ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_LABEL", false, it - 1, item:RightLabel())
+                if item._rightBadge ~= BadgeStyle.NONE then
+                    ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_BADGE", false, it - 1, item._rightBadge)
+                end
+            end
+        
+            if (SubType == "UIMenuItem" and item._leftBadge ~= BadgeStyle.NONE) or (SubType ~= "UIMenuItem" and item.Base._leftBadge ~= BadgeStyle.NONE) then
+                if SubType ~= "UIMenuItem" then
+                    ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_BADGE", false, it - 1, item.Base._leftBadge)
+                else
+                    ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_BADGE", false, it - 1, item._leftBadge)
+                end
+            end
+            if #item.Panels > 0 then
+                for pan, panel in pairs (item.Panels) do
+                    local pType, pSubType = panel()
+                    if pSubType == "UIMenuColorPanel" then
+                        if panel.CustomColors ~= nil then
+                            ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it - 1, 0, panel.Title, panel.ColorPanelColorType, panel.value, table.concat(panel.CustomColors, ","))
+                        else
+                            ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it - 1, 0, panel.Title, panel.ColorPanelColorType, panel.value)
+                        end
+                    elseif pSubType == "UIMenuPercentagePanel" then
+                        ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it - 1, 1, panel.Title, panel.Min, panel.Max, panel.Percentage)
+                    elseif pSubType == "UIMenuGridPanel" then
+                        ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it - 1, 2, panel.TopLabel, panel.RightLabel, panel.LeftLabel, panel.BottomLabel, panel.CirclePosition.x, panel.CirclePosition.y, true, panel.GridType)
+                    elseif pSubType == "UIMenuStatisticsPanel" then
+                        ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it - 1, 3)
+                        if #panel.Items then
+                            for key, stat in pairs (panel.Items) do
+                                ScaleformUI.Scaleforms._ui:CallFunction("ADD_STATISTIC_TO_PANEL", false, it - 1, pan - 1, stat['name'], stat['value'])
+                            end
+                        end
+                    end
+                end
+            end
+            if item.SidePanel ~= nil then
+                if item.SidePanel() == "UIMissionDetailsPanel" then
+                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, it - 1, 0, item.SidePanel.PanelSide, item.SidePanel.TitleType, item.SidePanel.Title, item.SidePanel.TitleColor, item.SidePanel.TextureDict, item.SidePanel.TextureName)
+                    for key, value in pairs(item.SidePanel.Items) do
+                        ScaleformUI.Scaleforms._ui:CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", false, it - 1, value.Type, value.TextLeft, value.TextRight, value.Icon, value.IconColor, value.Tick)
+                    end
+                elseif item.SidePanel() == "UIVehicleColorPickerPanel" then
+                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, it - 1, 1, item.SidePanel.PanelSide, item.SidePanel.TitleType, item.SidePanel.Title, item.SidePanel.TitleColor)
+                end
+            end
+        end
+        ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, self:CurrentSelection()-1)
+        local Type, SubType = self.Items[self.ActiveItem]
+        if SubType == "UIMenuSeparatorItem" then
+            if(self.Items[self.ActiveItem].Jumpable) then
+                self:GoDown()
+            end
+        end
+        ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_MOUSE", false, self.Settings.MouseControlsEnabled)
     end)
 end
 
@@ -583,7 +714,7 @@ function UIMenu:ProcessControl()
         return
     end
 
-    if self.Controls.Up.Enabled and (IsDisabledControlPressed(0, 172) or IsDisabledControlPressed(1, 172) or IsDisabledControlPressed(2, 172) or IsDisabledControlPressed(0, 241) or IsDisabledControlPressed(1, 241) or IsDisabledControlPressed(2, 241) or IsDisabledControlPressed(2, 241)) then
+    if self.Controls.Up.Enabled and not self._isBuilding and (IsDisabledControlPressed(0, 172) or IsDisabledControlPressed(1, 172) or IsDisabledControlPressed(2, 172) or IsDisabledControlPressed(0, 241) or IsDisabledControlPressed(1, 241) or IsDisabledControlPressed(2, 241) or IsDisabledControlPressed(2, 241)) then
         if GetGameTimer() - self._time > self._delay then
             self:ButtonDelay()
             Citizen.CreateThread(function()
@@ -593,7 +724,7 @@ function UIMenu:ProcessControl()
         end
     end
 
-    if self.Controls.Down.Enabled and (IsDisabledControlPressed(0, 173) or IsDisabledControlPressed(1, 173) or IsDisabledControlPressed(2, 173) or IsDisabledControlPressed(0, 242) or IsDisabledControlPressed(1, 242) or IsDisabledControlPressed(2, 242)) then
+    if self.Controls.Down.Enabled and not self._isBuilding and (IsDisabledControlPressed(0, 173) or IsDisabledControlPressed(1, 173) or IsDisabledControlPressed(2, 173) or IsDisabledControlPressed(0, 242) or IsDisabledControlPressed(1, 242) or IsDisabledControlPressed(2, 242)) then
         if GetGameTimer() - self._time > self._delay then
             self:ButtonDelay(0)
             Citizen.CreateThread(function()
@@ -603,7 +734,7 @@ function UIMenu:ProcessControl()
         end
     end
 
-    if self.Controls.Left.Enabled and (IsDisabledControlPressed(0, 174) or IsDisabledControlPressed(1, 174) or IsDisabledControlPressed(2, 174)) then
+    if self.Controls.Left.Enabled and not self._isBuilding and (IsDisabledControlPressed(0, 174) or IsDisabledControlPressed(1, 174) or IsDisabledControlPressed(2, 174)) then
         if GetGameTimer() - self._time > self._delay then
             self:ButtonDelay()
             Citizen.CreateThread(function()
@@ -613,7 +744,7 @@ function UIMenu:ProcessControl()
         end
     end
 
-    if self.Controls.Right.Enabled and (IsDisabledControlPressed(0, 175) or IsDisabledControlPressed(1, 175) or IsDisabledControlPressed(2, 175)) then
+    if self.Controls.Right.Enabled and not self._isBuilding and (IsDisabledControlPressed(0, 175) or IsDisabledControlPressed(1, 175) or IsDisabledControlPressed(2, 175)) then
         if GetGameTimer() - self._time > self._delay then
             self:ButtonDelay()
             Citizen.CreateThread(function()
@@ -623,7 +754,7 @@ function UIMenu:ProcessControl()
         end
     end
 
-    if self.Controls.Select.Enabled and (IsDisabledControlJustPressed(0, 201) or IsDisabledControlJustPressed(1, 201) or IsDisabledControlJustPressed(2, 201)) then
+    if self.Controls.Select.Enabled and not self._isBuilding and (IsDisabledControlJustPressed(0, 201) or IsDisabledControlJustPressed(1, 201) or IsDisabledControlJustPressed(2, 201)) then
         Citizen.CreateThread(function()
             self:SelectItem()
             Citizen.Wait(125)       
@@ -818,7 +949,11 @@ function UIMenu:SelectItem(play)
         self.Children[Item].OnMenuChanged(self, self.Children[Item], "forwards")
         self.Children[Item]._canBuild = true
         self.Children[Item]:Visible(true)
-        self.Children[Item]:BuildUpMenu()
+        if self.Children[Item]:BuildAsync() then
+            self.Children[Item]:BuildUpMenuAsync()
+        else
+            self.Children[Item]:BuildUpMenuSync()
+        end
     end
 end
 
@@ -833,7 +968,11 @@ function UIMenu:GoBack()
         ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.ParentMenu.InstructionalButtons)
         self.ParentMenu._canBuild = true
         self.ParentMenu._Visible = true
-        self.ParentMenu:BuildUpMenu()
+        if self.ParentMenu:BuildAsync() then
+            self.ParentMenu:BuildUpMenuAsync()
+        else
+            self.ParentMenu:BuildUpMenuSync()
+        end
         self.OnMenuChanged(self, self.ParentMenu, "backwards")
         self.ParentMenu.OnMenuChanged(self, self.ParentMenu, "backwards")
     else
