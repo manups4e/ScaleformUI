@@ -151,6 +151,9 @@ namespace ScaleformUI
             submenu.MouseWheelControlEnabled = menu.MouseWheelControlEnabled;
             submenu.MouseControlsEnabled = menu.MouseControlsEnabled;
             submenu.MaxItemsOnScreen = menu.MaxItemsOnScreen;
+            submenu.BuildAsync = menu.BuildAsync;
+            submenu.AnimationType = menu.AnimationType;
+            submenu.BuildingAnimation = menu.BuildingAnimation;
             Add(submenu);
 			menu.BindMenuToItem(submenu, item);
             menu._poolcontainer = this;
