@@ -845,12 +845,12 @@ namespace ScaleformUI
 		CIRCULAR_INOUT
 	}
 
-    public enum MenuAnimation
+    public enum MenuBuildingAnimation
     {
         NONE,
-        Left,
-        Right,
-        Alternated,
+        LEFT,
+        RIGHT,
+        LEFT_RIGHT,
     }
 
     #endregion
@@ -951,7 +951,7 @@ namespace ScaleformUI
             }
         }
 
-        public MenuAnimation BuildingAnimation
+        public MenuBuildingAnimation BuildingAnimation
         {
             get => buildingAnimation;
             set
@@ -2158,7 +2158,7 @@ namespace ScaleformUI
         }
 
         private bool isBuilding = false;
-        private MenuAnimation buildingAnimation = MenuAnimation.Left;
+        private MenuBuildingAnimation buildingAnimation = MenuBuildingAnimation.LEFT;
 
         internal async void BuildUpMenuAsync()
         {
