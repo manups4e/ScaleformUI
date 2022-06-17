@@ -46,6 +46,7 @@ function UIMenu.New(Title, Subtitle, X, Y, glare, txtDictionary, txtName, altern
         Pagination = { Min = 0, Max = 7, Total = 7 },
         enableAnimation = true,
         animationType = 0,
+        buildingAnimation = 1,
         Extra = {},
         Description = {},
         Items = {},
@@ -283,6 +284,17 @@ function UIMenu:AnimationType(animType)
     end
 end
 
+function UIMenu:BuildingAnimation(animType)
+    if animType ~= nil then
+        self.buildingAnimation = animType
+        if self:Visible() then
+            ScaleformUI.Scaleforms._ui:CallFunction("CHANGE_BUILDING_ANIMATION_TYPE", false, animType)
+        end
+    else
+        return self.buildingAnimation
+    end
+end
+
 ---CurrentSelection
 ---@param value number
 function UIMenu:CurrentSelection(value)
@@ -416,6 +428,10 @@ function UIMenu:AddSubMenu(Menu, text, description, offset, KeepBanner)
         Menu.Settings.MouseControlsEnabled = self.Settings.MouseControlsEnabled
         Menu.Settings.MouseEdgeEnabled = self.Settings.MouseEdgeEnabled
         Menu:MaxItemsOnScreen(self:MaxItemsOnScreen())
+        Menu:BuildAsync(self:BuildAsync())
+        Menu:AnimationEnabled(self:AnimationEnabled())
+        Menu:AnimationType(self:AnimationType())
+        Menu:BuildingAnimation(self:BuildingAnimation())
         self._internalpool:Add(Menu)
         self:BindMenuToItem(Menu, Item)
         return Menu
@@ -466,7 +482,7 @@ function UIMenu:BuildUpMenuAsync()
         local enab = self:AnimationEnabled()
         self:AnimationEnabled(false)
         while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
-        ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self.Title, self.Subtitle, 0, 0, self.AlternativeTitle, self.TxtDictionary, self.TxtName,self:MaxItemsOnScreen(), true, 1)
+        ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self.Title, self.Subtitle, 0, 0, self.AlternativeTitle, self.TxtDictionary, self.TxtName,self:MaxItemsOnScreen(), self:BuildAsync(), self:AnimationType(), self:BuildingAnimation())
         if #self.Windows > 0 then
             for w_id, window in pairs (self.Windows) do
                 local Type, SubType = window()
@@ -496,7 +512,7 @@ function UIMenu:BuildUpMenuAsync()
         local items = self.Items
         local it = 1
         while it <= #items do
-            Wait(1)
+            Citizen.Wait(50)
             if not self._canBuild then return end
             local item = items[it]
             local Type, SubType = item()
@@ -582,7 +598,7 @@ end
 function UIMenu:BuildUpMenuSync()
     Citizen.CreateThread(function()
         while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
-        ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self.Title, self.Subtitle, 0, 0, self.AlternativeTitle, self.TxtDictionary, self.TxtName,self:MaxItemsOnScreen(), true, 1)
+        ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self.Title, self.Subtitle, 0, 0, self.AlternativeTitle, self.TxtDictionary, self.TxtName,self:MaxItemsOnScreen(), self:BuildAsync(), self:AnimationType(), self:BuildingAnimation())
         if #self.Windows > 0 then
             for w_id, window in pairs (self.Windows) do
                 local Type, SubType = window()

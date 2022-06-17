@@ -19,3 +19,10 @@ MenuAnimationType = {
     CIRCULAR_OUT = 17,
     CIRCULAR_INOUT = 18
 }
+
+MenuBuildingAnimation = {
+    NONE = 0,
+    LEFT = 1,
+    RIGHT = 2,
+    LEFT_RIGHT = 3,
+}
