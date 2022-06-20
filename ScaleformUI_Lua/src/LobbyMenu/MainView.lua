@@ -266,14 +266,14 @@ function MainView:ProcessMouse()
                     ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", false, 16)
                     local item = col.Items[item_id+1]
                     local _type, _subType = item()
-                    if _subtype == "UIMenuCheckboxItem" then
+                    if _subType == "UIMenuCheckboxItem" then
                         item:Checked(not item:Checked())
                         item.OnCheckboxChanged(nil, item, item:Checked())
-                    elseif _subtype == "UIMenuListItem" then
+                    elseif _subType == "UIMenuListItem" then
                         item.OnListSelected(nil, item, item._Index)
-                    elseif _subtype == "UIMenuSliderItem" then
+                    elseif _subType == "UIMenuSliderItem" then
                         item.OnSliderSelected(nil, item, item._Index)
-                    elseif _subtype == "UIMenuProgressItem" then
+                    elseif _subType == "UIMenuProgressItem" then
                         item.OnProgressSelected(nil, item, item._Index)
                     else
                         item.Activated(nil, item)
