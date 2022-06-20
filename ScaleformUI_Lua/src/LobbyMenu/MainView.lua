@@ -18,7 +18,7 @@ function MainView.New(title, subtitle, sideTop, sideMid, sideBot)
         SettingsColumn = {},
         PlayersColumn = {},
         MissionPanel = {},
-        focusLevel = 0,
+        focusLevel = 1,
         TemporarilyHidden = false,
         controller = false,
         _loaded = false,
@@ -266,11 +266,17 @@ function MainView:ProcessMouse()
                     ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", false, 16)
                     local item = col.Items[item_id+1]
                     local _type, _subType = item()
-                    if _subType == "UIMenuCheckboxItem" then
+                    if _subtype == "UIMenuCheckboxItem" then
                         item:Checked(not item:Checked())
                         item.OnCheckboxChanged(nil, item, item:Checked())
-                    elseif _subType == "UIMenuItem" then
-                       item.Activated(nil, item)
+                    elseif _subtype == "UIMenuListItem" then
+                        item.OnListSelected(nil, item, item._Index)
+                    elseif _subtype == "UIMenuSliderItem" then
+                        item.OnSliderSelected(nil, item, item._Index)
+                    elseif _subtype == "UIMenuProgressItem" then
+                        item.OnProgressSelected(nil, item, item._Index)
+                    else
+                        item.Activated(nil, item)
                     end
                     return
                 end
@@ -395,6 +401,12 @@ function MainView:Select()
         if subtype == "UIMenuCheckboxItem" then
             item:Checked(not item:Checked())
             item.OnCheckboxChanged(nil, item, item:Checked())
+        elseif subtype == "UIMenuListItem" then
+            item.OnListSelected(nil, item, item._Index)
+        elseif subtype == "UIMenuSliderItem" then
+            item.OnSliderSelected(nil, item, item._Index)
+        elseif subtype == "UIMenuProgressItem" then
+            item.OnProgressSelected(nil, item, item._Index)
         else
             item.Activated(nil, item)
         end
