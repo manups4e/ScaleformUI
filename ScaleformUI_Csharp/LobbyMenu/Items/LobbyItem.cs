@@ -1,5 +1,7 @@
 ﻿using CitizenFX.Core;
+using CitizenFX.Core.Native;
 using ScaleformUI.LobbyMenu;
+using ScaleformUI.PauseMenu;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +15,8 @@ namespace ScaleformUI
         internal int _type;
         private bool _enabled = true;
         private bool _selected;
+        private Ped clonePed;
+
         /// <summary>
         /// Whether this item is currently selected.
         /// </summary>
@@ -24,7 +28,52 @@ namespace ScaleformUI
                 _selected = value;
             }
         }
-        public Ped ClonePed { get; set; }
+        public Ped ClonePed
+        {
+            get => clonePed;
+            set
+            {
+                clonePed = value;
+                if (clonePed == null)
+                    API.ClearPedInPauseMenu();
+                else
+                {
+                    if (ParentColumn.Parent != null && ParentColumn.Parent.Visible)
+                    {
+                        if (Panel != null)
+                        {
+                            Panel.UpdatePanel();
+                        }
+                        if (ParentColumn.Parent is MainView lobby)
+                        {
+                            if (lobby.PlayersColumn.Items[lobby.PlayersColumn.CurrentSelection] == this)
+                            {
+                                updateClone();
+                            }
+                        }
+                        else if (ParentColumn.Parent is TabView pause)
+                        {
+                            if (pause.Tabs[pause.Index] is PlayerListTab tab)
+                            {
+                                if (tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection] == this)
+                                {
+                                    updateClone();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private async void updateClone()
+        {
+            var ped = new Ped(API.ClonePed(ClonePed.Handle, 0, true, true));
+            await BaseScript.Delay(0);
+            API.GivePedToPauseMenu(ped.Handle, 2);
+            API.SetPauseMenuPedSleepState(true);
+            API.SetPauseMenuPedLighting(ParentColumn.Parent is TabView? (ParentColumn.Parent as TabView).FocusLevel != 0 : true);
+        }
 
 
         /// <summary>
