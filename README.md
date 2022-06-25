@@ -1,9 +1,11 @@
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
 
+![image](https://user-images.githubusercontent.com/4005518/175790543-9ea1fde2-87db-43d2-9ff0-071ce4dc6f49.png)
+
 # NativeUI alike all done with custom-made Scaleforms.
 
 ScaleformUI is a library that helps you quickly and easily build Rockstar-like menus Pause Menus and Lobby systems.
-## NOTE: you can use this in your resources as you want, but cannot be added in any paid resource! ⚠️
+## ⚠️ NOTE: you can use this in your resources as you want, but you cannot add it in any paid resource! If you want to sell a resource using this library, please refer this repository in your script's requirements! ⚠️
 
 ### Documentation
 Take a look at our Wiki here: https://github.com/manups4e/ScaleformUI/wiki
