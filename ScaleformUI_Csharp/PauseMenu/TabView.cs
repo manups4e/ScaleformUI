@@ -126,8 +126,8 @@ namespace ScaleformUI.PauseMenu
                 _visible = value;
                 if (value)
                 {
+                    ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY_NO_BACKGROUND"), true, -1);
                     SendPauseMenuOpen();
-                    DontRenderInGameUi(true);
                     AnimpostfxPlay("PauseMenuIn", 800, true);
                     ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
                     SetPlayerControl(Game.Player.Handle, false, 0);
@@ -137,12 +137,12 @@ namespace ScaleformUI.PauseMenu
                 else
                 {
                     _pause.Dispose();
-                    DontRenderInGameUi(false);
                     AnimpostfxStop("PauseMenuIn");
                     AnimpostfxPlay("PauseMenuOut", 800, false);
                     SendPauseMenuClose();
                     SetPlayerControl(Game.Player.Handle, true, 0);
                     _poolcontainer.ProcessMenus(false);
+                    ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY_NO_BACKGROUND"), false, -1);
                 }
             }
         }
@@ -474,6 +474,10 @@ namespace ScaleformUI.PauseMenu
             {
                 case 0:
                     FocusLevel++;
+                    if (Tabs[Index] is PlayerListTab)
+                    {
+                        SetPauseMenuPedLighting(FocusLevel != 0);
+                    }
                     if (Tabs[Index].LeftItemList.All(x => !x.Enabled)) break;
                     while (!Tabs[Index].LeftItemList[leftItemIndex].Enabled)
                     {
@@ -600,6 +604,7 @@ namespace ScaleformUI.PauseMenu
                     }
                 }
                 FocusLevel--;
+                SetPauseMenuPedLighting(FocusLevel != 0);
             }
             else
             {
@@ -624,6 +629,14 @@ namespace ScaleformUI.PauseMenu
                         {
                             case 0:
                                 plTab.PlayersColumn.CurrentSelection = retVal;
+                                if (plTab.PlayersColumn.Items[retVal].ClonePed != null)
+                                {
+                                    var ped = new Ped(ClonePed(plTab.PlayersColumn.Items[retVal].ClonePed.Handle, 0, true, true));
+                                    await BaseScript.Delay(0);
+                                    GivePedToPauseMenu(ped.Handle, 2);
+                                    SetPauseMenuPedSleepState(true);
+                                    SetPauseMenuPedLighting(FocusLevel != 0);
+                                }
                                 break;
                             case 1:
                                 plTab.SettingsColumn.CurrentSelection = retVal;
@@ -657,6 +670,14 @@ namespace ScaleformUI.PauseMenu
                         {
                             case 0:
                                 plTab.PlayersColumn.CurrentSelection = retVal;
+                                if (plTab.PlayersColumn.Items[retVal].ClonePed != null)
+                                {
+                                    var ped = new Ped(ClonePed(plTab.PlayersColumn.Items[retVal].ClonePed.Handle, 0, true, true));
+                                    await BaseScript.Delay(0);
+                                    GivePedToPauseMenu(ped.Handle, 2);
+                                    SetPauseMenuPedSleepState(true);
+                                    SetPauseMenuPedLighting(FocusLevel != 0);
+                                }
                                 break;
                             case 1:
                                 plTab.SettingsColumn.CurrentSelection = retVal;
@@ -694,6 +715,16 @@ namespace ScaleformUI.PauseMenu
                             {
                                 switch (plTab.Focus)
                                 {
+                                    case 0:
+                                        if (plTab.PlayersColumn.Items[retVal].ClonePed != null)
+                                        {
+                                            var ped = new Ped(ClonePed(plTab.PlayersColumn.Items[retVal].ClonePed.Handle, 0, true, true));
+                                            await BaseScript.Delay(0);
+                                            GivePedToPauseMenu(ped.Handle, 2);
+                                            SetPauseMenuPedSleepState(true);
+                                            SetPauseMenuPedLighting(FocusLevel != 0);
+                                        }
+                                        break;
                                     case 1:
                                         var item = plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection];
                                         if (!item.Enabled)
@@ -772,6 +803,17 @@ namespace ScaleformUI.PauseMenu
                     case 0:
                         _pause.HeaderGoRight();
                         Index = retVal;
+                        if (Tabs[Index] is PlayerListTab _plTab)
+                        {
+                            if (_plTab.PlayersColumn.Items[retVal].ClonePed != null)
+                            {
+                                var ped = new Ped(ClonePed(_plTab.PlayersColumn.Items[retVal].ClonePed.Handle, 0, true, true));
+                                await BaseScript.Delay(0);
+                                GivePedToPauseMenu(ped.Handle, 2);
+                                SetPauseMenuPedSleepState(true);
+                                SetPauseMenuPedLighting(FocusLevel != 0);
+                            }
+                        }
                         break;
                     case 1:
                         {
@@ -779,6 +821,16 @@ namespace ScaleformUI.PauseMenu
                             {
                                 switch (plTab.Focus)
                                 {
+                                    case 0:
+                                        if (plTab.PlayersColumn.Items[retVal].ClonePed != null)
+                                        {
+                                            var ped = new Ped(ClonePed(plTab.PlayersColumn.Items[retVal].ClonePed.Handle, 0, true, true));
+                                            await BaseScript.Delay(0);
+                                            GivePedToPauseMenu(ped.Handle, 2);
+                                            SetPauseMenuPedSleepState(true);
+                                            SetPauseMenuPedLighting(FocusLevel != 0);
+                                        }
+                                        break;
                                     case 1:
                                         var item = plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection];
                                         if (!item.Enabled)
@@ -927,6 +979,15 @@ namespace ScaleformUI.PauseMenu
                                     if (tab.Focus == 1)
                                         tab.Focus = 0;
                                     tab.PlayersColumn.CurrentSelection = itemId;
+                                    if (tab.PlayersColumn.Items[itemId].ClonePed != null)
+                                    {
+                                        var ped = new Ped(ClonePed(tab.PlayersColumn.Items[itemId].ClonePed.Handle, 0, true, true));
+                                        await BaseScript.Delay(0);
+                                        GivePedToPauseMenu(ped.Handle, 2);
+                                        SetPauseMenuPedSleepState(true);
+                                        SetPauseMenuPedLighting(FocusLevel != 0);
+                                    }
+
                                 }
                                 break;
                             case 1: // left item in subitem tab pressed or playerListTab settings selected

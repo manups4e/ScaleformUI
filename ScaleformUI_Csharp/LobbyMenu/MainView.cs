@@ -86,9 +86,9 @@ namespace ScaleformUI.LobbyMenu
                 _visible = value;
                 if (value)
                 {
+                    ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY_NO_BACKGROUND"), true, -1);
                     BuildPauseMenu();
                     SendPauseMenuOpen();
-                    DontRenderInGameUi(true);
                     AnimpostfxPlay("PauseMenuIn", 800, true);
                     ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
                     SetPlayerControl(Game.Player.Handle, false, 0);
@@ -98,12 +98,12 @@ namespace ScaleformUI.LobbyMenu
                 else
                 {
                     _pause.Dispose();
-                    DontRenderInGameUi(false);
                     AnimpostfxStop("PauseMenuIn");
                     AnimpostfxPlay("PauseMenuOut", 800, false);
                     SendPauseMenuClose();
                     SetPlayerControl(Game.Player.Handle, true, 0);
                     _poolcontainer.ProcessMenus(false);
+                    ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY_NO_BACKGROUND"), false, -1);
                 }
             }
         }
@@ -317,7 +317,7 @@ namespace ScaleformUI.LobbyMenu
         private int context = 0;
         private int unused = 0;
         private bool cursorPressed;
-        public override void ProcessMouse()
+        public override async void ProcessMouse()
         {
             if (!IsInputDisabled(2))
             {
@@ -341,6 +341,7 @@ namespace ScaleformUI.LobbyMenu
                         {
                             case SettingsListColumn:
                                 {
+                                    ClearPedInPauseMenu();
                                     var col = listCol[context] as SettingsListColumn;
                                     foreach (var p in PlayersColumn.Items) p.Selected = false;
                                     if (!col.Items[col.CurrentSelection].Enabled)
@@ -381,10 +382,18 @@ namespace ScaleformUI.LobbyMenu
                                     }
                                     if (col.Items[itemId].Selected)
                                     {
-                                        // do something
+                                        // code here
                                         return;
                                     }
                                     col.CurrentSelection = itemId;
+                                    if (col.Items[itemId].ClonePed != null)
+                                    {
+                                        var ped = ClonePed(col.Items[itemId].ClonePed.Handle, 0, true, true);
+                                        await BaseScript.Delay(1);
+                                        GivePedToPauseMenu(ped, 2);
+                                        SetPauseMenuPedSleepState(true);
+                                        SetPauseMenuPedLighting(true);
+                                    }
                                 }
                                 break;
                         }
@@ -516,6 +525,14 @@ namespace ScaleformUI.LobbyMenu
             else if (FocusLevel == PlayersColumn.Order)
             {
                 PlayersColumn.CurrentSelection = split[1];
+                if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
+                {
+                    var ped = ClonePed(PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed.Handle, 0, true, true);
+                    await BaseScript.Delay(1);
+                    GivePedToPauseMenu(ped, 2);
+                    SetPauseMenuPedSleepState(true);
+                    SetPauseMenuPedLighting(true);
+                }
                 PlayersColumn.IndexChangedEvent();
             }
         }
@@ -538,6 +555,14 @@ namespace ScaleformUI.LobbyMenu
             else if (FocusLevel == PlayersColumn.Order)
             {
                 PlayersColumn.CurrentSelection = split[1];
+                if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
+                {
+                    var ped = new Ped(ClonePed(PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed.Handle, 0, true, true));
+                    await BaseScript.Delay(0);
+                    GivePedToPauseMenu(ped.Handle, 2);
+                    SetPauseMenuPedSleepState(true);
+                    SetPauseMenuPedLighting(true);
+                }
                 PlayersColumn.IndexChangedEvent();
             }
         }
@@ -557,12 +582,21 @@ namespace ScaleformUI.LobbyMenu
                 FocusLevel = split[0];
                 if (FocusLevel == SettingsColumn.Order)
                 {
+                    ClearPedInPauseMenu();
                     SettingsColumn.CurrentSelection = split[1];
                     SettingsColumn.IndexChangedEvent();
                 }
                 else if (FocusLevel == PlayersColumn.Order)
                 {
                     PlayersColumn.CurrentSelection = split[1];
+                    if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
+                    {
+                        var ped = new Ped(ClonePed(PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed.Handle, 0, true, true));
+                        await BaseScript.Delay(0);
+                        GivePedToPauseMenu(ped.Handle, 2);
+                        SetPauseMenuPedSleepState(true);
+                        SetPauseMenuPedLighting(true);
+                    }
                     PlayersColumn.IndexChangedEvent();
                 }
             }
@@ -617,12 +651,21 @@ namespace ScaleformUI.LobbyMenu
                 FocusLevel = split[0];
                 if (FocusLevel == SettingsColumn.Order)
                 {
+                    ClearPedInPauseMenu();
                     SettingsColumn.CurrentSelection = split[1];
                     SettingsColumn.IndexChangedEvent();
                 }
                 else if (FocusLevel == PlayersColumn.Order)
                 {
                     PlayersColumn.CurrentSelection = split[1];
+                    if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
+                    {
+                        var ped = new Ped(ClonePed(PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed.Handle, 0, true, true));
+                        await BaseScript.Delay(0);
+                        GivePedToPauseMenu(ped.Handle, 2);
+                        SetPauseMenuPedSleepState(true);
+                        SetPauseMenuPedLighting(true);
+                    }
                     PlayersColumn.IndexChangedEvent();
                 }
             }

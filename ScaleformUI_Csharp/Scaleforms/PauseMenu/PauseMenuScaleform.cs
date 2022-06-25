@@ -256,13 +256,15 @@ namespace ScaleformUI
 
         public void Draw(bool isLobby = false)
         {
-            if (_visible && !Game.IsPaused)
+            if (_visible && GetCurrentFrontendMenuVersion() == -2060115030)
             {
+
+                SetScriptGfxDrawBehindPausemenu(true);
                 DrawScaleformMovie(_header.Handle, 0.501f, 0.162f, 0.6782f, 0.145f, 255, 255, 255, 255, 0);
                 if (!isLobby)
-                    DrawScaleformMovie(_pause.Handle, 0.6617187f, 0.7166667f, 1, 1, 255, 255, 255, 255, 0);
+                    DrawScaleformMovie(_pause.Handle, 0.6617187f, 0.7226667f, 1, 1, 255, 255, 255, 255, 0);
                 else
-                    DrawScaleformMovie(_lobby.Handle, 0.6617187f, 0.7166667f, 1, 1, 255, 255, 255, 255, 0);
+                    DrawScaleformMovie(_lobby.Handle, 0.6617187f, 0.7226667f, 1, 1, 255, 255, 255, 255, 0);
             }
         }
     }

@@ -967,11 +967,19 @@ public class MenuExample : BaseScript
 		var friend4 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_ORANGE, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
 		var friend5 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_RED, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
 
+		friend.ClonePed = Game.PlayerPed;
+		friend1.ClonePed = Game.PlayerPed;
+		friend2.ClonePed = Game.PlayerPed;
+		friend3.ClonePed = Game.PlayerPed;
+		friend4.ClonePed = Game.PlayerPed;
+		friend5.ClonePed = Game.PlayerPed;
+
 		playersTab.PlayersColumn.AddPlayer(friend);
 		playersTab.PlayersColumn.AddPlayer(friend2);
 		playersTab.PlayersColumn.AddPlayer(friend3);
 		playersTab.PlayersColumn.AddPlayer(friend4);
 		playersTab.PlayersColumn.AddPlayer(friend5);
+
 
 		var panel = new PlayerStatsPanel("Player 1", HudColor.HUD_COLOUR_GREEN)
 		{
@@ -1191,6 +1199,7 @@ public class MenuExample : BaseScript
 		var friend3 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_BLUE, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
 		var friend4 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_ORANGE, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
 		var friend5 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_RED, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+		
 		friend.SetLeftIcon(LobbyBadgeIcon.IS_CONSOLE_PLAYER);
 		friend1.SetLeftIcon(LobbyBadgeIcon.IS_PC_PLAYER);
 		friend2.SetLeftIcon(LobbyBadgeIcon.SPECTATOR);
@@ -1198,7 +1207,14 @@ public class MenuExample : BaseScript
 		friend4.SetLeftIcon(BadgeIcon.COUNTRY_ITALY);
 		friend5.SetLeftIcon(BadgeIcon.CASTLE);
 
-        var panel = new PlayerStatsPanel("Player 1", HudColor.HUD_COLOUR_GREEN)
+		friend.ClonePed = Game.PlayerPed;
+		friend1.ClonePed = Game.PlayerPed;
+		friend2.ClonePed = Game.PlayerPed;
+		friend3.ClonePed = Game.PlayerPed;
+		friend4.ClonePed = Game.PlayerPed;
+		friend5.ClonePed = Game.PlayerPed;
+
+		var panel = new PlayerStatsPanel("Player 1", HudColor.HUD_COLOUR_GREEN)
         {
             Description = "This is the description for Player 1!!",
 			HasPlane = true,
@@ -1340,9 +1356,9 @@ public class MenuExample : BaseScript
 		MarkersHandler.AddMarker(playerMarker);
 
 		Tick += async () =>
-		{	
+		{
 			//If the player is in drawing range for the marker, the marker will draw automatically and the DrawText will show itself (true if the ped enters the marker)
-			if(playerMarker.IsInRange)
+			if (playerMarker.IsInRange)
 				Notifications.DrawText($"IsInMarker => {playerMarker.IsInMarker}");
 
 			if (Game.IsControlJustPressed(0, Control.SelectCharacterMichael) && !_menuPool.IsAnyMenuOpen) // Our menu enabler (to exit menu simply press Back on the main menu)

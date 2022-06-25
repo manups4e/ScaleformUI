@@ -38,6 +38,12 @@ namespace ScaleformUI
             {
                 if (resName == API.GetCurrentResourceName())
                 {
+                    if (Game.IsPaused && API.GetCurrentFrontendMenuVersion() == -2060115030)
+                    {
+                        API.ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY_NO_BACKGROUND"), false, -1);
+                        API.AnimpostfxStop("PauseMenuIn");
+                        API.AnimpostfxPlay("PauseMenuOut", 800, false);
+                    }
                     _ui.CallFunction("CLEAR_ALL");
                     _ui.Dispose();
                     PauseMenu.Dispose();

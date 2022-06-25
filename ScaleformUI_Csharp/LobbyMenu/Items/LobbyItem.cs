@@ -1,4 +1,5 @@
-﻿using ScaleformUI.LobbyMenu;
+﻿using CitizenFX.Core;
+using ScaleformUI.LobbyMenu;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,7 @@ namespace ScaleformUI
                 _selected = value;
             }
         }
+        public Ped ClonePed { get; set; }
 
 
         /// <summary>

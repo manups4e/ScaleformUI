@@ -36,6 +36,7 @@ namespace ScaleformUI.LobbyMenu
         internal bool boolL;
         internal bool boolR;
         private bool coloredTag;
+
         public string Label
         {
             get => label;
