@@ -28,7 +28,7 @@ Take a look at our Wiki here: https://github.com/manups4e/ScaleformUI/wiki
 ### Screenshots
 
 ![NativeUI Example](https://i.imgur.com/K4FXOvR.png)
-![Lobby Menu Example](https://i.imgur.com/5pkLTnf.png)
+![Lobby Menu Example](https://user-images.githubusercontent.com/4005518/175790747-7c80eb14-ca0b-431c-8e75-4aedac345a9f.png)
 ![Pause Menu Example](https://i.imgur.com/LMAHF4O.png)
 
 
