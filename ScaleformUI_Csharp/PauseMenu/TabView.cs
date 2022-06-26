@@ -708,6 +708,17 @@ namespace ScaleformUI.PauseMenu
                     case 0:
                         _pause.HeaderGoLeft();
                         Index = retVal;
+                        if (Tabs[Index] is PlayerListTab _plTab)
+                        {
+                            if (_plTab.PlayersColumn.Items[retVal].ClonePed != null)
+                            {
+                                var ped = new Ped(ClonePed(_plTab.PlayersColumn.Items[retVal].ClonePed.Handle, 0, true, true));
+                                await BaseScript.Delay(0);
+                                GivePedToPauseMenu(ped.Handle, 2);
+                                SetPauseMenuPedSleepState(true);
+                                SetPauseMenuPedLighting(FocusLevel != 0);
+                            }
+                        }
                         break;
                     case 1:
                         {
