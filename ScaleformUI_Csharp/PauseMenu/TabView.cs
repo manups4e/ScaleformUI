@@ -637,6 +637,7 @@ namespace ScaleformUI.PauseMenu
                                     SetPauseMenuPedSleepState(true);
                                     SetPauseMenuPedLighting(FocusLevel != 0);
                                 }
+                                else ClearPedInPauseMenu();
                                 break;
                             case 1:
                                 plTab.SettingsColumn.CurrentSelection = retVal;
@@ -678,6 +679,7 @@ namespace ScaleformUI.PauseMenu
                                     SetPauseMenuPedSleepState(true);
                                     SetPauseMenuPedLighting(FocusLevel != 0);
                                 }
+                                else ClearPedInPauseMenu();
                                 break;
                             case 1:
                                 plTab.SettingsColumn.CurrentSelection = retVal;
@@ -718,6 +720,7 @@ namespace ScaleformUI.PauseMenu
                                 SetPauseMenuPedSleepState(true);
                                 SetPauseMenuPedLighting(FocusLevel != 0);
                             }
+                            else ClearPedInPauseMenu();
                         }
                         break;
                     case 1:
@@ -735,6 +738,7 @@ namespace ScaleformUI.PauseMenu
                                             SetPauseMenuPedSleepState(true);
                                             SetPauseMenuPedLighting(FocusLevel != 0);
                                         }
+                                        else ClearPedInPauseMenu();
                                         break;
                                     case 1:
                                         var item = plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection];
@@ -824,6 +828,7 @@ namespace ScaleformUI.PauseMenu
                                 SetPauseMenuPedSleepState(true);
                                 SetPauseMenuPedLighting(FocusLevel != 0);
                             }
+                            else ClearPedInPauseMenu();
                         }
                         break;
                     case 1:
@@ -841,6 +846,7 @@ namespace ScaleformUI.PauseMenu
                                             SetPauseMenuPedSleepState(true);
                                             SetPauseMenuPedLighting(FocusLevel != 0);
                                         }
+                                        else ClearPedInPauseMenu();
                                         break;
                                     case 1:
                                         var item = plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection];
@@ -998,7 +1004,7 @@ namespace ScaleformUI.PauseMenu
                                         SetPauseMenuPedSleepState(true);
                                         SetPauseMenuPedLighting(FocusLevel != 0);
                                     }
-
+                                    else ClearPedInPauseMenu();
                                 }
                                 break;
                             case 1: // left item in subitem tab pressed or playerListTab settings selected

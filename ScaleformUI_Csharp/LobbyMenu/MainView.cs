@@ -394,6 +394,7 @@ namespace ScaleformUI.LobbyMenu
                                         SetPauseMenuPedSleepState(true);
                                         SetPauseMenuPedLighting(true);
                                     }
+                                    else ClearPedInPauseMenu();
                                 }
                                 break;
                         }
@@ -533,6 +534,7 @@ namespace ScaleformUI.LobbyMenu
                     SetPauseMenuPedSleepState(true);
                     SetPauseMenuPedLighting(true);
                 }
+                else ClearPedInPauseMenu();
                 PlayersColumn.IndexChangedEvent();
             }
         }
@@ -563,6 +565,7 @@ namespace ScaleformUI.LobbyMenu
                     SetPauseMenuPedSleepState(true);
                     SetPauseMenuPedLighting(true);
                 }
+                else ClearPedInPauseMenu();
                 PlayersColumn.IndexChangedEvent();
             }
         }
@@ -597,6 +600,7 @@ namespace ScaleformUI.LobbyMenu
                         SetPauseMenuPedSleepState(true);
                         SetPauseMenuPedLighting(true);
                     }
+                    else ClearPedInPauseMenu();
                     PlayersColumn.IndexChangedEvent();
                 }
             }
@@ -666,6 +670,7 @@ namespace ScaleformUI.LobbyMenu
                         SetPauseMenuPedSleepState(true);
                         SetPauseMenuPedLighting(true);
                     }
+                    else ClearPedInPauseMenu();
                     PlayersColumn.IndexChangedEvent();
                 }
             }
