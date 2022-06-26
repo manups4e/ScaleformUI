@@ -635,7 +635,6 @@ function TabView:GoRight()
         if self:FocusLevel() == 0 then
             ScaleformUI.Scaleforms._pauseMenu:HeaderGoRight()
             self.Index = retVal+1
-            print("self.Index = " .. self.Index)
             local tab = self.Tabs[self.Index]
             local _, subT = tab()
             if subT == "PlayerListTab" then
