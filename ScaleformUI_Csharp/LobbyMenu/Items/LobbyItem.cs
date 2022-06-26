@@ -38,7 +38,7 @@ namespace ScaleformUI
                     API.ClearPedInPauseMenu();
                 else
                 {
-                    if (ParentColumn.Parent != null && ParentColumn.Parent.Visible)
+                    if (ParentColumn != null && ParentColumn.Parent != null && ParentColumn.Parent.Visible)
                     {
                         if (Panel != null)
                         {
