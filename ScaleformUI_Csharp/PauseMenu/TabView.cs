@@ -722,6 +722,7 @@ namespace ScaleformUI.PauseMenu
                             }
                             else ClearPedInPauseMenu();
                         }
+                        else ClearPedInPauseMenu();
                         break;
                     case 1:
                         {
@@ -810,7 +811,9 @@ namespace ScaleformUI.PauseMenu
             ScaleformMovieMethodAddParamInt(11);
             var ret = EndScaleformMovieMethodReturnValue();
             while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            var retVal = GetScaleformMovieFunctionReturnInt(ret);
+            var _retVal = GetScaleformMovieFunctionReturnInt(ret);
+            int retVal = _retVal != -1 ? _retVal : 0;
+
             if (retVal != -1)
             {
                 switch (FocusLevel)
@@ -830,6 +833,7 @@ namespace ScaleformUI.PauseMenu
                             }
                             else ClearPedInPauseMenu();
                         }
+                        else ClearPedInPauseMenu();
                         break;
                     case 1:
                         {
@@ -944,6 +948,20 @@ namespace ScaleformUI.PauseMenu
                                 _pause.SelectTab(itemId);
                                 FocusLevel = 1;
                                 Index = itemId;
+                                if (Tabs[Index] is PlayerListTab tab)
+                                {
+                                    if (tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].ClonePed != null)
+                                    {
+                                        var ped = new Ped(ClonePed(tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].ClonePed.Handle, 0, true, true));
+                                        await BaseScript.Delay(0);
+                                        GivePedToPauseMenu(ped.Handle, 2);
+                                        SetPauseMenuPedSleepState(true);
+                                        SetPauseMenuPedLighting(FocusLevel != 0);
+                                    }
+                                    else ClearPedInPauseMenu();
+                                }
+                                else ClearPedInPauseMenu();
+                                Game.PlaySound("SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET");
                                 if (Tabs[Index].LeftItemList.All(x => !x.Enabled)) break;
                                 while (!Tabs[Index].LeftItemList[leftItemIndex].Enabled)
                                 {
