@@ -84,21 +84,21 @@ function TabView:Visible(visible)
         self._visible = visible
         ScaleformUI.Scaleforms._pauseMenu:Visible(visible)
         if visible == true then
+            ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
             self:BuildPauseMenu()
             self._internalpool:ProcessMenus(true)
             self.OnPauseMenuOpen(self)
-            DontRenderInGameUi(true)
             AnimpostfxPlay("PauseMenuIn", 800, true)
             ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
             SetPlayerControl(PlayerId(), false, 0)
         else
             ScaleformUI.Scaleforms._pauseMenu:Dispose()
-            DontRenderInGameUi(false)
             AnimpostfxStop("PauseMenuIn")
             AnimpostfxPlay("PauseMenuOut", 800, false)
             self.OnPauseMenuClose(self)
             SetPlayerControl(PlayerId(), true, 0)
             self._internalpool:ProcessMenus(false)
+            ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
         end
     else
         return self._visible
@@ -269,7 +269,7 @@ function TabView:BuildPauseMenu()
                     local item = items[it]
                     local Type, SubType = item()
                     if SubType == "FriendItem" then
-                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_PLAYER_ITEM", false, tabIndex, 1, 1, item:Label(), item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL, item._iconR, item._boolR, item:Status(), item:StatusColor(), item:Rank(), item:CrewTag());
+                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_PLAYER_ITEM", false, tabIndex, 1, 1, item:Label(), item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL, item._iconR, item._boolR, item:Status(), item:StatusColor(), item:Rank(), item:CrewTag())
                     end
                     if item.Panel ~= nil then
                         item.Panel:UpdatePanel(true)
@@ -340,6 +340,11 @@ end
 function TabView:Select()
     if self:FocusLevel() == 0 then
         self:FocusLevel(self:FocusLevel() + 1)
+        local tab = self.Tabs[self.Index]
+        local cur_tab, cur_sub_tab = tab()
+        if cur_sub_tab == "PlayerListTab" then
+            SetPauseMenuPedLighting(self:FocusLevel() ~= 0)
+        end
         --[[ check if all disabled ]]
         local allDisabled = true
         for _,v in ipairs(self.Tabs[self.Index].LeftItemList) do
@@ -452,6 +457,7 @@ function TabView:GoBack()
             end
         end
         self:FocusLevel(self:FocusLevel() - 1)
+        SetPauseMenuPedLighting(self:FocusLevel() ~= 0)
     else
         if self:CanPlayerCloseMenu() then
             self:Visible(false)
@@ -472,11 +478,20 @@ function TabView:GoUp()
             if subT == "PlayerListTab" then
                 if tab:Focus() == 0 then
                     tab.PlayersColumn:CurrentSelection(retVal)
-                    tab.PlayersColumn.OnIndexChanged(tab.PlayersColumn:CurrentSelection())
+                    if tab.PlayersColumn.Items[retVal+1].ClonePed ~= nil and tab.PlayersColumn.Items[retVal+1].ClonePed ~= 0 then
+                        local ped = ClonePed(tab.PlayersColumn.Items[retVal+1].ClonePed, false, true, true)
+                        Citizen.Wait(0)
+                        GivePedToPauseMenu(ped, 2)
+                        SetPauseMenuPedSleepState(true)
+                        SetPauseMenuPedLighting(self:FocusLevel() ~= 0)
+                    else
+                        ClearPedInPauseMenu()
+                    end
+                    tab.PlayersColumn.OnIndexChanged(retVal+1)
                     return
                 elseif tab:Focus() == 1 then
                     tab.SettingsColumn:CurrentSelection(retVal)
-                    tab.SettingsColumn.OnIndexChanged(tab.PlayersColumn:CurrentSelection())
+                    tab.SettingsColumn.OnIndexChanged(retVal+1)
                     return
                 end
             end
@@ -500,11 +515,20 @@ function TabView:GoDown()
             if subT == "PlayerListTab" then
                 if tab:Focus() == 0 then
                     tab.PlayersColumn:CurrentSelection(retVal)
-                    tab.PlayersColumn.OnIndexChanged(tab.PlayersColumn:CurrentSelection())
+                    if tab.PlayersColumn.Items[retVal+1].ClonePed ~= nil and tab.PlayersColumn.Items[retVal+1].ClonePed ~= 0 then
+                        local ped = ClonePed(tab.PlayersColumn.Items[retVal+1].ClonePed, false, true, true)
+                        Citizen.Wait(0)
+                        GivePedToPauseMenu(ped, 2)
+                        SetPauseMenuPedSleepState(true)
+                        SetPauseMenuPedLighting(self:FocusLevel() ~= 0)
+                    else
+                        ClearPedInPauseMenu()
+                    end
+                    tab.PlayersColumn.OnIndexChanged(retVal+1)
                     return
                 elseif tab:Focus() == 1 then
                     tab.SettingsColumn:CurrentSelection(retVal)
-                    tab.SettingsColumn.OnIndexChanged(tab.PlayersColumn:CurrentSelection())
+                    tab.SettingsColumn.OnIndexChanged(retVal+1)
                     return
                 end
             end
@@ -526,11 +550,36 @@ function TabView:GoLeft()
         if self:FocusLevel() == 0 then
             ScaleformUI.Scaleforms._pauseMenu:HeaderGoLeft()
             self.Index = retVal+1
+            local tab = self.Tabs[self.Index]
+            local _, subT = tab()
+            if subT == "PlayerListTab" then
+                if tab.PlayersColumn.Items[retVal+1].ClonePed ~= nil and tab.PlayersColumn.Items[retVal+1].ClonePed ~= 0 then
+                    local ped = ClonePed(tab.PlayersColumn.Items[retVal+1].ClonePed, false, true, true)
+                    Citizen.Wait(0)
+                    GivePedToPauseMenu(ped, 2)
+                    SetPauseMenuPedSleepState(true)
+                    SetPauseMenuPedLighting(self:FocusLevel() ~= 0)
+                else
+                    ClearPedInPauseMenu()
+                end
+            else
+                ClearPedInPauseMenu()
+            end
         elseif self:FocusLevel() == 1 then
             local tab = self.Tabs[self.Index]
             local _, subT = tab()
             if subT == "PlayerListTab" then
-                if tab:Focus() == 1 then
+                if tab:Focus() == 0 then
+                    if tab.PlayersColumn.Items[retVal+1].ClonePed ~= nil and tab.PlayersColumn.Items[retVal+1].ClonePed ~= 0 then
+                        local ped = ClonePed(tab.PlayersColumn.Items[retVal+1].ClonePed, false, true, true)
+                        Citizen.Wait(0)
+                        GivePedToPauseMenu(ped, 2)
+                        SetPauseMenuPedSleepState(true)
+                        SetPauseMenuPedLighting(self:FocusLevel() ~= 0)
+                    else
+                        ClearPedInPauseMenu()
+                    end
+                elseif tab:Focus() == 1 then
                     local Item = tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]
                     if not Item:Enabled() then
                         PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
@@ -581,16 +630,42 @@ function TabView:GoRight()
         Citizen.Wait(0)
     end
     local retVal = GetScaleformMovieMethodReturnValueInt(return_value)
-
+    if retVal == -1 then retVal = 0 end
     if retVal ~= -1 then
         if self:FocusLevel() == 0 then
             ScaleformUI.Scaleforms._pauseMenu:HeaderGoRight()
             self.Index = retVal+1
+            print("self.Index = " .. self.Index)
+            local tab = self.Tabs[self.Index]
+            local _, subT = tab()
+            if subT == "PlayerListTab" then
+                if tab.PlayersColumn.Items[retVal+1].ClonePed ~= nil and tab.PlayersColumn.Items[retVal+1].ClonePed ~= 0 then
+                    local ped = ClonePed(tab.PlayersColumn.Items[retVal+1].ClonePed, false, true, true)
+                    Citizen.Wait(0)
+                    GivePedToPauseMenu(ped, 2)
+                    SetPauseMenuPedSleepState(true)
+                    SetPauseMenuPedLighting(self:FocusLevel() ~= 0)
+                else
+                    ClearPedInPauseMenu()
+                end
+            else
+                ClearPedInPauseMenu()
+            end
         elseif self:FocusLevel() == 1 then
             local tab = self.Tabs[self.Index]
             local _, subT = tab()
             if subT == "PlayerListTab" then
-                if tab:Focus() == 1 then
+                if tab:Focus() == 0 then
+                    if tab.PlayersColumn.Items[retVal+1].ClonePed ~= nil and tab.PlayersColumn.Items[retVal+1].ClonePed ~= 0 then
+                        local ped = ClonePed(tab.PlayersColumn.Items[retVal+1].ClonePed, false, true, true)
+                        Citizen.Wait(0)
+                        GivePedToPauseMenu(ped, 2)
+                        SetPauseMenuPedSleepState(true)
+                        SetPauseMenuPedLighting(self:FocusLevel() ~= 0)
+                    else
+                        ClearPedInPauseMenu()
+                    end
+                elseif tab:Focus() == 1 then
                     local Item = tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]
                     if not Item:Enabled() then
                         PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
@@ -655,6 +730,21 @@ function TabView:ProcessMouse()
                 self:FocusLevel(1)
                 self.Index = item_id_h + 1
                 PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
+                local tab = self.Tabs[self.Index]
+                local _, subT = tab()
+                if subT == "PlayerListTab" then
+                    if tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed ~= nil and tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
+                        local ped = ClonePed(tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed, false, true, true)
+                        Citizen.Wait(0)
+                        GivePedToPauseMenu(ped, 2)
+                        SetPauseMenuPedSleepState(true)
+                        SetPauseMenuPedLighting(self:FocusLevel() ~= 0)
+                    else
+                        ClearPedInPauseMenu()
+                    end
+                else
+                    ClearPedInPauseMenu()
+                end
             end
         end
     end
@@ -671,6 +761,15 @@ function TabView:ProcessMouse()
                         tab:Focus(0)
                     end
                     tab.PlayersColumn:CurrentSelection(item_id)
+                    if tab.PlayersColumn.Items[item_id+1].ClonePed ~= nil and tab.PlayersColumn.Items[item_id+1].ClonePed ~= 0 then
+                        local ped = ClonePed(tab.PlayersColumn.Items[item_id+1].ClonePed, false, true, true)
+                        Citizen.Wait(0)
+                        GivePedToPauseMenu(ped, 2)
+                        SetPauseMenuPedSleepState(true)
+                        SetPauseMenuPedLighting(self:FocusLevel() ~= 0)
+                    else
+                        ClearPedInPauseMenu()
+                    end
                 else
                     if #tab.LeftItemList == 0 then return end
                     if not tab.LeftItemList[self.leftItemList] then return end
@@ -824,14 +923,14 @@ function TabView:ProcessControl()
     if (IsControlJustPressed(2, 205)) then
         Citizen.CreateThread(function()
             if (self:FocusLevel() == 0) then
-                self:GoLeft();
+                self:GoLeft()
             end
         end)
     end
     if (IsControlJustPressed(2, 206)) then
         Citizen.CreateThread(function()
             if (self:FocusLevel() == 0) then
-                self:GoRight();
+                self:GoRight()
             end
         end)
     end

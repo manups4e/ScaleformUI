@@ -246,15 +246,16 @@ end
 
 function Pause:Draw(isLobby)
     if isLobby == nil then isLobby = false end
-    if self._visible and not IsPauseMenuActive() then
+    if self._visible and GetCurrentFrontendMenuVersion() == -2060115030 then
+        SetScriptGfxDrawBehindPausemenu(true)
         if IsInputDisabled(2) then
             ShowCursorThisFrame()
         end
         self._header:Render2DNormal(0.501, 0.162, 0.6782, 0.145)
         if isLobby then
-            self._lobby:Render2DNormal(0.6617187, 0.7166667, 1.0, 1.0)
+            self._lobby:Render2DNormal(0.6617187, 0.7226667, 1.0, 1.0)
         else
-            self._pause:Render2DNormal(0.6617187, 0.7166667, 1.0, 1.0)
+            self._pause:Render2DNormal(0.6617187, 0.7226667, 1.0, 1.0)
         end
     end
 end

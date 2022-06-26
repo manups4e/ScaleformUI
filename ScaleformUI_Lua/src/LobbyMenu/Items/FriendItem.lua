@@ -23,6 +23,7 @@ function FriendItem.New(label, itemColor, coloredTag, rank, status, crewTag)
         _boolR = false,
         _coloredTag = true,
         ParentColumn = nil,
+        ClonePed = 0,
         Panel = nil
     }
     return setmetatable(_data, FriendItem)
@@ -40,6 +41,45 @@ function FriendItem:Label(label)
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_LABEL", false, idx, self._label)
             elseif pSubT == "PauseMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_LABEL", false, self.ParentColumn.ParentTab, idx, self._label)
+            end
+        end
+    end
+end
+
+function FriendItem:AddPedToPauseMenu(ped)
+    if ped == nil then
+        return self.ClonePed
+    else
+        self.ClonePed = ped
+        if ped == 0 or ped == nil then
+            ClearPedInPauseMenu()
+            return
+        end
+        if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
+            if self.Panel ~= nil then
+                self.Panel:UpdatePanel()
+            end
+            local pSubT = self.ParentColumn.Parent()
+            if pSubT == "LobbyMenu" then
+                if self.ParentColumn.Items[self.ParentColumn:CurrentSelection()] == self then
+                    local ped = ClonePed(self.ClonePed, false, true, true)
+                    Citizen.Wait(0);
+                    GivePedToPauseMenu(ped, 2);
+                    SetPauseMenuPedSleepState(true)
+                    SetPauseMenuPedLighting(true)
+                end
+            elseif pSubT == "PauseMenu" then
+                local tab = self.ParentColumn.Parent.Tabs[self.ParentColumn.Parent.Index]
+                local _, subT = tab()
+                if subT == "PlayerListTab" then
+                    if tab.Items[tab:CurrentSelection()] == self then
+                        local ped = ClonePed(self.ClonePed, false, true, true)
+                        Citizen.Wait(0);
+                        GivePedToPauseMenu(ped, 2);
+                        SetPauseMenuPedSleepState(true)
+                        SetPauseMenuPedLighting(self.ParentColumn.Parent:FocusLevel() ~= 0);
+                    end
+                end
             end
         end
     end

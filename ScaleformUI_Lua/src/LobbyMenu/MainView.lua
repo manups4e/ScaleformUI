@@ -75,9 +75,9 @@ function MainView:Visible(visible)
         ScaleformUI.Scaleforms.InstructionalButtons:Enabled(visible)
         ScaleformUI.Scaleforms._pauseMenu:Visible(visible)
         if visible == true then
+            ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
             self:BuildPauseMenu()
             self.OnLobbyMenuOpen(self)
-            DontRenderInGameUi(true)
             AnimpostfxPlay("PauseMenuIn", 800, true)
             ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
             SetPlayerControl(PlayerId(), false, 0)
@@ -85,12 +85,12 @@ function MainView:Visible(visible)
             self._internalpool:ProcessMenus(true)
         else
             ScaleformUI.Scaleforms._pauseMenu:Dispose()
-            DontRenderInGameUi(false)
             AnimpostfxStop("PauseMenuIn")
             AnimpostfxPlay("PauseMenuOut", 800, false)
             self.OnLobbyMenuClose(self)
             SetPlayerControl(PlayerId(), true, 0)
             self._internalpool:ProcessMenus(false)
+            ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, false, -1)
         end
     else
         return self._visible
@@ -257,6 +257,7 @@ function MainView:ProcessMouse()
             local col = self._listCol[context+1]
             local Type, SubType = col()
             if SubType == "SettingsListColumn" then
+                ClearPedInPauseMenu()
                 for k,v in pairs(self.PlayersColumn.Items) do v:Selected(false) end
                 if not col.Items[col:CurrentSelection()]:Enabled() then
                     PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
@@ -293,6 +294,15 @@ function MainView:ProcessMouse()
                 end
                 col:CurrentSelection(item_id)
                 col.OnIndexChanged(item_id+1)
+                if col.Items[item_id+1].ClonePed ~= nil and col.Items[item_id+1].ClonePed ~= 0 then
+                    local ped = ClonePed(col.Items[item_id+1].ClonePed, false, true, true);
+                    Citizen.Wait(0)
+                    GivePedToPauseMenu(ped, 2)
+                    SetPauseMenuPedSleepState(true);
+                    SetPauseMenuPedLighting(true);
+                else
+                    ClearPedInPauseMenu()
+                end
             end
         end
     end
@@ -435,6 +445,15 @@ function MainView:GoUp()
         self.SettingsColumn.OnIndexChanged(self.SettingsColumn:CurrentSelection())
     elseif self:FocusLevel() == self.PlayersColumn.Order then
         self.PlayersColumn:CurrentSelection(tonumber(splitted[2]))
+        if self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= nil and self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
+            local ped = ClonePed(self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed, false, true, true);
+            Citizen.Wait(0)
+            GivePedToPauseMenu(ped, 2)
+            SetPauseMenuPedSleepState(true);
+            SetPauseMenuPedLighting(true);
+        else
+            ClearPedInPauseMenu()
+        end
         self.PlayersColumn.OnIndexChanged(self.PlayersColumn:CurrentSelection())
     end
 end
@@ -453,6 +472,15 @@ function MainView:GoDown()
         self.SettingsColumn.OnIndexChanged(self.SettingsColumn:CurrentSelection())
     elseif self:FocusLevel() == self.PlayersColumn.Order then
         self.PlayersColumn:CurrentSelection(tonumber(splitted[2]))
+        if self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= nil and self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
+            local ped = ClonePed(self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed, false, true, true);
+            Citizen.Wait(0)
+            GivePedToPauseMenu(ped, 2)
+            SetPauseMenuPedSleepState(true);
+            SetPauseMenuPedLighting(true);
+        else
+            ClearPedInPauseMenu()
+        end
         self.PlayersColumn.OnIndexChanged(self.PlayersColumn:CurrentSelection())
     end
 end
@@ -469,11 +497,21 @@ function MainView:GoLeft()
     if tonumber(splitted[3]) == -1 then
         self:FocusLevel(tonumber(splitted[1])+1)
         if self:FocusLevel() == self.SettingsColumn.Order then
+            ClearPedInPauseMenu();
             self.SettingsColumn:CurrentSelection(tonumber(splitted[2]))
             self.SettingsColumn.OnIndexChanged(self.SettingsColumn:CurrentSelection());
         elseif self:FocusLevel() == self.PlayersColumn.Order then
             self.PlayersColumn:CurrentSelection(tonumber(splitted[2]))
-        self.PlayersColumn.OnIndexChanged(self.PlayersColumn:CurrentSelection())
+            if self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= nil and self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
+                local ped = ClonePed(self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed, false, true, true);
+                Citizen.Wait(0)
+                GivePedToPauseMenu(ped, 2)
+                SetPauseMenuPedSleepState(true);
+                SetPauseMenuPedLighting(true);
+            else
+                ClearPedInPauseMenu()
+            end
+            self.PlayersColumn.OnIndexChanged(self.PlayersColumn:CurrentSelection())
         end
     else
         local item = self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()];
@@ -508,10 +546,20 @@ function MainView:GoRight()
     if tonumber(splitted[3]) == -1 then
         self:FocusLevel(tonumber(splitted[1])+1)
         if self:FocusLevel() == self.SettingsColumn.Order then
+            ClearPedInPauseMenu();
             self.SettingsColumn:CurrentSelection(tonumber(splitted[2]))
             self.SettingsColumn.OnIndexChanged(self.SettingsColumn:CurrentSelection());
         elseif self:FocusLevel() == self.PlayersColumn.Order then
             self.PlayersColumn:CurrentSelection(tonumber(splitted[2]))
+            if self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= nil and self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
+                local ped = ClonePed(self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed, false, true, true);
+                Citizen.Wait(0)
+                GivePedToPauseMenu(ped, 2)
+                SetPauseMenuPedSleepState(true);
+                SetPauseMenuPedLighting(true);
+            else
+                ClearPedInPauseMenu()
+            end
             self.PlayersColumn.OnIndexChanged(self.PlayersColumn:CurrentSelection())
         end
     else
