@@ -49,8 +49,6 @@ namespace ScaleformUI
 
         public int WidthOffset { set { _menuList.ForEach(m => m.SetMenuWidthOffset(value)); } }
 
-        public string CounterPretext { set { _menuList.ForEach(m => m.CounterPretext = value); } }
-
         public bool DisableInstructionalButtons { set { _menuList.ForEach(m => m.DisableInstructionalButtons(value)); } }
 
 		public bool BannerInheritance = true;

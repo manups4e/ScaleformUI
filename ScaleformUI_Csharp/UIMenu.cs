@@ -898,6 +898,11 @@ namespace ScaleformUI
         private static readonly MenuControls[] _menuControls = Enum.GetValues(typeof(MenuControls)).Cast<MenuControls>().ToArray();
 
         internal MenuPool _poolcontainer;
+        private bool isBuilding = false;
+        private MenuBuildingAnimation buildingAnimation = MenuBuildingAnimation.LEFT;
+        private string title;
+        private string subtitle;
+        private HudColor counterColor = HudColor.HUD_COLOUR_FREEMODE;
 
         public bool Glare { get; set; }
 
@@ -908,7 +913,7 @@ namespace ScaleformUI
         // Button delay
         private int time;
         private int times;
-        private int delay = 150;
+        private int delay = 150;    
         #endregion
 
         #region Public Fields
@@ -2157,9 +2162,6 @@ namespace ScaleformUI
             }
         }
 
-        private bool isBuilding = false;
-        private MenuBuildingAnimation buildingAnimation = MenuBuildingAnimation.LEFT;
-
         internal async void BuildUpMenuAsync()
         {
             isBuilding = true;
@@ -2167,7 +2169,7 @@ namespace ScaleformUI
             var _animEnabled = EnableAnimation;
             EnableAnimation = false;
             while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
-            ScaleformUI._ui.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, EnableAnimation, (int)AnimationType, (int)buildingAnimation);
+            ScaleformUI._ui.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, EnableAnimation, (int)AnimationType, (int)buildingAnimation, (int)counterColor);
             if (Windows.Count > 0)
             {
                 foreach (var wind in Windows)
@@ -2395,7 +2397,7 @@ namespace ScaleformUI
         internal async void BuildUpMenuSync()
         {
             while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
-            ScaleformUI._ui.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, EnableAnimation, (int)AnimationType, (int)buildingAnimation);
+            ScaleformUI._ui.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, EnableAnimation, (int)AnimationType, (int)buildingAnimation, (int)counterColor);
             if (Windows.Count > 0)
             {
                 foreach (var wind in Windows)
@@ -2641,25 +2643,56 @@ namespace ScaleformUI
         /// <summary>
         /// Returns the title object.
         /// </summary>
-        public string Title { get; internal set; }
+        public string Title
+        {
+            get => title;
+            set
+            {
+                title = value;
+                if (Visible)
+                {
+                    ScaleformUI._ui.CallFunction("UPDATE_TITLE_SUBTITLE", title, subtitle, AlternativeTitle);
+                }
+            }
+        }
 
 
         /// <summary>
         /// Returns the subtitle object.
         /// </summary>
-        public string Subtitle { get; internal set; }
-
+        public string Subtitle
+        {
+            get => subtitle;
+            set
+            {
+                subtitle = value;
+                if (Visible)
+                {
+                    ScaleformUI._ui.CallFunction("UPDATE_TITLE_SUBTITLE", title, subtitle, AlternativeTitle);
+                }
+            }
+        }
 
         /// <summary>
-        /// String to pre-attach to the counter string. Useful for color codes.
+        /// Set the CounterText color.
         /// </summary>
-        public string CounterPretext { get; set; }
-
+        public HudColor CounterColor
+        {
+            get => counterColor;
+            set
+            {
+                counterColor = value;
+                if (Visible)
+                {
+                    ScaleformUI._ui.CallFunction("SET_COUNTER_COLOR", (int)counterColor);
+                }
+            }
+        }
 
         /// <summary>
         /// If this is a nested menu, returns the parent menu. You can also set it to a menu so when pressing Back it goes to that menu.
         /// </summary>
-        public UIMenu ParentMenu { get; set; }
+        public UIMenu ParentMenu { get; internal set; }
 
 
         /// <summary>

@@ -26,6 +26,7 @@ public class MenuExample : BaseScript
 		exampleMenu.BuildAsync = true; // set to false might freeze the game a couple of milliseconds to load high N items menus. (default true)
 		exampleMenu.BuildingAnimation = MenuBuildingAnimation.LEFT_RIGHT;
 		exampleMenu.AnimationType = MenuAnimationType.BACK_INOUT;
+		//exampleMenu.CounterColor = HudColor.HUD_COLOUR_PINK;
 		// let's add the menu to the Pool
 		_menuPool.Add(exampleMenu);
 
@@ -789,7 +790,7 @@ public class MenuExample : BaseScript
 		exampleMenu.OnIndexChange += (sender, index) =>
 		{
 			//if (sender.MenuItems[index] == cookItem)
-				//cookItem.SetLeftBadge(BadgeIcon.NONE);
+			//cookItem.SetLeftBadge(BadgeIcon.NONE);
 		};
 
 		exampleMenu.OnListChange += (sender, item, index) =>
