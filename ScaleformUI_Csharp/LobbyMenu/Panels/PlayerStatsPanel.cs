@@ -88,6 +88,7 @@ namespace ScaleformUI.LobbyMenu
         {
             this.title = title;
             this.titleColor = titleColor;
+            this.description = string.Empty;
             RankInfo = new(this);
             Items = new();
         }
