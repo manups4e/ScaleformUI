@@ -12,7 +12,7 @@ namespace ScaleformUI.LobbyMenu
         private int currentSelection;
 
         public int ParentTab { get; internal set; }
-        public IndexChanged OnIndexChanged;
+        public event IndexChanged OnIndexChanged;
         public List<UIMenuItem> Items { get; internal set; }
         public PauseMenuBase Parent { get; internal set; }
         public SettingsListColumn(string label, HudColor color) : base(label, color)

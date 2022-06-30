@@ -10,7 +10,7 @@ namespace ScaleformUI.LobbyMenu
     public class PlayerListColumn : Column
     {
         private int currentSelection;
-        public IndexChanged OnIndexChanged;
+        public event IndexChanged OnIndexChanged;
         public int ParentTab { get; internal set; }
         public List<LobbyItem> Items { get; private set; }
         public PlayerListColumn(string label, HudColor color) : base(label, color)
