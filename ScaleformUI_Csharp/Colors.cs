@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ScaleformUI
 {
-	public class Colors
+	public abstract class Colors
 	{
 		public static readonly Color Transparent = Color.FromArgb(16777215);
 		public static readonly Color AliceBlue = Color.FromArgb(-984833);
