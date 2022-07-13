@@ -60,27 +60,29 @@ function FriendItem:AddPedToPauseMenu(ped)
                 self.Panel:UpdatePanel()
             end
             local pSubT = self.ParentColumn.Parent()
-            if pSubT == "LobbyMenu" then
-                if self.ParentColumn.Items[self.ParentColumn:CurrentSelection()] == self then
-                    local ped = ClonePed(self.ClonePed, false, true, true)
-                    Citizen.Wait(0);
-                    GivePedToPauseMenu(ped, 2);
-                    SetPauseMenuPedSleepState(true)
-                    SetPauseMenuPedLighting(true)
-                end
-            elseif pSubT == "PauseMenu" then
-                local tab = self.ParentColumn.Parent.Tabs[self.ParentColumn.Parent.Index]
-                local _, subT = tab()
-                if subT == "PlayerListTab" then
-                    if tab.Items[tab:CurrentSelection()] == self then
-                        local ped = ClonePed(self.ClonePed, false, true, true)
-                        Citizen.Wait(0);
+            Citizen.CreateThread(function()
+                if pSubT == "LobbyMenu" then
+                    if self.ParentColumn.Items[self.ParentColumn:CurrentSelection()] == self then
+                        local ped = ClonePed(self.ClonePed, false, false, true)
+                        FinalizeHeadBlend(ped)
                         GivePedToPauseMenu(ped, 2);
                         SetPauseMenuPedSleepState(true)
-                        SetPauseMenuPedLighting(self.ParentColumn.Parent:FocusLevel() ~= 0);
+                        SetPauseMenuPedLighting(true)
+                    end
+                elseif pSubT == "PauseMenu" then
+                    local tab = self.ParentColumn.Parent.Tabs[self.ParentColumn.Parent.Index]
+                    local _, subT = tab()
+                    if subT == "PlayerListTab" then
+                        if self.ParentColumn.Items[self.ParentColumn:CurrentSelection()] == self then
+                            local ped = ClonePed(self.ClonePed, false, false, true)
+                            FinalizeHeadBlend(ped)
+                            GivePedToPauseMenu(ped, 2);
+                            SetPauseMenuPedSleepState(true)
+                            SetPauseMenuPedLighting(self.ParentColumn.Parent:FocusLevel() ~= 0);
+                        end
                     end
                 end
-            end
+            end)
         end
     end
 end

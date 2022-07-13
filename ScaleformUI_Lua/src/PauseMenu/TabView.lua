@@ -479,13 +479,9 @@ function TabView:GoUp()
                 if tab:Focus() == 0 then
                     tab.PlayersColumn:CurrentSelection(retVal)
                     if tab.PlayersColumn.Items[retVal+1].ClonePed ~= nil and tab.PlayersColumn.Items[retVal+1].ClonePed ~= 0 then
-                        local ped = ClonePed(tab.PlayersColumn.Items[retVal+1].ClonePed, false, true, true)
-                        Citizen.Wait(0)
-                        GivePedToPauseMenu(ped, 2)
-                        SetPauseMenuPedSleepState(true)
-                        SetPauseMenuPedLighting(self:FocusLevel() ~= 0)
+                        tab.PlayersColumn.Items[retVal+1]:AddPedToPauseMenu(tab.PlayersColumn.Items[retVal+1].ClonePed)
                     else
-                        ClearPedInPauseMenu()
+                        tab.PlayersColumn.Items[retVal+1]:AddPedToPauseMenu()
                     end
                     tab.PlayersColumn.OnIndexChanged(retVal+1)
                     return
@@ -516,13 +512,9 @@ function TabView:GoDown()
                 if tab:Focus() == 0 then
                     tab.PlayersColumn:CurrentSelection(retVal)
                     if tab.PlayersColumn.Items[retVal+1].ClonePed ~= nil and tab.PlayersColumn.Items[retVal+1].ClonePed ~= 0 then
-                        local ped = ClonePed(tab.PlayersColumn.Items[retVal+1].ClonePed, false, true, true)
-                        Citizen.Wait(0)
-                        GivePedToPauseMenu(ped, 2)
-                        SetPauseMenuPedSleepState(true)
-                        SetPauseMenuPedLighting(self:FocusLevel() ~= 0)
+                        tab.PlayersColumn.Items[retVal+1]:AddPedToPauseMenu(tab.PlayersColumn.Items[retVal+1].ClonePed)
                     else
-                        ClearPedInPauseMenu()
+                        tab.PlayersColumn.Items[retVal+1]:AddPedToPauseMenu()
                     end
                     tab.PlayersColumn.OnIndexChanged(retVal+1)
                     return
@@ -553,14 +545,10 @@ function TabView:GoLeft()
             local tab = self.Tabs[self.Index]
             local _, subT = tab()
             if subT == "PlayerListTab" then
-                if tab.PlayersColumn.Items[retVal+1].ClonePed ~= nil and tab.PlayersColumn.Items[retVal+1].ClonePed ~= 0 then
-                    local ped = ClonePed(tab.PlayersColumn.Items[retVal+1].ClonePed, false, true, true)
-                    Citizen.Wait(0)
-                    GivePedToPauseMenu(ped, 2)
-                    SetPauseMenuPedSleepState(true)
-                    SetPauseMenuPedLighting(self:FocusLevel() ~= 0)
+                if tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed ~= nil and tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
+                    tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu(tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed)
                 else
-                    ClearPedInPauseMenu()
+                    tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu()
                 end
             else
                 ClearPedInPauseMenu()
@@ -570,14 +558,10 @@ function TabView:GoLeft()
             local _, subT = tab()
             if subT == "PlayerListTab" then
                 if tab:Focus() == 0 then
-                    if tab.PlayersColumn.Items[retVal+1].ClonePed ~= nil and tab.PlayersColumn.Items[retVal+1].ClonePed ~= 0 then
-                        local ped = ClonePed(tab.PlayersColumn.Items[retVal+1].ClonePed, false, true, true)
-                        Citizen.Wait(0)
-                        GivePedToPauseMenu(ped, 2)
-                        SetPauseMenuPedSleepState(true)
-                        SetPauseMenuPedLighting(self:FocusLevel() ~= 0)
+                    if tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed ~= nil and tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
+                        tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu(tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed)
                     else
-                        ClearPedInPauseMenu()
+                        tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu()
                     end
                 elseif tab:Focus() == 1 then
                     local Item = tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]
@@ -638,14 +622,10 @@ function TabView:GoRight()
             local tab = self.Tabs[self.Index]
             local _, subT = tab()
             if subT == "PlayerListTab" then
-                if tab.PlayersColumn.Items[retVal+1].ClonePed ~= nil and tab.PlayersColumn.Items[retVal+1].ClonePed ~= 0 then
-                    local ped = ClonePed(tab.PlayersColumn.Items[retVal+1].ClonePed, false, true, true)
-                    Citizen.Wait(0)
-                    GivePedToPauseMenu(ped, 2)
-                    SetPauseMenuPedSleepState(true)
-                    SetPauseMenuPedLighting(self:FocusLevel() ~= 0)
+                if tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed ~= nil and tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
+                    tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu(tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed)
                 else
-                    ClearPedInPauseMenu()
+                    tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu()
                 end
             else
                 ClearPedInPauseMenu()
@@ -655,14 +635,10 @@ function TabView:GoRight()
             local _, subT = tab()
             if subT == "PlayerListTab" then
                 if tab:Focus() == 0 then
-                    if tab.PlayersColumn.Items[retVal+1].ClonePed ~= nil and tab.PlayersColumn.Items[retVal+1].ClonePed ~= 0 then
-                        local ped = ClonePed(tab.PlayersColumn.Items[retVal+1].ClonePed, false, true, true)
-                        Citizen.Wait(0)
-                        GivePedToPauseMenu(ped, 2)
-                        SetPauseMenuPedSleepState(true)
-                        SetPauseMenuPedLighting(self:FocusLevel() ~= 0)
+                    if tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed ~= nil and tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
+                        tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu(tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed)
                     else
-                        ClearPedInPauseMenu()
+                        tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu()
                     end
                 elseif tab:Focus() == 1 then
                     local Item = tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]
@@ -733,16 +709,10 @@ function TabView:ProcessMouse()
                 local _, subT = tab()
                 if subT == "PlayerListTab" then
                     if tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed ~= nil and tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
-                        local ped = ClonePed(tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed, false, true, true)
-                        Citizen.Wait(0)
-                        GivePedToPauseMenu(ped, 2)
-                        SetPauseMenuPedSleepState(true)
-                        SetPauseMenuPedLighting(self:FocusLevel() ~= 0)
+                        tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu(tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed)
                     else
-                        ClearPedInPauseMenu()
+                        tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu()
                     end
-                else
-                    ClearPedInPauseMenu()
                 end
             end
         end
@@ -760,14 +730,10 @@ function TabView:ProcessMouse()
                         tab:Focus(0)
                     end
                     tab.PlayersColumn:CurrentSelection(item_id)
-                    if tab.PlayersColumn.Items[item_id+1].ClonePed ~= nil and tab.PlayersColumn.Items[item_id+1].ClonePed ~= 0 then
-                        local ped = ClonePed(tab.PlayersColumn.Items[item_id+1].ClonePed, false, true, true)
-                        Citizen.Wait(0)
-                        GivePedToPauseMenu(ped, 2)
-                        SetPauseMenuPedSleepState(true)
-                        SetPauseMenuPedLighting(self:FocusLevel() ~= 0)
+                    if tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed ~= nil and tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
+                        tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu(tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed)
                     else
-                        ClearPedInPauseMenu()
+                        tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu()
                     end
                 else
                     if #tab.LeftItemList == 0 then return end

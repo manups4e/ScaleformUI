@@ -35,7 +35,13 @@ function PlayerListColumn:CurrentSelection(idx)
             self._currentSelection = 0
         end
         self.Items[self:CurrentSelection()]:Selected(false)
-        self._currentSelection = 1000000 - (1000000 % #self.Items) + tonumber(idx)
+        if idx < 0 then
+            self._currentSelection = 0
+        elseif idx > #self.Items then
+            self._currentSelection = #self.Items
+        else
+            self._currentSelection = 1000000 - (1000000 % #self.Items) + tonumber(idx)
+        end
         self.Items[self:CurrentSelection()]:Selected(true)
         if self.Parent ~= nil and self.Parent:Visible() then
             local pSubT = self.Parent()
