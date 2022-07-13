@@ -34,31 +34,35 @@ namespace ScaleformUI
             set
             {
                 clonePed = value;
-                if (clonePed == null)
-                    API.ClearPedInPauseMenu();
-                else
+                CreateClonedPed(clonePed);
+            }
+        }
+
+        internal void CreateClonedPed(Ped ped)
+        {
+            if (ped == null) API.ClearPedInPauseMenu();
+            else
+            {
+                if (ParentColumn != null && ParentColumn.Parent != null && ParentColumn.Parent.Visible)
                 {
-                    if (ParentColumn != null && ParentColumn.Parent != null && ParentColumn.Parent.Visible)
+                    if (Panel != null)
                     {
-                        if (Panel != null)
+                        Panel.UpdatePanel();
+                    }
+                    if (ParentColumn.Parent is MainView lobby)
+                    {
+                        if (lobby.PlayersColumn.Items[lobby.PlayersColumn.CurrentSelection] == this)
                         {
-                            Panel.UpdatePanel();
+                            UpdateClone();
                         }
-                        if (ParentColumn.Parent is MainView lobby)
+                    }
+                    else if (ParentColumn.Parent is TabView pause)
+                    {
+                        if (pause.Tabs[pause.Index] is PlayerListTab tab)
                         {
-                            if (lobby.PlayersColumn.Items[lobby.PlayersColumn.CurrentSelection] == this)
+                            if (tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection] == this)
                             {
-                                updateClone();
-                            }
-                        }
-                        else if (ParentColumn.Parent is TabView pause)
-                        {
-                            if (pause.Tabs[pause.Index] is PlayerListTab tab)
-                            {
-                                if (tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection] == this)
-                                {
-                                    updateClone();
-                                }
+                                UpdateClone();
                             }
                         }
                     }
@@ -66,13 +70,12 @@ namespace ScaleformUI
             }
         }
 
-        private async void updateClone()
+        private async void UpdateClone()
         {
             var ped = new Ped(API.ClonePed(ClonePed.Handle, 0, true, true));
-            await BaseScript.Delay(0);
             API.GivePedToPauseMenu(ped.Handle, 2);
             API.SetPauseMenuPedSleepState(true);
-            API.SetPauseMenuPedLighting(ParentColumn.Parent is TabView? (ParentColumn.Parent as TabView).FocusLevel != 0 : true);
+            API.SetPauseMenuPedLighting(ParentColumn.Parent is not TabView || (ParentColumn.Parent as TabView).FocusLevel != 0);
         }
 
 

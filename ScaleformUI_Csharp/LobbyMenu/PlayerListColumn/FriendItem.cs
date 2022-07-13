@@ -1,4 +1,5 @@
 ﻿using CitizenFX.Core;
+using CitizenFX.Core.Native;
 using ScaleformUI.PauseMenu;
 using System;
 using System.Collections.Generic;
@@ -220,6 +221,7 @@ namespace ScaleformUI.LobbyMenu
                     pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ICON_RIGHT", ParentColumn.ParentTab, idx, iconR, boolR);
             }
         }
+
 
         public void AddPanel(PlayerStatsPanel panel)
         {
