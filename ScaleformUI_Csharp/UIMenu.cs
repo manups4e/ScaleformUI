@@ -2231,7 +2231,7 @@ namespace ScaleformUI
             while (i < MenuItems.Count)
             {
                 await BaseScript.Delay(50);
-                if (!canBuild) return;
+                if (!Visible) return;
                 var item = MenuItems[i];
                 var index = i;
 
