@@ -913,7 +913,7 @@ namespace ScaleformUI
         // Button delay
         private int time;
         private int times;
-        private int delay = 150;    
+        private int delay = 150;
         #endregion
 
         #region Public Fields
@@ -962,7 +962,10 @@ namespace ScaleformUI
             set
             {
                 buildingAnimation = value;
-                ScaleformUI._ui.CallFunction("CHANGE_BUILDING_ANIMATION_TYPE", (int)buildingAnimation);
+                if (Visible)
+                {
+                    ScaleformUI._ui.CallFunction("CHANGE_BUILDING_ANIMATION_TYPE", (int)buildingAnimation);
+                }
             }
         }
 
@@ -986,6 +989,20 @@ namespace ScaleformUI
                 }
             }
         }
+
+        public KeyValuePair<string, int> DescriptionFont
+        {
+            get => descriptionFont;
+            set
+            {
+                descriptionFont = value;
+                if (Visible)
+                {
+                    ScaleformUI._ui.CallFunction("SET_DESC_FONT", descriptionFont.Key, descriptionFont.Value);
+                }
+            }
+        }
+
         public bool ResetCursorOnOpen = true;
         private bool mouseControlsEnabled = true;
         public bool AlternativeTitle = false;
@@ -1580,6 +1597,7 @@ namespace ScaleformUI
         int context = 0;
         int unused = 0;
         bool cursorPressed;
+        private KeyValuePair<string, int> descriptionFont = new("$Font2", 0);
 
         /// <summary>
         /// Process the mouse's position and check if it's hovering over any UI element. Call this in OnTick
@@ -2169,7 +2187,7 @@ namespace ScaleformUI
             var _animEnabled = EnableAnimation;
             EnableAnimation = false;
             while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
-            ScaleformUI._ui.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, EnableAnimation, (int)AnimationType, (int)buildingAnimation, (int)counterColor);
+            ScaleformUI._ui.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, EnableAnimation, (int)AnimationType, (int)buildingAnimation, (int)counterColor, descriptionFont.Key, descriptionFont.Value);
             if (Windows.Count > 0)
             {
                 foreach (var wind in Windows)
@@ -2325,6 +2343,7 @@ namespace ScaleformUI
                             ScaleformUI._ui.CallFunction("SET_RIGHT_BADGE", index, (int)item.RightBadge);
                         break;
                 }
+                ScaleformUI._ui.CallFunction("SET_ITEM_LABEL_FONT", index, item.LabelFont.Key, item.labelFont.Value);
                 if (item.LeftBadge != BadgeIcon.NONE)
                     ScaleformUI._ui.CallFunction("SET_LEFT_BADGE", index, (int)item.LeftBadge);
                 if (item.SidePanel != null)
@@ -2397,7 +2416,7 @@ namespace ScaleformUI
         internal async void BuildUpMenuSync()
         {
             while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
-            ScaleformUI._ui.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, EnableAnimation, (int)AnimationType, (int)buildingAnimation, (int)counterColor);
+            ScaleformUI._ui.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, EnableAnimation, (int)AnimationType, (int)buildingAnimation, (int)counterColor, descriptionFont.Key, descriptionFont.Value);
             if (Windows.Count > 0)
             {
                 foreach (var wind in Windows)
@@ -2546,6 +2565,7 @@ namespace ScaleformUI
                             ScaleformUI._ui.CallFunction("SET_RIGHT_BADGE", index, (int)item.RightBadge);
                         break;
                 }
+                ScaleformUI._ui.CallFunction("SET_ITEM_LABEL_FONT", index, item.LabelFont.Key, item.labelFont.Value);
                 if (item.LeftBadge != BadgeIcon.NONE)
                     ScaleformUI._ui.CallFunction("SET_LEFT_BADGE", index, (int)item.LeftBadge);
                 if (item.SidePanel != null)

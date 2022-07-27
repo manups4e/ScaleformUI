@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading.Tasks;
-
+using Font = CitizenFX.Core.UI.Font;
 namespace ScaleformUI
 {
     public enum BadgeIcon
@@ -197,8 +197,22 @@ namespace ScaleformUI
     /// </summary>
     public class UIMenuItem
     {
-
         internal int _itemId = 0;
+        private bool _selected;
+        private string _label;
+        private string _formatLeftLabel;
+        private string _rightLabel = "";
+        private string _formatRightLabel;
+        private bool _enabled;
+        private bool blinkDescription;
+        private HudColor mainColor;
+        private HudColor highlightColor;
+        private HudColor textColor = HudColor.HUD_COLOUR_WHITE;
+        private HudColor highlightedTextColor = HudColor.HUD_COLOUR_BLACK;
+        private string description;
+        private uint descriptionHash;
+        internal KeyValuePair<string, int> labelFont = new("$Font2", 0);
+
         /// <summary>
         /// The item color when not highlighted
         /// </summary>
@@ -261,21 +275,22 @@ namespace ScaleformUI
             }
         }
 
+        public KeyValuePair<string, int> LabelFont
+        {
+            get => labelFont;
+            set
+            {
+                labelFont = value;
+                if (Parent is not null && Parent.Visible)
+                {
+                    ScaleformUI._ui.CallFunction("SET_ITEM_LABEL_FONT", Parent.MenuItems.IndexOf(this), labelFont.Key, labelFont.Value);
+                }
+            }
+        }
+
         public List<UIMenuPanel> Panels = new();
+
         public UIMenuSidePanel SidePanel { get; set; }
-        private bool _selected;
-        private string _label;
-        private string _formatLeftLabel;
-        private string _rightLabel = "";
-        private string _formatRightLabel;
-        private bool _enabled;
-        private bool blinkDescription;
-        private HudColor mainColor;
-        private HudColor highlightColor;
-        private HudColor textColor = HudColor.HUD_COLOUR_WHITE;
-        private HudColor highlightedTextColor = HudColor.HUD_COLOUR_BLACK;
-        private string description;
-        private uint descriptionHash;
 
 
         // Allows you to attach data to a menu item if you want to identify the menu item without having to put identification info in the visible text or description.
