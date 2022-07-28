@@ -8,6 +8,7 @@ function UIMenuItem.New(text, description, color, highlightColor, textColor, hig
     _UIMenuItem = {
         _label = tostring(text) or "",
         _Description = tostring(description) or "",
+        _labelFont = {"$Font2", 0},
         _Selected = false,
         _Hovered = false,
         _Enabled = true,
@@ -29,6 +30,17 @@ function UIMenuItem.New(text, description, color, highlightColor, textColor, hig
         end,
     }
     return setmetatable(_UIMenuItem, UIMenuItem)
+end
+
+function UIMenuItem:LabelFont(fontTable)
+    if fontTable == nil then
+        return self._labelFont
+    else
+        self._labelFont = fontTable
+        if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", false, IndexOf(self.ParentMenu.Items, item) - 1,  self._labelFont[1], self._labelFont[2])
+        end
+    end
 end
 
 function UIMenuItem:SetParentMenu(Menu)

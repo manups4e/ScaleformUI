@@ -29,6 +29,17 @@ function UIMenuSeperatorItem:SetParentMenu(Menu)
 	end
 end
 
+function UIMenuSeperatorItem:LabelFont(fontTable)
+    if fontTable == nil then
+        return self.Base._labelFont
+    else
+        self.Base._labelFont = fontTable
+        if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", false, IndexOf(self.ParentMenu.Items, item) - 1,  self.Base._labelFont[1], self.Base._labelFont[2])
+        end
+    end
+end
+
 ---Description
 ---@param str string
 function UIMenuSeperatorItem:Description(str)

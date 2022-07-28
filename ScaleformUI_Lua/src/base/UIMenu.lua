@@ -1,4 +1,3 @@
-
 UIMenu = setmetatable({}, UIMenu)
 UIMenu.__index = UIMenu
 UIMenu.__call = function()
@@ -48,6 +47,7 @@ function UIMenu.New(Title, Subtitle, X, Y, glare, txtDictionary, txtName, altern
         enableAnimation = true,
         animationType = 0,
         buildingAnimation = 1,
+        descFont = {"$Font2", 0},
         Extra = {},
         Description = {},
         Items = {},
@@ -201,6 +201,17 @@ function UIMenu:Title(title)
         self.Title = title
         if self:Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_TITLE_SUBTITLE", false, self.Title, self.Subtitle, self.alternativeTitle)
+        end
+    end
+end
+
+function UIMenu:DescriptionFont(fontTable)
+    if fontTable == nil then
+        return self.descFont
+    else
+        self.descFont = fontTable
+        if self:Visible() then
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_DESC_FONT", false, self.descFont[1], self.descFont[2])
         end
     end
 end
@@ -517,7 +528,7 @@ function UIMenu:BuildUpMenuAsync()
         local enab = self:AnimationEnabled()
         self:AnimationEnabled(false)
         while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
-        ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self.Title, self.Subtitle, 0, 0, self.AlternativeTitle, self.TxtDictionary, self.TxtName,self:MaxItemsOnScreen(), self:BuildAsync(), self:AnimationType(), self:BuildingAnimation(), self.counterColor)
+        ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self.Title, self.Subtitle, 0, 0, self.AlternativeTitle, self.TxtDictionary, self.TxtName,self:MaxItemsOnScreen(), self:BuildAsync(), self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont[1], self.descFont[2])
         if #self.Windows > 0 then
             for w_id, window in pairs (self.Windows) do
                 local Type, SubType = window()
@@ -548,7 +559,7 @@ function UIMenu:BuildUpMenuAsync()
         local it = 1
         while it <= #items do
             Citizen.Wait(50)
-            if not self._canBuild then return end
+            if not self:Visible() then return end
             local item = items[it]
             local Type, SubType = item()
             AddTextEntry("desc_{" .. it .."}", item:Description())
@@ -574,11 +585,13 @@ function UIMenu:BuildUpMenuAsync()
                     ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_BADGE", false, it - 1, item._rightBadge)
                 end
             end
-        
+
             if (SubType == "UIMenuItem" and item._leftBadge ~= BadgeStyle.NONE) or (SubType ~= "UIMenuItem" and item.Base._leftBadge ~= BadgeStyle.NONE) then
                 if SubType ~= "UIMenuItem" then
+                    ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", false, it - 1, item.Base._labelFont[1],item.Base._labelFont[2])
                     ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_BADGE", false, it - 1, item.Base._leftBadge)
                 else
+                    ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", false, it - 1, item._labelFont[1],item._labelFont[2])
                     ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_BADGE", false, it - 1, item._leftBadge)
                 end
             end
@@ -633,7 +646,7 @@ end
 function UIMenu:BuildUpMenuSync()
     Citizen.CreateThread(function()
         while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
-        ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self.Title, self.Subtitle, 0, 0, self.AlternativeTitle, self.TxtDictionary, self.TxtName,self:MaxItemsOnScreen(), self:BuildAsync(), self:AnimationType(), self:BuildingAnimation(), self.counterColor)
+        ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self.Title, self.Subtitle, 0, 0, self.AlternativeTitle, self.TxtDictionary, self.TxtName,self:MaxItemsOnScreen(), self:BuildAsync(), self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont[1], self.descFont[2])
         if #self.Windows > 0 then
             for w_id, window in pairs (self.Windows) do
                 local Type, SubType = window()
@@ -690,8 +703,10 @@ function UIMenu:BuildUpMenuSync()
         
             if (SubType == "UIMenuItem" and item._leftBadge ~= BadgeStyle.NONE) or (SubType ~= "UIMenuItem" and item.Base._leftBadge ~= BadgeStyle.NONE) then
                 if SubType ~= "UIMenuItem" then
+                    ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", false, it - 1, item.Base._labelFont[1],item.Base._labelFont[2])
                     ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_BADGE", false, it - 1, item.Base._leftBadge)
                 else
+                    ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", false, it - 1, item._labelFont[1],item._labelFont[2])
                     ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_BADGE", false, it - 1, item._leftBadge)
                 end
             end
