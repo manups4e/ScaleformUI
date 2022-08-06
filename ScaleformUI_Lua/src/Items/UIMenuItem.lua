@@ -22,6 +22,7 @@ function UIMenuItem.New(text, description, color, highlightColor, textColor, hig
         _highlightColor = highlightColor or 1,
         _textColor = textColor or 1,
         _highlightedTextColor = highlightedTextColor or 2,
+        _itemData = {},
         ParentMenu = nil,
         Panels = {},
         SidePanel = nil,
@@ -30,6 +31,14 @@ function UIMenuItem.New(text, description, color, highlightColor, textColor, hig
         end,
     }
     return setmetatable(_UIMenuItem, UIMenuItem)
+end
+
+function UIMenuItem:ItemData(data)
+    if data == nil then
+        return self._itemData
+    else
+        self._itemData = data
+    end
 end
 
 function UIMenuItem:LabelFont(fontTable)

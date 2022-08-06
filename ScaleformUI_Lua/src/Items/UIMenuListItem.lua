@@ -23,6 +23,14 @@ function UIMenuListItem.New(Text, Items, Index, Description, color, highlightCol
 	return setmetatable(_UIMenuListItem, UIMenuListItem)
 end
 
+function UIMenuListItem:ItemData(data)
+    if data == nil then
+        return self.Base._itemData
+    else
+        self.Base._itemData = data
+    end
+end
+
 ---SetParentMenu
 ---@param Menu table
 function UIMenuListItem:SetParentMenu(Menu)

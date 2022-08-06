@@ -27,6 +27,14 @@ function UIMenuSliderItem.New(Text, Max, Multiplier, Index, Heritage, Descriptio
 	return setmetatable(_UIMenuSliderItem, UIMenuSliderItem)
 end
 
+function UIMenuSliderItem:ItemData(data)
+    if data == nil then
+        return self.Base._itemData
+    else
+        self.Base._itemData = data
+    end
+end
+
 ---SetParentMenu
 ---@param Menu table
 function UIMenuSliderItem:SetParentMenu(Menu)

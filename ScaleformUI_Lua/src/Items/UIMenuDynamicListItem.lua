@@ -20,6 +20,14 @@ function UIMenuDynamicListItem.New(Text, Description, StartingItem, callback, co
 	return setmetatable(_UIMenuDynamicListItem, UIMenuDynamicListItem)
 end
 
+function UIMenuDynamicListItem:ItemData(data)
+    if data == nil then
+        return self.Base._itemData
+    else
+        self.Base._itemData = data
+    end
+end
+
 function UIMenuDynamicListItem:LabelFont(fontTable)
     if fontTable == nil then
         return self.Base._labelFont
