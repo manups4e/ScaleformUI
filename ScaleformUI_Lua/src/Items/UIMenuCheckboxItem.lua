@@ -19,6 +19,14 @@ function UIMenuCheckboxItem.New(Text, Check, checkStyle, Description, color, hig
 	return setmetatable(_UIMenuCheckboxItem, UIMenuCheckboxItem)
 end
 
+function UIMenuCheckboxItem:ItemData(data)
+    if data == nil then
+        return self.Base._itemData
+    else
+        self.Base._itemData = data
+    end
+end
+
 ---SetParentMenu
 ---@param Menu table
 function UIMenuCheckboxItem:SetParentMenu(Menu)
