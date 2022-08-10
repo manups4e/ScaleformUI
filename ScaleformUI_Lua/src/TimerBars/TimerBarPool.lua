@@ -9,7 +9,7 @@ function TimerBarPool.New()
 end
 
 function TimerBarPool:AddBar(timerBar)
-    table.insert(self.Bars, timerBar)
+    self.Bars[#self.Bars + 1] = timerBar
 end
 
 function TimerBarPool:RemoveBar(id)

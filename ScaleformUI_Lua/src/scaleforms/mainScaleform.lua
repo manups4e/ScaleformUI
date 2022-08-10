@@ -42,7 +42,7 @@ Citizen.CreateThread(function()
     ScaleformUI.Scaleforms._pauseMenu:Load()
     
     while true do
-        Wait(0)
+        Citizen.Wait(0)
         ScaleformUI.Scaleforms.BigMessageInstance:Update()
         ScaleformUI.Scaleforms.MidMessageInstance:Update()
         ScaleformUI.Scaleforms.InstructionalButtons:Update()

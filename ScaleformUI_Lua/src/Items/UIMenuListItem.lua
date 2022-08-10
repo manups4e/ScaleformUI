@@ -232,7 +232,7 @@ end
 ---@param Panel table
 function UIMenuListItem:AddPanel(Panel)
 	if Panel() == "UIMenuPanel" then
-		table.insert(self.Panels, Panel)
+		self.Panels[#self.Panels + 1] = Panel
 		Panel:SetParentItem(self)
 	end
 end

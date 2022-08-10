@@ -56,7 +56,7 @@ end
 
 function PlayerListColumn:AddPlayer(item)
     item.ParentColumn = self
-    table.insert(self.Items, item)
+    self.Items[#self.Items + 1] = item
     if self.Parent ~= nil and self.Parent:Visible() then
         local Type, SubType = item()
         if SubType == "FriendItem" then

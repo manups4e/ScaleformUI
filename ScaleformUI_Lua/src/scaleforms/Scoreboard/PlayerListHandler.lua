@@ -71,7 +71,7 @@ function PlayerListScoreboard:SetTimer(upTime)
 end
 
 function PlayerListScoreboard:AddRow(row)
-    table.insert(self.PlayerRows, row)
+    self.PlayerRows[#self.PlayerRows + 1] = row
 end
 
 function PlayerListScoreboard:RemoveRow(id)
@@ -156,7 +156,7 @@ function PlayerListScoreboard:BuildMenu()
     self._sc:CallFunction("SET_TITLE", false, self.TitleLeftText, self.TitleRightText, self.TitleIcon)
     for k,v in pairs(self.PlayerRows) do
         if self:IsSupposedToShow(k) then
-            table.insert(rows, v)
+            rows[#rows + 1] = v
         end
     end
     self.Index = 0
