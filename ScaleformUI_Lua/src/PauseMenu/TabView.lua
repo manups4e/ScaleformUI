@@ -880,7 +880,7 @@ function TabView:ProcessControl()
             self:GoLeft()
         end)
     end
-    if (IsControlJustPressed(2, 175)) then
+    if (IsControlJustPressed(2, 175) or IsControlJustPressed(2, 192)) then
         Citizen.CreateThread(function()
             self:GoRight()
         end)
