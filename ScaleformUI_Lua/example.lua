@@ -4,7 +4,7 @@ local timerBarPool = TimerBarPool.New()
 
 function CreateMenu()
 	local txd = CreateRuntimeTxd("scaleformui")
-	local dui = CreateDui("https://sleeping-tears.xyz/img/gta5/hiccup_racing.png", 288, 160)
+	local dui = CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160)
 	CreateRuntimeTextureFromDuiHandle(txd, "sidepanel", GetDuiHandle(dui))
 	
 	local exampleMenu = UIMenu.New("ScaleformUI UI", "ScaleformUI SHOWCASE", 50, 50, true, nil, nil, true)
@@ -78,9 +78,9 @@ function CreateMenu()
 	local colorListItem  = UIMenuListItem.New("Colored ListItem.. Really?", foodsList, 0, "~BLIP_BARBER~ ~BLIP_INFO_ICON~ ~BLIP_TANK~ ~BLIP_OFFICE~ ~BLIP_CRIM_DRUGS~ ~BLIP_WAYPOINT~ ~INPUTGROUP_MOVE~~n~You can use Blips and Inputs in description as you prefer!", 21, 24)
 	exampleMenu:AddItem(colorListItem)
 
-	local sliderItem = UIMenuSliderItem.New("Slider Item!", 100, 5, 0, false, "Cool!")
+	local sliderItem = UIMenuSliderItem.New("Slider Item!", 100, 5, 50, false, "Cool!")
 	exampleMenu:AddItem(sliderItem)
-	local progressItem = UIMenuProgressItem.New("Slider Progress Item", 10, 0)
+	local progressItem = UIMenuProgressItem.New("Slider Progress Item", 10, 5)
 	exampleMenu:AddItem(progressItem)
 
 	local listPanelItem1 = UIMenuItem.New("Change Color", "It can be whatever item you want it to be")
