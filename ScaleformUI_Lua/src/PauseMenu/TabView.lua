@@ -880,12 +880,12 @@ function TabView:ProcessControl()
             self:GoLeft()
         end)
     end
-    if (IsControlJustPressed(2, 175) or (IsUsingKeyboard(2) and IsControlJustPressed(2, 192))) then
+    if (IsControlJustPressed(2, 175)) then
         Citizen.CreateThread(function()
             self:GoRight()
         end)
     end
-    if (IsControlJustPressed(2, 205)) then
+    if (IsControlJustPressed(2, 205) or (IsUsingKeyboard(2) and IsControlJustPressed(2, 192) and IsControlPressed(2, 21))) then
         Citizen.CreateThread(function()
             if (self:FocusLevel() ~= 0) then
                 self:FocusLevel(0)
@@ -893,7 +893,7 @@ function TabView:ProcessControl()
             self:GoLeft()
         end)
     end
-    if (IsControlJustPressed(2, 206)) then
+    if (IsControlJustPressed(2, 206) or (IsUsingKeyboard(2) and IsControlJustPressed(2, 192))) then
         Citizen.CreateThread(function()
             if (self:FocusLevel() ~= 0) then
                 self:FocusLevel(0)
