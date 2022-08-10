@@ -26,6 +26,14 @@ function UIMenuProgressItem.New(Text, Max, Index, Description, sliderColor, colo
 	return setmetatable(_UIMenuProgressItem, UIMenuProgressItem)
 end
 
+function UIMenuProgressItem:ItemData(data)
+    if data == nil then
+        return self.Base._itemData
+    else
+        self.Base._itemData = data
+    end
+end
+
 function UIMenuProgressItem:LabelFont(fontTable)
     if fontTable == nil then
         return self.Base._labelFont

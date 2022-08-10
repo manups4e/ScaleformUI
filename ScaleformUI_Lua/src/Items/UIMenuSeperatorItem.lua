@@ -19,6 +19,14 @@ function UIMenuSeperatorItem.New(Text, jumpable , mainColor, highlightColor, tex
 	return setmetatable(_UIMenuSeperatorItem, UIMenuSeperatorItem)
 end
 
+function UIMenuSeperatorItem:ItemData(data)
+    if data == nil then
+        return self.Base._itemData
+    else
+        self.Base._itemData = data
+    end
+end
+
 ---SetParentMenu
 ---@param Menu table
 function UIMenuSeperatorItem:SetParentMenu(Menu)

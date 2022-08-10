@@ -23,6 +23,14 @@ function UIMenuStatsItem.New(Text, Description, Index, barColor, type, mainColor
 	return setmetatable(_UIMenuStatsItem, UIMenuStatsItem)
 end
 
+function UIMenuStatsItem:ItemData(data)
+    if data == nil then
+        return self.Base._itemData
+    else
+        self.Base._itemData = data
+    end
+end
+
 ---SetParentMenu
 ---@param Menu table
 function UIMenuStatsItem:SetParentMenu(Menu)
