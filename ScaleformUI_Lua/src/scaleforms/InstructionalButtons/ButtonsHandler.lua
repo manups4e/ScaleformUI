@@ -40,7 +40,7 @@ function handler:Load()
     self._sc = Scaleform.Request("INSTRUCTIONAL_BUTTONS")
     local timeout = 1000
     local start = GetGameTimer()
-    while not self._sc:IsLoaded() and GetGameTimer() - start < timeout do Citizen.Wait(0) end
+    while not self._sc:IsLoaded() and GetGameTimer() - start < timeout do Wait(0) end
 end
 
 function handler:SetInstructionalButtons(buttons)
@@ -49,7 +49,7 @@ function handler:SetInstructionalButtons(buttons)
 end
 
 function handler:AddInstructionalButton(button)
-    table.insert(ControlButtons, button)
+    ControlButtons[#ControlButtons + 1] = button
     self._changed = true
 end
 
@@ -81,7 +81,7 @@ function handler:ShowBusySpinner(spinnerType, text, time)
         AddTextComponentSubstringPlayerName(text)
     end
     EndTextCommandBusyString(spinnerType)
-    while GetGameTimer() - self.savingTimer <= time do Citizen.Wait(100) end
+    while GetGameTimer() - self.savingTimer <= time do Wait(100) end
     RemoveLoadingPrompt()
     self.IsSaving = false
 end

@@ -88,7 +88,7 @@ end
 
 function UIMenuDetailsWindow:AddStatSingleToWheel(stat)
     if self.StatWheelEnabled then
-        table.insert(self.DetailStats, stat)
+        self.DetailStats[#self.DetailStats + 1] = stat
         if self.ParentMenu ~= nil then
             local wid = IndexOf(self.ParentMenu.Windows, self) - 1
             ScaleformUI.Scaleforms._ui:CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", false, wid, stat.Percentage, stat.HudColor)

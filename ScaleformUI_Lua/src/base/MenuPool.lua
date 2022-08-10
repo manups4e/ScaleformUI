@@ -51,7 +51,7 @@ end
 function MenuPool:Add(Menu)
     if Menu() == "UIMenu" then
         Menu._internalpool = self
-        table.insert(self.Menus, Menu)
+        self.Menus[#self.Menus + 1] = Menu
     end
 end
 
@@ -164,9 +164,9 @@ end
 
 function MenuPool:ProcessMenus(bool)
     self.ableToDraw = bool
-    Citizen.CreateThread(function()
+    CreateThread(function()
         while self.ableToDraw do
-            Citizen.Wait(0)
+            Wait(0)
             self:ProcessControl()
             self:Draw()
         end

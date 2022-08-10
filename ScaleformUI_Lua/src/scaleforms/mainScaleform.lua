@@ -29,7 +29,7 @@ AddEventHandler("onResourceStop", function(resName)
     end
 end)
 
-Citizen.CreateThread(function()
+CreateThread(function()
     ScaleformUI.Scaleforms._ui = Scaleform.Request("scaleformui")
     ScaleformUI.Scaleforms.BigMessageInstance = BigMessageInstance.New()
     ScaleformUI.Scaleforms.MidMessageInstance = MidMessageInstance.New()

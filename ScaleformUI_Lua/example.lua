@@ -38,7 +38,8 @@ function CreateMenu()
 
 	local animations = {}
 	for k,v in pairs(MenuAnimationType) do
-		table.insert(animations, k)
+		-- table.insert(animations, k) -- Instead of this , use it like below (learn more here : https://springrts.com/wiki/Lua_Performance#TEST_12:_Adding_Table_Items_.28table.insert_vs._.5B_.5D.29)
+		animations[#animations + 1] = k
 	end
 
 	local scrollingItem = UIMenuListItem.New("Choose the scrolling animation", animations, exampleMenu:AnimationType(), "~BLIP_BARBER~ ~BLIP_INFO_ICON~ ~BLIP_TANK~ ~BLIP_OFFICE~ ~BLIP_CRIM_DRUGS~ ~BLIP_WAYPOINT~ ~INPUTGROUP_MOVE~~n~You can use Blips and Inputs in description as you prefer!~n~⚠ 🐌 ❤️ 🥺 💪🏻 You can use Emojis too!", Colours.HUD_COLOUR_FREEMODE_DARK, Colours.HUD_COLOUR_FREEMODE)
@@ -236,7 +237,7 @@ function CreatePauseMenu()
 	local pauseMenuExample = TabView.New("ScaleformUI LUA", "THE LUA API", GetPlayerName(PlayerId()), "String middle", "String bottom")
 
 	local handle = RegisterPedheadshot(PlayerPedId())
-    while not IsPedheadshotReady(handle) or not IsPedheadshotValid(handle) do Citizen.Wait(0) end
+    while not IsPedheadshotReady(handle) or not IsPedheadshotValid(handle) do Wait(0) end
     local txd = GetPedheadshotTxdString(handle)
 	pauseMenuExample:HeaderPicture(txd, txd) 	-- pauseMenuExample:CrewPicture used to add a picture on the left of the HeaderPicture
 	print("PedHandle => " .. handle)
@@ -523,7 +524,7 @@ function CreateLobbyMenu()
 		lobbyMenu:SetupColumns(columns)
 
 		local handle = RegisterPedheadshot(PlayerPedId())
-		while not IsPedheadshotReady(handle) or not IsPedheadshotValid(handle) do Citizen.Wait(0) end
+		while not IsPedheadshotReady(handle) or not IsPedheadshotValid(handle) do Wait(0) end
 		local txd = GetPedheadshotTxdString(handle)
 		lobbyMenu:HeaderPicture(txd, txd) 	-- lobbyMenu:CrewPicture used to add a picture on the left of the HeaderPicture
 
@@ -802,11 +803,11 @@ function CreateMissionSelectorMenu()
 	end
 	ScaleformUI.Scaleforms.JobMissionSelector:Enabled(true)
 	
-	Citizen.Wait(1000)
+	Wait(1000)
 	ScaleformUI.Scaleforms.JobMissionSelector:ShowPlayerVote(3, "PlayerName", Colours.HUD_COLOUR_GREEN, true, true)
 end
 
-Citizen.CreateThread(function()
+CreateThread(function()
 	local pos = GetEntityCoords(PlayerPedId(), true)
 	--type, position, scale, distance, color, placeOnGround, bobUpDown, rotate, faceCamera, checkZ
 	local marker = Marker.New(1, pos, vector3(2,2,2), 100.0, {R=0, G= 100, B=50, A=255}, true, false, false, false, true)
@@ -844,7 +845,7 @@ Citizen.CreateThread(function()
 		
 		if IsControlJustPressed(0, 56) and not pool:IsAnyMenuOpen() then -- F9
 			local handle = RegisterPedheadshot(PlayerPedId())
-			while not IsPedheadshotReady(handle) or not IsPedheadshotValid(handle) do Citizen.Wait(0) end
+			while not IsPedheadshotReady(handle) or not IsPedheadshotValid(handle) do Wait(0) end
 			local txd = GetPedheadshotTxdString(handle)
 				
 			ScaleformUI.Scaleforms.PlayerListScoreboard:SetTitle("Title", "leftLabel", 2)

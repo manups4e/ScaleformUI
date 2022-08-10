@@ -45,13 +45,13 @@ end
 
 function m:AddCard(card)
     if #self.Cards < 9 then
-        table.insert(self.Cards, card)
+        self.Cards[#self.Cards + 1] = card
     end
 end
 
 function m:AddButton(button)
     if #self.Buttons < 3 then
-        table.insert(self.Buttons, button)
+        self.Buttons[#self.Buttons + 1] = button
     end
 end
 
@@ -79,12 +79,12 @@ end
 
 function m:BuildMenu()
     self:Load()
-    while self._sc == nil or not self._sc:IsLoaded() do Citizen.Wait(0) end
+    while self._sc == nil or not self._sc:IsLoaded() do Wait(0) end
     self:_SetTitle(self.JobTitle.Title, self.JobTitle.Votes)
     for i, card in ipairs (self.Cards) do 
         if not string.IsNullOrEmpty(card.Txd) then
             while not HasStreamedTextureDictLoaded(card.Txd) do
-                Citizen.Wait(0)
+                Wait(0)
                 RequestStreamedTextureDict(card.Txd, true)
             end
         end
@@ -151,7 +151,7 @@ function m:Load()
     self._sc = Scaleform.Request("MP_NEXT_JOB_SELECTION")
     local timeout = 1000
     local start = GetGameTimer()
-    while not self._sc:IsLoaded() and GetGameTimer() - start < timeout do Citizen.Wait(0) end
+    while not self._sc:IsLoaded() and GetGameTimer() - start < timeout do Wait(0) end
 end
 
 local success, event_type, context, item_id

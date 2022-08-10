@@ -89,7 +89,7 @@ end
 function PlayerStatsPanel:AddStat(statItem)
     statItem.Parent = self
     statItem.idx = #self.Items
-    table.insert(self.Items, statItem)
+    self.Items[#self.Items + 1] = statItem
     self:UpdatePanel()
 end
 

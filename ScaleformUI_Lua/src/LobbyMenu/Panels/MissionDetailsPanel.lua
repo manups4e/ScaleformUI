@@ -39,7 +39,7 @@ function MissionDetailsPanel:UpdatePanelPicture(txd, txn)
 end
 
 function MissionDetailsPanel:AddItem(item)
-    table.insert(self.Items, item)
+    self.Items[#self.Items + 1] = item
     if self.Parent ~= nil and self.Parent:Visible() then
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_MISSION_PANEL_ITEM", false, item.Type, item.TextLeft, item.TextRight, item.Icon, item.IconColor, item.Tick)
     end
