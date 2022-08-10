@@ -1151,19 +1151,15 @@ namespace ScaleformUI.PauseMenu
                 GoLeft();
             else if (Game.IsControlJustPressed(2, Control.PhoneRight))
                 GoRight();
-            else if (Game.IsControlJustPressed(2, Control.FrontendLb))
+            else if (Game.IsControlJustPressed(2, Control.FrontendLb) || (Game.IsControlJustPressed(2, (Control)192) && Game.IsControlPressed(2, Control.Sprint) && IsUsingKeyboard(2)))
             {
-                if (FocusLevel == 0)
-                {
-                    GoLeft();
-                }
+                if (FocusLevel != 0) FocusLevel = 0;
+                GoLeft();
             }
-            else if (Game.IsControlJustPressed(2, Control.FrontendRb))
+            else if (Game.IsControlJustPressed(2, Control.FrontendRb) || (Game.IsControlJustPressed(2, (Control)192) && IsUsingKeyboard(2)))
             {
-                if (FocusLevel == 0)
-                {
-                    GoRight();
-                }
+                if (FocusLevel != 0) FocusLevel = 0;
+                GoRight();
             }
             else if (Game.IsControlJustPressed(2, Control.FrontendAccept))
                 Select(false);
