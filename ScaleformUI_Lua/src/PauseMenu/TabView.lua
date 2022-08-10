@@ -887,16 +887,18 @@ function TabView:ProcessControl()
     end
     if (IsControlJustPressed(2, 205)) then
         Citizen.CreateThread(function()
-            if (self:FocusLevel() == 0) then
-                self:GoLeft()
+            if (self:FocusLevel() ~= 0) then
+                self:FocusLevel(0)
             end
+            self:GoLeft()
         end)
     end
     if (IsControlJustPressed(2, 206)) then
         Citizen.CreateThread(function()
-            if (self:FocusLevel() == 0) then
-                self:GoRight()
+            if (self:FocusLevel() ~= 0) then
+                self:FocusLevel(0)
             end
+            self:GoRight()
         end)
     end
     if (IsControlJustPressed(2, 201)) then
