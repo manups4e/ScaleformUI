@@ -158,11 +158,11 @@ end
 function MainView:BuildPauseMenu()
     self:ShowHeader()
     ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CREATE_MENU", false, self.SettingsColumn.Order-1, self.PlayersColumn.Order-1, self.MissionPanel.Order-1);
-    CreateThread(function()
+    Citizen.CreateThread(function()
         local items = self.SettingsColumn.Items
         local it = 1
         while it <= #items do
-            Wait(1)
+            Citizen.Wait(1)
             local item = items[it]
             local Type, SubType = item()
             AddTextEntry("menu_lobby_desc_{" .. it .."}", item:Description())
@@ -195,11 +195,11 @@ function MainView:BuildPauseMenu()
         end
         self.SettingsColumn:CurrentSelection(0)
     end)
-    CreateThread(function()
+    Citizen.CreateThread(function()
         local items = self.PlayersColumn.Items
         local it = 1
         while it <= #items do
-            Wait(1)
+            Citizen.Wait(1)
             local item = items[it]
             local Type, SubType = item()
             if SubType == "FriendItem" then
@@ -296,7 +296,7 @@ function MainView:ProcessMouse()
                 col.OnIndexChanged(item_id+1)
                 if col.Items[item_id+1].ClonePed ~= nil and col.Items[item_id+1].ClonePed ~= 0 then
                     local ped = ClonePed(col.Items[item_id+1].ClonePed, false, true, true);
-                    Wait(0)
+                    Citizen.Wait(0)
                     GivePedToPauseMenu(ped, 2)
                     SetPauseMenuPedSleepState(true);
                     SetPauseMenuPedLighting(true);
@@ -316,7 +316,7 @@ function MainView:ProcessControl()
     if (IsControlPressed(2, 172)) then
         if GetGameTimer() - self._time > self._delay then
             self:ButtonDelay()
-            CreateThread(function()
+            Citizen.CreateThread(function()
                 self:GoUp()
                 return
             end)
@@ -325,7 +325,7 @@ function MainView:ProcessControl()
     if (IsControlPressed(2, 173)) then
         if GetGameTimer() - self._time > self._delay then
             self:ButtonDelay()
-            CreateThread(function()
+            Citizen.CreateThread(function()
                 self:GoDown()
                 return
             end)
@@ -334,7 +334,7 @@ function MainView:ProcessControl()
     if (IsControlPressed(2, 174)) then
         if GetGameTimer() - self._time > self._delay then
             self:ButtonDelay()
-            CreateThread(function()
+            Citizen.CreateThread(function()
                 self:GoLeft()
                 return
             end)
@@ -343,7 +343,7 @@ function MainView:ProcessControl()
     if (IsControlPressed(2, 175)) then
         if GetGameTimer() - self._time > self._delay then
             self:ButtonDelay()
-            CreateThread(function()
+            Citizen.CreateThread(function()
                 self:GoRight()
                 return
             end)
@@ -351,23 +351,23 @@ function MainView:ProcessControl()
     end
 
     if (IsControlJustPressed(2, 201)) then
-        CreateThread(function()
+        Citizen.CreateThread(function()
             self:Select()
         end)
     end
     if (IsDisabledControlJustReleased(2, 177)) then
-        CreateThread(function()
+        Citizen.CreateThread(function()
             self:GoBack()
         end)
     end
 
     if (IsControlJustPressed(1, 241)) then
-        CreateThread(function()
+        Citizen.CreateThread(function()
             ScaleformUI.Scaleforms._pauseMenu:SendScrollEvent(-1)
         end)
     end
     if (IsControlJustPressed(1, 242)) then
-        CreateThread(function()
+        Citizen.CreateThread(function()
             ScaleformUI.Scaleforms._pauseMenu:SendScrollEvent(1)
         end)
     end
@@ -396,7 +396,7 @@ end
 function MainView:Select()
     local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 16)
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
-        Wait(0)
+        Citizen.Wait(0)
     end
     local retVal = GetScaleformMovieMethodReturnValueString(return_value)
 
@@ -434,7 +434,7 @@ end
 function MainView:GoUp()
     local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 8,self._delay)
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
-        Wait(0)
+        Citizen.Wait(0)
     end
     local retVal = GetScaleformMovieMethodReturnValueString(return_value)
 
@@ -447,7 +447,7 @@ function MainView:GoUp()
         self.PlayersColumn:CurrentSelection(tonumber(splitted[2]))
         if self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= nil and self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
             local ped = ClonePed(self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed, false, true, true);
-            Wait(0)
+            Citizen.Wait(0)
             GivePedToPauseMenu(ped, 2)
             SetPauseMenuPedSleepState(true);
             SetPauseMenuPedLighting(true);
@@ -461,7 +461,7 @@ end
 function MainView:GoDown()
     local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 9,self._delay)
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
-        Wait(0)
+        Citizen.Wait(0)
     end
     local retVal = GetScaleformMovieMethodReturnValueString(return_value)
 
@@ -474,7 +474,7 @@ function MainView:GoDown()
         self.PlayersColumn:CurrentSelection(tonumber(splitted[2]))
         if self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= nil and self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
             local ped = ClonePed(self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed, false, true, true);
-            Wait(0)
+            Citizen.Wait(0)
             GivePedToPauseMenu(ped, 2)
             SetPauseMenuPedSleepState(true);
             SetPauseMenuPedLighting(true);
@@ -488,7 +488,7 @@ end
 function MainView:GoLeft()
     local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 10,self._delay)
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
-        Wait(0)
+        Citizen.Wait(0)
     end
     local retVal = GetScaleformMovieMethodReturnValueString(return_value)
 
@@ -504,7 +504,7 @@ function MainView:GoLeft()
             self.PlayersColumn:CurrentSelection(tonumber(splitted[2]))
             if self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= nil and self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
                 local ped = ClonePed(self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed, false, true, true);
-                Wait(0)
+                Citizen.Wait(0)
                 GivePedToPauseMenu(ped, 2)
                 SetPauseMenuPedSleepState(true);
                 SetPauseMenuPedLighting(true);
@@ -537,7 +537,7 @@ end
 function MainView:GoRight()
     local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 11,self._delay)
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
-        Wait(0)
+        Citizen.Wait(0)
     end
     local retVal = GetScaleformMovieMethodReturnValueString(return_value)
 
@@ -553,7 +553,7 @@ function MainView:GoRight()
             self.PlayersColumn:CurrentSelection(tonumber(splitted[2]))
             if self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= nil and self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
                 local ped = ClonePed(self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed, false, true, true);
-                Wait(0)
+                Citizen.Wait(0)
                 GivePedToPauseMenu(ped, 2)
                 SetPauseMenuPedSleepState(true);
                 SetPauseMenuPedLighting(true);

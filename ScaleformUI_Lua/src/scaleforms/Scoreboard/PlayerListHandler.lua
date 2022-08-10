@@ -40,7 +40,7 @@ function PlayerListScoreboard:Load()
     self._sc = Scaleform.Request("MP_MM_CARD_FREEMODE")
     local timeout = 1000
     local start = GetGameTimer()
-    while not self._sc:IsLoaded() and GetGameTimer() - start < timeout do Wait(0) end
+    while not self._sc:IsLoaded() and GetGameTimer() - start < timeout do Citizen.Wait(0) end
 end
 
 function PlayerListScoreboard:Dispose()
@@ -130,7 +130,7 @@ function PlayerListScoreboard:UpdateSlot(id, row)
 end
 
 function PlayerListScoreboard:RefreshAll()
-    CreateThread(function()
+    Citizen.CreateThread(function()
         for _, row in pairs(self.PlayerRows) do
             if row.CrewLabelText ~= "" then
                 self._sc:CallFunction("UPDATE_SLOT", false, id-1, row.RightText, row.Name, row.Color, row.RightIcon, row.IconOverlayText, row.JobPointsText, "..+"..row.CrewLabelText, row.JobPointsDisplayType, row.TextureString, row.TextureString, row.FriendType)
@@ -150,7 +150,7 @@ end
 
 function PlayerListScoreboard:BuildMenu()
     if self._sc == nil then self:Load() end
-    while self._sc == nil or not self._sc:IsLoaded() do Wait(0) end
+    while self._sc == nil or not self._sc:IsLoaded() do Citizen.Wait(0) end
     local rows = {}
     self._sc:CallFunction("SET_DATA_SLOT_EMPTY", false)
     self._sc:CallFunction("SET_TITLE", false, self.TitleLeftText, self.TitleRightText, self.TitleIcon)

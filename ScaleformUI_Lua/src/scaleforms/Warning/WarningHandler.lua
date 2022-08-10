@@ -28,7 +28,7 @@ function warn:Load()
     self._sc = Scaleform.Request("POPUP_WARNING")
     local timeout = 1000
     local start = GetGameTimer()
-    while not self._sc:IsLoaded() and GetGameTimer() - start < timeout do Wait(0) end
+    while not self._sc:IsLoaded() and GetGameTimer() - start < timeout do Citizen.Wait(0) end
 end
 
 function warn:Dispose()

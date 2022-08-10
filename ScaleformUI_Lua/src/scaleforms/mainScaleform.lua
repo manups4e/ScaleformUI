@@ -29,7 +29,7 @@ AddEventHandler("onResourceStop", function(resName)
     end
 end)
 
-CreateThread(function()
+Citizen.CreateThread(function()
     ScaleformUI.Scaleforms._ui = Scaleform.Request("scaleformui")
     ScaleformUI.Scaleforms.BigMessageInstance = BigMessageInstance.New()
     ScaleformUI.Scaleforms.MidMessageInstance = MidMessageInstance.New()
@@ -42,7 +42,7 @@ CreateThread(function()
     ScaleformUI.Scaleforms._pauseMenu:Load()
     
     while true do
-        Wait(0)
+        Citizen.Wait(0)
         ScaleformUI.Scaleforms.BigMessageInstance:Update()
         ScaleformUI.Scaleforms.MidMessageInstance:Update()
         ScaleformUI.Scaleforms.InstructionalButtons:Update()

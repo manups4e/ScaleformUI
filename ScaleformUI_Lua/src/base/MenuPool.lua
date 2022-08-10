@@ -164,9 +164,9 @@ end
 
 function MenuPool:ProcessMenus(bool)
     self.ableToDraw = bool
-    CreateThread(function()
+    Citizen.CreateThread(function()
         while self.ableToDraw do
-            Wait(0)
+            Citizen.Wait(0)
             self:ProcessControl()
             self:Draw()
         end

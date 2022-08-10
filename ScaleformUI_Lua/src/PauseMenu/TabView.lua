@@ -203,7 +203,7 @@ function TabView:BuildPauseMenu()
                             ScaleformUI.Scaleforms._pauseMenu:AddRightSettingsProgressItemAlt(tabIndex , itemIndex, ii.Label, ii.MaxValue, ii._coloredBarColor, ii._value, ii:Enabled())
                         elseif ii.ItemType == SettingsItemType.CheckBox then
                             while (not HasStreamedTextureDictLoaded("commonmenu")) do
-                                Wait(0)
+                                Citizen.Wait(0)
                                 RequestStreamedTextureDict("commonmenu", true)
                             end
                             ScaleformUI.Scaleforms._pauseMenu:AddRightSettingsCheckboxItem(tabIndex , itemIndex, ii.Label, ii.CheckBoxStyle, ii._isChecked, ii:Enabled())
@@ -224,11 +224,11 @@ function TabView:BuildPauseMenu()
             end
         elseif subtype == "PlayerListTab" then
             ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 1, tab.Base.Type)
-            CreateThread(function()
+            Citizen.CreateThread(function()
                 local items = tab.SettingsColumn.Items
                 local it = 1
                 while it <= #items do
-                    Wait(1)
+                    Citizen.Wait(1)
                     local item = items[it]
                     local Type, SubType = item()
                     AddTextEntry("menu_pause_playerTab{" .. it .."}", item:Description())
@@ -261,11 +261,11 @@ function TabView:BuildPauseMenu()
                 end
                 tab.SettingsColumn:CurrentSelection(0)
             end)
-            CreateThread(function()
+            Citizen.CreateThread(function()
                 local items = tab.PlayersColumn.Items
                 local it = 1
                 while it <= #items do
-                    Wait(1)
+                    Citizen.Wait(1)
                     local item = items[it]
                     local Type, SubType = item()
                     if SubType == "FriendItem" then
@@ -356,7 +356,7 @@ function TabView:Select()
         if allDisabled then return end
         --[[ end check all disabled ]]--
         while(not self.Tabs[self.Index].LeftItemList[self.leftItemIndex]:Enabled()) do
-            Wait(0)
+            Citizen.Wait(0)
             self.leftItemIndex = self.leftItemIndex + 1
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_LEFT_ITEM_INDEX", false, self.leftItemIndex-1)
         end
@@ -383,7 +383,7 @@ function TabView:Select()
                 PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
                 --[[ end check all disabled ]]--
                 while(not self.Tabs[self.Index].LeftItemList[self.leftItemIndex]:Enabled()) do
-                    Wait(0)
+                    Citizen.Wait(0)
                     self.rightItemIndex = self.rightItemIndex+1
                     ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_RIGHT_ITEM_INDEX", false, self.rightItemIndex-1)
                 end
@@ -468,7 +468,7 @@ end
 function TabView:GoUp()
     local return_value = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", true, 8)
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
-        Wait(0)
+        Citizen.Wait(0)
     end
     local retVal = GetScaleformMovieMethodReturnValueInt(return_value)
     if retVal ~= -1 then
@@ -501,7 +501,7 @@ end
 function TabView:GoDown()
     local return_value = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", true, 9)
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
-        Wait(0)
+        Citizen.Wait(0)
     end
     local retVal = GetScaleformMovieMethodReturnValueInt(return_value)
     if retVal ~= -1 then
@@ -534,7 +534,7 @@ end
 function TabView:GoLeft()
     local return_value = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", true, 10)
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
-        Wait(0)
+        Citizen.Wait(0)
     end
     local retVal = GetScaleformMovieMethodReturnValueInt(return_value)
 
@@ -611,7 +611,7 @@ end
 function TabView:GoRight()
     local return_value = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", true, 11)
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
-        Wait(0)
+        Citizen.Wait(0)
     end
     local retVal = GetScaleformMovieMethodReturnValueInt(return_value)
     if retVal == -1 then retVal = 0 end
@@ -739,7 +739,7 @@ function TabView:ProcessMouse()
                     if #tab.LeftItemList == 0 then return end
                     if not tab.LeftItemList[self.leftItemList] then return end
                     while not tab.LeftItemList[self.leftItemList]:Enabled() do
-                        Wait(0)
+                        Citizen.Wait(0)
                         self.leftItemIndex = self.leftItemIndex+1
                         ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_LEFT_ITEM_INDEX", false, self.leftItemIndex)
                     end
@@ -866,27 +866,27 @@ function TabView:ProcessControl()
     end
     EnableControlAction(2, 177, true)
     if (IsControlJustPressed(2, 172)) then
-        CreateThread(function()
+        Citizen.CreateThread(function()
             self:GoUp()
         end)
     end
     if (IsControlJustPressed(2, 173)) then
-        CreateThread(function()
+        Citizen.CreateThread(function()
             self:GoDown()
         end)
     end
     if (IsControlJustPressed(2, 174)) then
-        CreateThread(function()
+        Citizen.CreateThread(function()
             self:GoLeft()
         end)
     end
     if (IsControlJustPressed(2, 175)) then
-        CreateThread(function()
+        Citizen.CreateThread(function()
             self:GoRight()
         end)
     end
     if (IsControlJustPressed(2, 205) or (IsUsingKeyboard(2) and IsControlJustPressed(2, 192) and IsControlPressed(2, 21))) then
-        CreateThread(function()
+        Citizen.CreateThread(function()
             if (self:FocusLevel() ~= 0) then
                 self:FocusLevel(0)
             end
@@ -894,7 +894,7 @@ function TabView:ProcessControl()
         end)
     end
     if (IsControlJustPressed(2, 206) or (IsUsingKeyboard(2) and IsControlJustPressed(2, 192))) then
-        CreateThread(function()
+        Citizen.CreateThread(function()
             if (self:FocusLevel() ~= 0) then
                 self:FocusLevel(0)
             end
@@ -902,23 +902,23 @@ function TabView:ProcessControl()
         end)
     end
     if (IsControlJustPressed(2, 201)) then
-        CreateThread(function()
+        Citizen.CreateThread(function()
             self:Select()
         end)
     end
     if (IsControlJustReleased(2, 177)) then
-        CreateThread(function()
+        Citizen.CreateThread(function()
             self:GoBack()
         end)
     end
 
     if (IsControlJustPressed(2, 241) or IsDisabledControlJustPressed(2, 241)) then
-        CreateThread(function()
+        Citizen.CreateThread(function()
             ScaleformUI.Scaleforms._pauseMenu:SendScrollEvent(-1)
         end)
     end
     if (IsControlJustPressed(2, 242) or IsDisabledControlJustPressed(2, 242)) then
-        CreateThread(function()
+        Citizen.CreateThread(function()
             ScaleformUI.Scaleforms._pauseMenu:SendScrollEvent(1)
         end)
     end
@@ -926,7 +926,7 @@ function TabView:ProcessControl()
 
     if (IsControlPressed(2, 3) and not IsUsingKeyboard(2)) then
         if (GetGameTimer() - self._timer > 175) then
-            CreateThread(function()
+            Citizen.CreateThread(function()
                 ScaleformUI.Scaleforms._pauseMenu:SendScrollEvent(-1)
             end)
             self._timer = GetGameTimer()
@@ -934,7 +934,7 @@ function TabView:ProcessControl()
     end
     if (IsControlPressed(2, 4) and not IsUsingKeyboard(2)) then
         if (GetGameTimer() - self._timer > 175) then
-            CreateThread(function()
+            Citizen.CreateThread(function()
                 ScaleformUI.Scaleforms._pauseMenu:SendScrollEvent(1)
             end)
             self._timer = GetGameTimer()

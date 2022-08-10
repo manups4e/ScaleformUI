@@ -79,12 +79,12 @@ end
 
 function m:BuildMenu()
     self:Load()
-    while self._sc == nil or not self._sc:IsLoaded() do Wait(0) end
+    while self._sc == nil or not self._sc:IsLoaded() do Citizen.Wait(0) end
     self:_SetTitle(self.JobTitle.Title, self.JobTitle.Votes)
     for i, card in ipairs (self.Cards) do 
         if not string.IsNullOrEmpty(card.Txd) then
             while not HasStreamedTextureDictLoaded(card.Txd) do
-                Wait(0)
+                Citizen.Wait(0)
                 RequestStreamedTextureDict(card.Txd, true)
             end
         end
@@ -151,7 +151,7 @@ function m:Load()
     self._sc = Scaleform.Request("MP_NEXT_JOB_SELECTION")
     local timeout = 1000
     local start = GetGameTimer()
-    while not self._sc:IsLoaded() and GetGameTimer() - start < timeout do Wait(0) end
+    while not self._sc:IsLoaded() and GetGameTimer() - start < timeout do Citizen.Wait(0) end
 end
 
 local success, event_type, context, item_id
