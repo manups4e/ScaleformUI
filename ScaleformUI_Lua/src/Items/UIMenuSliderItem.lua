@@ -171,7 +171,7 @@ function UIMenuSliderItem:SliderColor(color)
 end
 
 function UIMenuSliderItem:Index(Index)
-	if tonumber(Index) then
+	if Index ~= nil then
 		if tonumber(Index) > self._Max then
 			self._Index = self._Max
 		elseif tonumber(Index) < 0 then
