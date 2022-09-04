@@ -188,6 +188,9 @@ function UIMenuSliderItem:Index(Index)
 			self._Index = tonumber(Index)
 		end
 		self.OnSliderChanged(self.ParentMenu, self, self._Index)
+        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_VALUE", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self._Index)
+        end
 	else
 		return self._Index
 	end

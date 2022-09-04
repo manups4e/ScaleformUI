@@ -171,9 +171,8 @@ function UIMenuListItem:HighlightedTextColor(color)
 end
 ---Index
 ---@param Index table
-function UIMenuListItem:Index(Index)
+function UIMenuListItem:Index(ind)
 	if tonumber(Index) then
-		local ind = Index+1
 		if ind > #self.Items then
 			self._Index = 1
 		elseif ind < 1 then
@@ -181,6 +180,9 @@ function UIMenuListItem:Index(Index)
 		else
 			self._Index = ind
 		end
+        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_VALUE", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self._Index - 1)
+        end
 	else
 		return self._Index
 	end
@@ -275,6 +277,6 @@ function UIMenuListItem:ChangeList(list)
 	self.Items = {}
 	self.Items = list
     if self.Base.ParentMenu:Visible() then
-    	ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_LISTITEM_LIST", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, table.concat(self.Items, ","), self._Index)
+    	ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_LISTITEM_LIST", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, table.concat(self.Items, ","), self._Index - 1)
     end
 end
