@@ -30,8 +30,13 @@ namespace ScaleformUI
         {
 			get { return _index % Items.Count; }
 			set 
-            { 
-                _index = 100000000 - (100000000 % Items.Count) + value;
+            {
+                if (value < 0)
+                    _index = 0;
+                else if (value > Items.Count)
+                    _index = Items.Count - 1;
+                else
+                    _index = value;
                 if (Parent is not null && Parent.Visible)
                     ScaleformUI._ui.CallFunction("SET_ITEM_VALUE", Parent.MenuItems.IndexOf(this), _index);
             }
