@@ -66,6 +66,8 @@ namespace ScaleformUI
                 else
                     _value = value;
                 SliderChanged(_value);
+                if (Parent.Visible)
+                    ScaleformUI._ui.CallFunction("SET_ITEM_VALUE", Parent.MenuItems.IndexOf(this), _value);
             }
         }
         /// <summary>

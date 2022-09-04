@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Reflection;
 using System.Threading.Tasks;
 using CitizenFX.Core.UI;
 
@@ -28,7 +29,12 @@ namespace ScaleformUI
         public int Index
         {
 			get { return _index % Items.Count; }
-			set { _index = 100000000 - (100000000 % Items.Count) + value; }
+			set 
+            { 
+                _index = 100000000 - (100000000 % Items.Count) + value;
+                if (Parent.Visible)
+                    ScaleformUI._ui.CallFunction("SET_ITEM_VALUE", Parent.MenuItems.IndexOf(this), _index);
+            }
 		}
 
 		/// <summary>
@@ -128,6 +134,7 @@ namespace ScaleformUI
         {
             _items.Clear();
             _items = list;
+            _index = index;
             if(Parent.Visible)
                 ScaleformUI._ui.CallFunction("UPDATE_LISTITEM_LIST", Parent.MenuItems.IndexOf(this), string.Join(",", _items), index);
         }
