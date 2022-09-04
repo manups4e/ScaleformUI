@@ -30,7 +30,7 @@ end
 
 function TabLeftItem:AddItem(item)
     item.Parent = self
-    table.insert(self.ItemList, item)
+    self.ItemList[#self.ItemList + 1] = item
 end
 
 function TabLeftItem:Enabled(enabled)

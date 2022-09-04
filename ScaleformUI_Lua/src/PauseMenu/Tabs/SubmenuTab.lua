@@ -19,5 +19,5 @@ end
 
 function SubmenuTab:AddLeftItem(item)
     item.Parent = self
-    table.insert(self.LeftItemList, item)
+    self.LeftItemList[#self.LeftItemList + 1] = item
 end

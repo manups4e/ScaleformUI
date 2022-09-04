@@ -49,7 +49,7 @@ function handler:SetInstructionalButtons(buttons)
 end
 
 function handler:AddInstructionalButton(button)
-    table.insert(ControlButtons, button)
+    ControlButtons[#ControlButtons + 1] = button
     self._changed = true
 end
 

@@ -51,7 +51,7 @@ end
 function MenuPool:Add(Menu)
     if Menu() == "UIMenu" then
         Menu._internalpool = self
-        table.insert(self.Menus, Menu)
+        self.Menus[#self.Menus + 1] = Menu
     end
 end
 

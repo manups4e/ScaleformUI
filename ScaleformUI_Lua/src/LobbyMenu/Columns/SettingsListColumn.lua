@@ -50,6 +50,6 @@ end
 
 function SettingsListColumn:AddSettings(item)
     item.ParentColumn = self
-    table.insert(self.Items, item)
+    self.Items[#self.Items + 1] = item
 end
 

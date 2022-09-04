@@ -371,7 +371,7 @@ end
 function UIMenu:AddWindow(Window)
     if Window() == "UIMenuWindow" then
         Window:SetParentMenu(self)
-        table.insert(self.Windows, Window)
+        self.Windows[#self.Windows + 1] = Window
     end
 end
 
@@ -390,7 +390,7 @@ end
 function UIMenu:AddItem(Item)
     if Item() == "UIMenuItem" then
         Item:SetParentMenu(self)
-        table.insert(self.Items, Item)
+        self.Items[#self.Items + 1] = Item
     end
 end
 
@@ -1285,7 +1285,7 @@ end
 ---@param button table
 function UIMenu:AddInstructionButton(button)
     if type(button) == "table" and #button == 2 then
-        table.insert(self.InstructionalButtons, button)
+        self.InstructionalButtons[#self.InstructionalButtons + 1] = button
     end
 end
 

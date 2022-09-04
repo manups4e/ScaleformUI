@@ -45,13 +45,13 @@ end
 
 function m:AddCard(card)
     if #self.Cards < 9 then
-        table.insert(self.Cards, card)
+        self.Cards[#self.Cards + 1] = card
     end
 end
 
 function m:AddButton(button)
     if #self.Buttons < 3 then
-        table.insert(self.Buttons, button)
+        self.Buttons[#self.Buttons + 1] = button
     end
 end
 

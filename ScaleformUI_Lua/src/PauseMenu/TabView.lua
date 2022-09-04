@@ -107,7 +107,7 @@ end
 
 function TabView:AddTab(item)
     item.Base.Parent = self
-    table.insert(self.Tabs, item)
+    self.Tabs[#self.Tabs + 1] = item
     local _, subT = item()
     if subT == "PlayerListTab" then
         item.SettingsColumn.ParentTab = #self.Tabs - 1
