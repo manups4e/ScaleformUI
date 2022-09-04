@@ -33,7 +33,7 @@ namespace ScaleformUI
             {
                 if (value < 0)
                     _index = 0;
-                else if (value > Items.Count)
+                else if (value > Items.Count - 1)
                     _index = Items.Count - 1;
                 else
                     _index = value;
