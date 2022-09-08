@@ -36,7 +36,7 @@ function UIMenuGridPanel:SetCirclePosition(position)
 		if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
 			local it = IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem)
 			local van = IndexOf(self.ParentItem.Panels, self)
-			ScaleformUI.Scaleforms._ui:CallFunction("SET_GRID_PANEL_VALUE_RETURN_VALUE", false, it, van, position.x, position.y)
+			ScaleformUI.Scaleforms._ui:CallFunction("SET_GRID_PANEL_VALUE_RETURN_VALUE", false, it-1, van-1, position.x, position.y)
 		end
 	else
 		return self.CirclePosition
