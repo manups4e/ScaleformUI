@@ -23,7 +23,7 @@ end
 ---SetParentItem
 ---@param Item table
 function UIMenuGridPanel:SetParentItem(Item) -- required
-	if not Item() == nil then
+	if Item() ~= nil then
 		self.ParentItem = Item
 	else
 		return self.ParentItem
