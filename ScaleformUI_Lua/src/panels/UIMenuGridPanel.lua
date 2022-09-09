@@ -30,7 +30,7 @@ function UIMenuGridPanel:SetParentItem(Item) -- required
 	end
 end
 
-function UIMenuGridPanel:SetCirclePosition(position)
+function UIMenuGridPanel:CirclePosition(position)
 	if position ~= nil then
 		self.CirclePosition = position
 		if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
