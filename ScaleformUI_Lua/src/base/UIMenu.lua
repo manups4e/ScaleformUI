@@ -607,7 +607,7 @@ function UIMenu:BuildUpMenuAsync()
                     elseif pSubType == "UIMenuPercentagePanel" then
                         ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it - 1, 1, panel.Title, panel.Min, panel.Max, panel.Percentage)
                     elseif pSubType == "UIMenuGridPanel" then
-                        ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it - 1, 2, panel.TopLabel, panel.RightLabel, panel.LeftLabel, panel.BottomLabel, panel.CirclePosition.x, panel.CirclePosition.y, true, panel.GridType)
+                        ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it - 1, 2, panel.TopLabel, panel.RightLabel, panel.LeftLabel, panel.BottomLabel, panel._CirclePosition.x, panel._CirclePosition.y, true, panel.GridType)
                     elseif pSubType == "UIMenuStatisticsPanel" then
                         ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it - 1, 3)
                         if #panel.Items then
@@ -722,7 +722,7 @@ function UIMenu:BuildUpMenuSync()
                     elseif pSubType == "UIMenuPercentagePanel" then
                         ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it - 1, 1, panel.Title, panel.Min, panel.Max, panel.Percentage)
                     elseif pSubType == "UIMenuGridPanel" then
-                        ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it - 1, 2, panel.TopLabel, panel.RightLabel, panel.LeftLabel, panel.BottomLabel, panel.CirclePosition.x, panel.CirclePosition.y, true, panel.GridType)
+                        ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it - 1, 2, panel.TopLabel, panel.RightLabel, panel.LeftLabel, panel.BottomLabel, panel._CirclePosition.x, panel._CirclePosition.y, true, panel.GridType)
                     elseif pSubType == "UIMenuStatisticsPanel" then
                         ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, it - 1, 3)
                         if #panel.Items then
@@ -1264,9 +1264,9 @@ function UIMenu:ProcessMouse()
             local panel_type, panel_subtype = panel()
     
             if panel_subtype == "UIMenuGridPanel" then
-                panel.CirclePosition = vector2(tonumber(split[2]), tonumber(split[3]))
-                self.OnGridPanelChanged(panel.ParentItem, panel, panel.CirclePosition)
-                panel.OnGridPanelChanged(panel.ParentItem, panel, panel.CirclePosition)
+                panel._CirclePosition = vector2(tonumber(split[2]), tonumber(split[3]))
+                self.OnGridPanelChanged(panel.ParentItem, panel, panel._CirclePosition)
+                panel.OnGridPanelChanged(panel.ParentItem, panel, panel._CirclePosition)
             elseif panel_subtype == "UIMenuPercentagePanel" then
                 panel.Percentage = tonumber(split[2])
                 self:OnPercentagePanelChanged(panel.ParentItem, panel, panel.Percentage)
