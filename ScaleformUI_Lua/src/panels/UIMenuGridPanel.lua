@@ -12,7 +12,7 @@ function UIMenuGridPanel.New(topText, leftText, rightText, bottomText, circlePos
 		RightLabel = leftText or "RIGHT",
 		LeftLabel = rightText or "LEFT",
 		BottomLabel = bottomText or "DOWN",
-		CirclePosition = circlePosition or vector2(0.5, 0.5),
+		_CirclePosition = circlePosition or vector2(0.5, 0.5),
 		GridType = gridType or 0,
 		ParentItem = nil, -- required
 		OnGridPanelChanged = function(item, panel, newindex) end
@@ -23,7 +23,7 @@ end
 ---SetParentItem
 ---@param Item table
 function UIMenuGridPanel:SetParentItem(Item) -- required
-	if not Item() == nil then
+	if Item() ~= nil then
 		self.ParentItem = Item
 	else
 		return self.ParentItem
@@ -32,13 +32,13 @@ end
 
 function UIMenuGridPanel:CirclePosition(position)
 	if position ~= nil then
-		self.CirclePosition = position
+		self._CirclePosition = position
 		if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
 			local it = IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem)
 			local van = IndexOf(self.ParentItem.Panels, self)
-			ScaleformUI.Scaleforms._ui:CallFunction("SET_GRID_PANEL_VALUE_RETURN_VALUE", false, it, van, position.x, position.y)
+			ScaleformUI.Scaleforms._ui:CallFunction("SET_GRID_PANEL_VALUE_RETURN_VALUE", false, it-1, van-1, position.x, position.y)
 		end
 	else
-		return self.CirclePosition
+		return self._CirclePosition
 	end
 end
