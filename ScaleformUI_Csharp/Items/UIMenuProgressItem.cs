@@ -1,12 +1,4 @@
-﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace ScaleformUI
 {
@@ -75,7 +67,7 @@ namespace ScaleformUI
         public int Multiplier
         {
             get => _multiplier;
-            set =>_multiplier = value;
+            set => _multiplier = value;
         }
 
         /// <summary>

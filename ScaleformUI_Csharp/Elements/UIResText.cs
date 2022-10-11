@@ -1,7 +1,7 @@
-﻿using System;
-using System.Drawing;
-using CitizenFX.Core.Native;
+﻿using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
+using System;
+using System.Drawing;
 using Font = CitizenFX.Core.UI.Font;
 
 namespace ScaleformUI

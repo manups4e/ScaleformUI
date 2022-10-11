@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using CitizenFX.Core;
+using CitizenFX.Core.Native;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
-using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using ScaleformUI.PauseMenu;
 using Control = CitizenFX.Core.Control;
 
 namespace ScaleformUI
@@ -18,7 +16,9 @@ namespace ScaleformUI
     public class MenuPool
     {
         private static Ped _ped;
-        internal static Ped PlayerPed { get
+        internal static Ped PlayerPed
+        {
+            get
             {
                 int handle = API.PlayerPedId();
 
@@ -274,7 +274,7 @@ namespace ScaleformUI
         /// </summary>
         public void CloseAllMenus()
         {
-            if(currentMenu is not null)
+            if (currentMenu is not null)
             {
                 foreach (var menu in currentMenu.Children)
                 {

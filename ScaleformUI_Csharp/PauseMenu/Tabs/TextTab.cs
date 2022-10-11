@@ -1,6 +1,4 @@
-﻿using CitizenFX.Core;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Collections.Generic;
 
 namespace ScaleformUI.PauseMenu
 {
@@ -18,7 +16,7 @@ namespace ScaleformUI.PauseMenu
 
         public async void AddTitle(string title)
         {
-            if(string.IsNullOrWhiteSpace(TextTitle))
+            if (string.IsNullOrWhiteSpace(TextTitle))
                 TextTitle = title;
         }
 

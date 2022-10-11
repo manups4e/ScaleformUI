@@ -1,10 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using CitizenFX.Core.UI;
-using CitizenFX.Core;
-using System.Threading.Tasks;
-using System;
+using System.Collections.Generic;
 
 namespace ScaleformUI
 {
@@ -45,7 +41,7 @@ namespace ScaleformUI
         }
         public UIMenuColorPanel(string title, ColorPanelType ColorType, int startIndex = 0)
         {
-            Title = title??"Color Panel";
+            Title = title ?? "Color Panel";
             ColorPanelColorType = ColorType;
             _value = startIndex;
         }

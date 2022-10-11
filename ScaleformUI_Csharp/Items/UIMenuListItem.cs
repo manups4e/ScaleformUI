@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Reflection;
-using System.Threading.Tasks;
-using CitizenFX.Core.UI;
 
 namespace ScaleformUI
 {
@@ -29,7 +25,7 @@ namespace ScaleformUI
         public int Index
         {
             get { return _index % Items.Count; }
-            set 
+            set
             {
                 if (value < 0)
                     _index = 0;
@@ -79,7 +75,7 @@ namespace ScaleformUI
         public UIMenuListItem(string text, List<dynamic> items, int index, string description, HudColor mainColor, HudColor higlightColor) : this(text, items, index, description, mainColor, higlightColor, HudColor.HUD_COLOUR_WHITE, HudColor.HUD_COLOUR_BLACK)
         {
         }
-        
+
         public UIMenuListItem(string text, List<dynamic> items, int index, string description, HudColor mainColor, HudColor higlightColor, HudColor textColor, HudColor highlightTextColor) : base(text, description, mainColor, higlightColor, textColor, highlightTextColor)
         {
             _items = items;
@@ -140,7 +136,7 @@ namespace ScaleformUI
             _items.Clear();
             _items = list;
             _index = index;
-            if(Parent.Visible)
+            if (Parent.Visible)
                 ScaleformUI._ui.CallFunction("UPDATE_LISTITEM_LIST", Parent.MenuItems.IndexOf(this), string.Join(",", _items), index);
         }
 

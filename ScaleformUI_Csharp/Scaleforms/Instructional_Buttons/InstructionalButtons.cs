@@ -1,11 +1,10 @@
-﻿using System;
+﻿using CitizenFX.Core;
+using CitizenFX.Core.Native;
+using CitizenFX.Core.UI;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
-using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using CitizenFX.Core.UI;
 
 namespace ScaleformUI
 {
@@ -189,7 +188,7 @@ namespace ScaleformUI
                 }
                 return retVal;
             }
-            else if(InputButton != InputGroup.UNUSED) return $"~{InputButton}~";
+            else if (InputButton != InputGroup.UNUSED) return $"~{InputButton}~";
 
             return IsUsingController ? API.GetControlInstructionalButton(2, (int)GamepadButton, 1) : API.GetControlInstructionalButton(2, (int)KeyboardButton, 1);
         }
@@ -293,7 +292,7 @@ namespace ScaleformUI
         {
             foreach (var button in buttons)
             {
-                if(ControlButtons.Contains(button))
+                if (ControlButtons.Contains(button))
                     ControlButtons.Remove(button);
             }
             _changed = true;

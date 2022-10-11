@@ -1,8 +1,5 @@
-﻿using CitizenFX.Core.UI;
-using System;
-using System.Drawing;
+﻿using System;
 using System.Threading.Tasks;
-using Font = CitizenFX.Core.UI.Font;
 
 namespace ScaleformUI
 {
@@ -22,7 +19,7 @@ namespace ScaleformUI
             get => currentListItem; internal set
             {
                 currentListItem = value;
-                if(Parent is not null && Parent.Visible)
+                if (Parent is not null && Parent.Visible)
                 {
                     ScaleformUI._ui.CallFunction("UPDATE_LISTITEM_LIST", Parent.MenuItems.IndexOf(this), currentListItem, 0);
                 }

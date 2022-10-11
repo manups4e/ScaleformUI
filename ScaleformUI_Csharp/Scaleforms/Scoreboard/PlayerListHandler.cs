@@ -85,7 +85,7 @@ namespace ScaleformUI
 
         public void RemoveRow(PlayerRow row)
         {
-            var r = PlayerRows.FirstOrDefault(x=>x.ServerId == row.ServerId);
+            var r = PlayerRows.FirstOrDefault(x => x.ServerId == row.ServerId);
             if (r != null)
             {
                 PlayerRows.Remove(r);
@@ -171,7 +171,7 @@ namespace ScaleformUI
         {
             var r = PlayerRows.FirstOrDefault(x => Convert.ToInt32(x.RightText) == Convert.ToInt32(row.RightText));
             //var r = PlayerRows.FirstOrDefault(x => x.ServerId == row.ServerId);
-            if(r != null)
+            if (r != null)
             {
                 PlayerRows[PlayerRows.IndexOf(r)] = row;
                 if (row.CrewLabelText != "")
@@ -186,7 +186,7 @@ namespace ScaleformUI
             var row = PlayerRows[index];
             if (row != null)
             {
-                _sc.CallFunction("SET_ICON",index, (int)icon, txt);
+                _sc.CallFunction("SET_ICON", index, (int)icon, txt);
             }
         }
 
@@ -265,7 +265,7 @@ namespace ScaleformUI
 
         public ScoreDisplayType JobPointsDisplayType;
 
- 
+
         public ScoreRightIconType RightIcon;
         public string TextureString;
         public char FriendType;

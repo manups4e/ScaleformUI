@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Threading.Tasks;
-using CitizenFX.Core;
+﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using CitizenFX.Core.UI;
+using System;
+using System.Drawing;
 
 namespace ScaleformUI
 {
@@ -12,8 +9,8 @@ namespace ScaleformUI
     {
 
         public string Min { get; set; }
-        public string Max{get;set;}
-        public string Title{get;set;}
+        public string Max { get; set; }
+        public string Title { get; set; }
 
         public event PercentagePanelChangedEvent OnPercentagePanelChange;
 

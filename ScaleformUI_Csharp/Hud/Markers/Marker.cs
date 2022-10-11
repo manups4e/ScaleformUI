@@ -1,7 +1,6 @@
 ﻿using CitizenFX.Core;
 using System;
 using System.Drawing;
-using System.Threading.Tasks;
 using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI

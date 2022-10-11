@@ -1,11 +1,4 @@
-﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using ScaleformUI.PauseMenu;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ScaleformUI.PauseMenu;
 
 namespace ScaleformUI.LobbyMenu
 {

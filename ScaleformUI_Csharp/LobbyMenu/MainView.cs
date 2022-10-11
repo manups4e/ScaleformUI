@@ -1,12 +1,8 @@
-﻿using System;
+﻿using CitizenFX.Core;
+using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using CitizenFX.Core;
-using CitizenFX.Core.Native;
 using static CitizenFX.Core.Native.API;
-using CitizenFX.Core.UI;
-using Font = CitizenFX.Core.UI.Font;
 
 namespace ScaleformUI.LobbyMenu
 {
@@ -504,7 +500,7 @@ namespace ScaleformUI.LobbyMenu
 
         public async void GoBack()
         {
-            if(CanPlayerCloseMenu)
+            if (CanPlayerCloseMenu)
                 Visible = false;
         }
 

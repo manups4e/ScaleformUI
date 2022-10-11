@@ -1,6 +1,6 @@
 ﻿using CitizenFX.Core;
-using static CitizenFX.Core.Native.API;
 using System.Linq;
+using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI
 {

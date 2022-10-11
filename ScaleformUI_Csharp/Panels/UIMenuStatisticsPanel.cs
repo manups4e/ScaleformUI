@@ -1,7 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
-using System.Threading.Tasks;
-using CitizenFX.Core.UI;
 
 namespace ScaleformUI
 {
@@ -14,7 +11,7 @@ namespace ScaleformUI
             Items = new List<StatisticsForPanel>();
         }
 
-        public void AddStatistics (string Name, float val)
+        public void AddStatistics(string Name, float val)
         {
             float _value = val;
             if (_value > 100)
@@ -57,7 +54,7 @@ namespace ScaleformUI
             Value = value;
             if (Value > 100)
                 Value = 100;
-            if(Value < 0)
+            if (Value < 0)
                 Value = 0;
         }
     }

@@ -1,10 +1,7 @@
 ﻿using CitizenFX.Core;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI
 {
@@ -22,7 +19,7 @@ namespace ScaleformUI
         {
             if (_markerList.Count == 0) return;
 
-            for(int i=0; i<FilterMarkers().Count; i++)
+            for (int i = 0; i < FilterMarkers().Count; i++)
                 FilterMarkers()[i].Draw();
             await Task.FromResult(0);
         }

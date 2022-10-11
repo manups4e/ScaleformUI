@@ -1,14 +1,14 @@
-﻿using System;
-using System.Drawing;
-using System.Collections.Generic;
-using CitizenFX.Core;
+﻿using CitizenFX.Core;
+using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
 using ScaleformUI;
-using CitizenFX.Core.Native;
+using ScaleformUI.LobbyMenu;
+using ScaleformUI.PauseMenu;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
-using ScaleformUI.PauseMenu;
-using ScaleformUI.LobbyMenu;
 
 public class MenuExample : BaseScript
 {
@@ -20,7 +20,7 @@ public class MenuExample : BaseScript
     {
         var _titledui = API.CreateDui("https://i.imgur.com/3yrFYbF.gif", 288, 130);
         API.CreateRuntimeTextureFromDuiHandle(txd, "bannerbackground", API.GetDuiHandle(_titledui));
-    
+
         UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI SHOWCASE", new PointF(20, 20), "scaleformui", "bannerbackground", true, true); // true means add menu Glare scaleform to the menu
         exampleMenu.MaxItemsOnScreen = 7; // To decide max items on screen at time, default 7
         exampleMenu.BuildAsync = true; // set to false might freeze the game a couple of milliseconds to load high N items menus. (default true)
@@ -274,15 +274,18 @@ public class MenuExample : BaseScript
             Notifications.ShowNotification($"ColorPanel index => {index}");
         };
 
-        PercentagePanel.OnPercentagePanelChange += (item, panel, index) => {
+        PercentagePanel.OnPercentagePanelChange += (item, panel, index) =>
+        {
             Screen.ShowSubtitle("Percentage = " + index + "...");
         };
 
-        GridPanel.OnGridPanelChange += (item, panel, value) => {
+        GridPanel.OnGridPanelChange += (item, panel, value) =>
+        {
             Screen.ShowSubtitle("GridPosition = " + value + "...");
         };
 
-        HorizontalGridPanel.OnGridPanelChange += (item, panel, value) => {
+        HorizontalGridPanel.OnGridPanelChange += (item, panel, value) =>
+        {
             Screen.ShowSubtitle("HorizontalGridPosition = " + value + "...");
         };
 
@@ -774,7 +777,7 @@ public class MenuExample : BaseScript
                 enabled = checked_;
                 sender.EnableAnimation = enabled;
                 colorListItem.Enabled = enabled;
-                Notifications.ShowNotification("~r~Menu animation: ~b~" + (enabled?"Enabled":"Disabled"));
+                Notifications.ShowNotification("~r~Menu animation: ~b~" + (enabled ? "Enabled" : "Disabled"));
             }
         };
 
@@ -844,7 +847,7 @@ public class MenuExample : BaseScript
     }
     public async Task FloatingHelpTimer()
     {
-        Notifications.ShowFloatingHelpNotification(_text, Game.PlayerPed.Bones[Bone.SKEL_Head].Position + new Vector3(0, 0, 0.5f)    );
+        Notifications.ShowFloatingHelpNotification(_text, Game.PlayerPed.Bones[Bone.SKEL_Head].Position + new Vector3(0, 0, 0.5f));
         // this will show the 3d notification on the head of the ped in 3d world coords
         if (Game.GameTime - _timer > 5000) // this is a tricky yet simple way to count time without using Delay and pausing the Thread ;)
             Tick -= FloatingHelpTimer;
@@ -951,7 +954,7 @@ public class MenuExample : BaseScript
         pauseMenu.AddTab(playersTab);
 
         UIMenuItem n1 = new("Base Item", "Basic Description");
-        UIMenuListItem n2 = new("List Item", new List<dynamic> { "item1", "item2", "item3"}, 0, "List Description");
+        UIMenuListItem n2 = new("List Item", new List<dynamic> { "item1", "item2", "item3" }, 0, "List Description");
         UIMenuCheckboxItem n3 = new("Checkbox Item", UIMenuCheckboxStyle.Tick, true, "Checkbox Description");
         UIMenuSliderItem n4 = new("Slider Item", "Slider Description", 100, 10, 50, false);
         UIMenuProgressItem n5 = new("Progress Item", 100, 50, "Progress Description");
@@ -1108,17 +1111,17 @@ public class MenuExample : BaseScript
 
         pauseMenu.OnPauseMenuFocusChanged += (menu, tab, focusLevel) =>
         {
-            Screen.ShowSubtitle(tab.Title + " Focus at level => ~y~"+ focusLevel +"~w~!");
-            if(focusLevel == 1)
+            Screen.ShowSubtitle(tab.Title + " Focus at level => ~y~" + focusLevel + "~w~!");
+            if (focusLevel == 1)
             {
-                if(tab is TextTab)
+                if (tab is TextTab)
                 {
                     List<InstructionalButton> buttons = new List<InstructionalButton>()
                     {
                         new InstructionalButton(Control.PhoneCancel, Game.GetGXTEntry("HUD_INPUT3")),
                         new InstructionalButton(Control.LookUpDown, "Scroll text", PadCheck.Controller),
                         new InstructionalButton(InputGroup.INPUTGROUP_CURSOR_SCROLL, "Scroll text", PadCheck.Keyboard)
-                    
+
                     };
 
                     ScaleformUI.ScaleformUI.InstructionalButtons.SetInstructionalButtons(buttons);
@@ -1131,9 +1134,9 @@ public class MenuExample : BaseScript
 
         pauseMenu.OnLeftItemChange += (menu, leftItem, leftItemIndex) =>
         {
-            Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel+ "~w~, and left Item ~o~N° " + (leftItemIndex + 1) + "~w~ selected!");
+            Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, and left Item ~o~N° " + (leftItemIndex + 1) + "~w~ selected!");
         };
-    
+
         pauseMenu.OnLeftItemSelect += (menu, leftItem, leftItemIndex) =>
         {
             Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, and left Item ~o~N° " + (leftItemIndex + 1) + "~w~ selected!");
@@ -1141,12 +1144,12 @@ public class MenuExample : BaseScript
 
         pauseMenu.OnRightItemChange += (menu, item, leftItemIndex, rightItemIndex) =>
         {
-            Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, left Item ~o~N° " + (leftItemIndex + 1) + "~w~ and right Item ~b~N° " + (rightItemIndex+1) + "~w~ selected!");
+            Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, left Item ~o~N° " + (leftItemIndex + 1) + "~w~ and right Item ~b~N° " + (rightItemIndex + 1) + "~w~ selected!");
         };
 
         pauseMenu.OnRightItemSelect += (menu, item, leftItemIndex, rightItemIndex) =>
         {
-            Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + "~w~, left Item ~o~N° " + (leftItemIndex + 1) + "~w~ and right Item ~b~N° " + (rightItemIndex + 1) + "~w~ of type ~p~"+ item.ItemType +"~w~ selected!");
+            Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + "~w~, left Item ~o~N° " + (leftItemIndex + 1) + "~w~ and right Item ~b~N° " + (rightItemIndex + 1) + "~w~ of type ~p~" + item.ItemType + "~w~ selected!");
         };
         pauseMenu.Visible = true;
         //API.UnregisterPedheadshot(mugshot);
@@ -1173,7 +1176,7 @@ public class MenuExample : BaseScript
         _menuPool.Add(pauseMenu);
 
         var item = new UIMenuItem("UIMenuItem", "UIMenuItem description");
-        var item1 = new UIMenuListItem("UIMenuListItem", new List<dynamic>() { "This", "is", "a", "Test"}, 0, "UIMenuListItem description");
+        var item1 = new UIMenuListItem("UIMenuListItem", new List<dynamic>() { "This", "is", "a", "Test" }, 0, "UIMenuListItem description");
         var item2 = new UIMenuCheckboxItem("UIMenuCheckboxItem", true, "UIMenuCheckboxItem description");
         var item3 = new UIMenuSliderItem("UIMenuSliderItem", "UIMenuSliderItem description", 100, 5, 50, false);
         var item4 = new UIMenuProgressItem("UIMenuProgressItem", 10, 5, "UIMenuProgressItem description");
@@ -1200,7 +1203,7 @@ public class MenuExample : BaseScript
         var friend3 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_BLUE, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
         var friend4 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_ORANGE, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
         var friend5 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_RED, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
-        
+
         friend.SetLeftIcon(LobbyBadgeIcon.IS_CONSOLE_PLAYER);
         friend1.SetLeftIcon(LobbyBadgeIcon.IS_PC_PLAYER);
         friend2.SetLeftIcon(LobbyBadgeIcon.SPECTATOR);

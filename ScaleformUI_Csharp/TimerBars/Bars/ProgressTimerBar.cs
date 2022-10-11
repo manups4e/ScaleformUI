@@ -21,7 +21,7 @@ namespace ScaleformUI
             BackgroundColor = Colors.DarkRed;
             ForegroundColor = Colors.Red;
             _background = new UIResRectangle(new PointF(0, 0), new SizeF(150, 15), BackgroundColor);
-            _foreground = new UIResRectangle(new PointF(0,0), new SizeF(0, 15), ForegroundColor);
+            _foreground = new UIResRectangle(new PointF(0, 0), new SizeF(0, 15), ForegroundColor);
         }
 
         public ProgressTimerBar(string label, Color background, Color foreground) : base(label)

@@ -1,9 +1,9 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using static CitizenFX.Core.Native.API;
-using System.Drawing;
-using System;
 using CitizenFX.Core.UI;
+using System;
+using System.Drawing;
+using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI
 {

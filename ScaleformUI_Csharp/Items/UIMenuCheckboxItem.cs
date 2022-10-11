@@ -1,8 +1,4 @@
-﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using System;
-using System.Drawing;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace ScaleformUI
 {
@@ -73,8 +69,9 @@ namespace ScaleformUI
         /// <summary>
         /// Change or get whether the checkbox is checked.
         /// </summary>
-        public bool Checked { 
-            get => _checked; 
+        public bool Checked
+        {
+            get => _checked;
             set
             {
                 _checked = value;

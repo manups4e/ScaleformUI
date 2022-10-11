@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace ScaleformUI.PauseMenu
 {
@@ -34,7 +30,7 @@ namespace ScaleformUI.PauseMenu
             set
             {
                 label = value;
-                if(Parent != null && Parent.Visible)
+                if (Parent != null && Parent.Visible)
                 {
                     var tab = Parent.Parent.Tabs.IndexOf(Parent);
                     var it = Parent.LeftItemList.IndexOf(this);

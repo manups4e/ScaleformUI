@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Threading.Tasks;
-using CitizenFX.Core;
+﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using CitizenFX.Core.UI;
+using System;
+using System.Drawing;
 
 namespace ScaleformUI
 {
@@ -17,9 +14,9 @@ namespace ScaleformUI
     public class UIMenuGridPanel : UIMenuPanel
     {
         public string TopLabel { get; set; }
-        public string LeftLabel{get;set;}
-        public string RightLabel{get;set;}
-        public string BottomLabel{get;set;}
+        public string LeftLabel { get; set; }
+        public string RightLabel { get; set; }
+        public string BottomLabel { get; set; }
         public event GridPanelChangedEvent OnGridPanelChange;
         public GridType GridType = GridType.Full;
 
@@ -67,7 +64,7 @@ namespace ScaleformUI
             TopLabel = "";
             BottomLabel = "";
             LeftLabel = LeftText ?? "Left";
-            RightLabel = RightText?? "Right";
+            RightLabel = RightText ?? "Right";
             GridType = GridType.Horizontal;
             _value = circlePosition;
         }
