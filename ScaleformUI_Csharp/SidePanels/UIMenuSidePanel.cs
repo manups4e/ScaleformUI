@@ -6,32 +6,32 @@ using System.Threading.Tasks;
 
 namespace ScaleformUI
 {
-	public enum PanelSide
+    public enum PanelSide
     {
-		Left,
-		Right
+        Left,
+        Right
     }
-	public enum SidePanelsTitleType
-	{
-		Big,
-		Small,
-		Classic
-	}
-
-	public class UIMenuSidePanel
+    public enum SidePanelsTitleType
     {
-		public virtual bool Selected { get; set; }
-		public virtual bool Enabled { get; set; }
-		public virtual PanelSide PanelSide { get; set; }
-		public virtual void UpdateParent()
-		{
-		}
-		public void SetParentItem(UIMenuItem item)
-		{
-			ParentItem = item;
-		}
+        Big,
+        Small,
+        Classic
+    }
 
-		public UIMenuItem ParentItem { get; set; }
+    public class UIMenuSidePanel
+    {
+        public virtual bool Selected { get; set; }
+        public virtual bool Enabled { get; set; }
+        public virtual PanelSide PanelSide { get; set; }
+        public virtual void UpdateParent()
+        {
+        }
+        public void SetParentItem(UIMenuItem item)
+        {
+            ParentItem = item;
+        }
 
-	}
+        public UIMenuItem ParentItem { get; set; }
+
+    }
 }

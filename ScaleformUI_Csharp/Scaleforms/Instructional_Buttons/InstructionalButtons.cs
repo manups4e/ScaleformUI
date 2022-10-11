@@ -17,7 +17,7 @@ namespace ScaleformUI
     }
 
     public enum InputGroup
-	{
+    {
         UNUSED = -1,
         INPUTGROUP_MOVE = 0,
         INPUTGROUP_LOOK = 1,
@@ -51,7 +51,7 @@ namespace ScaleformUI
         INPUTGROUP_CURSOR_SCROLL = 29,
         INPUTGROUP_SNIPER_ZOOM_SECONDARY = 30,
         INPUTGROUP_VEH_HYDRAULICS_CONTROL = 31,
-	};
+    };
 
     public delegate void OnInstructionControlSelected(InstructionalButton control);
     public class InstructionalButton
@@ -147,11 +147,11 @@ namespace ScaleformUI
         /// <param name="text">Help text that goes with the button.</param>
         /// <param name="padFilter">Filter to show only with GamePad or Keyoboard (default both).</param>
         public InstructionalButton(InputGroup control, string text, PadCheck padFilter = PadCheck.Any)
-		{
+        {
             InputButton = control;
             Text = text;
             PadCheck = padFilter;
-		}
+        }
 
         /// <summary>
         /// Bind this button to an item, so it's only shown when that item is selected.
@@ -255,21 +255,21 @@ namespace ScaleformUI
             while (!API.HasScaleformMovieLoaded(_sc.Handle) && DateTime.Now.Subtract(start).TotalMilliseconds < timeout) await BaseScript.Delay(0);
         }
 
-		/// <summary>
-		/// Set the list of buttons at once (can be edited after).
-		/// </summary>
-		/// <param name="buttons">List of <see cref="InstructionalButton"/> to show.</param>
-		public void SetInstructionalButtons(List<InstructionalButton> buttons)
+        /// <summary>
+        /// Set the list of buttons at once (can be edited after).
+        /// </summary>
+        /// <param name="buttons">List of <see cref="InstructionalButton"/> to show.</param>
+        public void SetInstructionalButtons(List<InstructionalButton> buttons)
         {
             ControlButtons = buttons;
             _changed = true;
         }
 
-		/// <summary>
-		/// Adds an <see cref="InstructionalButton"/> to the List (on the left)
-		/// </summary>
-		/// <param name="button"></param>
-		public void AddInstructionalButton(InstructionalButton button)
+        /// <summary>
+        /// Adds an <see cref="InstructionalButton"/> to the List (on the left)
+        /// </summary>
+        /// <param name="button"></param>
+        public void AddInstructionalButton(InstructionalButton button)
         {
             ControlButtons.Add(button);
             _changed = true;
@@ -418,7 +418,7 @@ namespace ScaleformUI
         /// </summary>
         /// <param name="Position">the values for variation must be in 0.000 (One thousandth) decimal places for precision</param>
         public void Draw(PointF Position)
-		{
+        {
             API.DrawScaleformMovie(_sc.Handle, 0.5f - Position.X, 0.5f - Position.Y, 1f, 1f, 255, 255, 255, 255, 0);
         }
 
@@ -464,5 +464,5 @@ namespace ScaleformUI
         }
 
         public static bool IsControlJustPressed(Control control, PadCheck keyboardOnly = PadCheck.Any) => Game.IsControlJustPressed(2, control) && (keyboardOnly == PadCheck.Keyboard ? API.IsUsingKeyboard(2) : keyboardOnly != PadCheck.Controller || !API.IsUsingKeyboard(2));
-	}
+    }
 }

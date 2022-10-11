@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 namespace ScaleformUI
 {
     public enum UIMenuCheckboxStyle
-	{
-		Cross,
-		Tick
-	}
+    {
+        Cross,
+        Tick
+    }
 
     public class UIMenuCheckboxItem : UIMenuItem
     {
