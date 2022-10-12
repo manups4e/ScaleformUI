@@ -1,12 +1,6 @@
-﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using CitizenFX.Core.UI;
+﻿using CitizenFX.Core.Native;
 using ScaleformUI.LobbyMenu;
-using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Threading.Tasks;
-using Font = CitizenFX.Core.UI.Font;
 namespace ScaleformUI
 {
     public enum BadgeIcon

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ScaleformUI
+﻿namespace ScaleformUI
 {
 
     public class UIVehicleColourPickerPanel : UIMenuSidePanel
@@ -26,7 +20,7 @@ namespace ScaleformUI
         internal SidePanelsTitleType _titleType;
         internal int _value;
 
-        public int Value => _value; 
+        public int Value => _value;
         public event VehicleColorPickerSelectEvent OnVehicleColorPickerSelect;
 
         /// <summary>

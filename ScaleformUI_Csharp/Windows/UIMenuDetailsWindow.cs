@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ScaleformUI
 {
@@ -92,7 +90,7 @@ namespace ScaleformUI
         {
             if (StatWheelEnabled)
             {
-                if(DetailStats.Count != stats.Count)
+                if (DetailStats.Count != stats.Count)
                 {
                     throw new Exception("You cannot add items using this function");
                 }
@@ -119,7 +117,7 @@ namespace ScaleformUI
         {
             if (id < 0 || id >= DetailStats.Count) return;
             DetailStats.RemoveAt(id);
-            if(ParentMenu is not null)
+            if (ParentMenu is not null)
             {
                 var wid = ParentMenu.Windows.IndexOf(this);
                 ScaleformUI._ui.CallFunction("REMOVE_STATS_DETAILS_WINDOW_STATWHEEL", wid, id);

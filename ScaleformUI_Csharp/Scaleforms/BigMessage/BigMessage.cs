@@ -1,7 +1,5 @@
-﻿using System;
-using System.Runtime.Remoting.Messaging;
-using CitizenFX.Core;
-using CitizenFX.Core.Native;
+﻿using CitizenFX.Core;
+using System;
 using System.Threading.Tasks;
 
 namespace ScaleformUI

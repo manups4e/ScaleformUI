@@ -1,6 +1,6 @@
-﻿using System.Drawing;
-using CitizenFX.Core.Native;
+﻿using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
+using System.Drawing;
 
 namespace ScaleformUI
 {
@@ -8,7 +8,7 @@ namespace ScaleformUI
     /// A rectangle in 1080 pixels height system.
     /// </summary>
     public class UIResRectangle : CitizenFX.Core.UI.Rectangle
-	{
+    {
         public UIResRectangle()
         { }
 

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using static CitizenFX.Core.Native.API;
-using CitizenFX.Core.UI;
-using Font = CitizenFX.Core.UI.Font;
+﻿using CitizenFX.Core;
 using ScaleformUI.LobbyMenu;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI.PauseMenu
 {
@@ -64,7 +60,7 @@ namespace ScaleformUI.PauseMenu
             set
             {
                 focusLevel = value;
-                if(_pause is not null)
+                if (_pause is not null)
                     _pause.SetFocus(value);
                 SendPauseMenuFocusChange();
             }
@@ -149,7 +145,7 @@ namespace ScaleformUI.PauseMenu
         public void AddTab(BaseTab item)
         {
             item.Parent = this;
-            if(item is PlayerListTab)
+            if (item is PlayerListTab)
             {
                 var it = item as PlayerListTab;
                 it.SettingsColumn.ParentTab = Tabs.Count;
@@ -500,7 +496,7 @@ namespace ScaleformUI.PauseMenu
                             {
                                 FocusLevel = 2;
                                 if (leftItem.ItemList.All(x => !(x as SettingsItem).Enabled)) break;
-                                while(!(leftItem.ItemList[rightItemIndex] as SettingsItem).Enabled)
+                                while (!(leftItem.ItemList[rightItemIndex] as SettingsItem).Enabled)
                                 {
                                     await BaseScript.Delay(0);
                                     rightItemIndex++;
@@ -593,11 +589,12 @@ namespace ScaleformUI.PauseMenu
             Game.PlaySound(AUDIO_BACK, AUDIO_LIBRARY);
             if (FocusLevel > 0)
             {
-                if(FocusLevel == 1)
+                if (FocusLevel == 1)
                 {
                     if (Tabs[Index] is PlayerListTab plTab)
                     {
-                        if (plTab.Focus == 1) {
+                        if (plTab.Focus == 1)
+                        {
                             plTab.Focus = 0;
                             return;
                         }
@@ -608,7 +605,7 @@ namespace ScaleformUI.PauseMenu
             }
             else
             {
-                if(CanPlayerCloseMenu) Visible = false;
+                if (CanPlayerCloseMenu) Visible = false;
             }
         }
 
@@ -619,9 +616,9 @@ namespace ScaleformUI.PauseMenu
             var ret = EndScaleformMovieMethodReturnValue();
             while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
             var retVal = GetScaleformMovieFunctionReturnInt(ret);
-            if(retVal != -1)
+            if (retVal != -1)
             {
-                if(FocusLevel == 1)
+                if (FocusLevel == 1)
                 {
                     if (Tabs[Index] is PlayerListTab plTab)
                     {
@@ -898,7 +895,7 @@ namespace ScaleformUI.PauseMenu
                                 Index = itemId;
                                 if (Tabs[Index] is PlayerListTab tab)
                                     tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].CreateClonedPed(tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].ClonePed);
-                                else 
+                                else
                                     ClearPedInPauseMenu();
                                 Game.PlaySound("SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET");
                                 if (Tabs[Index].LeftItemList.All(x => !x.Enabled)) break;

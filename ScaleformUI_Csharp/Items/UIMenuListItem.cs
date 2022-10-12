@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Reflection;
-using System.Threading.Tasks;
-using CitizenFX.Core.UI;
 
 namespace ScaleformUI
 {
@@ -18,9 +14,9 @@ namespace ScaleformUI
         /// </summary>
         public event ItemListEvent OnListChanged;
 
-        /// <summary>		
-        /// Triggered when a list item is selected.		
-        /// </summary>		
+        /// <summary>        
+        /// Triggered when a list item is selected.        
+        /// </summary>        
         public event ItemListEvent OnListSelected;
 
         /// <summary>
@@ -28,8 +24,8 @@ namespace ScaleformUI
         /// </summary>
         public int Index
         {
-			get { return _index % Items.Count; }
-			set 
+            get { return _index % Items.Count; }
+            set
             {
                 if (value < 0)
                     _index = 0;
@@ -40,28 +36,28 @@ namespace ScaleformUI
                 if (Parent is not null && Parent.Visible)
                     ScaleformUI._ui.CallFunction("SET_ITEM_VALUE", Parent.MenuItems.IndexOf(this), _index);
             }
-		}
+        }
 
-		/// <summary>
-		/// Returns the current selected index.
-		/// </summary>
-		public List<object> Items
-		{
-			get => _items;
-			set
-			{
-				Index = 0;
-				_items = value;
-			}
-		}
+        /// <summary>
+        /// Returns the current selected index.
+        /// </summary>
+        public List<object> Items
+        {
+            get => _items;
+            set
+            {
+                Index = 0;
+                _items = value;
+            }
+        }
 
-		/// <summary>
-		/// List item, with left/right arrows.
-		/// </summary>
-		/// <param name="text">Item label.</param>
-		/// <param name="items">List that contains your items.</param>
-		/// <param name="index">Index in the list. If unsure user 0.</param>
-		public UIMenuListItem(string text, List<dynamic> items, int index) : this(text, items, index, "")
+        /// <summary>
+        /// List item, with left/right arrows.
+        /// </summary>
+        /// <param name="text">Item label.</param>
+        /// <param name="items">List that contains your items.</param>
+        /// <param name="index">Index in the list. If unsure user 0.</param>
+        public UIMenuListItem(string text, List<dynamic> items, int index) : this(text, items, index, "")
         {
         }
 
@@ -79,33 +75,33 @@ namespace ScaleformUI
         public UIMenuListItem(string text, List<dynamic> items, int index, string description, HudColor mainColor, HudColor higlightColor) : this(text, items, index, description, mainColor, higlightColor, HudColor.HUD_COLOUR_WHITE, HudColor.HUD_COLOUR_BLACK)
         {
         }
-        
+
         public UIMenuListItem(string text, List<dynamic> items, int index, string description, HudColor mainColor, HudColor higlightColor, HudColor textColor, HudColor highlightTextColor) : base(text, description, mainColor, higlightColor, textColor, highlightTextColor)
-		{
-			_items = items;
-			Index = index;
-			_itemId = 1;
-		}
+        {
+            _items = items;
+            Index = index;
+            _itemId = 1;
+        }
 
 
-		/// <summary>
-		/// Find an item in the list and return it's index.
-		/// </summary>
-		/// <param name="item">Item to search for.</param>
-		/// <returns>Item index.</returns>
-		[Obsolete("Use UIMenuListItem.Items.FindIndex(p => ReferenceEquals(p, item)) instead.")]
-		public virtual int ItemToIndex(dynamic item)
+        /// <summary>
+        /// Find an item in the list and return it's index.
+        /// </summary>
+        /// <param name="item">Item to search for.</param>
+        /// <returns>Item index.</returns>
+        [Obsolete("Use UIMenuListItem.Items.FindIndex(p => ReferenceEquals(p, item)) instead.")]
+        public virtual int ItemToIndex(dynamic item)
         {
             return _items.FindIndex(p => ReferenceEquals(p, item));
         }
 
-		/// <summary>
-		/// Find an item by it's index and return the item.
-		/// </summary>
-		/// <param name="index">Item's index.</param>
-		/// <returns>Item</returns>
-		[Obsolete("Use UIMenuListItem.Items[Index] instead.")]
-		public virtual dynamic IndexToItem(int index)
+        /// <summary>
+        /// Find an item by it's index and return the item.
+        /// </summary>
+        /// <param name="index">Item's index.</param>
+        /// <returns>Item</returns>
+        [Obsolete("Use UIMenuListItem.Items[Index] instead.")]
+        public virtual dynamic IndexToItem(int index)
         {
             return _items[index];
         }
@@ -140,7 +136,7 @@ namespace ScaleformUI
             _items.Clear();
             _items = list;
             _index = index;
-            if(Parent.Visible)
+            if (Parent.Visible)
                 ScaleformUI._ui.CallFunction("UPDATE_LISTITEM_LIST", Parent.MenuItems.IndexOf(this), string.Join(",", _items), index);
         }
 
@@ -154,8 +150,8 @@ namespace ScaleformUI
             throw new Exception("UIMenuListItem cannot have a right label.");
         }
 
-		[Obsolete("Use UIMenuListItem.Items[Index].ToString() instead.")]
-		public string CurrentItem()
+        [Obsolete("Use UIMenuListItem.Items[Index].ToString() instead.")]
+        public string CurrentItem()
         {
             return _items[Index].ToString();
         }

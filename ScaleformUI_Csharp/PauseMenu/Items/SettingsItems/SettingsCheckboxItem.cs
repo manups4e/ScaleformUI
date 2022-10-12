@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ScaleformUI.PauseMenu
+﻿namespace ScaleformUI.PauseMenu
 {
     public delegate void SettingsCheckboxChanged(SettingsItem item, bool value);
     public class SettingsCheckboxItem : SettingsItem
