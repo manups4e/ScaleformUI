@@ -60,7 +60,6 @@ function warn:ShowWarningWithButtons(title, subtitle, prompt, buttons, errorMsg,
 end
 
 function warn:Update()
-    if self._sc == 0 then return end
     self._sc:Render2D()
     if self._disableControls then
         ScaleformUI.Scaleforms.InstructionalButtons:Draw()
