@@ -50,6 +50,8 @@ namespace ScaleformUI
 
         private async Task ScaleformUIThread_Tick()
         {
+            if (InstructionalButtons._sc != null && InstructionalButtons.Enabled && ((InstructionalButtons.ControlButtons != null || InstructionalButtons.ControlButtons.Count != 0) || InstructionalButtons.IsSaving))
+                InstructionalButtons.Update();
             if (Game.IsPaused) return;
             if (Warning._warning != null)
                 Warning.Update();
@@ -61,8 +63,6 @@ namespace ScaleformUI
                 PlayerListInstance.Update();
             if (JobMissionSelection._sc != null && JobMissionSelection.Enabled)
                 JobMissionSelection.Update();
-            if (InstructionalButtons._sc != null && InstructionalButtons.Enabled && ((InstructionalButtons.ControlButtons != null || InstructionalButtons.ControlButtons.Count != 0) || InstructionalButtons.IsSaving))
-                InstructionalButtons.Update();
             if (BigFeed._sc != null)
                 BigFeed.Update();
             _ui ??= new Scaleform("ScaleformUI");

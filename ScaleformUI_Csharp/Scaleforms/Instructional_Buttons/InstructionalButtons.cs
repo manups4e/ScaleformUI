@@ -423,8 +423,6 @@ namespace ScaleformUI
 
         internal void Update()
         {
-            if (_sc == null || !_enabled) return;
-            if ((ControlButtons == null || ControlButtons.Count == 0) && !_isSaving) return;
             if (API.IsUsingKeyboard(2))
             {
                 if (!_isUsingKeyboard)
