@@ -49,9 +49,6 @@ Citizen.CreateThread(function()
             if ScaleformUI.Scaleforms.MidMessageInstance._sc ~= 0 then
                 ScaleformUI.Scaleforms.MidMessageInstance:Update()
             end
-            if ScaleformUI.Scaleforms.InstructionalButtons._sc ~= 0 and ScaleformUI.Scaleforms.InstructionalButtons._sc ~= nil or ScaleformUI.Scaleforms.InstructionalButtons._enabled or (ScaleformUI.Scaleforms.InstructionalButtons.ControlButtons ~= nil or #ScaleformUI.Scaleforms.InstructionalButtons.ControlButtons ~= 0 or ScaleformUI.Scaleforms.InstructionalButtons.IsSaving) then
-                ScaleformUI.Scaleforms.InstructionalButtons:Update()
-            end
             if ScaleformUI.Scaleforms.PlayerListScoreboard._sc ~= nil and ScaleformUI.Scaleforms.PlayerListScoreboard.Enabled then
                 ScaleformUI.Scaleforms.PlayerListScoreboard:Update()
             end
@@ -61,6 +58,9 @@ Citizen.CreateThread(function()
             if ScaleformUI.Scaleforms.Warning._sc ~= 0 then
                 ScaleformUI.Scaleforms.Warning:Update()
             end
+        end
+        if ScaleformUI.Scaleforms.InstructionalButtons._sc ~= 0 and ScaleformUI.Scaleforms.InstructionalButtons._sc ~= nil or ScaleformUI.Scaleforms.InstructionalButtons._enabled or (ScaleformUI.Scaleforms.InstructionalButtons.ControlButtons ~= nil or #ScaleformUI.Scaleforms.InstructionalButtons.ControlButtons ~= 0 or ScaleformUI.Scaleforms.InstructionalButtons.IsSaving) then
+            ScaleformUI.Scaleforms.InstructionalButtons:Update()
         end
         if ScaleformUI.Scaleforms._ui == 0 or ScaleformUI.Scaleforms._ui == nil then
             ScaleformUI.Scaleforms._ui = Scaleform.Request("scaleformui")
