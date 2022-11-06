@@ -34,7 +34,7 @@ namespace ScaleformUI
 
     public class MissionSelectorHandler
     {
-        private Scaleform _sc;
+        internal Scaleform _sc;
         private bool enabled;
         private bool alreadyVoted;
         public int[] Votes = new int[9];
@@ -189,7 +189,6 @@ namespace ScaleformUI
         int unused = 0;
         public void Update()
         {
-            if (!enabled || _sc is null) return;
             _sc.Render2D();
             Game.DisableAllControlsThisFrame(0);
             Game.DisableAllControlsThisFrame(1);

@@ -12,7 +12,7 @@ namespace ScaleformUI
         private int _start;
         private int _timer;
         public bool Enabled { get; set; }
-        private Scaleform _sc { get; set; }
+        internal Scaleform _sc { get; set; }
         private int Index { get; set; } = 0;
         public int MaxPages { get; set; } = 1;
 
@@ -130,7 +130,6 @@ namespace ScaleformUI
 
         internal void Update()
         {
-            if (_sc is null || !Enabled) return;
             API.DrawScaleformMovie(_sc.Handle, 0.122f, 0.3f, 0.28f, 0.6f, 255, 255, 255, 255, 0);
             if (_start != 0 && Game.GameTime - _start > _timer)
             {

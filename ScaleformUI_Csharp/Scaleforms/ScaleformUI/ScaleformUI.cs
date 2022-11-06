@@ -50,20 +50,24 @@ namespace ScaleformUI
 
         private async Task ScaleformUIThread_Tick()
         {
-            Warning.Update();
-            MedMessageInstance.Update();
-            BigMessageInstance.Update();
-            PlayerListInstance.Update();
-            JobMissionSelection.Update();
-            InstructionalButtons.Update();
-            BigFeed.Update();
-
-            if (_ui is null)
-                _ui = new Scaleform("ScaleformUI");
-
+            if (Game.IsPaused) return;
+            if (Warning._warning != null)
+                Warning.Update();
+            if (MedMessageInstance._sc != null)
+                MedMessageInstance.Update();
+            if (BigMessageInstance._sc != null)
+                BigMessageInstance.Update();
+            if (PlayerListInstance._sc != null && PlayerListInstance.Enabled) return;
+                PlayerListInstance.Update();
+            if (JobMissionSelection._sc != null && JobMissionSelection.Enabled) return;
+                JobMissionSelection.Update();
+            if (InstructionalButtons._sc != null && InstructionalButtons.Enabled && ((InstructionalButtons.ControlButtons != null || InstructionalButtons.ControlButtons.Count != 0) || InstructionalButtons.IsSaving))
+                InstructionalButtons.Update();
+            if (BigFeed._sc != null)
+                BigFeed.Update();
+            _ui ??= new Scaleform("ScaleformUI");
             if (!PauseMenu.Loaded)
                 PauseMenu.Load();
-
             await Task.FromResult(0);
         }
     }

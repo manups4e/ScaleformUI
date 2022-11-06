@@ -201,7 +201,7 @@ namespace ScaleformUI
 
     public class InstructionalButtonsScaleform
     {
-        private Scaleform _sc;
+        internal Scaleform _sc;
         private bool _useMouseButtons;
         private bool _enabled = false;
         internal bool _isUsingKeyboard;
