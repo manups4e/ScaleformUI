@@ -57,9 +57,9 @@ namespace ScaleformUI
                 MedMessageInstance.Update();
             if (BigMessageInstance._sc != null)
                 BigMessageInstance.Update();
-            if (PlayerListInstance._sc != null && PlayerListInstance.Enabled) return;
+            if (PlayerListInstance._sc != null && PlayerListInstance.Enabled)
                 PlayerListInstance.Update();
-            if (JobMissionSelection._sc != null && JobMissionSelection.Enabled) return;
+            if (JobMissionSelection._sc != null && JobMissionSelection.Enabled)
                 JobMissionSelection.Update();
             if (InstructionalButtons._sc != null && InstructionalButtons.Enabled && ((InstructionalButtons.ControlButtons != null || InstructionalButtons.ControlButtons.Count != 0) || InstructionalButtons.IsSaving))
                 InstructionalButtons.Update();
