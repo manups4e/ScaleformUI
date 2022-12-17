@@ -15,7 +15,7 @@ namespace ScaleformUI
 
     public class PopupWarning
     {
-        private Scaleform _warning;
+        internal Scaleform _warning;
         private bool _disableControls;
         private List<InstructionalButton> _buttonList;
 
@@ -115,7 +115,6 @@ namespace ScaleformUI
 
         internal void Update()
         {
-            if (_warning == null) return;
             _warning.Render2D();
         }
     }

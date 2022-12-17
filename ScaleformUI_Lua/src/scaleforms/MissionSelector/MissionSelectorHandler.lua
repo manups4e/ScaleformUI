@@ -157,7 +157,6 @@ end
 local success, event_type, context, item_id
 
 function m:Update()
-    if not self.enabled or not self._sc or not self._sc:IsLoaded() then return end
     self._sc:Render2D()
     DisableAllControlActions(0)
     DisableAllControlActions(1)

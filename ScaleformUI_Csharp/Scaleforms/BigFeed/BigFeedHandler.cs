@@ -6,7 +6,7 @@ namespace ScaleformUI
 {
     public class BigFeedHandler
     {
-        private Scaleform _sc;
+        internal Scaleform _sc;
         private bool enabled;
         private string title = "";
         private string subtitle = "";
@@ -150,7 +150,6 @@ namespace ScaleformUI
 
         internal async void Update()
         {
-            if (_sc is null) return;
             _sc.Render2D();
         }
     }

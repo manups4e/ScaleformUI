@@ -201,7 +201,7 @@ namespace ScaleformUI
 
     public class InstructionalButtonsScaleform
     {
-        private Scaleform _sc;
+        internal Scaleform _sc;
         private bool _useMouseButtons;
         private bool _enabled = false;
         internal bool _isUsingKeyboard;
@@ -423,8 +423,6 @@ namespace ScaleformUI
 
         internal void Update()
         {
-            if (_sc == null || !_enabled) return;
-            if ((ControlButtons == null || ControlButtons.Count == 0) && !_isSaving) return;
             if (API.IsUsingKeyboard(2))
             {
                 if (!_isUsingKeyboard)

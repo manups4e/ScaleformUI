@@ -90,7 +90,6 @@ function PlayerListScoreboard:UpdateMaxPages()
 end
 
 function PlayerListScoreboard:Update()
-    if self._sc == nil or not self.Enabled then return end
     self._sc:Render2DNormal(0.122, 0.3, 0.28, 0.6)
     if self._start ~= 0 and GetGameTimer() - self._start > self._timer then
         self:CurrentPage(0)

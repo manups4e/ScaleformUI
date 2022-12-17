@@ -29,6 +29,8 @@ function handler:Enabled(bool)
         if not bool then
             self._sc:CallFunction("CLEAR_ALL", false)
             self._sc:CallFunction("CLEAR_RENDER", false)
+            self._sc:Dispose()
+            self._sc=0
         end
         self._enabled = bool
         self._changed = bool
@@ -129,8 +131,6 @@ function handler:DrawScreeSpace(x, y)
 end
 
 function handler:Update()
-    if self._sc == 0 or self._sc == nil then self:Load() end
-    if not self._enabled or (self.ControlButtons == nil or #self.ControlButtons == 0) and not self.IsSaving then return end
     if IsUsingKeyboard(2) then
         if not self.IsUsingKeyboard then
             self.IsUsingKeyboard = true

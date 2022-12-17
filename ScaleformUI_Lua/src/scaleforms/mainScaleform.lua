@@ -41,19 +41,54 @@ Citizen.CreateThread(function()
     ScaleformUI.Scaleforms._pauseMenu = PauseMenu.New()
     ScaleformUI.Scaleforms._pauseMenu:Load()
     
+    local wait = 500
     while true do
-        Citizen.Wait(0)
-        ScaleformUI.Scaleforms.BigMessageInstance:Update()
-        ScaleformUI.Scaleforms.MidMessageInstance:Update()
-        ScaleformUI.Scaleforms.InstructionalButtons:Update()
-        ScaleformUI.Scaleforms.PlayerListScoreboard:Update()
-        ScaleformUI.Scaleforms.JobMissionSelector:Update()
-        ScaleformUI.Scaleforms.Warning:Update()
+        if not IsPauseMenuActive() then
+            if ScaleformUI.Scaleforms.BigMessageInstance._sc ~= 0 then
+                ScaleformUI.Scaleforms.BigMessageInstance:Update()
+                wait = 0
+            end
+            if ScaleformUI.Scaleforms.MidMessageInstance._sc ~= 0 then
+                ScaleformUI.Scaleforms.MidMessageInstance:Update()
+                wait = 0
+            end
+            if ScaleformUI.Scaleforms.PlayerListScoreboard._sc ~= nil and ScaleformUI.Scaleforms.PlayerListScoreboard.Enabled then
+                ScaleformUI.Scaleforms.PlayerListScoreboard:Update()
+                wait = 0
+            end
+            if ScaleformUI.Scaleforms.JobMissionSelector.enabled and ScaleformUI.Scaleforms.JobMissionSelector._sc and ScaleformUI.Scaleforms.JobMissionSelector._sc:IsLoaded() then
+                ScaleformUI.Scaleforms.JobMissionSelector:Update()
+                wait = 0
+            end
+            if ScaleformUI.Scaleforms.Warning._sc ~= 0 then
+                ScaleformUI.Scaleforms.Warning:Update()
+                wait = 0
+            end
+        end
+        if (ScaleformUI.Scaleforms.InstructionalButtons._sc == 0 or ScaleformUI.Scaleforms.InstructionalButtons._sc == nil) then
+            ScaleformUI.Scaleforms.InstructionalButtons:Load()
+        end
+        if ScaleformUI.Scaleforms.InstructionalButtons:Enabled() or ScaleformUI.Scaleforms.InstructionalButtons.IsSaving then
+            ScaleformUI.Scaleforms.InstructionalButtons:Update()
+            wait = 0
+        end
         if ScaleformUI.Scaleforms._ui == 0 or ScaleformUI.Scaleforms._ui == nil then
             ScaleformUI.Scaleforms._ui = Scaleform.Request("scaleformui")
         end
         if not ScaleformUI.Scaleforms._pauseMenu.Loaded then
             ScaleformUI.Scaleforms._pauseMenu:Load()
         end
+
+        if ScaleformUI.Scaleforms.BigMessageInstance._sc == 0 and
+            ScaleformUI.Scaleforms.MidMessageInstance._sc == 0 and
+            ScaleformUI.Scaleforms.Warning._sc == 0 and
+            (ScaleformUI.Scaleforms.PlayerListScoreboard._sc == nil or not ScaleformUI.Scaleforms.PlayerListScoreboard.Enabled) and
+            (ScaleformUI.Scaleforms.JobMissionSelector.enabled or ScaleformUI.Scaleforms.JobMissionSelector._sc == nil) and
+            (not ScaleformUI.Scaleforms.InstructionalButtons._enabled or (ScaleformUI.Scaleforms.InstructionalButtons.ControlButtons == nil or #ScaleformUI.Scaleforms.InstructionalButtons.ControlButtons == 0 and not ScaleformUI.Scaleforms.InstructionalButtons.IsSaving))
+        then
+            wait = 500
+        end
+
+        Citizen.Wait(wait)
     end
 end)
