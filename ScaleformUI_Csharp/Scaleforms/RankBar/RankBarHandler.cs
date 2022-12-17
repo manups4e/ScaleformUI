@@ -17,7 +17,6 @@ namespace ScaleformUI.Scaleforms.RankBar
         private int _nextRank = 2;
 
         private HudColor _rankBarColor = HudColor.HUD_COLOUR_FREEMODE;
-        private HudColor _rankBarColorTwo = HudColor.HUD_COLOUR_FREEMODE_DARK;
 
         /// <summary>
         /// Set the color of the Rank Bar when displayed
@@ -28,14 +27,6 @@ namespace ScaleformUI.Scaleforms.RankBar
             set
             {
                 _rankBarColor = value;
-            }
-        }
-        public HudColor ColorTwo
-        {
-            get => _rankBarColorTwo;
-            set
-            {
-                _rankBarColorTwo = value;
             }
         }
 
@@ -75,7 +66,6 @@ namespace ScaleformUI.Scaleforms.RankBar
             // Color has to be set else it will be white by default
             API.BeginScaleformMovieMethodHudComponent(HUD_COMPONENT_ID, "SET_COLOUR");
             API.PushScaleformMovieFunctionParameterInt((int)_rankBarColor);
-            API.PushScaleformMovieFunctionParameterInt((int)_rankBarColorTwo);
             API.EndScaleformMovieMethod();
 
             _limitStart = limitStart;
