@@ -1,5 +1,6 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
+using ScaleformUI.Scaleforms.RankBar;
 using ScaleformUI.Scaleforms.Countdown;
 using System;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ namespace ScaleformUI
         public static PlayerListHandler PlayerListInstance { get; set; }
         public static MissionSelectorHandler JobMissionSelection { get; set; }
         public static BigFeedHandler BigFeed { get; set; }
+        public static RankBarHandler RankBarInstance { get; set; }
         public static CountdownHandler CountdownInstance { get; set; }
 
         internal static Scaleform _ui { get; set; }
@@ -31,6 +33,7 @@ namespace ScaleformUI
             _ui = new("scaleformui");
             InstructionalButtons = new();
             InstructionalButtons.Load();
+            RankBarInstance = new();
             CountdownInstance = new();
             Tick += ScaleformUIThread_Tick;
 
