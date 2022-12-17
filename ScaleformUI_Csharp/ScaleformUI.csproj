@@ -82,6 +82,7 @@
     <Compile Include="Items\UIMenuSeparatorItem.cs" />
     <Compile Include="Items\UIMenuSliderItem.cs" />
     <Compile Include="Colors.cs" />
+    <Compile Include="Scaleforms\Countdown\CountdownHandler.cs" />
     <Compile Include="Scaleforms\Instructional_Buttons\InstructionalButtons.cs" />
     <Compile Include="Items\IListItem.cs" />
     <Compile Include="Items\UIMenuCheckboxItem.cs" />
