@@ -9,13 +9,6 @@ namespace ScaleformUI.Scaleforms.RankBar
     {
         private const int HUD_COMPONENT_ID = 19;
 
-        private int _limitStart = 0;
-        private int _limitEnd = 0;
-        private int _previousValue = 0;
-        private int _currentValue = 0;
-        private int _currentRank = 1;
-        private int _nextRank = 2;
-
         private HudColor _rankBarColor = HudColor.HUD_COLOUR_FREEMODE;
 
         /// <summary>
@@ -29,13 +22,6 @@ namespace ScaleformUI.Scaleforms.RankBar
                 _rankBarColor = value;
             }
         }
-
-        public int LimitStart { get => _limitStart; set => _limitStart = value; }
-        public int LimitEnd { get => _limitEnd; set => _limitEnd = value; }
-        public int PreviousValue { get => _previousValue; set => _previousValue = value; }
-        public int CurrentValue { get => _currentValue; set => _currentValue = value; }
-        public int CurrentRank { get => _currentRank; set => _currentRank = value; }
-        public int NextRank { get => _nextRank; set => _nextRank = value; }
 
         public RankBarHandler() { }
 
@@ -67,12 +53,6 @@ namespace ScaleformUI.Scaleforms.RankBar
             API.BeginScaleformMovieMethodHudComponent(HUD_COMPONENT_ID, "SET_COLOUR");
             API.PushScaleformMovieFunctionParameterInt((int)_rankBarColor);
             API.EndScaleformMovieMethod();
-
-            _limitStart = limitStart;
-            _limitEnd = limitEnd;
-            _previousValue = previousValue;
-            _currentValue = currentValue;
-            _currentRank = currentRank;
 
             // this will set an update the score
             API.BeginScaleformMovieMethodHudComponent(HUD_COMPONENT_ID, "SET_RANK_SCORES");

@@ -42,15 +42,13 @@ namespace ScaleformUI.Scaleforms.Countdown
 
             while (number >= 0)
             {
-                if ((API.GetGameTimer() - gameTime) < 1000)
-                    await BaseScript.Delay(0);
-                else
+                await BaseScript.Delay(0);
+                if ((API.GetGameTimer() - gameTime) > 1000)
                 {
                     API.PlaySoundFrontend(-1, countdownAudioName, countdownAudioRef, true);
                     gameTime = API.GetGameTimer();
                     ShowMessage(number, r, g, b);
                     number--;
-                    await BaseScript.Delay(0);
                 }
             }
 

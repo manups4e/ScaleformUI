@@ -10,6 +10,8 @@ ScaleformUI.Scaleforms.BigMessageInstance = nil
 ScaleformUI.Scaleforms.Warning = nil
 ScaleformUI.Scaleforms.PlayerListInstance = nil
 ScaleformUI.Scaleforms.JobMissionSelector = nil
+ScaleformUI.Scaleforms.RankbarHandler = nil
+ScaleformUI.Scaleforms.CountdownHandler = nil
 
 ScaleformUI.Scaleforms._pauseMenu = nil
 
@@ -40,6 +42,8 @@ Citizen.CreateThread(function()
     ScaleformUI.Notifications = Notifications.New()
     ScaleformUI.Scaleforms._pauseMenu = PauseMenu.New()
     ScaleformUI.Scaleforms._pauseMenu:Load()
+    ScaleformUI.Scaleforms.RankbarHandler = RankbarHandler.New()
+    ScaleformUI.Scaleforms.CountdownHandler = CountdownHandler.New()
     
     local wait = 500
     while true do
