@@ -894,6 +894,7 @@ function UIMenu:GoLeft()
     local res = GetScaleformMovieFunctionReturnInt(return_value)
 
     if subtype == "UIMenuListItem" then
+        res = res - 1
         Item:Index(res)
         self.OnListChange(self, Item, Item._Index)
         Item.OnListChanged(self, Item, Item._Index)
@@ -937,6 +938,7 @@ function UIMenu:GoRight()
     local res = GetScaleformMovieFunctionReturnInt(return_value)
 
     if subtype == "UIMenuListItem" then
+        res = res + 1
         Item:Index(res)
         self.OnListChange(self, Item, Item._Index)
         Item.OnListChanged(self, Item, Item._Index)
