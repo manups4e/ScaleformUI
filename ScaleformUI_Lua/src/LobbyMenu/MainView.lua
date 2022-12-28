@@ -90,7 +90,10 @@ function MainView:Visible(visible)
             self.OnLobbyMenuClose(self)
             SetPlayerControl(PlayerId(), true, 0)
             self._internalpool:ProcessMenus(false)
-            ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, false, -1)
+            if IsPauseMenuActive() then
+				ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, false, -1)
+			end
+			SetFrontendActive(false)
         end
     else
         return self._visible
