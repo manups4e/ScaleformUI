@@ -86,7 +86,7 @@ Citizen.CreateThread(function()
         if ScaleformUI.Scaleforms.BigMessageInstance._sc == 0 and
             ScaleformUI.Scaleforms.MidMessageInstance._sc == 0 and
             ScaleformUI.Scaleforms.Warning._sc == 0 and
-            (ScaleformUI.Scaleforms.PlayerListScoreboard._sc == nil or not ScaleformUI.Scaleforms.PlayerListScoreboard.Enabled) and
+            (ScaleformUI.Scaleforms.PlayerListScoreboard._sc ~= nil and not ScaleformUI.Scaleforms.PlayerListScoreboard.Enabled) and
             (ScaleformUI.Scaleforms.JobMissionSelector.enabled or ScaleformUI.Scaleforms.JobMissionSelector._sc == nil) and
             (not ScaleformUI.Scaleforms.InstructionalButtons._enabled or (ScaleformUI.Scaleforms.InstructionalButtons.ControlButtons == nil or #ScaleformUI.Scaleforms.InstructionalButtons.ControlButtons == 0 and not ScaleformUI.Scaleforms.InstructionalButtons.IsSaving))
         then
