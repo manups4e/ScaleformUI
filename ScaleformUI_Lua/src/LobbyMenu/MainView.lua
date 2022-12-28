@@ -139,7 +139,7 @@ function MainView:ShowHeader()
         ScaleformUI.Scaleforms._pauseMenu:SetHeaderTitle(self.Title)
     else
         ScaleformUI.Scaleforms._pauseMenu:ShiftCoronaDescription(true, false)
-        ScaleformUI.Scaleforms._pauseMenu:SetHeaderTitle(self.Title, self.Subtitle)
+        ScaleformUI.Scaleforms._pauseMenu:SetHeaderTitle(self.Title, self.Subtitle.."\n\n\n\n\n\n\n\n\n\n\n")
     end
     if (self:HeaderPicture() ~= nil) then
         ScaleformUI.Scaleforms._pauseMenu:SetHeaderCharImg(self:HeaderPicture().txd, self:HeaderPicture().txn, true)
