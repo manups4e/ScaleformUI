@@ -26,7 +26,7 @@ function handler:Enabled(bool)
     if bool == nil then
         return self._enabled
     else
-        if not bool then
+        if not bool and type(self._sc) ~= "number" then
             self._sc:CallFunction("CLEAR_ALL", false)
             self._sc:CallFunction("CLEAR_RENDER", false)
             self._sc:Dispose()
