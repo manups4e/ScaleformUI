@@ -76,10 +76,11 @@ function MainView:Visible(visible)
         ScaleformUI.Scaleforms._pauseMenu:Visible(visible)
         if visible == true then
 			if not IsPauseMenuActive() then
+				self.focusLevel = 1
 				ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
 				self:BuildPauseMenu()
 				self.OnLobbyMenuOpen(self)
-				AnimpostfxPlay("PauseMenuIn", 800, true)
+				TriggerScreenblurFadeIn(1000) --screen blur
 				ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
 				SetPlayerControl(PlayerId(), false, 0)
 				self._firstTick = true
@@ -87,9 +88,9 @@ function MainView:Visible(visible)
 			end
         else
 			ScaleformUI.Scaleforms._pauseMenu:Dispose()
-			AnimpostfxStop("PauseMenuIn")
-			AnimpostfxPlay("PauseMenuOut", 800, false)
-			self.OnLobbyMenuClose(self)
+			TriggerScreenblurFadeOut(1000)--screen blur
+			self.OnL
+			obbyMenuClose(self)
 			SetPlayerControl(PlayerId(), true, 0)
 			self._internalpool:ProcessMenus(false)
 			if IsPauseMenuActive() then
