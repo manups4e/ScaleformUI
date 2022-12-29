@@ -19,8 +19,7 @@ AddEventHandler("onResourceStop", function(resName)
     if resName == GetCurrentResourceName() then
         if IsPauseMenuActive() and GetCurrentFrontendMenuVersion() == -2060115030 then
             ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
-            AnimpostfxStop("PauseMenuIn");
-            AnimpostfxPlay("PauseMenuOut", 800, false);
+            TriggerScreenblurFadeOut(0) --screen blur
         end
         ScaleformUI.Scaleforms._pauseMenu:Dispose()
         ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)

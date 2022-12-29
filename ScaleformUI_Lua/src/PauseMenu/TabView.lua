@@ -84,21 +84,27 @@ function TabView:Visible(visible)
         self._visible = visible
         ScaleformUI.Scaleforms._pauseMenu:Visible(visible)
         if visible == true then
-            ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
-            self:BuildPauseMenu()
-            self._internalpool:ProcessMenus(true)
-            self.OnPauseMenuOpen(self)
-            AnimpostfxPlay("PauseMenuIn", 800, true)
-            ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
-            SetPlayerControl(PlayerId(), false, 0)
+			if not IsPauseMenuActive() then
+				PlaySoundFrontend(-1, "Hit_In", "PLAYER_SWITCH_CUSTOM_SOUNDSET")
+				ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
+				self:BuildPauseMenu()
+				self._internalpool:ProcessMenus(true)
+				self.OnPauseMenuOpen(self)
+				TriggerScreenblurFadeIn(800) --screen blur
+				ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
+				SetPlayerControl(PlayerId(), false, 0)
+			end
         else
             ScaleformUI.Scaleforms._pauseMenu:Dispose()
-            AnimpostfxStop("PauseMenuIn")
-            AnimpostfxPlay("PauseMenuOut", 800, false)
+            TriggerScreenblurFadeOut(800)--screen blur
             self.OnPauseMenuClose(self)
             SetPlayerControl(PlayerId(), true, 0)
             self._internalpool:ProcessMenus(false)
-            ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
+			if IsPauseMenuActive() then
+				PlaySoundFrontend(-1, "Hit_Out", "PLAYER_SWITCH_CUSTOM_SOUNDSET")
+				ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
+			end
+			SetFrontendActive(false)
         end
     else
         return self._visible
