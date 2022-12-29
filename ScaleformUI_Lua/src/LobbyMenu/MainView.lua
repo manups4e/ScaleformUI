@@ -75,22 +75,27 @@ function MainView:Visible(visible)
         ScaleformUI.Scaleforms.InstructionalButtons:Enabled(visible)
         ScaleformUI.Scaleforms._pauseMenu:Visible(visible)
         if visible == true then
-            ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
-            self:BuildPauseMenu()
-            self.OnLobbyMenuOpen(self)
-            AnimpostfxPlay("PauseMenuIn", 800, true)
-            ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
-            SetPlayerControl(PlayerId(), false, 0)
-            self._firstTick = true
-            self._internalpool:ProcessMenus(true)
+			if not IsPauseMenuActive() then
+				ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
+				self:BuildPauseMenu()
+				self.OnLobbyMenuOpen(self)
+				AnimpostfxPlay("PauseMenuIn", 800, true)
+				ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
+				SetPlayerControl(PlayerId(), false, 0)
+				self._firstTick = true
+				self._internalpool:ProcessMenus(true)
+			end
         else
-            ScaleformUI.Scaleforms._pauseMenu:Dispose()
-            AnimpostfxStop("PauseMenuIn")
-            AnimpostfxPlay("PauseMenuOut", 800, false)
-            self.OnLobbyMenuClose(self)
-            SetPlayerControl(PlayerId(), true, 0)
-            self._internalpool:ProcessMenus(false)
-            ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, false, -1)
+			ScaleformUI.Scaleforms._pauseMenu:Dispose()
+			AnimpostfxStop("PauseMenuIn")
+			AnimpostfxPlay("PauseMenuOut", 800, false)
+			self.OnLobbyMenuClose(self)
+			SetPlayerControl(PlayerId(), true, 0)
+			self._internalpool:ProcessMenus(false)
+			if IsPauseMenuActive() then
+				ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, false, -1)
+			end
+			SetFrontendActive(false)
         end
     else
         return self._visible
