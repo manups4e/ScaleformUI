@@ -76,6 +76,9 @@ function MainView:Visible(visible)
         ScaleformUI.Scaleforms._pauseMenu:Visible(visible)
         if visible == true then
 			if not IsPauseMenuActive() then
+				self.focusLevel = 1
+				PlaySoundFrontend(-1, "Hit_In", "PLAYER_SWITCH_CUSTOM_SOUNDSET")
+				ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
 				ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
 				self:BuildPauseMenu()
 				self.OnLobbyMenuOpen(self)
@@ -93,6 +96,7 @@ function MainView:Visible(visible)
 			SetPlayerControl(PlayerId(), true, 0)
 			self._internalpool:ProcessMenus(false)
 			if IsPauseMenuActive() then
+				PlaySoundFrontend(-1, "Hit_Out", "PLAYER_SWITCH_CUSTOM_SOUNDSET")
 				ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, false, -1)
 			end
 			SetFrontendActive(false)
@@ -431,7 +435,6 @@ end
 
 function MainView:GoBack()
     if self:CanPlayerCloseMenu() then
-        PlaySoundFrontend(-1, "BACK", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
         self:Visible(false)
     end
 end
