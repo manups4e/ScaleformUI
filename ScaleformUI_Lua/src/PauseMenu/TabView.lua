@@ -3,6 +3,7 @@ TabView.__index = TabView
 TabView.__call = function()
     return "PauseMenu"
 end
+TabView.SoundId = GetSoundId()
 
 function TabView.New(title, subtitle, sideTop, sideMid, sideBot)
     local _data = {
@@ -86,7 +87,7 @@ function TabView:Visible(visible)
         if visible == true then
             if not IsPauseMenuActive() then
                 self.focusLevel = 1
-                PlaySoundFrontend(-1, "Hit_In", "PLAYER_SWITCH_CUSTOM_SOUNDSET")
+                PlaySoundFrontend(self.SoundId, "Hit_In", "PLAYER_SWITCH_CUSTOM_SOUNDSET")
                 ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
                 self:BuildPauseMenu()
                 self._internalpool:ProcessMenus(true)
@@ -103,7 +104,7 @@ function TabView:Visible(visible)
             SetPlayerControl(PlayerId(), true, 0)
             self._internalpool:ProcessMenus(false)
             if IsPauseMenuActive() then
-                PlaySoundFrontend(-1, "Hit_Out", "PLAYER_SWITCH_CUSTOM_SOUNDSET")
+                PlaySoundFrontend(self.SoundId, "Hit_Out", "PLAYER_SWITCH_CUSTOM_SOUNDSET")
                 ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
             end
             SetFrontendActive(false)
