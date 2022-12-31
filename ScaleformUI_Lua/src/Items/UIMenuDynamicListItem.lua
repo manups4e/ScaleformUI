@@ -8,16 +8,16 @@ UIMenuDynamicListItem.__call = function() return "UIMenuItem", "UIMenuDynamicLis
 ---@param Index number
 ---@param Description string
 function UIMenuDynamicListItem.New(Text, Description, StartingItem, callback, color, highlightColor, textColor, highlightedTextColor)
-	local _UIMenuDynamicListItem = {
-		Base = UIMenuItem.New(Text or "", Description or "", color or 117, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
-		Panels = {},
-		SidePanel = nil,
+    local _UIMenuDynamicListItem = {
+        Base = UIMenuItem.New(Text or "", Description or "", color or 117, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
+        Panels = {},
+        SidePanel = nil,
         _currentItem = StartingItem,
         Callback = callback,
-		ItemId = 1,
-		OnListSelected = function(menu, item, newindex) end,
-	}
-	return setmetatable(_UIMenuDynamicListItem, UIMenuDynamicListItem)
+        ItemId = 1,
+        OnListSelected = function(menu, item, newindex) end,
+    }
+    return setmetatable(_UIMenuDynamicListItem, UIMenuDynamicListItem)
 end
 
 function UIMenuDynamicListItem:ItemData(data)
@@ -53,85 +53,85 @@ end
 ---SetParentMenu
 ---@param Menu table
 function UIMenuDynamicListItem:SetParentMenu(Menu)
-	if Menu ~= nil and Menu() == "UIMenu" then
-		self.Base.ParentMenu = Menu
-	else
-		return self.Base.ParentMenu
-	end
+    if Menu ~= nil and Menu() == "UIMenu" then
+        self.Base.ParentMenu = Menu
+    else
+        return self.Base.ParentMenu
+    end
 end
 
 function UIMenuDynamicListItem:AddSidePanel(sidePanel)
     if sidePanel() == "UIMissionDetailsPanel" then
         sidePanel:SetParentItem(self)
         self.SidePanel = sidePanel
-		if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
-			ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
-		end
-    elseif sidePanel() == "UIVehicleColorPickerPanel" then	
-        sidePanel:SetParentItem(self)	
-        self.SidePanel = sidePanel	
-		if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
-			ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.ParentMenu.Items, self) - 1, 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor)
-		end
-	end
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
+        end
+    elseif sidePanel() == "UIVehicleColorPickerPanel" then    
+        sidePanel:SetParentItem(self)    
+        self.SidePanel = sidePanel    
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.ParentMenu.Items, self) - 1, 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor)
+        end
+    end
 end
 
 ---Selected
 ---@param bool boolean
 function UIMenuDynamicListItem:Selected(bool)
-	if bool ~= nil then
-		self.Base:Selected(tobool(bool), self)
-	else
-		return self.Base._Selected
-	end
+    if bool ~= nil then
+        self.Base:Selected(tobool(bool), self)
+    else
+        return self.Base._Selected
+    end
 end
 
 ---Hovered
 ---@param bool boolean
 function UIMenuDynamicListItem:Hovered(bool)
-	if bool ~= nil then
-		self.Base._Hovered = tobool(bool)
-	else
-		return self.Base._Hovered
-	end
+    if bool ~= nil then
+        self.Base._Hovered = tobool(bool)
+    else
+        return self.Base._Hovered
+    end
 end
 
 ---Enabled
 ---@param bool boolean
 function UIMenuDynamicListItem:Enabled(bool)
-	if bool ~= nil then
-		self.Base:Enabled(bool, self)
-	else
-		return self.Base._Enabled
-	end
+    if bool ~= nil then
+        self.Base:Enabled(bool, self)
+    else
+        return self.Base._Enabled
+    end
 end
 
 ---Description
 ---@param str string
 function UIMenuDynamicListItem:Description(str)
-	if tostring(str) and str ~= nil then
-		self.Base:Description(tostring(str), self)
-	else
-		return self.Base._Description
-	end
+    if tostring(str) and str ~= nil then
+        self.Base:Description(tostring(str), self)
+    else
+        return self.Base._Description
+    end
 end
 
 function UIMenuDynamicListItem:BlinkDescription(bool)
     if bool ~= nil then
-		self.Base:BlinkDescription(bool, self)
-	else
-		return self.Base:BlinkDescription()
-	end
+        self.Base:BlinkDescription(bool, self)
+    else
+        return self.Base:BlinkDescription()
+    end
 end
 
 ---Text
 ---@param Text string
 function UIMenuDynamicListItem:Label(Text)
-	if tostring(Text) and Text ~= nil then
-		self.Base:Label(tostring(Text), self)
-	else
-		return self.Base:Label()
-	end
+    if tostring(Text) and Text ~= nil then
+        self.Base:Label(tostring(Text), self)
+    else
+        return self.Base:Label()
+    end
 end
 
 function UIMenuDynamicListItem:MainColor(color)
@@ -189,52 +189,52 @@ end
 
 ---RightBadge
 function UIMenuDynamicListItem:RightBadge()
-	error("This item does not support badges")
+    error("This item does not support badges")
 end
 
 ---RightLabel
 function UIMenuDynamicListItem:RightLabel()
-	error("This item does not support a right label")
+    error("This item does not support a right label")
 end
 
 ---AddPanel
 ---@param Panel table
 function UIMenuDynamicListItem:AddPanel(Panel)
-	if Panel() == "UIMenuPanel" then
-		self.Panels[#self.Panels + 1] = Panel
-		Panel:SetParentItem(self)
-	end
+    if Panel() == "UIMenuPanel" then
+        self.Panels[#self.Panels + 1] = Panel
+        Panel:SetParentItem(self)
+    end
 end
 
 ---RemovePanelAt
 ---@param Index table
 function UIMenuDynamicListItem:RemovePanelAt(Index)
-	if tonumber(Index) then
-		if self.Panels[Index] then
-			table.remove(self.Panels, tonumber(Index))
-		end
-	end
+    if tonumber(Index) then
+        if self.Panels[Index] then
+            table.remove(self.Panels, tonumber(Index))
+        end
+    end
 end
 
 ---FindPanelIndex
 ---@param Panel table
 function UIMenuDynamicListItem:FindPanelIndex(Panel)
-	if Panel() == "UIMenuPanel" then
-		for Index = 1, #self.Panels do
-			if self.Panels[Index] == Panel then
-				return Index
-			end
-		end
-	end
-	return nil
+    if Panel() == "UIMenuPanel" then
+        for Index = 1, #self.Panels do
+            if self.Panels[Index] == Panel then
+                return Index
+            end
+        end
+    end
+    return nil
 end
 
 ---FindPanelItem
 function UIMenuDynamicListItem:FindPanelItem()
-	for Index = #self.Items, 1, -1 do
-		if self.Items[Index].Panel then
-			return Index
-		end
-	end
-	return nil
+    for Index = #self.Items, 1, -1 do
+        if self.Items[Index].Panel then
+            return Index
+        end
+    end
+    return nil
 end

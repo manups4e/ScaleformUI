@@ -115,7 +115,7 @@ end
 ---@param Outline number
 ---@param WordWrap number
 function UIResText.New(Text, X, Y, Scale, R, G, B, A, Font, Alignment, DropShadow, Outline, WordWrap)
-	local _UIResText = {
+    local _UIResText = {
         _Text = tostring(Text) or "",
         X = tonumber(X) or 0,
         Y = tonumber(Y) or 0,
@@ -127,7 +127,7 @@ function UIResText.New(Text, X, Y, Scale, R, G, B, A, Font, Alignment, DropShado
         Outline = Outline or nil,
         WordWrap = tonumber(WordWrap) or 0,
     }
-	return setmetatable(_UIResText, UIResText)
+    return setmetatable(_UIResText, UIResText)
 end
 
 ---Position

@@ -123,7 +123,7 @@ function handler:UpdateButtons()
 end
 
 function handler:Draw()
-	SetScriptGfxDrawBehindPausemenu(true)
+    SetScriptGfxDrawBehindPausemenu(true)
     self._sc:Render2D()
 end
 

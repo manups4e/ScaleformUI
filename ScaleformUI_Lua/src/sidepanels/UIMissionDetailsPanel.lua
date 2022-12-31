@@ -4,7 +4,7 @@ UIMissionDetailsPanel.__call = function() return "UIMissionDetailsPanel", "UIMis
 
 function UIMissionDetailsPanel.New(side, title, color, inside, txd, txn)
     local _titleType, _titleColor
-	if inside == -1 then
+    if inside == -1 then
         _titleType = 1
     elseif inside then
         _titleType = 2
@@ -27,16 +27,16 @@ function UIMissionDetailsPanel.New(side, title, color, inside, txd, txn)
         TextureName = txn or "",
         Items = {},
         ParentItem = nil
-	}
-	return setmetatable(_UIMissionDetailsPanel, UIMissionDetailsPanel)
+    }
+    return setmetatable(_UIMissionDetailsPanel, UIMissionDetailsPanel)
 end
 
 function UIMissionDetailsPanel:SetParentItem(Item) -- required
-	if Item() == "UIMenuItem" then
-		self.ParentItem = Item
-	else
-		return self.ParentItem
-	end
+    if Item() == "UIMenuItem" then
+        self.ParentItem = Item
+    else
+        return self.ParentItem
+    end
 end
 
 function UIMissionDetailsPanel:UpdatePanelTitle(title)
@@ -69,6 +69,6 @@ end
 function UIMissionDetailsPanel:RemoveItemAt(index)
     table.remove(self.Items, index)
     if self.ParentItem ~= nil then
-        ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_MISSION_DETAILS_DESC_ITEM", false, index - 1)	
-    end	
+        ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_MISSION_DETAILS_DESC_ITEM", false, index - 1)    
+    end    
 end
