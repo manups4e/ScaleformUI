@@ -3,6 +3,7 @@ MainView.__index = MainView
 MainView.__call = function()
     return "LobbyMenu"
 end
+MainView.SoundId = GetSoundId()
 
 function MainView.New(title, subtitle, sideTop, sideMid, sideBot)
     local _data = {
@@ -77,7 +78,7 @@ function MainView:Visible(visible)
         if visible == true then
             if not IsPauseMenuActive() then
                 self.focusLevel = 1
-                PlaySoundFrontend(-1, "Hit_In", "PLAYER_SWITCH_CUSTOM_SOUNDSET")
+                PlaySoundFrontend(self.SoundId, "Hit_In", "PLAYER_SWITCH_CUSTOM_SOUNDSET")
                 ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
                 ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
                 self:BuildPauseMenu()
@@ -96,7 +97,7 @@ function MainView:Visible(visible)
             SetPlayerControl(PlayerId(), true, 0)
             self._internalpool:ProcessMenus(false)
             if IsPauseMenuActive() then
-                PlaySoundFrontend(-1, "Hit_Out", "PLAYER_SWITCH_CUSTOM_SOUNDSET")
+                PlaySoundFrontend(self.SoundId, "Hit_Out", "PLAYER_SWITCH_CUSTOM_SOUNDSET")
                 ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, false, -1)
             end
             SetFrontendActive(false)
