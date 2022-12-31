@@ -40,17 +40,17 @@ function UIMenuDetailsWindow.New(...)
             ParentMenu = nil, -- required
         }
     end
-	return setmetatable(_UIMenuDetailsWindow, UIMenuDetailsWindow)
+    return setmetatable(_UIMenuDetailsWindow, UIMenuDetailsWindow)
 end
 
 ---SetParentMenu
 ---@param Menu table
 function UIMenuDetailsWindow:SetParentMenu(Menu) -- required
-	if Menu() == "UIMenu" then
-		self.ParentMenu = Menu
-	else
-		return self.ParentMenu
-	end
+    if Menu() == "UIMenu" then
+        self.ParentMenu = Menu
+    else
+        return self.ParentMenu
+    end
 end
 
 function UIMenuDetailsWindow:UpdateLabels(top, mid, bot, leftDetail)
