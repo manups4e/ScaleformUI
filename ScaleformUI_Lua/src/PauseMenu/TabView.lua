@@ -251,17 +251,17 @@ function TabView:BuildPauseMenu()
                         ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_SETTINGS_ITEM", false, tabIndex, 4, item:Label(), "menu_pause_playerTab{" .. it .."}", item:Enabled(), item:BlinkDescription(), item._Max, item._Multiplier, item:Index(), item.Base._mainColor, item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor, item.SliderColor)
                     else
                         ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_SETTINGS_ITEM", false, tabIndex, 0, item:Label(), "menu_pause_playerTab{" .. it .."}", item:Enabled(), item:BlinkDescription(), item._mainColor, item._highlightColor, item._textColor, item._highlightedTextColor)
-                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SETTINGS_SET_RIGHT_LABEL", false, it - 1, item:RightLabel())
+                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_RIGHT_LABEL", false, it - 1, item:RightLabel())
                         if item._rightBadge ~= BadgeStyle.NONE then
-                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SETTINGS_SET_RIGHT_BADGE", false, it - 1, item._rightBadge)
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_RIGHT_BADGE", false, it - 1, item._rightBadge)
                         end
                     end
                     --[[
                     if (SubType == "UIMenuItem" and item._leftBadge ~= BadgeStyle.NONE) or (SubType ~= "UIMenuItem" and item.Base._leftBadge ~= BadgeStyle.NONE) then
                         if SubType ~= "UIMenuItem" then
-                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SETTINGS_SET_LEFT_BADGE", false, it - 1, item.Base._leftBadge)
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_LEFT_BADGE", false, it - 1, item.Base._leftBadge)
                         else
-                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SETTINGS_SET_LEFT_BADGE", false, it - 1, item._leftBadge)
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_LEFT_BADGE", false, it - 1, item._leftBadge)
                         end
                     end
                     ]]
