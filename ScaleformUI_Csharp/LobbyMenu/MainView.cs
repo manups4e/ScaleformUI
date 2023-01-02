@@ -261,8 +261,15 @@ namespace ScaleformUI.LobbyMenu
                             PushScaleformMovieFunctionParameterInt((int)item.TextColor);
                             PushScaleformMovieFunctionParameterInt((int)item.HighlightedTextColor);
                             EndScaleformMovieMethod();
+                            _pause._lobby.CallFunction("UPDATE_SETTINGS_ITEM_LABEL_RIGHT", index, item.RightLabel);
+                            if(item.RightBadge != BadgeIcon.NONE)
+                            {
+                                _pause._lobby.CallFunction("SET_SETTINGS_ITEM_RIGHT_BADGE", index, (int)item.RightBadge);
+                            }
                             break;
                     }
+                    if (item.LeftBadge != BadgeIcon.NONE) 
+                        _pause._lobby.CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", index, (int)item.LeftBadge);
                     i++;
                 }
                 SettingsColumn.CurrentSelection = 0;

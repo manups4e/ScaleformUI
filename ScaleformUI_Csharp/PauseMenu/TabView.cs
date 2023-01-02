@@ -378,8 +378,15 @@ namespace ScaleformUI.PauseMenu
                         PushScaleformMovieFunctionParameterInt((int)item.TextColor);
                         PushScaleformMovieFunctionParameterInt((int)item.HighlightedTextColor);
                         EndScaleformMovieMethod();
+                        _pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL_RIGHT", tab, index, item.RightLabel);
+                        if (item.RightBadge != BadgeIcon.NONE)
+                        {
+                            _pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_BADGE", tab, index, (int)item.RightBadge);
+                        }
                         break;
                 }
+                if (item.LeftBadge != BadgeIcon.NONE)
+                    _pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", tab, index, (int)item.LeftBadge);
                 i++;
             }
             tab.SettingsColumn.CurrentSelection = 0;
