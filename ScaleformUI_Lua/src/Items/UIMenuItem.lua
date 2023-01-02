@@ -41,7 +41,8 @@ function UIMenuItem:ItemData(data)
     end
 end
 
-function UIMenuItem:LabelFont(fontTable)
+-- not supported on Lobby and Pause menu yet
+function UIMenuItem:LabelFont(fontTable) 
     if fontTable == nil then
         return self._labelFont
     else
