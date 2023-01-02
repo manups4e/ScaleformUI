@@ -18,6 +18,6 @@ function UIMenuFreemodeDetailsItem.New(textLeft, textRight, seperator, icon, ico
         Icon = icon,
         IconColor = iconColor,
         Tick = tick or false
-	}
-	return setmetatable(_UIMenuFreemodeDetailsItem, UIMenuFreemodeDetailsItem)
+    }
+    return setmetatable(_UIMenuFreemodeDetailsItem, UIMenuFreemodeDetailsItem)
 end

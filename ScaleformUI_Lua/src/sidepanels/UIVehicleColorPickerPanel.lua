@@ -18,16 +18,16 @@ function UIVehicleColorPickerPanel.New(side, title, color)
         Value = 1,
         ParentItem = nil,
         PickerSelect = function(menu, item, newindex) end
-	}
-	return setmetatable(_UIVehicleColorPickerPanel, UIVehicleColorPickerPanel)
+    }
+    return setmetatable(_UIVehicleColorPickerPanel, UIVehicleColorPickerPanel)
 end
 
 function UIVehicleColorPickerPanel:SetParentItem(Item) -- required
-	if not Item() == nil then
-		self.ParentItem = Item
-	else
-		return self.ParentItem
-	end
+    if not Item() == nil then
+        self.ParentItem = Item
+    else
+        return self.ParentItem
+    end
 end
 
 function UIVehicleColorPickerPanel:UpdatePanelTitle(title)

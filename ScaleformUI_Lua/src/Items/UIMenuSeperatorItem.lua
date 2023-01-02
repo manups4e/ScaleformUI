@@ -9,14 +9,14 @@ UIMenuSeperatorItem.__call = function() return "UIMenuItem", "UIMenuSeperatorIte
 ---@param Description string
 ---@param Counter boolean
 function UIMenuSeperatorItem.New(Text, jumpable , mainColor, highlightColor, textColor, highlightedTextColor)
-	local _UIMenuSeperatorItem = {
-		Base = UIMenuItem.New(Text or "", "", mainColor or 117, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
-		Panels = {},
-		SidePanel = nil,
+    local _UIMenuSeperatorItem = {
+        Base = UIMenuItem.New(Text or "", "", mainColor or 117, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
+        Panels = {},
+        SidePanel = nil,
         Jumpable = jumpable,
-		ItemId = 6
-	}
-	return setmetatable(_UIMenuSeperatorItem, UIMenuSeperatorItem)
+        ItemId = 6
+    }
+    return setmetatable(_UIMenuSeperatorItem, UIMenuSeperatorItem)
 end
 
 function UIMenuSeperatorItem:ItemData(data)
@@ -30,11 +30,11 @@ end
 ---SetParentMenu
 ---@param Menu table
 function UIMenuSeperatorItem:SetParentMenu(Menu)
-	if Menu() == "UIMenu" then
-		self.Base.ParentMenu = Menu
-	else
-		return self.Base.ParentMenu
-	end
+    if Menu() == "UIMenu" then
+        self.Base.ParentMenu = Menu
+    else
+        return self.Base.ParentMenu
+    end
 end
 
 function UIMenuSeperatorItem:LabelFont(fontTable)
@@ -51,21 +51,21 @@ end
 ---Description
 ---@param str string
 function UIMenuSeperatorItem:Description(str)
-	if tostring(str) and str ~= nil then
-		self.Base:Description(tostring(str), self)
-	else
-		return self.Base._Description
-	end
+    if tostring(str) and str ~= nil then
+        self.Base:Description(tostring(str), self)
+    else
+        return self.Base._Description
+    end
 end
 
 ---Text
 ---@param Text string
 function UIMenuSeperatorItem:Label(Text)
-	if tostring(Text) and Text ~= nil then
-		self.Base:Label(tostring(Text), self)
-	else
-		return self.Base:Label()
-	end
+    if tostring(Text) and Text ~= nil then
+        self.Base:Label(tostring(Text), self)
+    else
+        return self.Base:Label()
+    end
 end
 
 function UIMenuSeperatorItem:MainColor(color)
@@ -115,52 +115,52 @@ end
 ---Selected
 ---@param bool number
 function UIMenuSeperatorItem:Selected(bool)
-	if bool ~= nil then
-		self.Base:Selected(tobool(bool), self)
-	else
-		return self.Base._Selected
-	end
+    if bool ~= nil then
+        self.Base:Selected(tobool(bool), self)
+    else
+        return self.Base._Selected
+    end
 end
 
 ---Hovered
 ---@param bool boolean
 function UIMenuSeperatorItem:Hovered(bool)
-	if bool ~= nil then
-		self.Base._Hovered = tobool(bool)
-	else
-		return self.Base._Hovered
-	end
+    if bool ~= nil then
+        self.Base._Hovered = tobool(bool)
+    else
+        return self.Base._Hovered
+    end
 end
 
 ---Enabled
 ---@param bool boolean
 function UIMenuSeperatorItem:Enabled(bool)
-	if bool ~= nil then
-		self.Base:Enabled(bool, self)
-	else
-		return self.Base._Enabled
-	end
+    if bool ~= nil then
+        self.Base:Enabled(bool, self)
+    else
+        return self.Base._Enabled
+    end
 end
 
 function UIMenuSeperatorItem:BlinkDescription(bool)
     if bool ~= nil then
-		self.Base:BlinkDescription(bool, self)
-	else
-		return self.Base:BlinkDescription()
-	end
+        self.Base:BlinkDescription(bool, self)
+    else
+        return self.Base:BlinkDescription()
+    end
 end
 
 ---LeftBadge
 function UIMenuProgressItem:LeftBadge()
-	error("This item does not support badges")
+    error("This item does not support badges")
 end
 
 ---RightBadge
 function UIMenuProgressItem:RightBadge()
-	error("This item does not support badges")
+    error("This item does not support badges")
 end
 
 ---RightLabel
 function UIMenuProgressItem:RightLabel()
-	error("This item does not support a right label")
+    error("This item does not support a right label")
 end

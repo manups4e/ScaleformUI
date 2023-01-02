@@ -9,21 +9,21 @@ UIMenuProgressItem.__call = function() return "UIMenuItem", "UIMenuProgressItem"
 ---@param Description string
 ---@param Counter boolean
 function UIMenuProgressItem.New(Text, Max, Index, Description, sliderColor, color, highlightColor, textColor, highlightedTextColor)
-	local _UIMenuProgressItem = {
-		Base = UIMenuItem.New(Text or "", Description or "", color or 117, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
-		_Max = Max or 100,
-		_Multiplier = 5,
-		_Index = Index or 0,
-		Panels = {},
-		SidePanel = nil,
-		SliderColor = sliderColor or 116,
-		BackgroundSliderColor = backgroundSliderColor or 117,
-		ItemId = 4,
-		OnProgressChanged = function(menu, item, newindex) end,
-		OnProgressSelected = function(menu, item, newindex) end,
-	}
+    local _UIMenuProgressItem = {
+        Base = UIMenuItem.New(Text or "", Description or "", color or 117, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
+        _Max = Max or 100,
+        _Multiplier = 5,
+        _Index = Index or 0,
+        Panels = {},
+        SidePanel = nil,
+        SliderColor = sliderColor or 116,
+        BackgroundSliderColor = backgroundSliderColor or 117,
+        ItemId = 4,
+        OnProgressChanged = function(menu, item, newindex) end,
+        OnProgressSelected = function(menu, item, newindex) end,
+    }
 
-	return setmetatable(_UIMenuProgressItem, UIMenuProgressItem)
+    return setmetatable(_UIMenuProgressItem, UIMenuProgressItem)
 end
 
 function UIMenuProgressItem:ItemData(data)
@@ -48,77 +48,77 @@ end
 ---SetParentMenu
 ---@param Menu table
 function UIMenuProgressItem:SetParentMenu(Menu)
-	if Menu() == "UIMenu" then
-		self.Base.ParentMenu = Menu
-	else
-		return self.Base.ParentMenu
-	end
+    if Menu() == "UIMenu" then
+        self.Base.ParentMenu = Menu
+    else
+        return self.Base.ParentMenu
+    end
 end
 
 function UIMenuProgressItem:AddSidePanel(sidePanel)
     if sidePanel() == "UIMissionDetailsPanel" then
         sidePanel:SetParentItem(self)
         self.SidePanel = sidePanel
-		if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
-			ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
-		end
-    elseif sidePanel() == "UIVehicleColorPickerPanel" then	
-        sidePanel:SetParentItem(self)	
-        self.SidePanel = sidePanel	
-		if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
-			ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.ParentMenu.Items, self) - 1, 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor)
-		end
-	end
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
+        end
+    elseif sidePanel() == "UIVehicleColorPickerPanel" then    
+        sidePanel:SetParentItem(self)    
+        self.SidePanel = sidePanel    
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.ParentMenu.Items, self) - 1, 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor)
+        end
+    end
 end
 
 ---Selected
 ---@param bool number
 function UIMenuProgressItem:Selected(bool)
-	if bool ~= nil then
-		self.Base:Selected(tobool(bool), self)
-	else
-		return self.Base._Selected
-	end
+    if bool ~= nil then
+        self.Base:Selected(tobool(bool), self)
+    else
+        return self.Base._Selected
+    end
 end
 
 ---Hovered
 ---@param bool boolean
 function UIMenuProgressItem:Hovered(bool)
-	if bool ~= nil then
-		self.Base._Hovered = tobool(bool)
-	else
-		return self.Base._Hovered
-	end
+    if bool ~= nil then
+        self.Base._Hovered = tobool(bool)
+    else
+        return self.Base._Hovered
+    end
 end
 
 ---Enabled
 ---@param bool boolean
 function UIMenuProgressItem:Enabled(bool)
-	if bool ~= nil then
-		self.Base:Enabled(bool, self)
-	else
-		return self.Base._Enabled
-	end
+    if bool ~= nil then
+        self.Base:Enabled(bool, self)
+    else
+        return self.Base._Enabled
+    end
 end
 
 ---Description
 ---@param str string
 function UIMenuProgressItem:Description(str)
-	if tostring(str) and str ~= nil then
-		self.Base:Description(tostring(str), self)
-	else
-		return self.Base._Description
-	end
+    if tostring(str) and str ~= nil then
+        self.Base:Description(tostring(str), self)
+    else
+        return self.Base._Description
+    end
 end
 
 ---Text
 ---@param Text string
 function UIMenuProgressItem:Label(Text)
-	if tostring(Text) and Text ~= nil then
-		self.Base:Label(tostring(Text), self)
-	else
-		return self.Base:Label()
-	end
+    if tostring(Text) and Text ~= nil then
+        self.Base:Label(tostring(Text), self)
+    else
+        return self.Base:Label()
+    end
 end
 
 function UIMenuProgressItem:MainColor(color)
@@ -179,30 +179,30 @@ end
 
 function UIMenuProgressItem:BlinkDescription(bool)
     if bool ~= nil then
-		self.Base:BlinkDescription(bool, self)
-	else
-		return self.Base:BlinkDescription()
-	end
+        self.Base:BlinkDescription(bool, self)
+    else
+        return self.Base:BlinkDescription()
+    end
 end
 
 ---Index
 ---@param Index table
 function UIMenuProgressItem:Index(Index)
-	if tonumber(Index) then
-		if Index > self._Max then
-			self._Index = self._Max
-		elseif Index < 0 then
-			self._Index = 0
-		else
-			self._Index = Index
-		end
-		self.OnProgressChanged(self._Index)
+    if tonumber(Index) then
+        if Index > self._Max then
+            self._Index = self._Max
+        elseif Index < 0 then
+            self._Index = 0
+        else
+            self._Index = Index
+        end
+        self.OnProgressChanged(self._Index)
         if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_VALUE", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self._Index)
         end
-	else
-		return self._Index
-	end
+    else
+        return self._Index
+    end
 end
 
 ---LeftBadge
@@ -216,10 +216,10 @@ end
 
 ---RightBadge
 function UIMenuProgressItem:RightBadge()
-	error("This item does not support badges")
+    error("This item does not support badges")
 end
 
 ---RightLabel
 function UIMenuProgressItem:RightLabel()
-	error("This item does not support a right label")
+    error("This item does not support a right label")
 end

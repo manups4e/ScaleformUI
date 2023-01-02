@@ -20,6 +20,6 @@ function MissionDetailsItem.New(textLeft, textRight, seperator, icon, iconColor,
         Icon = icon,
         IconColor = iconColor,
         Tick = tick or false
-	}
+    }
     return setmetatable(_MissionDetailsItem, MissionDetailsItem)
 end
