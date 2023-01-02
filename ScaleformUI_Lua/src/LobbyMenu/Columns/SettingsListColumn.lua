@@ -65,6 +65,7 @@ function SettingsListColumn:UpdateItemLabels(index, leftLabel, rightLabel)
 end
 
 function SettingsListColumn:UpdateItemBlinkDescription(index, blink)
+    if blink == 1 then blink = true elseif blink == 0 then blink = false end
     if self.Parent ~= nil then
         local pSubT = self.Parent()
         if pSubT == "LobbyMenu" then
