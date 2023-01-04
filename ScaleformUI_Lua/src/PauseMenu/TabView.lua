@@ -229,7 +229,9 @@ function TabView:BuildPauseMenu()
                     else
                         ScaleformUI.Scaleforms._pauseMenu:AddRightListLabel(tabIndex , itemIndex, ii.Label)
                     end
+					Wait(0)
                 end
+				Wait(0)
             end
         elseif subtype == "PlayerListTab" then
             ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 1, tab.Base.Type)
