@@ -77,14 +77,14 @@ function handler:ShowBusySpinner(spinnerType, text, time)
     self.savingTimer = GetGameTimer()
 
     if text == nil or text == "" then
-        BeginTextCommandBusyString(nil)
+        BeginTextCommandBusyspinnerOn(nil)
     else
-        BeginTextCommandBusyString("STRING")
+        BeginTextCommandBusyspinnerOn("STRING")
         AddTextComponentSubstringPlayerName(text)
     end
-    EndTextCommandBusyString(spinnerType)
+    EndTextCommandBusyspinnerOn(spinnerType)
     while GetGameTimer() - self.savingTimer <= time do Citizen.Wait(100) end
-    RemoveLoadingPrompt()
+    BusyspinnerOff()
     self.IsSaving = false
 end
 
