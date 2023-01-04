@@ -167,6 +167,9 @@ function TabView:ShowHeader()
 end
 
 function TabView:BuildPauseMenu()
+	BeginTextCommandBusyspinnerOn("FMMC_DOWNLOAD")
+	EndTextCommandBusyspinnerOn(1)
+	
     self:ShowHeader()
     for k, tab in pairs(self.Tabs) do
         local tabIndex = k-1
@@ -229,9 +232,9 @@ function TabView:BuildPauseMenu()
                     else
                         ScaleformUI.Scaleforms._pauseMenu:AddRightListLabel(tabIndex , itemIndex, ii.Label)
                     end
-					Wait(0)
+					Citizen.Wait(0)
                 end
-				Wait(0)
+				Citizen.Wait(0)
             end
         elseif subtype == "PlayerListTab" then
             ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 1, tab.Base.Type)
@@ -291,6 +294,8 @@ function TabView:BuildPauseMenu()
             end)
         end
     end
+	
+	BusyspinnerOff()
 end
 
 
