@@ -807,17 +807,42 @@ function CreateMissionSelectorMenu()
     ScaleformUI.Scaleforms.JobMissionSelector:ShowPlayerVote(3, "PlayerName", Colours.HUD_COLOUR_GREEN, true, true)
 end
 
+function setRowColor(row)
+    if row % 5 == 0 then
+        return Colours.HUD_COLOUR_BLUE
+    elseif row % 3 == 0 then
+        return Colours.HUD_COLOUR_GREEN
+    elseif row % 2 == 0 then
+        return Colours.HUD_COLOUR_PURPLE
+    else
+        return Colours.HUD_COLOUR_ORANGE
+    end
+end
+
 CreateThread(function()
     local pos = GetEntityCoords(PlayerPedId(), true)
     --type, position, scale, distance, color, placeOnGround, bobUpDown, rotate, faceCamera, checkZ
     local marker = Marker.New(1, pos, vector3(2,2,2), 100.0, {R=0, G= 100, B=50, A=255}, true, false, false, false, true)
-
     -- example for working timerBars.. you can disable them by setting :Enabled(false).. to hide and show them while drawing :)
     local textBar = TextTimerBar.New("Label", "Caption")
     local progrBar = ProgressTimerBar.New("Label")
     progrBar:Percentage(0.5) -- goes from 0.0 to 1.0
     timerBarPool:AddBar(textBar)
     timerBarPool:AddBar(progrBar)
+
+    local scoreboardPlayerCount = 124 -- This would normally be a networked value, but for the sake of the example, we'll just use a local value
+    local currentPage = 1;
+
+    local handle = RegisterPedheadshot(PlayerPedId())
+    while not IsPedheadshotReady(handle) or not IsPedheadshotValid(handle) do Wait(0) end
+    local txd = GetPedheadshotTxdString(handle)
+
+    for i = scoreboardPlayerCount, 1, -1 do        
+        local row = SCPlayerItem.New(GetPlayerName(PlayerId()), setRowColor(i), 65, 50, "", "hello", "", 0, "", 1, txd)
+        ScaleformUI.Scaleforms.PlayerListScoreboard:AddRow(row)
+    end
+
+    UnregisterPedheadshot(handle) -- call it right after adding the menu.. this way the txd will be loaded correctly by the scaleform.. 
 
     while true do
         Wait(0)
@@ -844,25 +869,33 @@ CreateThread(function()
         end
         
         if IsControlJustPressed(0, 56) and not pool:IsAnyMenuOpen() then -- F9
-            local handle = RegisterPedheadshot(PlayerPedId())
-            while not IsPedheadshotReady(handle) or not IsPedheadshotValid(handle) do Wait(0) end
-            local txd = GetPedheadshotTxdString(handle)
-                
-            ScaleformUI.Scaleforms.PlayerListScoreboard:SetTitle("Title", "leftLabel", 2)
+            local maxPage = math.ceil(scoreboardPlayerCount / 16); -- 16 is the max amount of rows per page
 
-            local row1 = SCPlayerItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_GREEN, 65, 50, "", "hello", "", 0, "", 1, txd)
-            local row2 = SCPlayerItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_RED, 65, 100, "", "hello", "", 0, "", 1, txd)
-            local row3 = SCPlayerItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_BLUE, 65, 200, "", "hello", "", 0, "", 1, txd)
-            local row4 = SCPlayerItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_PURPLE, 65, 250, "", "hello", "", 0, "", 1, txd)
-            ScaleformUI.Scaleforms.PlayerListScoreboard:AddRow(row1)
-            ScaleformUI.Scaleforms.PlayerListScoreboard:AddRow(row2)
-            ScaleformUI.Scaleforms.PlayerListScoreboard:AddRow(row3)
-            ScaleformUI.Scaleforms.PlayerListScoreboard:AddRow(row4)
+            -- set the title of the menu, the second parameter is the page number, the third is the max page number, you can set your own labels
+            ScaleformUI.Scaleforms.PlayerListScoreboard:SetTitle("Title", currentPage .. "/" .. maxPage, 2)
+            
+            -- you must set the Current Page before enabling the menu
+            ScaleformUI.Scaleforms.PlayerListScoreboard:CurrentPage(currentPage)
+            currentPage = currentPage + 1
+            -- reset to page 1 if we are on the last page
+            if currentPage > maxPage then
+                currentPage = 1;
+            end
 
-            ScaleformUI.Scaleforms.PlayerListScoreboard:CurrentPage(1)
+            -- this is just to show how you can change the position of the menu
+            if currentPage % 2 == 0 then
+                ScaleformUI.Scaleforms.PlayerListScoreboard:SetPosition(0.890, 0.3)
+            else
+                ScaleformUI.Scaleforms.PlayerListScoreboard:SetPosition(0.122, 0.3)
+            end
+
+            -- enable the menu, after a while it will close itself
             ScaleformUI.Scaleforms.PlayerListScoreboard.Enabled = true
-            UnregisterPedheadshot(handle) -- call it right after adding the menu.. this way the txd will be loaded correctly by the scaleform.. 
+        end
 
+        -- when the menu is no longer being shown, reset the currentPage to 1
+        if not ScaleformUI.Scaleforms.PlayerListScoreboard.Enabled then
+            currentPage = 1;
         end
 
         -- this is used to free memory from all the menus in the MenuPool emptying its tables.
