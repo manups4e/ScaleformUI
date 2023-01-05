@@ -14,7 +14,9 @@ function PlayerListScoreboard.New()
         PlayerRows = {},
         TitleLeftText = "",
         TitleRightText = "",
-        TitleIcon = 0
+        TitleIcon = 0,
+        X = 0.122,
+        Y = 0.3
     }
     return setmetatable(data, PlayerListScoreboard)
 end
@@ -66,6 +68,11 @@ function PlayerListScoreboard:SetTitle(title, label, icon)
     self.TitleIcon = icon or 0
 end
 
+function PlayerListScoreboard:SetPosition(x, y)
+    self.X = x
+    self.Y = y
+end
+
 function PlayerListScoreboard:SetTimer(upTime)
     self.uptime = upTime
 end
@@ -90,7 +97,7 @@ function PlayerListScoreboard:UpdateMaxPages()
 end
 
 function PlayerListScoreboard:Update()
-    self._sc:Render2DNormal(0.122, 0.3, 0.28, 0.6)
+    self._sc:Render2DNormal(self.X, self.Y, 0.28, 0.6)
     if self._start ~= 0 and GetGameTimer() - self._start > self._timer then
         self:CurrentPage(0)
         self.Enabled = false
