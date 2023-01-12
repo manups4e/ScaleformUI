@@ -24,7 +24,8 @@ function FriendItem.New(label, itemColor, coloredTag, rank, status, crewTag)
         _coloredTag = true,
         ParentColumn = nil,
         ClonePed = 0,
-        Panel = nil
+        Panel = nil,
+        Handle = nil,
     }
     return setmetatable(_data, FriendItem)
 end
