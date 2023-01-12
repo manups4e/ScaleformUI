@@ -75,6 +75,11 @@ function PlayerListColumn:AddPlayer(item)
 end
 
 function PlayerListColumn:RemovePlayer(item)
+    if item == nil then
+        print("^1[ERROR] PlayerListColumn:RemovePlayer() - item is nil");
+        return
+    end
+
     local id = item.Handle
     if self.Parent ~= nil and self.Parent:Visible() then
         local item = self.Items[id]
