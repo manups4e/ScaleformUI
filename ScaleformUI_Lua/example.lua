@@ -51,6 +51,12 @@ function CreateMenu()
     cookItem:RightBadge(BadgeStyle.STAR)
     cookItem:LeftBadge(BadgeStyle.STAR)
 
+    exampleMenu.OnItemSelect = function (menu, item, index)
+        if (item == cookItem) then
+            ScaleformUI.Notifications:ShowNotification("We're cooking Jessie!")
+        end
+        ScaleformUI.Notifications:ShowNotification("Item with label '" .. item:Label() .. "' was clicked.")
+    end
 
     local colorItem = UIMenuItem.New("UIMenuItem with Colors", "~b~Look!!~r~I can be colored ~y~too!!~w~", 21, 24)
     colorItem:LeftBadge(BadgeStyle.STAR)
@@ -514,8 +520,11 @@ function CreatePauseMenu()
     pauseMenuExample:Visible(true)
 end
 
+local friend;
+local lobbyMenu;
+
 function CreateLobbyMenu()
-        local lobbyMenu = MainView.New("Lobby Menu", "ScaleformUI for you by Manups4e!", "Detail 1", "Detail 2", "Detail 3")
+        lobbyMenu = MainView.New("Lobby Menu", "ScaleformUI for you by Manups4e!", "Detail 1", "Detail 2", "Detail 3")
         local columns = {
             SettingsListColumn.New("COLUMN SETTINGS", Colours.HUD_COLOUR_RED),
             PlayerListColumn.New("COLUMN PLAYERS", Colours.HUD_COLOUR_ORANGE),
@@ -545,7 +554,7 @@ function CreateLobbyMenu()
         lobbyMenu.SettingsColumn:AddSettings(item3)
         lobbyMenu.SettingsColumn:AddSettings(item4)
 
-        local friend = FriendItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_GREEN, true, GetRandomIntInRange(15, 55), "Status", "CrewTag")
+        friend = FriendItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_GREEN, true, GetRandomIntInRange(15, 55), "Status", "CrewTag")
         local friend1 = FriendItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_MENU_YELLOW, true, GetRandomIntInRange(15, 55), "Status", "CrewTag")
         local friend2 = FriendItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_PINK, true, GetRandomIntInRange(15, 55), "Status", "CrewTag")
         local friend3 = FriendItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_BLUE, true, GetRandomIntInRange(15, 55), "Status", "CrewTag")
@@ -819,6 +828,21 @@ function setRowColor(row)
     end
 end
 
+function AddAndRemoveFriend()
+    CreateThread(function()
+        local playerName = GetPlayerName(PlayerId());
+        Wait(2500)
+        friend:Label("Leaving...")
+        Wait(5000)
+        lobbyMenu.PlayersColumn:RemovePlayer(friend)
+        Wait(5000)
+        friend:Label("Joining...")
+        lobbyMenu.PlayersColumn:AddPlayer(friend)
+        Wait(1000)
+        friend:Label(playerName)
+    end)
+end
+
 CreateThread(function()
     local pos = GetEntityCoords(PlayerPedId(), true)
     --type, position, scale, distance, color, placeOnGround, bobUpDown, rotate, faceCamera, checkZ
@@ -862,6 +886,7 @@ CreateThread(function()
         end
         if IsControlJustPressed(0, 168) and not pool:IsAnyMenuOpen() then -- F7
             CreateLobbyMenu()
+            AddAndRemoveFriend()
         end
 
         if IsControlJustPressed(0, 170) or IsDisabledControlJustPressed(0, 170) and not pool:IsAnyMenuOpen() then -- F3
