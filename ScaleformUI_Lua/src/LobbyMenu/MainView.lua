@@ -56,6 +56,15 @@ function MainView:FocusLevel(index)
     if index ~= nil then
         self.focusLevel = index
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_FOCUS", false, index-1)
+        if index == 2 then
+            CreateThread(function()
+                Wait(100)
+                local ped = ClonePed(self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed, false, true, true);
+                GivePedToPauseMenu(ped, 2)
+                SetPauseMenuPedSleepState(true);
+                SetPauseMenuPedLighting(true);
+            end)
+        end
     else
         return self.focusLevel
     end
