@@ -5,16 +5,19 @@ ProgressTimerBar.__call = function()
 end
 
 function ProgressTimerBar.New(label, backgroundColor, foregroundColor)
-    if backgroundColor == nil then backgroundColor = {R = 112, G = 25, B = 25, A = 255} end
-    if foregroundColor == nil then foregroundColor = {R = 224, G = 50, B = 50, A = 255} end
+    if backgroundColor == nil then backgroundColor = { R = 112, G = 25, B = 25, A = 255 } end
+    if foregroundColor == nil then foregroundColor = { R = 224, G = 50, B = 50, A = 255 } end
     local _data = {
         _label = label or "",
         _percentage = 0,
-        _backgroundColor = backgroundColor or {R = 112, G = 25, B = 25, A = 255}, --darkred
-        _foregroundColor = foregroundColor or {R = 224, G = 50, B = 50, A = 255}, -- red
-        _backgroundRect = UIResRectangle.New(0, 0, 150, 15, backgroundColor.R or 112, backgroundColor.G  or 25, backgroundColor.B or 25, backgroundColor.A or 255),
-        _foregroundRect = UIResRectangle.New(0, 0, 0, 15, foregroundColor.R or 224, foregroundColor.G  or 50, foregroundColor.B or 50, foregroundColor.A or 255),
+        _backgroundColor = backgroundColor or { R = 112, G = 25, B = 25, A = 255 }, --darkred
+        _foregroundColor = foregroundColor or { R = 224, G = 50, B = 50, A = 255 }, -- red
+        _backgroundRect = UIResRectangle.New(0, 0, 150, 15, backgroundColor.R or 112, backgroundColor.G or 25,
+            backgroundColor.B or 25, backgroundColor.A or 255),
+        _foregroundRect = UIResRectangle.New(0, 0, 0, 15, foregroundColor.R or 224, foregroundColor.G or 50,
+            foregroundColor.B or 50, foregroundColor.A or 255),
         _enabled = true,
+        Handle = nil,
     }
     return setmetatable(_data, ProgressTimerBar)
 end
@@ -26,6 +29,7 @@ function ProgressTimerBar:Label(label)
         self._label = label
     end
 end
+
 function ProgressTimerBar:BackgroundColor(color)
     if color == nil then
         return self._backgroundColor
@@ -33,6 +37,7 @@ function ProgressTimerBar:BackgroundColor(color)
         self._backgroundColor = color
     end
 end
+
 function ProgressTimerBar:ForegroundColor(color)
     if color == nil then
         return self._foregroundColor
@@ -40,6 +45,7 @@ function ProgressTimerBar:ForegroundColor(color)
         self._foregroundColor = color
     end
 end
+
 function ProgressTimerBar:Percentage(val)
     if val == nil then
         return self._percentage
@@ -47,6 +53,7 @@ function ProgressTimerBar:Percentage(val)
         self._percentage = val
     end
 end
+
 function ProgressTimerBar:Enabled(bool)
     if bool == nil then
         return self._enabled
@@ -59,18 +66,22 @@ function ProgressTimerBar:Draw(interval)
     if not self._enabled then return end
     local resx, resy = ResolutionMaintainRatio()
     local safex, safey = SafezoneBounds()
-    
-    UIResText.New(self:Label(), resx - safex - 180, resy - safey - (30 + (4 * interval)), 0.3, 240, 240, 240, 255, 0, 2):Draw()
-    Sprite.New("timerbars", "all_black_bg", resx - safex - 298, resy - safey - (40 + (4 * interval)), 300, 37, 0.0, 255, 255, 255, 180):Draw()
+
+    UIResText.New(self:Label(), resx - safex - 180, resy - safey - (30 + (4 * interval)), 0.3, 240, 240, 240, 255, 0, 2)
+        :Draw()
+    Sprite.New("timerbars", "all_black_bg", resx - safex - 298, resy - safey - (40 + (4 * interval)), 300, 37, 0.0, 255,
+        255, 255, 180):Draw()
 
     local startx, starty = resx - safex - 160, resy - safey - (28 + (4 * interval))
     self._backgroundRect:Position(startx, starty)
     self._foregroundRect:Position(startx, starty)
-    self._foregroundRect:Size(150*self._percentage, 15)
+    self._foregroundRect:Size(150 * self._percentage, 15)
 
     -- in case someone decides to change color on the fly..
-    self._backgroundRect:Colour(self._backgroundColor.R, self._backgroundColor.G, self._backgroundColor.B, self._backgroundColor.A)
-    self._foregroundRect:Colour(self._foregroundColor.R, self._foregroundColor.G, self._foregroundColor.B, self._foregroundColor.A)
+    self._backgroundRect:Colour(self._backgroundColor.R, self._backgroundColor.G, self._backgroundColor.B,
+        self._backgroundColor.A)
+    self._foregroundRect:Colour(self._foregroundColor.R, self._foregroundColor.G, self._foregroundColor.B,
+        self._foregroundColor.A)
 
     self._backgroundRect:Draw()
     self._foregroundRect:Draw()
