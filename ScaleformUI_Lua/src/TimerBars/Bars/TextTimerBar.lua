@@ -4,7 +4,7 @@ TextTimerBar.__call = function()
     return "TimerBarBase", "TextTimerBar"
 end
 
-function TextTimerBar.New(label, text, captionColor)
+function TextTimerBar.New(label, text, captionColor, labelFont, captionFont)
     if captionColor == nil then captionColor = { R = 240, G = 240, B = 240, A = 255 } end
     local _data = {
         _label = label or "",
@@ -12,6 +12,8 @@ function TextTimerBar.New(label, text, captionColor)
         _captionColor = captionColor,
         _enabled = true,
         Handle = nil,
+        LabelFont = labelFont or 0,
+        CaptionFont = captionFont or 0,
     }
     return setmetatable(_data, TextTimerBar)
 end
@@ -53,12 +55,13 @@ function TextTimerBar:Draw(interval)
     local resx, resy = ResolutionMaintainRatio()
     local safex, safey = SafezoneBounds()
 
-    UIResText.New(self._label, resx - safex - 180, resy - safey - (30 + (4 * interval)), 0.3, 240, 240, 240, 255, 0, 2):
+    UIResText.New(self._label, resx - safex - 180, resy - safey - (30 + (4 * interval)), 0.3, 240, 240, 240, 255,
+        self.LabelFont, 2, 0, 0, 0):
         Draw()
     Sprite.New("timerbars", "all_black_bg", resx - safex - 298, resy - safey - (40 + (4 * interval)), 300, 37, 0.0, 255,
         255, 255, 180):Draw()
     UIResText.New(self._caption, resx - safex - 10, resy - safey - (42 + (4 * interval)), 0.5, self._captionColor.R,
-        self._captionColor.G, self._captionColor.B, self._captionColor.A, 0, 2):Draw()
+        self._captionColor.G, self._captionColor.B, self._captionColor.A, self.CaptionFont, 2, 0, 0, 0):Draw()
 
     HideHudComponentThisFrame(6);
     HideHudComponentThisFrame(7);
