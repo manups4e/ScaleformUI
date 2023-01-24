@@ -15,6 +15,7 @@ public class MenuExample : BaseScript
     private bool enabled = true;
     private string dish = "Banana";
     private MenuPool _menuPool;
+    private TimerBarPool _timerBarPool;
     private long txd;
     public void ExampleMenu()
     {
@@ -1353,6 +1354,13 @@ public class MenuExample : BaseScript
     {
         _menuPool = new MenuPool();
         _menuPool.RefreshIndex();
+
+        _timerBarPool = new TimerBarPool();
+        TextTimerBar textTimerBar = new TextTimerBar("Label", "Caption", CitizenFX.Core.UI.Font.Pricedown);
+        _timerBarPool.Add(textTimerBar);
+        TextTimerBar textTimerBar2 = new TextTimerBar("Other", "Caption", CitizenFX.Core.UI.Font.ChaletComprimeCologne, CitizenFX.Core.UI.Font.HouseScript);
+        _timerBarPool.Add(textTimerBar2);
+
         txd = API.CreateRuntimeTxd("scaleformui");
 
         // We create a marker on the peds position, adds it to the MarkerHandler
@@ -1361,6 +1369,8 @@ public class MenuExample : BaseScript
 
         Tick += async () =>
         {
+            _timerBarPool.Draw();
+
             //If the player is in drawing range for the marker, the marker will draw automatically and the DrawText will show itself (true if the ped enters the marker)
             if (playerMarker.IsInRange)
                 Notifications.DrawText($"IsInMarker => {playerMarker.IsInMarker}");
