@@ -9,11 +9,12 @@ function TimerBarPool.New()
 end
 
 function TimerBarPool:AddBar(timerBar)
-    self.Bars[#self.Bars + 1] = timerBar
+    timerBar.Handle = #self.Bars + 1;
+    self.Bars[timerBar.Handle] = timerBar
 end
 
-function TimerBarPool:RemoveBar(id)
-    table.remove(self.Bars, id)
+function TimerBarPool:RemoveBar(timerBar)
+    table.remove(self.Bars, timerBar.Handle)
 end
 
 function TimerBarPool:Draw()
@@ -21,7 +22,7 @@ function TimerBarPool:Draw()
     if ScaleformUI.Scaleforms.InstructionalButtons:Enabled() or ScaleformUI.Scaleforms.InstructionalButtons.IsSaving then
         offset = 9
     end
-    for k,v in pairs(self.Bars) do
-        v:Draw((k*10)+offset)
+    for k, v in pairs(self.Bars) do
+        v:Draw((k * 10) + offset)
     end
 end
