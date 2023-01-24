@@ -4,7 +4,7 @@ ProgressTimerBar.__call = function()
     return "TimerBarBase", "ProgressTimerBar"
 end
 
-function ProgressTimerBar.New(label, backgroundColor, foregroundColor, labelFont)
+function ProgressTimerBar.New(label, backgroundColor, foregroundColor)
     if backgroundColor == nil then backgroundColor = { R = 112, G = 25, B = 25, A = 255 } end
     if foregroundColor == nil then foregroundColor = { R = 224, G = 50, B = 50, A = 255 } end
     local _data = {
@@ -17,8 +17,8 @@ function ProgressTimerBar.New(label, backgroundColor, foregroundColor, labelFont
         _foregroundRect = UIResRectangle.New(0, 0, 0, 15, foregroundColor.R or 224, foregroundColor.G or 50,
             foregroundColor.B or 50, foregroundColor.A or 255),
         _enabled = true,
+        _labelFont = Font.CHALET_LONDON,
         Handle = nil,
-        LabelFont = labelFont or 0,
     }
     return setmetatable(_data, ProgressTimerBar)
 end
@@ -28,6 +28,14 @@ function ProgressTimerBar:Label(label)
         return self._label
     else
         self._label = label
+    end
+end
+
+function ProgressTimerBar:LabelFont(font)
+    if font == nil then
+        return self._labelFont
+    else
+        self._labelFont = font
     end
 end
 
@@ -69,7 +77,7 @@ function ProgressTimerBar:Draw(interval)
     local safex, safey = SafezoneBounds()
 
     UIResText.New(self:Label(), resx - safex - 180, resy - safey - (30 + (4 * interval)), 0.3, 240, 240, 240, 255,
-        self.LabelFont, 2, 0, 0, 0)
+        self._labelFont, 2, 0, 0, 0)
         :Draw()
     Sprite.New("timerbars", "all_black_bg", resx - safex - 298, resy - safey - (40 + (4 * interval)), 300, 37, 0.0, 255,
         255, 255, 180):Draw()
