@@ -1355,7 +1355,7 @@ public class MenuExample : BaseScript
         _menuPool = new MenuPool();
         _menuPool.RefreshIndex();
 
-        _timerBarPool = new TimerBarPool();
+        _timerBarPool = new TimerBarPool();        
         TextTimerBar textTimerBar = new TextTimerBar("Label", "Caption", CitizenFX.Core.UI.Font.Pricedown);
         _timerBarPool.Add(textTimerBar);
         TextTimerBar textTimerBar2 = new TextTimerBar("Other", "Caption", CitizenFX.Core.UI.Font.ChaletComprimeCologne, CitizenFX.Core.UI.Font.HouseScript);

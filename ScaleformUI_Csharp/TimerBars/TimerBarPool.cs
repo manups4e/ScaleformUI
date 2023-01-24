@@ -35,12 +35,5 @@ namespace ScaleformUI
                 _bars[i].Draw((i * 10) + off);
             }
         }
-
-        public void AddTimerBar(Action<TextTimerBar> timerBar)
-        {
-            TextTimerBar item = new("", "");
-            timerBar?.Invoke(item);
-            _bars.Add(item);
-        }
     }
 }
