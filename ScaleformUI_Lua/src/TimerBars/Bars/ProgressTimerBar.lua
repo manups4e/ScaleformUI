@@ -77,7 +77,7 @@ function ProgressTimerBar:Draw(interval)
     local safex, safey = SafezoneBounds()
 
     UIResText.New(self:Label(), resx - safex - 180, resy - safey - (30 + (4 * interval)), 0.3, 240, 240, 240, 255,
-        self._labelFont, 2, 0, 0, 0)
+        self._labelFont, 2)
         :Draw()
     Sprite.New("timerbars", "all_black_bg", resx - safex - 298, resy - safey - (40 + (4 * interval)), 300, 37, 0.0, 255,
         255, 255, 180):Draw()
