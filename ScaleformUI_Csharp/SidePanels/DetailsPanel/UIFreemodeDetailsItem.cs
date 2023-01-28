@@ -8,6 +8,11 @@
         public HudColor IconColor;
         public int Type;
         public bool Tick;
+        public UIFreemodeDetailsItem(string description)
+        {
+            Type = 4;
+            TextLeft = description;
+        }
         public UIFreemodeDetailsItem(string textLeft, string textRight, bool separator)
         {
             Type = separator ? 3 : 0;
