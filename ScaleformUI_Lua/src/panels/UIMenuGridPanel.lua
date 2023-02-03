@@ -9,8 +9,8 @@ UIMenuGridPanel.__call = function() return "UIMenuPanel", "UIMenuGridPanel" end
 function UIMenuGridPanel.New(topText, leftText, rightText, bottomText, circlePosition, gridType)
     local _UIMenuGridPanel = {
         TopLabel = topText or "UP",
-        RightLabel = leftText or "RIGHT",
-        LeftLabel = rightText or "LEFT",
+        RightLabel = rightText or "RIGHT",
+        LeftLabel = leftText or "LEFT",
         BottomLabel = bottomText or "DOWN",
         _CirclePosition = circlePosition or vector2(0.5, 0.5),
         GridType = gridType or 0,
