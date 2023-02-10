@@ -8,6 +8,8 @@ function UIMenuFreemodeDetailsItem.New(textLeft, textRight, seperator, icon, ico
         _type = 3
     elseif icon ~= nil and iconColor ~= nil then
         _type = 2
+    elseif textRight == nil and seperator == nil and icon == nil and iconColor == nil and tick == nil then
+        _type = 4
     else
         _type = 0
     end
@@ -18,6 +20,6 @@ function UIMenuFreemodeDetailsItem.New(textLeft, textRight, seperator, icon, ico
         Icon = icon,
         IconColor = iconColor,
         Tick = tick or false
-	}
-	return setmetatable(_UIMenuFreemodeDetailsItem, UIMenuFreemodeDetailsItem)
+    }
+    return setmetatable(_UIMenuFreemodeDetailsItem, UIMenuFreemodeDetailsItem)
 end

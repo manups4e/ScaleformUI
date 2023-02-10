@@ -4,7 +4,7 @@ UIMissionDetailsPanel.__call = function() return "UIMissionDetailsPanel", "UIMis
 
 function UIMissionDetailsPanel.New(side, title, color, inside, txd, txn)
     local _titleType, _titleColor
-	if inside == -1 then
+    if inside == -1 then
         _titleType = 1
     elseif inside then
         _titleType = 2
@@ -27,16 +27,16 @@ function UIMissionDetailsPanel.New(side, title, color, inside, txd, txn)
         TextureName = txn or "",
         Items = {},
         ParentItem = nil
-	}
-	return setmetatable(_UIMissionDetailsPanel, UIMissionDetailsPanel)
+    }
+    return setmetatable(_UIMissionDetailsPanel, UIMissionDetailsPanel)
 end
 
 function UIMissionDetailsPanel:SetParentItem(Item) -- required
-	if Item() == "UIMenuItem" then
-		self.ParentItem = Item
-	else
-		return self.ParentItem
-	end
+    if Item() == "UIMenuItem" then
+        self.ParentItem = Item
+    else
+        return self.ParentItem
+    end
 end
 
 function UIMissionDetailsPanel:UpdatePanelTitle(title)
@@ -59,16 +59,16 @@ function UIMissionDetailsPanel:UpdatePanelPicture(txd, txn)
 end
 
 function UIMissionDetailsPanel:AddItem(newitem)
-    table.insert(self.Items, newitem)
+    self.Items[#self.Items + 1] = newitem
     if self.ParentItem ~= nil then
         local item = IndexOf(self.ParentItem.Base.ParentMenu.Items, self.ParentItem) - 1
         ScaleformUI.Scaleforms._ui:CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", false, item, newitem.Type, newitem.TextLeft, newitem.TextRight, newitem.Icon, newitem.IconColor, newitem.Tick)
     end
 end
 
-function UIMissionDetailsPanel:RemoveItemAt(index)	
-    table.remove(self.Items, index)	
-    if self.ParentItem ~= nil then	
-        ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_MISSION_DETAILS_DESC_ITEM", false, index - 1)	
-    end	
+function UIMissionDetailsPanel:RemoveItemAt(index)
+    table.remove(self.Items, index)
+    if self.ParentItem ~= nil then
+        ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_MISSION_DETAILS_DESC_ITEM", false, index - 1)    
+    end    
 end

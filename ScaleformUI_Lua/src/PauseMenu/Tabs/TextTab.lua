@@ -25,5 +25,5 @@ function TextTab:AddTitle(title)
 end
 
 function TextTab:AddItem(item)
-    table.insert(self.LabelsList, item)
+    self.LabelsList[#self.LabelsList + 1] = item
 end

@@ -1,9 +1,8 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
+using ScaleformUI.Scaleforms.RankBar;
+using ScaleformUI.Scaleforms.Countdown;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ScaleformUI
@@ -18,6 +17,8 @@ namespace ScaleformUI
         public static PlayerListHandler PlayerListInstance { get; set; }
         public static MissionSelectorHandler JobMissionSelection { get; set; }
         public static BigFeedHandler BigFeed { get; set; }
+        public static RankBarHandler RankBarInstance { get; set; }
+        public static CountdownHandler CountdownInstance { get; set; }
 
         internal static Scaleform _ui { get; set; }
         public ScaleformUI()
@@ -32,6 +33,8 @@ namespace ScaleformUI
             _ui = new("scaleformui");
             InstructionalButtons = new();
             InstructionalButtons.Load();
+            RankBarInstance = new();
+            CountdownInstance = new();
             Tick += ScaleformUIThread_Tick;
 
             EventHandlers["onResourceStop"] += new Action<string>((resName) =>
@@ -53,20 +56,24 @@ namespace ScaleformUI
 
         private async Task ScaleformUIThread_Tick()
         {
-            Warning.Update();
-            MedMessageInstance.Update();
-            BigMessageInstance.Update();
-            PlayerListInstance.Update();
-            JobMissionSelection.Update();
-            InstructionalButtons.Update();
-            BigFeed.Update();
-
-            if (_ui is null)
-                _ui = new Scaleform("ScaleformUI");
-
+            if (InstructionalButtons._sc != null && InstructionalButtons.Enabled && ((InstructionalButtons.ControlButtons != null || InstructionalButtons.ControlButtons.Count != 0) || InstructionalButtons.IsSaving))
+                InstructionalButtons.Update();
+            if (Game.IsPaused) return;
+            if (Warning._warning != null)
+                Warning.Update();
+            if (MedMessageInstance._sc != null)
+                MedMessageInstance.Update();
+            if (BigMessageInstance._sc != null)
+                BigMessageInstance.Update();
+            if (PlayerListInstance._sc != null && PlayerListInstance.Enabled)
+                PlayerListInstance.Update();
+            if (JobMissionSelection._sc != null && JobMissionSelection.Enabled)
+                JobMissionSelection.Update();
+            if (BigFeed._sc != null)
+                BigFeed.Update();
+            _ui ??= new Scaleform("ScaleformUI");
             if (!PauseMenu.Loaded)
                 PauseMenu.Load();
-
             await Task.FromResult(0);
         }
     }

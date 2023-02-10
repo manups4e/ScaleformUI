@@ -24,7 +24,8 @@ function FriendItem.New(label, itemColor, coloredTag, rank, status, crewTag)
         _coloredTag = true,
         ParentColumn = nil,
         ClonePed = 0,
-        Panel = nil
+        Panel = nil,
+        Handle = nil,
     }
     return setmetatable(_data, FriendItem)
 end
@@ -61,6 +62,7 @@ function FriendItem:AddPedToPauseMenu(ped)
             end
             local pSubT = self.ParentColumn.Parent()
             Citizen.CreateThread(function()
+                Wait(100)
                 if pSubT == "LobbyMenu" then
                     if self.ParentColumn.Items[self.ParentColumn:CurrentSelection()] == self then
                         local ped = ClonePed(self.ClonePed, false, false, true)

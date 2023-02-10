@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using static CitizenFX.Core.Native.API;
-using CitizenFX.Core.UI;
-using Font = CitizenFX.Core.UI.Font;
+﻿using CitizenFX.Core;
 using ScaleformUI.LobbyMenu;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI.PauseMenu
 {
@@ -64,7 +60,7 @@ namespace ScaleformUI.PauseMenu
             set
             {
                 focusLevel = value;
-                if(_pause is not null)
+                if (_pause is not null)
                     _pause.SetFocus(value);
                 SendPauseMenuFocusChange();
             }
@@ -149,7 +145,7 @@ namespace ScaleformUI.PauseMenu
         public void AddTab(BaseTab item)
         {
             item.Parent = this;
-            if(item is PlayerListTab)
+            if (item is PlayerListTab)
             {
                 var it = item as PlayerListTab;
                 it.SettingsColumn.ParentTab = Tabs.Count;
@@ -382,8 +378,15 @@ namespace ScaleformUI.PauseMenu
                         PushScaleformMovieFunctionParameterInt((int)item.TextColor);
                         PushScaleformMovieFunctionParameterInt((int)item.HighlightedTextColor);
                         EndScaleformMovieMethod();
+                        _pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL_RIGHT", tab, index, item.RightLabel);
+                        if (item.RightBadge != BadgeIcon.NONE)
+                        {
+                            _pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_BADGE", tab, index, (int)item.RightBadge);
+                        }
                         break;
                 }
+                if (item.LeftBadge != BadgeIcon.NONE)
+                    _pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", tab, index, (int)item.LeftBadge);
                 i++;
             }
             tab.SettingsColumn.CurrentSelection = 0;
@@ -500,7 +503,7 @@ namespace ScaleformUI.PauseMenu
                             {
                                 FocusLevel = 2;
                                 if (leftItem.ItemList.All(x => !(x as SettingsItem).Enabled)) break;
-                                while(!(leftItem.ItemList[rightItemIndex] as SettingsItem).Enabled)
+                                while (!(leftItem.ItemList[rightItemIndex] as SettingsItem).Enabled)
                                 {
                                     await BaseScript.Delay(0);
                                     rightItemIndex++;
@@ -593,11 +596,12 @@ namespace ScaleformUI.PauseMenu
             Game.PlaySound(AUDIO_BACK, AUDIO_LIBRARY);
             if (FocusLevel > 0)
             {
-                if(FocusLevel == 1)
+                if (FocusLevel == 1)
                 {
                     if (Tabs[Index] is PlayerListTab plTab)
                     {
-                        if (plTab.Focus == 1) {
+                        if (plTab.Focus == 1)
+                        {
                             plTab.Focus = 0;
                             return;
                         }
@@ -608,7 +612,7 @@ namespace ScaleformUI.PauseMenu
             }
             else
             {
-                if(CanPlayerCloseMenu) Visible = false;
+                if (CanPlayerCloseMenu) Visible = false;
             }
         }
 
@@ -619,9 +623,9 @@ namespace ScaleformUI.PauseMenu
             var ret = EndScaleformMovieMethodReturnValue();
             while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
             var retVal = GetScaleformMovieFunctionReturnInt(ret);
-            if(retVal != -1)
+            if (retVal != -1)
             {
-                if(FocusLevel == 1)
+                if (FocusLevel == 1)
                 {
                     if (Tabs[Index] is PlayerListTab plTab)
                     {
@@ -898,7 +902,7 @@ namespace ScaleformUI.PauseMenu
                                 Index = itemId;
                                 if (Tabs[Index] is PlayerListTab tab)
                                     tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].CreateClonedPed(tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].ClonePed);
-                                else 
+                                else
                                     ClearPedInPauseMenu();
                                 Game.PlaySound("SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET");
                                 if (Tabs[Index].LeftItemList.All(x => !x.Enabled)) break;
@@ -1151,19 +1155,15 @@ namespace ScaleformUI.PauseMenu
                 GoLeft();
             else if (Game.IsControlJustPressed(2, Control.PhoneRight))
                 GoRight();
-            else if (Game.IsControlJustPressed(2, Control.FrontendLb))
+            else if (Game.IsControlJustPressed(2, Control.FrontendLb) || (Game.IsControlJustPressed(2, (Control)192) && Game.IsControlPressed(2, Control.Sprint) && IsUsingKeyboard(2)))
             {
-                if (FocusLevel == 0)
-                {
-                    GoLeft();
-                }
+                if (FocusLevel != 0) FocusLevel = 0;
+                GoLeft();
             }
-            else if (Game.IsControlJustPressed(2, Control.FrontendRb))
+            else if (Game.IsControlJustPressed(2, Control.FrontendRb) || (Game.IsControlJustPressed(2, (Control)192) && IsUsingKeyboard(2)))
             {
-                if (FocusLevel == 0)
-                {
-                    GoRight();
-                }
+                if (FocusLevel != 0) FocusLevel = 0;
+                GoRight();
             }
             else if (Game.IsControlJustPressed(2, Control.FrontendAccept))
                 Select(false);

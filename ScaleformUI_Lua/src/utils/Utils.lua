@@ -39,28 +39,28 @@ function keyOf(tbl, value)
 end
 
 function math.round(num, numDecimalPlaces)
-	return tonumber(string.format("%." .. (numDecimalPlaces or 0) .. "f", num))
+    return tonumber(string.format("%." .. (numDecimalPlaces or 0) .. "f", num))
 end
 
 function tobool(input)
-	if input == "true" or tonumber(input) == 1 or input == true then
-		return true
-	else
-		return false
-	end
+    if input == "true" or tonumber(input) == 1 or input == true then
+        return true
+    else
+        return false
+    end
 end
 
 function string.split(inputstr, sep)
-	if sep == nil then
-		sep = "%s"
-	end
-	local t, i = {}, 1
-	for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
-		t[i] = str
-		i = i + 1
-	end
+    if sep == nil then
+        sep = "%s"
+    end
+    local t, i = {}, 1
+    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+        t[i] = str
+        i = i + 1
+    end
 
-	return t
+    return t
 end
 
 function split(pString, pPattern)
@@ -70,14 +70,14 @@ function split(pString, pPattern)
     local s, e, cap = pString:find(fpat, 1)
     while s do
        if s ~= 1 or cap ~= "" then
-      table.insert(Table,cap)
+      Table[#Table + 1] = cap
        end
        last_end = e+1
        s, e, cap = pString:find(fpat, last_end)
     end
     if last_end <= #pString then
        cap = pString:sub(last_end)
-       table.insert(Table, cap)
+       Table[#Table + 1] = cap
     end
     return Table
 end

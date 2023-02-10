@@ -8,6 +8,7 @@ function UIMenuItem.New(text, description, color, highlightColor, textColor, hig
     _UIMenuItem = {
         _label = tostring(text) or "",
         _Description = tostring(description) or "",
+        _labelFont = {"$Font2", 0},
         _Selected = false,
         _Hovered = false,
         _Enabled = true,
@@ -21,6 +22,7 @@ function UIMenuItem.New(text, description, color, highlightColor, textColor, hig
         _highlightColor = highlightColor or 1,
         _textColor = textColor or 1,
         _highlightedTextColor = highlightedTextColor or 2,
+        _itemData = {},
         ParentMenu = nil,
         Panels = {},
         SidePanel = nil,
@@ -29,6 +31,26 @@ function UIMenuItem.New(text, description, color, highlightColor, textColor, hig
         end,
     }
     return setmetatable(_UIMenuItem, UIMenuItem)
+end
+
+function UIMenuItem:ItemData(data)
+    if data == nil then
+        return self._itemData
+    else
+        self._itemData = data
+    end
+end
+
+-- not supported on Lobby and Pause menu yet
+function UIMenuItem:LabelFont(fontTable) 
+    if fontTable == nil then
+        return self._labelFont
+    else
+        self._labelFont = fontTable
+        if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", false, IndexOf(self.ParentMenu.Items, item) - 1,  self._labelFont[1], self._labelFont[2])
+        end
+    end
 end
 
 function UIMenuItem:SetParentMenu(Menu)
@@ -257,7 +279,7 @@ end
 
 function UIMenuItem:AddPanel(Panel)
     if Panel() == "UIMenuPanel" then
-        table.insert(self.Panels, Panel)
+        self.Panels[#self.Panels + 1] = Panel
         Panel:SetParentItem(self)
     end
 end
@@ -266,13 +288,13 @@ function UIMenuItem:AddSidePanel(sidePanel)
     if sidePanel() == "UIMissionDetailsPanel" then
         sidePanel:SetParentItem(self)
         self.SidePanel = sidePanel
-		if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+        if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
         end
     elseif sidePanel() == "UIVehicleColorPickerPanel" then
         sidePanel:SetParentItem(self)
         self.SidePanel = sidePanel
-		if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+        if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.ParentMenu.Items, self) - 1, 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor)
         end
     end

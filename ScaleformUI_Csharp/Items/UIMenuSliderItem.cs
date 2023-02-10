@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Threading.Tasks;
 
 namespace ScaleformUI
 {
@@ -13,7 +10,8 @@ namespace ScaleformUI
         public HudColor SliderColor
         {
             get => sliderColor;
-            set { 
+            set
+            {
                 sliderColor = value;
                 if (Parent is not null && Parent.Visible)
                 {
@@ -66,6 +64,8 @@ namespace ScaleformUI
                 else
                     _value = value;
                 SliderChanged(_value);
+                if (Parent is not null && Parent.Visible)
+                    ScaleformUI._ui.CallFunction("SET_ITEM_VALUE", Parent.MenuItems.IndexOf(this), _value);
             }
         }
         /// <summary>

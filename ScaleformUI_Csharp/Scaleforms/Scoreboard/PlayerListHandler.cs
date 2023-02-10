@@ -12,7 +12,7 @@ namespace ScaleformUI
         private int _start;
         private int _timer;
         public bool Enabled { get; set; }
-        private Scaleform _sc { get; set; }
+        internal Scaleform _sc { get; set; }
         private int Index { get; set; } = 0;
         public int MaxPages { get; set; } = 1;
 
@@ -85,7 +85,7 @@ namespace ScaleformUI
 
         public void RemoveRow(PlayerRow row)
         {
-            var r = PlayerRows.FirstOrDefault(x=>x.ServerId == row.ServerId);
+            var r = PlayerRows.FirstOrDefault(x => x.ServerId == row.ServerId);
             if (r != null)
             {
                 PlayerRows.Remove(r);
@@ -130,7 +130,6 @@ namespace ScaleformUI
 
         internal void Update()
         {
-            if (_sc is null || !Enabled) return;
             API.DrawScaleformMovie(_sc.Handle, 0.122f, 0.3f, 0.28f, 0.6f, 255, 255, 255, 255, 0);
             if (_start != 0 && Game.GameTime - _start > _timer)
             {
@@ -171,7 +170,7 @@ namespace ScaleformUI
         {
             var r = PlayerRows.FirstOrDefault(x => Convert.ToInt32(x.RightText) == Convert.ToInt32(row.RightText));
             //var r = PlayerRows.FirstOrDefault(x => x.ServerId == row.ServerId);
-            if(r != null)
+            if (r != null)
             {
                 PlayerRows[PlayerRows.IndexOf(r)] = row;
                 if (row.CrewLabelText != "")
@@ -186,7 +185,7 @@ namespace ScaleformUI
             var row = PlayerRows[index];
             if (row != null)
             {
-                _sc.CallFunction("SET_ICON",index, (int)icon, txt);
+                _sc.CallFunction("SET_ICON", index, (int)icon, txt);
             }
         }
 
@@ -265,7 +264,7 @@ namespace ScaleformUI
 
         public ScoreDisplayType JobPointsDisplayType;
 
- 
+
         public ScoreRightIconType RightIcon;
         public string TextureString;
         public char FriendType;

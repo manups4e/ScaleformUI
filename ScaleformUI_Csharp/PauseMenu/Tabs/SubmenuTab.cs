@@ -1,7 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
-using CitizenFX.Core.Native;
-using CitizenFX.Core;
 
 namespace ScaleformUI.PauseMenu
 {

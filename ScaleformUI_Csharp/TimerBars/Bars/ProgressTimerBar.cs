@@ -1,5 +1,6 @@
 ﻿
 using System.Drawing;
+using Font = CitizenFX.Core.UI.Font;
 
 namespace ScaleformUI
 {
@@ -21,10 +22,26 @@ namespace ScaleformUI
             BackgroundColor = Colors.DarkRed;
             ForegroundColor = Colors.Red;
             _background = new UIResRectangle(new PointF(0, 0), new SizeF(150, 15), BackgroundColor);
-            _foreground = new UIResRectangle(new PointF(0,0), new SizeF(0, 15), ForegroundColor);
+            _foreground = new UIResRectangle(new PointF(0, 0), new SizeF(0, 15), ForegroundColor);
+        }
+
+        public ProgressTimerBar(string label, Font labelFont) : base(label, labelFont)
+        {
+            BackgroundColor = Colors.DarkRed;
+            ForegroundColor = Colors.Red;
+            _background = new UIResRectangle(new PointF(0, 0), new SizeF(150, 15), BackgroundColor);
+            _foreground = new UIResRectangle(new PointF(0, 0), new SizeF(0, 15), ForegroundColor);
         }
 
         public ProgressTimerBar(string label, Color background, Color foreground) : base(label)
+        {
+            BackgroundColor = background;
+            ForegroundColor = foreground;
+            _background = new UIResRectangle(new PointF(0, 0), new SizeF(150, 15), BackgroundColor);
+            _foreground = new UIResRectangle(new PointF(0, 0), new SizeF(0, 15), ForegroundColor);
+        }
+
+        public ProgressTimerBar(string label, Color background, Color foreground, Font labelFont) : base(label, labelFont)
         {
             BackgroundColor = background;
             ForegroundColor = foreground;

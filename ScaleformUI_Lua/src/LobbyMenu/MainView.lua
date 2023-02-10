@@ -3,6 +3,7 @@ MainView.__index = MainView
 MainView.__call = function()
     return "LobbyMenu"
 end
+MainView.SoundId = GetSoundId()
 
 function MainView.New(title, subtitle, sideTop, sideMid, sideBot)
     local _data = {
@@ -55,6 +56,15 @@ function MainView:FocusLevel(index)
     if index ~= nil then
         self.focusLevel = index
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_FOCUS", false, index-1)
+        if index == 2 then
+            CreateThread(function()
+                Wait(100)
+                local ped = ClonePed(self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed, false, true, true);
+                GivePedToPauseMenu(ped, 2)
+                SetPauseMenuPedSleepState(true);
+                SetPauseMenuPedLighting(true);
+            end)
+        end
     else
         return self.focusLevel
     end
@@ -75,14 +85,19 @@ function MainView:Visible(visible)
         ScaleformUI.Scaleforms.InstructionalButtons:Enabled(visible)
         ScaleformUI.Scaleforms._pauseMenu:Visible(visible)
         if visible == true then
-            ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
-            self:BuildPauseMenu()
-            self.OnLobbyMenuOpen(self)
-            AnimpostfxPlay("PauseMenuIn", 800, true)
-            ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
-            SetPlayerControl(PlayerId(), false, 0)
-            self._firstTick = true
-            self._internalpool:ProcessMenus(true)
+            if not IsPauseMenuActive() then
+                self.focusLevel = 1
+                PlaySoundFrontend(self.SoundId, "Hit_In", "PLAYER_SWITCH_CUSTOM_SOUNDSET")
+                ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
+                ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
+                self:BuildPauseMenu()
+                self.OnLobbyMenuOpen(self)
+                AnimpostfxPlay("PauseMenuIn", 800, true)
+                ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
+                SetPlayerControl(PlayerId(), false, 0)
+                self._firstTick = true
+                self._internalpool:ProcessMenus(true)
+            end
         else
             ScaleformUI.Scaleforms._pauseMenu:Dispose()
             AnimpostfxStop("PauseMenuIn")
@@ -90,7 +105,11 @@ function MainView:Visible(visible)
             self.OnLobbyMenuClose(self)
             SetPlayerControl(PlayerId(), true, 0)
             self._internalpool:ProcessMenus(false)
-            ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, false, -1)
+            if IsPauseMenuActive() then
+                PlaySoundFrontend(self.SoundId, "Hit_Out", "PLAYER_SWITCH_CUSTOM_SOUNDSET")
+                ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, false, -1)
+            end
+            SetFrontendActive(false)
         end
     else
         return self._visible
@@ -139,7 +158,7 @@ function MainView:ShowHeader()
         ScaleformUI.Scaleforms._pauseMenu:SetHeaderTitle(self.Title)
     else
         ScaleformUI.Scaleforms._pauseMenu:ShiftCoronaDescription(true, false)
-        ScaleformUI.Scaleforms._pauseMenu:SetHeaderTitle(self.Title, self.Subtitle)
+        ScaleformUI.Scaleforms._pauseMenu:SetHeaderTitle(self.Title, self.Subtitle.."\n\n\n\n\n\n\n\n\n\n\n")
     end
     if (self:HeaderPicture() ~= nil) then
         ScaleformUI.Scaleforms._pauseMenu:SetHeaderCharImg(self:HeaderPicture().txd, self:HeaderPicture().txn, true)
@@ -177,17 +196,17 @@ function MainView:BuildPauseMenu()
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, 4, item:Label(), "menu_lobby_desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item._Max, item._Multiplier, item:Index(), item.Base._mainColor, item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor, item.SliderColor)
             else
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, 0, item:Label(), "menu_lobby_desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item._mainColor, item._highlightColor, item._textColor, item._highlightedTextColor)
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SETTINGS_SET_RIGHT_LABEL", false, it - 1, item:RightLabel())
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_ITEM_LABEL_RIGHT", false, it - 1, item:RightLabel())
                 if item._rightBadge ~= BadgeStyle.NONE then
-                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SETTINGS_SET_RIGHT_BADGE", false, it - 1, item._rightBadge)
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_RIGHT_BADGE", false, it - 1, item._rightBadge)
                 end
             end
         
             if (SubType == "UIMenuItem" and item._leftBadge ~= BadgeStyle.NONE) or (SubType ~= "UIMenuItem" and item.Base._leftBadge ~= BadgeStyle.NONE) then
                 if SubType ~= "UIMenuItem" then
-                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SETTINGS_SET_LEFT_BADGE", false, it - 1, item.Base._leftBadge)
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", false, it - 1, item.Base._leftBadge)
                 else
-                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SETTINGS_SET_LEFT_BADGE", false, it - 1, item._leftBadge)
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", false, it - 1, item._leftBadge)
                 end
             end
     
@@ -426,7 +445,6 @@ end
 
 function MainView:GoBack()
     if self:CanPlayerCloseMenu() then
-        PlaySoundFrontend(-1, "BACK", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
         self:Visible(false)
     end
 end

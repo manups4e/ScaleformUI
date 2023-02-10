@@ -26,9 +26,11 @@ function handler:Enabled(bool)
     if bool == nil then
         return self._enabled
     else
-        if not bool then
+        if not bool and type(self._sc) ~= "number" then
             self._sc:CallFunction("CLEAR_ALL", false)
             self._sc:CallFunction("CLEAR_RENDER", false)
+            self._sc:Dispose()
+            self._sc=0
         end
         self._enabled = bool
         self._changed = bool
@@ -49,7 +51,7 @@ function handler:SetInstructionalButtons(buttons)
 end
 
 function handler:AddInstructionalButton(button)
-    table.insert(ControlButtons, button)
+    ControlButtons[#ControlButtons + 1] = button
     self._changed = true
 end
 
@@ -75,14 +77,14 @@ function handler:ShowBusySpinner(spinnerType, text, time)
     self.savingTimer = GetGameTimer()
 
     if text == nil or text == "" then
-        BeginTextCommandBusyString(nil)
+        BeginTextCommandBusyspinnerOn(nil)
     else
-        BeginTextCommandBusyString("STRING")
+        BeginTextCommandBusyspinnerOn("STRING")
         AddTextComponentSubstringPlayerName(text)
     end
-    EndTextCommandBusyString(spinnerType)
+    EndTextCommandBusyspinnerOn(spinnerType)
     while GetGameTimer() - self.savingTimer <= time do Citizen.Wait(100) end
-    RemoveLoadingPrompt()
+    BusyspinnerOff()
     self.IsSaving = false
 end
 
@@ -121,6 +123,7 @@ function handler:UpdateButtons()
 end
 
 function handler:Draw()
+    SetScriptGfxDrawBehindPausemenu(true)
     self._sc:Render2D()
 end
 
@@ -129,8 +132,6 @@ function handler:DrawScreeSpace(x, y)
 end
 
 function handler:Update()
-    if self._sc == 0 or self._sc == nil then self:Load() end
-    if not self._enabled or (self.ControlButtons == nil or #self.ControlButtons == 0) and not self.IsSaving then return end
     if IsUsingKeyboard(2) then
         if not self.IsUsingKeyboard then
             self.IsUsingKeyboard = true

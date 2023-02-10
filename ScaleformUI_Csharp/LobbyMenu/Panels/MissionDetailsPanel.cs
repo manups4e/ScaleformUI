@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace ScaleformUI.LobbyMenu
 {
@@ -25,7 +21,7 @@ namespace ScaleformUI.LobbyMenu
             }
         }
 
-        public List<UIFreemodeDetailsItem> Items {get; private set;}
+        public List<UIFreemodeDetailsItem> Items { get; private set; }
         public MissionDetailsPanel(string label, HudColor color) : base(label, color)
         {
             Items = new List<UIFreemodeDetailsItem>();

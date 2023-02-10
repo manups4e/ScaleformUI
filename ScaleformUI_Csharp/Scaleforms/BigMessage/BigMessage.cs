@@ -1,14 +1,12 @@
-﻿using System;
-using System.Runtime.Remoting.Messaging;
-using CitizenFX.Core;
-using CitizenFX.Core.Native;
+﻿using CitizenFX.Core;
+using System;
 using System.Threading.Tasks;
 
 namespace ScaleformUI
 {
     public class BigMessageHandler
     {
-        private Scaleform _sc;
+        internal Scaleform _sc;
         private int _start;
         private int _timer;
 
@@ -104,7 +102,6 @@ namespace ScaleformUI
 
         internal void Update()
         {
-            if (_sc == null || Game.IsPaused) return;
             _sc.Render2D();
             if (_start != 0 && Game.GameTime - _start > _timer)
             {

@@ -1,11 +1,7 @@
 ﻿using CitizenFX.Core;
-using static CitizenFX.Core.Native.API;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using CitizenFX.Core.Native;
+using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI
 {
@@ -218,7 +214,7 @@ namespace ScaleformUI
 
         public void UpdateItemColoredBar(int tab, int leftItem, int rightItem, HudColor color)
         {
-            if(color == HudColor.NONE)
+            if (color == HudColor.NONE)
                 _pause.CallFunction("UPDATE_COLORED_BAR_COLOR", tab, leftItem, rightItem, (int)HudColor.HUD_COLOUR_WHITE);
             else
                 _pause.CallFunction("UPDATE_COLORED_BAR_COLOR", tab, leftItem, rightItem, (int)color);

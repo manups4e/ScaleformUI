@@ -1,12 +1,4 @@
-﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ScaleformUI.PauseMenu
+﻿namespace ScaleformUI.PauseMenu
 {
     public class KeymapItem : BasicTabItem
     {

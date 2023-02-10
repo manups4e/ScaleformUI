@@ -1,16 +1,12 @@
 ﻿using CitizenFX.Core;
-using static CitizenFX.Core.Native.API;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI
 {
     public class BigFeedHandler
     {
-        private Scaleform _sc;
+        internal Scaleform _sc;
         private bool enabled;
         private string title = "";
         private string subtitle = "";
@@ -154,7 +150,6 @@ namespace ScaleformUI
 
         internal async void Update()
         {
-            if (_sc is null) return;
             _sc.Render2D();
         }
     }

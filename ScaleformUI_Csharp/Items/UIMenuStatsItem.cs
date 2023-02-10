@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ScaleformUI
 {
@@ -13,7 +9,7 @@ namespace ScaleformUI
 
         public int Value
         {
-            get => _value; 
+            get => _value;
             set
             {
                 _value = value;
@@ -22,7 +18,7 @@ namespace ScaleformUI
         }
         public int Type { get; private set; }
         private HudColor sliderColor;
-        public HudColor Color 
+        public HudColor Color
         {
             get => sliderColor;
             set

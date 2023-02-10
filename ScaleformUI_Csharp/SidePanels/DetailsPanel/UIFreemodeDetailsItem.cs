@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ScaleformUI
+﻿namespace ScaleformUI
 {
     public class UIFreemodeDetailsItem
     {
@@ -14,6 +8,11 @@ namespace ScaleformUI
         public HudColor IconColor;
         public int Type;
         public bool Tick;
+        public UIFreemodeDetailsItem(string description)
+        {
+            Type = 4;
+            TextLeft = description;
+        }
         public UIFreemodeDetailsItem(string textLeft, string textRight, bool separator)
         {
             Type = separator ? 3 : 0;

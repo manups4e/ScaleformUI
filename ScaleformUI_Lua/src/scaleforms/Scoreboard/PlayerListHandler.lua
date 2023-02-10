@@ -14,7 +14,9 @@ function PlayerListScoreboard.New()
         PlayerRows = {},
         TitleLeftText = "",
         TitleRightText = "",
-        TitleIcon = 0
+        TitleIcon = 0,
+        X = 0.122,
+        Y = 0.3
     }
     return setmetatable(data, PlayerListScoreboard)
 end
@@ -66,12 +68,17 @@ function PlayerListScoreboard:SetTitle(title, label, icon)
     self.TitleIcon = icon or 0
 end
 
+function PlayerListScoreboard:SetPosition(x, y)
+    self.X = x
+    self.Y = y
+end
+
 function PlayerListScoreboard:SetTimer(upTime)
     self.uptime = upTime
 end
 
 function PlayerListScoreboard:AddRow(row)
-    table.insert(self.PlayerRows, row)
+    self.PlayerRows[#self.PlayerRows + 1] = row
 end
 
 function PlayerListScoreboard:RemoveRow(id)
@@ -90,8 +97,7 @@ function PlayerListScoreboard:UpdateMaxPages()
 end
 
 function PlayerListScoreboard:Update()
-    if self._sc == nil or not self.Enabled then return end
-    self._sc:Render2DNormal(0.122, 0.3, 0.28, 0.6)
+    self._sc:Render2DNormal(self.X, self.Y, 0.28, 0.6)
     if self._start ~= 0 and GetGameTimer() - self._start > self._timer then
         self:CurrentPage(0)
         self.Enabled = false
@@ -156,7 +162,7 @@ function PlayerListScoreboard:BuildMenu()
     self._sc:CallFunction("SET_TITLE", false, self.TitleLeftText, self.TitleRightText, self.TitleIcon)
     for k,v in pairs(self.PlayerRows) do
         if self:IsSupposedToShow(k) then
-            table.insert(rows, v)
+            rows[#rows + 1] = v
         end
     end
     self.Index = 0

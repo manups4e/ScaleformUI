@@ -50,6 +50,83 @@ end
 
 function SettingsListColumn:AddSettings(item)
     item.ParentColumn = self
-    table.insert(self.Items, item)
+    self.Items[#self.Items + 1] = item
 end
 
+function SettingsListColumn:UpdateItemLabels(index, leftLabel, rightLabel)
+    if self.Parent ~= nil then
+        local pSubT = self.Parent()
+        if pSubT == "LobbyMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_ITEM_LABELS", false, index-1, leftLabel, rightLabel)
+        elseif pSubT == "PauseMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABELS", false, self.ParentTab, index-1, leftLabel, rightLabel)
+        end
+    end
+end
+
+function SettingsListColumn:UpdateItemBlinkDescription(index, blink)
+    if blink == 1 then blink = true elseif blink == 0 then blink = false end
+    if self.Parent ~= nil then
+        local pSubT = self.Parent()
+        if pSubT == "LobbyMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_ITEM_BLINK_DESC", false, index-1, blink)
+        elseif pSubT == "PauseMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_BLINK_DESC", false, self.ParentTab, index-1, leftLabel, rightLabel)
+        end
+    end
+end
+
+function SettingsListColumn:UpdateItemLabel(index, label)
+    if self.Parent ~= nil then
+        local pSubT = self.Parent()
+        if pSubT == "LobbyMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_ITEM_LABEL", false, index-1,label)
+        elseif pSubT == "PauseMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL", false, self.ParentTab, index-1, label)
+        end
+    end
+end
+
+function SettingsListColumn:UpdateItemRightLabel(index, label)
+    if self.Parent ~= nil then
+        local pSubT = self.Parent()
+        if pSubT == "LobbyMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_ITEM_LABEL_RIGHT", false, index-1,label)
+        elseif pSubT == "PauseMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL_RIGHT", false, self.ParentTab, index-1, label)
+        end
+    end
+end
+
+function SettingsListColumn:UpdateItemLeftBadge(index, badge)
+    if self.Parent ~= nil then
+        local pSubT = self.Parent()
+        if pSubT == "LobbyMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", false, index-1, badge)
+        elseif pSubT == "PauseMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", false, self.ParentTab, index-1, badge)
+        end
+    end
+end
+
+function SettingsListColumn:UpdateItemRightBadge(index, badge)
+    if self.Parent ~= nil then
+        local pSubT = self.Parent()
+        if pSubT == "LobbyMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_RIGHT_BADGE", false, index-1, badge)
+        elseif pSubT == "PauseMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_BADGE", false, self.ParentTab, index-1, badge)
+        end
+    end
+end
+
+function SettingsListColumn:EnableItem(index, enable)
+    if self.Parent ~= nil then
+        local pSubT = self.Parent()
+        if pSubT == "LobbyMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ENABLE_SETTINGS_ITEM", false, index-1, enable)
+        elseif pSubT == "PauseMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ENABLE_PLAYERS_TAB_SETTINGS_ITEM", false, self.ParentTab, index-1, enable)
+        end
+    end
+end

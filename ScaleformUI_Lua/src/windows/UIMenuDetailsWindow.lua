@@ -40,17 +40,17 @@ function UIMenuDetailsWindow.New(...)
             ParentMenu = nil, -- required
         }
     end
-	return setmetatable(_UIMenuDetailsWindow, UIMenuDetailsWindow)
+    return setmetatable(_UIMenuDetailsWindow, UIMenuDetailsWindow)
 end
 
 ---SetParentMenu
 ---@param Menu table
 function UIMenuDetailsWindow:SetParentMenu(Menu) -- required
-	if Menu() == "UIMenu" then
-		self.ParentMenu = Menu
-	else
-		return self.ParentMenu
-	end
+    if Menu() == "UIMenu" then
+        self.ParentMenu = Menu
+    else
+        return self.ParentMenu
+    end
 end
 
 function UIMenuDetailsWindow:UpdateLabels(top, mid, bot, leftDetail)
@@ -88,7 +88,7 @@ end
 
 function UIMenuDetailsWindow:AddStatSingleToWheel(stat)
     if self.StatWheelEnabled then
-        table.insert(self.DetailStats, stat)
+        self.DetailStats[#self.DetailStats + 1] = stat
         if self.ParentMenu ~= nil then
             local wid = IndexOf(self.ParentMenu.Windows, self) - 1
             ScaleformUI.Scaleforms._ui:CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", false, wid, stat.Percentage, stat.HudColor)

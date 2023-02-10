@@ -11,97 +11,116 @@ UIMenuSliderItem.__call = function() return "UIMenuItem", "UIMenuSliderItem" end
 ---@param SliderColors table
 ---@param BackgroundSliderColors table
 function UIMenuSliderItem.New(Text, Max, Multiplier, Index, Heritage, Description, sliderColor, color, highlightColor, textColor, highlightedTextColor)
-	local _UIMenuSliderItem = {
-		Base = UIMenuItem.New(Text or "", Description or "", color or 117, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
-		_Index = tonumber(Index) or 0,
-		_Max = tonumber(Max) or 100,
-		_Multiplier = Multiplier or 5,
-		_heritage = Heritage or false,
-		Panels = {},
-		SidePanel = nil,
-		SliderColor = sliderColor or 116,
-		ItemId = 3,
-		OnSliderChanged = function(menu, item, newindex) end,
-		OnSliderSelected = function(menu, item, newindex) end,
-	}
-	return setmetatable(_UIMenuSliderItem, UIMenuSliderItem)
+    local _UIMenuSliderItem = {
+        Base = UIMenuItem.New(Text or "", Description or "", color or 117, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
+        _Index = tonumber(Index) or 0,
+        _Max = tonumber(Max) or 100,
+        _Multiplier = Multiplier or 5,
+        _heritage = Heritage or false,
+        Panels = {},
+        SidePanel = nil,
+        SliderColor = sliderColor or 116,
+        ItemId = 3,
+        OnSliderChanged = function(menu, item, newindex) end,
+        OnSliderSelected = function(menu, item, newindex) end,
+    }
+    return setmetatable(_UIMenuSliderItem, UIMenuSliderItem)
+end
+
+function UIMenuSliderItem:ItemData(data)
+    if data == nil then
+        return self.Base._itemData
+    else
+        self.Base._itemData = data
+    end
 end
 
 ---SetParentMenu
 ---@param Menu table
 function UIMenuSliderItem:SetParentMenu(Menu)
-	if Menu() == "UIMenu" then
-		self.Base.ParentMenu = Menu
-	else
-		return self.Base.ParentMenu
-	end
+    if Menu() == "UIMenu" then
+        self.Base.ParentMenu = Menu
+    else
+        return self.Base.ParentMenu
+    end
+end
+
+function UIMenuSliderItem:LabelFont(fontTable)
+    if fontTable == nil then
+        return self.Base._labelFont
+    else
+        self.Base._labelFont = fontTable
+        if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", false, IndexOf(self.ParentMenu.Items, item) - 1,  self.Base._labelFont[1], self.Base._labelFont[2])
+        end
+    end
 end
 
 function UIMenuSliderItem:AddSidePanel(sidePanel)
     if sidePanel() == "UIMissionDetailsPanel" then
         sidePanel:SetParentItem(self)
         self.SidePanel = sidePanel
-		if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
-			ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
-		end
-    elseif sidePanel() == "UIVehicleColorPickerPanel" then	
-        sidePanel:SetParentItem(self)	
-        self.SidePanel = sidePanel	
-		if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
-			ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.ParentMenu.Items, self) - 1, 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor)
-		end
-	end
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
+        end
+    elseif sidePanel() == "UIVehicleColorPickerPanel" then    
+        sidePanel:SetParentItem(self)    
+        self.SidePanel = sidePanel    
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.ParentMenu.Items, self) - 1, 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor)
+        end
+    end
 end
 
 ---Selected
 ---@param bool table
 function UIMenuSliderItem:Selected(bool)
-	if bool ~= nil then
+    if bool ~= nil then
 
-		self.Base:Selected(tobool(bool), self)
-	else
-		return self.Base._Selected
-	end
+        self.Base:Selected(tobool(bool), self)
+    else
+        return self.Base._Selected
+    end
 end
 
 function UIMenuSliderItem:Hovered(bool)
-	if bool ~= nil then
-		self.Base._Hovered = tobool(bool)
-	else
-		return self.Base._Hovered
-	end
+    if bool ~= nil then
+        self.Base._Hovered = tobool(bool)
+    else
+        return self.Base._Hovered
+    end
 end
 
 function UIMenuSliderItem:Enabled(bool)
-	if bool ~= nil then
-		self.Base:Enabled(bool, self)
-	else
-		return self.Base._Enabled
-	end
+    if bool ~= nil then
+        self.Base:Enabled(bool, self)
+    else
+        return self.Base._Enabled
+    end
 end
 
 function UIMenuSliderItem:Description(str)
-	if tostring(str) and str ~= nil then
-		self.Base:Description(tostring(str), self)
-	else
-		return self.Base._Description
-	end
+    if tostring(str) and str ~= nil then
+        self.Base:Description(tostring(str), self)
+    else
+        return self.Base._Description
+    end
 end
 
 function UIMenuSliderItem:BlinkDescription(bool)
     if bool ~= nil then
-		self.Base:BlinkDescription(bool, self)
-	else
-		return self.Base:BlinkDescription()
-	end
+        self.Base:BlinkDescription(bool, self)
+    else
+        return self.Base:BlinkDescription()
+    end
 end
 
 function UIMenuSliderItem:Label(Text)
-	if tostring(Text) and Text ~= nil then
-		self.Base:Label(tostring(Text), self)
-	else
-		return self.Base:Label()
-	end
+    if tostring(Text) and Text ~= nil then
+        self.Base:Label(tostring(Text), self)
+    else
+        return self.Base:Label()
+    end
 end
 
 function UIMenuSliderItem:MainColor(color)
@@ -160,18 +179,21 @@ function UIMenuSliderItem:SliderColor(color)
 end
 
 function UIMenuSliderItem:Index(Index)
-	if tonumber(Index) then
-		if tonumber(Index) > self._Max then
-			self._Index = self._Max
-		elseif tonumber(Index) < 0 then
-			self._Index = 0
-		else
-			self._Index = tonumber(Index)
-		end
-		self.OnSliderChanged(self.ParentMenu, self, self._Index)
-	else
-		return self._Index
-	end
+    if Index ~= nil then
+        if tonumber(Index) > self._Max then
+            self._Index = self._Max
+        elseif tonumber(Index) < 0 then
+            self._Index = 0
+        else
+            self._Index = tonumber(Index)
+        end
+        self.OnSliderChanged(self.ParentMenu, self, self._Index)
+        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_VALUE", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self._Index)
+        end
+    else
+        return self._Index
+    end
 end
 
 function UIMenuSliderItem:LeftBadge(Badge)
@@ -183,9 +205,9 @@ function UIMenuSliderItem:LeftBadge(Badge)
 end
 
 function UIMenuSliderItem:RightBadge()
-	error("This item does not support badges")
+    error("This item does not support badges")
 end
 
 function UIMenuSliderItem:RightLabel()
-	error("This item does not support a right label")
+    error("This item does not support a right label")
 end

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace ScaleformUI
 {
@@ -18,7 +14,7 @@ namespace ScaleformUI
             set
             {
                 title = value;
-                if(ParentItem is not null)
+                if (ParentItem is not null)
                 {
                     ScaleformUI._ui.CallFunction("UPDATE_SIDE_PANEL_TITLE", ParentItem.Parent.MenuItems.IndexOf(ParentItem), title);
                 }

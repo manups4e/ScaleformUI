@@ -95,7 +95,6 @@ function m:ShowMpWastedMessage(msg, subtitle, time)
 end
 
 function m:Update()
-    if self._sc == 0 or IsPauseMenuActive() then return end
     self._sc:Render2D()
     if self._start ~= 0 and GetGameTimer() - self._start > self._timer then
         self._sc:CallFunction("TRANSITION_OUT", false)

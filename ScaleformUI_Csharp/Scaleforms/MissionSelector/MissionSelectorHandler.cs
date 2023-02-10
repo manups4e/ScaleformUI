@@ -3,7 +3,6 @@ using CitizenFX.Core.Native;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ScaleformUI
@@ -35,7 +34,7 @@ namespace ScaleformUI
 
     public class MissionSelectorHandler
     {
-        private Scaleform _sc;
+        internal Scaleform _sc;
         private bool enabled;
         private bool alreadyVoted;
         public int[] Votes = new int[9];
@@ -141,9 +140,9 @@ namespace ScaleformUI
             else
             {
                 SetSelection(idx, Buttons[idx - 6].Text, Buttons[idx - 6].Description);
-                foreach (var detail in Buttons[idx-6].Details)
+                foreach (var detail in Buttons[idx - 6].Details)
                 {
-                    SetDetailsItem(Buttons[idx - 6].Details.IndexOf(detail), idx, Buttons[idx-6].Details.IndexOf(detail), (int)detail.Type, 0, 0, detail.TextLeft, detail.TextRight, detail.Icon, detail.IconColor, detail.Tick);
+                    SetDetailsItem(Buttons[idx - 6].Details.IndexOf(detail), idx, Buttons[idx - 6].Details.IndexOf(detail), (int)detail.Type, 0, 0, detail.TextLeft, detail.TextRight, detail.Icon, detail.IconColor, detail.Tick);
                 }
             }
         }
@@ -190,7 +189,6 @@ namespace ScaleformUI
         int unused = 0;
         public void Update()
         {
-            if (!enabled || _sc is null) return;
             _sc.Render2D();
             Game.DisableAllControlsThisFrame(0);
             Game.DisableAllControlsThisFrame(1);

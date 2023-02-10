@@ -3,6 +3,7 @@ TabView.__index = TabView
 TabView.__call = function()
     return "PauseMenu"
 end
+TabView.SoundId = GetSoundId()
 
 function TabView.New(title, subtitle, sideTop, sideMid, sideBot)
     local _data = {
@@ -84,13 +85,17 @@ function TabView:Visible(visible)
         self._visible = visible
         ScaleformUI.Scaleforms._pauseMenu:Visible(visible)
         if visible == true then
-            ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
-            self:BuildPauseMenu()
-            self._internalpool:ProcessMenus(true)
-            self.OnPauseMenuOpen(self)
-            AnimpostfxPlay("PauseMenuIn", 800, true)
-            ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
-            SetPlayerControl(PlayerId(), false, 0)
+            if not IsPauseMenuActive() then
+                self.focusLevel = 1
+                PlaySoundFrontend(self.SoundId, "Hit_In", "PLAYER_SWITCH_CUSTOM_SOUNDSET")
+                ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
+                self:BuildPauseMenu()
+                self._internalpool:ProcessMenus(true)
+                self.OnPauseMenuOpen(self)
+                AnimpostfxPlay("PauseMenuIn", 800, true)
+                ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
+                SetPlayerControl(PlayerId(), false, 0)
+            end
         else
             ScaleformUI.Scaleforms._pauseMenu:Dispose()
             AnimpostfxStop("PauseMenuIn")
@@ -98,7 +103,11 @@ function TabView:Visible(visible)
             self.OnPauseMenuClose(self)
             SetPlayerControl(PlayerId(), true, 0)
             self._internalpool:ProcessMenus(false)
-            ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
+            if IsPauseMenuActive() then
+                PlaySoundFrontend(self.SoundId, "Hit_Out", "PLAYER_SWITCH_CUSTOM_SOUNDSET")
+                ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
+            end
+            SetFrontendActive(false)
         end
     else
         return self._visible
@@ -107,7 +116,7 @@ end
 
 function TabView:AddTab(item)
     item.Base.Parent = self
-    table.insert(self.Tabs, item)
+    self.Tabs[#self.Tabs + 1] = item
     local _, subT = item()
     if subT == "PlayerListTab" then
         item.SettingsColumn.ParentTab = #self.Tabs - 1
@@ -158,6 +167,9 @@ function TabView:ShowHeader()
 end
 
 function TabView:BuildPauseMenu()
+    BeginTextCommandBusyspinnerOn("FMMC_DOWNLOAD")
+    EndTextCommandBusyspinnerOn(1)
+    
     self:ShowHeader()
     for k, tab in pairs(self.Tabs) do
         local tabIndex = k-1
@@ -220,7 +232,9 @@ function TabView:BuildPauseMenu()
                     else
                         ScaleformUI.Scaleforms._pauseMenu:AddRightListLabel(tabIndex , itemIndex, ii.Label)
                     end
+                    Citizen.Wait(0)
                 end
+                Citizen.Wait(0)
             end
         elseif subtype == "PlayerListTab" then
             ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 1, tab.Base.Type)
@@ -280,6 +294,8 @@ function TabView:BuildPauseMenu()
             end)
         end
     end
+    
+    BusyspinnerOff()
 end
 
 
@@ -444,7 +460,6 @@ function TabView:Select()
 end
 
 function TabView:GoBack()
-    PlaySoundFrontend(-1, "BACK", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
     if self:FocusLevel() > 0 then
         if self:FocusLevel() == 1 then
             local tab = self.Tabs[self.Index]
@@ -885,18 +900,20 @@ function TabView:ProcessControl()
             self:GoRight()
         end)
     end
-    if (IsControlJustPressed(2, 205)) then
+    if (IsControlJustPressed(2, 205) or (IsUsingKeyboard(2) and IsControlJustPressed(2, 192) and IsControlPressed(2, 21))) then
         Citizen.CreateThread(function()
-            if (self:FocusLevel() == 0) then
-                self:GoLeft()
+            if (self:FocusLevel() ~= 0) then
+                self:FocusLevel(0)
             end
+            self:GoLeft()
         end)
     end
-    if (IsControlJustPressed(2, 206)) then
+    if (IsControlJustPressed(2, 206) or (IsUsingKeyboard(2) and IsControlJustPressed(2, 192))) then
         Citizen.CreateThread(function()
-            if (self:FocusLevel() == 0) then
-                self:GoRight()
+            if (self:FocusLevel() ~= 0) then
+                self:FocusLevel(0)
             end
+            self:GoRight()
         end)
     end
     if (IsControlJustPressed(2, 201)) then

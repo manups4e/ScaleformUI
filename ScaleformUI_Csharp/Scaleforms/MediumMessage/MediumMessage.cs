@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using CitizenFX.Core;
+using System;
 using System.Threading.Tasks;
-using CitizenFX.Core;
-using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI
 {
     public class MediumMessageHandler
     {
-        private Scaleform _sc;
+        internal Scaleform _sc;
         private int _start;
         private int _timer;
         private bool _hasAnimatedOut;
@@ -44,9 +40,7 @@ namespace ScaleformUI
 
         internal async void Update()
         {
-            if (_sc == null || Game.IsPaused) return;
             _sc.Render2D();
-
             if (_start != 0 && Game.GameTime - _start > _timer)
             {
                 if (!_hasAnimatedOut)
