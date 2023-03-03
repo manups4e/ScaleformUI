@@ -1,138 +1,47 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F5614594-90FD-4F4C-9C68-C9DC90060F8D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ScaleformUI</RootNamespace>
     <AssemblyName>ScaleformUI</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFramework>net452</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
+    <BaseOutputPath>..\CompiledLibs\</BaseOutputPath>
+    <Title>ScaleformUI</Title>
+    <PackageProjectUrl>https://github.com/manups4e/ScaleformUI</PackageProjectUrl>
+    <Copyright>Copyright Leonardo Emanuele</Copyright>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <DebugType>embedded</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>1</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <TargetName>ScaleformUI</TargetName>
+    <WarningsNotAsErrors>$(WarningsNotAsError);8632;8618;8600;8602;8625</WarningsNotAsErrors>
+    <Nullable>annotations</Nullable>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <Version>2.9.2</Version>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="CitizenFX.Core.Client, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CitizenFX.Core.Client.1.0.5546\lib\net45\CitizenFX.Core.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="CitizenFX.Core.Client" Version="1.0.6285" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <None Include="..\LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Hud\Markers\Marker.cs" />
-    <Compile Include="Hud\Markers\MarkersHandler.cs" />
-    <Compile Include="Hud\Notifications\NotificationChars.cs" />
-    <Compile Include="Hud\Notifications\Notifications.cs" />
-    <Compile Include="Items\UIMenuStatsItem.cs" />
-    <Compile Include="LobbyMenu\Columns\Column.cs" />
-    <Compile Include="LobbyMenu\Columns\SettingsListColumn.cs" />
-    <Compile Include="LobbyMenu\Panels\PlayerStatsPanel.cs" />
-    <Compile Include="LobbyMenu\PlayerListColumn\FriendItem.cs" />
-    <Compile Include="LobbyMenu\Items\LobbyItem.cs" />
-    <Compile Include="LobbyMenu\PlayerListColumn\MMPLayerItem.cs" />
-    <Compile Include="LobbyMenu\MainView.cs" />
-    <Compile Include="LobbyMenu\Panels\MissionDetailsPanel.cs" />
-    <Compile Include="LobbyMenu\Columns\PlayerListColumn.cs" />
-    <Compile Include="PauseMenuBase.cs" />
-    <Compile Include="PauseMenu\Items\BasicTabItem.cs" />
-    <Compile Include="PauseMenu\Items\KeymapItem.cs" />
-    <Compile Include="PauseMenu\Items\SettingsItems\SettingsProgressItem.cs" />
-    <Compile Include="PauseMenu\Items\SettingsItems\SettingsCheckboxItem.cs" />
-    <Compile Include="PauseMenu\Items\SettingsItems\SettingsListItem.cs" />
-    <Compile Include="PauseMenu\Items\SettingsItems\SettingsSliderItem.cs" />
-    <Compile Include="PauseMenu\Items\SettingsItems\SettingsItem.cs" />
-    <Compile Include="PauseMenu\Items\StatsTabItem.cs" />
-    <Compile Include="PauseMenu\Tabs\BaseTab.cs" />
-    <Compile Include="PauseMenu\Tabs\PlayerListTab.cs" />
-    <Compile Include="PauseMenu\Tabs\SubmenuTab.cs" />
-    <Compile Include="PauseMenu\Tabs\TabLeftItem.cs" />
-    <Compile Include="PauseMenu\Tabs\TextTab.cs" />
-    <Compile Include="PauseMenu\TabView.cs" />
-    <Compile Include="Scaleforms\BigFeed\BigFeedHandler.cs" />
-    <Compile Include="Scaleforms\BigMessage\BigMessage.cs" />
-    <Compile Include="Controls.cs" />
-    <Compile Include="Elements\Sprite.cs" />
-    <Compile Include="Elements\UIResRectangle.cs" />
-    <Compile Include="Elements\UIResText.cs" />
-    <Compile Include="Items\UIMenuSeparatorItem.cs" />
-    <Compile Include="Items\UIMenuSliderItem.cs" />
-    <Compile Include="Colors.cs" />
-    <Compile Include="Scaleforms\Countdown\CountdownHandler.cs" />
-    <Compile Include="Scaleforms\Instructional_Buttons\InstructionalButtons.cs" />
-    <Compile Include="Items\IListItem.cs" />
-    <Compile Include="Items\UIMenuCheckboxItem.cs" />
-    <Compile Include="Items\UIMenuDynamicListItem.cs" />
-    <Compile Include="Items\UIMenuItem.cs" />
-    <Compile Include="Items\UIMenuListItem.cs" />
-    <Compile Include="Items\UIMenuProgressItem.cs" />
-    <Compile Include="MenuPool.cs" />
-    <Compile Include="Panels\UIMenuColorPanel.cs" />
-    <Compile Include="Panels\UIMenuGridPanel.cs" />
-    <Compile Include="Panels\UIMenuPanel.cs" />
-    <Compile Include="Panels\UIMenuPercentagePanel.cs" />
-    <Compile Include="Panels\UIMenuStatisticsPanel.cs" />
-    <Compile Include="PointExtensions.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scaleforms\MediumMessage\MediumMessage.cs" />
-    <Compile Include="Scaleforms\MissionSelector\MissionSelectorHandler.cs" />
-    <Compile Include="Scaleforms\RankBar\RankBarHandler.cs" />
-    <Compile Include="Scaleforms\ScaleformUI\ScaleformUI.cs" />
-    <Compile Include="Scaleforms\PauseMenu\PauseMenuScaleform.cs" />
-    <Compile Include="Scaleforms\PopupWarning\PopupWarning.cs" />
-    <Compile Include="Scaleforms\Scoreboard\PlayerListHandler.cs" />
-    <Compile Include="ScreenTools.cs" />
-    <Compile Include="SidePanels\ColorPicker\UIVehicleColourPickerPanel.cs" />
-    <Compile Include="SidePanels\DetailsPanel\UIFreemodeDetailsItem.cs" />
-    <Compile Include="SidePanels\UIMenuSidePanel.cs" />
-    <Compile Include="SidePanels\DetailsPanel\UIMissionDetailsPanel.cs" />
-    <Compile Include="TimerBars\Bars\ProgressTimerBar.cs" />
-    <Compile Include="TimerBars\Bars\TextTimerBar.cs" />
-    <Compile Include="TimerBars\Bars\TimerBarBase.cs" />
-    <Compile Include="TimerBars\TimerBarPool.cs" />
-    <Compile Include="UIMenu.cs" />
-    <Compile Include="Windows\UIMenuDetailsWindow.cs" />
-    <Compile Include="Windows\UIMenuHeritageWindow.cs" />
-    <Compile Include="Windows\UIMenuWindow.cs" />
+    <Reference Include="System.Net.Http" />
   </ItemGroup>
-  <ItemGroup />
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

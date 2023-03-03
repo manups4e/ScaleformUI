@@ -1,13 +1,20 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
-using System;
 using System.Drawing;
-using System.Threading.Tasks;
 using static CitizenFX.Core.Native.API;
 using Font = CitizenFX.Core.UI.Font;
 namespace ScaleformUI
 {
+    public enum BusySpinner
+    {
+        Left,
+        Left2,
+        Left3,
+        Save,
+        Right,
+    };
+
     public enum NotificationType : int
     {
         Default = 0,
@@ -426,6 +433,31 @@ namespace ScaleformUI
             SetTextEntry("jamyfafi");
             AddTextComponentSubstringPlayerName(text);
             EndTextCommandDisplayText(x, y);
+        }
+
+        /// <summary>
+        /// Creates a loading prompt in the lower right of the screen.
+        /// </summary>
+        /// <param name="label"></param>
+        /// <param name="busySpinner"></param>
+        public static void StartLoadingMessage(string label, BusySpinner busySpinner = BusySpinner.Save)
+        {
+            string textOutput = Game.GetGXTEntry(label);
+
+            if (string.IsNullOrEmpty(textOutput))
+                textOutput = label;
+
+            SetLoadingPromptTextEntry("STRING");
+            AddTextComponentSubstringPlayerName(textOutput);
+            EndTextCommandBusyspinnerOn((int)busySpinner);
+        }
+
+        /// <summary>
+        /// Removes the loading prompt.
+        /// </summary>
+        public static void StopLoadingMessage()
+        {
+            BusyspinnerOff();
         }
 
         internal static async Task<Tuple<int, string>> GetPedMugshotAsync(Ped ped, bool transparent = false)
