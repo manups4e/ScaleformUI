@@ -149,6 +149,11 @@ function UIMenu.New(Title, Subtitle, X, Y, glare, txtDictionary, txtName, altern
                     { 0, 1 }, -- Look Left and Right
                     { 0, 25 }, -- Aim
                     { 0, 24 }, -- Attack
+                    { 0, 71 }, -- Accelerate Vehicle
+                    { 0, 72 }, -- Vehicle Brake
+                    { 0, 30 }, -- Move Left and Right
+                    { 0, 31 }, -- Move Up and Down
+                    { 0, 59 }, -- Move Vehicle Left and Right
                 },
                 Keyboard = {
                     { 0, 201 }, -- Select
