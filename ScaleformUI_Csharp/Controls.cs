@@ -54,6 +54,12 @@ namespace ScaleformUI
             Control.LookLeftRight,
             Control.Aim,
             Control.Attack,
+            Control.VehicleAccelerate,
+            Control.VehicleBrake,
+            Control.VehicleMoveLeftRight,
+            Control.MoveUpDown,
+            Control.MoveLeftRight,
+            Control.VehicleExit,
         })
         .ToArray();
 
