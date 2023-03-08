@@ -4,20 +4,21 @@ UIMenuColorPanel.__call = function() return "UIMenuPanel", "UIMenuColorPanel" en
 
 ---New
 ---@param title string
----@param colorType int
+---@param colorType number
 ---@param startIndex number
 function UIMenuColorPanel.New(title, colorType, startIndex, colors)
     if colors ~= nil then
         colorType = 2
     end
-    
+
     local _UIMenuColorPanel = {
         Title = title or "Color Panel",
         ColorPanelColorType = colorType,
         value = startIndex or 0,
         CustomColors = colors or nil,
         ParentItem = nil, -- required
-        OnColorPanelChanged = function(item, panel, newindex) end
+        OnColorPanelChanged = function(item, panel, newindex)
+        end
     }
     return setmetatable(_UIMenuColorPanel, UIMenuColorPanel)
 end

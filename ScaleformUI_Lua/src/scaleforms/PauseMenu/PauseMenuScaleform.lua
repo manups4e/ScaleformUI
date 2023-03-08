@@ -29,7 +29,7 @@ function Pause:Visible(visible)
 end
 
 function Pause:Load()
-    if(self._header ~= nil and self._pause ~= nil and self._lobby ~= nil) then return end
+    if (self._header ~= nil and self._pause ~= nil and self._lobby ~= nil) then return end
     self._header = Scaleform.Request("pausemenuheader")
     self._pause = Scaleform.Request("pausemenu")
     self._lobby = Scaleform.Request("lobbymenu")
@@ -37,8 +37,8 @@ function Pause:Load()
 end
 
 function Pause:SetHeaderTitle(title, subtitle, shiftUpHeader)
-    if(subtitle == nil) then subtitle = "" end
-    if(shiftUpHeader == nil) then shiftUpHeader = false end
+    if (subtitle == nil) then subtitle = "" end
+    if (shiftUpHeader == nil) then shiftUpHeader = false end
     self._header:CallFunction("SET_HEADER_TITLE", false, title, subtitle, shiftUpHeader)
 end
 
@@ -101,7 +101,6 @@ function Pause:AddLeftItem(tab, _type, title, itemColor, highlightColor, enabled
     else
         self._pause:CallFunction("ADD_LEFT_ITEM", false, tab, _type, title, enabled)
     end
-
 end
 
 function Pause:AddRightTitle(tab, leftItem, title)
@@ -109,12 +108,12 @@ function Pause:AddRightTitle(tab, leftItem, title)
 end
 
 function Pause:AddRightListLabel(tab, leftItem, label)
-    AddTextEntry("PauseMenu_"..tab.."_"..leftItem, label)
+    AddTextEntry("PauseMenu_" .. tab .. "_" .. leftItem, label)
     BeginScaleformMovieMethod(self._pause.handle, "ADD_RIGHT_LIST_ITEM")
     ScaleformMovieMethodAddParamInt(tab)
     ScaleformMovieMethodAddParamInt(leftItem)
     ScaleformMovieMethodAddParamInt(0)
-    BeginTextCommandScaleformString("PauseMenu_"..tab.."_"..leftItem)
+    BeginTextCommandScaleformString("PauseMenu_" .. tab .. "_" .. leftItem)
     EndTextCommandScaleformString_2()
     EndScaleformMovieMethod()
 end
@@ -161,12 +160,12 @@ function Pause:AddKeymapItem(tab, leftItem, label, control1, control2)
     ScaleformMovieMethodAddParamInt(tab)
     ScaleformMovieMethodAddParamInt(leftItem)
     ScaleformMovieMethodAddParamInt(3)
-    PushScaleformMovieFunctionParameterString(label)
+    ScaleformMovieMethodAddParamTextureNameString(label)
     BeginTextCommandScaleformString("STRING")
-    AddTextComponentScaleform(control1)
+    AddTextComponentSubstringKeyboardDisplay(control1)
     EndTextCommandScaleformString_2()
     BeginTextCommandScaleformString("STRING")
-    AddTextComponentScaleform(control2)
+    AddTextComponentSubstringKeyboardDisplay(control2)
     EndTextCommandScaleformString_2()
     EndScaleformMovieMethod()
 end
@@ -177,10 +176,10 @@ function Pause:UpdateKeymap(tab, leftItem, rightItem, control1, control2)
     ScaleformMovieMethodAddParamInt(leftItem)
     ScaleformMovieMethodAddParamInt(rightItem)
     BeginTextCommandScaleformString("string")
-    AddTextComponentScaleform(control1)
+    AddTextComponentSubstringKeyboardDisplay(control1)
     EndTextCommandScaleformString_2()
     BeginTextCommandScaleformString("string")
-    AddTextComponentScaleform(control2)
+    AddTextComponentSubstringKeyboardDisplay(control2)
     EndTextCommandScaleformString_2()
     EndScaleformMovieMethod()
 end
@@ -210,7 +209,7 @@ function Pause:UpdateStatsItemBar(tab, leftItem, rightItem, label, value, color)
 end
 
 function Pause:UpdateItemColoredBar(tab, leftItem, rightItem, color)
-    if(color == nil or color == Colours.NONE) then
+    if (color == nil or color == Colours.NONE) then
         self._pause:CallFunction("UPDATE_COLORED_BAR_COLOR", false, tab, leftItem, rightItem, Colours.HUD_COLOUR_WHITE)
     else
         self._pause:CallFunction("UPDATE_COLORED_BAR_COLOR", false, tab, leftItem, rightItem, color)
@@ -222,7 +221,7 @@ function Pause:SendInputEvent(direction) -- to be awaited
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
-    return GetScaleformMovieFunctionReturnString(return_value)
+    return GetScaleformMovieMethodReturnValueString(return_value)
 end
 
 function Pause:SendScrollEvent(direction) -- to be awaited
@@ -234,7 +233,7 @@ function Pause:SendClickEvent() -- to be awaited
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
-    return GetScaleformMovieFunctionReturnString(return_value)
+    return GetScaleformMovieMethodReturnValueString(return_value)
 end
 
 function Pause:Dispose()
@@ -248,8 +247,8 @@ function Pause:Draw(isLobby)
     if isLobby == nil then isLobby = false end
     if self._visible and GetCurrentFrontendMenuVersion() == -2060115030 then
         SetScriptGfxDrawBehindPausemenu(true)
-        if IsInputDisabled(2) then
-            ShowCursorThisFrame()
+        if IsUsingKeyboard(2) then
+            SetMouseCursorActiveThisFrame()
         end
         self._header:Render2DNormal(0.501, 0.162, 0.6782, 0.145)
         if isLobby then

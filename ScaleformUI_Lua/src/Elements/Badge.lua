@@ -206,183 +206,355 @@ function GetSpriteDictionary(icon)
 end
 
 function GetSpriteName(icon, selected)
-    if icon == BadgeStyle.AMMO then if selected then return "shop_ammo_icon_b" else return "shop_ammo_icon_a" end
-    elseif icon == BadgeStyle.ARMOR then if selected then return "shop_armour_icon_b" else return "shop_armour_icon_a" end
-    elseif icon == BadgeStyle.BARBER then if selected then return "shop_barber_icon_b" else return "shop_barber_icon_a" end
-    elseif icon == BadgeStyle.BIKE then if selected then return "shop_garage_bike_icon_b" else return "shop_garage_bike_icon_a" end
-    elseif icon == BadgeStyle.CAR then if selected then return "shop_garage_icon_b" else return "shop_garage_icon_a" end
-    elseif icon == BadgeStyle.CASH then return "mp_specitem_cash" 
-    elseif icon == BadgeStyle.CLOTHING then if selected then return "shop_clothing_icon_b" else return "shop_clothing_icon_a" end
-    elseif icon == BadgeStyle.COKE then return "mp_specitem_coke" 
-    elseif icon == BadgeStyle.CROWN then return "mp_hostcrown" 
-    elseif icon == BadgeStyle.FRANKLIN then if selected then return "shop_franklin_icon_b" else return "shop_franklin_icon_a" end
-    elseif icon == BadgeStyle.GUN then if selected then return "shop_gunclub_icon_b" else return "shop_gunclub_icon_a" end
-    elseif icon == BadgeStyle.HEALTH_HEART then if selected then return "shop_health_icon_b" else return "shop_health_icon_a" end
-    elseif icon == BadgeStyle.HEROIN then return "mp_specitem_heroin" 
-    elseif icon == BadgeStyle.LOCK then return "shop_lock" 
-    elseif icon == BadgeStyle.MAKEUP_BRUSH then if selected then return "shop_makeup_icon_b" else return "shop_makeup_icon_a" end
-    elseif icon == BadgeStyle.MASK then if selected then return "shop_mask_icon_b" else return "shop_mask_icon_a" end
-    elseif icon == BadgeStyle.MEDAL_BRONZE then return "mp_medal_bronze" 
-    elseif icon == BadgeStyle.MEDAL_GOLD then return "mp_medal_gold" 
-    elseif icon == BadgeStyle.MEDAL_SILVER then return "mp_medal_silver" 
-    elseif icon == BadgeStyle.METH then return "mp_specitem_meth" 
-    elseif icon == BadgeStyle.MICHAEL then if selected then return "shop_michael_icon_b" else return "shop_michael_icon_a" end
-    elseif icon == BadgeStyle.STAR then return "shop_new_star" 
-    elseif icon == BadgeStyle.TATTOO then if selected then return "shop_tattoos_icon_b" else return "shop_tattoos_icon_a" end
-    elseif icon == BadgeStyle.TICK then return "shop_tick_icon" 
-    elseif icon == BadgeStyle.TREVOR then if selected then return "shop_trevor_icon_b" else return "shop_trevor_icon_a" end
-    elseif icon == BadgeStyle.WARNING then return "mp_alerttriangle" 
-    elseif icon == BadgeStyle.WEED then return "mp_specitem_weed" 
-    elseif icon == BadgeStyle.MALE then return "leaderboard_male_icon" 
-    elseif icon == BadgeStyle.FEMALE then return "leaderboard_female_icon" 
-    elseif icon == BadgeStyle.LOCK_ARENA then return "shop_lock_arena" 
-    elseif icon == BadgeStyle.ADVERSARY then return "adversary" 
-    elseif icon == BadgeStyle.BASE_JUMPING then return "base_jumping" 
-    elseif icon == BadgeStyle.BRIEFCASE then return "capture_the_flag" 
-    elseif icon == BadgeStyle.MISSION_STAR then return "custom_mission" 
-    elseif icon == BadgeStyle.DEATHMATCH then return "deathmatch" 
-    elseif icon == BadgeStyle.CASTLE then return "gang_attack" 
-    elseif icon == BadgeStyle.TROPHY then return "last_team_standing" 
-    elseif icon == BadgeStyle.RACE_FLAG then return "race" 
-    elseif icon == BadgeStyle.RACE_FLAG_PLANE then return "race_air" 
-    elseif icon == BadgeStyle.RACE_FLAG_BICYCLE then return "race_bicycle" 
-    elseif icon == BadgeStyle.RACE_FLAG_PERSON then return "race_foot" 
-    elseif icon == BadgeStyle.RACE_FLAG_CAR then return "race_land" 
-    elseif icon == BadgeStyle.RACE_FLAG_BOAT_ANCHOR then return "race_water" 
-    elseif icon == BadgeStyle.ROCKSTAR then return "rockstar" 
-    elseif icon == BadgeStyle.STUNT then return "stunt" 
-    elseif icon == BadgeStyle.STUNT_PREMIUM then return "stunt_premium" 
-    elseif icon == BadgeStyle.RACE_FLAG_STUNT_JUMP then return "stunt_race" 
-    elseif icon == BadgeStyle.SHIELD then return "survival" 
-    elseif icon == BadgeStyle.TEAM_DEATHMATCH then return "team_deathmatch" 
-    elseif icon == BadgeStyle.VEHICLE_DEATHMATCH then return "vehicle_deathmatch" 
-    elseif icon == BadgeStyle.MP_AMMO_PICKUP then return "ammo_pickup" 
-    elseif icon == BadgeStyle.MP_AMMO then return "mp_anim_ammo" 
-    elseif icon == BadgeStyle.MP_CASH then return "mp_anim_cash" 
-    elseif icon == BadgeStyle.MP_RP then return "mp_anim_rp" 
-    elseif icon == BadgeStyle.MP_SPECTATING then return "spectating" 
-    elseif icon == BadgeStyle.SALE then return "saleicon" 
+    if icon == BadgeStyle.AMMO then
+        if selected then return "shop_ammo_icon_b" else return "shop_ammo_icon_a" end
+    elseif icon == BadgeStyle.ARMOR then
+        if selected then return "shop_armour_icon_b" else return "shop_armour_icon_a" end
+    elseif icon == BadgeStyle.BARBER then
+        if selected then return "shop_barber_icon_b" else return "shop_barber_icon_a" end
+    elseif icon == BadgeStyle.BIKE then
+        if selected then return "shop_garage_bike_icon_b" else return "shop_garage_bike_icon_a" end
+    elseif icon == BadgeStyle.CAR then
+        if selected then return "shop_garage_icon_b" else return "shop_garage_icon_a" end
+    elseif icon == BadgeStyle.CASH then
+        return "mp_specitem_cash"
+    elseif icon == BadgeStyle.CLOTHING then
+        if selected then return "shop_clothing_icon_b" else return "shop_clothing_icon_a" end
+    elseif icon == BadgeStyle.COKE then
+        return "mp_specitem_coke"
+    elseif icon == BadgeStyle.CROWN then
+        return "mp_hostcrown"
+    elseif icon == BadgeStyle.FRANKLIN then
+        if selected then return "shop_franklin_icon_b" else return "shop_franklin_icon_a" end
+    elseif icon == BadgeStyle.GUN then
+        if selected then return "shop_gunclub_icon_b" else return "shop_gunclub_icon_a" end
+    elseif icon == BadgeStyle.HEALTH_HEART then
+        if selected then return "shop_health_icon_b" else return "shop_health_icon_a" end
+    elseif icon == BadgeStyle.HEROIN then
+        return "mp_specitem_heroin"
+    elseif icon == BadgeStyle.LOCK then
+        return "shop_lock"
+    elseif icon == BadgeStyle.MAKEUP_BRUSH then
+        if selected then return "shop_makeup_icon_b" else return "shop_makeup_icon_a" end
+    elseif icon == BadgeStyle.MASK then
+        if selected then return "shop_mask_icon_b" else return "shop_mask_icon_a" end
+    elseif icon == BadgeStyle.MEDAL_BRONZE then
+        return "mp_medal_bronze"
+    elseif icon == BadgeStyle.MEDAL_GOLD then
+        return "mp_medal_gold"
+    elseif icon == BadgeStyle.MEDAL_SILVER then
+        return "mp_medal_silver"
+    elseif icon == BadgeStyle.METH then
+        return "mp_specitem_meth"
+    elseif icon == BadgeStyle.MICHAEL then
+        if selected then return "shop_michael_icon_b" else return "shop_michael_icon_a" end
+    elseif icon == BadgeStyle.STAR then
+        return "shop_new_star"
+    elseif icon == BadgeStyle.TATTOO then
+        if selected then return "shop_tattoos_icon_b" else return "shop_tattoos_icon_a" end
+    elseif icon == BadgeStyle.TICK then
+        return "shop_tick_icon"
+    elseif icon == BadgeStyle.TREVOR then
+        if selected then return "shop_trevor_icon_b" else return "shop_trevor_icon_a" end
+    elseif icon == BadgeStyle.WARNING then
+        return "mp_alerttriangle"
+    elseif icon == BadgeStyle.WEED then
+        return "mp_specitem_weed"
+    elseif icon == BadgeStyle.MALE then
+        return "leaderboard_male_icon"
+    elseif icon == BadgeStyle.FEMALE then
+        return "leaderboard_female_icon"
+    elseif icon == BadgeStyle.LOCK_ARENA then
+        return "shop_lock_arena"
+    elseif icon == BadgeStyle.ADVERSARY then
+        return "adversary"
+    elseif icon == BadgeStyle.BASE_JUMPING then
+        return "base_jumping"
+    elseif icon == BadgeStyle.BRIEFCASE then
+        return "capture_the_flag"
+    elseif icon == BadgeStyle.MISSION_STAR then
+        return "custom_mission"
+    elseif icon == BadgeStyle.DEATHMATCH then
+        return "deathmatch"
+    elseif icon == BadgeStyle.CASTLE then
+        return "gang_attack"
+    elseif icon == BadgeStyle.TROPHY then
+        return "last_team_standing"
+    elseif icon == BadgeStyle.RACE_FLAG then
+        return "race"
+    elseif icon == BadgeStyle.RACE_FLAG_PLANE then
+        return "race_air"
+    elseif icon == BadgeStyle.RACE_FLAG_BICYCLE then
+        return "race_bicycle"
+    elseif icon == BadgeStyle.RACE_FLAG_PERSON then
+        return "race_foot"
+    elseif icon == BadgeStyle.RACE_FLAG_CAR then
+        return "race_land"
+    elseif icon == BadgeStyle.RACE_FLAG_BOAT_ANCHOR then
+        return "race_water"
+    elseif icon == BadgeStyle.ROCKSTAR then
+        return "rockstar"
+    elseif icon == BadgeStyle.STUNT then
+        return "stunt"
+    elseif icon == BadgeStyle.STUNT_PREMIUM then
+        return "stunt_premium"
+    elseif icon == BadgeStyle.RACE_FLAG_STUNT_JUMP then
+        return "stunt_race"
+    elseif icon == BadgeStyle.SHIELD then
+        return "survival"
+    elseif icon == BadgeStyle.TEAM_DEATHMATCH then
+        return "team_deathmatch"
+    elseif icon == BadgeStyle.VEHICLE_DEATHMATCH then
+        return "vehicle_deathmatch"
+    elseif icon == BadgeStyle.MP_AMMO_PICKUP then
+        return "ammo_pickup"
+    elseif icon == BadgeStyle.MP_AMMO then
+        return "mp_anim_ammo"
+    elseif icon == BadgeStyle.MP_CASH then
+        return "mp_anim_cash"
+    elseif icon == BadgeStyle.MP_RP then
+        return "mp_anim_rp"
+    elseif icon == BadgeStyle.MP_SPECTATING then
+        return "spectating"
+    elseif icon == BadgeStyle.SALE then
+        return "saleicon"
     elseif icon == BadgeStyle.GLOBE_WHITE or icon == BadgeStyle.GLOBE_RED or icon == BadgeStyle.GLOBE_BLUE or icon == BadgeStyle.GLOBE_YELLOW or icon == BadgeStyle.GLOBE_GREEN or icon == BadgeStyle.GLOBE_ORANGE then
         return "globe"
-    
-    elseif icon == BadgeStyle.INV_ARM_WRESTLING then return "arm_wrestling" 
-    elseif icon == BadgeStyle.INV_BASEJUMP then return "basejump" 
-    elseif icon == BadgeStyle.INV_MISSION then return "custom_mission" 
-    elseif icon == BadgeStyle.INV_DARTS then return "darts" 
-    elseif icon == BadgeStyle.INV_DEATHMATCH then return "deathmatch" 
-    elseif icon == BadgeStyle.INV_DRUG then return "drug_trafficking" 
-    elseif icon == BadgeStyle.INV_CASTLE then return "gang_attack" 
-    elseif icon == BadgeStyle.INV_GOLF then return "golf" 
-    elseif icon == BadgeStyle.INV_BIKE then return "mp_specitem_bike" 
-    elseif icon == BadgeStyle.INV_BOAT then return "mp_specitem_boat" 
-    elseif icon == BadgeStyle.INV_ANCHOR then return "mp_specitem_boatpickup" 
-    elseif icon == BadgeStyle.INV_CAR then return "mp_specitem_car" 
-    elseif icon == BadgeStyle.INV_DOLLAR then return "mp_specitem_cash" 
-    elseif icon == BadgeStyle.INV_COKE then return "mp_specitem_coke" 
-    elseif icon == BadgeStyle.INV_KEY then return "mp_specitem_cuffkeys" 
-    elseif icon == BadgeStyle.INV_DATA then return "mp_specitem_data" 
-    elseif icon == BadgeStyle.INV_HELI then return "mp_specitem_heli" 
-    elseif icon == BadgeStyle.INV_HEORIN then return "mp_specitem_heroin" 
-    elseif icon == BadgeStyle.INV_KEYCARD then return "mp_specitem_keycard" 
-    elseif icon == BadgeStyle.INV_METH then return "mp_specitem_meth" 
-    elseif icon == BadgeStyle.INV_BRIEFCASE then return "mp_specitem_package" 
-    elseif icon == BadgeStyle.INV_LINK then return "mp_specitem_partnericon" 
-    elseif icon == BadgeStyle.INV_PERSON then return "mp_specitem_ped" 
-    elseif icon == BadgeStyle.INV_PLANE then return "mp_specitem_plane" 
-    elseif icon == BadgeStyle.INV_PLANE2 then return "mp_specitem_plane2" 
-    elseif icon == BadgeStyle.INV_QUESTIONMARK then return "mp_specitem_randomobject" 
-    elseif icon == BadgeStyle.INV_REMOTE then return "mp_specitem_remote" 
-    elseif icon == BadgeStyle.INV_SAFE then return "mp_specitem_safe" 
-    elseif icon == BadgeStyle.INV_STEER_WHEEL then return "mp_specitem_steer_wheel" 
-    elseif icon == BadgeStyle.INV_WEAPON then return "mp_specitem_weapons" 
-    elseif icon == BadgeStyle.INV_WEED then return "mp_specitem_weed" 
-    elseif icon == BadgeStyle.INV_RACE_FLAG_PLANE then return "race_air" 
-    elseif icon == BadgeStyle.INV_RACE_FLAG_BICYCLE then return "race_bike" 
-    elseif icon == BadgeStyle.INV_RACE_FLAG_BOAT_ANCHOR then return "race_boat" 
-    elseif icon == BadgeStyle.INV_RACE_FLAG_PERSON then return "race_foot" 
-    elseif icon == BadgeStyle.INV_RACE_FLAG_CAR then return "race_land" 
-    elseif icon == BadgeStyle.INV_RACE_FLAG_HELMET then return "race_offroad" 
-    elseif icon == BadgeStyle.INV_SHOOTING_RANGE then return "shooting_range" 
-    elseif icon == BadgeStyle.INV_SURVIVAL then return "survival" 
-    elseif icon == BadgeStyle.INV_TEAM_DEATHMATCH then return "team_deathmatch" 
-    elseif icon == BadgeStyle.INV_TENNIS then return "tennis" 
-    elseif icon == BadgeStyle.INV_VEHICLE_DEATHMATCH then return "vehicle_deathmatch" 
-    elseif icon == BadgeStyle.AUDIO_MUTE then return "leaderboard_audio_mute" 
-    elseif icon == BadgeStyle.AUDIO_INACTIVE then return "leaderboard_audio_inactive" 
-    elseif icon == BadgeStyle.AUDIO_VOL1 then return "leaderboard_audio_1" 
-    elseif icon == BadgeStyle.AUDIO_VOL2 then return "leaderboard_audio_2" 
-    elseif icon == BadgeStyle.AUDIO_VOL3 then return "leaderboard_audio_3" 
-    elseif icon == BadgeStyle.COUNTRY_USA then return "vehicle_card_icons_flag_usa" 
-    elseif icon == BadgeStyle.COUNTRY_UK then return "vehicle_card_icons_flag_uk" 
-    elseif icon == BadgeStyle.COUNTRY_SWEDEN then return "vehicle_card_icons_flag_sweden" 
-    elseif icon == BadgeStyle.COUNTRY_KOREA then return "vehicle_card_icons_flag_korea" 
-    elseif icon == BadgeStyle.COUNTRY_JAPAN then return "vehicle_card_icons_flag_japan" 
-    elseif icon == BadgeStyle.COUNTRY_ITALY then return "vehicle_card_icons_flag_italy" 
-    elseif icon == BadgeStyle.COUNTRY_GERMANY then return "vehicle_card_icons_flag_germany" 
-    elseif icon == BadgeStyle.COUNTRY_FRANCE then return "vehicle_card_icons_flag_france" 
-    elseif icon == BadgeStyle.BRAND_ALBANY then return "albany" 
-    elseif icon == BadgeStyle.BRAND_ANNIS then return "annis" 
-    elseif icon == BadgeStyle.BRAND_BANSHEE then return "banshee" 
-    elseif icon == BadgeStyle.BRAND_BENEFACTOR then return "benefactor" 
-    elseif icon == BadgeStyle.BRAND_BF then return "bf" 
-    elseif icon == BadgeStyle.BRAND_BOLLOKAN then return "bollokan" 
-    elseif icon == BadgeStyle.BRAND_BRAVADO then return "bravado" 
-    elseif icon == BadgeStyle.BRAND_BRUTE then return "brute" 
-    elseif icon == BadgeStyle.BRAND_BUCKINGHAM then return "buckingham" 
-    elseif icon == BadgeStyle.BRAND_CANIS then return "canis" 
-    elseif icon == BadgeStyle.BRAND_CHARIOT then return "chariot" 
-    elseif icon == BadgeStyle.BRAND_CHEVAL then return "cheval" 
-    elseif icon == BadgeStyle.BRAND_CLASSIQUE then return "classique" 
-    elseif icon == BadgeStyle.BRAND_COIL then return "coil" 
-    elseif icon == BadgeStyle.BRAND_DECLASSE then return "declasse" 
-    elseif icon == BadgeStyle.BRAND_DEWBAUCHEE then return "dewbauchee" 
-    elseif icon == BadgeStyle.BRAND_DILETTANTE then return "dilettante" 
-    elseif icon == BadgeStyle.BRAND_DINKA then return "dinka" 
-    elseif icon == BadgeStyle.BRAND_DUNDREARY then return "dundreary" 
-    elseif icon == BadgeStyle.BRAND_EMPORER then return "emporer" 
-    elseif icon == BadgeStyle.BRAND_ENUS then return "enus" 
-    elseif icon == BadgeStyle.BRAND_FATHOM then return "fathom" 
-    elseif icon == BadgeStyle.BRAND_GALIVANTER then return "galivanter" 
-    elseif icon == BadgeStyle.BRAND_GROTTI then return "grotti" 
-    elseif icon == BadgeStyle.BRAND_HIJAK then return "hijak" 
-    elseif icon == BadgeStyle.BRAND_HVY then return "hvy" 
-    elseif icon == BadgeStyle.BRAND_IMPONTE then return "imponte" 
-    elseif icon == BadgeStyle.BRAND_INVETERO then return "invetero" 
-    elseif icon == BadgeStyle.BRAND_JACKSHEEPE then return "jacksheepe" 
-    elseif icon == BadgeStyle.BRAND_JOBUILT then return "jobuilt" 
-    elseif icon == BadgeStyle.BRAND_KARIN then return "karin" 
-    elseif icon == BadgeStyle.BRAND_LAMPADATI then return "lampadati" 
-    elseif icon == BadgeStyle.BRAND_MAIBATSU then return "maibatsu" 
-    elseif icon == BadgeStyle.BRAND_MAMMOTH then return "mammoth" 
-    elseif icon == BadgeStyle.BRAND_MTL then return "mtl" 
-    elseif icon == BadgeStyle.BRAND_NAGASAKI then return "nagasaki" 
-    elseif icon == BadgeStyle.BRAND_OBEY then return "obey" 
-    elseif icon == BadgeStyle.BRAND_OCELOT then return "ocelot" 
-    elseif icon == BadgeStyle.BRAND_OVERFLOD then return "overflod" 
-    elseif icon == BadgeStyle.BRAND_PED then return "ped" 
-    elseif icon == BadgeStyle.BRAND_PEGASSI then return "pegassi" 
-    elseif icon == BadgeStyle.BRAND_PFISTER then return "pfister" 
-    elseif icon == BadgeStyle.BRAND_PRINCIPE then return "principe" 
-    elseif icon == BadgeStyle.BRAND_PROGEN then return "progen" 
-    elseif icon == BadgeStyle.BRAND_SCHYSTER then return "schyster" 
-    elseif icon == BadgeStyle.BRAND_SHITZU then return "shitzu" 
-    elseif icon == BadgeStyle.BRAND_SPEEDOPHILE then return "speedophile" 
-    elseif icon == BadgeStyle.BRAND_STANLEY then return "stanley" 
-    elseif icon == BadgeStyle.BRAND_TRUFFADE then return "truffade" 
-    elseif icon == BadgeStyle.BRAND_UBERMACHT then return "ubermacht" 
-    elseif icon == BadgeStyle.BRAND_VAPID then return "vapid" 
-    elseif icon == BadgeStyle.BRAND_VULCAR then return "vulcar" 
-    elseif icon == BadgeStyle.BRAND_WEENY then return "weeny" 
-    elseif icon == BadgeStyle.BRAND_WESTERN then return "western" 
-    elseif icon == BadgeStyle.BRAND_WESTERNMOTORCYCLE then return "westernmotorcycle" 
-    elseif icon == BadgeStyle.BRAND_WILLARD then return "willard" 
-    elseif icon == BadgeStyle.BRAND_ZIRCONIUM then return "zirconium" 
-    elseif icon == BadgeStyle.BRAND_GROTTI2 then return "grotti_2" 
-    elseif icon == BadgeStyle.BRAND_LCC then return "lcc" 
-    elseif icon == BadgeStyle.BRAND_PROGEN2 then return "progen" 
-    elseif icon == BadgeStyle.BRAND_RUNE then return "rune" 
-    elseif icon == BadgeStyle.INFO then return "info_icon_32" 
-    else 
-        return "" 
+    elseif icon == BadgeStyle.INV_ARM_WRESTLING then
+        return "arm_wrestling"
+    elseif icon == BadgeStyle.INV_BASEJUMP then
+        return "basejump"
+    elseif icon == BadgeStyle.INV_MISSION then
+        return "custom_mission"
+    elseif icon == BadgeStyle.INV_DARTS then
+        return "darts"
+    elseif icon == BadgeStyle.INV_DEATHMATCH then
+        return "deathmatch"
+    elseif icon == BadgeStyle.INV_DRUG then
+        return "drug_trafficking"
+    elseif icon == BadgeStyle.INV_CASTLE then
+        return "gang_attack"
+    elseif icon == BadgeStyle.INV_GOLF then
+        return "golf"
+    elseif icon == BadgeStyle.INV_BIKE then
+        return "mp_specitem_bike"
+    elseif icon == BadgeStyle.INV_BOAT then
+        return "mp_specitem_boat"
+    elseif icon == BadgeStyle.INV_ANCHOR then
+        return "mp_specitem_boatpickup"
+    elseif icon == BadgeStyle.INV_CAR then
+        return "mp_specitem_car"
+    elseif icon == BadgeStyle.INV_DOLLAR then
+        return "mp_specitem_cash"
+    elseif icon == BadgeStyle.INV_COKE then
+        return "mp_specitem_coke"
+    elseif icon == BadgeStyle.INV_KEY then
+        return "mp_specitem_cuffkeys"
+    elseif icon == BadgeStyle.INV_DATA then
+        return "mp_specitem_data"
+    elseif icon == BadgeStyle.INV_HELI then
+        return "mp_specitem_heli"
+    elseif icon == BadgeStyle.INV_HEORIN then
+        return "mp_specitem_heroin"
+    elseif icon == BadgeStyle.INV_KEYCARD then
+        return "mp_specitem_keycard"
+    elseif icon == BadgeStyle.INV_METH then
+        return "mp_specitem_meth"
+    elseif icon == BadgeStyle.INV_BRIEFCASE then
+        return "mp_specitem_package"
+    elseif icon == BadgeStyle.INV_LINK then
+        return "mp_specitem_partnericon"
+    elseif icon == BadgeStyle.INV_PERSON then
+        return "mp_specitem_ped"
+    elseif icon == BadgeStyle.INV_PLANE then
+        return "mp_specitem_plane"
+    elseif icon == BadgeStyle.INV_PLANE2 then
+        return "mp_specitem_plane2"
+    elseif icon == BadgeStyle.INV_QUESTIONMARK then
+        return "mp_specitem_randomobject"
+    elseif icon == BadgeStyle.INV_REMOTE then
+        return "mp_specitem_remote"
+    elseif icon == BadgeStyle.INV_SAFE then
+        return "mp_specitem_safe"
+    elseif icon == BadgeStyle.INV_STEER_WHEEL then
+        return "mp_specitem_steer_wheel"
+    elseif icon == BadgeStyle.INV_WEAPON then
+        return "mp_specitem_weapons"
+    elseif icon == BadgeStyle.INV_WEED then
+        return "mp_specitem_weed"
+    elseif icon == BadgeStyle.INV_RACE_FLAG_PLANE then
+        return "race_air"
+    elseif icon == BadgeStyle.INV_RACE_FLAG_BICYCLE then
+        return "race_bike"
+    elseif icon == BadgeStyle.INV_RACE_FLAG_BOAT_ANCHOR then
+        return "race_boat"
+    elseif icon == BadgeStyle.INV_RACE_FLAG_PERSON then
+        return "race_foot"
+    elseif icon == BadgeStyle.INV_RACE_FLAG_CAR then
+        return "race_land"
+    elseif icon == BadgeStyle.INV_RACE_FLAG_HELMET then
+        return "race_offroad"
+    elseif icon == BadgeStyle.INV_SHOOTING_RANGE then
+        return "shooting_range"
+    elseif icon == BadgeStyle.INV_SURVIVAL then
+        return "survival"
+    elseif icon == BadgeStyle.INV_TEAM_DEATHMATCH then
+        return "team_deathmatch"
+    elseif icon == BadgeStyle.INV_TENNIS then
+        return "tennis"
+    elseif icon == BadgeStyle.INV_VEHICLE_DEATHMATCH then
+        return "vehicle_deathmatch"
+    elseif icon == BadgeStyle.AUDIO_MUTE then
+        return "leaderboard_audio_mute"
+    elseif icon == BadgeStyle.AUDIO_INACTIVE then
+        return "leaderboard_audio_inactive"
+    elseif icon == BadgeStyle.AUDIO_VOL1 then
+        return "leaderboard_audio_1"
+    elseif icon == BadgeStyle.AUDIO_VOL2 then
+        return "leaderboard_audio_2"
+    elseif icon == BadgeStyle.AUDIO_VOL3 then
+        return "leaderboard_audio_3"
+    elseif icon == BadgeStyle.COUNTRY_USA then
+        return "vehicle_card_icons_flag_usa"
+    elseif icon == BadgeStyle.COUNTRY_UK then
+        return "vehicle_card_icons_flag_uk"
+    elseif icon == BadgeStyle.COUNTRY_SWEDEN then
+        return "vehicle_card_icons_flag_sweden"
+    elseif icon == BadgeStyle.COUNTRY_KOREA then
+        return "vehicle_card_icons_flag_korea"
+    elseif icon == BadgeStyle.COUNTRY_JAPAN then
+        return "vehicle_card_icons_flag_japan"
+    elseif icon == BadgeStyle.COUNTRY_ITALY then
+        return "vehicle_card_icons_flag_italy"
+    elseif icon == BadgeStyle.COUNTRY_GERMANY then
+        return "vehicle_card_icons_flag_germany"
+    elseif icon == BadgeStyle.COUNTRY_FRANCE then
+        return "vehicle_card_icons_flag_france"
+    elseif icon == BadgeStyle.BRAND_ALBANY then
+        return "albany"
+    elseif icon == BadgeStyle.BRAND_ANNIS then
+        return "annis"
+    elseif icon == BadgeStyle.BRAND_BANSHEE then
+        return "banshee"
+    elseif icon == BadgeStyle.BRAND_BENEFACTOR then
+        return "benefactor"
+    elseif icon == BadgeStyle.BRAND_BF then
+        return "bf"
+    elseif icon == BadgeStyle.BRAND_BOLLOKAN then
+        return "bollokan"
+    elseif icon == BadgeStyle.BRAND_BRAVADO then
+        return "bravado"
+    elseif icon == BadgeStyle.BRAND_BRUTE then
+        return "brute"
+    elseif icon == BadgeStyle.BRAND_BUCKINGHAM then
+        return "buckingham"
+    elseif icon == BadgeStyle.BRAND_CANIS then
+        return "canis"
+    elseif icon == BadgeStyle.BRAND_CHARIOT then
+        return "chariot"
+    elseif icon == BadgeStyle.BRAND_CHEVAL then
+        return "cheval"
+    elseif icon == BadgeStyle.BRAND_CLASSIQUE then
+        return "classique"
+    elseif icon == BadgeStyle.BRAND_COIL then
+        return "coil"
+    elseif icon == BadgeStyle.BRAND_DECLASSE then
+        return "declasse"
+    elseif icon == BadgeStyle.BRAND_DEWBAUCHEE then
+        return "dewbauchee"
+    elseif icon == BadgeStyle.BRAND_DILETTANTE then
+        return "dilettante"
+    elseif icon == BadgeStyle.BRAND_DINKA then
+        return "dinka"
+    elseif icon == BadgeStyle.BRAND_DUNDREARY then
+        return "dundreary"
+    elseif icon == BadgeStyle.BRAND_EMPORER then
+        return "emporer"
+    elseif icon == BadgeStyle.BRAND_ENUS then
+        return "enus"
+    elseif icon == BadgeStyle.BRAND_FATHOM then
+        return "fathom"
+    elseif icon == BadgeStyle.BRAND_GALIVANTER then
+        return "galivanter"
+    elseif icon == BadgeStyle.BRAND_GROTTI then
+        return "grotti"
+    elseif icon == BadgeStyle.BRAND_HIJAK then
+        return "hijak"
+    elseif icon == BadgeStyle.BRAND_HVY then
+        return "hvy"
+    elseif icon == BadgeStyle.BRAND_IMPONTE then
+        return "imponte"
+    elseif icon == BadgeStyle.BRAND_INVETERO then
+        return "invetero"
+    elseif icon == BadgeStyle.BRAND_JACKSHEEPE then
+        return "jacksheepe"
+    elseif icon == BadgeStyle.BRAND_JOBUILT then
+        return "jobuilt"
+    elseif icon == BadgeStyle.BRAND_KARIN then
+        return "karin"
+    elseif icon == BadgeStyle.BRAND_LAMPADATI then
+        return "lampadati"
+    elseif icon == BadgeStyle.BRAND_MAIBATSU then
+        return "maibatsu"
+    elseif icon == BadgeStyle.BRAND_MAMMOTH then
+        return "mammoth"
+    elseif icon == BadgeStyle.BRAND_MTL then
+        return "mtl"
+    elseif icon == BadgeStyle.BRAND_NAGASAKI then
+        return "nagasaki"
+    elseif icon == BadgeStyle.BRAND_OBEY then
+        return "obey"
+    elseif icon == BadgeStyle.BRAND_OCELOT then
+        return "ocelot"
+    elseif icon == BadgeStyle.BRAND_OVERFLOD then
+        return "overflod"
+    elseif icon == BadgeStyle.BRAND_PED then
+        return "ped"
+    elseif icon == BadgeStyle.BRAND_PEGASSI then
+        return "pegassi"
+    elseif icon == BadgeStyle.BRAND_PFISTER then
+        return "pfister"
+    elseif icon == BadgeStyle.BRAND_PRINCIPE then
+        return "principe"
+    elseif icon == BadgeStyle.BRAND_PROGEN then
+        return "progen"
+    elseif icon == BadgeStyle.BRAND_SCHYSTER then
+        return "schyster"
+    elseif icon == BadgeStyle.BRAND_SHITZU then
+        return "shitzu"
+    elseif icon == BadgeStyle.BRAND_SPEEDOPHILE then
+        return "speedophile"
+    elseif icon == BadgeStyle.BRAND_STANLEY then
+        return "stanley"
+    elseif icon == BadgeStyle.BRAND_TRUFFADE then
+        return "truffade"
+    elseif icon == BadgeStyle.BRAND_UBERMACHT then
+        return "ubermacht"
+    elseif icon == BadgeStyle.BRAND_VAPID then
+        return "vapid"
+    elseif icon == BadgeStyle.BRAND_VULCAR then
+        return "vulcar"
+    elseif icon == BadgeStyle.BRAND_WEENY then
+        return "weeny"
+    elseif icon == BadgeStyle.BRAND_WESTERN then
+        return "western"
+    elseif icon == BadgeStyle.BRAND_WESTERNMOTORCYCLE then
+        return "westernmotorcycle"
+    elseif icon == BadgeStyle.BRAND_WILLARD then
+        return "willard"
+    elseif icon == BadgeStyle.BRAND_ZIRCONIUM then
+        return "zirconium"
+    elseif icon == BadgeStyle.BRAND_GROTTI2 then
+        return "grotti_2"
+    elseif icon == BadgeStyle.BRAND_LCC then
+        return "lcc"
+    elseif icon == BadgeStyle.BRAND_PROGEN2 then
+        return "progen"
+    elseif icon == BadgeStyle.BRAND_RUNE then
+        return "rune"
+    elseif icon == BadgeStyle.INFO then
+        return "info_icon_32"
+    else
+        return ""
     end
 end

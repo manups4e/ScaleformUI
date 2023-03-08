@@ -15,7 +15,7 @@ ScaleformUI.Scaleforms.CountdownHandler = nil
 
 ScaleformUI.Scaleforms._pauseMenu = nil
 
-AddEventHandler("onResourceStop", function(resName) 
+AddEventHandler("onResourceStop", function(resName)
     if resName == GetCurrentResourceName() then
         if IsPauseMenuActive() and GetCurrentFrontendMenuVersion() == -2060115030 then
             ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
@@ -44,7 +44,7 @@ Citizen.CreateThread(function()
     ScaleformUI.Scaleforms._pauseMenu:Load()
     ScaleformUI.Scaleforms.RankbarHandler = RankbarHandler.New()
     ScaleformUI.Scaleforms.CountdownHandler = CountdownHandler.New()
-    
+
     local wait = 500
     while true do
         if not IsPauseMenuActive() then

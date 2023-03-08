@@ -1,3 +1,5 @@
+---@diagnostic disable: missing-parameter -- false positive
+
 TextTimerBar = setmetatable({}, TextTimerBar)
 TextTimerBar.__index = TextTimerBar
 TextTimerBar.__call = function()

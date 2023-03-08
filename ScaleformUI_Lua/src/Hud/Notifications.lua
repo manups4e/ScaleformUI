@@ -34,7 +34,7 @@ function Notifications.New()
             AdDFriendRequest = 3,
             RightJumpingArrow = 7,
             RPIcon = 8,
-            DollarIcon = 9           
+            DollarIcon = 9
         },
         IconChars = {
             Abigail = "CHAR_ABIGAIL",
@@ -153,13 +153,13 @@ end
 function Notifications:ShowNotificationWithColor(msg, color, blink, showBrief)
     AddTextEntry("ScaleformUINotification", msg)
     BeginTextCommandThefeedPost("ScaleformUINotification")
-    ThefeedNextPostBackgroundColor(color)
+    ThefeedSetNextPostBackgroundColor(color)
     EndTextCommandThefeedPostTicker(blink, showBrief)
 end
 
 function Notifications:ShowHelpNotification(helpText, time)
     AddTextEntry("ScaleformUIHelpText", helpText)
-    if(time ~= nil) then
+    if (time ~= nil) then
         if (time > 5000) then time = 5000 end
         BeginTextCommandDisplayHelp("ScaleformUIHelpText")
         EndTextCommandDisplayHelp(0, false, true, time)
@@ -169,7 +169,7 @@ function Notifications:ShowHelpNotification(helpText, time)
 end
 
 function Notifications:ShowFloatingHelpNotification(msg, coords, time)
-   if(time == nil) then time = -1 end 
+    if (time == nil) then time = -1 end
     AddTextEntry("ScaleformUIFloatingHelpText", msg)
     SetFloatingHelpTextWorldPosition(1, coords.x, coords.y, coords.z)
     SetFloatingHelpTextStyle(1, 1, 2, -1, 3, 0)
@@ -177,28 +177,29 @@ function Notifications:ShowFloatingHelpNotification(msg, coords, time)
     EndTextCommandDisplayHelp(2, false, false, time)
 end
 
-function Notifications:ShowAdvancedNotification(title, subtitle, text, iconSet, icon, bgColor, flashColor, blink, type, sound)
-    if(type == nil) then type = self.Type.Default end
-    if(iconSet == nil) then iconSet = self.IconChars.Default end
-    if(icon == nil) then icon = self.NotificationIcon.Default end
-    if(bgColor == nil) then bgColor = -1 end
-    if(blink == nil ) then blink = false end
+function Notifications:ShowAdvancedNotification(title, subtitle, text, iconSet, icon, bgColor, flashColor, blink, type,
+                                                sound)
+    if (type == nil) then type = self.Type.Default end
+    if (iconSet == nil) then iconSet = self.IconChars.Default end
+    if (icon == nil) then icon = self.NotificationIcon.Default end
+    if (bgColor == nil) then bgColor = -1 end
+    if (blink == nil) then blink = false end
     AddTextEntry("ScaleformUIAdvancedNotification", text)
     BeginTextCommandThefeedPost("ScaleformUIAdvancedNotification")
     AddTextComponentSubstringPlayerName(text)
     if (bgColor and bgColor ~= -1) then
-        SetNotificationBackgroundColor(bgColor)
+        ThefeedSetNextPostBackgroundColor(bgColor)
     end
     if (flashColor and not blink) then
-        SetNotificationFlashColor(flashColor.R, flashColor.G, flashColor.B, flashColor.A)
+        ThefeedSetAnimpostfxColor(flashColor.R, flashColor.G, flashColor.B, flashColor.A)
     end
-    if (sound) then Audio.PlaySoundFrontend("DELETE", "HUD_DEATHMATCH_SOUNDSET") end
+    if (sound) then PlaySoundFrontend(-1, "DELETE", "HUD_DEATHMATCH_SOUNDSET", true); end
     return EndTextCommandThefeedPostMessagetext(iconSet, icon, true, type, title, subtitle)
 end
 
 function Notifications:ShowStatNotification(newProgress, oldProgress, title, blink, showBrief)
-    if(blink == nil) then blink = false end
-    if(showBrief == nil) then showBrief = false end
+    if (blink == nil) then blink = false end
+    if (showBrief == nil) then showBrief = false end
     AddTextEntry("ScaleformUIStatsNotification", title)
     local handle = RegisterPedheadshot(PlayerPedId())
     while not IsPedheadshotReady(handle) or not IsPedheadshotValid(handle) do Citizen.Wait(0) end
@@ -220,6 +221,7 @@ function Notifications:ShowVSNotification(ped1, ped2, color1, color2)
     local txd_2 = GetPedheadshotTxdString(handle_2)
 
     BeginTextCommandThefeedPost("")
+    ---@diagnostic disable-next-line: redundant-parameter -- This is a bug in the linter
     EndTextCommandThefeedPostVersusTu(txd_1, txd_1, 12, txd_2, txd_2, 1, color1, color2)
 
     UnregisterPedheadshot(handle_1)
@@ -249,14 +251,14 @@ function Notifications:DrawText3D(coords, color, text, font, size)
 end
 
 function Notifications:DrawText(x, y, text, color, font, textAlignment, shadow, outline, wrap)
-    if(color == nil) then color = {r=255, g=255, b=255, a=255} end
-    if(font == nil) then font = 4 end
-    if(textAlignment == nil) then textAlignment = 1 end
-    if(shadow == nil) then shadow = false end
-    if(outline == nil) then outline = false end
-    if(wrap == nil) then wrap = 0 end
+    if (color == nil) then color = { r = 255, g = 255, b = 255, a = 255 } end
+    if (font == nil) then font = 4 end
+    if (textAlignment == nil) then textAlignment = 1 end
+    if (shadow == nil) then shadow = false end
+    if (outline == nil) then outline = false end
+    if (wrap == nil) then wrap = 0 end
 
-    local screenw, screenh = GetScreenActiveResolution()
+    local screenw, screenh = GetActiveScreenResolution()
     local height = 1080
     local ratio = screenw / screenh
     local width = height * ratio
@@ -267,14 +269,14 @@ function Notifications:DrawText(x, y, text, color, font, textAlignment, shadow, 
     if (shadow) then SetTextDropShadow() end
     if (outline) then SetTextOutline() end
     if (wrap ~= 0) then
-        local xsize = (x + Wrap) / width
+        local xsize = (x + wrap) / width
         SetTextWrap(x, xsize)
     end
-    if (TextAlignment == 0) then
-            SetTextCentre(true)
-    elseif(TextAlignment == 2) then
-            SetTextRightJustify(true)
-            SetTextWrap(0, x)
+    if (textAlignment == 0) then
+        SetTextCentre(true)
+    elseif (textAlignment == 2) then
+        SetTextRightJustify(true)
+        SetTextWrap(0, x)
     end
     BeginTextCommandDisplayText("jamyfafi")
     AddTextComponentSubstringPlayerName(text)
@@ -282,7 +284,7 @@ function Notifications:DrawText(x, y, text, color, font, textAlignment, shadow, 
 end
 
 function Notifications:ShowSubtitle(msg, time)
-    if(time == nil) then time = 2500 end
+    if (time == nil) then time = 2500 end
     AddTextEntry("ScaleformUISubtitle", msg)
     BeginTextCommandPrint("ScaleformUISubtitle")
     EndTextCommandPrint(time, true)

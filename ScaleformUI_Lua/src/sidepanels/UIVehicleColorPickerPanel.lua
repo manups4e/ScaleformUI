@@ -17,7 +17,8 @@ function UIVehicleColorPickerPanel.New(side, title, color)
         TitleType = 0,
         Value = 1,
         ParentItem = nil,
-        PickerSelect = function(menu, item, newindex) end
+        PickerSelect = function(menu, item, newindex)
+        end
     }
     return setmetatable(_UIVehicleColorPickerPanel, UIVehicleColorPickerPanel)
 end

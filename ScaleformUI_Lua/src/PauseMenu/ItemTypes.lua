@@ -1,7 +1,6 @@
 StatItemType = {
     Basic = 0,
     ColoredBar = 1,
-    
 }
 
 SettingsItemType = {

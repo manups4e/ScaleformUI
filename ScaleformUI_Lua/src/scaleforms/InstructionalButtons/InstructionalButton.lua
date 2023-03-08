@@ -17,7 +17,7 @@ function InstructionalButton.New(text, padcheck, gamepadControls, keyboardContro
         KeyboardButton = -1,
         PadCheck = padcheck or -1
     }
-    
+
     if type(gamepadControls) == "table" then
         if padcheck == 0 or padcheck == -1 then
             _button.GamepadButtons = gamepadControls
@@ -25,8 +25,8 @@ function InstructionalButton.New(text, padcheck, gamepadControls, keyboardContro
     else
         if padcheck == 0 or padcheck == -1 then
             _button.GamepadButton = gamepadControls
-        else 
-            _button.GamepadButton= -1
+        else
+            _button.GamepadButton = -1
         end
     end
     if type(keyboardControls) == "table" then
@@ -35,13 +35,13 @@ function InstructionalButton.New(text, padcheck, gamepadControls, keyboardContro
         end
     else
         if padcheck == 1 or padcheck == -1 then
-            _button.KeyboardButton = keyboardControls 
+            _button.KeyboardButton = keyboardControls
         else
             _button.KeyboardButton = -1
         end
     end
     _button.InputGroupButton = inputGroup or -1
-    
+
     return setmetatable(_button, button)
 end
 
@@ -54,33 +54,32 @@ function button:GetButtonId()
         local retVal = ""
         if self:IsUsingController() then
             if self.GamepadButtons ~= nil then
-                for i=#self.GamepadButtons, 1, -1 do
+                for i = #self.GamepadButtons, 1, -1 do
                     if i == 1 then
-                        retVal = retVal .. GetControlInstructionalButton(2, self.GamepadButtons[i], 1)
+                        retVal = retVal .. GetControlInstructionalButton(2, self.GamepadButtons[i], true)
                     else
-                        retVal = retVal .. GetControlInstructionalButton(2, self.GamepadButtons[i], 1) .. "%"
+                        retVal = retVal .. GetControlInstructionalButton(2, self.GamepadButtons[i], true) .. "%"
                     end
                 end
             end
         else
             if self.KeyboardButtons ~= nil then
-                for i=#self.KeyboardButtons, 1, -1 do
+                for i = #self.KeyboardButtons, 1, -1 do
                     if i == 1 then
-                        retVal = retVal .. GetControlInstructionalButton(2, self.KeyboardButtons[i], 1)
+                        retVal = retVal .. GetControlInstructionalButton(2, self.KeyboardButtons[i], true)
                     else
-                        retVal = retVal .. GetControlInstructionalButton(2, self.KeyboardButtons[i], 1) .. "%"
+                        retVal = retVal .. GetControlInstructionalButton(2, self.KeyboardButtons[i], true) .. "%"
                     end
                 end
             end
         end
         return retVal
-    elseif self.InputGroupButton ~= -1 then 
-        return "~"..self.InputGroupButton.."~"
+    elseif self.InputGroupButton ~= -1 then
+        return "~" .. self.InputGroupButton .. "~"
     end
     if self:IsUsingController() then
-        return GetControlInstructionalButton(2, self.GamepadButton, 1)
+        return GetControlInstructionalButton(2, self.GamepadButton, true)
     else
-        return GetControlInstructionalButton(2, self.KeyboardButton, 1)
+        return GetControlInstructionalButton(2, self.KeyboardButton, true)
     end
 end
-

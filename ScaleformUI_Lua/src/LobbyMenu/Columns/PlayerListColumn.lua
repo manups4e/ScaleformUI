@@ -46,9 +46,11 @@ function PlayerListColumn:CurrentSelection(idx)
         if self.Parent ~= nil and self.Parent:Visible() then
             local pSubT = self.Parent()
             if pSubT == "LobbyMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_SELECTION", false, self:CurrentSelection()-1)
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_SELECTION", false,
+                self:CurrentSelection() - 1)
             elseif pSubT == "PauseMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_SELECTION", false, self.ParentTab, self:CurrentSelection()-1)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_SELECTION", false,
+                self.ParentTab, self:CurrentSelection() - 1)
             end
         end
     end
@@ -63,9 +65,13 @@ function PlayerListColumn:AddPlayer(item)
         if SubType == "FriendItem" then
             local pSubT = self.Parent()
             if pSubT == "LobbyMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_PLAYER_ITEM", false, 1, 1, item:Label(), item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL, item._iconR, item._boolR, item:Status(), item:StatusColor(), item:Rank(), item:CrewTag())
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_PLAYER_ITEM", false, 1, 1, item:Label(),
+                item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL, item._iconR, item._boolR, item:Status(),
+                item:StatusColor(), item:Rank(), item:CrewTag())
             elseif pSubT == "PauseMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_PLAYER_ITEM", false, self.ParentTab, 1, 1, item:Label(), item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL, item._iconR, item._boolR, item:Status(), item:StatusColor(), item:Rank(), item:CrewTag())
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_PLAYER_ITEM", false,
+                self.ParentTab, 1, 1, item:Label(), item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL,
+                item._iconR, item._boolR, item:Status(), item:StatusColor(), item:Rank(), item:CrewTag())
             end
         end
         if item.Panel ~= nil then
@@ -87,9 +93,10 @@ function PlayerListColumn:RemovePlayer(item)
         if SubType == "FriendItem" then
             local pSubT = self.Parent()
             if pSubT == "LobbyMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("REMOVE_PLAYER_ITEM", false, id-1)
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("REMOVE_PLAYER_ITEM", false, id - 1)
             elseif pSubT == "PauseMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("REMOVE_PLAYERS_TAB_PLAYER_ITEM", false, self.ParentTab, id-1)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("REMOVE_PLAYERS_TAB_PLAYER_ITEM", false,
+                self.ParentTab, id - 1)
             end
         end
         if item.Panel ~= nil then

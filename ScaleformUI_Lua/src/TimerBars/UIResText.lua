@@ -21,7 +21,7 @@ function GetByteCount(str)
     local bytes = 0
 
     for c in str:gmatch("[%z\1-\127\194-\244][\128-\191]*") do
-        local a,b,c,d = c:byte(1, -1)
+        local a, b, c, d = c:byte(1, -1)
         if a ~= nil then
             bytes = bytes + 1
         end
@@ -67,7 +67,7 @@ function AddLongStringForUtf8(str)
         end
     end
     AddTextComponentSubstringPlayerName(string.sub(str, startIndex, GetCharacterCount(str) - startIndex))
-end 
+end
 
 ---AddLongString
 ---@param str string
@@ -85,7 +85,7 @@ end
 ---@param font number
 ---@param scale number
 function MeasureStringWidthNoConvert(str, font, scale)
-    BeginTextCommandWidth("STRING")
+    BeginTextCommandGetWidth("STRING")
     AddLongString(str)
     SetTextFont(font or 0)
     SetTextScale(1.0, scale or 0)
@@ -102,25 +102,25 @@ end
 
 ---New
 ---@param Text string
----@param X number
----@param Y number
----@param Scale number
----@param R number
----@param G number
----@param B number
----@param A number
----@param Font number
----@param Alignment number
----@param DropShadow number
----@param Outline number
----@param WordWrap number
+---@param X number|0
+---@param Y number|0
+---@param Scale number|0
+---@param R number|255
+---@param G number|255
+---@param B number|255
+---@param A number|255
+---@param Font number|0
+---@param Alignment number|nil
+---@param DropShadow number|nil
+---@param Outline number|nil
+---@param WordWrap number|0
 function UIResText.New(Text, X, Y, Scale, R, G, B, A, Font, Alignment, DropShadow, Outline, WordWrap)
     local _UIResText = {
         _Text = tostring(Text) or "",
         X = tonumber(X) or 0,
         Y = tonumber(Y) or 0,
         Scale = tonumber(Scale) or 0,
-        _Colour = {R = tonumber(R) or 255, G = tonumber(G) or 255, B = tonumber(B) or 255, A = tonumber(A) or 255},
+        _Colour = { R = tonumber(R) or 255, G = tonumber(G) or 255, B = tonumber(B) or 255, A = tonumber(A) or 255 },
         Font = tonumber(Font) or 0,
         Alignment = Alignment or nil,
         DropShadow = DropShadow or nil,
@@ -131,22 +131,22 @@ function UIResText.New(Text, X, Y, Scale, R, G, B, A, Font, Alignment, DropShado
 end
 
 ---Position
----@param X number
----@param Y number
+---@param X number|nil
+---@param Y number|nil
 function UIResText:Position(X, Y)
     if tonumber(X) and tonumber(Y) then
         self.X = tonumber(X)
         self.Y = tonumber(Y)
     else
-        return {X = self.X, Y = self.Y}
+        return { X = self.X, Y = self.Y }
     end
 end
 
 ---Colour
----@param R number
----@param G number
----@param B number
----@param A number
+---@param R number|nil
+---@param G number|nil
+---@param B number|nil
+---@param A number|nil
 function UIResText:Colour(R, G, B, A)
     if tonumber(R) and tonumber(G) and tonumber(B) and tonumber(A) then
         self._Colour.R = tonumber(R)
@@ -196,7 +196,8 @@ function UIResText:Draw()
 
     if tonumber(self.WordWrap) then
         if tonumber(self.WordWrap) ~= 0 then
-            SetTextWrap(Position.X, Position.X + (tonumber(self.WordWrap) / Resolution.Width))
+            local Width, Height = GetScreenResolution()
+            SetTextWrap(Position.X, Position.X + (tonumber(self.WordWrap) / Width))
         end
     end
 

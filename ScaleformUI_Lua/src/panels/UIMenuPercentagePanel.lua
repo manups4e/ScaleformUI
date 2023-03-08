@@ -4,8 +4,9 @@ UIMenuPercentagePanel.__call = function() return "UIMenuPanel", "UIMenuPercentag
 
 ---New
 ---@param title string
----@param colorType int
----@param startIndex number
+---@param minText string
+---@param maxText string
+---@param initialValue number
 function UIMenuPercentagePanel.New(title, minText, maxText, initialValue)
     local _UIMenuPercentagePanel = {
         Min = minText or "0%",
@@ -13,7 +14,8 @@ function UIMenuPercentagePanel.New(title, minText, maxText, initialValue)
         Title = title or "Opacity",
         Percentage = initialValue or 0.0,
         ParentItem = nil, -- required
-        OnPercentagePanelChange = function(item, panel, value) end
+        OnPercentagePanelChange = function(item, panel, value)
+        end
     }
     return setmetatable(_UIMenuPercentagePanel, UIMenuPercentagePanel)
 end

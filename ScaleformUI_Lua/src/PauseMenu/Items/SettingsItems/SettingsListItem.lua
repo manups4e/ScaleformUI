@@ -8,7 +8,7 @@ function SettingsListItem.New(label, items, index)
     data = {
         Base = SettingsItem.New(label, ""),
         ItemType = SettingsItemType.ListItem,
-        Label = label or "", 
+        Label = label or "",
         ListItems = items or {},
         _itemIndex = index or 0,
         _enabled = true,
@@ -31,7 +31,8 @@ function SettingsListItem:Enabled(enabled)
                 local tab = IndexOf(self.Parent.Parent.Base.Parent.Tabs, self.Parent.Parent) - 1
                 local leftItem = IndexOf(self.Parent.Parent.LeftItemList, self.Parent) - 1
                 local rightIndex = IndexOf(self.Parent.ItemList, self) - 1
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ENABLE_RIGHT_ITEM", false, tab, leftItem, rightIndex, self._enabled)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ENABLE_RIGHT_ITEM", false, tab, leftItem,
+                rightIndex, self._enabled)
             end
         end
     else
@@ -56,7 +57,7 @@ function SettingsListItem:Selected(selected)
 end
 
 function SettingsListItem:ItemIndex(index)
-    if index ~= nil then 
+    if index ~= nil then
         self._itemIndex = index
         local tab = IndexOf(self.Parent.Parent.Base.Parent.Tabs, self.Parent.Parent) - 1
         local leftItem = IndexOf(self.Parent.Parent.LeftItemList, self.Parent) - 1

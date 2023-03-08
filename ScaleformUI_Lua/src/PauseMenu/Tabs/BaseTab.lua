@@ -13,7 +13,8 @@ function BaseTab.New(title, type)
         Active = false,
         Parent = nil,
         LeftItemList = {},
-        Activated = function(item) end
+        Activated = function(item)
+        end
     }
     return setmetatable(data, BaseTab)
 end

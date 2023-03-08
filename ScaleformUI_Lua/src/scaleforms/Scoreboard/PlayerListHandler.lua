@@ -57,8 +57,8 @@ function PlayerListScoreboard:Dispose()
     _sc:CallFunction("SET_DATA_SLOT_EMPTY")
     _sc:Dispose()
     _sc = nil
-    for i=0, 1024 do  -- cleaning up in case of a reload, this frees up all ped headshot handles :)
-        UnregisterPedheadshot(x)
+    for i = 0, 1024 do -- cleaning up in case of a reload, this frees up all ped headshot handles :)
+        UnregisterPedheadshot(i)
     end
 end
 
@@ -120,28 +120,37 @@ function PlayerListScoreboard:NextPage()
 end
 
 function PlayerListScoreboard:Highlight(idx)
-    self._sc:CallFunction("SET_HIGHLIGHT", false, idx-1)
+    self._sc:CallFunction("SET_HIGHLIGHT", false, idx - 1)
 end
 
 function PlayerListScoreboard:ShowMic(idx, show)
-    self._sc:CallFunction("DISPLAY_MIC", false, idx-1, show)
+    self._sc:CallFunction("DISPLAY_MIC", false, idx - 1, show)
 end
 
 function PlayerListScoreboard:UpdateSlot(id, row)
     if row.CrewLabelText ~= "" then
-        self._sc:CallFunction("UPDATE_SLOT", false, id-1, row.RightText, row.Name, row.Color, row.RightIcon, row.IconOverlayText, row.JobPointsText, "..+"..row.CrewLabelText, row.JobPointsDisplayType, row.TextureString, row.TextureString, row.FriendType)
-    else 
-        self._sc:CallFunction("UPDATE_SLOT", false, id-1, row.RightText, row.Name, row.Color, row.RightIcon, row.IconOverlayText, row.JobPointsText, "", row.JobPointsDisplayType, row.TextureString, row.TextureString, row.FriendType)
+        self._sc:CallFunction("UPDATE_SLOT", false, id - 1, row.RightText, row.Name, row.Color, row.RightIcon,
+            row.IconOverlayText, row.JobPointsText, "..+" .. row.CrewLabelText, row.JobPointsDisplayType,
+            row.TextureString,
+            row.TextureString, row.FriendType)
+    else
+        self._sc:CallFunction("UPDATE_SLOT", false, id - 1, row.RightText, row.Name, row.Color, row.RightIcon,
+            row.IconOverlayText, row.JobPointsText, "", row.JobPointsDisplayType, row.TextureString, row.TextureString,
+            row.FriendType)
     end
 end
 
 function PlayerListScoreboard:RefreshAll()
     Citizen.CreateThread(function()
-        for _, row in pairs(self.PlayerRows) do
+        for index, row in pairs(self.PlayerRows) do
             if row.CrewLabelText ~= "" then
-                self._sc:CallFunction("UPDATE_SLOT", false, id-1, row.RightText, row.Name, row.Color, row.RightIcon, row.IconOverlayText, row.JobPointsText, "..+"..row.CrewLabelText, row.JobPointsDisplayType, row.TextureString, row.TextureString, row.FriendType)
-            else 
-                self._sc:CallFunction("UPDATE_SLOT", false, id-1, row.RightText, row.Name, row.Color, row.RightIcon, row.IconOverlayText, row.JobPointsText, "", row.JobPointsDisplayType, row.TextureString, row.TextureString, row.FriendType)
+                self._sc:CallFunction("UPDATE_SLOT", false, index - 1, row.RightText, row.Name, row.Color, row.RightIcon,
+                    row.IconOverlayText, row.JobPointsText, "..+" .. row.CrewLabelText, row.JobPointsDisplayType,
+                    row.TextureString, row.TextureString, row.FriendType)
+            else
+                self._sc:CallFunction("UPDATE_SLOT", false, index - 1, row.RightText, row.Name, row.Color, row.RightIcon,
+                    row.IconOverlayText, row.JobPointsText, "", row.JobPointsDisplayType, row.TextureString,
+                    row.TextureString, row.FriendType)
             end
         end
     end)
@@ -160,17 +169,22 @@ function PlayerListScoreboard:BuildMenu()
     local rows = {}
     self._sc:CallFunction("SET_DATA_SLOT_EMPTY", false)
     self._sc:CallFunction("SET_TITLE", false, self.TitleLeftText, self.TitleRightText, self.TitleIcon)
-    for k,v in pairs(self.PlayerRows) do
+    for k, v in pairs(self.PlayerRows) do
         if self:IsSupposedToShow(k) then
             rows[#rows + 1] = v
         end
     end
     self.Index = 0
-    for k,row in pairs(rows) do
+    for k, row in pairs(rows) do
         if string.IsNullOrEmpty(row.CrewLabelText) then
-            self._sc:CallFunction("SET_DATA_SLOT", false, self.Index, row.RightText, row.Name, row.Color, row.RightIcon, row.IconOverlayText, row.JobPointsText, "", row.JobPointsDisplayType, row.TextureString, row.TextureString, row.FriendType)
+            self._sc:CallFunction("SET_DATA_SLOT", false, self.Index, row.RightText, row.Name, row.Color, row.RightIcon,
+                row.IconOverlayText, row.JobPointsText, "", row.JobPointsDisplayType, row.TextureString,
+                row.TextureString,
+                row.FriendType)
         else
-            self._sc:CallFunction("SET_DATA_SLOT", false, self.Index, row.RightText, row.Name, row.Color, row.RightIcon, row.IconOverlayText, row.JobPointsText, "..+"..row.CrewLabelText, row.JobPointsDisplayType, row.TextureString, row.TextureString, row.FriendType)
+            self._sc:CallFunction("SET_DATA_SLOT", false, self.Index, row.RightText, row.Name, row.Color, row.RightIcon,
+                row.IconOverlayText, row.JobPointsText, "..+" .. row.CrewLabelText, row.JobPointsDisplayType,
+                row.TextureString, row.TextureString, row.FriendType)
         end
         self.Index = self.Index + 1
     end

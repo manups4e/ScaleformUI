@@ -6,13 +6,13 @@ end
 
 function SettingsProgressItem.New(label, max, startIndex, masked, barColor)
     local _type = SettingsItemType.ProgressBar
-    if(masked) then
+    if (masked) then
         _type = SettingsItemType.MaskedProgressBar
     end
     local data = {
         Base = BasicTabItem.New(label or ""),
         ItemType = _type,
-        Label = label or "", 
+        Label = label or "",
         MaxValue = max,
         _value = startIndex,
         _coloredBarColor = barColor or Colours.HUD_COLOUR_FREEMODE,
@@ -36,7 +36,8 @@ function SettingsProgressItem:Enabled(enabled)
                 local tab = IndexOf(self.Parent.Parent.Base.Parent.Tabs, self.Parent.Parent) - 1
                 local leftItem = IndexOf(self.Parent.Parent.LeftItemList, self.Parent) - 1
                 local rightIndex = IndexOf(self.Parent.ItemList, self) - 1
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ENABLE_RIGHT_ITEM", false, tab, leftItem, rightIndex, self._enabled)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ENABLE_RIGHT_ITEM", false, tab, leftItem,
+                rightIndex, self._enabled)
             end
         end
     else

@@ -1,20 +1,32 @@
-function string.starts(String,Start)
-    return string.sub(String,1,string.len(Start))==Start
+---starts
+---@param Str string
+---@param Start string
+---@return boolean
+function string.starts(Str, Start)
+    return string.sub(Str, 1, string.len(Start)) == Start
 end
 
-string.StartsWith = function(self, str) 
+---StartsWith
+---@param self string
+---@param str string
+---@return boolean
+string.StartsWith = function(self, str)
     return self:find('^' .. str) ~= nil
 end
 
+---IsNullOrEmpty
+---@param self string
+---@return boolean
 string.IsNullOrEmpty = function(self)
-    return self == nil or self == '' or not not tostring(self):find("^%s*$") 
+    return self == nil or self == '' or not not tostring(self):find("^%s*$")
 end
-function string.IsNullOrEmpty(s)
-    return s == nil or s == '' or not not tostring(s):find("^%s*$") 
- end
-   
+
+---Insert
+---@param self string
+---@param pos number
+---@param str2 string
 string.Insert = function(self, pos, str2)
-    return self:sub(1,pos)..str2..self:sub(pos+1)
+    return self:sub(1, pos) .. str2 .. self:sub(pos + 1)
 end
 
 -- Return the first index with the given value (or -1 if not found).
@@ -55,7 +67,7 @@ function string.split(inputstr, sep)
         sep = "%s"
     end
     local t, i = {}, 1
-    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+    for str in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
         t[i] = str
         i = i + 1
     end
@@ -64,26 +76,26 @@ function string.split(inputstr, sep)
 end
 
 function split(pString, pPattern)
-    local Table = {}  -- NOTE: use {n = 0} in Lua-5.0
+    local Table = {} -- NOTE: use {n = 0} in Lua-5.0
     local fpat = "(.-)" .. pPattern
     local last_end = 1
     local s, e, cap = pString:find(fpat, 1)
     while s do
-       if s ~= 1 or cap ~= "" then
-      Table[#Table + 1] = cap
-       end
-       last_end = e+1
-       s, e, cap = pString:find(fpat, last_end)
+        if s ~= 1 or cap ~= "" then
+            Table[#Table + 1] = cap
+        end
+        last_end = e + 1
+        s, e, cap = pString:find(fpat, last_end)
     end
     if last_end <= #pString then
-       cap = pString:sub(last_end)
-       Table[#Table + 1] = cap
+        cap = pString:sub(last_end)
+        Table[#Table + 1] = cap
     end
     return Table
 end
 
 function ResolutionMaintainRatio()
-    local screenw,screenh = GetActiveScreenResolution()
+    local screenw, screenh = GetActiveScreenResolution()
     local ratio = screenw / screenh
     local width = 1080 * ratio
     return width, 1080
@@ -91,11 +103,11 @@ end
 
 function SafezoneBounds()
     local t = GetSafeZoneSize();
-    local  g = math.round(t, 2);
+    local g = math.round(t, 2);
     g = (g * 100) - 90;
     g = 10 - g;
 
-    local screenw = 720 * GetScreenAspectRatio(false)
+    local screenw = 720 * GetAspectRatio(false)
     local screenh = 720
     local ratio = screenw / screenh;
     local wmp = ratio * 5.4
@@ -104,6 +116,6 @@ function SafezoneBounds()
 end
 
 function FormatXWYH(Value, Value2)
-    local w,h = ResolutionMaintainRatio()
-    return Value/w, Value2/h
+    local w, h = ResolutionMaintainRatio()
+    return Value / w, Value2 / h
 end

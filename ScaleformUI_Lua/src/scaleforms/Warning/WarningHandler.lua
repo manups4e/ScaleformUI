@@ -63,7 +63,7 @@ function warn:Update()
     self._sc:Render2D()
     if self._disableControls then
         ScaleformUI.Scaleforms.InstructionalButtons:Draw()
-        for k,v in pairs(self._buttonList) do
+        for k, v in pairs(self._buttonList) do
             if IsControlJustPressed(1, v.GamepadButton) or IsControlJustPressed(1, v.KeyboardButton) then
                 self.OnButtonPressed(v)
                 self:Dispose()

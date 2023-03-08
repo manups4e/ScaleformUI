@@ -3,9 +3,7 @@ UIMenuStatisticsPanel.__index = UIMenuStatisticsPanel
 UIMenuStatisticsPanel.__call = function() return "UIMenuPanel", "UIMenuStatisticsPanel" end
 
 ---New
----@param title string
----@param colorType int
----@param startIndex number
+---@param items table
 function UIMenuStatisticsPanel.New(items)
     local _UIMenuStatisticsPanel = {
         Items = items or {},
@@ -25,7 +23,8 @@ function UIMenuStatisticsPanel:SetParentItem(Item) -- required
 end
 
 ---AddStatistic
----@param Item table
+---@param name string
+---@param value number
 function UIMenuStatisticsPanel:AddStatistic(name, value) -- required
     if name ~= nil and name ~= "" and value ~= nil then
         if value > 100 then
@@ -33,7 +32,7 @@ function UIMenuStatisticsPanel:AddStatistic(name, value) -- required
         elseif value < 0 then
             value = 0
         end
-        self.Items[#self.Items + 1] = {['name'] = name, ['value'] = value}
+        self.Items[#self.Items + 1] = { ['name'] = name,['value'] = value }
         if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
             local it = IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem)
             local van = IndexOf(self.ParentItem.Panels, self)
@@ -59,7 +58,7 @@ function UIMenuStatisticsPanel:UpdateStatistic(id, value)
         if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
             local it = IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem)
             local van = IndexOf(self.ParentItem.Panels, self)
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_PANEL_STATS_ITEM_VALUE", false, it, van, id-1, value)
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_PANEL_STATS_ITEM_VALUE", false, it, van, id - 1, value)
         end
     end
 end

@@ -17,7 +17,7 @@ function CountdownHandler.New()
     local _sc = 0
     local _start = 0
     local _timer = 0
-    local data = {_sc = _sc, _start = _start, _timer = _timer}
+    local data = { _sc = _sc, _start = _start, _timer = _timer }
     return setmetatable(data, m)
 end
 
@@ -61,18 +61,17 @@ end
 
 function m:Start(number, hudColour, countdownAudioName, countdownAudioRef, goAudioName, goAudioRef)
     local p = promise.new()
-    
+
     if number == nil then number = 3 end
     if hudColour == nil then hudColour = 18 end
     if countdownAudioName == nil then countdownAudioName = "321" end
     if countdownAudioRef == nil then countdownAudioRef = "Car_Club_Races_Pursuit_Series_Sounds" end
     if goAudioName == nil then goAudioName = "Go" end
     if goAudioRef == nil then goAudioRef = "Car_Club_Races_Pursuit_Series_Sounds" end
-    
-    self:Load():next(function()
 
+    self:Load():next(function()
         _r, _g, _b, _a = GetHudColour(hudColour)
-        
+
         local gameTime = GetGameTimer()
 
         while number >= 0 do
@@ -89,7 +88,7 @@ function m:Start(number, hudColour, countdownAudioName, countdownAudioRef, goAud
         PlaySoundFrontend(-1, goAudioName, goAudioRef, true);
         self:ShowMessage("CNTDWN_GO")
         p:resolve()
-        
+
         if GetGameTimer() - gameTime > 1000 then
             self:Dispose()
         end

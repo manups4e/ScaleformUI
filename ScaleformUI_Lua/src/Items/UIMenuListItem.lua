@@ -11,14 +11,17 @@ function UIMenuListItem.New(Text, Items, Index, Description, color, highlightCol
     if type(Items) ~= "table" then Items = {} end
     if Index == 0 then Index = 1 end
     local _UIMenuListItem = {
-        Base = UIMenuItem.New(Text or "", Description or "", color or 117, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
+        Base = UIMenuItem.New(Text or "", Description or "", color or 117, highlightColor or 1, textColor or 1,
+            highlightedTextColor or 2),
         Items = Items,
         _Index = tonumber(Index) or 1,
         Panels = {},
         SidePanel = nil,
         ItemId = 1,
-        OnListChanged = function(menu, item, newindex) end,
-        OnListSelected = function(menu, item, newindex) end,
+        OnListChanged = function(menu, item, newindex)
+        end,
+        OnListSelected = function(menu, item, newindex)
+        end,
     }
     return setmetatable(_UIMenuListItem, UIMenuListItem)
 end
@@ -47,7 +50,8 @@ function UIMenuListItem:LabelFont(fontTable)
     else
         self.Base._labelFont = fontTable
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", false, IndexOf(self.ParentMenu.Items, item) - 1,  self.Base._labelFont[1], self.Base._labelFont[2])
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", false,
+                IndexOf(self.ParentMenu.Items, self) - 1, self.Base._labelFont[1], self.Base._labelFont[2])
         end
     end
 end
@@ -57,13 +61,18 @@ function UIMenuListItem:AddSidePanel(sidePanel)
         sidePanel:SetParentItem(self)
         self.SidePanel = sidePanel
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
-            ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false,
+                IndexOf(self.Base.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType,
+                sidePanel.Title,
+                sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
         end
-    elseif sidePanel() == "UIVehicleColorPickerPanel" then    
-        sidePanel:SetParentItem(self)    
-        self.SidePanel = sidePanel    
+    elseif sidePanel() == "UIVehicleColorPickerPanel" then
+        sidePanel:SetParentItem(self)
+        self.SidePanel = sidePanel
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
-            ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.ParentMenu.Items, self) - 1, 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor)
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false,
+                IndexOf(self.ParentMenu.Items, self) - 1, 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title,
+                sidePanel.TitleColor)
         end
     end
 end
@@ -127,10 +136,11 @@ function UIMenuListItem:Label(Text)
 end
 
 function UIMenuListItem:MainColor(color)
-    if(color)then
+    if (color) then
         self.Base._mainColor = color
-        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
+        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1,
+                self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
         return self.Base._mainColor
@@ -138,10 +148,11 @@ function UIMenuListItem:MainColor(color)
 end
 
 function UIMenuListItem:TextColor(color)
-    if(color)then
+    if (color) then
         self.Base._textColor = color
-        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
+        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1,
+                self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
         return self.Base._textColor
@@ -149,10 +160,11 @@ function UIMenuListItem:TextColor(color)
 end
 
 function UIMenuListItem:HighlightColor(color)
-    if(color)then
+    if (color) then
         self.Base._highlightColor = color
-        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
+        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1,
+                self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
         return self.Base._highlightColor
@@ -160,15 +172,17 @@ function UIMenuListItem:HighlightColor(color)
 end
 
 function UIMenuListItem:HighlightedTextColor(color)
-    if(color)then
+    if (color) then
         self.Base._highlightedTextColor = color
-        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
+        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1,
+                self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
         return self.Base._highlightedTextColor
     end
 end
+
 ---Index
 ---@param Index table
 function UIMenuListItem:Index(Index)
@@ -180,8 +194,9 @@ function UIMenuListItem:Index(Index)
         else
             self._Index = Index
         end
-        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_VALUE", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self._Index - 1)
+        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_VALUE", false,
+                IndexOf(self.Base.ParentMenu.Items, self) - 1, self._Index - 1)
         end
     else
         return self._Index
@@ -201,7 +216,7 @@ function UIMenuListItem:ItemToIndex(Item)
 end
 
 ---IndexToItem
----@param Index table
+---@param Index number
 function UIMenuListItem:IndexToItem(Index)
     if tonumber(Index) then
         if tonumber(Index) == 0 then Index = 1 end
@@ -277,6 +292,7 @@ function UIMenuListItem:ChangeList(list)
     self.Items = {}
     self.Items = list
     if self.Base.ParentMenu:Visible() then
-        ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_LISTITEM_LIST", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, table.concat(self.Items, ","), self._Index - 1)
+        ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_LISTITEM_LIST", false,
+            IndexOf(self.Base.ParentMenu.Items, self) - 1, table.concat(self.Items, ","), self._Index - 1)
     end
 end

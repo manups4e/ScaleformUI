@@ -20,12 +20,13 @@ function PlayerListTab.New(name)
 end
 
 function PlayerListTab:Focus(_f)
-    if _f == nil then 
+    if _f == nil then
         return self._focus
     else
         self._focus = _f
         if self.Base.Parent ~= nil and self.Base.Parent:Visible() then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_FOCUS", false, IndexOf(self.Base.Parent.Tabs, self) - 1, self._focus)
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_FOCUS", false,
+            IndexOf(self.Base.Parent.Tabs, self) - 1, self._focus)
         end
     end
 end

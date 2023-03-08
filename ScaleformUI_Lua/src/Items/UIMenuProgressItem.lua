@@ -4,13 +4,20 @@ UIMenuProgressItem.__call = function() return "UIMenuItem", "UIMenuProgressItem"
 
 ---New
 ---@param Text string
----@param Items table
+---@param Max number
 ---@param Index number
 ---@param Description string
----@param Counter boolean
-function UIMenuProgressItem.New(Text, Max, Index, Description, sliderColor, color, highlightColor, textColor, highlightedTextColor)
+---@param sliderColor number
+---@param color number
+---@param highlightColor number
+---@param textColor number
+---@param highlightedTextColor number
+---@param backgroundSliderColor number
+function UIMenuProgressItem.New(Text, Max, Index, Description, sliderColor, color, highlightColor, textColor,
+                                highlightedTextColor, backgroundSliderColor)
     local _UIMenuProgressItem = {
-        Base = UIMenuItem.New(Text or "", Description or "", color or 117, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
+        Base = UIMenuItem.New(Text or "", Description or "", color or 117, highlightColor or 1, textColor or 1,
+            highlightedTextColor or 2),
         _Max = Max or 100,
         _Multiplier = 5,
         _Index = Index or 0,
@@ -19,8 +26,10 @@ function UIMenuProgressItem.New(Text, Max, Index, Description, sliderColor, colo
         SliderColor = sliderColor or 116,
         BackgroundSliderColor = backgroundSliderColor or 117,
         ItemId = 4,
-        OnProgressChanged = function(menu, item, newindex) end,
-        OnProgressSelected = function(menu, item, newindex) end,
+        OnProgressChanged = function(menu, item, newindex)
+        end,
+        OnProgressSelected = function(menu, item, newindex)
+        end,
     }
 
     return setmetatable(_UIMenuProgressItem, UIMenuProgressItem)
@@ -40,7 +49,8 @@ function UIMenuProgressItem:LabelFont(fontTable)
     else
         self.Base._labelFont = fontTable
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", false, IndexOf(self.ParentMenu.Items, item) - 1,  self.Base._labelFont[1], self.Base._labelFont[2])
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", false,
+                IndexOf(self.ParentMenu.Items, self) - 1, self.Base._labelFont[1], self.Base._labelFont[2])
         end
     end
 end
@@ -60,13 +70,18 @@ function UIMenuProgressItem:AddSidePanel(sidePanel)
         sidePanel:SetParentItem(self)
         self.SidePanel = sidePanel
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
-            ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false,
+                IndexOf(self.Base.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType,
+                sidePanel.Title,
+                sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
         end
-    elseif sidePanel() == "UIVehicleColorPickerPanel" then    
-        sidePanel:SetParentItem(self)    
-        self.SidePanel = sidePanel    
+    elseif sidePanel() == "UIVehicleColorPickerPanel" then
+        sidePanel:SetParentItem(self)
+        self.SidePanel = sidePanel
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
-            ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.ParentMenu.Items, self) - 1, 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor)
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false,
+                IndexOf(self.ParentMenu.Items, self) - 1, 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title,
+                sidePanel.TitleColor)
         end
     end
 end
@@ -122,10 +137,11 @@ function UIMenuProgressItem:Label(Text)
 end
 
 function UIMenuProgressItem:MainColor(color)
-    if(color)then
+    if (color) then
         self.Base._mainColor = color
-        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
+        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1,
+                self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
         return self.Base._mainColor
@@ -133,10 +149,11 @@ function UIMenuProgressItem:MainColor(color)
 end
 
 function UIMenuProgressItem:TextColor(color)
-    if(color)then
+    if (color) then
         self.Base._textColor = color
-        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
+        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1,
+                self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
         return self.Base._textColor
@@ -144,10 +161,11 @@ function UIMenuProgressItem:TextColor(color)
 end
 
 function UIMenuProgressItem:HighlightColor(color)
-    if(color)then
+    if (color) then
         self.Base._highlightColor = color
-        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
+        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1,
+                self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
         return self.Base._highlightColor
@@ -155,10 +173,11 @@ function UIMenuProgressItem:HighlightColor(color)
 end
 
 function UIMenuProgressItem:HighlightedTextColor(color)
-    if(color)then
+    if (color) then
         self.Base._highlightedTextColor = color
-        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
+        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1,
+                self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
         return self.Base._highlightedTextColor
@@ -166,16 +185,17 @@ function UIMenuProgressItem:HighlightedTextColor(color)
 end
 
 function UIMenuProgressItem:SliderColor(color)
-    if(color)then
+    if (color) then
         self.SliderColor = color
-        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor, self.SliderColor)
+        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1,
+                self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor,
+                self.SliderColor)
         end
     else
         return self.SliderColor
     end
 end
-
 
 function UIMenuProgressItem:BlinkDescription(bool)
     if bool ~= nil then
@@ -197,8 +217,9 @@ function UIMenuProgressItem:Index(Index)
             self._Index = Index
         end
         self.OnProgressChanged(self._Index)
-        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_VALUE", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self._Index)
+        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_VALUE", false,
+                IndexOf(self.Base.ParentMenu.Items, self) - 1, self._Index)
         end
     else
         return self._Index

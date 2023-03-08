@@ -9,7 +9,7 @@ end
 handler.__index = handler
 
 function ButtonsHandler.New()
-    local data ={
+    local data = {
         _sc = 0,
         UseMouseButtons = false,
         _enabled = false,
@@ -18,8 +18,8 @@ function ButtonsHandler.New()
         savingTimer = 0,
         IsSaving = false,
         ControlButtons = {}
-    } 
-    return setmetatable(data, handler) 
+    }
+    return setmetatable(data, handler)
 end
 
 function handler:Enabled(bool)
@@ -30,7 +30,7 @@ function handler:Enabled(bool)
             self._sc:CallFunction("CLEAR_ALL", false)
             self._sc:CallFunction("CLEAR_RENDER", false)
             self._sc:Dispose()
-            self._sc=0
+            self._sc = 0
         end
         self._enabled = bool
         self._changed = bool
@@ -51,13 +51,13 @@ function handler:SetInstructionalButtons(buttons)
 end
 
 function handler:AddInstructionalButton(button)
-    ControlButtons[#ControlButtons + 1] = button
+    self.ControlButtons[#self.ControlButtons + 1] = button
     self._changed = true
 end
 
 function handler:RemoveInstructionalButton(button)
     local bt
-    for k,v in pairs (self.ControlButtons) do
+    for k, v in pairs(self.ControlButtons) do
         if v.Text == button.Text then
             self.ControlButtons[k] = nil
         end
@@ -77,7 +77,7 @@ function handler:ShowBusySpinner(spinnerType, text, time)
     self.savingTimer = GetGameTimer()
 
     if text == nil or text == "" then
-        BeginTextCommandBusyspinnerOn(nil)
+        BeginTextCommandBusyspinnerOn("PM_WAIT")
     else
         BeginTextCommandBusyspinnerOn("STRING")
         AddTextComponentSubstringPlayerName(text)
@@ -94,7 +94,7 @@ function handler:UpdateButtons()
     self._sc:CallFunction("TOGGLE_MOUSE_BUTTONS", false, self.UseMouseButtons)
     local count = 0
 
-    for k, button in pairs (self.ControlButtons) do
+    for k, button in pairs(self.ControlButtons) do
         if button:IsUsingController() then
             if button.PadCheck == 0 or button.PadCheck == -1 then
                 if ScaleformUI.Scaleforms.Warning:IsShowing() then
@@ -106,7 +106,8 @@ function handler:UpdateButtons()
         else
             if button.PadCheck == 1 or button.PadCheck == -1 then
                 if self.UseMouseButtons then
-                    self._sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text, 1, button.KeyboardButton)
+                    self._sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text, 1,
+                        button.KeyboardButton)
                 else
                     if ScaleformUI.Scaleforms.Warning:IsShowing() then
                         self._sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text, 0, -1)
@@ -145,7 +146,7 @@ function handler:Update()
     end
     self:UpdateButtons()
     if not ScaleformUI.Scaleforms.Warning:IsShowing() then self:Draw() end
-    if self.UseMouseButtons then ShowCursorThisFrame() end
+    if self.UseMouseButtons then SetMouseCursorActiveThisFrame() end
     HideHudComponentThisFrame(6)
     HideHudComponentThisFrame(7)
     HideHudComponentThisFrame(9)

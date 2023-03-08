@@ -12,7 +12,7 @@ function BigMessageInstance.New()
     local _sc = 0
     local _start = 0
     local _timer = 0
-    local data = {_sc = _sc, _start = _start, _timer = _timer}
+    local data = { _sc = _sc, _start = _start, _timer = _timer }
     return setmetatable(data, m)
 end
 
@@ -30,7 +30,7 @@ function m:Dispose()
 end
 
 function m:ShowMissionPassedMessage(msg, time)
-    if time == nil then  time = 5000 end
+    if time == nil then time = 5000 end
     self:Load()
     self._start = GetGameTimer()
     self._sc:CallFunction("SHOW_MISSION_PASSED_MESSAGE", false, msg, "", 100, true, 0, true)
@@ -38,7 +38,7 @@ function m:ShowMissionPassedMessage(msg, time)
 end
 
 function m:ShowColoredShard(msg, desc, textColor, bgColor, time)
-    if time == nil then  time = 5000 end
+    if time == nil then time = 5000 end
     self:Load()
     self._start = GetGameTimer()
     self._sc:CallFunction("SHOW_SHARD_CENTERED_MP_MESSAGE", false, msg, desc, bgColor, textColor)
@@ -46,7 +46,7 @@ function m:ShowColoredShard(msg, desc, textColor, bgColor, time)
 end
 
 function m:ShowOldMessage(msg, time)
-    if time == nil then  time = 5000 end
+    if time == nil then time = 5000 end
     self:Load()
     self._start = GetGameTimer()
     self._sc:CallFunction("SHOW_MISSION_PASSED_MESSAGE", false, msg)
@@ -54,7 +54,7 @@ function m:ShowOldMessage(msg, time)
 end
 
 function m:ShowSimpleShard(msg, subtitle, time)
-    if time == nil then  time = 5000 end
+    if time == nil then time = 5000 end
     self:Load()
     self._start = GetGameTimer()
     self._sc:CallFunction("SHOW_SHARD_CREW_RANKUP_MP_MESSAGE", false, msg, subtitle)
@@ -62,7 +62,7 @@ function m:ShowSimpleShard(msg, subtitle, time)
 end
 
 function m:ShowRankupMessage(msg, subtitle, rank, time)
-    if time == nil then  time = 5000 end
+    if time == nil then time = 5000 end
     self:Load()
     self._start = GetGameTimer()
     self._sc:CallFunction("SHOW_BIG_MP_MESSAGE", false, msg, subtitle, rank, "", "")
@@ -70,7 +70,7 @@ function m:ShowRankupMessage(msg, subtitle, rank, time)
 end
 
 function m:ShowWeaponPurchasedMessage(bigMessage, weaponName, weaponHash, time)
-    if time == nil then  time = 5000 end
+    if time == nil then time = 5000 end
     self:Load()
     self._start = GetGameTimer()
     self._sc:CallFunction("SHOW_WEAPON_PURCHASED", false, bigMessage, weaponName, weaponHash, "", 100)
@@ -78,7 +78,7 @@ function m:ShowWeaponPurchasedMessage(bigMessage, weaponName, weaponHash, time)
 end
 
 function m:ShowMpMessageLarge(msg, time)
-    if time == nil then  time = 5000 end
+    if time == nil then time = 5000 end
     self:Load()
     self._start = GetGameTimer()
     self._sc:CallFunction("SHOW_CENTERED_MP_MESSAGE_LARGE", false, msg, "", 100, true, 100)
@@ -87,7 +87,7 @@ function m:ShowMpMessageLarge(msg, time)
 end
 
 function m:ShowMpWastedMessage(msg, subtitle, time)
-    if time == nil then  time = 5000 end
+    if time == nil then time = 5000 end
     self:Load()
     self._start = GetGameTimer()
     self._sc:CallFunction("SHOW_SHARD_WASTED_MP_MESSAGE", false, msg, subtitle)

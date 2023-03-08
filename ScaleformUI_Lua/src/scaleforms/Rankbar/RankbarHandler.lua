@@ -12,14 +12,14 @@ local HUD_COMPONENT_ID = 19
 local _rankBarColor = 116
 
 function RankbarHandler.New()
-    local data = { }
+    local data = {}
     return setmetatable(data, m)
 end
 
 function m:Load()
     local p = promise.new()
 
-    if HasScaleformScriptHudMovieLoaded(HUD_COMPONENT_ID) then 
+    if HasScaleformScriptHudMovieLoaded(HUD_COMPONENT_ID) then
         p:resolve()
         return p
     end
@@ -40,19 +40,21 @@ end
 
 function m:SetScores(limitStart, limitEnd, previousValue, currentValue, currentRank)
     self:Load():next(function()
-        BeginScaleformScriptHudMovieMethod(HUD_COMPONENT_ID, "SET_COLOUR")
-        ScaleformMovieMethodAddParamInt(_rankBarColor)
-        EndScaleformMovieMethod()
-    
-        BeginScaleformScriptHudMovieMethod(HUD_COMPONENT_ID, "SET_RANK_SCORES")
-        ScaleformMovieMethodAddParamInt(limitStart)
-        ScaleformMovieMethodAddParamInt(limitEnd)
-        ScaleformMovieMethodAddParamInt(previousValue)
-        ScaleformMovieMethodAddParamInt(currentValue)
-        ScaleformMovieMethodAddParamInt(currentRank)
-        EndScaleformMovieMethod()
-    end)
-    
+            BeginScaleformScriptHudMovieMethod(HUD_COMPONENT_ID, "SET_COLOUR")
+            ScaleformMovieMethodAddParamInt(_rankBarColor)
+            EndScaleformMovieMethod()
+
+            BeginScaleformScriptHudMovieMethod(HUD_COMPONENT_ID, "SET_RANK_SCORES")
+            ScaleformMovieMethodAddParamInt(limitStart)
+            ScaleformMovieMethodAddParamInt(limitEnd)
+            ScaleformMovieMethodAddParamInt(previousValue)
+            ScaleformMovieMethodAddParamInt(currentValue)
+            ScaleformMovieMethodAddParamInt(currentRank)
+            EndScaleformMovieMethod()
+        end,
+        function()
+            print("RankbarHandler:Load() failed")
+        end)
 end
 
 function m:SetColour(rankBarColor)
@@ -68,16 +70,22 @@ end
 
 function m:OverrideAnimationSpeed(speed)
     self:Load():next(function()
-        BeginScaleformScriptHudMovieMethod(HUD_COMPONENT_ID, "OVERRIDE_ANIMATION_SPEED");
-        ScaleformMovieMethodAddParamInt(speed);
-        EndScaleformMovieMethod();
-    end)
+            BeginScaleformScriptHudMovieMethod(HUD_COMPONENT_ID, "OVERRIDE_ANIMATION_SPEED");
+            ScaleformMovieMethodAddParamInt(speed);
+            EndScaleformMovieMethod();
+        end,
+        function()
+            print("RankbarHandler:Load() failed")
+        end)
 end
 
 function m:OverrideOnscreenDuration(duration)
     self:Load():next(function()
-        BeginScaleformScriptHudMovieMethod(HUD_COMPONENT_ID, "OVERRIDE_ONSCREEN_DURATION");
-        ScaleformMovieMethodAddParamInt(duration);
-        EndScaleformMovieMethod();
-    end)
+            BeginScaleformScriptHudMovieMethod(HUD_COMPONENT_ID, "OVERRIDE_ONSCREEN_DURATION");
+            ScaleformMovieMethodAddParamInt(duration);
+            EndScaleformMovieMethod();
+        end,
+        function()
+            print("RankbarHandler:Load() failed")
+        end)
 end

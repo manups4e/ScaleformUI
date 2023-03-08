@@ -13,7 +13,7 @@ function MidMessageInstance.New()
     local _start = 0
     local _timer = 0
     local _hasAnimatedOut = false
-    local data = {_sc = _sc, _start = _start, _timer = _timer, _hasAnimatedOut = _hasAnimatedOut}
+    local data = { _sc = _sc, _start = _start, _timer = _timer, _hasAnimatedOut = _hasAnimatedOut }
     return setmetatable(data, m)
 end
 
@@ -31,7 +31,7 @@ function m:Dispose()
 end
 
 function m:ShowColoredShard(msg, desc, bgColor, useDarkerShard, useCondensedShard, time)
-    if time == nil then  time = 5000 end
+    if time == nil then time = 5000 end
     self:Load()
     self._start = GetGameTimer()
     self._sc:CallFunction("SHOW_SHARD_MIDSIZED_MESSAGE", false, msg, desc, bgColor, useDarkerShard, useCondensedShard)
