@@ -46,7 +46,7 @@ function PlayerListScoreboard:Load()
 end
 
 function PlayerListScoreboard:Dispose()
-    if _sc == nil then return end
+    if self._sc == nil then return end
     self.Enabled = false
     self.Index = 0
     self.MaxPages = 1
@@ -54,9 +54,9 @@ function PlayerListScoreboard:Dispose()
     self.TitleLeftText = ""
     self.TitleRightText = ""
     self.TitleIcon = 0
-    _sc:CallFunction("SET_DATA_SLOT_EMPTY")
-    _sc:Dispose()
-    _sc = nil
+    self._sc:CallFunction("SET_DATA_SLOT_EMPTY")
+    self._sc:Dispose()
+    self._sc = nil
     for i = 0, 1024 do -- cleaning up in case of a reload, this frees up all ped headshot handles :)
         UnregisterPedheadshot(i)
     end

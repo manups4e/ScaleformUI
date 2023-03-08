@@ -123,7 +123,7 @@ end
 ---@param bool number
 function UIMenuSeperatorItem:Selected(bool)
     if bool ~= nil then
-        self.Base:Selected(tobool(bool), self)
+        self.Base:Selected(ToBool(bool), self)
     else
         return self.Base._Selected
     end
@@ -133,7 +133,7 @@ end
 ---@param bool boolean
 function UIMenuSeperatorItem:Hovered(bool)
     if bool ~= nil then
-        self.Base._Hovered = tobool(bool)
+        self.Base._Hovered = ToBool(bool)
     else
         return self.Base._Hovered
     end

@@ -905,7 +905,7 @@ function CreateMissionSelectorMenu()
     ScaleformUI.Scaleforms.JobMissionSelector:ShowPlayerVote(3, "PlayerName", Colours.HUD_COLOUR_GREEN, true, true)
 end
 
-function setRowColor(row)
+function SetRowColor(row)
     if row % 5 == 0 then
         return Colours.HUD_COLOUR_BLUE
     elseif row % 3 == 0 then
@@ -955,7 +955,7 @@ CreateThread(function()
     local txd = GetPedheadshotTxdString(handle)
 
     for i = scoreboardPlayerCount, 1, -1 do
-        local row = SCPlayerItem.New(GetPlayerName(PlayerId()), setRowColor(i), 65, 50, "", "hello", "", 0, "", 1, txd)
+        local row = SCPlayerItem.New(GetPlayerName(PlayerId()), SetRowColor(i), 65, 50, "", "hello", "", 0, "", 1, txd)
         ScaleformUI.Scaleforms.PlayerListScoreboard:AddRow(row)
     end
 

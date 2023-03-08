@@ -69,7 +69,7 @@ end
 function MenuPool:MouseEdgeEnabled(bool)
     if bool ~= nil then
         for _, Menu in pairs(self.Menus) do
-            Menu.Settings.MouseEdgeEnabled = tobool(bool)
+            Menu.Settings.MouseEdgeEnabled = ToBool(bool)
         end
     end
 end
@@ -79,7 +79,7 @@ end
 function MenuPool:ControlDisablingEnabled(bool)
     if bool ~= nil then
         for _, Menu in pairs(self.Menus) do
-            Menu.Settings.ControlDisablingEnabled = tobool(bool)
+            Menu.Settings.ControlDisablingEnabled = ToBool(bool)
         end
     end
 end
@@ -89,7 +89,7 @@ end
 function MenuPool:ResetCursorOnOpen(bool)
     if bool ~= nil then
         for _, Menu in pairs(self.Menus) do
-            Menu.Settings.ResetCursorOnOpen = tobool(bool)
+            Menu.Settings.ResetCursorOnOpen = ToBool(bool)
         end
     end
 end
@@ -99,7 +99,7 @@ end
 function MenuPool:MultilineFormats(bool)
     if bool ~= nil then
         for _, Menu in pairs(self.Menus) do
-            Menu.Settings.MultilineFormats = tobool(bool)
+            Menu.Settings.MultilineFormats = ToBool(bool)
         end
     end
 end
@@ -142,7 +142,7 @@ end
 function MenuPool:DisableInstructionalButtons(bool)
     if bool ~= nil then
         for _, Menu in pairs(self.Menus) do
-            Menu.Settings.InstructionalButtons = tobool(bool)
+            Menu.Settings.InstructionalButtons = ToBool(bool)
         end
     end
 end
@@ -152,7 +152,7 @@ end
 function MenuPool:MouseControlsEnabled(bool)
     if bool ~= nil then
         for _, Menu in pairs(self.Menus) do
-            Menu.Settings.MouseControlsEnabled = tobool(bool)
+            Menu.Settings.MouseControlsEnabled = ToBool(bool)
         end
     end
 end

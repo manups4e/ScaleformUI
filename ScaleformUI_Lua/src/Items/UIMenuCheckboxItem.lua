@@ -11,7 +11,7 @@ function UIMenuCheckboxItem.New(Text, Check, checkStyle, Description, color, hig
     local _UIMenuCheckboxItem = {
         Base = UIMenuItem.New(Text or "", Description or "", color or 117, highlightColor or 1, textColor or 1,
             highlightedTextColor or 2),
-        _Checked = tobool(Check),
+        _Checked = ToBool(Check),
         Panels = {},
         SidePanel = nil,
         CheckBoxStyle = checkStyle or 0,
@@ -65,7 +65,7 @@ end
 ---@param bool boolean
 function UIMenuCheckboxItem:Selected(bool)
     if bool ~= nil then
-        self.Base:Selected(tobool(bool), self)
+        self.Base:Selected(ToBool(bool), self)
     else
         return self.Base._Selected
     end
@@ -87,7 +87,7 @@ end
 ---@param bool boolean
 function UIMenuCheckboxItem:Hovered(bool)
     if bool ~= nil then
-        self.Base._Hovered = tobool(bool)
+        self.Base._Hovered = ToBool(bool)
     else
         return self.Base._Hovered
     end
@@ -200,7 +200,7 @@ end
 
 function UIMenuCheckboxItem:Checked(bool)
     if bool ~= nil then
-        self._Checked = tobool(bool)
+        self._Checked = ToBool(bool)
         if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
             local it = IndexOf(self.Base.ParentMenu.Items, self) - 1
             ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", false, 16, it, self._Checked)

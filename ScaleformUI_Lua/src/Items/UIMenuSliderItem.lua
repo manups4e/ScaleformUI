@@ -90,7 +90,7 @@ end
 ---@param bool table
 function UIMenuSliderItem:Selected(bool)
     if bool ~= nil then
-        self.Base:Selected(tobool(bool), self)
+        self.Base:Selected(ToBool(bool), self)
     else
         return self.Base._Selected
     end
@@ -98,7 +98,7 @@ end
 
 function UIMenuSliderItem:Hovered(bool)
     if bool ~= nil then
-        self.Base._Hovered = tobool(bool)
+        self.Base._Hovered = ToBool(bool)
     else
         return self.Base._Hovered
     end

@@ -73,7 +73,7 @@ function UIMenuItem:Selected(bool, item)
     if bool ~= nil then
         if item == nil then item = self end
 
-        self._Selected = tobool(bool)
+        self._Selected = ToBool(bool)
         if self._Selected then
             if (self._highlightedTextColor == 2) then
                 if not self._formatLeftLabel:StartsWith("~") then
@@ -118,7 +118,7 @@ end
 
 function UIMenuItem:Hovered(bool)
     if bool ~= nil then
-        self._Hovered = tobool(bool)
+        self._Hovered = ToBool(bool)
     else
         return self._Hovered
     end
@@ -127,7 +127,7 @@ end
 function UIMenuItem:Enabled(bool, item)
     if bool ~= nil then
         if item == nil then item = self end
-        self._Enabled = tobool(bool)
+        self._Enabled = ToBool(bool)
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_ITEM", false, IndexOf(self.ParentMenu.Items, item) - 1,
                 self._Enabled)

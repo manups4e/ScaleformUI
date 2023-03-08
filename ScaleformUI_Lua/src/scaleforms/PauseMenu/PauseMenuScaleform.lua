@@ -21,7 +21,7 @@ function PauseMenu.New()
 end
 
 function Pause:Visible(visible)
-    if tobool(visible) then
+    if ToBool(visible) then
         self._visible = visible
     else
         return self._visible

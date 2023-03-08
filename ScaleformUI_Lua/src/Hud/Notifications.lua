@@ -5,7 +5,7 @@ Notifications.__call = function()
 end
 
 function Notifications.New()
-    _notif = {
+    local _notif = {
         _handle = 0,
         Type = {
             Default = 0,

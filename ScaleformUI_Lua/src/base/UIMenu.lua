@@ -287,7 +287,7 @@ end
 ---@param bool boolean
 function UIMenu:HasInstructionalButtons(bool)
     if bool ~= nil then
-        self.Settings.InstructionalButtons = tobool(bool)
+        self.Settings.InstructionalButtons = ToBool(bool)
     end
 end
 
@@ -529,9 +529,9 @@ end
 ---@param bool boolean|nil
 function UIMenu:Visible(bool)
     if bool ~= nil then
-        self._Visible = tobool(bool)
-        self.JustOpened = tobool(bool)
-        self.Dirty = tobool(bool)
+        self._Visible = ToBool(bool)
+        self.JustOpened = ToBool(bool)
+        self.Dirty = ToBool(bool)
 
         if self.ParentMenu ~= nil then return end
 
@@ -1336,7 +1336,7 @@ function UIMenu:ProcessMouse()
                         Citizen.Wait(0)
                     end
                     local res = GetScaleformMovieMethodReturnValueString(return_value)
-                    local split = split(res, ",")
+                    local split = Split(res, ",")
                     local panel = self.Items[self:CurrentSelection()].Panels[tonumber(split[1]) + 1]
                     panel.value = tonumber(split[2]) + 1
                     self.OnColorPanelChanged(panel.ParentItem, panel, panel:CurrentSelection())
@@ -1389,7 +1389,7 @@ function UIMenu:ProcessMouse()
             end
             local value = GetScaleformMovieMethodReturnValueString(return_value)
 
-            local split = split(value, ",")
+            local split = Split(value, ",")
             local panel = self.Items[self:CurrentSelection()].Panels[tonumber(split[1]) + 1]
             local panel_type, panel_subtype = panel()
 

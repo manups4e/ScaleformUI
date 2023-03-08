@@ -236,7 +236,7 @@ end
 
 function FriendItem:Selected(bool, item)
     if bool ~= nil then
-        self._Selected = tobool(bool)
+        self._Selected = ToBool(bool)
     else
         return self._Selected
     end
@@ -244,7 +244,7 @@ end
 
 function FriendItem:Hovered(bool)
     if bool ~= nil then
-        self._Hovered = tobool(bool)
+        self._Hovered = ToBool(bool)
     else
         return self._Hovered
     end
@@ -252,7 +252,7 @@ end
 
 function FriendItem:Enabled(bool, item)
     if bool ~= nil then
-        self._Enabled = tobool(bool)
+        self._Enabled = ToBool(bool)
     else
         return self._Enabled
     end

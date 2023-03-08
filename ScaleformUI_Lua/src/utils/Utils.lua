@@ -41,7 +41,7 @@ end
 
 -- Return a key with the given value (or nil if not found).  If there are
 -- multiple keys with that value, the particular key returned is arbitrary.
-function keyOf(tbl, value)
+function KeyOf(tbl, value)
     for k, v in pairs(tbl) do
         if v == value then
             return k
@@ -54,7 +54,7 @@ function math.round(num, numDecimalPlaces)
     return tonumber(string.format("%." .. (numDecimalPlaces or 0) .. "f", num))
 end
 
-function tobool(input)
+function ToBool(input)
     if input == "true" or tonumber(input) == 1 or input == true then
         return true
     else
@@ -75,7 +75,7 @@ function string.split(inputstr, sep)
     return t
 end
 
-function split(pString, pPattern)
+function Split(pString, pPattern)
     local Table = {} -- NOTE: use {n = 0} in Lua-5.0
     local fpat = "(.-)" .. pPattern
     local last_end = 1

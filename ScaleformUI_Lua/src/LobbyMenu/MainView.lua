@@ -448,7 +448,7 @@ function MainView:Select()
     end
     local retVal = GetScaleformMovieMethodReturnValueString(return_value)
 
-    local splitted = split(retVal, ",")
+    local splitted = Split(retVal, ",")
     if self:FocusLevel() == self.SettingsColumn.Order then
         local item = self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]
         local type, subtype = item()
@@ -485,7 +485,7 @@ function MainView:GoUp()
     end
     local retVal = GetScaleformMovieMethodReturnValueString(return_value)
 
-    local splitted = split(retVal, ",")
+    local splitted = Split(retVal, ",")
 
     if self:FocusLevel() == self.SettingsColumn.Order then
         self.SettingsColumn:CurrentSelection(tonumber(splitted[2]))
@@ -513,7 +513,7 @@ function MainView:GoDown()
     end
     local retVal = GetScaleformMovieMethodReturnValueString(return_value)
 
-    local splitted = split(retVal, ",")
+    local splitted = Split(retVal, ",")
 
     if self:FocusLevel() == self.SettingsColumn.Order then
         self.SettingsColumn:CurrentSelection(tonumber(splitted[2]))
@@ -541,7 +541,7 @@ function MainView:GoLeft()
     end
     local retVal = GetScaleformMovieMethodReturnValueString(return_value)
 
-    local splitted = split(retVal, ",")
+    local splitted = Split(retVal, ",")
 
     if tonumber(splitted[3]) == -1 then
         self:FocusLevel(tonumber(splitted[1]) + 1)
@@ -591,7 +591,7 @@ function MainView:GoRight()
     end
     local retVal = GetScaleformMovieMethodReturnValueString(return_value)
 
-    local splitted = split(retVal, ",")
+    local splitted = Split(retVal, ",")
 
     if tonumber(splitted[3]) == -1 then
         self:FocusLevel(tonumber(splitted[1]) + 1)
