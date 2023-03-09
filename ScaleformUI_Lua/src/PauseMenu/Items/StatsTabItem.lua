@@ -72,7 +72,7 @@ end
 ---@param value any
 ---@return any
 function StatsTabItem:Value(value)
-    if self.Type == SettingsItemType.ColoredBar then
+    if self.Type == StatItemType.ColoredBar then
         if value ~= nil then
             self._value = value
             local tab = IndexOf(self.Base.Parent.Parent.Parent.Tabs, self.Base.Parent.Parent) - 1
@@ -98,7 +98,7 @@ end
 ---@param color number
 ---@return number
 function StatsTabItem:ColoredBarColor(color)
-    if self.Type == SettingsItemType.ColoredBar then
+    if self.Type == StatItemType.ColoredBar then
         if color ~= nil then
             self._coloredBarColor = color
             local tab = IndexOf(self.Base.Parent.Parent.Parent.Tabs, self.Base.Parent.Parent) - 1
