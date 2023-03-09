@@ -4,6 +4,22 @@ SettingsProgressItem.__call = function()
     return "SettingsItem", "SettingsItem"
 end
 
+---@class SettingsProgressItem
+---@field public Base BasicTabItem
+---@field public ItemType SettingsItemType
+---@field public Label string
+---@field public MaxValue number
+---@field public Parent BasicTabItem
+---@field public OnBarChanged fun(item: SettingsProgressItem, value: number)
+---@field public OnProgressSelected fun(item: SettingsProgressItem, value: number)
+
+---Creates a new SettingsProgressItem
+---@param label string
+---@param max number
+---@param startIndex number
+---@param masked boolean
+---@param barColor number
+---@return table
 function SettingsProgressItem.New(label, max, startIndex, masked, barColor)
     local _type = SettingsItemType.ProgressBar
     if (masked) then
@@ -28,6 +44,9 @@ function SettingsProgressItem.New(label, max, startIndex, masked, barColor)
     return setmetatable(data, SettingsProgressItem)
 end
 
+---Toggle the enabled state of the item
+---@param enabled boolean
+---@return boolean
 function SettingsProgressItem:Enabled(enabled)
     if enabled ~= nil then
         self._enabled = enabled
@@ -37,30 +56,36 @@ function SettingsProgressItem:Enabled(enabled)
                 local leftItem = IndexOf(self.Parent.Parent.LeftItemList, self.Parent) - 1
                 local rightIndex = IndexOf(self.Parent.ItemList, self) - 1
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ENABLE_RIGHT_ITEM", false, tab, leftItem,
-                rightIndex, self._enabled)
+                    rightIndex, self._enabled)
             end
         end
-    else
-        return self._enabled
     end
+    return self._enabled
 end
 
+---Toggle the hovered state of the item
+---@param hover boolean
+---@return boolean
 function SettingsProgressItem:Hovered(hover)
     if hover ~= nil then
         self._hovered = hover
-    else
-        return self._hovered
     end
+    return self._hovered
 end
 
+---Toggle the selected state of the item
+---@param selected boolean
+---@return boolean
 function SettingsProgressItem:Selected(selected)
     if selected ~= nil then
         self._selected = selected
-    else
-        return self._selected
     end
+    return self._selected
 end
 
+---Set the value of the item
+---@param value number
+---@return number
 function SettingsProgressItem:Value(value)
     if value ~= nil then
         self._value = value
@@ -69,11 +94,13 @@ function SettingsProgressItem:Value(value)
         local rightIndex = IndexOf(self.Parent.ItemList, self) - 1
         ScaleformUI.Scaleforms._pauseMenu:SetRightSettingsItemValue(tab, leftItem, rightIndex, value)
         self.OnBarChanged(self, value)
-    else
-        return self._value
     end
+    return self._value
 end
 
+---Set the color of the colored bar
+---@param color number
+---@return number
 function SettingsProgressItem:ColoredBarColor(color)
     if color ~= nil then
         self._coloredBarColor = color
@@ -81,7 +108,6 @@ function SettingsProgressItem:ColoredBarColor(color)
         local leftItem = IndexOf(self.Parent.Parent.LeftItemList, self.Parent) - 1
         local rightIndex = IndexOf(self.Parent.ItemList, self) - 1
         ScaleformUI.Scaleforms._pauseMenu:UpdateItemColoredBar(tab, leftItem, rightIndex, color)
-    else
-        return self._coloredBarColor
     end
+    return self._coloredBarColor
 end

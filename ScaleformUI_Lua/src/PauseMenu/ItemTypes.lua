@@ -1,4 +1,4 @@
----@class InfoItemType
+---@class StatItemType
 StatItemType = {
     Basic = 0,
     ColoredBar = 1,

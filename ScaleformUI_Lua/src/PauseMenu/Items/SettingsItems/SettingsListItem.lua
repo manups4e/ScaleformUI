@@ -4,6 +4,20 @@ SettingsListItem.__call = function()
     return "SettingsItem", "SettingsItem"
 end
 
+---@class SettingsListItem
+---@field public Base SettingsItem
+---@field public ItemType SettingsItemType
+---@field public Label string
+---@field public ListItems table
+---@field public Parent SettingsItem
+---@field public OnListChanged fun(item: SettingsListItem, value: number, listItem: string)
+---@field public OnListSelected fun(item: SettingsListItem, value: number, listItem: string)
+
+---Create a new SettingsListItem
+---@param label string
+---@param items table
+---@param index number
+---@return table
 function SettingsListItem.New(label, items, index)
     local data = {
         Base = SettingsItem.New(label, ""),
@@ -23,6 +37,9 @@ function SettingsListItem.New(label, items, index)
     return setmetatable(data, SettingsListItem)
 end
 
+---Toggle the enabled state of the item
+---@param enabled boolean
+---@return boolean
 function SettingsListItem:Enabled(enabled)
     if enabled ~= nil then
         self._enabled = enabled
@@ -35,27 +52,33 @@ function SettingsListItem:Enabled(enabled)
                     rightIndex, self._enabled)
             end
         end
-    else
-        return self._enabled
     end
+    return self._enabled
 end
 
+---Toggle the hovered state of the item
+---@param hover boolean
+---@return boolean
 function SettingsListItem:Hovered(hover)
     if hover ~= nil then
         self._hovered = hover
-    else
-        return self._hovered
     end
+    return self._hovered
 end
 
+---Toggle the selected state of the item
+---@param selected boolean
+---@return boolean
 function SettingsListItem:Selected(selected)
     if selected ~= nil then
         self._selected = selected
-    else
-        return self._selected
     end
+    return self._selected
 end
 
+---Set the index of the selected item
+---@param index number
+---@return number
 function SettingsListItem:ItemIndex(index)
     if index ~= nil then
         self._itemIndex = index
@@ -64,7 +87,6 @@ function SettingsListItem:ItemIndex(index)
         local rightIndex = IndexOf(self.Parent.ItemList, self) - 1
         ScaleformUI.Scaleforms._pauseMenu:SetRightSettingsItemIndex(tab, leftItem, rightIndex, index)
         self.OnListChanged(self, self._itemIndex, tostring(self.ListItems[index]))
-    else
-        return self._itemIndex
     end
+    return self._itemIndex
 end

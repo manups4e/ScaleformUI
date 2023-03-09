@@ -14,10 +14,10 @@ end
 ---@field public OnSliderSelected fun(item: SettingsSliderItem, value: number)
 
 ---Creates a new SettingsSliderItem
----@param label any
----@param max any
----@param startIndex any
----@param barColor any
+---@param label string
+---@param max number
+---@param startIndex number
+---@param barColor number
 ---@return table
 function SettingsSliderItem.New(label, max, startIndex, barColor)
     local data = {
@@ -39,6 +39,9 @@ function SettingsSliderItem.New(label, max, startIndex, barColor)
     return setmetatable(data, SettingsSliderItem)
 end
 
+---Toggle the enabled state of the item
+---@param enabled boolean
+---@return boolean
 function SettingsSliderItem:Enabled(enabled)
     if enabled ~= nil then
         self._enabled = enabled
@@ -51,27 +54,33 @@ function SettingsSliderItem:Enabled(enabled)
                     rightIndex, self._enabled)
             end
         end
-    else
-        return self._enabled
     end
+    return self._enabled
 end
 
+---Toggle the hovered state of the item
+---@param hover boolean
+---@return boolean
 function SettingsSliderItem:Hovered(hover)
     if hover ~= nil then
         self._hovered = hover
-    else
-        return self._hovered
     end
+    return self._hovered
 end
 
+---Toggle the selected state of the item
+---@param selected boolean
+---@return boolean
 function SettingsSliderItem:Selected(selected)
     if selected ~= nil then
         self._selected = selected
-    else
-        return self._selected
     end
+    return self._selected
 end
 
+---Set the value of the item
+---@param value number
+---@return number
 function SettingsSliderItem:Value(value)
     if value ~= nil then
         self._value = value
@@ -80,11 +89,13 @@ function SettingsSliderItem:Value(value)
         local rightIndex = IndexOf(self.Parent.ItemList, self) - 1
         ScaleformUI.Scaleforms._pauseMenu:SetRightSettingsItemValue(tab, leftItem, rightIndex, value)
         self.OnBarChanged(self, value)
-    else
-        return self._value
     end
+    return self._value
 end
 
+---Set the color of the colored bar
+---@param color number
+---@return number
 function SettingsSliderItem:ColoredBarColor(color)
     if color ~= nil then
         self._coloredBarColor = color
@@ -92,7 +103,6 @@ function SettingsSliderItem:ColoredBarColor(color)
         local leftItem = IndexOf(self.Parent.Parent.LeftItemList, self.Parent) - 1
         local rightIndex = IndexOf(self.Parent.ItemList, self) - 1
         ScaleformUI.Scaleforms._pauseMenu:UpdateItemColoredBar(tab, leftItem, rightIndex, color)
-    else
-        return self._coloredBarColor
     end
+    return self._coloredBarColor
 end
