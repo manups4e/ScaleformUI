@@ -4,6 +4,16 @@ MissionDetailsPanel.__call = function()
     return "Panel", "MissionDetailsPanel"
 end
 
+---@class MissionDetailsPanel
+---@field private _title string
+---@field private _label string
+---@field private _color number
+---@field public Parent MissionDetailsPanel
+---@field public Items MissionDetailsItem[]
+---@field public TextureDict string
+---@field public TextureName string
+---@field public OnIndexChanged fun(index: number)
+
 function MissionDetailsPanel.New(label, color)
     local _data = {
         _title = "",
@@ -35,7 +45,7 @@ function MissionDetailsPanel:UpdatePanelPicture(txd, txn)
     self.TextureName = txn
     if self.Parent ~= nil and self.Parent:Visible() then
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_MISSION_PANEL_PICTURE", false, self.TextureDict,
-        self.TextureName)
+            self.TextureName)
     end
 end
 
@@ -43,7 +53,7 @@ function MissionDetailsPanel:AddItem(item)
     self.Items[#self.Items + 1] = item
     if self.Parent ~= nil and self.Parent:Visible() then
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_MISSION_PANEL_ITEM", false, item.Type, item.TextLeft,
-        item.TextRight, item.Icon, item.IconColor, item.Tick)
+            item.TextRight, item.Icon, item.IconColor, item.Tick)
     end
 end
 

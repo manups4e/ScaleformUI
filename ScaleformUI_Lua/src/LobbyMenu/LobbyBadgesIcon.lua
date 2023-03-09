@@ -1,3 +1,4 @@
+---@class LobbyBadgesIcon
 LobbyBadgeIcon = {
     NONE = 0,
     ACTIVE_HEADSET = 47,

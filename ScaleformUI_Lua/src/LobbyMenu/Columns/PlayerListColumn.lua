@@ -4,6 +4,20 @@ PlayerListColumn.__call = function()
     return "Column", "PlayerListColumn"
 end
 
+---@class PlayerListColumn
+---@field private _label string
+---@field private _color number
+---@field private _currentSelection number
+---@field public Order number
+---@field public Parent function
+---@field public ParentTab number
+---@field public Items FriendItem[]
+---@field public OnIndexChanged fun(index: number)
+
+---Creates a new PlayerListColumn.
+---@param label string
+---@param color number|116
+---@return table
 function PlayerListColumn.New(label, color)
     local _data = {
         _label = label or "",
@@ -19,6 +33,9 @@ function PlayerListColumn.New(label, color)
     return setmetatable(_data, PlayerListColumn)
 end
 
+---Sets or gets the current selection.
+---@param idx number|nil
+---@return number
 function PlayerListColumn:CurrentSelection(idx)
     if idx == nil then
         if #self.Items == 0 then
@@ -47,15 +64,18 @@ function PlayerListColumn:CurrentSelection(idx)
             local pSubT = self.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_SELECTION", false,
-                self:CurrentSelection() - 1)
+                    self:CurrentSelection() - 1)
             elseif pSubT == "PauseMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_SELECTION", false,
-                self.ParentTab, self:CurrentSelection() - 1)
+                    self.ParentTab, self:CurrentSelection() - 1)
             end
         end
     end
+    return self:CurrentSelection() - 1;
 end
 
+---Adds a new player to the column.
+---@param item FriendItem
 function PlayerListColumn:AddPlayer(item)
     item.ParentColumn = self
     item.Handle = #self.Items + 1
@@ -66,12 +86,13 @@ function PlayerListColumn:AddPlayer(item)
             local pSubT = self.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_PLAYER_ITEM", false, 1, 1, item:Label(),
-                item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL, item._iconR, item._boolR, item:Status(),
-                item:StatusColor(), item:Rank(), item:CrewTag())
+                    item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL, item._iconR, item._boolR,
+                    item:Status(),
+                    item:StatusColor(), item:Rank(), item:CrewTag())
             elseif pSubT == "PauseMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_PLAYER_ITEM", false,
-                self.ParentTab, 1, 1, item:Label(), item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL,
-                item._iconR, item._boolR, item:Status(), item:StatusColor(), item:Rank(), item:CrewTag())
+                    self.ParentTab, 1, 1, item:Label(), item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL,
+                    item._iconR, item._boolR, item:Status(), item:StatusColor(), item:Rank(), item:CrewTag())
             end
         end
         if item.Panel ~= nil then
@@ -80,6 +101,8 @@ function PlayerListColumn:AddPlayer(item)
     end
 end
 
+---Removes a player from the column.
+---@param item FriendItem
 function PlayerListColumn:RemovePlayer(item)
     if item == nil then
         print("^1[ERROR] PlayerListColumn:RemovePlayer() - item is nil");
@@ -96,7 +119,7 @@ function PlayerListColumn:RemovePlayer(item)
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("REMOVE_PLAYER_ITEM", false, id - 1)
             elseif pSubT == "PauseMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("REMOVE_PLAYERS_TAB_PLAYER_ITEM", false,
-                self.ParentTab, id - 1)
+                    self.ParentTab, id - 1)
             end
         end
         if item.Panel ~= nil then

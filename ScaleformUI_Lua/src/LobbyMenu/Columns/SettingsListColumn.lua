@@ -4,6 +4,17 @@ SettingsListColumn.__call = function()
     return "Column", "SettingsListColumn"
 end
 
+---@class SettingsListColumn
+---@field private _label string
+---@field private _color number
+---@field private _currentSelection number
+---@field private _rightLabel string
+---@field public Order number
+---@field public Parent function
+---@field public ParentTab number
+---@field public Items SettingsListItem[]
+---@field public OnIndexChanged fun(index: number)
+
 function SettingsListColumn.New(label, color)
     local _data = {
         _label = label or "",

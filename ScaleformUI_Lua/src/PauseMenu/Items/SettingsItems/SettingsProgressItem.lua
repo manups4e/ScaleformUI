@@ -13,7 +13,7 @@ end
 ---@field public OnBarChanged fun(item: SettingsProgressItem, value: number)
 ---@field public OnProgressSelected fun(item: SettingsProgressItem, value: number)
 
----Creates a new SettingsProgressItem
+---Creates a new SettingsProgressItem.
 ---@param label string
 ---@param max number
 ---@param startIndex number
@@ -44,7 +44,7 @@ function SettingsProgressItem.New(label, max, startIndex, masked, barColor)
     return setmetatable(data, SettingsProgressItem)
 end
 
----Toggle the enabled state of the item
+---Toggle the enabled state of the item.
 ---@param enabled boolean
 ---@return boolean
 function SettingsProgressItem:Enabled(enabled)
@@ -63,7 +63,7 @@ function SettingsProgressItem:Enabled(enabled)
     return self._enabled
 end
 
----Toggle the hovered state of the item
+---Toggle the hovered state of the item.
 ---@param hover boolean
 ---@return boolean
 function SettingsProgressItem:Hovered(hover)
@@ -73,7 +73,7 @@ function SettingsProgressItem:Hovered(hover)
     return self._hovered
 end
 
----Toggle the selected state of the item
+---Toggle the selected state of the item.
 ---@param selected boolean
 ---@return boolean
 function SettingsProgressItem:Selected(selected)
@@ -83,7 +83,7 @@ function SettingsProgressItem:Selected(selected)
     return self._selected
 end
 
----Set the value of the item
+---Set the value of the item.
 ---@param value number
 ---@return number
 function SettingsProgressItem:Value(value)
@@ -98,7 +98,7 @@ function SettingsProgressItem:Value(value)
     return self._value
 end
 
----Set the color of the colored bar
+---Set the color of the colored bar.
 ---@param color number
 ---@return number
 function SettingsProgressItem:ColoredBarColor(color)

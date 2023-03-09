@@ -13,7 +13,7 @@ end
 ---@field public OnListChanged fun(item: SettingsListItem, value: number, listItem: string)
 ---@field public OnListSelected fun(item: SettingsListItem, value: number, listItem: string)
 
----Create a new SettingsListItem
+---Create a new SettingsListItem.
 ---@param label string
 ---@param items table
 ---@param index number
@@ -37,7 +37,7 @@ function SettingsListItem.New(label, items, index)
     return setmetatable(data, SettingsListItem)
 end
 
----Toggle the enabled state of the item
+---Toggle the enabled state of the item.
 ---@param enabled boolean
 ---@return boolean
 function SettingsListItem:Enabled(enabled)
@@ -56,7 +56,7 @@ function SettingsListItem:Enabled(enabled)
     return self._enabled
 end
 
----Toggle the hovered state of the item
+---Toggle the hovered state of the item.
 ---@param hover boolean
 ---@return boolean
 function SettingsListItem:Hovered(hover)
@@ -66,7 +66,7 @@ function SettingsListItem:Hovered(hover)
     return self._hovered
 end
 
----Toggle the selected state of the item
+---Toggle the selected state of the item.
 ---@param selected boolean
 ---@return boolean
 function SettingsListItem:Selected(selected)
@@ -76,7 +76,7 @@ function SettingsListItem:Selected(selected)
     return self._selected
 end
 
----Set the index of the selected item
+---Set the index of the selected item.
 ---@param index number
 ---@return number
 function SettingsListItem:ItemIndex(index)

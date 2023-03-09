@@ -5,6 +5,34 @@ MainView.__call = function()
 end
 MainView.SoundId = GetSoundId()
 
+---@class MainView
+---@field public Title string
+---@field public Subtitle string
+---@field public SideTop string
+---@field public SideMid string
+---@field public SideBot string
+---@field public SettingsColumn SettingsColumn
+---@field public PlayersColumn PlayersColumn
+---@field public MissionPanel MissionPanel
+---@field public InstructionalButtons InstructionalButton[]
+---@field public OnLobbyMenuOpen fun(menu: MainView)
+---@field public OnLobbyMenuClose fun(menu: MainView)
+---@field public TemporarilyHidden boolean
+---@field public controller boolean
+---@field public focusLevel number
+---@field private _internalpool InternalPool
+---@field private _headerPicture table
+---@field private _crewPicture table
+---@field private _visible boolean
+---@field private _loaded boolean
+---@field private _timer number
+---@field private _time number
+---@field private _times number
+---@field private _delay number
+---@field private _listCol table
+---@field private _firstTick boolean
+---@field private _canHe boolean
+
 function MainView.New(title, subtitle, sideTop, sideMid, sideBot)
     local _data = {
         Title = title or "",

@@ -13,7 +13,7 @@ end
 ---@field public OnBarChanged fun(item: SettingsSliderItem, value: number)
 ---@field public OnSliderSelected fun(item: SettingsSliderItem, value: number)
 
----Creates a new SettingsSliderItem
+---Creates a new SettingsSliderItem.
 ---@param label string
 ---@param max number
 ---@param startIndex number
@@ -39,7 +39,7 @@ function SettingsSliderItem.New(label, max, startIndex, barColor)
     return setmetatable(data, SettingsSliderItem)
 end
 
----Toggle the enabled state of the item
+---Toggle the enabled state of the item.
 ---@param enabled boolean
 ---@return boolean
 function SettingsSliderItem:Enabled(enabled)
@@ -58,7 +58,7 @@ function SettingsSliderItem:Enabled(enabled)
     return self._enabled
 end
 
----Toggle the hovered state of the item
+---Toggle the hovered state of the item.
 ---@param hover boolean
 ---@return boolean
 function SettingsSliderItem:Hovered(hover)
@@ -68,7 +68,7 @@ function SettingsSliderItem:Hovered(hover)
     return self._hovered
 end
 
----Toggle the selected state of the item
+---Toggle the selected state of the item.
 ---@param selected boolean
 ---@return boolean
 function SettingsSliderItem:Selected(selected)
@@ -78,7 +78,7 @@ function SettingsSliderItem:Selected(selected)
     return self._selected
 end
 
----Set the value of the item
+---Set the value of the item.
 ---@param value number
 ---@return number
 function SettingsSliderItem:Value(value)
@@ -93,7 +93,7 @@ function SettingsSliderItem:Value(value)
     return self._value
 end
 
----Set the color of the colored bar
+---Set the color of the colored bar.
 ---@param color number
 ---@return number
 function SettingsSliderItem:ColoredBarColor(color)

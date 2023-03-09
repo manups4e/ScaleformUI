@@ -4,6 +4,31 @@ FriendItem.__call = function()
     return "LobbyItem", "FriendItem"
 end
 
+---@class FriendItem
+---@field public Label string
+---@field public ItemColor number
+---@field public ColoredTag boolean
+---@field public Rank number
+---@field public Status string
+---@field public StatusColor number
+---@field public CrewTag string
+---@field public IconL number
+---@field public IconR number
+---@field public BoolL boolean
+---@field public BoolR boolean
+---@field public ParentColumn PlayerListColumn
+---@field public ClonePed number
+---@field public Panel PlayerStatsPanel
+---@field public Handle number
+
+---Creates a new FriendItem.
+---@param label string
+---@param itemColor number
+---@param coloredTag boolean
+---@param rank number
+---@param status string
+---@param crewTag string
+---@return FriendItem
 function FriendItem.New(label, itemColor, coloredTag, rank, status, crewTag)
     if itemColor == -1 then itemColor = 9 end
     local _data = {
@@ -21,7 +46,7 @@ function FriendItem.New(label, itemColor, coloredTag, rank, status, crewTag)
         _iconR = 65,
         _boolL = false,
         _boolR = false,
-        _coloredTag = true,
+        _coloredTag = coloredTag or true,
         ParentColumn = nil,
         ClonePed = 0,
         Panel = nil,
@@ -30,10 +55,11 @@ function FriendItem.New(label, itemColor, coloredTag, rank, status, crewTag)
     return setmetatable(_data, FriendItem)
 end
 
+---Sets the label of the item if supplied else it will return the current label.
+---@param label string|nil
+---@return string
 function FriendItem:Label(label)
-    if label == nil then
-        return self._label
-    else
+    if label ~= nil then
         self._label = label
         if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
             local idx = IndexOf(self.ParentColumn.Items, self) - 1
@@ -46,16 +72,18 @@ function FriendItem:Label(label)
             end
         end
     end
+    return self._label
 end
 
+---Adds a ped to the pause menu or returns the current ped.
+---@param ped number|nil If the ped parameter is 0 it will clear the ped.
+---@return number -- If the ped parameter is 0 it will return -1.
 function FriendItem:AddPedToPauseMenu(ped)
-    if ped == nil then
-        return self.ClonePed
-    else
+    if ped ~= nil then
         self.ClonePed = ped
-        if ped == 0 or ped == nil then
+        if ped == 0 then
             ClearPedInPauseMenu()
-            return
+            return -1
         end
         if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
             if self.Panel ~= nil then
@@ -88,12 +116,12 @@ function FriendItem:AddPedToPauseMenu(ped)
             end)
         end
     end
+    return self.ClonePed
 end
 
+---Sets the item color of the item if supplied else it will return the current item color.
 function FriendItem:ItemColor(color)
-    if color == nil then
-        return self._itemColor
-    else
+    if color ~= nil then
         self._itemColor = color
         if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
             local idx = IndexOf(self.ParentColumn.Items, self) - 1
@@ -107,13 +135,15 @@ function FriendItem:ItemColor(color)
             end
         end
     end
+    return self._itemColor
 end
 
-function FriendItem:ColoredTag(bool)
-    if bool == nil then
-        return self._coloredTag
-    else
-        self._coloredTag = bool
+-- Sets if the item color should be used for the crew tag, if the argument is nil it will return the current value.
+---@param enableColorTag boolean
+---@return boolean
+function FriendItem:ColoredTag(enableColorTag)
+    if enableColorTag ~= nil then
+        self._coloredTag = enableColorTag
         if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
             local idx = IndexOf(self.ParentColumn.Items, self) - 1
             local pSubT = self.ParentColumn.Parent()
@@ -126,12 +156,14 @@ function FriendItem:ColoredTag(bool)
             end
         end
     end
+    return self._coloredTag
 end
 
+---Sets the rank of the item if supplied else it will return the current rank.
+---@param rank number|nil
+---@return number
 function FriendItem:Rank(rank)
-    if rank == nil then
-        return self._rank
-    else
+    if rank ~= nil then
         self._rank = rank
         if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
             local idx = IndexOf(self.ParentColumn.Items, self) - 1
@@ -144,12 +176,14 @@ function FriendItem:Rank(rank)
             end
         end
     end
+    return self._rank
 end
 
+---Sets the status of the item if supplied else it will return the current status.
+---@param status string|nil
+---@return string
 function FriendItem:Status(status)
-    if status == nil then
-        return self._status
-    else
+    if status ~= nil then
         self._status = status
         if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
             local idx = IndexOf(self.ParentColumn.Items, self) - 1
@@ -163,12 +197,14 @@ function FriendItem:Status(status)
             end
         end
     end
+    return self._status
 end
 
+---Sets the status color of the item if supplied else it will return the current status color.
+---@param color number
+---@return number
 function FriendItem:StatusColor(color)
-    if color == nil then
-        return self._statusColor
-    else
+    if color ~= nil then
         self._statusColor = color
         if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
             local idx = IndexOf(self.ParentColumn.Items, self) - 1
@@ -182,12 +218,14 @@ function FriendItem:StatusColor(color)
             end
         end
     end
+    return self._statusColor
 end
 
+---Sets the crew tag of the item if supplied else it will return the current crew tag.
+---@param tag string|nil
+---@return string
 function FriendItem:CrewTag(tag)
-    if tag == nil then
-        return self._crewTag
-    else
+    if tag ~= nil then
         self._crewTag = tag
         if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
             local idx = IndexOf(self.ParentColumn.Items, self) - 1
@@ -200,8 +238,12 @@ function FriendItem:CrewTag(tag)
             end
         end
     end
+    return self._crewTag
 end
 
+---Sets the left icon of the item.
+---@param icon string|nil
+---@param isBadge boolean|nil
 function FriendItem:SetLeftIcon(icon, isBadge)
     self._iconL = icon;
     self._boolL = isBadge or false;
@@ -218,6 +260,9 @@ function FriendItem:SetLeftIcon(icon, isBadge)
     end
 end
 
+---Sets the right icon of the item.
+---@param icon string|nil
+---@param isBadge boolean|nil
 function FriendItem:SetRightIcon(icon, isBadge)
     self._iconR = icon;
     self._boolR = isBadge or false;
@@ -234,30 +279,34 @@ function FriendItem:SetRightIcon(icon, isBadge)
     end
 end
 
-function FriendItem:Selected(bool, item)
+---Sets the selected state of the item if supplied else it will return the current selected state.
+---@param bool boolean|nil
+---@return boolean
+function FriendItem:Selected(bool)
     if bool ~= nil then
         self._Selected = ToBool(bool)
-    else
-        return self._Selected
     end
+    return self._Selected
 end
 
+---Sets the hovered state of the item if supplied else it will return the current hovered state.
 function FriendItem:Hovered(bool)
     if bool ~= nil then
         self._Hovered = ToBool(bool)
-    else
-        return self._Hovered
     end
+    return self._Hovered
 end
 
-function FriendItem:Enabled(bool, item)
+---Sets the enabled state of the item if supplied else it will return the current enabled state.
+function FriendItem:Enabled(bool)
     if bool ~= nil then
         self._Enabled = ToBool(bool)
-    else
-        return self._Enabled
     end
+    return self._Enabled
 end
 
+---Adds a player stats panel to the item.
+---@param panel PlayerStatsPanel
 function FriendItem:AddPanel(panel)
     panel.ParentItem = self
     self.Panel = panel

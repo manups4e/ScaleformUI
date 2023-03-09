@@ -10,7 +10,7 @@ end
 ---@field Parent SettingsItem
 ---@field OnActivated fun(item:SettingsItem, index:number)
 
----Creates a new SettingsItem
+---Creates a new SettingsItem.
 ---@param label string
 ---@param rightLabel string|nil
 ---@return SettingsItem
@@ -29,7 +29,7 @@ function SettingsItem.New(label, rightLabel)
     return setmetatable(data, SettingsItem)
 end
 
----Toggle the enabled state of the item
+---Toggle the enabled state of the item.
 ---@param enabled any
 ---@return any
 function SettingsItem:Enabled(enabled)
@@ -48,7 +48,7 @@ function SettingsItem:Enabled(enabled)
     return self._enabled
 end
 
----Toggle the hovered state of the item
+---Toggle the hovered state of the item.
 ---@param hover any
 ---@return any
 function SettingsItem:Hovered(hover)
@@ -58,7 +58,7 @@ function SettingsItem:Hovered(hover)
     return self._hovered
 end
 
----Toggle the selected state of the item
+---Toggle the selected state of the item.
 ---@param selected any
 ---@return any
 function SettingsItem:Selected(selected)
@@ -68,7 +68,7 @@ function SettingsItem:Selected(selected)
     return self._selected
 end
 
----Set the right label of the item
+---Set the right label of the item.
 ---@param label string
 ---@return string
 function SettingsItem:RightLabel(label)

@@ -11,7 +11,7 @@ end
 ---@field public SecondaryKeyboard string
 ---@field public SecondaryGamepad string
 
----Creates a new KeymapItem
+---Creates a new KeymapItem.
 ---@param title string
 ---@param primaryKeyboard string|nil
 ---@param primaryGamepad string|nil

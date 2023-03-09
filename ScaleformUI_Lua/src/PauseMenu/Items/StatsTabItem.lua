@@ -12,7 +12,7 @@ end
 ---@field public OnBarChanged fun(item: StatsTabItem, value: number)
 ---@field public OnSliderSelected fun(item: StatsTabItem, value: number)
 
----Creates a new StatsTabItem
+---Creates a new StatsTabItem.
 ---@param label string
 ---@param rightLabel string|nil
 ---@return table
@@ -26,7 +26,7 @@ function StatsTabItem.NewBasic(label, rightLabel)
     return setmetatable(data, StatsTabItem)
 end
 
----Adds a new bar to the StatsTabItem
+---Adds a new bar to the StatsTabItem.
 ---@param label string
 ---@param value number|nil
 ---@param color number|nil
@@ -42,7 +42,7 @@ function StatsTabItem.NewBar(label, value, color)
     return setmetatable(data, StatsTabItem)
 end
 
----Sets the right label of the item
+---Sets the right label of the item.
 ---@param label string
 ---@return string
 function StatsTabItem:RightLabel(label)
@@ -68,7 +68,7 @@ function StatsTabItem:RightLabel(label)
     return self._rightLabel
 end
 
----Sets the value of the item
+---Sets the value of the item.
 ---@param value any
 ---@return any
 function StatsTabItem:Value(value)
@@ -94,7 +94,7 @@ function StatsTabItem:Value(value)
     return self._value
 end
 
----Sets the color of the item
+---Sets the color of the item.
 ---@param color number
 ---@return number
 function StatsTabItem:ColoredBarColor(color)
