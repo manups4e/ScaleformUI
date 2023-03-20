@@ -786,7 +786,10 @@ function UIMenu:ProcessControl()
         return
     end
 
-    if self.Controls.Up.Enabled and not self._isBuilding and (IsDisabledControlPressed(0, 172) or IsDisabledControlPressed(1, 172) or IsDisabledControlPressed(2, 172) or IsDisabledControlPressed(0, 241) or IsDisabledControlPressed(1, 241) or IsDisabledControlPressed(2, 241) or IsDisabledControlPressed(2, 241)) then
+    if self.Controls.Up.Enabled and (IsDisabledControlPressed(0, 172) or IsDisabledControlPressed(1, 172) or IsDisabledControlPressed(2, 172) or IsDisabledControlPressed(0, 241) or IsDisabledControlPressed(1, 241) or IsDisabledControlPressed(2, 241) or IsDisabledControlPressed(2, 241)) then
+        if self._isBuilding and self.ActiveItem <= 0 then
+            return
+        end
         if GetGameTimer() - self._time > self._delay then
             self:ButtonDelay()
             Citizen.CreateThread(function()
@@ -796,7 +799,7 @@ function UIMenu:ProcessControl()
         end
     end
 
-    if self.Controls.Down.Enabled and not self._isBuilding and (IsDisabledControlPressed(0, 173) or IsDisabledControlPressed(1, 173) or IsDisabledControlPressed(2, 173) or IsDisabledControlPressed(0, 242) or IsDisabledControlPressed(1, 242) or IsDisabledControlPressed(2, 242)) then
+    if self.Controls.Down.Enabled and (IsDisabledControlPressed(0, 173) or IsDisabledControlPressed(1, 173) or IsDisabledControlPressed(2, 173) or IsDisabledControlPressed(0, 242) or IsDisabledControlPressed(1, 242) or IsDisabledControlPressed(2, 242)) then
         if GetGameTimer() - self._time > self._delay then
             self:ButtonDelay(0)
             Citizen.CreateThread(function()
@@ -806,7 +809,7 @@ function UIMenu:ProcessControl()
         end
     end
 
-    if self.Controls.Left.Enabled and not self._isBuilding and (IsDisabledControlPressed(0, 174) or IsDisabledControlPressed(1, 174) or IsDisabledControlPressed(2, 174)) then
+    if self.Controls.Left.Enabled and (IsDisabledControlPressed(0, 174) or IsDisabledControlPressed(1, 174) or IsDisabledControlPressed(2, 174)) then
         if GetGameTimer() - self._time > self._delay then
             self:ButtonDelay()
             Citizen.CreateThread(function()
@@ -816,7 +819,7 @@ function UIMenu:ProcessControl()
         end
     end
 
-    if self.Controls.Right.Enabled and not self._isBuilding and (IsDisabledControlPressed(0, 175) or IsDisabledControlPressed(1, 175) or IsDisabledControlPressed(2, 175)) then
+    if self.Controls.Right.Enabled and (IsDisabledControlPressed(0, 175) or IsDisabledControlPressed(1, 175) or IsDisabledControlPressed(2, 175)) then
         if GetGameTimer() - self._time > self._delay then
             self:ButtonDelay()
             Citizen.CreateThread(function()
@@ -826,7 +829,7 @@ function UIMenu:ProcessControl()
         end
     end
 
-    if self.Controls.Select.Enabled and not self._isBuilding and (IsDisabledControlJustPressed(0, 201) or IsDisabledControlJustPressed(1, 201) or IsDisabledControlJustPressed(2, 201)) then
+    if self.Controls.Select.Enabled and (IsDisabledControlJustPressed(0, 201) or IsDisabledControlJustPressed(1, 201) or IsDisabledControlJustPressed(2, 201)) then
         Citizen.CreateThread(function()
             self:SelectItem()
             Citizen.Wait(125)       
