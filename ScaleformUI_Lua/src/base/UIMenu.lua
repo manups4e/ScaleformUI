@@ -157,6 +157,7 @@ function UIMenu.New(Title, Subtitle, X, Y, glare, txtDictionary, txtName, altern
                     { 0, 75 }, -- Exit Vehicle
                 },
                 Keyboard = {
+                    { 0, 0 },   -- Camera
                     { 0, 201 }, -- Select
                     { 0, 195 }, -- X axis
                     { 0, 196 }, -- Y axis
