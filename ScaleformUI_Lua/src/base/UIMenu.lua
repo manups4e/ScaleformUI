@@ -293,6 +293,23 @@ function UIMenu:CanPlayerCloseMenu(canHe)
     end
 end
 
+function UIMenu:ControlDisablingEnabled(bool)
+    if bool == nil then
+        return self.Settings.ControlDisablingEnabled
+    else
+        self.Settings.ControlDisablingEnabled = tobool(bool)
+    end
+end
+
+function UIMenu:MouseControlsEnabled(bool)
+    if bool == nil then
+        return self.Settings.MouseControlsEnabled
+    else
+        self.Settings.MouseControlsEnabled = tobool(bool)
+    end
+    ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_MOUSE", false, self.Settings.MouseControlsEnabled)
+end
+
 
 ---SetBannerSprite
 ---@param Sprite string
