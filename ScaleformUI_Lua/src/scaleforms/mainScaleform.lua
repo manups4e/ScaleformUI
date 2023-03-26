@@ -45,8 +45,9 @@ Citizen.CreateThread(function()
     ScaleformUI.Scaleforms.RankbarHandler = RankbarHandler.New()
     ScaleformUI.Scaleforms.CountdownHandler = CountdownHandler.New()
     
-    local wait = 500
+    local wait = 850
     while true do
+        wait = 850
         if not IsPauseMenuActive() then
             if ScaleformUI.Scaleforms.BigMessageInstance._sc ~= 0 then
                 ScaleformUI.Scaleforms.BigMessageInstance:Update()
