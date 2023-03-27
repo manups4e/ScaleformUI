@@ -45,8 +45,9 @@ Citizen.CreateThread(function()
     ScaleformUI.Scaleforms.RankbarHandler = RankbarHandler.New()
     ScaleformUI.Scaleforms.CountdownHandler = CountdownHandler.New()
     
-    local wait = 500
+    local wait = 850
     while true do
+        wait = 850
         if not IsPauseMenuActive() then
             if ScaleformUI.Scaleforms.BigMessageInstance._sc ~= 0 then
                 ScaleformUI.Scaleforms.BigMessageInstance:Update()
@@ -90,7 +91,7 @@ Citizen.CreateThread(function()
             (ScaleformUI.Scaleforms.JobMissionSelector.enabled or ScaleformUI.Scaleforms.JobMissionSelector._sc == nil) and
             (not ScaleformUI.Scaleforms.InstructionalButtons._enabled or (ScaleformUI.Scaleforms.InstructionalButtons.ControlButtons == nil or #ScaleformUI.Scaleforms.InstructionalButtons.ControlButtons == 0 and not ScaleformUI.Scaleforms.InstructionalButtons.IsSaving))
         then
-            wait = 500
+            wait = 850
         end
 
         Citizen.Wait(wait)
