@@ -56,7 +56,6 @@ function UIMenu.New(Title, Subtitle, X, Y, glare, txtDictionary, txtName, altern
         TxtDictionary = txtDictionary,
         TxtName = txtName,
         Glare = glare or false,
-        _internalpool = nil,
         _keyboard = false,
         _changed = false,
         _maxItem = 7,
@@ -90,6 +89,7 @@ function UIMenu.New(Title, Subtitle, X, Y, glare, txtDictionary, txtName, altern
             },
         },
         ParentMenu = nil,
+        ParentPool = nil,
         ParentItem = nil,
         _Visible = false,
         ActiveItem = 0,
@@ -503,7 +503,7 @@ function UIMenu:AddSubMenu(Menu, text, description, offset, KeepBanner)
         Menu:AnimationEnabled(self:AnimationEnabled())
         Menu:AnimationType(self:AnimationType())
         Menu:BuildingAnimation(self:BuildingAnimation())
-        self._internalpool:Add(Menu)
+        self.ParentPool:Add(Menu)
         self:BindMenuToItem(Menu, Item)
         return Menu
     end
@@ -528,13 +528,13 @@ function UIMenu:Visible(bool)
             else
                 self:BuildUpMenuSync()
             end
-                self._internalpool.currentMenu = self
-            self._internalpool:ProcessMenus(true)
+                self.ParentPool.currentMenu = self
+            self.ParentPool:ProcessMenus(true)
         else
             self.OnMenuChanged(self, nil, "closed")
             ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
-            self._internalpool.currentMenu = nil
-            self._internalpool:ProcessMenus(false)
+            self.ParentPool.currentMenu = nil
+            self.ParentPool:ProcessMenus(false)
         end
         ScaleformUI.Scaleforms.InstructionalButtons:Enabled(bool)
         if self.Settings.ResetCursorOnOpen then

@@ -50,14 +50,14 @@ end
 ---@param Menu table
 function MenuPool:Add(Menu)
     if Menu() == "UIMenu" then
-        Menu._internalpool = self
+        Menu.ParentPool = self
         self.Menus[#self.Menus + 1] = Menu
     end
 end
 
 function MenuPool:AddPauseMenu(Menu)
     if Menu() == "PauseMenu" or Menu() == "LobbyMenu" then
-        Menu._internalpool = self,
+        Menu.ParentPool = self,
         table.insert(self.PauseMenus, Menu)
     end
 end
@@ -238,16 +238,9 @@ end
 
 ---CloseAllMenus
 function MenuPool:CloseAllMenus()
-    if self.currentMenu ~= nil and self.currentMenu() == "UIMenu" then
-        for _,subMenu in pairs(self.currentMenu.Children) do
-            if subMenu:Visible() then
-                subMenu:Visible(false)
-            end
-        end
-        if self.currentMenu:Visible() then
-            self.currentMenu:Visible(false)
-        else
-            self.currentMenu.OnMenuChanged(self.currentMenu, nil, "closed")
+    for k,v in pairs(self.Menus) do
+        if v:Visible() then
+            v:Visible(false)
         end
     end
     ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)

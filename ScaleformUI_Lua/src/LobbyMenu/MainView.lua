@@ -12,10 +12,10 @@ function MainView.New(title, subtitle, sideTop, sideMid, sideBot)
         SideTop = sideTop or "",
         SideMid = sideMid or "",
         SideBot = sideBot or "",
+        ParentPool = nil,
         _headerPicture = {},
         _crewPicture = {},
         _visible = false,
-        _internalpool = nil,
         SettingsColumn = {},
         PlayersColumn = {},
         MissionPanel = {},
@@ -96,7 +96,7 @@ function MainView:Visible(visible)
                 ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
                 SetPlayerControl(PlayerId(), false, 0)
                 self._firstTick = true
-                self._internalpool:ProcessMenus(true)
+                self.ParentPool:ProcessMenus(true)
             end
         else
             ScaleformUI.Scaleforms._pauseMenu:Dispose()
@@ -104,7 +104,7 @@ function MainView:Visible(visible)
             AnimpostfxPlay("PauseMenuOut", 800, false)
             self.OnLobbyMenuClose(self)
             SetPlayerControl(PlayerId(), true, 0)
-            self._internalpool:ProcessMenus(false)
+            self.ParentPool:ProcessMenus(false)
             if IsPauseMenuActive() then
                 PlaySoundFrontend(self.SoundId, "Hit_Out", "PLAYER_SWITCH_CUSTOM_SOUNDSET")
                 ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, false, -1)
