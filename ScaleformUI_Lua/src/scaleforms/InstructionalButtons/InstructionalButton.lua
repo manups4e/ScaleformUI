@@ -1,15 +1,19 @@
-InstructionalButton = {}
-
-local button = {}
-button = setmetatable({}, button)
-
-button.__call = function()
-    return true
+InstructionalButton = setmetatable({}, InstructionalButton)
+InstructionalButton.__index = InstructionalButton
+InstructionalButton.__call = function()
+    return "InstructionalButton"
 end
-button.__index = button
+
+---@class InstructionalButton
+---@field public Text string
+---@field public GamepadButtons number[]
+---@field public GamepadButton number
+---@field public KeyboardButtons number[]
+---@field public KeyboardButton number
+---@field public PadCheck number
 
 function InstructionalButton.New(text, padcheck, gamepadControls, keyboardControls, inputGroup)
-    local _button = {
+    local _instructionalButton = {
         Text = text or "",
         GamepadButtons = nil,
         GamepadButton = -1,
@@ -20,36 +24,36 @@ function InstructionalButton.New(text, padcheck, gamepadControls, keyboardContro
 
     if type(gamepadControls) == "table" then
         if padcheck == 0 or padcheck == -1 then
-            _button.GamepadButtons = gamepadControls
+            _instructionalButton.GamepadButtons = gamepadControls
         end
     else
         if padcheck == 0 or padcheck == -1 then
-            _button.GamepadButton = gamepadControls
+            _instructionalButton.GamepadButton = gamepadControls
         else
-            _button.GamepadButton = -1
+            _instructionalButton.GamepadButton = -1
         end
     end
     if type(keyboardControls) == "table" then
         if padcheck == 1 or padcheck == -1 then
-            _button.KeyboardButtons = keyboardControls
+            _instructionalButton.KeyboardButtons = keyboardControls
         end
     else
         if padcheck == 1 or padcheck == -1 then
-            _button.KeyboardButton = keyboardControls
+            _instructionalButton.KeyboardButton = keyboardControls
         else
-            _button.KeyboardButton = -1
+            _instructionalButton.KeyboardButton = -1
         end
     end
-    _button.InputGroupButton = inputGroup or -1
+    _instructionalButton.InputGroupButton = inputGroup or -1
 
-    return setmetatable(_button, button)
+    return setmetatable(_instructionalButton, InstructionalButton)
 end
 
-function button:IsUsingController()
+function InstructionalButton:IsUsingController()
     return not IsUsingKeyboard(2)
 end
 
-function button:GetButtonId()
+function InstructionalButton:GetButtonId()
     if self.KeyboardButtons ~= nil or self.GamepadButtons ~= nil then
         local retVal = ""
         if self:IsUsingController() then
