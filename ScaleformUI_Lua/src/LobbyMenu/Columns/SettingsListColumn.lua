@@ -63,6 +63,8 @@ function SettingsListColumn:CurrentSelection(idx)
     end
 end
 
+---Add a new item to the column.
+---@param item UIMenuItem|UIMenuListItem|UIMenuCheckboxItem|UIMenuSliderItem|UIMenuProgressItem
 function SettingsListColumn:AddSettings(item)
     item.ParentColumn = self
     self.Items[#self.Items + 1] = item

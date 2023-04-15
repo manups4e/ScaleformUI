@@ -20,8 +20,8 @@ end
 ---@field public ClonePed number
 ---@field public Panel PlayerStatsPanel
 ---@field public Handle number
----@field public SetLeftIcon fun(icon:number, bool:boolean):nil
----@field public SetRightIcon fun(icon:number, bool:boolean):nil
+---@field public SetLeftIcon fun(icon:LobbyBadgeIcon, bool:boolean):nil
+---@field public SetRightIcon fun(icon:LobbyBadgeIcon, bool:boolean):nil
 ---@field public AddPedToPauseMenu fun(ped:number):number
 ---@field public AddPanel fun(panel: PlayerStatsPanel)
 ---@field public Enabled fun(enabled:boolean):boolean
@@ -247,7 +247,7 @@ function FriendItem:CrewTag(tag)
 end
 
 ---Sets the left icon of the item.
----@param icon string|nil
+---@param icon LobbyBadgeIcon|nil
 ---@param isBadge boolean|nil
 function FriendItem:SetLeftIcon(icon, isBadge)
     self._iconL = icon;
@@ -266,7 +266,7 @@ function FriendItem:SetLeftIcon(icon, isBadge)
 end
 
 ---Sets the right icon of the item.
----@param icon string|nil
+---@param icon LobbyBadgeIcon|nil
 ---@param isBadge boolean|nil
 function FriendItem:SetRightIcon(icon, isBadge)
     self._iconR = icon;
