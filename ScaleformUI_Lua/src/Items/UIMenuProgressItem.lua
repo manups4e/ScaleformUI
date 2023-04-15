@@ -2,6 +2,9 @@ UIMenuProgressItem = setmetatable({}, UIMenuProgressItem)
 UIMenuProgressItem.__index = UIMenuProgressItem
 UIMenuProgressItem.__call = function() return "UIMenuItem", "UIMenuProgressItem" end
 
+---@class UIMenuProgressItem : UIMenuItem
+---@field public Base UIMenuItem
+
 ---New
 ---@param Text string
 ---@param Max number

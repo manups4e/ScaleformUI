@@ -2,6 +2,9 @@ UIMenuSeperatorItem = setmetatable({}, UIMenuSeperatorItem)
 UIMenuSeperatorItem.__index = UIMenuSeperatorItem
 UIMenuSeperatorItem.__call = function() return "UIMenuItem", "UIMenuSeperatorItem" end
 
+---@class UIMenuSeperatorItem : UIMenuItem
+---@field public Base UIMenuItem
+
 ---New
 ---@param Text string
 ---@param jumpable boolean

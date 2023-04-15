@@ -2,6 +2,9 @@ UIMenuCheckboxItem = setmetatable({}, UIMenuCheckboxItem)
 UIMenuCheckboxItem.__index = UIMenuCheckboxItem
 UIMenuCheckboxItem.__call = function() return "UIMenuItem", "UIMenuCheckboxItem" end
 
+---@class UIMenuCheckboxItem : UIMenuItem
+---@field public Base UIMenuItem
+
 ---New
 ---@param Text string
 ---@param Check boolean

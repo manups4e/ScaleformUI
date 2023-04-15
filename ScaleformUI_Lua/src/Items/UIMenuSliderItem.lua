@@ -2,6 +2,9 @@ UIMenuSliderItem = setmetatable({}, UIMenuSliderItem)
 UIMenuSliderItem.__index = UIMenuSliderItem
 UIMenuSliderItem.__call = function() return "UIMenuItem", "UIMenuSliderItem" end
 
+---@class UIMenuSliderItem : UIMenuItem
+---@field public Base UIMenuItem
+
 ---New
 ---@param Text string
 ---@param Max number

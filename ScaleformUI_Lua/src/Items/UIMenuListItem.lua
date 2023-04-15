@@ -2,6 +2,9 @@ UIMenuListItem = setmetatable({}, UIMenuListItem)
 UIMenuListItem.__index = UIMenuListItem
 UIMenuListItem.__call = function() return "UIMenuItem", "UIMenuListItem" end
 
+---@class UIMenuListItem : UIMenuItem
+---@field public Base UIMenuItem
+
 ---New
 ---@param Text string
 ---@param Items table

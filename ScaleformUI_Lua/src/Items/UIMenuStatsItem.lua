@@ -2,6 +2,9 @@ UIMenuStatsItem = setmetatable({}, UIMenuStatsItem)
 UIMenuStatsItem.__index = UIMenuStatsItem
 UIMenuStatsItem.__call = function() return "UIMenuItem", "UIMenuStatsItem" end
 
+---@class UIMenuStatsItem : UIMenuItem
+---@field public Base UIMenuItem
+
 ---New
 ---@param Text string
 ---@param Description string
