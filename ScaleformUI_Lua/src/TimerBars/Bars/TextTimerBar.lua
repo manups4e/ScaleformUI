@@ -1,4 +1,4 @@
----@diagnostic disable: missing-parameter -- false positive
+---@diagnostic disable: missing-parameter
 
 TextTimerBar = setmetatable({}, TextTimerBar)
 TextTimerBar.__index = TextTimerBar
