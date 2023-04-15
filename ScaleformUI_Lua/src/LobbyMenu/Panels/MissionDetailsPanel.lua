@@ -20,7 +20,7 @@ function MissionDetailsPanel.New(label, color)
         _label = label or "",
         _color = color or 116,
         Parent = nil,
-        Items = {},
+        Items = {} --[[@type MissionDetailsItem[]],
         TextureDict = "",
         TextureName = "",
         OnIndexChanged = function(index)
