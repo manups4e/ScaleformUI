@@ -1,3 +1,4 @@
+---@enum Colours
 Colours = {
     NONE = -1,
     HUD_COLOUR_PURE_WHITE = 0,

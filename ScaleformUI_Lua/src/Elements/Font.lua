@@ -1,3 +1,4 @@
+---@enum Font
 Font = {
   CHALET_LONDON = 0,
   HOUSE_SCRIPT = 1,
