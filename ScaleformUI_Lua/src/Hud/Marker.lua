@@ -1,5 +1,3 @@
----@diagnostic disable: cast-local-type -- vector3 false positive
-
 Marker = setmetatable({}, Marker)
 Marker.__index = Marker
 Marker.__call = function()
@@ -59,9 +57,9 @@ function Marker:IsInRange()
     local pos = GetEntityCoords(PlayerPedId(), true)
     local dist = vector3(0, 0, 0)
     if (self.CheckZ) then
-        dist = #(pos - self.Position)       -- Use Z
+        dist = #(pos - self.Position) --[[@as vector3]]       -- Use Z
     else
-        dist = #(pos.xy - self.Position.xy) -- Do not use Z
+        dist = #(pos.xy - self.Position.xy) --[[@as vector3]] -- Do not use Z
     end
     return dist <= self.Distance
 end
