@@ -19,13 +19,14 @@ end
 ---@field public IsInMarker boolean
 ---@field public CheckZ boolean
 ---@field private _height number
+---@field public Draw fun(self:Marker):nil
 
 ---Creates a new marker
 ---@param type MarkerType|nil
 ---@param position vector3
 ---@param scale vector3
 ---@param distance number
----@param color table<number, number, number, number> -- {Red, Green, Blue, Alpha}
+---@param color table<number, number, number, number> -- {R: Red, G: Green, B: Blue, A: Alpha}
 ---@param placeOnGround boolean
 ---@param bobUpDown boolean
 ---@param rotate boolean
