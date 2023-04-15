@@ -4,13 +4,29 @@ Scaleform.__call = function()
     return "Scaleform"
 end
 
+---@class Scaleform
+---@field public CallFunction fun(theFunction:string, returndata:boolean, ...:any):nil|number
+---@field public Dispose fun():nil
+---@field public IsLoaded fun():boolean
+---@field public IsValid fun():boolean
+---@field public Render2D fun():nil
+---@field public Render2DNormal fun(x:number, y:number, width:number, height:number):nil
+---@field public Render3D fun(x:number, y:number, z:number, rx:number, ry:number, rz:number, scale:number):nil
+---@field public Render3DAdditive fun(x:number, y:number, z:number, rx:number, ry:number, rz:number, scale:number):nil
+
+---Create a new scaleform instance
 function Scaleform.Request(Name)
     local ScaleformHandle = RequestScaleformMovie(Name)
     local data = { name = Name, handle = ScaleformHandle }
     return setmetatable(data, Scaleform)
 end
 
-function Scaleform:CallFunction(theFunction, returndata, ...)
+---Call a function on the scaleform
+---@param theFunction string
+---@param returndata any
+---@vararg any
+---@return nil|number -- If returndata is true, returns the return value of the function
+function Scaleform:CallFunction(theFunction --[[@as string]], returndata --[[@as boolean]], ...)
     BeginScaleformMovieMethod(self.handle, theFunction)
     local arg = { ... }
     if arg ~= nil then
@@ -42,14 +58,17 @@ function Scaleform:CallFunction(theFunction, returndata, ...)
     end
 end
 
+---Render the scaleform full screen
 function Scaleform:Render2D()
     DrawScaleformMovieFullscreen(self.handle, 255, 255, 255, 255, 0)
 end
 
+---Render the scaleform in a rectangle
 function Scaleform:Render2DNormal(x, y, width, height)
     DrawScaleformMovie(self.handle, x, y, width, height, 255, 255, 255, 255, 0)
 end
 
+---Render the scaleform in a rectangle with screen space coordinates
 function Scaleform:Render2DScreenSpace(locx, locy, sizex, sizey)
     local Width, Height = GetScreenResolution()
     local x = locy / Width
@@ -59,23 +78,30 @@ function Scaleform:Render2DScreenSpace(locx, locy, sizex, sizey)
     DrawScaleformMovie(self.handle, x + (width / 2.0), y + (height / 2.0), width, height, 255, 255, 255, 255, 0)
 end
 
+---Render the scaleform in 3D space
 function Scaleform:Render3D(x, y, z, rx, ry, rz, scalex, scaley, scalez)
     DrawScaleformMovie_3dSolid(self.handle, x, y, z, rx, ry, rz, 2.0, 2.0, 1.0, scalex, scaley, scalez, 2)
 end
 
+---Render the scaleform in 3D space with additive blending
 function Scaleform:Render3DAdditive(x, y, z, rx, ry, rz, scalex, scaley, scalez)
     DrawScaleformMovie_3d(self.handle, x, y, z, rx, ry, rz, 2.0, 2.0, 1.0, scalex, scaley, scalez, 2)
 end
 
+---Disposes the scaleform
 function Scaleform:Dispose()
     SetScaleformMovieAsNoLongerNeeded(self.handle)
     self = nil
 end
 
+---Returns true if the scaleform is valid
+---@return boolean
 function Scaleform:IsValid()
     return self and true or false
 end
 
+---Returns true if the scaleform is loaded
+---@return boolean
 function Scaleform:IsLoaded()
     return HasScaleformMovieLoaded(self.handle)
 end

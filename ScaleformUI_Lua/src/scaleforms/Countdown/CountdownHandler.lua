@@ -4,6 +4,8 @@ CountdownHandler.__call = function()
     return "CountdownHandler"
 end
 
+---@class CountdownHandler
+
 local _r;
 local _g;
 local _b;

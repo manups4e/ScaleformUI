@@ -4,6 +4,8 @@ PlayerListScoreboard.__call = function()
     return "PlayerListScoreboard"
 end
 
+---@class PlayerListScoreboard
+
 function PlayerListScoreboard.New()
     local data = {
         _uptime = 8000,

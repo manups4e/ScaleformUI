@@ -4,6 +4,8 @@ MissionSelectorHandler.__call = function()
     return "MissionSelectorHandler"
 end
 
+---@class MissionSelectorHandler
+
 function MissionSelectorHandler.New()
     local data = {
         _sc = nil,

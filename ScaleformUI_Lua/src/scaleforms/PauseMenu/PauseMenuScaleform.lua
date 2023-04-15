@@ -4,6 +4,8 @@ PauseMenu.__call = function()
     return "PauseMenu"
 end
 
+---@class PauseMenu
+
 function PauseMenu.New()
     local _data = {
         _header = nil,

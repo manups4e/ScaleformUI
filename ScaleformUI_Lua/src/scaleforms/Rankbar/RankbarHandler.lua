@@ -4,6 +4,8 @@ RankbarHandler.__call = function()
     return "RankbarHandler"
 end
 
+---@class RankbarHandler
+
 local HUD_COMPONENT_ID = 19
 local _rankBarColor = 116
 

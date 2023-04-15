@@ -4,6 +4,8 @@ BigMessageInstance.__call = function()
     return "BigMessageInstance"
 end
 
+---@class BigMessageInstance
+
 function BigMessageInstance.New()
     local _sc = 0
     local _start = 0

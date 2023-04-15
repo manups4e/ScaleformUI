@@ -1,17 +1,16 @@
 ScaleformUI = {}
 ScaleformUI.Scaleforms = {}
 ScaleformUI.Notifications = nil
-ScaleformUI.Scaleforms._ui = 0
-ScaleformUI.Scaleforms._pauseMenu = nil
-ScaleformUI.Scaleforms.MidMessageInstance = nil
-ScaleformUI.Scaleforms.PlayerListScoreboard = nil
-ScaleformUI.Scaleforms.InstructionalButtons = nil
-ScaleformUI.Scaleforms.BigMessageInstance = nil
-ScaleformUI.Scaleforms.Warning = nil
-ScaleformUI.Scaleforms.PlayerListInstance = nil
-ScaleformUI.Scaleforms.JobMissionSelector = nil
-ScaleformUI.Scaleforms.RankbarHandler = nil
-ScaleformUI.Scaleforms.CountdownHandler = nil
+ScaleformUI.Scaleforms._ui = nil --[[@type Scaleform]]
+ScaleformUI.Scaleforms._pauseMenu = nil --[[@type PauseMenu]]
+ScaleformUI.Scaleforms.MidMessageInstance = nil --[[@type MidMessageInstance]]
+ScaleformUI.Scaleforms.PlayerListScoreboard = nil --[[@type PlayerListScoreboard]]
+ScaleformUI.Scaleforms.InstructionalButtons = nil --[[@type ButtonsHandler]]
+ScaleformUI.Scaleforms.BigMessageInstance = nil --[[@type BigMessageInstance]]
+ScaleformUI.Scaleforms.Warning = nil --[[@type WarningInstance]]
+ScaleformUI.Scaleforms.JobMissionSelector = nil --[[@type MissionSelectorHandler]]
+ScaleformUI.Scaleforms.RankbarHandler = nil --[[@type RankbarHandler]]
+ScaleformUI.Scaleforms.CountdownHandler = nil --[[@type CountdownHandler]]
 
 ScaleformUI.Scaleforms._pauseMenu = nil
 
@@ -23,8 +22,8 @@ AddEventHandler("onResourceStop", function(resName)
             AnimpostfxPlay("PauseMenuOut", 800, false);
         end
         ScaleformUI.Scaleforms._pauseMenu:Dispose()
-        ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
-        ScaleformUI.Scaleforms._ui:Dispose()
+        ScaleformUI.Scaleforms._ui.CallFunction("CLEAR_ALL", false)
+        ScaleformUI.Scaleforms._ui.Dispose()
         if not IsPlayerControlOn(PlayerId()) then
             SetPlayerControl(PlayerId(), true, 0)
         end

@@ -4,6 +4,8 @@ MidMessageInstance.__call = function()
     return "MidMessageInstance"
 end
 
+---@class MidMessageInstance
+
 function MidMessageInstance.New()
     local _sc = 0
     local _start = 0
