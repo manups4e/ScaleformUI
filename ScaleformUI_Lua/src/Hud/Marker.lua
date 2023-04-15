@@ -1,12 +1,40 @@
 Marker = setmetatable({}, Marker)
 Marker.__index = Marker
 Marker.__call = function()
-    return "Marker", "Marker"
+    return "Marker"
 end
 
+---@class Marker
+---@field public Type MarkerType
+---@field public Position vector3
+---@field public Scale vector3
+---@field public Direction vector3
+---@field public Rotation vector3
+---@field public Distance number
+---@field public Color table<number, number, number, number> -- {Red, Green, Blue, Alpha}
+---@field public PlaceOnGround boolean
+---@field public BobUpDown boolean
+---@field public Rotate boolean
+---@field public FaceCamera boolean
+---@field public IsInMarker boolean
+---@field public CheckZ boolean
+---@field private _height number
+
+---Creates a new marker
+---@param type MarkerType|nil
+---@param position vector3
+---@param scale vector3
+---@param distance number
+---@param color table<number, number, number, number> -- {Red, Green, Blue, Alpha}
+---@param placeOnGround boolean
+---@param bobUpDown boolean
+---@param rotate boolean
+---@param faceCamera boolean
+---@param checkZ boolean
+---@return Marker
 function Marker.New(type, position, scale, distance, color, placeOnGround, bobUpDown, rotate, faceCamera, checkZ)
     local _marker = {
-        MarkerType = type or 0,
+        Type = type or MarkerType.UpsideDownCone,
         Position = position or vector3(0, 0, 0),
         Scale = scale or vector3(1, 1, 1),
         Direction = vector3(0, 0, 0),
@@ -39,9 +67,10 @@ function Marker:Draw()
         end
     end
 
-    DrawMarker(self.MarkerType, self.Position.x, self.Position.y, self.Position.z, self.Direction.x, self.Direction.y,
+    DrawMarker(self.Type, self.Position.x, self.Position.y, self.Position.z, self.Direction.x, self.Direction.y,
         self.Direction.z, self.Rotation.x, self.Rotation.y, self.Rotation.z, self.Scale.x, self.Scale.y, self.Scale.z,
-        self.Color.R, self.Color.G, self.Color.B, self.Color.A, self.BobUpDown, self.FaceCamera, 2, self.Rotate, "", "",
+        ---@diagnostic disable-next-line: param-type-mismatch -- Texture dictionary and texture name have to be strings but cannot be empty strings
+        self.Color.R, self.Color.G, self.Color.B, self.Color.A, self.BobUpDown, self.FaceCamera, 2, self.Rotate, nil, nil,
         false)
     local posDif = pedPos - self.Position
     local distanceSquared = (posDif.x * posDif.x) + (posDif.y * posDif.y) + (posDif.z * posDif.z)
@@ -53,6 +82,8 @@ function Marker:Draw()
     end
 end
 
+---Returns true if the player is in range of the marker
+---@return boolean
 function Marker:IsInRange()
     local pos = GetEntityCoords(PlayerPedId(), true)
     local dist = vector3(0, 0, 0)
@@ -64,6 +95,7 @@ function Marker:IsInRange()
     return dist <= self.Distance
 end
 
+---Sets the marker color
 function Marker:SetColor(r, g, b, a)
     self.Color = { R = r, G = g, B = b, A = a }
 end
