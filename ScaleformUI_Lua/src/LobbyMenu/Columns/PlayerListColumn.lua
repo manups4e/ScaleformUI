@@ -96,7 +96,7 @@ function PlayerListColumn:AddPlayer(item)
             end
         end
         if item.Panel ~= nil then
-            item.Panel:UpdatePanel(true)
+            item.Panel.UpdatePanel(true)
         end
     end
 end

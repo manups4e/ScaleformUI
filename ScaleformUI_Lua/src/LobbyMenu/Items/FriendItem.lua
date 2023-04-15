@@ -12,10 +12,10 @@ end
 ---@field public Status string
 ---@field public StatusColor number
 ---@field public CrewTag string
----@field public IconL number
----@field public IconR number
----@field public BoolL boolean
----@field public BoolR boolean
+---@field public _iconL number
+---@field public _iconR number
+---@field public _boolL boolean
+---@field public _boolR boolean
 ---@field public ParentColumn PlayerListColumn
 ---@field public ClonePed number
 ---@field public Panel PlayerStatsPanel
@@ -87,7 +87,7 @@ function FriendItem:AddPedToPauseMenu(ped)
         end
         if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
             if self.Panel ~= nil then
-                self.Panel:UpdatePanel()
+                self.Panel.UpdatePanel()
             end
             local pSubT = self.ParentColumn.Parent()
             Citizen.CreateThread(function()
@@ -310,5 +310,5 @@ end
 function FriendItem:AddPanel(panel)
     panel.ParentItem = self
     self.Panel = panel
-    self.Panel:UpdatePanel()
+    self.Panel.UpdatePanel()
 end

@@ -15,7 +15,7 @@ end
 ---@field public ParentItem FriendItem
 ---@field public RankInfo UpperInformation
 ---@field public Items PlayerStatsPanelStatItem[]
----@field public UpdatePanel fun(override: boolean)
+---@field public UpdatePanel fun(override: boolean|nil)
 ---@field public OnItemChanged fun(item: PlayerStatsPanelStatItem)
 ---@field public OnItemActivated fun(item: PlayerStatsPanelStatItem)
 
