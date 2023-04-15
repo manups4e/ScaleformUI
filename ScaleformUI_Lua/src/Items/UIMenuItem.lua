@@ -369,6 +369,7 @@ function UIMenuItem:RemovePanelAt(Index)
     if tonumber(Index) then
         if self.Panels[Index] then
             table.remove(self.Panels, tonumber(Index))
+            ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_PANEL", false, IndexOf(self.ParentMenu.Items, self) - 1, Index-1)
         end
     end
 end

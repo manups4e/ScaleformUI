@@ -91,7 +91,6 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         TxtDictionary = txtDictionary,
         TxtName = txtName,
         Glare = glare or false,
-        _internalpool = nil,
         _keyboard = false,
         _changed = false,
         _maxItem = 7,
@@ -125,6 +124,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
             },
         },
         ParentMenu = nil,
+        ParentPool = nil,
         ParentItem = nil,
         _Visible = false,
         ActiveItem = 0,
@@ -192,6 +192,8 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
                     { 0, 75 }, -- Exit Vehicle
                 },
                 Keyboard = {
+                    { 0, 2 },   -- Look Up and Down
+                    { 0, 1 },   -- Look Left and Right
                     { 0, 201 }, -- Select
                     { 0, 195 }, -- X axis
                     { 0, 196 }, -- Y axis
@@ -335,8 +337,25 @@ function UIMenu:CanPlayerCloseMenu(playerCanCloseMenu)
     return self._canHe
 end
 
----Sets the Menu's Banner Sprite.
----@param sprite Sprite
+function UIMenu:ControlDisablingEnabled(bool)
+    if bool == nil then
+        return self.Settings.ControlDisablingEnabled
+    else
+        self.Settings.ControlDisablingEnabled = tobool(bool)
+    end
+end
+
+function UIMenu:MouseControlsEnabled(bool)
+    if bool == nil then
+        return self.Settings.MouseControlsEnabled
+    else
+        self.Settings.MouseControlsEnabled = tobool(bool)
+    end
+    ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_MOUSE", false, self.Settings.MouseControlsEnabled)
+end
+
+---SetBannerSprite
+---@param Sprite string
 ---@param IncludeChildren boolean
 ---@see Sprite
 function UIMenu:SetBannerSprite(sprite, IncludeChildren)
@@ -519,11 +538,46 @@ end
 ---@param offset table|nil
 ---@param KeepBanner boolean|nil
 ---@return table UIMenu
-function UIMenu:AddSubMenu(subMenu, text, description, offset, KeepBanner)
+function UIMenu:AddSubMenu(Menu, text, description, offset, KeepBanner)
     if subMenu() ~= "UIMenu" then
         print("^1ScaleformUI [ERROR]: You're trying to add a submenu [" ..
             subMenu.Title .. "] to a menu [" .. self.Title .. "] but it's not a menu!^7")
         return subMenu
+    end
+
+    if Menu() == "UIMenu" then
+        assert(Menu ~= self,
+        "^1ScaleformUI [ERROR]: You're can't add a menu [" .. Menu.Title .. "] as a redundant submenu to itself!")
+        for k, v in pairs(self.Children) do
+            assert(Menu ~= v,
+            "^1ScaleformUI [ERROR]: You can't add the same submenu [" .. Menu.Title .. "] more than once!")
+        end
+        local Item = UIMenuItem.New(tostring(text), description or "")
+        self:AddItem(Item)
+        if offset == nil then
+            Menu.Position = self.Position
+        else
+            Menu.Position = offset
+        end
+        if KeepBanner then
+            if self.Logo ~= nil then
+                Menu.Logo = self.Logo
+            else
+                Menu.Logo = nil
+                Menu.Banner = self.Banner
+            end
+        end
+        Menu.Glare = self.Glare
+        Menu.Settings.MouseControlsEnabled = self.Settings.MouseControlsEnabled
+        Menu.Settings.MouseEdgeEnabled = self.Settings.MouseEdgeEnabled
+        Menu:MaxItemsOnScreen(self:MaxItemsOnScreen())
+        Menu:BuildAsync(self:BuildAsync())
+        Menu:AnimationEnabled(self:AnimationEnabled())
+        Menu:AnimationType(self:AnimationType())
+        Menu:BuildingAnimation(self:BuildingAnimation())
+        self.ParentPool:Add(Menu)
+        self:BindMenuToItem(Menu, Item)
+        return Menu
     end
 
     assert(subMenu ~= self,
@@ -580,13 +634,13 @@ function UIMenu:Visible(bool)
             else
                 self:BuildUpMenuSync()
             end
-            self._internalpool.currentMenu = self
-            self._internalpool:ProcessMenus(true)
+            self.ParentPool.currentMenu = self
+            self.ParentPool:ProcessMenus(true)
         else
             self.OnMenuChanged(self, nil, "closed")
             ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
-            self._internalpool.currentMenu = nil
-            self._internalpool:ProcessMenus(false)
+            self.ParentPool.currentMenu = nil
+            self.ParentPool:ProcessMenus(false)
         end
         ScaleformUI.Scaleforms.InstructionalButtons:Enabled(bool)
         if self.Settings.ResetCursorOnOpen then
@@ -981,6 +1035,14 @@ function UIMenu:ProcessControl()
     end
 
     if self.Controls.Select.Enabled and not self._isBuilding and (IsDisabledControlJustPressed(0, 201) or IsDisabledControlJustPressed(1, 201) or IsDisabledControlJustPressed(2, 201)) then
+        Citizen.CreateThread(function()
+            self:SelectItem()
+            Citizen.Wait(125)
+            return
+        end)
+    end
+
+    if self.Controls.Select.Enabled and not self._isBuilding and (IsDisabledControlJustPressed(0, 24) or IsDisabledControlJustPressed(1, 24) or IsDisabledControlJustPressed(2, 24)) then
         Citizen.CreateThread(function()
             self:SelectItem()
             Citizen.Wait(125)

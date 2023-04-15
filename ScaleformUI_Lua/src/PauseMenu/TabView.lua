@@ -22,8 +22,8 @@ function TabView.New(title, subtitle, sideTop, sideMiddle, sideBottom)
         _crewPicture = {},
         Tabs = {},
         Index = 1,
+        ParentPool = nil,
         _visible = false,
-        _internalpool = nil,
         focusLevel = 0,
         rightItemIndex = 1,
         leftItemIndex = 1,
@@ -97,7 +97,7 @@ function TabView:Visible(visible)
                 PlaySoundFrontend(self.SoundId, "Hit_In", "PLAYER_SWITCH_CUSTOM_SOUNDSET", true)
                 ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
                 self:BuildPauseMenu()
-                self._internalpool:ProcessMenus(true)
+                self.ParentPool:ProcessMenus(true)
                 self.OnPauseMenuOpen(self)
                 AnimpostfxPlay("PauseMenuIn", 800, true)
                 ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
@@ -109,7 +109,7 @@ function TabView:Visible(visible)
             AnimpostfxPlay("PauseMenuOut", 800, false)
             self.OnPauseMenuClose(self)
             SetPlayerControl(PlayerId(), true, 0)
-            self._internalpool:ProcessMenus(false)
+            self.ParentPool:ProcessMenus(false)
             if IsPauseMenuActive() then
                 PlaySoundFrontend(self.SoundId, "Hit_Out", "PLAYER_SWITCH_CUSTOM_SOUNDSET", true)
                 ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)

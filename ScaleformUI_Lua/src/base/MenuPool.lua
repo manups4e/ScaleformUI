@@ -57,21 +57,19 @@ function MenuPool:AddSubMenu(subMenu, text, description, keepPosition, keepBanne
     end
 end
 
----Add a new menu to the pool
----@param menu any
-function MenuPool:Add(menu)
-    if menu() == "UIMenu" then
-        menu._internalpool = self
-        self.Menus[#self.Menus + 1] = menu
+---Add
+---@param Menu table
+function MenuPool:Add(Menu)
+    if Menu() == "UIMenu" then
+        Menu.ParentPool = self
+        self.Menus[#self.Menus + 1] = Menu
     end
 end
 
----Add a new pause or lobby menu to the pool
----@param menu any
-function MenuPool:AddPauseMenu(menu)
-    if menu() == "PauseMenu" or menu() == "LobbyMenu" then
-        menu._internalpool = self,
-            table.insert(self.PauseMenus, menu)
+function MenuPool:AddPauseMenu(Menu)
+    if Menu() == "PauseMenu" or Menu() == "LobbyMenu" then
+        Menu.ParentPool = self,
+            table.insert(self.PauseMenus, Menu)
     end
 end
 
@@ -251,16 +249,9 @@ end
 
 ---CloseAllMenus
 function MenuPool:CloseAllMenus()
-    if self.currentMenu ~= nil and self.currentMenu() == "UIMenu" then
-        for _, subMenu in pairs(self.currentMenu.Children) do
-            if subMenu:Visible() then
-                subMenu:Visible(false)
-            end
-        end
-        if self.currentMenu:Visible() then
-            self.currentMenu:Visible(false)
-        else
-            self.currentMenu.OnMenuChanged(self.currentMenu, nil, "closed")
+    for k, v in pairs(self.Menus) do
+        if v:Visible() then
+            v:Visible(false)
         end
     end
     ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
