@@ -2,6 +2,14 @@ UIMenuColorPanel = setmetatable({}, UIMenuColorPanel)
 UIMenuColorPanel.__index = UIMenuColorPanel
 UIMenuColorPanel.__call = function() return "UIMenuPanel", "UIMenuColorPanel" end
 
+---@class UIMenuColorPanel
+---@field public Title string
+---@field public ColorPanelColorType number
+---@field public value number
+---@field public CustomColors table
+---@field public ParentItem table
+---@field public OnColorPanelChanged function
+
 ---New
 ---@param title string
 ---@param colorType number

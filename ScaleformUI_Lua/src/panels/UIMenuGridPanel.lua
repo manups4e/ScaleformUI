@@ -2,6 +2,15 @@ UIMenuGridPanel = setmetatable({}, UIMenuGridPanel)
 UIMenuGridPanel.__index = UIMenuGridPanel
 UIMenuGridPanel.__call = function() return "UIMenuPanel", "UIMenuGridPanel" end
 
+---@class UIMenuGridPanel
+---@field public TopLabel string
+---@field public RightLabel string
+---@field public LeftLabel string
+---@field public BottomLabel string
+---@field public GridType number
+---@field public ParentItem table
+---@field public OnGridPanelChanged function
+
 ---New
 ---@param topText string
 ---@param leftText string

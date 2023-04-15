@@ -2,6 +2,10 @@ UIMenuStatisticsPanel = setmetatable({}, UIMenuStatisticsPanel)
 UIMenuStatisticsPanel.__index = UIMenuStatisticsPanel
 UIMenuStatisticsPanel.__call = function() return "UIMenuPanel", "UIMenuStatisticsPanel" end
 
+---@class UIMenuStatisticsPanel
+---@field public Items table
+---@field public ParentItem table
+
 ---New
 ---@param items table
 function UIMenuStatisticsPanel.New(items)

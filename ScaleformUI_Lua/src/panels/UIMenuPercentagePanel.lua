@@ -2,6 +2,14 @@ UIMenuPercentagePanel = setmetatable({}, UIMenuPercentagePanel)
 UIMenuPercentagePanel.__index = UIMenuPercentagePanel
 UIMenuPercentagePanel.__call = function() return "UIMenuPanel", "UIMenuPercentagePanel" end
 
+---@class UIMenuPercentagePanel
+---@field public Min string
+---@field public Max string
+---@field public Title string
+---@field public Percentage number
+---@field public ParentItem table
+---@field public OnPercentagePanelChange function
+
 ---New
 ---@param title string
 ---@param minText string
