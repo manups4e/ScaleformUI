@@ -26,35 +26,36 @@ end
 ---@param keepBanner boolean
 ---@return UIMenu
 function MenuPool:AddSubMenu(subMenu, text, description, keepPosition, keepBanner)
-    if subMenu() == "UIMenu" then
-        ---@diagnostic disable-next-line: missing-parameter
-        local item = UIMenuItem.New(tostring(text), description or "")
-        subMenu:AddItem(item)
-        local _subMenu
-        if keepPosition then
-            _subMenu = UIMenu.New(subMenu.Title, text, subMenu.Position.x, subMenu.Position.y, subMenu.Glare,
-                subMenu.TxtDictionary,
-                subMenu.TxtName, subMenu.AlternativeTitle)
-        else
-            _subMenu = UIMenu.New(subMenu.Title, text)
-        end
-        if keepBanner then
-            if subMenu.Logo ~= nil then
-                _subMenu.Logo = subMenu.Logo
-            else
-                _subMenu.Logo = nil
-                _subMenu.Banner = subMenu.Banner
-            end
-        end
+    assert(subMenu ~= "UIMenu",
+        "^1ScaleformUI [ERROR]: ^7The first argument must be a UIMenu, not a ^1" .. type(subMenu) .. "^7.")
 
-        _subMenu.Glare = subMenu.Glare
-        _subMenu.Settings.MouseControlsEnabled = subMenu.Settings.MouseControlsEnabled
-        _subMenu.Settings.MouseEdgeEnabled = subMenu.Settings.MouseEdgeEnabled
-        _subMenu:MaxItemsOnScreen(subMenu:MaxItemsOnScreen())
-        self:Add(_subMenu)
-        subMenu:BindMenuToItem(_subMenu, item)
-        return _subMenu
+    ---@diagnostic disable-next-line: missing-parameter
+    local item = UIMenuItem.New(tostring(text), description or "")
+    subMenu.AddItem(item)
+    local _subMenu
+    if keepPosition then
+        _subMenu = UIMenu.New(subMenu.Title, text, subMenu.Position.x, subMenu.Position.y, subMenu.Glare,
+            subMenu.TxtDictionary,
+            subMenu.TxtName, subMenu.AlternativeTitle)
+    else
+        _subMenu = UIMenu.New(subMenu.Title, text)
     end
+    if keepBanner then
+        if subMenu.Logo ~= nil then
+            _subMenu.Logo = subMenu.Logo
+        else
+            _subMenu.Logo = nil
+            _subMenu.Banner = subMenu.Banner
+        end
+    end
+
+    _subMenu.Glare = subMenu.Glare
+    _subMenu.Settings.MouseControlsEnabled = subMenu.Settings.MouseControlsEnabled
+    _subMenu.Settings.MouseEdgeEnabled = subMenu.Settings.MouseEdgeEnabled
+    _subMenu:MaxItemsOnScreen(subMenu.MaxItemsOnScreen())
+    self:Add(_subMenu)
+    subMenu.BindMenuToItem(_subMenu, item)
+    return _subMenu
 end
 
 ---Add
