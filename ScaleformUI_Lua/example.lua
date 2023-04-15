@@ -13,8 +13,6 @@ function CreateMenu()
     exampleMenu:BuildAsync(true) -- set to false to build in a sync way (might freeze game for a couple ms for high N of items in menus)
     exampleMenu:BuildingAnimation(MenuBuildingAnimation.LEFT_RIGHT)
     exampleMenu:AnimationType(MenuAnimationType.CUBIC_INOUT)
-    exampleMenu:MouseControlsEnabled(false)
-    exampleMenu:MouseEdgeEnabled(false)
     pool:Add(exampleMenu)
 
     local ketchupItem = UIMenuCheckboxItem.New("Scrolling animation enabled?", animEnabled, 1,
