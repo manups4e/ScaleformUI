@@ -4,6 +4,8 @@ TextTab.__call = function()
     return "BaseTab", "TextTab"
 end
 
+---@class TextTab
+
 function TextTab.New(name, _title)
     local data = {
         Base = BaseTab.New(name or "", 0),

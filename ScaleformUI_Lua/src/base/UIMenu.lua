@@ -581,11 +581,11 @@ function UIMenu:AddSubMenu(subMenu, text, description, offset, KeepBanner)
 
     subMenu.Settings.MouseControlsEnabled = self.Settings.MouseControlsEnabled
     subMenu.Settings.MouseEdgeEnabled = self.Settings.MouseEdgeEnabled
-    subMenu.MaxItemsOnScreen(self:MaxItemsOnScreen())
-    subMenu.BuildAsync(self:BuildAsync())
-    subMenu.AnimationEnabled(self:AnimationEnabled())
-    subMenu.AnimationType(self:AnimationType())
-    subMenu.BuildingAnimation(self:BuildingAnimation())
+    subMenu:MaxItemsOnScreen(self:MaxItemsOnScreen())
+    subMenu:BuildAsync(self:BuildAsync())
+    subMenu:AnimationEnabled(self:AnimationEnabled())
+    subMenu:AnimationType(self:AnimationType())
+    subMenu:BuildingAnimation(self:BuildingAnimation())
     self.ParentPool:Add(subMenu)
     self:BindMenuToItem(subMenu, Item)
     return subMenu
@@ -1050,7 +1050,7 @@ end
 ---GoUp
 function UIMenu:GoUp()
     self.Items[self:CurrentSelection()]:Selected(false)
-    local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", true, 8, self._delay)
+    local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", true, 8, self._delay) --[[@as number]]
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
@@ -1063,7 +1063,7 @@ end
 ---GoDown
 function UIMenu:GoDown()
     self.Items[self:CurrentSelection()]:Selected(false)
-    local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", true, 9, self._delay)
+    local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", true, 9, self._delay) --[[@as number]]
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
@@ -1086,7 +1086,7 @@ function UIMenu:GoLeft()
         return
     end
 
-    local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", true, 10)
+    local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", true, 10) --[[@as number]]
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
@@ -1130,7 +1130,7 @@ function UIMenu:GoRight()
         return
     end
 
-    local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", true, 11)
+    local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", true, 11) --[[@as number]]
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
@@ -1293,8 +1293,8 @@ function UIMenu:Draw()
         self:DisEnableControls(false)
     end
 
-    local x = self.Position.X / 1280
-    local y = self.Position.Y / 720
+    local x = self.Position.x / 1280
+    local y = self.Position.y / 720
     local width = 1280 / self._scaledWidth
     local height = 720 / 720
     ScaleformUI.Scaleforms._ui:Render2DNormal(x + (width / 2.0), y + (height / 2.0), width, height)
@@ -1302,8 +1302,8 @@ function UIMenu:Draw()
     if self.Glare then
         self._menuGlare:CallFunction("SET_DATA_SLOT", false, GetGameplayCamRelativeHeading())
 
-        local gx = self.Position.X / 1280 + 0.4499
-        local gy = self.Position.Y / 720 + 0.449
+        local gx = self.Position.x / 1280 + 0.4499
+        local gy = self.Position.y / 720 + 0.449
 
         self._menuGlare:Render2DNormal(gx, gy, 1.0, 1.0)
     end
@@ -1366,7 +1366,7 @@ function UIMenu:ProcessMouse()
                         self:SelectItem(false)
                     elseif item.ItemId == 1 or item.ItemId == 3 or item.ItemId == 4 then
                         Citizen.CreateThread(function()
-                            local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SELECT_ITEM", true, item_id)
+                            local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SELECT_ITEM", true, item_id) --[[@as number]]
                             while not IsScaleformMovieMethodReturnValueReady(return_value) do
                                 Citizen.Wait(0)
                             end
@@ -1405,7 +1405,7 @@ function UIMenu:ProcessMouse()
             elseif context == 10 then -- panels (10 => context 1, panel_type 0) // ColorPanel
                 Citizen.CreateThread(function()
                     local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SELECT_PANEL", true,
-                        self:CurrentSelection() - 1)
+                        self:CurrentSelection() - 1) --[[@as number]]
                     while not IsScaleformMovieMethodReturnValueReady(return_value) do
                         Citizen.Wait(0)
                     end
@@ -1457,7 +1457,7 @@ function UIMenu:ProcessMouse()
         end
 
         Citizen.CreateThread(function()
-            local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_MOUSE_EVENT_CONTINUE", true)
+            local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_MOUSE_EVENT_CONTINUE", true) --[[@as number]]
             while not IsScaleformMovieMethodReturnValueReady(return_value) do
                 Citizen.Wait(0)
             end

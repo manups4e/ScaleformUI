@@ -13,12 +13,19 @@ end
 ---@field public Render2DNormal fun(x:number, y:number, width:number, height:number):nil
 ---@field public Render3D fun(x:number, y:number, z:number, rx:number, ry:number, rz:number, scale:number):nil
 ---@field public Render3DAdditive fun(x:number, y:number, z:number, rx:number, ry:number, rz:number, scale:number):nil
+---@field private handle number
 
 ---Create a new scaleform instance
+---@param Name string
+---@return Scaleform
 function Scaleform.Request(Name)
-    local ScaleformHandle = RequestScaleformMovie(Name)
-    local data = { name = Name, handle = ScaleformHandle }
-    return setmetatable(data, Scaleform)
+    assert(Name ~= "string",
+        "^1ScaleformUI [ERROR]: ^7The first argument must be a string, not a ^1" .. type(Name) .. "^7.")
+    local _scaleform = {
+        name = Name,
+        handle = RequestScaleformMovie(Name)
+    }
+    return setmetatable(_scaleform, Scaleform)
 end
 
 ---Call a function on the scaleform

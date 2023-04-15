@@ -10,10 +10,10 @@ end
 ---@field private _upLabel string
 ---@field private _lowLabel string
 ---@field private _midLabel string
----@field public RankLevel fun(rank: number|nil): number
----@field public UpLabel fun(label: string|nil): string
----@field public MidLabel fun(label: string|nil): string
----@field public LowLabel fun(label: string|nil): string
+---@field public RankLevel fun(rank: number?): number
+---@field public UpLabel fun(label: string?): string
+---@field public MidLabel fun(label: string?): string
+---@field public LowLabel fun(label: string?): string
 
 ---Creates a new UpperInformation.
 ---@param parent UpperInformation

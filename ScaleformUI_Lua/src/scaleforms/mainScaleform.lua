@@ -1,16 +1,16 @@
 ScaleformUI = {}
 ScaleformUI.Scaleforms = {}
 ScaleformUI.Notifications = nil
-ScaleformUI.Scaleforms._ui = nil --[[@type Scaleform]]
-ScaleformUI.Scaleforms._pauseMenu = nil --[[@type PauseMenu]]
-ScaleformUI.Scaleforms.MidMessageInstance = nil --[[@type MidMessageInstance]]
-ScaleformUI.Scaleforms.PlayerListScoreboard = nil --[[@type PlayerListScoreboard]]
-ScaleformUI.Scaleforms.InstructionalButtons = nil --[[@type ButtonsHandler]]
-ScaleformUI.Scaleforms.BigMessageInstance = nil --[[@type BigMessageInstance]]
-ScaleformUI.Scaleforms.Warning = nil --[[@type WarningInstance]]
-ScaleformUI.Scaleforms.JobMissionSelector = nil --[[@type MissionSelectorHandler]]
-ScaleformUI.Scaleforms.RankbarHandler = nil --[[@type RankbarHandler]]
-ScaleformUI.Scaleforms.CountdownHandler = nil --[[@type CountdownHandler]]
+ScaleformUI.Scaleforms._ui = nil --[[@type Scaleform]]                             -- scaleformui
+ScaleformUI.Scaleforms._pauseMenu = nil --[[@type PauseMenu]]                      -- pausemenu
+ScaleformUI.Scaleforms.MidMessageInstance = nil --[[@type MidMessageInstance]]     -- midmessage
+ScaleformUI.Scaleforms.PlayerListScoreboard = nil --[[@type PlayerListScoreboard]] -- playerlist
+ScaleformUI.Scaleforms.InstructionalButtons = nil --[[@type ButtonsHandler]]       -- buttons
+ScaleformUI.Scaleforms.BigMessageInstance = nil --[[@type BigMessageInstance]]     -- bigmessage
+ScaleformUI.Scaleforms.Warning = nil --[[@type WarningInstance]]                   -- warning
+ScaleformUI.Scaleforms.JobMissionSelector = nil --[[@type MissionSelectorHandler]] -- missionselector
+ScaleformUI.Scaleforms.RankbarHandler = nil --[[@type RankbarHandler]]             -- rankbar
+ScaleformUI.Scaleforms.CountdownHandler = nil --[[@type CountdownHandler]]         -- countdown
 
 ScaleformUI.Scaleforms._pauseMenu = nil
 
@@ -22,7 +22,7 @@ AddEventHandler("onResourceStop", function(resName)
             AnimpostfxPlay("PauseMenuOut", 800, false);
         end
         ScaleformUI.Scaleforms._pauseMenu:Dispose()
-        ScaleformUI.Scaleforms._ui.CallFunction("CLEAR_ALL", false)
+        ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
         ScaleformUI.Scaleforms._ui.Dispose()
         if not IsPlayerControlOn(PlayerId()) then
             SetPlayerControl(PlayerId(), true, 0)

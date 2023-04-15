@@ -36,7 +36,7 @@ function ButtonsHandler:Enabled(bool)
 end
 
 function ButtonsHandler:Load()
-    if self._sc ~= 0 then return end
+    if self._sc ~= nil then return end
     self._sc = Scaleform.Request("INSTRUCTIONAL_BUTTONS")
     local timeout = 1000
     local start = GetGameTimer()
@@ -100,6 +100,8 @@ end
 ---Updates the instructional buttons
 function ButtonsHandler:UpdateButtons()
     if not self._changed then return end
+    if self._sc == nil then return end
+
     self._sc:CallFunction("SET_DATA_SLOT_EMPTY", false)
     self._sc:CallFunction("TOGGLE_MOUSE_BUTTONS", false, self.UseMouseButtons)
     local count = 0

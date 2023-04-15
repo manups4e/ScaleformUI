@@ -1,17 +1,19 @@
 MenuPool = setmetatable({}, MenuPool)
 MenuPool.__index = MenuPool
+MenuPool.__call = function()
+    return "MenuPool"
+end
 
 ---@class MenuPool
----@field Menus table
+---@field Menus table<UIMenu>
 ---@field PauseMenus table
 ---@field ableToDraw boolean
-
 
 ---Create a new MenuPool
 ---@return table
 function MenuPool.New()
     local _MenuPool = {
-        Menus = {},
+        Menus = {} --[[@as table<UIMenu>]],
         PauseMenus = {},
         ableToDraw = false
     }
@@ -52,9 +54,9 @@ function MenuPool:AddSubMenu(subMenu, text, description, keepPosition, keepBanne
     _subMenu.Glare = subMenu.Glare
     _subMenu.Settings.MouseControlsEnabled = subMenu.Settings.MouseControlsEnabled
     _subMenu.Settings.MouseEdgeEnabled = subMenu.Settings.MouseEdgeEnabled
-    _subMenu:MaxItemsOnScreen(subMenu.MaxItemsOnScreen())
+    _subMenu:MaxItemsOnScreen(subMenu:MaxItemsOnScreen())
     self:Add(_subMenu)
-    subMenu.BindMenuToItem(_subMenu, item)
+    subMenu:BindMenuToItem(_subMenu, item)
     return _subMenu
 end
 

@@ -5,6 +5,8 @@ TabView.__call = function()
 end
 TabView.SoundId = GetSoundId()
 
+---@class TabView
+
 ---comment
 ---@param title string
 ---@param subtitle string

@@ -39,17 +39,17 @@ local function CreateLobbyMenu()
         LobbyMenu:CanPlayerCloseMenu(true)
 
         local item = UIMenuItem.New("UIMenuItem", "UIMenuItem description")
-        LobbyMenu.SettingsColumn.AddSettings(item)
+        LobbyMenu.SettingsColumn:AddSettings(item)
 
-        LobbyMenu.MissionPanel.UpdatePanelPicture("scaleformui", "lobby_panelbackground")
-        LobbyMenu.MissionPanel.Title("ScaleformUI - Title")
+        LobbyMenu.MissionPanel:UpdatePanelPicture("scaleformui", "lobby_panelbackground")
+        LobbyMenu.MissionPanel:Title("ScaleformUI - Title")
 
         local detailItem = UIMenuFreemodeDetailsItem.New("Left Label", "Right Label", false, BadgeStyle.BRIEFCASE,
             Colours.HUD_COLOUR_FREEMODE)
-        LobbyMenu.MissionPanel.AddItem(detailItem)
+        LobbyMenu.MissionPanel:AddItem(detailItem)
 
         local friend = FriendItem.New("", Colours.HUD_COLOUR_FREEMODE, false, 0, "", "")
-        LobbyMenu.PlayersColumn.AddPlayer(friend)
+        LobbyMenu.PlayersColumn:AddPlayer(friend)
 
         LobbyMenu.SettingsColumn.OnIndexChanged = function(idx)
             currentSelectId = idx
@@ -252,35 +252,35 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:SetPlayerList", function(data)
                 friend.SetLeftIcon(LobbyBadge, false)
                 friend.AddPedToPauseMenu((v.ped or PlayerPedId())) -- defaulted to 0 if you set it to nil / 0 the ped will be removed from the pause menu
                 local panel = PlayerStatsPanel.New(v.name, v.rowColor)
-                panel.Description("My name is " .. v.name)
-                panel.HasPlane(v.HasPlane)
-                panel.HasHeli(v.HasHeli)
-                panel.HasBoat(v.HasBoat)
-                panel.HasVehicle(v.HasVehicle)
-                panel.RankInfo.RankLevel(v.lev)
-                panel.RankInfo.LowLabel("This is the low label")
-                panel.RankInfo.MidLabel("This is the middle label")
-                panel.RankInfo.UpLabel("This is the upper label")
-                panel.AddStat(PlayerStatsPanelStatItem.New("Stamina", GetSkillStaminaDescription(v.MP0_STAMINA),
+                panel:Description("My name is " .. v.name)
+                panel:HasPlane(v.HasPlane)
+                panel:HasHeli(v.HasHeli)
+                panel:HasBoat(v.HasBoat)
+                panel:HasVehicle(v.HasVehicle)
+                panel.RankInfo:RankLevel(v.lev)
+                panel.RankInfo:LowLabel("This is the low label")
+                panel.RankInfo:MidLabel("This is the middle label")
+                panel.RankInfo:UpLabel("This is the upper label")
+                panel:AddStat(PlayerStatsPanelStatItem.New("Stamina", GetSkillStaminaDescription(v.MP0_STAMINA),
                     v.MP0_STAMINA))
-                panel.AddStat(PlayerStatsPanelStatItem.New("Shooting",
+                panel:AddStat(PlayerStatsPanelStatItem.New("Shooting",
                     GetSkillShootingDescription(v.MP0_SHOOTING_ABILITY), v.MP0_SHOOTING_ABILITY))
-                panel.AddStat(PlayerStatsPanelStatItem.New("Strength", GetSkillStrengthDescription(v.MP0_STRENGTH),
+                panel:AddStat(PlayerStatsPanelStatItem.New("Strength", GetSkillStrengthDescription(v.MP0_STRENGTH),
                     v.MP0_STRENGTH))
-                panel.AddStat(PlayerStatsPanelStatItem.New("Stealth", GetSkillStealthDescription(v.MP0_STEALTH_ABILITY),
+                panel:AddStat(PlayerStatsPanelStatItem.New("Stealth", GetSkillStealthDescription(v.MP0_STEALTH_ABILITY),
                     v.MP0_STEALTH_ABILITY))
-                panel.AddStat(PlayerStatsPanelStatItem.New("Driving", GetSkillDrivingDescription(v.MP0_DRIVING_ABILITY),
+                panel:AddStat(PlayerStatsPanelStatItem.New("Driving", GetSkillDrivingDescription(v.MP0_DRIVING_ABILITY),
                     v.MP0_DRIVING_ABILITY))
-                panel.AddStat(PlayerStatsPanelStatItem.New("Flying", GetSkillFlyingDescription(v.MP0_FLYING_ABILITY),
+                panel:AddStat(PlayerStatsPanelStatItem.New("Flying", GetSkillFlyingDescription(v.MP0_FLYING_ABILITY),
                     v.MP0_FLYING_ABILITY))
-                panel.AddStat(PlayerStatsPanelStatItem.New("Mental State",
+                panel:AddStat(PlayerStatsPanelStatItem.New("Mental State",
                     GetSkillMentalStateDescription(v.MPPLY_KILLS_PLAYERS), v.MPPLY_KILLS_PLAYERS))
-                friend.AddPanel(panel)
-                friend.Enabled(true)
+                friend:AddPanel(panel)
+                friend:Enabled(true)
             else
                 friend._iconR = 0
                 friend._itemColor = 158
-                friend.Enabled(false)
+                friend:Enabled(false)
             end
             LobbyMenu.PlayersColumn:AddPlayer(friend)
 

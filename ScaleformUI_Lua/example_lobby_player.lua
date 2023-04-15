@@ -128,32 +128,32 @@ AddEventHandler("ScaleformUI_Lua:playermenu:SetPlayerList", function(data, Textu
     end
 
     local friend = FriendItem.New(data.name, data.Colours, data.colouredTag, data.lev, data.Status, data.CrewTag)
-    friend.SetLeftIcon(LobbyBadge, false)
-    friend.AddPedToPauseMenu((ClonePedData[data.name] or PlayerPedId())) -- defaulted to 0 if you set it to nil / 0 the ped will be removed from the pause menu
+    friend:SetLeftIcon(LobbyBadge, false)
+    friend:AddPedToPauseMenu((ClonePedData[data.name] or PlayerPedId())) -- defaulted to 0 if you set it to nil / 0 the ped will be removed from the pause menu
     local panel = PlayerStatsPanel.New(data.name, 116)
-    panel.Description("My name is " .. data.name)
-    panel.HasPlane(data.HasPlane)
-    panel.HasHeli(data.HasHeli)
-    panel.HasBoat(data.HasBoat)
-    panel.HasVehicle(data.HasVehicle)
-    panel.RankInfo.RankLevel(data.lev)
-    panel.RankInfo.LowLabel("This is the low label")
-    panel.RankInfo.MidLabel("This is the middle label")
-    panel.RankInfo.UpLabel("This is the upper label")
-    panel.AddStat(PlayerStatsPanelStatItem.New("Stamina", GetSkillStaminaDescription(data.MP0_STAMINA), data.MP0_STAMINA))
-    panel.AddStat(PlayerStatsPanelStatItem.New("Shooting", GetSkillShootingDescription(data.MP0_SHOOTING_ABILITY),
+    panel:Description("My name is " .. data.name)
+    panel:HasPlane(data.HasPlane)
+    panel:HasHeli(data.HasHeli)
+    panel:HasBoat(data.HasBoat)
+    panel:HasVehicle(data.HasVehicle)
+    panel.RankInfo:RankLevel(data.lev)
+    panel.RankInfo:LowLabel("This is the low label")
+    panel.RankInfo:MidLabel("This is the middle label")
+    panel.RankInfo:UpLabel("This is the upper label")
+    panel:AddStat(PlayerStatsPanelStatItem.New("Stamina", GetSkillStaminaDescription(data.MP0_STAMINA), data.MP0_STAMINA))
+    panel:AddStat(PlayerStatsPanelStatItem.New("Shooting", GetSkillShootingDescription(data.MP0_SHOOTING_ABILITY),
         data.MP0_SHOOTING_ABILITY))
-    panel.AddStat(PlayerStatsPanelStatItem.New("Strength", GetSkillStrengthDescription(data.MP0_STRENGTH),
+    panel:AddStat(PlayerStatsPanelStatItem.New("Strength", GetSkillStrengthDescription(data.MP0_STRENGTH),
         data.MP0_STRENGTH))
-    panel.AddStat(PlayerStatsPanelStatItem.New("Stealth", GetSkillStealthDescription(data.MP0_STEALTH_ABILITY),
+    panel:AddStat(PlayerStatsPanelStatItem.New("Stealth", GetSkillStealthDescription(data.MP0_STEALTH_ABILITY),
         data.MP0_STEALTH_ABILITY))
-    panel.AddStat(PlayerStatsPanelStatItem.New("Driving", GetSkillDrivingDescription(data.MP0_DRIVING_ABILITY),
+    panel:AddStat(PlayerStatsPanelStatItem.New("Driving", GetSkillDrivingDescription(data.MP0_DRIVING_ABILITY),
         data.MP0_DRIVING_ABILITY))
-    panel.AddStat(PlayerStatsPanelStatItem.New("Flying", GetSkillFlyingDescription(data.MP0_FLYING_ABILITY),
+    panel:AddStat(PlayerStatsPanelStatItem.New("Flying", GetSkillFlyingDescription(data.MP0_FLYING_ABILITY),
         data.MP0_FLYING_ABILITY))
-    panel.AddStat(PlayerStatsPanelStatItem.New("Mental State", GetSkillMentalStateDescription(data.MPPLY_KILLS_PLAYERS),
+    panel:AddStat(PlayerStatsPanelStatItem.New("Mental State", GetSkillMentalStateDescription(data.MPPLY_KILLS_PLAYERS),
         data.MPPLY_KILLS_PLAYERS))
-    friend.AddPanel(panel)
+    friend:AddPanel(panel)
 
     PlayerMenu.PlayersColumn:AddPlayer(friend)
 

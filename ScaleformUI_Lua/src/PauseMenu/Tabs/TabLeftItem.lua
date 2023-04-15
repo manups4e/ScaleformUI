@@ -4,6 +4,8 @@ TabLeftItem.__call = function()
     return "TabLeftItem", "TabLeftItem"
 end
 
+---@class TabLeftItem
+
 function TabLeftItem.New(label, _type, mainColor, highlightColor)
     local data = {
         Label = label or "",
@@ -42,7 +44,7 @@ function TabLeftItem:Enabled(enabled)
             local tab = IndexOf(self.Parent.Base.Parent.Tabs, self.Parent) - 1
             local leftItem = IndexOf(self.Parent.LeftItemList, self) - 1
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ENABLE_LEFT_ITEM", false, tab, leftItem, self
-            ._enabled)
+                ._enabled)
         end
     else
         return self._enabled
