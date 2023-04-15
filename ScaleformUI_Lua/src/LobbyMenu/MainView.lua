@@ -14,7 +14,7 @@ MainView.SoundId = GetSoundId()
 ---@field public SettingsColumn SettingsListColumn
 ---@field public PlayersColumn PlayerListColumn
 ---@field public MissionPanel MissionDetailsPanel
----@field public InstructionalButtons InstructionalButtons[]
+---@field public InstructionalButtons InstructionalButton[]
 ---@field public OnLobbyMenuOpen fun(menu: MainView)
 ---@field public OnLobbyMenuClose fun(menu: MainView)
 ---@field public TemporarilyHidden boolean
