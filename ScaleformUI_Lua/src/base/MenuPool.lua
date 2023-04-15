@@ -28,8 +28,8 @@ end
 function MenuPool:AddSubMenu(subMenu, text, description, keepPosition, keepBanner)
     if subMenu() == "UIMenu" then
         ---@diagnostic disable-next-line: missing-parameter
-        local Item = UIMenuItem.New(tostring(text), description or "")
-        subMenu:AddItem(Item)
+        local item = UIMenuItem.New(tostring(text), description or "")
+        subMenu:AddItem(item)
         local _subMenu
         if keepPosition then
             _subMenu = UIMenu.New(subMenu.Title, text, subMenu.Position.x, subMenu.Position.y, subMenu.Glare,
@@ -52,7 +52,7 @@ function MenuPool:AddSubMenu(subMenu, text, description, keepPosition, keepBanne
         _subMenu.Settings.MouseEdgeEnabled = subMenu.Settings.MouseEdgeEnabled
         _subMenu:MaxItemsOnScreen(subMenu:MaxItemsOnScreen())
         self:Add(_subMenu)
-        subMenu:BindMenuToItem(_subMenu, Item)
+        subMenu:BindMenuToItem(_subMenu, item)
         return _subMenu
     end
 end
