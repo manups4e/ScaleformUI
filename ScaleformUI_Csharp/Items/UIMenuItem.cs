@@ -652,6 +652,10 @@ namespace ScaleformUI
         public virtual void RemovePanelAt(int Index)
         {
             Panels.RemoveAt(Index);
+            if (Parent is not null && Parent.Visible)
+            {
+                ScaleformUI._ui.CallFunction("REMOVE_PANEL", Parent.MenuItems.IndexOf(this), Index);
+            }
         }
 
         /// <summary>
