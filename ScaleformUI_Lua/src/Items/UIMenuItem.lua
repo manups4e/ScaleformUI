@@ -4,6 +4,31 @@ UIMenuItem.__call = function()
     return "UIMenuItem", "UIMenuItem"
 end
 
+---@class UIMenuItem
+---@field _label string
+---@field _Description string
+---@field _labelFont table
+---@field _Selected boolean
+---@field _Hovered boolean
+---@field _Enabled boolean
+---@field blinkDescription boolean
+---@field _formatLeftLabel string
+---@field _rightLabel string
+---@field _formatRightLabel string
+---@field _rightBadge number
+---@field _leftBadge number
+---@field _mainColor number
+---@field _highlightColor number
+---@field _textColor number
+---@field _highlightedTextColor number
+---@field _itemData table
+---@field ParentMenu UIMenu
+---@field Panels table
+---@field SidePanel UIMenuPanel
+---@field ItemId number
+---@field Activated function
+---@field SetParentMenu function
+
 ---New
 ---@param text string
 ---@param description string
@@ -61,11 +86,20 @@ function UIMenuItem:LabelFont(fontTable)
     end
 end
 
-function UIMenuItem:SetParentMenu(Menu)
-    if Menu ~= nil and Menu() == "UIMenu" then
-        self.ParentMenu = Menu
-    else
+---Set the Parent Menu of the Item
+---@param menu UIMenu
+---@return UIMenu|nil -- returns the parent menu if no menu is passed, if a menu is passed it returns the menu if it was set successfully
+function UIMenuItem:SetParentMenu(menu)
+    if menu == nil then
         return self.ParentMenu
+    end
+
+    if menu ~= nil and menu() == "UIMenu" then
+        self.ParentMenu = menu
+        return self.ParentMenu
+    else
+        print("^1ScaleformUI Error: ^7UIMenuItem:SetParentMenu(menu) - menu passed in is not a UIMenu");
+        return nil
     end
 end
 

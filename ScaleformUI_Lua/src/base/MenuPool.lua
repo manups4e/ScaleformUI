@@ -1,7 +1,14 @@
 MenuPool = setmetatable({}, MenuPool)
 MenuPool.__index = MenuPool
 
----New
+---@class MenuPool
+---@field Menus table
+---@field PauseMenus table
+---@field ableToDraw boolean
+
+
+---Create a new MenuPool
+---@return table
 function MenuPool.New()
     local _MenuPool = {
         Menus = {},
@@ -11,60 +18,64 @@ function MenuPool.New()
     return setmetatable(_MenuPool, MenuPool)
 end
 
----AddSubMenu
----@param Menu table
----@param Text string
----@param Description string
----@param KeepPosition boolean
----@param KeepBanner boolean
-function MenuPool:AddSubMenu(Menu, Text, Description, KeepPosition, KeepBanner)
-    if Menu() == "UIMenu" then
+--- Add a new Submenu
+---@param subMenu UIMenu
+---@param text string
+---@param description string
+---@param keepPosition boolean
+---@param keepBanner boolean
+---@return UIMenu
+function MenuPool:AddSubMenu(subMenu, text, description, keepPosition, keepBanner)
+    if subMenu() == "UIMenu" then
         ---@diagnostic disable-next-line: missing-parameter
-        local Item = UIMenuItem.New(tostring(Text), Description or "")
-        Menu:AddItem(Item)
-        local SubMenu
-        if KeepPosition then
-            SubMenu = UIMenu.New(Menu.Title, Text, Menu.Position.X, Menu.Position.Y, Menu.Glare, Menu.TextureDict,
-                Menu.TextureName, Menu.AlternativeTitle)
+        local Item = UIMenuItem.New(tostring(text), description or "")
+        subMenu:AddItem(Item)
+        local _subMenu
+        if keepPosition then
+            _subMenu = UIMenu.New(subMenu.Title, text, subMenu.Position.x, subMenu.Position.y, subMenu.Glare,
+                subMenu.TxtDictionary,
+                subMenu.TxtName, subMenu.AlternativeTitle)
         else
-            SubMenu = UIMenu.New(Menu.Title, Text)
+            _subMenu = UIMenu.New(subMenu.Title, text)
         end
-        if KeepBanner then
-            if Menu.Logo ~= nil then
-                SubMenu.Logo = Menu.Logo
+        if keepBanner then
+            if subMenu.Logo ~= nil then
+                _subMenu.Logo = subMenu.Logo
             else
-                SubMenu.Logo = nil
-                SubMenu.Banner = Menu.Banner
+                _subMenu.Logo = nil
+                _subMenu.Banner = subMenu.Banner
             end
         end
 
-        SubMenu.Glare = Menu.Glare
-        SubMenu.Settings.MouseControlsEnabled = Menu.Settings.MouseControlsEnabled
-        SubMenu.Settings.MouseEdgeEnabled = Menu.Settings.MouseEdgeEnabled
-        SubMenu:MaxItemsOnScreen(Menu:MaxItemsOnScreen())
-        self:Add(SubMenu)
-        Menu:BindMenuToItem(SubMenu, Item)
-        return SubMenu
+        _subMenu.Glare = subMenu.Glare
+        _subMenu.Settings.MouseControlsEnabled = subMenu.Settings.MouseControlsEnabled
+        _subMenu.Settings.MouseEdgeEnabled = subMenu.Settings.MouseEdgeEnabled
+        _subMenu:MaxItemsOnScreen(subMenu:MaxItemsOnScreen())
+        self:Add(_subMenu)
+        subMenu:BindMenuToItem(_subMenu, Item)
+        return _subMenu
     end
 end
 
----Add
----@param Menu table
-function MenuPool:Add(Menu)
-    if Menu() == "UIMenu" then
-        Menu._internalpool = self
-        self.Menus[#self.Menus + 1] = Menu
+---Add a new menu to the pool
+---@param menu any
+function MenuPool:Add(menu)
+    if menu() == "UIMenu" then
+        menu._internalpool = self
+        self.Menus[#self.Menus + 1] = menu
     end
 end
 
-function MenuPool:AddPauseMenu(Menu)
-    if Menu() == "PauseMenu" or Menu() == "LobbyMenu" then
-        Menu._internalpool = self,
-            table.insert(self.PauseMenus, Menu)
+---Add a new pause or lobby menu to the pool
+---@param menu any
+function MenuPool:AddPauseMenu(menu)
+    if menu() == "PauseMenu" or menu() == "LobbyMenu" then
+        menu._internalpool = self,
+            table.insert(self.PauseMenus, menu)
     end
 end
 
----MouseEdgeEnabled
+---Toggle whether to rotate the camera when the mouse is at the edge of the screen
 ---@param bool boolean
 function MenuPool:MouseEdgeEnabled(bool)
     if bool ~= nil then
@@ -74,7 +85,7 @@ function MenuPool:MouseEdgeEnabled(bool)
     end
 end
 
----ControlDisablingEnabled
+---Toggle whether to disable controls when a menu is open
 ---@param bool boolean
 function MenuPool:ControlDisablingEnabled(bool)
     if bool ~= nil then
@@ -84,7 +95,7 @@ function MenuPool:ControlDisablingEnabled(bool)
     end
 end
 
----ResetCursorOnOpen
+---Reset the cursors position when a menu is opened
 ---@param bool boolean
 function MenuPool:ResetCursorOnOpen(bool)
     if bool ~= nil then
@@ -128,11 +139,11 @@ function MenuPool:WidthOffset(offset)
 end
 
 ---CounterPreText
----@param str string
-function MenuPool:CounterPreText(str)
-    if str ~= nil then
+---@param preText string
+function MenuPool:CounterPreText(preText)
+    if preText ~= nil then
         for _, Menu in pairs(self.Menus) do
-            Menu.PageCounter.PreText = tostring(str)
+            Menu.PageCounter.PreText = tostring(preText)
         end
     end
 end
@@ -259,11 +270,12 @@ function MenuPool:CloseAllMenus()
 end
 
 ---SetBannerSprite
----@param Sprite table
-function MenuPool:SetBannerSprite(Sprite)
-    if Sprite() == "Sprite" then
+---@param sprite Sprite
+---@see Sprite
+function MenuPool:SetBannerSprite(sprite)
+    if sprite() == "Sprite" then
         for _, Menu in pairs(self.Menus) do
-            Menu:SetBannerSprite(Sprite)
+            Menu:SetBannerSprite(sprite)
         end
     end
 end
@@ -278,6 +290,7 @@ function MenuPool:SetBannerRectangle(Rectangle)
     end
 end
 
+---Will flush all menus from the pool
 function MenuPool:FlushMenus()
     local countMenu = #self.Menus
     for i = 0, countMenu do
@@ -288,6 +301,7 @@ function MenuPool:FlushMenus()
     end
 end
 
+---Will flush all pause menus from the pool
 function MenuPool:FlushPauseMenus()
     local countPause = #self.PauseMenus
     for i = 0, countPause do
@@ -298,6 +312,7 @@ function MenuPool:FlushPauseMenus()
     end
 end
 
+---Will flush all menus and pause menus from the pool
 function MenuPool:FlushAllMenus()
     local countMenu = #self.Menus
     local countPause = #self.PauseMenus

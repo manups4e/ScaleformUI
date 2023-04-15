@@ -2,6 +2,22 @@ Sprite = setmetatable({}, Sprite)
 Sprite.__index = Sprite
 Sprite.__call = function() return "Sprite" end
 
+---@class Sprite
+---@field TxtDictionary string
+---@field TxtName string
+---@field X number
+---@field Y number
+---@field Width number
+---@field Height number
+---@field Heading number
+---@field _Colour table
+---@field _Colour.R number
+---@field _Colour.G number
+---@field _Colour.B number
+---@field _Colour.A number
+---@field Position function
+---@field Size function
+
 ---New
 ---@param TxtDictionary string
 ---@param TxtName string
@@ -28,7 +44,7 @@ function Sprite.New(TxtDictionary, TxtName, X, Y, Width, Height, Heading, R, G, 
     return setmetatable(_Sprite, Sprite)
 end
 
----Position
+---Sets the position of the sprite
 ---@param X number|nil
 ---@param Y number|nil
 function Sprite:Position(X, Y)
@@ -40,7 +56,7 @@ function Sprite:Position(X, Y)
     end
 end
 
----Size
+---Sets the size of the sprite
 ---@param Width number|nil
 ---@param Height number|nil
 function Sprite:Size(Width, Height)
@@ -52,7 +68,7 @@ function Sprite:Size(Width, Height)
     end
 end
 
----Colour
+---Sets the Colour of the sprite
 ---@param R number|nil
 ---@param G number|nil
 ---@param B number|nil
@@ -68,7 +84,7 @@ function Sprite:Colour(R, G, B, A)
     end
 end
 
----Draw
+---Draws the sprite to the screen
 function Sprite:Draw()
     if not HasStreamedTextureDictLoaded(self.TxtDictionary) then
         RequestStreamedTextureDict(self.TxtDictionary, true)

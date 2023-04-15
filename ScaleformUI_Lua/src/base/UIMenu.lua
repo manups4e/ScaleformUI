@@ -4,6 +4,40 @@ UIMenu.__call = function()
     return "UIMenu"
 end
 
+---@class UIMenu
+---@field public Title string -- Menu Title
+---@field public Subtitle string -- Menu Subtitle
+---@field public AlternativeTitle boolean -- false
+---@field public counterColor number -- 116
+---@field public Position vector2 -- { X = 0, Y = 0 }
+---@field public Pagination table -- { Min = 0, Max = 7, Total = 7 }
+---@field public enableAnimation boolean -- true
+---@field public animationType number -- 0
+---@field public buildingAnimation number -- 1
+---@field public descFont table -- { "$Font2", 0 }
+---@field public Extra table -- {}
+---@field public Description table -- {}
+---@field public Items table -- {}
+---@field public Windows table -- {}
+---@field public Children table -- {}
+---@field public Glare boolean -- false
+---@field public Controls table -- { Back = { Enabled = true }, Select = { Enabled = true }, Up = { Enabled = true }, Down = { Enabled = true }, Left = { Enabled = true }, Right = { Enabled = true } }
+---@field public TxtDictionary string -- "commonmenu"
+---@field public TxtName string -- "interaction_bgd"
+---@field public AddItem fun(item: UIMenuItem)
+---@field public SetParentMenu fun(menu: UIMenu)
+---@field public OnIndexChange fun(menu: UIMenu, newindex: number)
+---@field public OnListChange fun(menu: UIMenu, list: UIMenuListItem, newindex: number)
+---@field public OnSliderChange fun(menu: UIMenu, slider: UIMenuSliderItem, newindex: number)
+---@field public OnProgressChange fun(menu: UIMenu, progress: UIMenuProgressItem, newindex: number)
+---@field public OnCheckboxChange fun(menu: UIMenu, checkbox: UIMenuCheckboxItem, checked: boolean)
+---@field public OnListSelect fun(menu: UIMenu, item: UIMenuItem, index: number)
+---@field public OnSliderSelect fun(menu: UIMenu, item: UIMenuItem, index: number)
+---@field public OnStatsSelect fun(menu: UIMenu, item: UIMenuItem, index: number)
+---@field public OnItemSelect fun(menu: UIMenu, item: UIMenuItem, checked: boolean)
+---@field public OnMenuChanged fun(oldmenu: UIMenu, newmenu: UIMenu, change: any)
+
+
 ---Creates a new UIMenu.
 ---@param title string -- Menu title
 ---@param subTitle string -- Menu subtitle
@@ -43,7 +77,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         Subtitle = subTitle,
         AlternativeTitle = alternativeTitleStyle,
         counterColor = 116,
-        Position = { X = X, Y = Y },
+        Position = { x = X, y = Y },
         Pagination = { Min = 0, Max = 7, Total = 7 },
         enableAnimation = true,
         animationType = 0,
@@ -122,11 +156,11 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         end,
         OnMenuChanged = function(oldmenu, newmenu, change)
         end,
-        OnColorPanelChanged = function(oldmenu, newmenu, change)
+        OnColorPanelChanged = function(menu, item, index)
         end,
-        OnPercentagePanelChanged = function(oldmenu, newmenu, change)
+        OnPercentagePanelChanged = function(menu, item, index)
         end,
-        OnGridPanelChanged = function(oldmenu, newmenu, change)
+        OnGridPanelChanged = function(menu, item, index)
         end,
         Settings = {
             InstructionalButtons = true,
@@ -253,7 +287,7 @@ function UIMenu:DisEnableControls(bool)
     if bool then
         EnableAllControlActions(2)
     else
-        DisableAllControlActions(2)
+        EnableAllControlActions(2)
     end
 
     if bool then
@@ -351,7 +385,7 @@ function UIMenu:AnimationType(menuAnimationType)
 end
 
 --- Enables or disables the menu's building animationType.
----@param buildingAnimationType number
+---@param buildingAnimationType number|nil
 ---@return number MenuBuildingAnimation
 ---@see MenuBuildingAnimation
 function UIMenu:BuildingAnimation(buildingAnimationType)
@@ -390,11 +424,11 @@ function UIMenu:CurrentSelection(value)
 end
 
 ---AddWindow
----@param Window table
-function UIMenu:AddWindow(Window)
-    if Window() == "UIMenuWindow" then
-        Window:SetParentMenu(self)
-        self.Windows[#self.Windows + 1] = Window
+---@param window table
+function UIMenu:AddWindow(window)
+    if window() == "UIMenuWindow" then
+        window:SetParentMenu(self)
+        self.Windows[#self.Windows + 1] = window
     end
 end
 
@@ -408,13 +442,15 @@ function UIMenu:RemoveWindowAt(Index)
     end
 end
 
----AddItem
----@param Item table
-function UIMenu:AddItem(Item)
-    if Item() == "UIMenuItem" then
-        Item:SetParentMenu(self)
-        self.Items[#self.Items + 1] = Item
+--- Add a new item to the menu.
+---@param item UIMenuItem
+---@see UIMenuItem
+function UIMenu:AddItem(item)
+    if item() ~= "UIMenuItem" then
+        return
     end
+    item:SetParentMenu(self)
+    self.Items[#self.Items + 1] = item
 end
 
 ---RemoveItemAt
@@ -476,7 +512,7 @@ function UIMenu:MaxItemsOnScreen(max)
     end
 end
 
----Adds a submenu to the menu.
+---Adds a submenu to the menu, and returns the submenu.
 ---@param subMenu table
 ---@param text string
 ---@param description string
@@ -1394,7 +1430,7 @@ function UIMenu:ProcessMouse()
             local panel_type, panel_subtype = panel()
 
             if panel_subtype == "UIMenuGridPanel" then
-                panel._CirclePosition = vector2(tonumber(split[2]), tonumber(split[3]))
+                panel._CirclePosition = vector2(tonumber(split[2]) or 0, tonumber(split[3]) or 0)
                 self.OnGridPanelChanged(panel.ParentItem, panel, panel._CirclePosition)
                 panel.OnGridPanelChanged(panel.ParentItem, panel, panel._CirclePosition)
             elseif panel_subtype == "UIMenuPercentagePanel" then

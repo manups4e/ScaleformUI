@@ -2,6 +2,15 @@ UIMenuDynamicListItem = setmetatable({}, UIMenuDynamicListItem)
 UIMenuDynamicListItem.__index = UIMenuDynamicListItem
 UIMenuDynamicListItem.__call = function() return "UIMenuItem", "UIMenuDynamicListItem" end
 
+---@class UIMenuDynamicListItem : UIMenuItem
+---@field Base UIMenuItem
+---@field Panels table
+---@field SidePanel table
+---@field _currentItem string
+---@field Callback function
+---@field ItemId number
+---@field OnListSelected function
+
 ---New
 ---@param Text string
 ---@param Description string
