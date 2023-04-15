@@ -359,7 +359,7 @@ function UIMenu:ControlDisablingEnabled(enabled)
     return self.Settings.ControlDisablingEnabled
 end
 
----Enables or disables mouse controls for the menu.
+---Enables or disables mouse controls for the menu. (Default: true) [Documentation requires updating]
 ---@param enabled boolean|nil
 ---@return boolean
 function UIMenu:MouseControlsEnabled(enabled)
