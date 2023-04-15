@@ -3,5 +3,8 @@
   "editor.insertSpaces": true,
   "Lua.diagnostics.disable": [
     "redundant-value"
+  ],
+  "Lua.diagnostics.globals": [
+    "Citizen"
   ]
 }
