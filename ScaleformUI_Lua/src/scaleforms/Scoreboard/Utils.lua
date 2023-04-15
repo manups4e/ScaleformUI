@@ -1,9 +1,11 @@
+---@enum ScoreDisplayType
 ScoreDisplayType = {
     NUMBER_ONLY = 0,
     ICON = 1,
     NONE = 2
 }
 
+---@enum ScoreRightIconType
 ScoreRightIconType = {
     NONE = 0,
     INACTIVE_HEADSET = 48,

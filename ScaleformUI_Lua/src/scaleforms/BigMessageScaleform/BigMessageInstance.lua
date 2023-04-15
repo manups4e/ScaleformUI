@@ -1,22 +1,18 @@
-BigMessageInstance = {}
-
-local m = {}
-m = setmetatable({}, m)
-
-m.__call = function()
-    return true
+BigMessageInstance = setmetatable({}, BigMessageInstance)
+BigMessageInstance.__index = BigMessageInstance
+BigMessageInstance.__call = function()
+    return "BigMessageInstance"
 end
-m.__index = m
 
 function BigMessageInstance.New()
     local _sc = 0
     local _start = 0
     local _timer = 0
     local data = { _sc = _sc, _start = _start, _timer = _timer }
-    return setmetatable(data, m)
+    return setmetatable(data, BigMessageInstance)
 end
 
-function m:Load()
+function BigMessageInstance:Load()
     if self._sc ~= 0 then return end
     self._sc = Scaleform.Request("MP_BIG_MESSAGE_FREEMODE")
     local timeout = 1000
@@ -24,12 +20,12 @@ function m:Load()
     while not self._sc:IsLoaded() and GetGameTimer() - start < timeout do Citizen.Wait(0) end
 end
 
-function m:Dispose()
+function BigMessageInstance:Dispose()
     self._sc:Dispose()
     self._sc = 0
 end
 
-function m:ShowMissionPassedMessage(msg, time)
+function BigMessageInstance:ShowMissionPassedMessage(msg, time)
     if time == nil then time = 5000 end
     self:Load()
     self._start = GetGameTimer()
@@ -37,7 +33,7 @@ function m:ShowMissionPassedMessage(msg, time)
     self._timer = time
 end
 
-function m:ShowColoredShard(msg, desc, textColor, bgColor, time)
+function BigMessageInstance:ShowColoredShard(msg, desc, textColor, bgColor, time)
     if time == nil then time = 5000 end
     self:Load()
     self._start = GetGameTimer()
@@ -45,7 +41,7 @@ function m:ShowColoredShard(msg, desc, textColor, bgColor, time)
     self._timer = time
 end
 
-function m:ShowOldMessage(msg, time)
+function BigMessageInstance:ShowOldMessage(msg, time)
     if time == nil then time = 5000 end
     self:Load()
     self._start = GetGameTimer()
@@ -53,7 +49,7 @@ function m:ShowOldMessage(msg, time)
     self._timer = time
 end
 
-function m:ShowSimpleShard(msg, subtitle, time)
+function BigMessageInstance:ShowSimpleShard(msg, subtitle, time)
     if time == nil then time = 5000 end
     self:Load()
     self._start = GetGameTimer()
@@ -61,7 +57,7 @@ function m:ShowSimpleShard(msg, subtitle, time)
     self._timer = time
 end
 
-function m:ShowRankupMessage(msg, subtitle, rank, time)
+function BigMessageInstance:ShowRankupMessage(msg, subtitle, rank, time)
     if time == nil then time = 5000 end
     self:Load()
     self._start = GetGameTimer()
@@ -69,7 +65,7 @@ function m:ShowRankupMessage(msg, subtitle, rank, time)
     self._timer = time
 end
 
-function m:ShowWeaponPurchasedMessage(bigMessage, weaponName, weaponHash, time)
+function BigMessageInstance:ShowWeaponPurchasedMessage(bigMessage, weaponName, weaponHash, time)
     if time == nil then time = 5000 end
     self:Load()
     self._start = GetGameTimer()
@@ -77,7 +73,7 @@ function m:ShowWeaponPurchasedMessage(bigMessage, weaponName, weaponHash, time)
     self._timer = time
 end
 
-function m:ShowMpMessageLarge(msg, time)
+function BigMessageInstance:ShowMpMessageLarge(msg, time)
     if time == nil then time = 5000 end
     self:Load()
     self._start = GetGameTimer()
@@ -86,7 +82,7 @@ function m:ShowMpMessageLarge(msg, time)
     self._timer = time
 end
 
-function m:ShowMpWastedMessage(msg, subtitle, time)
+function BigMessageInstance:ShowMpWastedMessage(msg, subtitle, time)
     if time == nil then time = 5000 end
     self:Load()
     self._start = GetGameTimer()
@@ -94,7 +90,7 @@ function m:ShowMpWastedMessage(msg, subtitle, time)
     self._timer = time
 end
 
-function m:Update()
+function BigMessageInstance:Update()
     self._sc:Render2D()
     if self._start ~= 0 and GetGameTimer() - self._start > self._timer then
         self._sc:CallFunction("TRANSITION_OUT", false)

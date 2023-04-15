@@ -1,12 +1,8 @@
-ButtonsHandler = {}
-
-local handler = {}
-handler = setmetatable({}, handler)
-
-handler.__call = function()
-    return true
+ButtonsHandler = setmetatable({}, ButtonsHandler)
+ButtonsHandler.__index = ButtonsHandler
+ButtonsHandler.__call = function()
+    return "ButtonsHandler"
 end
-handler.__index = handler
 
 function ButtonsHandler.New()
     local data = {
@@ -19,10 +15,10 @@ function ButtonsHandler.New()
         IsSaving = false,
         ControlButtons = {}
     }
-    return setmetatable(data, handler)
+    return setmetatable(data, ButtonsHandler)
 end
 
-function handler:Enabled(bool)
+function ButtonsHandler:Enabled(bool)
     if bool == nil then
         return self._enabled
     else
@@ -37,7 +33,7 @@ function handler:Enabled(bool)
     end
 end
 
-function handler:Load()
+function ButtonsHandler:Load()
     if self._sc ~= 0 then return end
     self._sc = Scaleform.Request("INSTRUCTIONAL_BUTTONS")
     local timeout = 1000
@@ -45,17 +41,17 @@ function handler:Load()
     while not self._sc:IsLoaded() and GetGameTimer() - start < timeout do Citizen.Wait(0) end
 end
 
-function handler:SetInstructionalButtons(buttons)
+function ButtonsHandler:SetInstructionalButtons(buttons)
     self.ControlButtons = buttons
     self._changed = true
 end
 
-function handler:AddInstructionalButton(button)
+function ButtonsHandler:AddInstructionalButton(button)
     self.ControlButtons[#self.ControlButtons + 1] = button
     self._changed = true
 end
 
-function handler:RemoveInstructionalButton(button)
+function ButtonsHandler:RemoveInstructionalButton(button)
     local bt
     for k, v in pairs(self.ControlButtons) do
         if v.Text == button.Text then
@@ -65,12 +61,12 @@ function handler:RemoveInstructionalButton(button)
     self._changed = true
 end
 
-function handler:ClearButtonList()
+function ButtonsHandler:ClearButtonList()
     self.ControlButtons = {}
     self._changed = true
 end
 
-function handler:ShowBusySpinner(spinnerType, text, time)
+function ButtonsHandler:ShowBusySpinner(spinnerType, text, time)
     if time == nil or time < 0 then time = 3000 end
     self.IsSaving = true
     self._changed = true
@@ -88,7 +84,7 @@ function handler:ShowBusySpinner(spinnerType, text, time)
     self.IsSaving = false
 end
 
-function handler:UpdateButtons()
+function ButtonsHandler:UpdateButtons()
     if not self._changed then return end
     self._sc:CallFunction("SET_DATA_SLOT_EMPTY", false)
     self._sc:CallFunction("TOGGLE_MOUSE_BUTTONS", false, self.UseMouseButtons)
@@ -123,16 +119,16 @@ function handler:UpdateButtons()
     self._changed = false
 end
 
-function handler:Draw()
+function ButtonsHandler:Draw()
     SetScriptGfxDrawBehindPausemenu(true)
     self._sc:Render2D()
 end
 
-function handler:DrawScreeSpace(x, y)
+function ButtonsHandler:DrawScreeSpace(x, y)
     self._sc:Render2DNormal(0.5 - x, 0.5 - y, 1, 1)
 end
 
-function handler:Update()
+function ButtonsHandler:Update()
     if IsUsingKeyboard(2) then
         if not self.IsUsingKeyboard then
             self.IsUsingKeyboard = true

@@ -1,22 +1,18 @@
-RankbarHandler = {}
-
-local m = {}
-m = setmetatable({}, m)
-
-m.__call = function()
-    return true
+RankbarHandler = setmetatable({}, RankbarHandler)
+RankbarHandler.__index = RankbarHandler
+RankbarHandler.__call = function()
+    return "RankbarHandler"
 end
-m.__index = m
 
 local HUD_COMPONENT_ID = 19
 local _rankBarColor = 116
 
 function RankbarHandler.New()
     local data = {}
-    return setmetatable(data, m)
+    return setmetatable(data, RankbarHandler)
 end
 
-function m:Load()
+function RankbarHandler:Load()
     local p = promise.new()
 
     if HasScaleformScriptHudMovieLoaded(HUD_COMPONENT_ID) then
@@ -38,7 +34,7 @@ function m:Load()
     return p
 end
 
-function m:SetScores(limitStart, limitEnd, previousValue, currentValue, currentRank)
+function RankbarHandler:SetScores(limitStart, limitEnd, previousValue, currentValue, currentRank)
     self:Load():next(function()
             BeginScaleformScriptHudMovieMethod(HUD_COMPONENT_ID, "SET_COLOUR")
             ScaleformMovieMethodAddParamInt(_rankBarColor)
@@ -57,18 +53,18 @@ function m:SetScores(limitStart, limitEnd, previousValue, currentValue, currentR
         end)
 end
 
-function m:SetColour(rankBarColor)
+function RankbarHandler:SetColour(rankBarColor)
     _rankBarColor = rankBarColor
 end
 
-function m:Remove()
+function RankbarHandler:Remove()
     if HasScaleformScriptHudMovieLoaded(HUD_COMPONENT_ID) then
         BeginScaleformScriptHudMovieMethod(HUD_COMPONENT_ID, "REMOVE");
         EndScaleformMovieMethod();
     end
 end
 
-function m:OverrideAnimationSpeed(speed)
+function RankbarHandler:OverrideAnimationSpeed(speed)
     self:Load():next(function()
             BeginScaleformScriptHudMovieMethod(HUD_COMPONENT_ID, "OVERRIDE_ANIMATION_SPEED");
             ScaleformMovieMethodAddParamInt(speed);
@@ -79,7 +75,7 @@ function m:OverrideAnimationSpeed(speed)
         end)
 end
 
-function m:OverrideOnscreenDuration(duration)
+function RankbarHandler:OverrideOnscreenDuration(duration)
     self:Load():next(function()
             BeginScaleformScriptHudMovieMethod(HUD_COMPONENT_ID, "OVERRIDE_ONSCREEN_DURATION");
             ScaleformMovieMethodAddParamInt(duration);

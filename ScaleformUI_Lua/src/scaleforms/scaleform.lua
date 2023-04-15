@@ -1,21 +1,16 @@
-Scaleform = {}
-
-local scaleform = {}
-scaleform = setmetatable({}, scaleform)
-
-scaleform.__call = function()
-    return true
+Scaleform = setmetatable({}, Scaleform)
+Scaleform.__index = Scaleform
+Scaleform.__call = function()
+    return "Scaleform"
 end
-
-scaleform.__index = scaleform
 
 function Scaleform.Request(Name)
     local ScaleformHandle = RequestScaleformMovie(Name)
     local data = { name = Name, handle = ScaleformHandle }
-    return setmetatable(data, scaleform)
+    return setmetatable(data, Scaleform)
 end
 
-function scaleform:CallFunction(theFunction, returndata, ...)
+function Scaleform:CallFunction(theFunction, returndata, ...)
     BeginScaleformMovieMethod(self.handle, theFunction)
     local arg = { ... }
     if arg ~= nil then
@@ -47,15 +42,15 @@ function scaleform:CallFunction(theFunction, returndata, ...)
     end
 end
 
-function scaleform:Render2D()
+function Scaleform:Render2D()
     DrawScaleformMovieFullscreen(self.handle, 255, 255, 255, 255, 0)
 end
 
-function scaleform:Render2DNormal(x, y, width, height)
+function Scaleform:Render2DNormal(x, y, width, height)
     DrawScaleformMovie(self.handle, x, y, width, height, 255, 255, 255, 255, 0)
 end
 
-function scaleform:Render2DScreenSpace(locx, locy, sizex, sizey)
+function Scaleform:Render2DScreenSpace(locx, locy, sizex, sizey)
     local Width, Height = GetScreenResolution()
     local x = locy / Width
     local y = locx / Height
@@ -64,23 +59,23 @@ function scaleform:Render2DScreenSpace(locx, locy, sizex, sizey)
     DrawScaleformMovie(self.handle, x + (width / 2.0), y + (height / 2.0), width, height, 255, 255, 255, 255, 0)
 end
 
-function scaleform:Render3D(x, y, z, rx, ry, rz, scalex, scaley, scalez)
+function Scaleform:Render3D(x, y, z, rx, ry, rz, scalex, scaley, scalez)
     DrawScaleformMovie_3dSolid(self.handle, x, y, z, rx, ry, rz, 2.0, 2.0, 1.0, scalex, scaley, scalez, 2)
 end
 
-function scaleform:Render3DAdditive(x, y, z, rx, ry, rz, scalex, scaley, scalez)
+function Scaleform:Render3DAdditive(x, y, z, rx, ry, rz, scalex, scaley, scalez)
     DrawScaleformMovie_3d(self.handle, x, y, z, rx, ry, rz, 2.0, 2.0, 1.0, scalex, scaley, scalez, 2)
 end
 
-function scaleform:Dispose()
+function Scaleform:Dispose()
     SetScaleformMovieAsNoLongerNeeded(self.handle)
     self = nil
 end
 
-function scaleform:IsValid()
+function Scaleform:IsValid()
     return self and true or false
 end
 
-function scaleform:IsLoaded()
+function Scaleform:IsLoaded()
     return HasScaleformMovieLoaded(self.handle)
 end

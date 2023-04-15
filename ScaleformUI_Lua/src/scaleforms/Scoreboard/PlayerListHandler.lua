@@ -1,5 +1,8 @@
 PlayerListScoreboard = setmetatable({}, PlayerListScoreboard)
 PlayerListScoreboard.__index = PlayerListScoreboard
+PlayerListScoreboard.__call = function()
+    return "PlayerListScoreboard"
+end
 
 function PlayerListScoreboard.New()
     local data = {

@@ -1,12 +1,8 @@
-WarningInstance = {}
-
-local warn = {}
-warn = setmetatable({}, warn)
-
-warn.__call = function()
-    return true
+WarningInstance = setmetatable({}, WarningInstance)
+WarningInstance.__index = WarningInstance
+WarningInstance.__call = function()
+    return "WarningInstance"
 end
-warn.__index = warn
 
 function WarningInstance.New()
     local data = {
@@ -16,14 +12,14 @@ function WarningInstance.New()
         OnButtonPressed = function(button)
         end
     }
-    return setmetatable(data, warn)
+    return setmetatable(data, WarningInstance)
 end
 
-function warn:IsShowing()
+function WarningInstance:IsShowing()
     return self._sc ~= 0
 end
 
-function warn:Load()
+function WarningInstance:Load()
     if self._sc ~= 0 then return end
     self._sc = Scaleform.Request("POPUP_WARNING")
     local timeout = 1000
@@ -31,7 +27,7 @@ function warn:Load()
     while not self._sc:IsLoaded() and GetGameTimer() - start < timeout do Citizen.Wait(0) end
 end
 
-function warn:Dispose()
+function WarningInstance:Dispose()
     if self._sc == 0 then return end
     self._sc:CallFunction("HIDE_POPUP_WARNING", false, 1000)
     self._sc:Dispose()
@@ -39,16 +35,16 @@ function warn:Dispose()
     self._disableControls = false
 end
 
-function warn:ShowWarning(title, subtitle, prompt, errorMsg, warningType)
+function WarningInstance:ShowWarning(title, subtitle, prompt, errorMsg, warningType)
     self:Load()
     self._sc:CallFunction("SHOW_POPUP_WARNING", false, 1000, title, subtitle, prompt, true, warningType, errorMsg)
 end
 
-function warn:UpdateWarning(title, subtitle, prompt, errorMsg, warningType)
+function WarningInstance:UpdateWarning(title, subtitle, prompt, errorMsg, warningType)
     self._sc:CallFunction("SHOW_POPUP_WARNING", false, 1000, title, subtitle, prompt, true, warningType, errorMsg)
 end
 
-function warn:ShowWarningWithButtons(title, subtitle, prompt, buttons, errorMsg, warningType)
+function WarningInstance:ShowWarningWithButtons(title, subtitle, prompt, buttons, errorMsg, warningType)
     self:Load()
     self._disableControls = true
     self._buttonList = buttons
@@ -59,7 +55,7 @@ function warn:ShowWarningWithButtons(title, subtitle, prompt, buttons, errorMsg,
     ScaleformUI.Scaleforms.InstructionalButtons:Enabled(true)
 end
 
-function warn:Update()
+function WarningInstance:Update()
     self._sc:Render2D()
     if self._disableControls then
         ScaleformUI.Scaleforms.InstructionalButtons:Draw()

@@ -1,3 +1,4 @@
+---@enum JobIcon
 JobIcon = {
     NONE = -1,
     GTAOMission = 0,
@@ -18,6 +19,7 @@ JobIcon = {
     RaceStunt = 18
 }
 
+---@enum JobSelectionCardIcon
 JobSelectionCardIcon = {
     NONE = -1,
     CUSTOM_MISSION = 0,

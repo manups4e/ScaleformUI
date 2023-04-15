@@ -1,12 +1,8 @@
-CountdownHandler = {}
-
-local m = {}
-m = setmetatable({}, m)
-
-m.__call = function()
-    return true
+CountdownHandler = setmetatable({}, CountdownHandler)
+CountdownHandler.__index = CountdownHandler
+CountdownHandler.__call = function()
+    return "CountdownHandler"
 end
-m.__index = m
 
 local _r;
 local _g;
@@ -18,10 +14,10 @@ function CountdownHandler.New()
     local _start = 0
     local _timer = 0
     local data = { _sc = _sc, _start = _start, _timer = _timer }
-    return setmetatable(data, m)
+    return setmetatable(data, CountdownHandler)
 end
 
-function m:Load()
+function CountdownHandler:Load()
     local p = promise.new()
 
     if self._sc ~= 0 then
@@ -45,21 +41,21 @@ function m:Load()
     return p
 end
 
-function m:Dispose(force)
+function CountdownHandler:Dispose(force)
     self._sc:Dispose()
     self._sc = 0
 end
 
-function m:Update()
+function CountdownHandler:Update()
     self._sc:Render2D()
 end
 
-function m:ShowMessage(message)
+function CountdownHandler:ShowMessage(message)
     self._sc:CallFunction("SET_MESSAGE", false, message, _r, _g, _b, true);
     self._sc:CallFunction("FADE_MP", false, message, _r, _g, _b);
 end
 
-function m:Start(number, hudColour, countdownAudioName, countdownAudioRef, goAudioName, goAudioRef)
+function CountdownHandler:Start(number, hudColour, countdownAudioName, countdownAudioRef, goAudioName, goAudioRef)
     local p = promise.new()
 
     if number == nil then number = 3 end

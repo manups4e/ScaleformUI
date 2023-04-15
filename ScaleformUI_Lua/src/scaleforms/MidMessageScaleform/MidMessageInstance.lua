@@ -1,12 +1,8 @@
-MidMessageInstance = {}
-
-local m = {}
-m = setmetatable({}, m)
-
-m.__call = function()
-    return true
+MidMessageInstance = setmetatable({}, MidMessageInstance)
+MidMessageInstance.__index = MidMessageInstance
+MidMessageInstance.__call = function()
+    return "MidMessageInstance"
 end
-m.__index = m
 
 function MidMessageInstance.New()
     local _sc = 0
@@ -14,10 +10,10 @@ function MidMessageInstance.New()
     local _timer = 0
     local _hasAnimatedOut = false
     local data = { _sc = _sc, _start = _start, _timer = _timer, _hasAnimatedOut = _hasAnimatedOut }
-    return setmetatable(data, m)
+    return setmetatable(data, MidMessageInstance)
 end
 
-function m:Load()
+function MidMessageInstance:Load()
     if self._sc ~= 0 then return end
     self._sc = Scaleform.Request("MIDSIZED_MESSAGE")
     local timeout = 1000
@@ -25,12 +21,12 @@ function m:Load()
     while not self._sc:IsLoaded() and GetGameTimer() - start < timeout do Citizen.Wait(0) end
 end
 
-function m:Dispose()
+function MidMessageInstance:Dispose()
     self._sc:Dispose()
     self._sc = 0
 end
 
-function m:ShowColoredShard(msg, desc, bgColor, useDarkerShard, useCondensedShard, time)
+function MidMessageInstance:ShowColoredShard(msg, desc, bgColor, useDarkerShard, useCondensedShard, time)
     if time == nil then time = 5000 end
     self:Load()
     self._start = GetGameTimer()
@@ -39,7 +35,7 @@ function m:ShowColoredShard(msg, desc, bgColor, useDarkerShard, useCondensedShar
     self._hasAnimatedOut = false
 end
 
-function m:Update()
+function MidMessageInstance:Update()
     self._sc:Render2D()
     if self._start ~= 0 and GetGameTimer() - self._start > self._timer then
         if not self._hasAnimatedOut then

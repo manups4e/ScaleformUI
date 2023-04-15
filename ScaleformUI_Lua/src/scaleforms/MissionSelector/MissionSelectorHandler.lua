@@ -1,12 +1,8 @@
-MissionSelectorHandler = {}
-
-local m = {}
-m = setmetatable({}, m)
-
-m.__call = function()
-    return true
+MissionSelectorHandler = setmetatable({}, MissionSelectorHandler)
+MissionSelectorHandler.__index = MissionSelectorHandler
+MissionSelectorHandler.__call = function()
+    return "MissionSelectorHandler"
 end
-m.__index = m
 
 function MissionSelectorHandler.New()
     local data = {
@@ -28,14 +24,14 @@ function MissionSelectorHandler.New()
         Cards = {},
         Buttons = {},
     }
-    return setmetatable(data, m)
+    return setmetatable(data, MissionSelectorHandler)
 end
 
-function m:SetTitle(title)
+function MissionSelectorHandler:SetTitle(title)
     self.JobTitle.Title = title
 end
 
-function m:SetVotes(actual, label)
+function MissionSelectorHandler:SetVotes(actual, label)
     local tot = actual .. " / " .. self.MaxVotes
     if not string.IsNullOrEmpty(label) then
         self.JobTitle.Label = label
@@ -43,19 +39,19 @@ function m:SetVotes(actual, label)
     self.JobTitle.Votes = tot .. " " .. self.JobTitle.Label
 end
 
-function m:AddCard(card)
+function MissionSelectorHandler:AddCard(card)
     if #self.Cards < 9 then
         self.Cards[#self.Cards + 1] = card
     end
 end
 
-function m:AddButton(button)
+function MissionSelectorHandler:AddButton(button)
     if #self.Buttons < 3 then
         self.Buttons[#self.Buttons + 1] = button
     end
 end
 
-function m:Enabled(bool)
+function MissionSelectorHandler:Enabled(bool)
     if bool == nil then
         return self.enabled
     else
@@ -68,16 +64,16 @@ function m:Enabled(bool)
     end
 end
 
-function m:AlreadyVoted()
+function MissionSelectorHandler:AlreadyVoted()
     return self.alreadyVoted
 end
 
-function m:Dispose()
+function MissionSelectorHandler:Dispose()
     self._sc:Dispose()
     self._sc = nil
 end
 
-function m:BuildMenu()
+function MissionSelectorHandler:BuildMenu()
     self:Load()
     while self._sc == nil or not self._sc:IsLoaded() do Citizen.Wait(0) end
     self:_SetTitle(self.JobTitle.Title, self.JobTitle.Votes)
@@ -89,7 +85,7 @@ function m:BuildMenu()
             end
         end
         self:SetGridItem(i - 1, card.Title, card.Txd, card.Txn, 1, 0, card.Icon, false, card.RpMultiplier,
-        card.CashMultiplier, false, card.IconColor, card.ApMultiplier)
+            card.CashMultiplier, false, card.IconColor, card.ApMultiplier)
         SetStreamedTextureDictAsNoLongerNeeded(card.Txd)
     end
 
@@ -99,27 +95,27 @@ function m:BuildMenu()
     self:SetSelection(0, self.Cards[1].Title, self.Cards[1].Description)
     for i, detail in ipairs(self.Cards[1].Details) do
         self:SetDetailsItem(i - 1, 0, i - 1, detail.Type, 0, 0, detail.TextLeft, detail.TextRight, detail.Icon,
-        detail.IconColor, detail.Tick)
+            detail.IconColor, detail.Tick)
     end
 end
 
-function m:SelectCard(idx)
+function MissionSelectorHandler:SelectCard(idx)
     if idx <= 6 then
         self:SetSelection(idx - 1, self.Cards[idx].Title, self.Cards[idx].Description)
         for i, detail in pairs(self.Cards[idx].Details) do
             self:SetDetailsItem(i - 1, idx, i - 1, detail.Type, 0, 0, detail.TextLeft, detail.TextRight, detail.Icon,
-            detail.IconColor, detail.Tick)
+                detail.IconColor, detail.Tick)
         end
     else
         self:SetSelection(idx - 1, self.Buttons[idx - 6].Text, self.Buttons[idx - 6].Description)
         for i, detail in pairs(self.Buttons[idx - 6].Details) do
             self:SetDetailsItem(i - 1, idx, i - 1, detail.Type, 0, 0, detail.TextLeft, detail.TextRight, detail.Icon,
-            detail.IconColor, detail.Tick)
+                detail.IconColor, detail.Tick)
         end
     end
 end
 
-function m:UpdateOwnVote(idx, oldidx, showCheckMark, flashBG)
+function MissionSelectorHandler:UpdateOwnVote(idx, oldidx, showCheckMark, flashBG)
     if showCheckMark == nil then showCheckMark = false end
     if flashBG == nil then flashBG = false end
     if idx == oldidx then return end
@@ -134,7 +130,7 @@ function m:UpdateOwnVote(idx, oldidx, showCheckMark, flashBG)
     self:_SetTitle(self.JobTitle.Title, self.JobTitle.Votes)
 end
 
-function m:ShowPlayerVote(idx, playerName, color, showCheckMark, flashBG)
+function MissionSelectorHandler:ShowPlayerVote(idx, playerName, color, showCheckMark, flashBG)
     self.Votes[idx] = self.Votes[idx] + 1
     if showCheckMark == nil then showCheckMark = false end
     if flashBG == nil then flashBG = false end
@@ -150,7 +146,7 @@ function m:ShowPlayerVote(idx, playerName, color, showCheckMark, flashBG)
     self._sc:CallFunction("SET_GRID_ITEM_VOTE", false, idx - 1, self.Votes[idx], self.VotesColor, showCheckMark, flashBG)
 end
 
-function m:Load()
+function MissionSelectorHandler:Load()
     if self._sc ~= nil then return end
     self._sc = Scaleform.Request("MP_NEXT_JOB_SELECTION")
     local timeout = 1000
@@ -160,7 +156,7 @@ end
 
 local success, event_type, context, item_id
 
-function m:Update()
+function MissionSelectorHandler:Update()
     self._sc:Render2D()
     DisableAllControlActions(0)
     DisableAllControlActions(1)
@@ -280,28 +276,30 @@ function m:Update()
     end
 end
 
-function m:_SetTitle(left, votes)
+function MissionSelectorHandler:_SetTitle(left, votes)
     self._sc:CallFunction("SET_TITLE", false, left, votes);
 end
 
-function m:SetGridItem(id, title, txd, txn, loadtype, verified_type, icon, check, rp_multiplier, cash_multiplier,
-                       disabled, iconColor, ap_multiplier)
+function MissionSelectorHandler:SetGridItem(id, title, txd, txn, loadtype, verified_type, icon, check, rp_multiplier,
+                                            cash_multiplier,
+                                            disabled, iconColor, ap_multiplier)
     self._sc:CallFunction("SET_GRID_ITEM", false, id, title, txd, txn, loadtype, verified_type, icon, check,
-    rp_multiplier, cash_multiplier, disabled, iconColor, ap_multiplier);
+        rp_multiplier, cash_multiplier, disabled, iconColor, ap_multiplier);
 end
 
-function m:SetButtonItem(id, title)
+function MissionSelectorHandler:SetButtonItem(id, title)
     self._sc:CallFunction("SET_GRID_ITEM", false, id + 6, title, "", "", -1, -1, -1, false, -1, -1, false, -1, -1);
 end
 
-function m:SetSelection(index, title, description, hideHighlight)
+function MissionSelectorHandler:SetSelection(index, title, description, hideHighlight)
     if hideHighlight == nil then hideHighlight = false end
     self._sc:CallFunction("SET_SELECTION", false, index, title, description, hideHighlight);
 end
 
-function m:SetDetailsItem(id, menu_id, unique_id, type, initial_index, is_selectable, lText, rText, icon, iconColor, tick)
+function MissionSelectorHandler:SetDetailsItem(id, menu_id, unique_id, type, initial_index, is_selectable, lText, rText,
+                                               icon, iconColor, tick)
     if iconColor == nil then iconColor = Colours.HUD_COLOUR_WHITE end
     if tick == nil then tick = false end
     self._sc:CallFunction("SET_DETAILS_ITEM", false, id, menu_id, unique_id, type, initial_index, is_selectable, lText,
-    rText, icon, iconColor, tick)
+        rText, icon, iconColor, tick)
 end
