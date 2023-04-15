@@ -5,25 +5,24 @@ UIMenu.__call = function()
 end
 
 ---@class UIMenu
----@field public Title string -- Menu Title
----@field public Subtitle string -- Menu Subtitle
----@field public AlternativeTitle boolean -- false
----@field public counterColor number -- 116
----@field public Position vector2 -- { X = 0, Y = 0 }
----@field public Pagination table -- { Min = 0, Max = 7, Total = 7 }
----@field public enableAnimation boolean -- true
----@field public animationType number -- 0
----@field public buildingAnimation number -- 1
----@field public descFont table -- { "$Font2", 0 }
+---@field public Title string -- Sets the menu title
+---@field public Subtitle string -- Sets the menu subtitle
+---@field public AlternativeTitle boolean -- Enable or disable the alternative title (default: false)
+---@field public Position vector2 -- Sets the menu position (default: { X = 0.0, Y = 0.0 })
+---@field public Pagination table -- Menu pagination settings (default: { Min = 0, Max = 7, Total = 7 })
+---@field public Banner table -- Menu banner settings [Setting not fully understood or possibly not used]
 ---@field public Extra table -- {}
 ---@field public Description table -- {}
 ---@field public Items table -- {}
 ---@field public Windows table -- {}
 ---@field public Children table -- {}
----@field public Glare boolean -- false
+---@field public Glare boolean -- Sets if the glare animation is enabled or disabled (default: false)
 ---@field public Controls table -- { Back = { Enabled = true }, Select = { Enabled = true }, Up = { Enabled = true }, Down = { Enabled = true }, Left = { Enabled = true }, Right = { Enabled = true } }
----@field public TxtDictionary string -- "commonmenu"
----@field public TxtName string -- "interaction_bgd"
+---@field public TxtDictionary string -- Texture dictionary for the menu banner background (default: commonmenu)
+---@field public TxtName string -- Texture name for the menu banner background (default: interaction_bgd)
+---@field public Logo Sprite -- nil
+---@field public Settings table -- Defines the menus settings
+---@field public MaxItemsOnScreen fun(max: number) -- Sets the maximum number of items that can be displayed (default: 7)
 ---@field public AddItem fun(item: UIMenuItem)
 ---@field public SetParentMenu fun(menu: UIMenu)
 ---@field public OnIndexChange fun(menu: UIMenu, newindex: number)
@@ -36,7 +35,15 @@ end
 ---@field public OnStatsSelect fun(menu: UIMenu, item: UIMenuItem, index: number)
 ---@field public OnItemSelect fun(menu: UIMenu, item: UIMenuItem, checked: boolean)
 ---@field public OnMenuChanged fun(oldmenu: UIMenu, newmenu: UIMenu, change: any)
-
+---@field public BuildAsync fun(enabled: boolean) -- Sets if the menu should be built async (default: false)
+---@field public AnimationEnabled fun(enabled: boolean) -- Sets if the menu animation is enabled or disabled (default: true)
+---@field public AnimationType fun(type: MenuAnimationType) -- Sets the animation type for the menu (default: MenuAnimationType.LINEAR)
+---@field public BuildingAnimation fun(type: MenuBuildingAnimation) -- Sets the build animation type for the menu (default: MenuBuildingAnimation.LEFT)
+---@field private counterColor Colours -- Set the counter color (default: Colours.HUD_COLOUR_FREEMODE)
+---@field private enableAnimation boolean -- Enable or disable the menu animation (default: true)
+---@field private animationType MenuAnimationType -- Sets the menu animation type (default: MenuAnimationType.LINEAR)
+---@field private buildingAnimation MenuBuildingAnimation -- Sets the menu building animation type (default: MenuBuildingAnimation.NONE)
+---@field private descFont table -- { "$Font2", 0 }
 
 ---Creates a new UIMenu.
 ---@param title string -- Menu title
@@ -76,12 +83,12 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         Title = title,
         Subtitle = subTitle,
         AlternativeTitle = alternativeTitleStyle,
-        counterColor = 116,
+        counterColor = Colours.HUD_COLOUR_FREEMODE,
         Position = { x = X, y = Y },
         Pagination = { Min = 0, Max = 7, Total = 7 },
         enableAnimation = true,
-        animationType = 0,
-        buildingAnimation = 1,
+        animationType = MenuAnimationType.LINEAR,
+        buildingAnimation = MenuBuildingAnimation.NONE,
         descFont = { "$Font2", 0 },
         Extra = {},
         Description = {},
@@ -91,6 +98,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         TxtDictionary = txtDictionary,
         TxtName = txtName,
         Glare = glare or false,
+        Logo = nil,
         _keyboard = false,
         _changed = false,
         _maxItem = 7,
@@ -310,21 +318,23 @@ function UIMenu:DisEnableControls(bool)
 end
 
 --- Set's if the menu can build asynchronously.
----@param bool boolean|nil
+---@param enabled boolean|nil
 ---@return boolean
-function UIMenu:BuildAsync(bool)
-    if bool ~= nil then
-        self._buildAsync = bool
+function UIMenu:BuildAsync(enabled)
+    if enabled ~= nil then
+        self._buildAsync = enabled
     end
     return self._buildAsync
 end
 
 ---InstructionalButtons
----@param bool boolean
-function UIMenu:HasInstructionalButtons(bool)
-    if bool ~= nil then
-        self.Settings.InstructionalButtons = ToBool(bool)
+---@param enabled boolean|nil
+---@return boolean
+function UIMenu:HasInstructionalButtons(enabled)
+    if enabled ~= nil then
+        self.Settings.InstructionalButtons = ToBool(enabled)
     end
+    return self.Settings.InstructionalButtons
 end
 
 --- Sets if the menu can be closed by the player.
@@ -337,45 +347,49 @@ function UIMenu:CanPlayerCloseMenu(playerCanCloseMenu)
     return self._canHe
 end
 
-function UIMenu:ControlDisablingEnabled(bool)
-    if bool == nil then
-        return self.Settings.ControlDisablingEnabled
-    else
-        self.Settings.ControlDisablingEnabled = ToBool(bool)
+---Sets if controls are disabled when the menu is open. (Default: true) [Documentation requires updating]
+---@param enabled boolean|nil
+---@return boolean
+function UIMenu:ControlDisablingEnabled(enabled)
+    if enabled ~= nil then
+        self.Settings.ControlDisablingEnabled = ToBool(enabled)
     end
+    return self.Settings.ControlDisablingEnabled
 end
 
-function UIMenu:MouseControlsEnabled(bool)
-    if bool == nil then
-        return self.Settings.MouseControlsEnabled
-    else
-        self.Settings.MouseControlsEnabled = ToBool(bool)
+---Enables or disables mouse controls for the menu.
+---@param enabled boolean|nil
+---@return boolean
+function UIMenu:MouseControlsEnabled(enabled)
+    if enabled ~= nil then
+        self.Settings.MouseControlsEnabled = ToBool(enabled)
+        ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_MOUSE", false, self.Settings.MouseControlsEnabled)
     end
-    ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_MOUSE", false, self.Settings.MouseControlsEnabled)
+    return self.Settings.MouseControlsEnabled
 end
 
 ---SetBannerSprite
----@param Sprite string
----@param IncludeChildren boolean
+---@param sprite Sprite
+---@param includeChildren boolean
 ---@see Sprite
-function UIMenu:SetBannerSprite(sprite, IncludeChildren)
+function UIMenu:SetBannerSprite(sprite, includeChildren)
     if sprite() == "Sprite" then
         self.Logo = sprite
         self.Logo:Size(431 + self.WidthOffset, 107)
         self.Logo:Position(self.Position.X, self.Position.Y)
         self.Banner = nil
-        if IncludeChildren then
-            for Item, Menu in pairs(self.Children) do
-                Menu.Logo = sprite
-                Menu.Logo:Size(431 + self.WidthOffset, 107)
-                Menu.Logo:Position(self.Position.X, self.Position.Y)
-                Menu.Banner = nil
+        if includeChildren then
+            for item, menu in pairs(self.Children) do
+                menu.Logo = sprite
+                menu.Logo:Size(431 + self.WidthOffset, 107)
+                menu.Logo:Position(self.Position.X, self.Position.Y)
+                menu.Banner = nil
             end
         end
     end
 end
 
---- Enables or disabled the menu's animationType.
+--- Enables or disabls the menu's animations while the menu is visible.
 ---@param enable boolean|nil
 ---@return boolean
 function UIMenu:AnimationEnabled(enable)
@@ -388,8 +402,8 @@ function UIMenu:AnimationEnabled(enable)
     return self.enableAnimation
 end
 
---- Sets the menu's scrolling animationType.
----@param menuAnimationType number|nil
+--- Sets the menu's scrolling animationType while the menu is visible.
+---@param menuAnimationType MenuAnimationType|nil
 ---@return number MenuAnimationType
 ---@see MenuAnimationType
 function UIMenu:AnimationType(menuAnimationType)
@@ -404,8 +418,8 @@ function UIMenu:AnimationType(menuAnimationType)
 end
 
 --- Enables or disables the menu's building animationType.
----@param buildingAnimationType number|nil
----@return number MenuBuildingAnimation
+---@param buildingAnimationType MenuBuildingAnimation|nil
+---@return MenuBuildingAnimation
 ---@see MenuBuildingAnimation
 function UIMenu:BuildingAnimation(buildingAnimationType)
     if buildingAnimationType ~= nil then
@@ -523,61 +537,26 @@ end
 ---MaxItemsOnScreen
 ---@param max number|nil
 function UIMenu:MaxItemsOnScreen(max)
-    if max ~= nil then
-        self._maxItem = max
-        self:RefreshIndex()
-    else
+    if max == nil then
         return self._maxItem
     end
+
+    self._maxItem = max
+    self:RefreshIndex()
 end
 
 ---Adds a submenu to the menu, and returns the submenu.
----@param subMenu table
+---@param subMenu UIMenu
 ---@param text string
 ---@param description string
 ---@param offset table|nil
 ---@param KeepBanner boolean|nil
 ---@return table UIMenu
-function UIMenu:AddSubMenu(Menu, text, description, offset, KeepBanner)
+function UIMenu:AddSubMenu(subMenu, text, description, offset, KeepBanner)
     if subMenu() ~= "UIMenu" then
         print("^1ScaleformUI [ERROR]: You're trying to add a submenu [" ..
             subMenu.Title .. "] to a menu [" .. self.Title .. "] but it's not a menu!^7")
         return subMenu
-    end
-
-    if Menu() == "UIMenu" then
-        assert(Menu ~= self,
-            "^1ScaleformUI [ERROR]: You're can't add a menu [" .. Menu.Title .. "] as a redundant submenu to itself!")
-        for k, v in pairs(self.Children) do
-            assert(Menu ~= v,
-                "^1ScaleformUI [ERROR]: You can't add the same submenu [" .. Menu.Title .. "] more than once!")
-        end
-        local Item = UIMenuItem.New(tostring(text), description or "")
-        self:AddItem(Item)
-        if offset == nil then
-            Menu.Position = self.Position
-        else
-            Menu.Position = offset
-        end
-        if KeepBanner then
-            if self.Logo ~= nil then
-                Menu.Logo = self.Logo
-            else
-                Menu.Logo = nil
-                Menu.Banner = self.Banner
-            end
-        end
-        Menu.Glare = self.Glare
-        Menu.Settings.MouseControlsEnabled = self.Settings.MouseControlsEnabled
-        Menu.Settings.MouseEdgeEnabled = self.Settings.MouseEdgeEnabled
-        Menu:MaxItemsOnScreen(self:MaxItemsOnScreen())
-        Menu:BuildAsync(self:BuildAsync())
-        Menu:AnimationEnabled(self:AnimationEnabled())
-        Menu:AnimationType(self:AnimationType())
-        Menu:BuildingAnimation(self:BuildingAnimation())
-        self.ParentPool:Add(Menu)
-        self:BindMenuToItem(Menu, Item)
-        return Menu
     end
 
     assert(subMenu ~= self,
@@ -603,14 +582,15 @@ function UIMenu:AddSubMenu(Menu, text, description, offset, KeepBanner)
         end
     end
     subMenu.Glare = self.Glare
+
     subMenu.Settings.MouseControlsEnabled = self.Settings.MouseControlsEnabled
     subMenu.Settings.MouseEdgeEnabled = self.Settings.MouseEdgeEnabled
-    subMenu:MaxItemsOnScreen(self:MaxItemsOnScreen())
-    subMenu:BuildAsync(self:BuildAsync())
-    subMenu:AnimationEnabled(self:AnimationEnabled())
-    subMenu:AnimationType(self:AnimationType())
-    subMenu:BuildingAnimation(self:BuildingAnimation())
-    self._internalpool:Add(subMenu)
+    subMenu.MaxItemsOnScreen(self:MaxItemsOnScreen())
+    subMenu.BuildAsync(self:BuildAsync())
+    subMenu.AnimationEnabled(self:AnimationEnabled())
+    subMenu.AnimationType(self:AnimationType())
+    subMenu.BuildingAnimation(self:BuildingAnimation())
+    self.ParentPool:Add(subMenu)
     self:BindMenuToItem(subMenu, Item)
     return subMenu
 end
