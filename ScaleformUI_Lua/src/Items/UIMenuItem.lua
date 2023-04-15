@@ -4,6 +4,12 @@ UIMenuItem.__call = function()
     return "UIMenuItem", "UIMenuItem"
 end
 
+---@alias UIMenuPanel
+---| '"UIMenuGridPanel"' # Add a UIMenuGridPanel to the item
+---| '"UIMenuPercentagePanel"' # Add a UIMenuPercentagePanel to the item
+---| '"UIMenuStatisticsPanel"' # Add a UIMenuStatisticsPanel to the item
+---| '"UIMenuColorPanel"' # Add a UIMenuColorPanel to the item
+
 ---@class UIMenuItem
 ---@field _label string
 ---@field _Description string
@@ -24,7 +30,7 @@ end
 ---@field _itemData table
 ---@field ParentMenu UIMenu
 ---@field Panels table
----@field SidePanel UIMenuPanel
+---@field SidePanel UIMenuPanel -- UIMenuGridPanel, UIMenuPercentagePanel, UIMenuStatisticsPanel, UIMenuColorPanel
 ---@field ItemId number
 ---@field Activated function
 ---@field SetParentMenu function
@@ -79,7 +85,7 @@ function UIMenuItem:LabelFont(fontTable)
         return self._labelFont
     else
         self._labelFont = fontTable
-        if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+        if self.ParentMenu ~= nil and self.ParentMenu.Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", false,
                 IndexOf(self.ParentMenu.Items, self) - 1, self._labelFont[1], self._labelFont[2])
         end
@@ -141,7 +147,7 @@ function UIMenuItem:Selected(bool, item)
                 end
             end
         end
-        if self.ParentMenu ~= nil and self._textColor == 1 and self._highlightedTextColor == 2 and self.ParentMenu:Visible() then
+        if self.ParentMenu ~= nil and self._textColor == 1 and self._highlightedTextColor == 2 and self.ParentMenu.Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABELS", false, IndexOf(self.ParentMenu.Items, item) - 1,
                 self._formatLeftLabel, self._formatRightLabel)
         end
@@ -162,7 +168,7 @@ function UIMenuItem:Enabled(bool, item)
     if bool ~= nil then
         if item == nil then item = self end
         self._Enabled = ToBool(bool)
-        if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+        if self.ParentMenu ~= nil and self.ParentMenu.Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_ITEM", false, IndexOf(self.ParentMenu.Items, item) - 1,
                 self._Enabled)
         end
@@ -179,7 +185,7 @@ function UIMenuItem:Description(str, item)
     if tostring(str) and str ~= nil then
         if item == nil then item = self end
         self._Description = tostring(str)
-        if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+        if self.ParentMenu ~= nil and self.ParentMenu.Visible() then
             AddTextEntry("desc_{" .. IndexOf(self.ParentMenu.Items, item) .. "}", str)
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_ITEM_DESCRIPTION", false,
                 IndexOf(self.ParentMenu.Items, item) - 1, "desc_{" .. IndexOf(self.ParentMenu.Items, self) .. "}")
@@ -193,7 +199,7 @@ function UIMenuItem:MainColor(color, item)
     if (color) then
         if item == nil then item = self end
         self._mainColor = color
-        if (self.ParentMenu ~= nil and self.ParentMenu:Visible()) then
+        if (self.ParentMenu ~= nil and self.ParentMenu.Visible()) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.ParentMenu.Items, item) - 1,
                 self._mainColor, self._highlightColor, self._textColor, self._highlightedTextColor)
         end
@@ -206,7 +212,7 @@ function UIMenuItem:TextColor(color, item)
     if (color) then
         if item == nil then item = self end
         self._textColor = color
-        if (self.ParentMenu ~= nil and self.ParentMenu:Visible()) then
+        if (self.ParentMenu ~= nil and self.ParentMenu.Visible()) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.ParentMenu.Items, item) - 1,
                 self._mainColor, self._highlightColor, self._textColor, self._highlightedTextColor)
         end
@@ -219,7 +225,7 @@ function UIMenuItem:HighlightColor(color, item)
     if (color) then
         if item == nil then item = self end
         self._highlightColor = color
-        if (self.ParentMenu ~= nil and self.ParentMenu:Visible()) then
+        if (self.ParentMenu ~= nil and self.ParentMenu.Visible()) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.ParentMenu.Items, item) - 1,
                 self._mainColor, self._highlightColor, self._textColor, self._highlightedTextColor)
         end
@@ -232,7 +238,7 @@ function UIMenuItem:HighlightedTextColor(color, item)
     if (color) then
         if item == nil then item = self end
         self._highlightedTextColor = color
-        if (self.ParentMenu ~= nil and self.ParentMenu:Visible()) then
+        if (self.ParentMenu ~= nil and self.ParentMenu.Visible()) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.ParentMenu.Items, item) - 1,
                 self._mainColor, self._highlightColor, self._textColor, self._highlightedTextColor)
         end
@@ -264,7 +270,7 @@ function UIMenuItem:Label(Text, item)
                 end
             end
         end
-        if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self._textColor == 1 and self._highlightedTextColor == 2 then
+        if self.ParentMenu ~= nil and self.ParentMenu.Visible() and self._textColor == 1 and self._highlightedTextColor == 2 then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_LABEL", false, IndexOf(self.ParentMenu.Items, item) - 1,
                 self._formatLeftLabel)
         end
@@ -295,7 +301,7 @@ function UIMenuItem:RightLabel(Text)
                 end
             end
         end
-        if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self._textColor == 1 and self._highlightedTextColor == 2 then
+        if self.ParentMenu ~= nil and self.ParentMenu.Visible() and self._textColor == 1 and self._highlightedTextColor == 2 then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_LABEL", false, IndexOf(self.ParentMenu.Items, self) - 1,
                 self._formatRightLabel)
         end
@@ -308,7 +314,7 @@ function UIMenuItem:RightBadge(Badge, item)
     if tonumber(Badge) then
         if item == nil then item = self end
         self._rightBadge = tonumber(Badge)
-        if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+        if self.ParentMenu ~= nil and self.ParentMenu.Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_BADGE", false, IndexOf(self.ParentMenu.Items, item) - 1,
                 self._rightBadge)
         end
@@ -321,7 +327,7 @@ function UIMenuItem:LeftBadge(Badge, item)
     if tonumber(Badge) then
         if item == nil then item = self end
         self._leftBadge = tonumber(Badge)
-        if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+        if self.ParentMenu ~= nil and self.ParentMenu.Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_BADGE", false, IndexOf(self.ParentMenu.Items, item) - 1,
                 self._leftBadge)
         end
@@ -341,7 +347,7 @@ function UIMenuItem:AddSidePanel(sidePanel)
     if sidePanel() == "UIMissionDetailsPanel" then
         sidePanel:SetParentItem(self)
         self.SidePanel = sidePanel
-        if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+        if self.ParentMenu ~= nil and self.ParentMenu.Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false,
                 IndexOf(self.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title,
                 sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
@@ -349,7 +355,7 @@ function UIMenuItem:AddSidePanel(sidePanel)
     elseif sidePanel() == "UIVehicleColorPickerPanel" then
         sidePanel:SetParentItem(self)
         self.SidePanel = sidePanel
-        if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+        if self.ParentMenu ~= nil and self.ParentMenu.Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false,
                 IndexOf(self.ParentMenu.Items, self) - 1, 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title,
                 sidePanel.TitleColor)
@@ -359,7 +365,7 @@ end
 
 function UIMenuItem:RemoveSidePanel()
     self.SidePanel = nil
-    if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+    if self.ParentMenu ~= nil and self.ParentMenu.Visible() then
         ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_SIDE_PANEL_TO_ITEM", false,
             IndexOf(self.ParentMenu.Items, self) - 1)
     end
@@ -369,7 +375,8 @@ function UIMenuItem:RemovePanelAt(Index)
     if tonumber(Index) then
         if self.Panels[Index] then
             table.remove(self.Panels, tonumber(Index))
-            ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_PANEL", false, IndexOf(self.ParentMenu.Items, self) - 1, Index-1)
+            ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_PANEL", false, IndexOf(self.ParentMenu.Items, self) - 1,
+                Index - 1)
         end
     end
 end
@@ -398,7 +405,7 @@ function UIMenuItem:BlinkDescription(bool, item)
     if bool ~= nil then
         if item == nil then item = self end
         self.blinkDescription = bool
-        if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+        if self.ParentMenu ~= nil and self.ParentMenu.Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_BLINK_DESC", false, IndexOf(self.ParentMenu.Items, item) - 1,
                 self.blinkDescription)
         end
