@@ -13,6 +13,9 @@ end
 ---@field public TextureDict string
 ---@field public TextureName string
 ---@field public OnIndexChanged fun(index: number)
+---@field public Title fun(label: string): string
+---@field public UpdatePanelPicture fun(txd: string, txn: string)
+---@field public AddItem fun(item: MissionDetailsItem)
 
 function MissionDetailsPanel.New(label, color)
     local _data = {

@@ -13,6 +13,7 @@ end
 ---@field public ParentTab number
 ---@field public Items FriendItem[]
 ---@field public OnIndexChanged fun(index: number)
+---@field public AddPlayer fun(item: FriendItem)
 
 ---Creates a new PlayerListColumn.
 ---@param label string

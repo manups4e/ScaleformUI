@@ -20,6 +20,11 @@ end
 ---@field public ClonePed number
 ---@field public Panel PlayerStatsPanel
 ---@field public Handle number
+---@field public SetLeftIcon fun(icon:number, bool:boolean):nil
+---@field public SetRightIcon fun(icon:number, bool:boolean):nil
+---@field public AddPedToPauseMenu fun(ped:number):number
+---@field public AddPanel fun(panel: PlayerStatsPanel)
+---@field public Enabled fun(enabled:boolean):boolean
 
 ---Creates a new FriendItem.
 ---@param label string

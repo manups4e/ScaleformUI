@@ -22,7 +22,7 @@ end
 ---@field public TxtName string -- Texture name for the menu banner background (default: interaction_bgd)
 ---@field public Logo Sprite -- nil
 ---@field public Settings table -- Defines the menus settings
----@field public MaxItemsOnScreen fun(max: number|nil) -- Gets and sets the maximum number of items that can be displayed (default: 7)
+---@field public MaxItemsOnScreen fun(max: number|nil):number -- Maximum number of items that can be displayed (default: 7)
 ---@field public AddItem fun(item: UIMenuItem)
 ---@field public SetParentMenu fun(menu: UIMenu)
 ---@field public OnIndexChange fun(menu: UIMenu, newindex: number)
@@ -35,12 +35,12 @@ end
 ---@field public OnStatsSelect fun(menu: UIMenu, item: UIMenuItem, index: number)
 ---@field public OnItemSelect fun(menu: UIMenu, item: UIMenuItem, checked: boolean)
 ---@field public OnMenuChanged fun(oldmenu: UIMenu, newmenu: UIMenu, change: any)
----@field public BuildAsync fun(enabled: boolean|nil) -- Gets and sets if the menu should be built async (default: false)
----@field public AnimationEnabled fun(enabled: boolean|nil) -- Gets and sets if the menu animation is enabled or disabled (default: true)
----@field public AnimationType fun(type: MenuAnimationType|nil) -- Gets and sets the animation type for the menu (default: MenuAnimationType.LINEAR)
----@field public BuildingAnimation fun(type: MenuBuildingAnimation|nil) -- Gets and sets the build animation type for the menu (default: MenuBuildingAnimation.LEFT)
+---@field public BuildAsync fun(enabled: boolean|nil):boolean -- If the menu should be built async (default: false)
+---@field public AnimationEnabled fun(enabled: boolean|nil):boolean -- If the menu animation is enabled or disabled (default: true)
+---@field public AnimationType fun(type: MenuAnimationType|nil):MenuAnimationType -- Animation type for the menu (default: MenuAnimationType.LINEAR)
+---@field public BuildingAnimation fun(type: MenuBuildingAnimation|nil):MenuBuildingAnimation -- Build animation type for the menu (default: MenuBuildingAnimation.LEFT)
 ---@field public BindMenuToItem fun(menu: UIMenu, item: UIMenuItem) -- Binds a menu to an item
----@field public Visible fun(visible: boolean|nil) -- Gets and sets if the menu is visible or not (default: false)
+---@field public Visible fun(visible: boolean|nil):boolean -- If the menu is visible or not (default: false)
 ---@field private counterColor Colours -- Set the counter color (default: Colours.HUD_COLOUR_FREEMODE)
 ---@field private enableAnimation boolean -- Enable or disable the menu animation (default: true)
 ---@field private animationType MenuAnimationType -- Sets the menu animation type (default: MenuAnimationType.LINEAR)

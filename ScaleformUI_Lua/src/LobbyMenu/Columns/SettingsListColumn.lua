@@ -14,6 +14,7 @@ end
 ---@field public ParentTab number
 ---@field public Items SettingsListItem[]
 ---@field public OnIndexChanged fun(index: number)
+---@field public AddSettings fun(item: SettingsListItem)
 
 function SettingsListColumn.New(label, color)
     local _data = {

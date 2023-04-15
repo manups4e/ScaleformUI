@@ -18,6 +18,12 @@ end
 ---@field public UpdatePanel fun(override: boolean|nil)
 ---@field public OnItemChanged fun(item: PlayerStatsPanelStatItem)
 ---@field public OnItemActivated fun(item: PlayerStatsPanelStatItem)
+---@field public Description fun(desc: string|nil): string
+---@field public HasPlane fun(bool: boolean|nil): boolean
+---@field public HasHeli fun(bool: boolean|nil): boolean
+---@field public HasBoat fun(bool: boolean|nil): boolean
+---@field public HasVehicle fun(bool: boolean|nil): boolean
+---@field public AddStat fun(statItem: PlayerStatsPanelStatItem)
 
 ---Creates a new PlayerStatsPanel.
 ---@param title string
