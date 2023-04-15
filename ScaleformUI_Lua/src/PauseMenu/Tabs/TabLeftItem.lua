@@ -5,6 +5,27 @@ TabLeftItem.__call = function()
 end
 
 ---@class TabLeftItem
+---@field public Label string
+---@field public ItemType number
+---@field public Focused boolean
+---@field public MainColor number
+---@field public HighlightColor number
+---@field public Highlighted boolean
+---@field public ItemIndex number
+---@field public ItemList table<SettingsItem|SettingsListItem|SettingsProgressItem|SettingsCheckboxItem|SettingsSliderItem|KeymapItem>
+---@field public TextTitle string
+---@field private _enabled boolean
+---@field private _hovered boolean
+---@field private _selected boolean
+---@field public KeymapRightLabel_1 string
+---@field public KeymapRightLabel_2 string
+---@field public OnIndexChanged fun(item:TabLeftItem, index:number)
+---@field public OnActivated fun(item:TabLeftItem, index:number)
+---@field public Index number
+---@field public AddItem fun(item:SettingsItem|SettingsListItem|SettingsProgressItem|SettingsCheckboxItem|SettingsSliderItem|KeymapItem)
+---@field public Enabled fun(enabled:boolean):boolean
+---@field public Hovered fun(hover:boolean):boolean
+---@field public Selected fun(selected:boolean):boolean
 
 function TabLeftItem.New(label, _type, mainColor, highlightColor)
     local data = {
@@ -15,7 +36,7 @@ function TabLeftItem.New(label, _type, mainColor, highlightColor)
         HighlightColor = highlightColor or Colours.NONE,
         Highlighted = false,
         ItemIndex = 0,
-        ItemList = {},
+        ItemList = {} --[[@type table<SettingsItem|SettingsListItem|SettingsProgressItem|SettingsCheckboxItem|SettingsSliderItem|KeymapItem>]],
         TextTitle = "",
         _enabled = true,
         _hovered = false,
@@ -32,6 +53,8 @@ function TabLeftItem.New(label, _type, mainColor, highlightColor)
     return setmetatable(data, TabLeftItem)
 end
 
+---Add item to the tab list
+---@param item SettingsItem|SettingsListItem|SettingsProgressItem|SettingsCheckboxItem|SettingsSliderItem|KeymapItem
 function TabLeftItem:AddItem(item)
     item.Parent = self
     self.ItemList[#self.ItemList + 1] = item
