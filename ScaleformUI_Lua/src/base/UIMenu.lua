@@ -341,7 +341,7 @@ function UIMenu:ControlDisablingEnabled(bool)
     if bool == nil then
         return self.Settings.ControlDisablingEnabled
     else
-        self.Settings.ControlDisablingEnabled = tobool(bool)
+        self.Settings.ControlDisablingEnabled = ToBool(bool)
     end
 end
 
@@ -349,7 +349,7 @@ function UIMenu:MouseControlsEnabled(bool)
     if bool == nil then
         return self.Settings.MouseControlsEnabled
     else
-        self.Settings.MouseControlsEnabled = tobool(bool)
+        self.Settings.MouseControlsEnabled = ToBool(bool)
     end
     ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_MOUSE", false, self.Settings.MouseControlsEnabled)
 end
@@ -547,10 +547,10 @@ function UIMenu:AddSubMenu(Menu, text, description, offset, KeepBanner)
 
     if Menu() == "UIMenu" then
         assert(Menu ~= self,
-        "^1ScaleformUI [ERROR]: You're can't add a menu [" .. Menu.Title .. "] as a redundant submenu to itself!")
+            "^1ScaleformUI [ERROR]: You're can't add a menu [" .. Menu.Title .. "] as a redundant submenu to itself!")
         for k, v in pairs(self.Children) do
             assert(Menu ~= v,
-            "^1ScaleformUI [ERROR]: You can't add the same submenu [" .. Menu.Title .. "] more than once!")
+                "^1ScaleformUI [ERROR]: You can't add the same submenu [" .. Menu.Title .. "] more than once!")
         end
         local Item = UIMenuItem.New(tostring(text), description or "")
         self:AddItem(Item)
