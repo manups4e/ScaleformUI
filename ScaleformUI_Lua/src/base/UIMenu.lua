@@ -40,6 +40,7 @@ end
 ---@field public AnimationType fun(type: MenuAnimationType|nil) -- Gets and sets the animation type for the menu (default: MenuAnimationType.LINEAR)
 ---@field public BuildingAnimation fun(type: MenuBuildingAnimation|nil) -- Gets and sets the build animation type for the menu (default: MenuBuildingAnimation.LEFT)
 ---@field public BindMenuToItem fun(menu: UIMenu, item: UIMenuItem) -- Binds a menu to an item
+---@field public Visible fun(visible: boolean|nil) -- Gets and sets if the menu is visible or not (default: false)
 ---@field private counterColor Colours -- Set the counter color (default: Colours.HUD_COLOUR_FREEMODE)
 ---@field private enableAnimation boolean -- Enable or disable the menu animation (default: true)
 ---@field private animationType MenuAnimationType -- Sets the menu animation type (default: MenuAnimationType.LINEAR)
