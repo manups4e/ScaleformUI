@@ -10,7 +10,7 @@ warn.__index = warn
 
 function WarningInstance.New()
     local data = {
-        _sc = 0,
+        _sc = nil,
         _disableControls = false,
         _buttonList = {},
         OnButtonPressed = function(button)
@@ -20,13 +20,13 @@ function WarningInstance.New()
 end
 
 function warn:IsShowing()
-    return self._sc ~= 0
+    return self._sc ~= nil
 end
 
 function warn:Load()
     local p = promise.new()
 
-    if self._sc ~= 0 and self._sc:IsLoaded() then
+    if self._sc ~= nil then
         p:resolve()
         return p
     end
@@ -46,10 +46,10 @@ function warn:Load()
 end
 
 function warn:Dispose()
-    if self._sc == 0 then return end
+    if self._sc == nil then return end
     self._sc:CallFunction("HIDE_POPUP_WARNING", false, 1000)
     self._sc:Dispose()
-    self._sc = 0
+    self._sc = nil
     self._disableControls = false
 end
 
@@ -84,7 +84,7 @@ function warn:ShowWarningWithButtons(title, subtitle, prompt, buttons, errorMsg,
 end
 
 function warn:Update()
-    if self._sc == 0 then return end
+    if self._sc == nil then return end
     if not self._sc:IsLoaded() then
         self:Dispose()
         return
