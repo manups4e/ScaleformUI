@@ -62,7 +62,7 @@ function WarningInstance:ShowWarningWithButtons(title, subtitle, prompt, buttons
 end
 
 function WarningInstance:Update()
-    self._sc.Render2D()
+    self._sc:Render2D()
     if self._disableControls then
         ScaleformUI.Scaleforms.InstructionalButtons:Draw()
         for k, v in pairs(self._buttonList) do
