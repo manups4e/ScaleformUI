@@ -26,7 +26,7 @@ end
 function warn:Load()
     local p = promise.new()
 
-    if self._sc ~= 0 then
+    if self._sc ~= 0 and self._sc:IsLoaded() then
         p:resolve()
         return p
     end
@@ -85,6 +85,10 @@ end
 
 function warn:Update()
     if self._sc == 0 then return end
+    if not self._sc:IsLoaded() then
+        self:Dispose()
+        return
+    end
 
     self._sc:Render2D()
     if self._disableControls then
