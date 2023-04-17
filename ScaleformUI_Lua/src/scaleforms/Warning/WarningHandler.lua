@@ -32,6 +32,12 @@ function warn:Load()
     end
 
     self._sc = Scaleform.Request("POPUP_WARNING")
+
+    if self._sc == nil then
+        p:reject("Error requesting warning scaleform.")
+        return p
+    end
+
     local timeout = 1000
     local start = GetGameTimer()
     while not self._sc:IsLoaded() and GetGameTimer() - start < timeout do Citizen.Wait(0) end
@@ -39,7 +45,7 @@ function warn:Load()
     if self._sc:IsLoaded() then
         p:resolve()
     else
-        p:reject()
+        p:reject("Error loading warning scaleform.")
     end
 
     return p
@@ -85,10 +91,7 @@ end
 
 function warn:Update()
     if self._sc == nil then return end
-    if not self._sc:IsLoaded() then
-        self:Dispose()
-        return
-    end
+    if not self._sc:IsLoaded() then return end
 
     self._sc:Render2D()
     if self._disableControls then
