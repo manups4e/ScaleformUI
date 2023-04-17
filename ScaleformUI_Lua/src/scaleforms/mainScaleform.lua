@@ -15,7 +15,7 @@ ScaleformUI.Scaleforms.CountdownHandler = nil
 
 ScaleformUI.Scaleforms._pauseMenu = nil
 
-AddEventHandler("onResourceStop", function(resName) 
+AddEventHandler("onResourceStop", function(resName)
     if resName == GetCurrentResourceName() then
         if IsPauseMenuActive() and GetCurrentFrontendMenuVersion() == -2060115030 then
             ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
@@ -44,7 +44,7 @@ Citizen.CreateThread(function()
     ScaleformUI.Scaleforms._pauseMenu:Load()
     ScaleformUI.Scaleforms.RankbarHandler = RankbarHandler.New()
     ScaleformUI.Scaleforms.CountdownHandler = CountdownHandler.New()
-    
+
     local wait = 850
     while true do
         wait = 850
@@ -65,15 +65,14 @@ Citizen.CreateThread(function()
                 ScaleformUI.Scaleforms.JobMissionSelector:Update()
                 wait = 0
             end
-            if ScaleformUI.Scaleforms.Warning._sc ~= 0 then
+            if ScaleformUI.Scaleforms.Warning._sc ~= nil then
                 ScaleformUI.Scaleforms.Warning:Update()
                 wait = 0
             end
         end
-        if (ScaleformUI.Scaleforms.InstructionalButtons._sc == 0 or ScaleformUI.Scaleforms.InstructionalButtons._sc == nil) then
+        if (ScaleformUI.Scaleforms.InstructionalButtons._sc == nil) then
             ScaleformUI.Scaleforms.InstructionalButtons:Load()
-        end
-        if ScaleformUI.Scaleforms.InstructionalButtons:Enabled() or ScaleformUI.Scaleforms.InstructionalButtons.IsSaving then
+        elseif ScaleformUI.Scaleforms.InstructionalButtons:Enabled() or ScaleformUI.Scaleforms.InstructionalButtons.IsSaving then
             ScaleformUI.Scaleforms.InstructionalButtons:Update()
             wait = 0
         end
@@ -86,7 +85,7 @@ Citizen.CreateThread(function()
 
         if ScaleformUI.Scaleforms.BigMessageInstance._sc == 0 and
             ScaleformUI.Scaleforms.MidMessageInstance._sc == 0 and
-            ScaleformUI.Scaleforms.Warning._sc == 0 and
+            ScaleformUI.Scaleforms.Warning._sc == nil and
             (ScaleformUI.Scaleforms.PlayerListScoreboard._sc ~= nil and not ScaleformUI.Scaleforms.PlayerListScoreboard.Enabled) and
             (ScaleformUI.Scaleforms.JobMissionSelector.enabled or ScaleformUI.Scaleforms.JobMissionSelector._sc == nil) and
             (not ScaleformUI.Scaleforms.InstructionalButtons._enabled or (ScaleformUI.Scaleforms.InstructionalButtons.ControlButtons == nil or #ScaleformUI.Scaleforms.InstructionalButtons.ControlButtons == 0 and not ScaleformUI.Scaleforms.InstructionalButtons.IsSaving))
