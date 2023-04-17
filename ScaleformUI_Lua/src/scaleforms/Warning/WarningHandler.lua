@@ -1,29 +1,25 @@
-WarningInstance = {}
-
-local warn = {}
-warn = setmetatable({}, warn)
-
-warn.__call = function()
-    return true
+WarningInstance = setmetatable({}, WarningInstance)
+WarningInstance.__index = WarningInstance
+WarningInstance.__call = function()
+    return "WarningInstance"
 end
-warn.__index = warn
 
 function WarningInstance.New()
-    local data = {
+    local _warningData = {
         _sc = nil,
         _disableControls = false,
         _buttonList = {},
         OnButtonPressed = function(button)
         end
     }
-    return setmetatable(data, warn)
+    return setmetatable(_warningData, WarningInstance)
 end
 
-function warn:IsShowing()
+function WarningInstance:IsShowing()
     return self._sc ~= nil
 end
 
-function warn:Load()
+function WarningInstance:Load()
     local p = promise.new()
 
     if self._sc ~= nil then
@@ -51,7 +47,7 @@ function warn:Load()
     return p
 end
 
-function warn:Dispose()
+function WarningInstance:Dispose()
     if self._sc == nil then return end
     self._sc:CallFunction("HIDE_POPUP_WARNING", false, 1000)
     self._sc:Dispose()
@@ -59,7 +55,7 @@ function warn:Dispose()
     self._disableControls = false
 end
 
-function warn:ShowWarning(title, subtitle, prompt, errorMsg, warningType)
+function WarningInstance:ShowWarning(title, subtitle, prompt, errorMsg, warningType)
     self:Load():next(function()
         self._sc:CallFunction("SHOW_POPUP_WARNING", false, 1000, title, subtitle, prompt, true, warningType, errorMsg)
     end, function(value)
@@ -67,7 +63,7 @@ function warn:ShowWarning(title, subtitle, prompt, errorMsg, warningType)
     end)
 end
 
-function warn:UpdateWarning(title, subtitle, prompt, errorMsg, warningType)
+function WarningInstance:UpdateWarning(title, subtitle, prompt, errorMsg, warningType)
     self:Load():next(function()
         self._sc:CallFunction("SHOW_POPUP_WARNING", false, 1000, title, subtitle, prompt, true, warningType, errorMsg)
     end, function(value)
@@ -75,7 +71,7 @@ function warn:UpdateWarning(title, subtitle, prompt, errorMsg, warningType)
     end)
 end
 
-function warn:ShowWarningWithButtons(title, subtitle, prompt, buttons, errorMsg, warningType)
+function WarningInstance:ShowWarningWithButtons(title, subtitle, prompt, buttons, errorMsg, warningType)
     self:Load():next(function()
         self._disableControls = true
         self._buttonList = buttons
@@ -89,7 +85,7 @@ function warn:ShowWarningWithButtons(title, subtitle, prompt, buttons, errorMsg,
     end)
 end
 
-function warn:Update()
+function WarningInstance:Update()
     if self._sc == nil then return end
     if not self._sc:IsLoaded() then return end
 
