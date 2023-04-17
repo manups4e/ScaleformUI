@@ -6,7 +6,7 @@ end
 
 function WarningInstance.New()
     local _warningData = {
-        _sc = nil,
+        _sc = nil --[[@as Scaleform]],
         _disableControls = false,
         _buttonList = {},
         OnButtonPressed = function(button)

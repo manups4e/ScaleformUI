@@ -70,10 +70,9 @@ Citizen.CreateThread(function()
                 wait = 0
             end
         end
-        if (ScaleformUI.Scaleforms.InstructionalButtons._sc == 0 or ScaleformUI.Scaleforms.InstructionalButtons._sc == nil) then
+        if (ScaleformUI.Scaleforms.InstructionalButtons._sc == nil) then
             ScaleformUI.Scaleforms.InstructionalButtons:Load()
-        end
-        if ScaleformUI.Scaleforms.InstructionalButtons:Enabled() or ScaleformUI.Scaleforms.InstructionalButtons.IsSaving then
+        elseif ScaleformUI.Scaleforms.InstructionalButtons:Enabled() or ScaleformUI.Scaleforms.InstructionalButtons.IsSaving then
             ScaleformUI.Scaleforms.InstructionalButtons:Update()
             wait = 0
         end
