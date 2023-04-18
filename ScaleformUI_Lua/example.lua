@@ -131,6 +131,20 @@ function CreateMenu()
     exampleMenu:AddItem(listPanelItem4)
     listPanelItem4:AddPanel(statisticsPanel)
 
+    listPanelItem4.OnListChanged = function(menu, item, newIndex)
+        if (newIndex == 1) then
+            ScaleformUI.Notifications:ShowNotification("Update Statistics Panel Item 1")
+            statisticsPanel:UpdateStatistic(1, 10.0)
+            statisticsPanel:UpdateStatistic(2, 50.0)
+            statisticsPanel:UpdateStatistic(3, 100.0)
+        elseif (newIndex == 2) then
+            ScaleformUI.Notifications:ShowNotification("Update Statistics Panel Item 2")
+            statisticsPanel:UpdateStatistic(1, 100.0)
+            statisticsPanel:UpdateStatistic(2, 75.0)
+            statisticsPanel:UpdateStatistic(3, 25.0)
+        end
+    end
+
     --[[
         2 ways to add submenus..
         - the old way => local submenu = pool:AddSubMenu(parent, ...)
