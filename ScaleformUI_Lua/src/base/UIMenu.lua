@@ -1090,10 +1090,10 @@ function UIMenu:GoLeft()
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
-    local res = GetScaleformMovieMethodReturnValueInt(return_value) + 1
+    local res = GetScaleformMovieMethodReturnValueInt(return_value)
 
     if subtype == "UIMenuListItem" then
-        Item:Index(res)
+        Item:Index(res + 1)
         self.OnListChange(self, Item, Item._Index)
         Item.OnListChanged(self, Item, Item._Index)
         PlaySoundFrontend(-1, self.Settings.Audio.LeftRight, self.Settings.Audio.Library, true)
@@ -1134,10 +1134,10 @@ function UIMenu:GoRight()
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
-    local res = GetScaleformMovieMethodReturnValueInt(return_value) + 1
+    local res = GetScaleformMovieMethodReturnValueInt(return_value)
 
     if subtype == "UIMenuListItem" then
-        Item:Index(res)
+        Item:Index(res + 1)
         self.OnListChange(self, Item, Item._Index)
         Item.OnListChanged(self, Item, Item._Index)
         PlaySoundFrontend(-1, self.Settings.Audio.LeftRight, self.Settings.Audio.Library, true)
