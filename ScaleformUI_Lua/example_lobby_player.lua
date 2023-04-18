@@ -26,11 +26,11 @@ local function CreatePlayerMenuMenu()
         local item = UIMenuItem.New("UIMenuItem", "UIMenuItem description")
         PlayerMenu.SettingsColumn.AddSettings(item)
 
-        PlayerMenu.MissionPanel.UpdatePanelPicture("scaleformui", "lobby_panelbackground")
-        PlayerMenu.MissionPanel.Title("ScaleformUI - Title")
+        PlayerMenu.MissionPanel:UpdatePanelPicture("scaleformui", "lobby_panelbackground")
+        PlayerMenu.MissionPanel:Title("ScaleformUI - Title")
 
         local friend = FriendItem.New("", Colours.HUD_COLOUR_FREEMODE, false, 0, "", "")
-        PlayerMenu.PlayersColumn.AddPlayer(friend)
+        PlayerMenu.PlayersColumn:AddPlayer(friend)
 
         PlayerMenu.SettingsColumn.OnIndexChanged = function(idx)
             currentSelectId = idx
@@ -251,18 +251,18 @@ AddEventHandler("ScaleformUI_Lua:playermenu:Show", function(FocusLevel, canclose
     local instructional_buttons = Scaleform.Request("instructional_buttons")
     instructional_buttons:CallFunction("CLEAR_ALL")
     local buttonsID = 0
-    instructional_buttons:CallFunction("SET_DATA_SLOT", buttonsID, GetControlInstructionalButton(1, 191, true),
+    instructional_buttons:CallFunction("SET_DATA_SLOT", false, buttonsID, GetControlInstructionalButton(1, 191, true),
         GetLabelText("HUD_INPUT2"))
     buttonsID = buttonsID + 1
     if canclose then
-        instructional_buttons:CallFunction("SET_DATA_SLOT", buttonsID, GetControlInstructionalButton(1, 194, true),
+        instructional_buttons:CallFunction("SET_DATA_SLOT", false, buttonsID, GetControlInstructionalButton(1, 194, true),
             GetLabelText("HUD_INPUT3"))
         buttonsID = buttonsID + 1
     end
-    instructional_buttons:CallFunction("SET_DATA_SLOT", buttonsID, "~INPUTGROUP_FRONTEND_DPAD_ALL~",
+    instructional_buttons:CallFunction("SET_DATA_SLOT", false, buttonsID, "~INPUTGROUP_FRONTEND_DPAD_ALL~",
         GetLabelText("HUD_INPUT8"))
     buttonsID = buttonsID + 1
-    instructional_buttons:CallFunction("SET_BACKGROUND_COLOUR", 0, 0, 0, 80)
+    instructional_buttons:CallFunction("SET_BACKGROUND_COLOUR", false, 0, 0, 0, 80)
     instructional_buttons:CallFunction("DRAW_INSTRUCTIONAL_BUTTONS")
 
     while PlayerMenu:Visible() do

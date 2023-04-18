@@ -19,7 +19,8 @@ end
 ---@field public IsInMarker boolean
 ---@field public CheckZ boolean
 ---@field private _height number
----@field public Draw fun(self:Marker):nil
+---@field public Draw fun(self: Marker):nil
+---@field public IsInRange fun(self: Marker):boolean
 
 ---Creates a new marker
 ---@param type MarkerType|nil

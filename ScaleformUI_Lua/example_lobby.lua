@@ -249,8 +249,8 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:SetPlayerList", function(data)
 
             local friend = FriendItem.New(v.name, Colours, v.rowColor, v.lev, Status, v.CrewTag)
             if v.ped then
-                friend.SetLeftIcon(LobbyBadge, false)
-                friend.AddPedToPauseMenu((v.ped or PlayerPedId())) -- defaulted to 0 if you set it to nil / 0 the ped will be removed from the pause menu
+                friend:SetLeftIcon(LobbyBadge, false)
+                friend:AddPedToPauseMenu((v.ped or PlayerPedId())) -- defaulted to 0 if you set it to nil / 0 the ped will be removed from the pause menu
                 local panel = PlayerStatsPanel.New(v.name, v.rowColor)
                 panel:Description("My name is " .. v.name)
                 panel:HasPlane(v.HasPlane)
@@ -491,18 +491,18 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:Show", function(FocusLevel, canclose,
     local instructional_buttons = Scaleform.Request("instructional_buttons")
     instructional_buttons:CallFunction("CLEAR_ALL")
     local buttonsID = 0
-    instructional_buttons:CallFunction("SET_DATA_SLOT", buttonsID, GetControlInstructionalButton(1, 191, true),
+    instructional_buttons:CallFunction("SET_DATA_SLOT", false, buttonsID, GetControlInstructionalButton(1, 191, true),
         GetLabelText("HUD_INPUT2"))
     buttonsID = buttonsID + 1
     if canclose then
-        instructional_buttons:CallFunction("SET_DATA_SLOT", buttonsID, GetControlInstructionalButton(1, 194, true),
+        instructional_buttons:CallFunction("SET_DATA_SLOT", false, buttonsID, GetControlInstructionalButton(1, 194, true),
             GetLabelText("HUD_INPUT3"))
         buttonsID = buttonsID + 1
     end
-    instructional_buttons:CallFunction("SET_DATA_SLOT", buttonsID, "~INPUTGROUP_FRONTEND_DPAD_ALL~",
+    instructional_buttons:CallFunction("SET_DATA_SLOT", false, buttonsID, "~INPUTGROUP_FRONTEND_DPAD_ALL~",
         GetLabelText("HUD_INPUT8"))
     buttonsID = buttonsID + 1
-    instructional_buttons:CallFunction("SET_BACKGROUND_COLOUR", 0, 0, 0, 80)
+    instructional_buttons:CallFunction("SET_BACKGROUND_COLOUR", false, 0, 0, 0, 80)
     instructional_buttons:CallFunction("DRAW_INSTRUCTIONAL_BUTTONS")
 
     while LobbyMenu:Visible() do

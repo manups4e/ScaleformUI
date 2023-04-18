@@ -12,10 +12,10 @@ end
 ---@field public Items MissionDetailsItem[]
 ---@field public TextureDict string
 ---@field public TextureName string
+---@field public Title fun(self: MissionDetailsPanel, label: string): string
+---@field public UpdatePanelPicture fun(self: MissionDetailsPanel, txd: string, txn: string)
+---@field public AddItem fun(self: MissionDetailsPanel, item: MissionDetailsItem)
 ---@field public OnIndexChanged fun(index: number)
----@field public Title fun(label: string): string
----@field public UpdatePanelPicture fun(txd: string, txn: string)
----@field public AddItem fun(item: MissionDetailsItem)
 
 function MissionDetailsPanel.New(label, color)
     local _data = {

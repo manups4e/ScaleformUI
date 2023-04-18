@@ -20,11 +20,11 @@ end
 ---@field public ClonePed number
 ---@field public Panel PlayerStatsPanel
 ---@field public Handle number
----@field public SetLeftIcon fun(icon:LobbyBadgeIcon, bool:boolean):nil
----@field public SetRightIcon fun(icon:LobbyBadgeIcon, bool:boolean):nil
----@field public AddPedToPauseMenu fun(ped:number):number
----@field public AddPanel fun(panel: PlayerStatsPanel)
----@field public Enabled fun(enabled:boolean):boolean
+---@field public SetLeftIcon fun(self: FriendItem, icon: LobbyBadgeIcon|BadgeStyle, bool: boolean):nil
+---@field public SetRightIcon fun(self: FriendItem, icon: LobbyBadgeIcon|BadgeStyle, bool: boolean):nil
+---@field public AddPedToPauseMenu fun(self: FriendItem, ped: number):number
+---@field public AddPanel fun(self: FriendItem, panel: PlayerStatsPanel)
+---@field public Enabled fun(self: FriendItem, enabled: boolean):boolean
 
 ---Creates a new FriendItem.
 ---@param label string
@@ -92,7 +92,7 @@ function FriendItem:AddPedToPauseMenu(ped)
         end
         if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
             if self.Panel ~= nil then
-                self.Panel.UpdatePanel()
+                self.Panel:UpdatePanel()
             end
             local pSubT = self.ParentColumn.Parent()
             Citizen.CreateThread(function()
@@ -315,5 +315,5 @@ end
 function FriendItem:AddPanel(panel)
     panel.ParentItem = self
     self.Panel = panel
-    self.Panel.UpdatePanel()
+    self.Panel:UpdatePanel()
 end

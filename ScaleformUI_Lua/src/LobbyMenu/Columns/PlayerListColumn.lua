@@ -13,7 +13,7 @@ end
 ---@field public ParentTab number
 ---@field public Items FriendItem[]
 ---@field public OnIndexChanged fun(index: number)
----@field public AddPlayer fun(item: FriendItem)
+---@field public AddPlayer fun(self: PlayerListColumn, item: FriendItem)
 
 ---Creates a new PlayerListColumn.
 ---@param label string
@@ -97,7 +97,7 @@ function PlayerListColumn:AddPlayer(item)
             end
         end
         if item.Panel ~= nil then
-            item.Panel.UpdatePanel(true)
+            item.Panel:UpdatePanel(true)
         end
     end
 end

@@ -19,13 +19,13 @@ end
 ---@field private _selected boolean
 ---@field public KeymapRightLabel_1 string
 ---@field public KeymapRightLabel_2 string
+---@field public Index number
+---@field public AddItem fun(self:TabLeftItem, item:SettingsItem|SettingsListItem|SettingsProgressItem|SettingsCheckboxItem|SettingsSliderItem|KeymapItem|BasicTabItem)
+---@field public Enabled fun(self:TabLeftItem, enabled:boolean):boolean
+---@field public Hovered fun(self:TabLeftItem, hover:boolean):boolean
+---@field public Selected fun(self:TabLeftItem, selected:boolean):boolean
 ---@field public OnIndexChanged fun(item:TabLeftItem, index:number)
 ---@field public OnActivated fun(item:TabLeftItem, index:number)
----@field public Index number
----@field public AddItem fun(item:SettingsItem|SettingsListItem|SettingsProgressItem|SettingsCheckboxItem|SettingsSliderItem|KeymapItem)
----@field public Enabled fun(enabled:boolean):boolean
----@field public Hovered fun(hover:boolean):boolean
----@field public Selected fun(selected:boolean):boolean
 
 function TabLeftItem.New(label, _type, mainColor, highlightColor)
     local data = {
@@ -36,7 +36,7 @@ function TabLeftItem.New(label, _type, mainColor, highlightColor)
         HighlightColor = highlightColor or Colours.NONE,
         Highlighted = false,
         ItemIndex = 0,
-        ItemList = {} --[[@type table<SettingsItem|SettingsListItem|SettingsProgressItem|SettingsCheckboxItem|SettingsSliderItem|KeymapItem>]],
+        ItemList = {} --[[@type table<SettingsItem|SettingsListItem|SettingsProgressItem|SettingsCheckboxItem|SettingsSliderItem|KeymapItem|BasicTabItem>]],
         TextTitle = "",
         _enabled = true,
         _hovered = false,
@@ -54,7 +54,7 @@ function TabLeftItem.New(label, _type, mainColor, highlightColor)
 end
 
 ---Add item to the tab list
----@param item SettingsItem|SettingsListItem|SettingsProgressItem|SettingsCheckboxItem|SettingsSliderItem|KeymapItem
+---@param item SettingsItem|SettingsListItem|SettingsProgressItem|SettingsCheckboxItem|SettingsSliderItem|KeymapItem|BasicTabItem
 function TabLeftItem:AddItem(item)
     item.Parent = self
     self.ItemList[#self.ItemList + 1] = item
