@@ -30,8 +30,6 @@ function ButtonsHandler:Enabled(bool)
             self._sc:Dispose()
             self._sc = nil
         end
-        self._enabled = bool
-        self._changed = bool
     end
 end
 
