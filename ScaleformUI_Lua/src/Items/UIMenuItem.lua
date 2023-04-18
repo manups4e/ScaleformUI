@@ -29,11 +29,11 @@ end
 ---@field _highlightedTextColor number
 ---@field _itemData table
 ---@field ParentMenu UIMenu
----@field Panels table
+---@field Panels table<UIMenuGridPanel|UIMenuPercentagePanel|UIMenuStatisticsPanel|UIMenuColorPanel>
 ---@field SidePanel UIMenuPanel -- UIMenuGridPanel, UIMenuPercentagePanel, UIMenuStatisticsPanel, UIMenuColorPanel
 ---@field ItemId number
----@field Activated function
----@field SetParentMenu function
+---@field Activated fun(self:UIMenuItem, menu:UIMenu, item:UIMenuItem):boolean
+---@field SetParentMenu fun(self:UIMenuItem, menu:UIMenu|nil):UIMenu|nil
 
 ---New
 ---@param text string

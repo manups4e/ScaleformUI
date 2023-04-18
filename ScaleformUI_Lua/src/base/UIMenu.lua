@@ -13,7 +13,7 @@ end
 ---@field public Banner table -- Menu banner settings [Setting not fully understood or possibly not used]
 ---@field public Extra table -- {}
 ---@field public Description table -- {}
----@field public Items table -- {}
+---@field public Items table<UIMenuItem> -- {}
 ---@field public Windows table -- {}
 ---@field public Children table -- {}
 ---@field public Glare boolean -- Sets if the glare animation is enabled or disabled (default: false)

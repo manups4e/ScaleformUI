@@ -4,6 +4,7 @@ UIMenuListItem.__call = function() return "UIMenuItem", "UIMenuListItem" end
 
 ---@class UIMenuListItem : UIMenuItem
 ---@field public Base UIMenuItem
+---@field public AddPanel fun(self:UIMenuListItem, item:UIMenuStatisticsPanel|UIMenuPercentagePanel|UIMenuColorPanel|UIMenuGridPanel):nil
 
 ---New
 ---@param Text string
@@ -249,11 +250,12 @@ function UIMenuListItem:RightLabel()
 end
 
 ---AddPanel
----@param Panel table
-function UIMenuListItem:AddPanel(Panel)
-    if Panel() == "UIMenuPanel" then
-        self.Panels[#self.Panels + 1] = Panel
-        Panel:SetParentItem(self)
+---@param panel UIMenuStatisticsPanel|UIMenuPercentagePanel|UIMenuColorPanel|UIMenuGridPanel
+function UIMenuListItem:AddPanel(panel)
+    if panel() == "UIMenuPanel" then
+        self.Panels[#self.Panels + 1] = panel
+        ---@diagnostic disable-next-line: param-type-mismatch
+        panel:SetParentItem(self)
     end
 end
 
