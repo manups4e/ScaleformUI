@@ -5,6 +5,7 @@ UIMenuStatisticsPanel.__call = function() return "UIMenuPanel", "UIMenuStatistic
 ---@class UIMenuStatisticsPanel
 ---@field public Items table
 ---@field public ParentItem UIMenuItem -- required
+---@field public SetParentItem fun(self:UIMenuStatisticsPanel, item:UIMenuItem):UIMenuItem -- required
 
 function UIMenuStatisticsPanel.New(items)
     local _UIMenuStatisticsPanel = {
@@ -59,8 +60,8 @@ function UIMenuStatisticsPanel:GetPercentage(index)
 end
 
 ---Update a statistic
----@param index number -- The index of the statistic 1-4
----@param value number -- Must be between 0 and 100
+---@param index number -- The index of the statistic starting from 1
+---@param value number -- Must be a between 0 and 100
 function UIMenuStatisticsPanel:UpdateStatistic(index, value)
     if value ~= nil then
         if value > 100 then
@@ -72,6 +73,7 @@ function UIMenuStatisticsPanel:UpdateStatistic(index, value)
         if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
             local it = IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem)
             local van = IndexOf(self.ParentItem.Panels, self)
+            print("UPDATE SET_PANEL_STATS_ITEM_VALUE", it, van, index - 1, value)
             ScaleformUI.Scaleforms._ui:CallFunction("SET_PANEL_STATS_ITEM_VALUE", false, it, van, index - 1, value)
         end
     end

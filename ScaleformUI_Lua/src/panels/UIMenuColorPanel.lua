@@ -8,6 +8,7 @@ UIMenuColorPanel.__call = function() return "UIMenuPanel", "UIMenuColorPanel" en
 ---@field public value number
 ---@field public CustomColors table
 ---@field public ParentItem table
+---@field public SetParentItem fun(self:UIMenuStatisticsPanel, item:UIMenuItem):UIMenuItem -- required
 ---@field public OnColorPanelChanged function
 
 ---New

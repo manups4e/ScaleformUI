@@ -8,6 +8,7 @@ UIMenuPercentagePanel.__call = function() return "UIMenuPanel", "UIMenuPercentag
 ---@field public Title string
 ---@field public Percentage number
 ---@field public ParentItem table
+---@field public SetParentItem fun(self:UIMenuStatisticsPanel, item:UIMenuItem):UIMenuItem -- required
 ---@field public OnPercentagePanelChange function
 
 ---New

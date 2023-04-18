@@ -9,6 +9,7 @@ UIMenuGridPanel.__call = function() return "UIMenuPanel", "UIMenuGridPanel" end
 ---@field public BottomLabel string
 ---@field public GridType number
 ---@field public ParentItem table
+---@field public SetParentItem fun(self:UIMenuStatisticsPanel, item:UIMenuItem):UIMenuItem -- required
 ---@field public OnGridPanelChanged function
 
 ---New
