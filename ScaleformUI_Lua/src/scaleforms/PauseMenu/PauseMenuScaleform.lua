@@ -214,7 +214,7 @@ function PauseMenu:UpdateItemColoredBar(tab, leftItem, rightItem, color)
 end
 
 function PauseMenu:SendInputEvent(direction) -- to be awaited
-    local return_value = self._pause:CallFunction("SET_INPUT_EVENT", true, direction)
+    local return_value = self._pause:CallFunction("SET_INPUT_EVENT", true, direction) --[[@as number]]
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
@@ -226,7 +226,7 @@ function PauseMenu:SendScrollEvent(direction) -- to be awaited
 end
 
 function PauseMenu:SendClickEvent() -- to be awaited
-    local return_value = self._pause:CallFunction("MOUSE_CLICK_EVENT", true)
+    local return_value = self._pause:CallFunction("MOUSE_CLICK_EVENT", true) --[[@as number]]
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end

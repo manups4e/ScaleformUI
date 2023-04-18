@@ -5,15 +5,15 @@ Scaleform.__call = function()
 end
 
 ---@class Scaleform
----@field public CallFunction fun(theFunction:string, returndata:boolean, ...:any):nil|number
----@field public Dispose fun():nil
----@field public IsLoaded fun():boolean
----@field public IsValid fun():boolean
----@field public Render2D fun():nil
----@field public Render2DNormal fun(x:number, y:number, width:number, height:number):nil
----@field public Render3D fun(x:number, y:number, z:number, rx:number, ry:number, rz:number, scale:number):nil
----@field public Render3DAdditive fun(x:number, y:number, z:number, rx:number, ry:number, rz:number, scale:number):nil
----@field private handle number
+---@field public CallFunction fun(self:table, theFunction:string, returndata:boolean, ...:any):nil|number
+---@field public Dispose fun(self:table):nil
+---@field public IsLoaded fun(self:table):boolean
+---@field public IsValid fun(self:table):boolean
+---@field public Render2D fun(self:table):nil
+---@field public Render2DNormal fun(self:table, x:number, y:number, width:number, height:number):nil
+---@field public Render3D fun(self:table, x:number, y:number, z:number, rx:number, ry:number, rz:number, scale:number):nil
+---@field public Render3DAdditive fun(self:table, x:number, y:number, z:number, rx:number, ry:number, rz:number, scale:number):nil
+---@field public handle number
 
 ---Create a new scaleform instance
 ---@param Name string

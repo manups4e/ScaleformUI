@@ -33,7 +33,7 @@ function MenuPool:AddSubMenu(subMenu, text, description, keepPosition, keepBanne
 
     ---@diagnostic disable-next-line: missing-parameter
     local item = UIMenuItem.New(tostring(text), description or "")
-    subMenu.AddItem(item)
+    subMenu:AddItem(item)
     local _subMenu
     if keepPosition then
         _subMenu = UIMenu.New(subMenu.Title, text, subMenu.Position.x, subMenu.Position.y, subMenu.Glare,

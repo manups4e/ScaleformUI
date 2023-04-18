@@ -59,7 +59,7 @@ function PlayerListScoreboard:Dispose()
     self.TitleLeftText = ""
     self.TitleRightText = ""
     self.TitleIcon = 0
-    self._sc:CallFunction("SET_DATA_SLOT_EMPTY")
+    self._sc:CallFunction("SET_DATA_SLOT_EMPTY", false)
     self._sc:Dispose()
     self._sc = nil
     for i = 0, 1024 do -- cleaning up in case of a reload, this frees up all ped headshot handles :)
