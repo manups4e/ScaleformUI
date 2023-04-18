@@ -29,11 +29,11 @@ function Scaleform.Request(Name)
 end
 
 ---Call a function on the scaleform
----@param theFunction string
----@param returndata any
----@vararg any
+---@param theFunction string -- The name of the function to call
+---@param returndata boolean -- If true, returns the return value of the function
+---@vararg any -- The arguments to pass to the function
 ---@return nil|number -- If returndata is true, returns the return value of the function
-function Scaleform:CallFunction(theFunction --[[@as string]], returndata --[[@as boolean]], ...)
+function Scaleform:CallFunction(theFunction, returndata, ...)
     BeginScaleformMovieMethod(self.handle, theFunction)
     local arg = { ... }
     if arg ~= nil then

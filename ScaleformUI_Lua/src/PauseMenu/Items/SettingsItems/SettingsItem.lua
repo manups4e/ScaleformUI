@@ -79,7 +79,7 @@ function SettingsItem:RightLabel(label)
                 local tab = IndexOf(self.Parent.Parent.Base.Parent.Tabs, self.Parent.Parent) - 1
                 local leftItem = IndexOf(self.Parent.Parent.LeftItemList, self.Parent) - 1
                 local rightIndex = IndexOf(self.Parent.ItemList, self) - 1
-                ScaleformUI.Scaleforms._pauseMenu.UpdateItemRightLabel(tab, leftItem, rightIndex, self._rightLabel)
+                ScaleformUI.Scaleforms._pauseMenu:UpdateItemRightLabel(tab, leftItem, rightIndex, self._rightLabel)
             end
         end
     end

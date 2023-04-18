@@ -7,7 +7,7 @@ end
 ---@class MidMessageInstance
 
 function MidMessageInstance.New()
-    local _sc = 0
+    local _sc = nil --[[@type Scaleform]]
     local _start = 0
     local _timer = 0
     local _hasAnimatedOut = false
@@ -16,7 +16,7 @@ function MidMessageInstance.New()
 end
 
 function MidMessageInstance:Load()
-    if self._sc ~= 0 then return end
+    if self._sc ~= nil then return end
     self._sc = Scaleform.Request("MIDSIZED_MESSAGE")
     local timeout = 1000
     local start = GetGameTimer()
@@ -25,7 +25,7 @@ end
 
 function MidMessageInstance:Dispose()
     self._sc:Dispose()
-    self._sc = 0
+    self._sc = nil
 end
 
 function MidMessageInstance:ShowColoredShard(msg, desc, bgColor, useDarkerShard, useCondensedShard, time)

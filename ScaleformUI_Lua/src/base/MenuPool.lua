@@ -13,7 +13,7 @@ end
 ---@return table
 function MenuPool.New()
     local _MenuPool = {
-        Menus = {} --[[@as table<UIMenu>]],
+        Menus = {} --[[@type table<UIMenu>]],
         PauseMenus = {},
         ableToDraw = false
     }

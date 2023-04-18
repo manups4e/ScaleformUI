@@ -24,11 +24,11 @@ function ButtonsHandler:Enabled(bool)
     if bool == nil then
         return self._enabled
     else
-        if not bool and type(self._sc) ~= "number" then
+        if not bool and self._sc ~= nil then
             self._sc:CallFunction("CLEAR_ALL", false)
             self._sc:CallFunction("CLEAR_RENDER", false)
             self._sc:Dispose()
-            self._sc = 0
+            self._sc = nil
         end
         self._enabled = bool
         self._changed = bool

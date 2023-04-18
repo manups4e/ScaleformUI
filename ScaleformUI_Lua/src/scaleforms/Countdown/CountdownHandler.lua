@@ -12,7 +12,7 @@ local _b;
 local _a;
 
 function CountdownHandler.New()
-    local _sc = 0
+    local _sc = nil --[[@type Scaleform]]
     local _start = 0
     local _timer = 0
     local data = { _sc = _sc, _start = _start, _timer = _timer }
@@ -22,7 +22,7 @@ end
 function CountdownHandler:Load()
     local p = promise.new()
 
-    if self._sc ~= 0 then
+    if self._sc ~= nil then
         p:resolve()
         return p
     end
@@ -45,7 +45,7 @@ end
 
 function CountdownHandler:Dispose(force)
     self._sc:Dispose()
-    self._sc = 0
+    self._sc = nil
 end
 
 function CountdownHandler:Update()
