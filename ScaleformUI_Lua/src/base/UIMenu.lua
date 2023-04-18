@@ -349,7 +349,8 @@ function UIMenu:CanPlayerCloseMenu(playerCanCloseMenu)
     return self._canHe
 end
 
----Sets if controls are disabled when the menu is open. (Default: true) [Documentation requires updating]
+-- TODO: Refactor this method and process as its rather backwards.
+---Sets if some controls (attack, game camera movement) are disabled when the menu is open. (Default: true) (set to false to disable default left click controls)
 ---@param enabled boolean|nil
 ---@return boolean
 function UIMenu:ControlDisablingEnabled(enabled)
@@ -359,7 +360,17 @@ function UIMenu:ControlDisablingEnabled(enabled)
     return self.Settings.ControlDisablingEnabled
 end
 
----Enables or disables mouse controls for the menu. (Default: true) [Documentation requires updating]
+---Sets if the camera can be rotated when the mouse cursor is near the edges of the screen. (Default: true)
+---@param enabled boolean|nil
+---@return boolean
+function UIMenu:MouseEdgeEnabled(enabled)
+    if enabled ~= nil then
+        self.Settings.MouseEdgeEnabled = ToBool(enabled)
+    end
+    return self.Settings.MouseEdgeEnabled
+end
+
+---Enables or disables mouse controls for the menu. (Default: true)
 ---@param enabled boolean|nil
 ---@return boolean
 function UIMenu:MouseControlsEnabled(enabled)
