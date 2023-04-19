@@ -12,7 +12,7 @@ end
 ---@field public Order number
 ---@field public Parent function
 ---@field public ParentTab number
----@field public Items SettingsListItem[]
+---@field public Items table<number, UIMenuItem|UIMenuListItem|UIMenuCheckboxItem|UIMenuSliderItem|UIMenuProgressItem>
 ---@field public OnIndexChanged fun(index: number)
 ---@field public AddSettings fun(self: SettingsListColumn, item: SettingsListItem)
 
@@ -25,7 +25,7 @@ function SettingsListColumn.New(label, color)
         Order = 0,
         Parent = nil,
         ParentTab = 0,
-        Items = {},
+        Items = {} --[[@type table<number, UIMenuItem|UIMenuListItem|UIMenuCheckboxItem|UIMenuSliderItem|UIMenuProgressItem>]],
         OnIndexChanged = function(index)
         end
     }
