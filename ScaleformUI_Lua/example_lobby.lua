@@ -196,7 +196,7 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:SetPlayerList", function(data)
         ColumnCallbackFunction[2] = {}
 
         for i = 1, #LobbyMenu.PlayersColumn.Items do
-            LobbyMenu.PlayersColumn:RemovePlayer(#LobbyMenu.PlayersColumn.Items)
+            LobbyMenu.PlayersColumn:RemovePlayer(LobbyMenu.PlayersColumn.Items[i])
             Wait(0)
         end
         Wait(1)

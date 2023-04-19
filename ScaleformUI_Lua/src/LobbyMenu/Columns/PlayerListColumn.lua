@@ -11,7 +11,7 @@ end
 ---@field public Order number
 ---@field public Parent function
 ---@field public ParentTab number
----@field public Items FriendItem[]
+---@field public Items table<FriendItem>
 ---@field public OnIndexChanged fun(index: number)
 ---@field public AddPlayer fun(self: PlayerListColumn, item: FriendItem)
 
@@ -27,7 +27,7 @@ function PlayerListColumn.New(label, color)
         Order = 0,
         Parent = nil,
         ParentTab = 0,
-        Items = {},
+        Items = {} --[[@type table<number, FriendItem>]],
         OnIndexChanged = function(index)
         end
     }
