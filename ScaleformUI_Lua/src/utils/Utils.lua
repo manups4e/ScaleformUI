@@ -119,3 +119,21 @@ function FormatXWYH(Value, Value2)
     local w, h = ResolutionMaintainRatio()
     return Value / w, Value2 / h
 end
+
+---Returns the magnitude of the vector.
+---@param vector vector3 -- The vector to get the magnitude of.
+---@return number
+function GetVectorMagnitude(vector)
+    return Sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z)
+end
+
+---Returns true if the vector is inside the sphere, false otherwise.
+---@param vector vector3 -- The vector to check.
+---@param position vector3 -- The position of the sphere.
+---@param scale vector3 -- The scale of the sphere.
+---@return boolean
+function IsVectorInsideSphere(vector, position, scale)
+    local distance = (vector - position)
+    local radius = GetVectorMagnitude(scale) / 2
+    return GetVectorMagnitude(distance) <= radius
+end

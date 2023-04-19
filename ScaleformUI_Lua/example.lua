@@ -952,7 +952,8 @@ end
 CreateThread(function()
     local pos = GetEntityCoords(PlayerPedId(), true)
     --type, position, scale, distance, color, placeOnGround, bobUpDown, rotate, faceCamera, checkZ
-    local marker = Marker.New(1, pos, vector3(2, 2, 2), 100.0, { R = 0, G = 100, B = 50, A = 255 }, true, false, false,
+    local marker = Marker.New(1, pos, vector3(2.0, 2.0, 2.0), 100.0, { R = 0, G = 100, B = 50, A = 255 }, true, false,
+        false,
         false, true)
     -- example for working timerBars.. you can disable them by setting :Enabled(false).. to hide and show them while drawing :)
     local textBar = TextTimerBar.New("Label", "Caption")

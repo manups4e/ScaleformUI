@@ -77,8 +77,10 @@ function Marker:Draw()
     local posDif = pedPos - self.Position
     local distanceSquared = (posDif.x * posDif.x) + (posDif.y * posDif.y) + (posDif.z * posDif.z)
     if (self.CheckZ) then
-        self.IsInMarker = distanceSquared <= (self.Scale.x / 2) ^ 2 or distanceSquared <= (self.Scale.y / 2) ^ 2 or
-            distanceSquared <= (self.Scale.z / 2) ^ 2
+        -- unknown reason as to why this stopped working as well as it should.
+        -- self.IsInMarker = distanceSquared <= (self.Scale.x / 2) ^ 2 or distanceSquared <= (self.Scale.y / 2) ^ 2 or
+        --     distanceSquared <= (self.Scale.z / 2) ^ 2
+        self.IsInMarker = IsVectorInsideSphere(pedPos, self.Position, self.Scale)
     else
         self.IsInMarker = distanceSquared <= (self.Scale.x / 2) ^ 2 or distanceSquared <= (self.Scale.y / 2) ^ 2
     end
