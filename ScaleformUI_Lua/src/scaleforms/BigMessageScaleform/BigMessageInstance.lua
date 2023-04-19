@@ -63,6 +63,8 @@ end
 
 ---Disposes the scaleform
 function BigMessageInstance:Dispose()
+    self._start = 0
+    self._transitionExecuted = false
     self._sc:Dispose()
     self._sc = nil
 end
@@ -205,8 +207,6 @@ function BigMessageInstance:Update()
     end
 
     if self._start ~= 0 and (GlobalGameTimer - self._start) > self._duration then
-        self._start = 0
-        self._transitionExecuted = false
         self:Dispose()
     end
 end
