@@ -167,6 +167,12 @@ end
 ---@param preventAutoExpansion boolean|nil -- default false
 ---@return nil
 function BigMessageInstance:SetTransition(transition, duration, preventAutoExpansion)
+    if transition == nil then transition = "TRANSITION_OUT" end
+
+    if transition ~= "TRANSITION_UP" and transition ~= "TRANSITION_OUT" and transition ~= "TRANSITION_DOWN" then
+        transition = "TRANSITION_OUT"
+    end
+
     self._transition = transition
 
     if duration == nil then duration = 0.4 end
