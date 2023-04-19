@@ -19,15 +19,14 @@ end
 ---@field public ShowWeaponPurchasedMessage fun(self:BigMessageInstance, bigMessage:string, weaponName:string, weaponHash:number, time:number):nil
 ---@field public ShowMpMessageLarge fun(self:BigMessageInstance, msg:string, time:number):nil
 ---@field public ShowMpWastedMessage fun(self:BigMessageInstance, msg:string, time:number):nil
+---@field public SetTransition fun(self:BigMessageInstance, transition:string, duration:number):nil
 ---@field public Update fun(self:BigMessageInstance):nil
 
 ---Creates a new BigMessageInstance
 ---@return BigMessageInstance
 function BigMessageInstance.New()
     local _sc = nil --[[@type Scaleform]]
-    local _start = 0
-    local _timer = 0
-    local data = { _sc = _sc, _start = _start, _timer = _timer }
+    local data = { _sc = _sc, _start = 0, _timer = 0, _transition = "TRANSITION_OUT", _transitionDuration = 0.4 }
     return setmetatable(data, BigMessageInstance)
 end
 
@@ -153,12 +152,21 @@ function BigMessageInstance:ShowMpWastedMessage(msg, subtitle, time)
     self._timer = time
 end
 
+---Sets the transition and duration for the scaleform when it is disposed
+---@param transition string -- TRANSITION_UP, TRANSITION_OUT, TRANSITION_DOWN supported
+---@param duration number
+---@return nil
+function BigMessageInstance:SetTransition(transition, duration)
+    self._transition = transition
+    self._transitionDuration = duration + .0
+end
+
 ---Renders the scaleform and checks if the timer has expired
 ---@return nil
 function BigMessageInstance:Update()
     self._sc:Render2D()
     if self._start ~= 0 and GetGameTimer() - self._start > self._timer then
-        self._sc:CallFunction("TRANSITION_OUT", false)
+        self._sc:CallFunction(self._transition, false, self._transitionDuration)
         self._start = 0
         self:Dispose()
     end
