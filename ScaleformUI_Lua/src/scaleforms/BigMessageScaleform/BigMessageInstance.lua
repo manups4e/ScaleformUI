@@ -8,6 +8,8 @@ end
 ---@field public _sc Scaleform
 ---@field private _start number
 ---@field private _timer number
+---@field private _transition string -- TRANSITION_UP, TRANSITION_OUT, TRANSITION_DOWN supported
+---@field private _transitionDuration number -- default: 0.4
 ---@field public New fun():BigMessageInstance
 ---@field public Load fun():nil
 ---@field public Dispose fun(self:BigMessageInstance, force:boolean):nil
@@ -25,8 +27,13 @@ end
 ---Creates a new BigMessageInstance
 ---@return BigMessageInstance
 function BigMessageInstance.New()
-    local _sc = nil --[[@type Scaleform]]
-    local data = { _sc = _sc, _start = 0, _timer = 0, _transition = "TRANSITION_OUT", _transitionDuration = 0.4 }
+    local data = {
+        _sc = nil --[[@type Scaleform]],
+        _start = 0,
+        _timer = 0,
+        _transition = "TRANSITION_OUT", -- TRANSITION_UP, TRANSITION_OUT, TRANSITION_DOWN supported
+        _transitionDuration = 0.4
+    }
     return setmetatable(data, BigMessageInstance)
 end
 
