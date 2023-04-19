@@ -18,6 +18,48 @@ function CreateMenu()
     exampleMenu:AnimationType(MenuAnimationType.CUBIC_INOUT)
     pool:Add(exampleMenu)
 
+    local currentTransition = "TRANSITION_OUT"
+    local bigMessageExampleMenu = UIMenu.New("Big Message Example", "Big Message Examples", 50, 50, true, nil, nil, true)
+    exampleMenu:AddSubMenu(bigMessageExampleMenu, "Big Message Example", "Big Message Examples")
+
+    local uiItemTransitionList = UIMenuListItem.New("Transition",
+        { "TRANSITION_OUT", "TRANSITION_UP", "TRANSITION_DOWN" },
+        1,
+        "Transition type for the big message")
+    bigMessageExampleMenu:AddItem(uiItemTransitionList)
+
+    local uiItemMessageType = UIMenuListItem.New("Message Type",
+        { "Mission Passed", "Coloured Shard", "Old Message", "Simple Shard", "Rank Up", "MP Message Large",
+            "MP Wasted Message" }, 1,
+        "Message type for the big message")
+    bigMessageExampleMenu:AddItem(uiItemMessageType)
+
+    bigMessageExampleMenu.OnListSelect = function(sender, item, index)
+        if item == uiItemTransitionList then
+            currentTransition = item:IndexToItem(index)
+            ScaleformUI.Notifications:ShowNotification(string.format("Transition set to %s", currentTransition))
+        elseif item == uiItemMessageType then
+            if index == 1 then
+                ScaleformUI.Scaleforms.BigMessageInstance:ShowMissionPassedMessage("Mission Passed", 5000)
+            elseif index == 2 then
+                ScaleformUI.Scaleforms.BigMessageInstance:ShowColoredShard("Coloured Shard", "Description",
+                    Colours.HUD_COLOUR_WHITE,
+                    Colours.HUD_COLOUR_FREEMODE, 5000)
+            elseif index == 3 then
+                ScaleformUI.Scaleforms.BigMessageInstance:ShowOldMessage("Old Message", 5000)
+            elseif index == 4 then
+                ScaleformUI.Scaleforms.BigMessageInstance:ShowSimpleShard("Simple Shard", "Simple Shard Subtitle", 5000)
+            elseif index == 5 then
+                ScaleformUI.Scaleforms.BigMessageInstance:ShowRankupMessage("Rank Up", "Rank Up Subtitle", 10, 5000)
+            elseif index == 6 then
+                ScaleformUI.Scaleforms.BigMessageInstance:ShowMpMessageLarge("MP Message Large", 5000)
+            elseif index == 7 then
+                ScaleformUI.Scaleforms.BigMessageInstance:ShowMpWastedMessage("MP Wasted Message", "Subtitle", 5000)
+            end
+            ScaleformUI.Scaleforms.BigMessageInstance:SetTransition(currentTransition, 0.4, true)
+        end
+    end
+
     local ketchupItem = UIMenuCheckboxItem.New("Scrolling animation enabled?", animEnabled, 1,
         "Do you wish to enable the scrolling animation?")
     ketchupItem:LeftBadge(BadgeStyle.STAR)

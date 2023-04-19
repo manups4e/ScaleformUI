@@ -7,34 +7,46 @@ end
 ---@class BigMessageInstance
 ---@field public _sc Scaleform
 ---@field private _start number
----@field private _timer number
+---@field private _duration number
 ---@field private _transition string -- TRANSITION_UP, TRANSITION_OUT, TRANSITION_DOWN supported
 ---@field private _transitionDuration number -- default: 0.4
 ---@field private _transitionPreventAutoExpansion boolean -- default: false
+---@field private _transitionExecuted boolean -- default: false
 ---@field public New fun():BigMessageInstance
 ---@field public Load fun():nil
 ---@field public Dispose fun(self:BigMessageInstance, force:boolean):nil
----@field public ShowMissionPassedMessage fun(self:BigMessageInstance, msg:string, time:number):nil
----@field public ShowColoredShard fun(self:BigMessageInstance, msg:string, desc:string, textColor:number, bgColor:number, time:number):nil
----@field public ShowOldMessage fun(self:BigMessageInstance, msg:string, time:number):nil
----@field public ShowSimpleShard fun(self:BigMessageInstance, msg:string, subtitle:string, time:number):nil
----@field public ShowRankupMessage fun(self:BigMessageInstance, msg:string, subtitle:string, rank:number, time:number):nil
----@field public ShowWeaponPurchasedMessage fun(self:BigMessageInstance, bigMessage:string, weaponName:string, weaponHash:number, time:number):nil
----@field public ShowMpMessageLarge fun(self:BigMessageInstance, msg:string, time:number):nil
----@field public ShowMpWastedMessage fun(self:BigMessageInstance, msg:string, time:number):nil
----@field public SetTransition fun(self:BigMessageInstance, transition:string, duration:number):nil
+---@field public ShowMissionPassedMessage fun(self:BigMessageInstance, msg:string, duration:number):nil
+---@field public ShowColoredShard fun(self:BigMessageInstance, msg:string, desc:string, textColor:number, bgColor:number, duration:number):nil
+---@field public ShowOldMessage fun(self:BigMessageInstance, msg:string, duration:number):nil
+---@field public ShowSimpleShard fun(self:BigMessageInstance, msg:string, subtitle:string, duration:number):nil
+---@field public ShowRankupMessage fun(self:BigMessageInstance, msg:string, subtitle:string, rank:number, duration:number):nil
+---@field public ShowWeaponPurchasedMessage fun(self:BigMessageInstance, bigMessage:string, weaponName:string, weaponHash:number, duration:number):nil
+---@field public ShowMpMessageLarge fun(self:BigMessageInstance, msg:string, duration:number):nil
+---@field public ShowMpWastedMessage fun(self:BigMessageInstance, msg:string, subtitle:string, duration:number):nil
+---@field public SetTransition fun(self:BigMessageInstance, transition:string, duration:number, preventAutoExpansion:boolean):nil
 ---@field public Update fun(self:BigMessageInstance):nil
 
+--[[
+    SHOW_MISSION_PASSED_MESSAGE - TRANSITION_OUT,
+    SHOW_SHARD_CENTERED_MP_MESSAGE - TRANSITION_OUT,
+    SHOW_MISSION_PASSED_MESSAGE - TRANSITION_OUT,
+    SHOW_SHARD_CREW_RANKUP_MP_MESSAGE - TRANSITION_OUT,
+    SHOW_BIG_MP_MESSAGE - TRANSITION_OUT,
+    SHOW_WEAPON_PURCHASED - TRANSITION_OUT,
+    SHOW_CENTERED_MP_MESSAGE_LARGE - TRANSITION_OUT,
+    SHOW_SHARD_WASTED_MP_MESSAGE - TRANSITION_OUT,
+]]
 ---Creates a new BigMessageInstance
 ---@return BigMessageInstance
 function BigMessageInstance.New()
     local data = {
         _sc = nil --[[@type Scaleform]],
         _start = 0,
-        _timer = 0,
+        _duration = 0,
         _transition = "TRANSITION_OUT", -- TRANSITION_UP, TRANSITION_OUT, TRANSITION_DOWN supported
-        _transitionDuration = 0.4,
-        _transitionPreventAutoExpansion = false
+        _transitionDuration = 0.15,
+        _transitionPreventAutoExpansion = false,
+        _transitionExecuted = false
     }
     return setmetatable(data, BigMessageInstance)
 end
@@ -57,14 +69,14 @@ end
 
 ---Runs the SHOW_MISSION_PASSED_MESSAGE method on the scaleform
 ---@param msg string
----@param time number
+---@param duration number
 ---@return nil
-function BigMessageInstance:ShowMissionPassedMessage(msg, time)
-    if time == nil then time = 5000 end
+function BigMessageInstance:ShowMissionPassedMessage(msg, duration)
+    if duration == nil then duration = 5000 end
     self:Load()
     self._start = GlobalGameTimer
     self._sc:CallFunction("SHOW_MISSION_PASSED_MESSAGE", false, msg, "", 100, true, 0, true)
-    self._timer = time
+    self._duration = duration
 end
 
 ---Runs the SHOW_SHARD_CENTERED_MP_MESSAGE message on the scaleform
@@ -72,93 +84,93 @@ end
 ---@param desc string
 ---@param textColor Colours
 ---@param bgColor Colours
----@param time number
+---@param duration number
 ---@return nil
-function BigMessageInstance:ShowColoredShard(msg, desc, textColor, bgColor, time)
-    if time == nil then time = 5000 end
+function BigMessageInstance:ShowColoredShard(msg, desc, textColor, bgColor, duration)
+    if duration == nil then duration = 5000 end
     self:Load()
     self._start = GlobalGameTimer
     self._sc:CallFunction("SHOW_SHARD_CENTERED_MP_MESSAGE", false, msg, desc, bgColor, textColor)
-    self._timer = time
+    self._duration = duration
 end
 
 ---Runs the SHOW_MISSION_PASSED_MESSAGE method on the scaleform
 ---@param msg string
----@param time number
+---@param duration number
 ---@return nil
-function BigMessageInstance:ShowOldMessage(msg, time)
-    if time == nil then time = 5000 end
+function BigMessageInstance:ShowOldMessage(msg, duration)
+    if duration == nil then duration = 5000 end
     self:Load()
     self._start = GlobalGameTimer
     self._sc:CallFunction("SHOW_MISSION_PASSED_MESSAGE", false, msg)
-    self._timer = time
+    self._duration = duration
 end
 
 ---Runs the SHOW_SHARD_CREW_RANKUP_MP_MESSAGE method on the scaleform
 ---@param msg string
 ---@param subtitle string
----@param time number
+---@param duration number
 ---@return nil
-function BigMessageInstance:ShowSimpleShard(msg, subtitle, time)
-    if time == nil then time = 5000 end
+function BigMessageInstance:ShowSimpleShard(msg, subtitle, duration)
+    if duration == nil then duration = 5000 end
     self:Load()
     self._start = GlobalGameTimer
     self._sc:CallFunction("SHOW_SHARD_CREW_RANKUP_MP_MESSAGE", false, msg, subtitle)
-    self._timer = time
+    self._duration = duration
 end
 
 ---Runs the SHOW_BIG_MP_MESSAGE method on the scaleform
 ---@param msg string
 ---@param subtitle string
 ---@param rank number
----@param time number
+---@param duration number
 ---@return nil
-function BigMessageInstance:ShowRankupMessage(msg, subtitle, rank, time)
-    if time == nil then time = 5000 end
+function BigMessageInstance:ShowRankupMessage(msg, subtitle, rank, duration)
+    if duration == nil then duration = 5000 end
     self:Load()
     self._start = GlobalGameTimer
     self._sc:CallFunction("SHOW_BIG_MP_MESSAGE", false, msg, subtitle, rank, "", "")
-    self._timer = time
+    self._duration = duration
 end
 
 ---Runs the SHOW_WEAPON_PURCHASED method on the scaleform
 ---@param bigMessage string
 ---@param weaponName string
 ---@param weaponHash number
----@param time number
+---@param duration number
 ---@return nil
-function BigMessageInstance:ShowWeaponPurchasedMessage(bigMessage, weaponName, weaponHash, time)
-    if time == nil then time = 5000 end
+function BigMessageInstance:ShowWeaponPurchasedMessage(bigMessage, weaponName, weaponHash, duration)
+    if duration == nil then duration = 5000 end
     self:Load()
     self._start = GlobalGameTimer
     self._sc:CallFunction("SHOW_WEAPON_PURCHASED", false, bigMessage, weaponName, weaponHash, "", 100)
-    self._timer = time
+    self._duration = duration
 end
 
 ---Runs the SHOW_CENTERED_MP_MESSAGE_LARGE method on the scaleform
 ---@param msg string
----@param time number
+---@param duration number
 ---@return nil
-function BigMessageInstance:ShowMpMessageLarge(msg, time)
-    if time == nil then time = 5000 end
+function BigMessageInstance:ShowMpMessageLarge(msg, duration)
+    if duration == nil then duration = 5000 end
     self:Load()
     self._start = GlobalGameTimer
     self._sc:CallFunction("SHOW_CENTERED_MP_MESSAGE_LARGE", false, msg, "", 100, true, 100)
     self._sc:CallFunction("TRANSITION_IN", false)
-    self._timer = time
+    self._duration = duration
 end
 
 ---Runs the SHOW_SHARD_WASTED_MP_MESSAGE method on the scaleform
 ---@param msg string
 ---@param subtitle string
----@param time number
+---@param duration number
 ---@return nil
-function BigMessageInstance:ShowMpWastedMessage(msg, subtitle, time)
-    if time == nil then time = 5000 end
+function BigMessageInstance:ShowMpWastedMessage(msg, subtitle, duration)
+    if duration == nil then duration = 5000 end
     self:Load()
     self._start = GlobalGameTimer
     self._sc:CallFunction("SHOW_SHARD_WASTED_MP_MESSAGE", false, msg, subtitle)
-    self._timer = time
+    self._duration = duration
 end
 
 ---Sets the transition and duration for the scaleform when it is disposed
@@ -175,7 +187,7 @@ function BigMessageInstance:SetTransition(transition, duration, preventAutoExpan
 
     self._transition = transition
 
-    if duration == nil then duration = 0.4 end
+    if duration == nil then duration = 0.15 end
     self._transitionDuration = duration + .0
 
     if preventAutoExpansion == nil then preventAutoExpansion = false end
@@ -186,9 +198,14 @@ end
 ---@return nil
 function BigMessageInstance:Update()
     self._sc:Render2D()
-    if self._start ~= 0 and GlobalGameTimer - self._start > self._timer then
+    if self._start ~= 0 and not self._transitionExecuted and GlobalGameTimer - self._start > (self._duration - ((self._transitionDuration * .5) * 1000)) then
         self._sc:CallFunction(self._transition, false, self._transitionDuration, self._transitionPreventAutoExpansion)
+        self._transitionExecuted = true
+    end
+
+    if self._start ~= 0 and (GlobalGameTimer - self._start) > (self._duration + ((self._transitionDuration * .5) * 1000)) then
         self._start = 0
+        self._transitionExecuted = false
         self:Dispose()
     end
 end
