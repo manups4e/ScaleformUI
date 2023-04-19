@@ -198,12 +198,13 @@ end
 ---@return nil
 function BigMessageInstance:Update()
     self._sc:Render2D()
-    if self._start ~= 0 and not self._transitionExecuted and GlobalGameTimer - self._start > (self._duration - ((self._transitionDuration * .5) * 1000)) then
+    -- Execute transition if it has been set and the timer has expired (minus the transition duration)
+    if self._start ~= 0 and not self._transitionExecuted and (GlobalGameTimer - self._start) > (self._duration - ((self._transitionDuration * .5) * 1000)) then
         self._sc:CallFunction(self._transition, false, self._transitionDuration, self._transitionPreventAutoExpansion)
         self._transitionExecuted = true
     end
 
-    if self._start ~= 0 and (GlobalGameTimer - self._start) > (self._duration + ((self._transitionDuration * .5) * 1000)) then
+    if self._start ~= 0 and (GlobalGameTimer - self._start) > self._duration then
         self._start = 0
         self._transitionExecuted = false
         self:Dispose()
