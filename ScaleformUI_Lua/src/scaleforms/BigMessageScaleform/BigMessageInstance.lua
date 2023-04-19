@@ -10,6 +10,7 @@ end
 ---@field private _timer number
 ---@field private _transition string -- TRANSITION_UP, TRANSITION_OUT, TRANSITION_DOWN supported
 ---@field private _transitionDuration number -- default: 0.4
+---@field private _transitionPreventAutoExpansion boolean -- default: false
 ---@field public New fun():BigMessageInstance
 ---@field public Load fun():nil
 ---@field public Dispose fun(self:BigMessageInstance, force:boolean):nil
@@ -32,7 +33,8 @@ function BigMessageInstance.New()
         _start = 0,
         _timer = 0,
         _transition = "TRANSITION_OUT", -- TRANSITION_UP, TRANSITION_OUT, TRANSITION_DOWN supported
-        _transitionDuration = 0.4
+        _transitionDuration = 0.4,
+        _transitionPreventAutoExpansion = false
     }
     return setmetatable(data, BigMessageInstance)
 end
@@ -161,11 +163,17 @@ end
 
 ---Sets the transition and duration for the scaleform when it is disposed
 ---@param transition string -- TRANSITION_UP, TRANSITION_OUT, TRANSITION_DOWN supported
----@param duration number
+---@param duration number|nil -- default 0.4
+---@param preventAutoExpansion boolean|nil -- default false
 ---@return nil
-function BigMessageInstance:SetTransition(transition, duration)
+function BigMessageInstance:SetTransition(transition, duration, preventAutoExpansion)
     self._transition = transition
+
+    if duration == nil then duration = 0.4 end
     self._transitionDuration = duration + .0
+
+    if preventAutoExpansion == nil then preventAutoExpansion = false end
+    self._transitionPreventAutoExpansion = preventAutoExpansion
 end
 
 ---Renders the scaleform and checks if the timer has expired
@@ -173,7 +181,7 @@ end
 function BigMessageInstance:Update()
     self._sc:Render2D()
     if self._start ~= 0 and GetGameTimer() - self._start > self._timer then
-        self._sc:CallFunction(self._transition, false, self._transitionDuration)
+        self._sc:CallFunction(self._transition, false, self._transitionDuration, self._transitionPreventAutoExpansion)
         self._start = 0
         self:Dispose()
     end
