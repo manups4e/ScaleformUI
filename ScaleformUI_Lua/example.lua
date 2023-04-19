@@ -22,7 +22,7 @@ function CreateMenu()
         "Do you wish to enable the scrolling animation?")
     ketchupItem:LeftBadge(BadgeStyle.STAR)
     local sidePanel = UIMissionDetailsPanel.New(1, "Side Panel", 6, true, "scaleformui", "sidepanel")
-    local detailItem1 = UIMenuFreemodeDetailsItem.New("Left Label", "Right Label", false, BadgeStyle.BRIEFCASE,
+    local detailItem1 = UIMenuFreemodeDetailsItem.New("Left Label", "<C>Right Label</C>", false, BadgeStyle.BRIEFCASE,
         Colours.HUD_COLOUR_FREEMODE)
     local detailItem2 = UIMenuFreemodeDetailsItem.New("Left Label", "Right Label", false, BadgeStyle.STAR,
         Colours.HUD_COLOUR_GOLD)
