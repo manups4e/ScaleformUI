@@ -182,7 +182,7 @@ function BigMessageInstance:SetTransition(transition, duration, preventAutoExpan
     self._transitionPreventAutoExpansion = preventAutoExpansion
 end
 
----Renders the scaleform and checks if the timer has expired
+---Renders the scaleform and checks if the timer has expired, if so it will dispose the scaleform
 ---@return nil
 function BigMessageInstance:Update()
     self._sc:Render2D()
