@@ -5,6 +5,20 @@
         "redundant-value"
     ],
     "Lua.diagnostics.globals": [
-        "Citizen"
+        "Citizen",
+        "fx_version",
+        "game",
+        "games",
+        "author",
+        "description",
+        "version",
+        "shared_script",
+        "client_script",
+        "server_script",
+        "client_scripts",
+        "server_scripts",
+        "ui_page",
+        "files",
+        "exports",
     ]
 }
