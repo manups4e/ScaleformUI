@@ -41,8 +41,8 @@ function WarningInstance:Load()
     end
 
     local timeout = 1000
-    local start = GetGameTimer()
-    while not self._sc:IsLoaded() and GetGameTimer() - start < timeout do Citizen.Wait(0) end
+    local start = GlobalGameTimer
+    while not self._sc:IsLoaded() and GlobalGameTimer - start < timeout do Citizen.Wait(0) end
 
     if self._sc:IsLoaded() then
         p:resolve()

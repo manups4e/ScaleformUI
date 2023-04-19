@@ -152,8 +152,8 @@ function MissionSelectorHandler:Load()
     if self._sc ~= nil then return end
     self._sc = Scaleform.Request("MP_NEXT_JOB_SELECTION")
     local timeout = 1000
-    local start = GetGameTimer()
-    while not self._sc:IsLoaded() and GetGameTimer() - start < timeout do Citizen.Wait(0) end
+    local start = GlobalGameTimer
+    while not self._sc:IsLoaded() and GlobalGameTimer - start < timeout do Citizen.Wait(0) end
 end
 
 local success, event_type, context, item_id

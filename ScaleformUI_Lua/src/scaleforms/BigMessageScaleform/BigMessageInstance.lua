@@ -45,8 +45,8 @@ function BigMessageInstance:Load()
     if self._sc ~= nil then return end
     self._sc = Scaleform.Request("MP_BIG_MESSAGE_FREEMODE")
     local timeout = 1000
-    local start = GetGameTimer()
-    while not self._sc:IsLoaded() and GetGameTimer() - start < timeout do Citizen.Wait(0) end
+    local start = GlobalGameTimer
+    while not self._sc:IsLoaded() and GlobalGameTimer - start < timeout do Citizen.Wait(0) end
 end
 
 ---Disposes the scaleform
@@ -62,7 +62,7 @@ end
 function BigMessageInstance:ShowMissionPassedMessage(msg, time)
     if time == nil then time = 5000 end
     self:Load()
-    self._start = GetGameTimer()
+    self._start = GlobalGameTimer
     self._sc:CallFunction("SHOW_MISSION_PASSED_MESSAGE", false, msg, "", 100, true, 0, true)
     self._timer = time
 end
@@ -77,7 +77,7 @@ end
 function BigMessageInstance:ShowColoredShard(msg, desc, textColor, bgColor, time)
     if time == nil then time = 5000 end
     self:Load()
-    self._start = GetGameTimer()
+    self._start = GlobalGameTimer
     self._sc:CallFunction("SHOW_SHARD_CENTERED_MP_MESSAGE", false, msg, desc, bgColor, textColor)
     self._timer = time
 end
@@ -89,7 +89,7 @@ end
 function BigMessageInstance:ShowOldMessage(msg, time)
     if time == nil then time = 5000 end
     self:Load()
-    self._start = GetGameTimer()
+    self._start = GlobalGameTimer
     self._sc:CallFunction("SHOW_MISSION_PASSED_MESSAGE", false, msg)
     self._timer = time
 end
@@ -102,7 +102,7 @@ end
 function BigMessageInstance:ShowSimpleShard(msg, subtitle, time)
     if time == nil then time = 5000 end
     self:Load()
-    self._start = GetGameTimer()
+    self._start = GlobalGameTimer
     self._sc:CallFunction("SHOW_SHARD_CREW_RANKUP_MP_MESSAGE", false, msg, subtitle)
     self._timer = time
 end
@@ -116,7 +116,7 @@ end
 function BigMessageInstance:ShowRankupMessage(msg, subtitle, rank, time)
     if time == nil then time = 5000 end
     self:Load()
-    self._start = GetGameTimer()
+    self._start = GlobalGameTimer
     self._sc:CallFunction("SHOW_BIG_MP_MESSAGE", false, msg, subtitle, rank, "", "")
     self._timer = time
 end
@@ -130,7 +130,7 @@ end
 function BigMessageInstance:ShowWeaponPurchasedMessage(bigMessage, weaponName, weaponHash, time)
     if time == nil then time = 5000 end
     self:Load()
-    self._start = GetGameTimer()
+    self._start = GlobalGameTimer
     self._sc:CallFunction("SHOW_WEAPON_PURCHASED", false, bigMessage, weaponName, weaponHash, "", 100)
     self._timer = time
 end
@@ -142,7 +142,7 @@ end
 function BigMessageInstance:ShowMpMessageLarge(msg, time)
     if time == nil then time = 5000 end
     self:Load()
-    self._start = GetGameTimer()
+    self._start = GlobalGameTimer
     self._sc:CallFunction("SHOW_CENTERED_MP_MESSAGE_LARGE", false, msg, "", 100, true, 100)
     self._sc:CallFunction("TRANSITION_IN", false)
     self._timer = time
@@ -156,7 +156,7 @@ end
 function BigMessageInstance:ShowMpWastedMessage(msg, subtitle, time)
     if time == nil then time = 5000 end
     self:Load()
-    self._start = GetGameTimer()
+    self._start = GlobalGameTimer
     self._sc:CallFunction("SHOW_SHARD_WASTED_MP_MESSAGE", false, msg, subtitle)
     self._timer = time
 end
@@ -186,7 +186,7 @@ end
 ---@return nil
 function BigMessageInstance:Update()
     self._sc:Render2D()
-    if self._start ~= 0 and GetGameTimer() - self._start > self._timer then
+    if self._start ~= 0 and GlobalGameTimer - self._start > self._timer then
         self._sc:CallFunction(self._transition, false, self._transitionDuration, self._transitionPreventAutoExpansion)
         self._start = 0
         self:Dispose()

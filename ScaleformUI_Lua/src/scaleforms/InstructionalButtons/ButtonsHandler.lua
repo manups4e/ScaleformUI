@@ -39,8 +39,8 @@ function ButtonsHandler:Load()
     if self._sc ~= nil then return end
     self._sc = Scaleform.Request("INSTRUCTIONAL_BUTTONS")
     local timeout = 1000
-    local start = GetGameTimer()
-    while not self._sc:IsLoaded() and GetGameTimer() - start < timeout do Citizen.Wait(0) end
+    local start = GlobalGameTimer
+    while not self._sc:IsLoaded() and GlobalGameTimer - start < timeout do Citizen.Wait(0) end
 end
 
 ---Sets the instructional buttons
@@ -83,7 +83,7 @@ function ButtonsHandler:ShowBusySpinner(spinnerType, text, time)
     if time == nil or time < 0 then time = 3000 end
     self.IsSaving = true
     self._changed = true
-    self.savingTimer = GetGameTimer()
+    self.savingTimer = GlobalGameTimer
 
     if text == nil or text == "" then
         BeginTextCommandBusyspinnerOn("PM_WAIT")
@@ -92,7 +92,7 @@ function ButtonsHandler:ShowBusySpinner(spinnerType, text, time)
         AddTextComponentSubstringPlayerName(text)
     end
     EndTextCommandBusyspinnerOn(spinnerType)
-    while GetGameTimer() - self.savingTimer <= time do Citizen.Wait(100) end
+    while GlobalGameTimer - self.savingTimer <= time do Citizen.Wait(100) end
     BusyspinnerOff()
     self.IsSaving = false
 end

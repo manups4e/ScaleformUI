@@ -378,7 +378,7 @@ function MainView:ProcessControl()
     end
 
     if (IsControlPressed(2, 172)) then
-        if GetGameTimer() - self._time > self._delay then
+        if GlobalGameTimer - self._time > self._delay then
             self:ButtonDelay()
             Citizen.CreateThread(function()
                 self:GoUp()
@@ -387,7 +387,7 @@ function MainView:ProcessControl()
         end
     end
     if (IsControlPressed(2, 173)) then
-        if GetGameTimer() - self._time > self._delay then
+        if GlobalGameTimer - self._time > self._delay then
             self:ButtonDelay()
             Citizen.CreateThread(function()
                 self:GoDown()
@@ -396,7 +396,7 @@ function MainView:ProcessControl()
         end
     end
     if (IsControlPressed(2, 174)) then
-        if GetGameTimer() - self._time > self._delay then
+        if GlobalGameTimer - self._time > self._delay then
             self:ButtonDelay()
             Citizen.CreateThread(function()
                 self:GoLeft()
@@ -405,7 +405,7 @@ function MainView:ProcessControl()
         end
     end
     if (IsControlPressed(2, 175)) then
-        if GetGameTimer() - self._time > self._delay then
+        if GlobalGameTimer - self._time > self._delay then
             self:ButtonDelay()
             Citizen.CreateThread(function()
                 self:GoRight()
@@ -454,7 +454,7 @@ function MainView:ButtonDelay()
             self._delay = 50
         end
     end
-    self._time = GetGameTimer()
+    self._time = GlobalGameTimer
 end
 
 function MainView:Select()

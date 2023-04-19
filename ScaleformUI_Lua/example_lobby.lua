@@ -26,8 +26,8 @@ local function CreateLobbyMenu()
                 "https://static.wikia.nocookie.net/gtawiki/images/4/4a/45%C2%B0-GTAO-JobImage.jpg/revision/latest?cb=20190216233424",
                 320, 180)))
         local mugshot = RegisterPedheadshot(PlayerPedId())
-        local timer = GetGameTimer()
-        while not IsPedheadshotReady(mugshot) and GetGameTimer() - timer < 1000 do
+        local timer = GlobalGameTimer
+        while not IsPedheadshotReady(mugshot) and GlobalGameTimer - timer < 1000 do
             Citizen.Wait(0)
         end
         local headshot = GetPedheadshotTxdString(mugshot)

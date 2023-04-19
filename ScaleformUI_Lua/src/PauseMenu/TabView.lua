@@ -1006,19 +1006,19 @@ function TabView:ProcessControl()
 
 
     if (IsControlPressed(2, 3) and not IsUsingKeyboard(2)) then
-        if (GetGameTimer() - self._timer > 175) then
+        if (GlobalGameTimer - self._timer > 175) then
             Citizen.CreateThread(function()
                 ScaleformUI.Scaleforms._pauseMenu:SendScrollEvent(-1)
             end)
-            self._timer = GetGameTimer()
+            self._timer = GlobalGameTimer
         end
     end
     if (IsControlPressed(2, 4) and not IsUsingKeyboard(2)) then
-        if (GetGameTimer() - self._timer > 175) then
+        if (GlobalGameTimer - self._timer > 175) then
             Citizen.CreateThread(function()
                 ScaleformUI.Scaleforms._pauseMenu:SendScrollEvent(1)
             end)
-            self._timer = GetGameTimer()
+            self._timer = GlobalGameTimer
         end
     end
 end

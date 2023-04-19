@@ -668,11 +668,11 @@ function UIMenu:BuildUpMenuAsync()
                 end
             end
         end
-        local timer = GetGameTimer()
+        local timer = GlobalGameTimer
         if #self.Items == 0 then
             while #self.Items == 0 do
                 Citizen.Wait(0)
-                if GetGameTimer() - timer > 150 then
+                if GlobalGameTimer - timer > 150 then
                     self.ActiveItem = 0
                     ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, self.ActiveItem)
                     return
@@ -828,11 +828,11 @@ function UIMenu:BuildUpMenuSync()
                 end
             end
         end
-        local timer = GetGameTimer()
+        local timer = GlobalGameTimer
         if #self.Items == 0 then
             while #self.Items == 0 do
                 Citizen.Wait(0)
-                if GetGameTimer() - timer > 150 then
+                if GlobalGameTimer - timer > 150 then
                     self.ActiveItem = 0
                     ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, self.ActiveItem)
                     return
@@ -982,7 +982,7 @@ function UIMenu:ProcessControl()
     end
 
     if self.Controls.Up.Enabled and not self._isBuilding and (IsDisabledControlPressed(0, 172) or IsDisabledControlPressed(1, 172) or IsDisabledControlPressed(2, 172) or IsDisabledControlPressed(0, 241) or IsDisabledControlPressed(1, 241) or IsDisabledControlPressed(2, 241) or IsDisabledControlPressed(2, 241)) then
-        if GetGameTimer() - self._time > self._delay then
+        if GlobalGameTimer - self._time > self._delay then
             self:ButtonDelay()
             Citizen.CreateThread(function()
                 self:GoUp()
@@ -992,7 +992,7 @@ function UIMenu:ProcessControl()
     end
 
     if self.Controls.Down.Enabled and not self._isBuilding and (IsDisabledControlPressed(0, 173) or IsDisabledControlPressed(1, 173) or IsDisabledControlPressed(2, 173) or IsDisabledControlPressed(0, 242) or IsDisabledControlPressed(1, 242) or IsDisabledControlPressed(2, 242)) then
-        if GetGameTimer() - self._time > self._delay then
+        if GlobalGameTimer - self._time > self._delay then
             self:ButtonDelay()
             Citizen.CreateThread(function()
                 self:GoDown()
@@ -1002,7 +1002,7 @@ function UIMenu:ProcessControl()
     end
 
     if self.Controls.Left.Enabled and not self._isBuilding and (IsDisabledControlPressed(0, 174) or IsDisabledControlPressed(1, 174) or IsDisabledControlPressed(2, 174)) then
-        if GetGameTimer() - self._time > self._delay then
+        if GlobalGameTimer - self._time > self._delay then
             self:ButtonDelay()
             Citizen.CreateThread(function()
                 self:GoLeft()
@@ -1012,7 +1012,7 @@ function UIMenu:ProcessControl()
     end
 
     if self.Controls.Right.Enabled and not self._isBuilding and (IsDisabledControlPressed(0, 175) or IsDisabledControlPressed(1, 175) or IsDisabledControlPressed(2, 175)) then
-        if GetGameTimer() - self._time > self._delay then
+        if GlobalGameTimer - self._time > self._delay then
             self:ButtonDelay()
             Citizen.CreateThread(function()
                 self:GoRight()
@@ -1055,7 +1055,7 @@ function UIMenu:ButtonDelay()
             self._delay = 50
         end
     end
-    self._time = GetGameTimer()
+    self._time = GlobalGameTimer
 end
 
 ---GoUp

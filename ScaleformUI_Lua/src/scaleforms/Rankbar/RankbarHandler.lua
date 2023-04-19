@@ -24,8 +24,8 @@ function RankbarHandler:Load()
 
     RequestScaleformScriptHudMovie(HUD_COMPONENT_ID)
     local timeout = 1000
-    local start = GetGameTimer()
-    while not HasScaleformScriptHudMovieLoaded(HUD_COMPONENT_ID) and GetGameTimer() - start < timeout do Citizen.Wait(0) end
+    local start = GlobalGameTimer
+    while not HasScaleformScriptHudMovieLoaded(HUD_COMPONENT_ID) and GlobalGameTimer - start < timeout do Citizen.Wait(0) end
 
     if HasScaleformScriptHudMovieLoaded(HUD_COMPONENT_ID) then
         p:resolve()

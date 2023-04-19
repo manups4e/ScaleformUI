@@ -31,8 +31,8 @@ function CountdownHandler:Load()
 
     self._sc = Scaleform.Request("COUNTDOWN")
     local timeout = 1000
-    local start = GetGameTimer()
-    while not self._sc:IsLoaded() and GetGameTimer() - start < timeout do Citizen.Wait(0) end
+    local start = GlobalGameTimer
+    while not self._sc:IsLoaded() and GlobalGameTimer - start < timeout do Citizen.Wait(0) end
 
     if self._sc:IsLoaded() then
         p:resolve()
@@ -70,16 +70,16 @@ function CountdownHandler:Start(number, hudColour, countdownAudioName, countdown
     self:Load():next(function()
         _r, _g, _b, _a = GetHudColour(hudColour)
 
-        local gameTime = GetGameTimer()
+        local gameTime = GlobalGameTimer
 
         while number >= 0 do
             Wait(0)
 
-            if GetGameTimer() - gameTime > 1000 then
+            if GlobalGameTimer - gameTime > 1000 then
                 PlaySoundFrontend(-1, countdownAudioName, countdownAudioRef, true);
                 self:ShowMessage(number)
                 number = number - 1
-                gameTime = GetGameTimer()
+                gameTime = GlobalGameTimer
             end
         end
 
@@ -87,7 +87,7 @@ function CountdownHandler:Start(number, hudColour, countdownAudioName, countdown
         self:ShowMessage("CNTDWN_GO")
         p:resolve()
 
-        if GetGameTimer() - gameTime > 1000 then
+        if GlobalGameTimer - gameTime > 1000 then
             self:Dispose()
         end
     end, function()

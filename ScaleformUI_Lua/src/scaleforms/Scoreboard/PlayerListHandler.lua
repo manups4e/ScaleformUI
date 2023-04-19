@@ -46,8 +46,8 @@ function PlayerListScoreboard:Load()
     if self._sc ~= nil then return end
     self._sc = Scaleform.Request("MP_MM_CARD_FREEMODE")
     local timeout = 1000
-    local start = GetGameTimer()
-    while not self._sc:IsLoaded() and GetGameTimer() - start < timeout do Citizen.Wait(0) end
+    local start = GlobalGameTimer
+    while not self._sc:IsLoaded() and GlobalGameTimer - start < timeout do Citizen.Wait(0) end
 end
 
 function PlayerListScoreboard:Dispose()
@@ -103,7 +103,7 @@ end
 
 function PlayerListScoreboard:Update()
     self._sc:Render2DNormal(self.X, self.Y, 0.28, 0.6)
-    if self._start ~= 0 and GetGameTimer() - self._start > self._timer then
+    if self._start ~= 0 and GlobalGameTimer - self._start > self._timer then
         self:CurrentPage(0)
         self.Enabled = false
         self._start = 0
@@ -113,7 +113,7 @@ end
 
 function PlayerListScoreboard:NextPage()
     self:UpdateMaxPages()
-    self._start = GetGameTimer()
+    self._start = GlobalGameTimer
     self._timer = self._uptime or 8000
     self:BuildMenu()
     if self:CurrentPage() > self.MaxPages then

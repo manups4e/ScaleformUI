@@ -1,3 +1,14 @@
+-- Globals
+GlobalGameTimer = GetGameTimer() --[[@type number]] -- GlobalGameTimer is used in many places, so we'll just define it here.
+
+--Update GlobalGameTimer every 100ms, so we don't have to call GetGameTimer() every time we need it.
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(100)
+        GlobalGameTimer = GetGameTimer()
+    end
+end)
+
 ---starts
 ---@param Str string
 ---@param Start string
