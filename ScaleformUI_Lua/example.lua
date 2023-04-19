@@ -95,7 +95,7 @@ function CreateMenu()
     exampleMenu:AddItem(seperatorItem1)
     exampleMenu:AddItem(seperatorItem2)
 
-    local foodsList     = { "Banana", "Apple", "Pizza", "Quartilicious" }
+    local foodsList     = { "Banana", "<C>Apple</C>", "Pizza", "Quartilicious" }
     local colorListItem = UIMenuListItem.New("Colored ListItem.. Really?", foodsList, 0,
         "~BLIP_BARBER~ ~BLIP_INFO_ICON~ ~BLIP_TANK~ ~BLIP_OFFICE~ ~BLIP_CRIM_DRUGS~ ~BLIP_WAYPOINT~ ~INPUTGROUP_MOVE~~n~You can use Blips and Inputs in description as you prefer!"
         , 21, 24)
