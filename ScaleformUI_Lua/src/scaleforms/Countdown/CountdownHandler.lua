@@ -73,12 +73,12 @@ function CountdownHandler:ShowMessage(message)
 end
 
 ---Starts the countdown
----@param number number|nil (optional) - The number to start the countdown from
----@param hudColour number|nil (optional) - The hud colour to use for the countdown
----@param countdownAudioName string|nil (optional) - The audio name to play for each number
----@param countdownAudioRef string|nil (optional) - The audio ref to play for each number
----@param goAudioName string|nil (optional) - The audio name to play when the countdown is finished
----@param goAudioRef string|nil (optional) - The audio ref to play when the countdown is finished
+---@param number number|nil - The number to start the countdown from
+---@param hudColour number|nil - The hud colour to use for the countdown
+---@param countdownAudioName string|nil - The audio name to play for each number
+---@param countdownAudioRef string|nil - The audio ref to play for each number
+---@param goAudioName string|nil - The audio name to play when the countdown is finished
+---@param goAudioRef string|nil - The audio ref to play when the countdown is finished
 ---@return promise
 function CountdownHandler:Start(number, hudColour, countdownAudioName, countdownAudioRef, goAudioName, goAudioRef)
     local p = promise.new()
