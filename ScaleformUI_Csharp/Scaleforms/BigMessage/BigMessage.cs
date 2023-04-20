@@ -1,6 +1,4 @@
 ﻿using CitizenFX.Core;
-using System;
-using System.Threading.Tasks;
 
 namespace ScaleformUI
 {
@@ -9,6 +7,11 @@ namespace ScaleformUI
         internal Scaleform _sc;
         private int _start;
         private int _timer;
+
+        private string _transition = "TRANSITION_OUT";
+        private float _transitionDuration = 0.15f;
+        private bool _transitionPreventAutoExpansion = false;
+        private bool _transitionExecuted = false;
 
         public BigMessageHandler()
         {
@@ -26,6 +29,8 @@ namespace ScaleformUI
 
         public void Dispose()
         {
+            _transitionExecuted = false;
+            _start = 0;
             _sc.Dispose();
             _sc = null;
         }
@@ -94,19 +99,34 @@ namespace ScaleformUI
             _sc.CallFunction("SHOW_SHARD_WASTED_MP_MESSAGE", msg, sub);
             _timer = time;
         }
+
         public async void ShowCustomShard(string funcName, params object[] paremeters)
         {
             await Load();
             _sc.CallFunction(funcName, paremeters);
         }
 
+        public void SetTransition(string transition, float duration = 0.4f, bool preventAutoExpansion = true)
+        {
+            // Only TRANSITION_OUT, TRANSITION_UP, and TRANSITION_DOWN are valid transitions
+            if (transition == "TRANSITION_IN")
+                transition = "TRANSITION_OUT";
+
+            _transition = transition;
+            _transitionDuration = duration;
+            _transitionPreventAutoExpansion = preventAutoExpansion;
+        }
+
         internal void Update()
         {
             _sc.Render2D();
+            if (_start != 0 && Game.GameTime - _start > (_timer - (_transitionDuration * .5) * 1000) && !_transitionExecuted)
+            {
+                _sc.CallFunction(_transition, _transitionDuration, _transitionPreventAutoExpansion);
+                _transitionExecuted = true;
+            }
             if (_start != 0 && Game.GameTime - _start > _timer)
             {
-                _sc.CallFunction("TRANSITION_OUT");
-                _start = 0;
                 Dispose();
             }
         }

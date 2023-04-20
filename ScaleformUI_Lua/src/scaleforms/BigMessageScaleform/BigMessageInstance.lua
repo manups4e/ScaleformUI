@@ -178,7 +178,7 @@ end
 ---Sets the transition and duration for the scaleform when it is disposed
 ---@param transition string -- TRANSITION_UP, TRANSITION_OUT, TRANSITION_DOWN supported
 ---@param duration number|nil -- default 0.4
----@param preventAutoExpansion boolean|nil -- default false
+---@param preventAutoExpansion boolean|nil -- default true
 ---@return nil
 function BigMessageInstance:SetTransition(transition, duration, preventAutoExpansion)
     if transition == nil then transition = "TRANSITION_OUT" end
@@ -192,7 +192,7 @@ function BigMessageInstance:SetTransition(transition, duration, preventAutoExpan
     if duration == nil then duration = 0.15 end
     self._transitionDuration = duration + .0
 
-    if preventAutoExpansion == nil then preventAutoExpansion = false end
+    if preventAutoExpansion == nil then preventAutoExpansion = true end
     self._transitionPreventAutoExpansion = preventAutoExpansion
 end
 
