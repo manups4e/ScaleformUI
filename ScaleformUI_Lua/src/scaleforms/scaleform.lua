@@ -5,15 +5,15 @@ Scaleform.__call = function()
 end
 
 ---@class Scaleform
----@field public CallFunction fun(self: table, theFunction:string, returndata:boolean, ...:any):nil|number
----@field public Dispose fun(self: table):nil
----@field public IsLoaded fun(self: table):boolean
----@field public IsValid fun(self: table):boolean
----@field public Render2D fun(self: table):nil
----@field public Render2DNormal fun(self: table, x:number, y:number, width:number, height:number):nil
----@field public Render3D fun(self: table, x:number, y:number, z:number, rx:number, ry:number, rz:number, scale:number):nil
----@field public Render3DAdditive fun(self: table, x:number, y:number, z:number, rx:number, ry:number, rz:number, scale:number):nil
----@field private handle number
+---@field public CallFunction fun(self:Scaleform, theFunction:string, returndata:boolean, ...:any):nil|number
+---@field public Dispose fun(self:Scaleform):nil
+---@field public IsLoaded fun(self:Scaleform):boolean
+---@field public IsValid fun(self:Scaleform):boolean
+---@field public Render2D fun(self:Scaleform):nil
+---@field public Render2DNormal fun(self:Scaleform, x:number, y:number, width:number, height:number):nil
+---@field public Render3D fun(self:Scaleform, x:number, y:number, z:number, rx:number, ry:number, rz:number, scale:number):nil
+---@field public Render3DAdditive fun(self:Scaleform, x:number, y:number, z:number, rx:number, ry:number, rz:number, scale:number):nil
+---@field public handle number
 
 ---Create a new scaleform instance
 ---@param Name string
@@ -29,11 +29,11 @@ function Scaleform.Request(Name)
 end
 
 ---Call a function on the scaleform
----@param theFunction string
----@param returndata boolean
----@vararg any
+---@param theFunction string -- The name of the function to call
+---@param returndata boolean -- If true, returns the return value of the function
+---@vararg any -- The arguments to pass to the function
 ---@return nil|number -- If returndata is true, returns the return value of the function
-function Scaleform:CallFunction(theFunction --[[@as string]], returndata --[[@as boolean]], ...)
+function Scaleform:CallFunction(theFunction, returndata, ...)
     BeginScaleformMovieMethod(self.handle, theFunction)
     local arg = { ... }
     if arg ~= nil then

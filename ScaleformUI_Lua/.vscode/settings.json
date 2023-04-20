@@ -2,6 +2,23 @@
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
     "Lua.diagnostics.disable": [
-        "undefined-global"
+        "redundant-value"
+    ],
+    "Lua.diagnostics.globals": [
+        "Citizen",
+        "fx_version",
+        "game",
+        "games",
+        "author",
+        "description",
+        "version",
+        "shared_script",
+        "client_script",
+        "server_script",
+        "client_scripts",
+        "server_scripts",
+        "ui_page",
+        "files",
+        "exports",
     ]
 }

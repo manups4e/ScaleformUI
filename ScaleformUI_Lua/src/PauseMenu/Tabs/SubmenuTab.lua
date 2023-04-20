@@ -4,6 +4,8 @@ SubmenuTab.__call = function()
     return "BaseTab", "SubmenuTab"
 end
 
+---@class SubmenuTab
+
 function SubmenuTab.New(name)
     local data = {
         Base = BaseTab.New(name or "", 1),

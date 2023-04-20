@@ -1,3 +1,4 @@
+---@diagnostic disable: missing-parameter
 local pool = MenuPool.New()
 local animEnabled = true
 local timerBarPool = TimerBarPool.New()
@@ -9,16 +10,61 @@ function CreateMenu()
 
     local exampleMenu = UIMenu.New("ScaleformUI UI", "ScaleformUI SHOWCASE", 50, 50, true, nil, nil, true)
     exampleMenu:MaxItemsOnScreen(7)
+    exampleMenu:MouseControlsEnabled(true)
+    exampleMenu:MouseEdgeEnabled(false)
+    exampleMenu:ControlDisablingEnabled(true)
     exampleMenu:BuildAsync(true) -- set to false to build in a sync way (might freeze game for a couple ms for high N of items in menus)
     exampleMenu:BuildingAnimation(MenuBuildingAnimation.LEFT_RIGHT)
     exampleMenu:AnimationType(MenuAnimationType.CUBIC_INOUT)
     pool:Add(exampleMenu)
 
+    local currentTransition = "TRANSITION_OUT"
+    local bigMessageExampleMenu = UIMenu.New("Big Message Example", "Big Message Examples", 50, 50, true, nil, nil, true)
+    exampleMenu:AddSubMenu(bigMessageExampleMenu, "Big Message Example", "Big Message Examples")
+
+    local uiItemTransitionList = UIMenuListItem.New("Transition",
+        { "TRANSITION_OUT", "TRANSITION_UP", "TRANSITION_DOWN" },
+        1,
+        "Transition type for the big message")
+    bigMessageExampleMenu:AddItem(uiItemTransitionList)
+
+    local uiItemMessageType = UIMenuListItem.New("Message Type",
+        { "Mission Passed", "Coloured Shard", "Old Message", "Simple Shard", "Rank Up", "MP Message Large",
+            "MP Wasted Message" }, 1,
+        "Message type for the big message")
+    bigMessageExampleMenu:AddItem(uiItemMessageType)
+
+    bigMessageExampleMenu.OnListSelect = function(sender, item, index)
+        if item == uiItemTransitionList then
+            currentTransition = item:IndexToItem(index)
+            ScaleformUI.Notifications:ShowNotification(string.format("Transition set to %s", currentTransition))
+        elseif item == uiItemMessageType then
+            if index == 1 then
+                ScaleformUI.Scaleforms.BigMessageInstance:ShowMissionPassedMessage("Mission Passed", 5000)
+            elseif index == 2 then
+                ScaleformUI.Scaleforms.BigMessageInstance:ShowColoredShard("Coloured Shard", "Description",
+                    Colours.HUD_COLOUR_WHITE,
+                    Colours.HUD_COLOUR_FREEMODE, 5000)
+            elseif index == 3 then
+                ScaleformUI.Scaleforms.BigMessageInstance:ShowOldMessage("Old Message", 5000)
+            elseif index == 4 then
+                ScaleformUI.Scaleforms.BigMessageInstance:ShowSimpleShard("Simple Shard", "Simple Shard Subtitle", 5000)
+            elseif index == 5 then
+                ScaleformUI.Scaleforms.BigMessageInstance:ShowRankupMessage("Rank Up", "Rank Up Subtitle", 10, 5000)
+            elseif index == 6 then
+                ScaleformUI.Scaleforms.BigMessageInstance:ShowMpMessageLarge("MP Message Large", 5000)
+            elseif index == 7 then
+                ScaleformUI.Scaleforms.BigMessageInstance:ShowMpWastedMessage("MP Wasted Message", "Subtitle", 5000)
+            end
+            ScaleformUI.Scaleforms.BigMessageInstance:SetTransition(currentTransition, 0.4, true)
+        end
+    end
+
     local ketchupItem = UIMenuCheckboxItem.New("Scrolling animation enabled?", animEnabled, 1,
         "Do you wish to enable the scrolling animation?")
     ketchupItem:LeftBadge(BadgeStyle.STAR)
     local sidePanel = UIMissionDetailsPanel.New(1, "Side Panel", 6, true, "scaleformui", "sidepanel")
-    local detailItem1 = UIMenuFreemodeDetailsItem.New("Left Label", "Right Label", false, BadgeStyle.BRIEFCASE,
+    local detailItem1 = UIMenuFreemodeDetailsItem.New("Left Label", "<C>Right Label</C>", false, BadgeStyle.BRIEFCASE,
         Colours.HUD_COLOUR_FREEMODE)
     local detailItem2 = UIMenuFreemodeDetailsItem.New("Left Label", "Right Label", false, BadgeStyle.STAR,
         Colours.HUD_COLOUR_GOLD)
@@ -91,7 +137,7 @@ function CreateMenu()
     exampleMenu:AddItem(seperatorItem1)
     exampleMenu:AddItem(seperatorItem2)
 
-    local foodsList     = { "Banana", "Apple", "Pizza", "Quartilicious" }
+    local foodsList     = { "Banana", "<C>Apple</C>", "Pizza", "Quartilicious" }
     local colorListItem = UIMenuListItem.New("Colored ListItem.. Really?", foodsList, 0,
         "~BLIP_BARBER~ ~BLIP_INFO_ICON~ ~BLIP_TANK~ ~BLIP_OFFICE~ ~BLIP_CRIM_DRUGS~ ~BLIP_WAYPOINT~ ~INPUTGROUP_MOVE~~n~You can use Blips and Inputs in description as you prefer!"
         , 21, 24)
@@ -130,10 +176,24 @@ function CreateMenu()
     exampleMenu:AddItem(listPanelItem4)
     listPanelItem4:AddPanel(statisticsPanel)
 
+    listPanelItem4.OnListChanged = function(menu, item, newIndex)
+        if (newIndex == 1) then
+            ScaleformUI.Notifications:ShowNotification("Update Statistics Panel Item 1")
+            statisticsPanel:UpdateStatistic(1, 10.0)
+            statisticsPanel:UpdateStatistic(2, 50.0)
+            statisticsPanel:UpdateStatistic(3, 100.0)
+        elseif (newIndex == 2) then
+            ScaleformUI.Notifications:ShowNotification("Update Statistics Panel Item 2")
+            statisticsPanel:UpdateStatistic(1, 100.0)
+            statisticsPanel:UpdateStatistic(2, 75.0)
+            statisticsPanel:UpdateStatistic(3, 25.0)
+        end
+    end
+
     --[[
-        2 ways to add submenus.. 
+        2 ways to add submenus..
         - the old way => local submenu = pool:AddSubMenu(parent, ...)
-        - way.New => 
+        - way.New =>
             local subMenu = UIMenu.New()
             parent:AddSubMenu(subMenu, itemText, itemDescription, offset, KeepBanner)
     ]]
@@ -143,10 +203,12 @@ function CreateMenu()
     local detailsWindow = UIMenuDetailsWindow.New("Parents resemblance", "Dad:", "Mom:", true, {})
     windowSubmenu:AddWindow(heritageWindow)
     windowSubmenu:AddWindow(detailsWindow)
-    local momNames = { "Hannah", "Audrey", "Jasmine", "Giselle", "Amelia", "Isabella", "Zoe", "Ava", "Camilla", "Violet",
+    local momNames           = { "Hannah", "Audrey", "Jasmine", "Giselle", "Amelia", "Isabella", "Zoe", "Ava", "Camilla",
+        "Violet",
         "Sophia", "Eveline", "Nicole", "Ashley", "Grace", "Brianna", "Natalie", "Olivia", "Elizabeth", "Charlotte",
         "Emma", "Misty" }
-    local dadNames = { "Benjamin", "Daniel", "Joshua", "Noah", "Andrew", "Joan", "Alex", "Isaac", "Evan", "Ethan",
+    local dadNames           = { "Benjamin", "Daniel", "Joshua", "Noah", "Andrew", "Joan", "Alex", "Isaac", "Evan",
+        "Ethan",
         "Vincent", "Angel", "Diego", "Adrian", "Gabriel", "Michael", "Santiago", "Kevin", "Louis", "Samuel", "Anthony",
         "Claude", "Niko", "John" }
 
@@ -265,32 +327,43 @@ function CreatePauseMenu()
     local txd = GetPedheadshotTxdString(handle)
     pauseMenuExample:HeaderPicture(txd, txd) -- pauseMenuExample:CrewPicture used to add a picture on the left of the HeaderPicture
     print("PedHandle => " .. handle)
-    UnregisterPedheadshot(handle) -- call it right after adding the menu.. this way the txd will be loaded correctly by the scaleform..
+    UnregisterPedheadshot(handle)            -- call it right after adding the menu.. this way the txd will be loaded correctly by the scaleform..
 
     pool:AddPauseMenu(pauseMenuExample)
 
     local basicTab = TextTab.New("TEXTTAB", "This is the Title!")
-    basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
-    basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~r~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
-    basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~b~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
-    basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~g~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
-    basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
-    basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
-    basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
-    basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
-    basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
-    basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
-    basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+    basicTab:AddItem(BasicTabItem.New(
+        "~BLIP_INFO_ICON~ ~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+    basicTab:AddItem(BasicTabItem.New(
+        "~BLIP_INFO_ICON~ ~r~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+    basicTab:AddItem(BasicTabItem.New(
+        "~BLIP_INFO_ICON~ ~b~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+    basicTab:AddItem(BasicTabItem.New(
+        "~BLIP_INFO_ICON~ ~g~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+    basicTab:AddItem(BasicTabItem.New(
+        "~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+    basicTab:AddItem(BasicTabItem.New(
+        "~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+    basicTab:AddItem(BasicTabItem.New(
+        "~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+    basicTab:AddItem(BasicTabItem.New(
+        "~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+    basicTab:AddItem(BasicTabItem.New(
+        "~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+    basicTab:AddItem(BasicTabItem.New(
+        "~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+    basicTab:AddItem(BasicTabItem.New(
+        "~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
     basicTab:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"))
     pauseMenuExample:AddTab(basicTab)
 
-    local multiItemTab = SubmenuTab.New("SUBMENUTAB") -- this is the tab with multiple sub menus in it.. each submenu has a different purpose
+    local multiItemTab = SubmenuTab.New("SUBMENUTAB")                        -- this is the tab with multiple sub menus in it.. each submenu has a different purpose
     pauseMenuExample:AddTab(multiItemTab)
-    local first = TabLeftItem.New("1 - Empty", LeftItemType.Empty) -- empty item..
-    local second = TabLeftItem.New("2 - Info", LeftItemType.Info) -- info (like briefings..)
+    local first = TabLeftItem.New("1 - Empty", LeftItemType.Empty)           -- empty item..
+    local second = TabLeftItem.New("2 - Info", LeftItemType.Info)            -- info (like briefings..)
     local third = TabLeftItem.New("3 - Statistics", LeftItemType.Statistics) -- for statistics
-    local fourth = TabLeftItem.New("4 - Settings", LeftItemType.Settings) -- well.. settings..
-    local fifth = TabLeftItem.New("5 - Keymaps", LeftItemType.Keymap) -- keymaps for custom keymapping
+    local fourth = TabLeftItem.New("4 - Settings", LeftItemType.Settings)    -- well.. settings..
+    local fifth = TabLeftItem.New("5 - Keymaps", LeftItemType.Keymap)        -- keymaps for custom keymapping
     first:Enabled(false)
     multiItemTab:AddLeftItem(first)
     multiItemTab:AddLeftItem(second)
@@ -299,17 +372,28 @@ function CreatePauseMenu()
     multiItemTab:AddLeftItem(fifth)
 
     second.TextTitle = "Info Title!!"
-    second:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
-    second:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~r~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
-    second:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~b~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
-    second:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~g~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
-    second:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
-    second:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
-    second:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
-    second:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
-    second:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
-    second:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
-    second:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+    second:AddItem(BasicTabItem.New(
+        "~BLIP_INFO_ICON~ ~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+    second:AddItem(BasicTabItem.New(
+        "~BLIP_INFO_ICON~ ~r~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+    second:AddItem(BasicTabItem.New(
+        "~BLIP_INFO_ICON~ ~b~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+    second:AddItem(BasicTabItem.New(
+        "~BLIP_INFO_ICON~ ~g~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+    second:AddItem(BasicTabItem.New(
+        "~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+    second:AddItem(BasicTabItem.New(
+        "~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+    second:AddItem(BasicTabItem.New(
+        "~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+    second:AddItem(BasicTabItem.New(
+        "~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+    second:AddItem(BasicTabItem.New(
+        "~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+    second:AddItem(BasicTabItem.New(
+        "~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
+    second:AddItem(BasicTabItem.New(
+        "~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
     second:AddItem(BasicTabItem.New("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"))
 
     local _labelStatItem = StatsTabItem.NewBasic("Item's Label", "Item's right label")
@@ -372,13 +456,13 @@ function CreatePauseMenu()
     playersTab.SettingsColumn:AddSettings(item4)
 
     local friend = FriendItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_GREEN, true, GetRandomIntInRange(15, 55)
-        , "Status", "CrewTag")
+    , "Status", "CrewTag")
     local friend1 = FriendItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_MENU_YELLOW, true,
         GetRandomIntInRange(15, 55), "Status", "CrewTag")
     local friend2 = FriendItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_PINK, true, GetRandomIntInRange(15, 55)
-        , "Status", "CrewTag")
+    , "Status", "CrewTag")
     local friend3 = FriendItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_BLUE, true, GetRandomIntInRange(15, 55)
-        , "Status", "CrewTag")
+    , "Status", "CrewTag")
     local friend4 = FriendItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_ORANGE, true,
         GetRandomIntInRange(15, 55), "Status", "CrewTag")
     local friend5 = FriendItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_RED, true, GetRandomIntInRange(15, 55),
@@ -390,7 +474,7 @@ function CreatePauseMenu()
     friend4:SetLeftIcon(BadgeStyle.COUNTRY_ITALY, true)
     friend5:SetLeftIcon(BadgeStyle.CASTLE, true)
 
-    friend:AddPedToPauseMenu(PlayerPedId()) -- defaulted to 0 if you set it to nil / 0 the ped will be removed from the pause menu
+    friend:AddPedToPauseMenu(PlayerPedId())  -- defaulted to 0 if you set it to nil / 0 the ped will be removed from the pause menu
     friend1:AddPedToPauseMenu(PlayerPedId()) -- defaulted to 0 if you set it to nil / 0 the ped will be removed from the pause menu
     friend2:AddPedToPauseMenu(PlayerPedId()) -- defaulted to 0 if you set it to nil / 0 the ped will be removed from the pause menu
     friend3:AddPedToPauseMenu(PlayerPedId()) -- defaulted to 0 if you set it to nil / 0 the ped will be removed from the pause menu
@@ -569,7 +653,7 @@ function CreateLobbyMenu()
     local txd = GetPedheadshotTxdString(handle)
     lobbyMenu:HeaderPicture(txd, txd) -- lobbyMenu:CrewPicture used to add a picture on the left of the HeaderPicture
 
-    UnregisterPedheadshot(handle) -- call it right after adding the menu.. this way the txd will be loaded correctly by the scaleform..
+    UnregisterPedheadshot(handle)     -- call it right after adding the menu.. this way the txd will be loaded correctly by the scaleform..
 
     pool:AddPauseMenu(lobbyMenu)
     lobbyMenu:CanPlayerCloseMenu(true)
@@ -591,9 +675,9 @@ function CreateLobbyMenu()
     local friend1 = FriendItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_MENU_YELLOW, true,
         GetRandomIntInRange(15, 55), "Status", "CrewTag")
     local friend2 = FriendItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_PINK, true, GetRandomIntInRange(15, 55)
-        , "Status", "CrewTag")
+    , "Status", "CrewTag")
     local friend3 = FriendItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_BLUE, true, GetRandomIntInRange(15, 55)
-        , "Status", "CrewTag")
+    , "Status", "CrewTag")
     local friend4 = FriendItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_ORANGE, true,
         GetRandomIntInRange(15, 55), "Status", "CrewTag")
     local friend5 = FriendItem.New(GetPlayerName(PlayerId()), Colours.HUD_COLOUR_RED, true, GetRandomIntInRange(15, 55),
@@ -605,7 +689,7 @@ function CreateLobbyMenu()
     friend4:SetLeftIcon(BadgeStyle.COUNTRY_ITALY, true)
     friend5:SetLeftIcon(BadgeStyle.CASTLE, true)
 
-    friend:AddPedToPauseMenu(PlayerPedId()) -- defaulted to 0 if you set it to nil / 0 the ped will be removed from the pause menu
+    friend:AddPedToPauseMenu(PlayerPedId())  -- defaulted to 0 if you set it to nil / 0 the ped will be removed from the pause menu
     friend1:AddPedToPauseMenu(PlayerPedId()) -- defaulted to 0 if you set it to nil / 0 the ped will be removed from the pause menu
     friend2:AddPedToPauseMenu(PlayerPedId()) -- defaulted to 0 if you set it to nil / 0 the ped will be removed from the pause menu
     friend3:AddPedToPauseMenu(PlayerPedId()) -- defaulted to 0 if you set it to nil / 0 the ped will be removed from the pause menu
@@ -731,13 +815,13 @@ function CreateLobbyMenu()
     local detailItem6 = UIMenuFreemodeDetailsItem.New("Left Label", "Right Label", true)
     local detailItem7 = UIMenuFreemodeDetailsItem.New("Left Label", "Right Label", false)
     --local missionItem4 = new("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "", false)
-    lobbyMenu.MissionPanel:AddItem(detailItem1)
-    lobbyMenu.MissionPanel:AddItem(detailItem2)
-    lobbyMenu.MissionPanel:AddItem(detailItem3)
-    lobbyMenu.MissionPanel:AddItem(detailItem4)
-    lobbyMenu.MissionPanel:AddItem(detailItem5)
-    lobbyMenu.MissionPanel:AddItem(detailItem6)
-    lobbyMenu.MissionPanel:AddItem(detailItem7)
+    lobbyMenu.MissionPanel.AddItem(detailItem1)
+    lobbyMenu.MissionPanel.AddItem(detailItem2)
+    lobbyMenu.MissionPanel.AddItem(detailItem3)
+    lobbyMenu.MissionPanel.AddItem(detailItem4)
+    lobbyMenu.MissionPanel.AddItem(detailItem5)
+    lobbyMenu.MissionPanel.AddItem(detailItem6)
+    lobbyMenu.MissionPanel.AddItem(detailItem7)
 
     lobbyMenu.SettingsColumn.OnIndexChanged = function(idx)
         ScaleformUI.Notifications:ShowSubtitle("SettingsColumn index =>~b~ " .. idx .. "~w~.")
@@ -752,7 +836,6 @@ end
 
 local MissionSelectorVisible = false
 function CreateMissionSelectorMenu()
-
     MissionSelectorVisible = not MissionSelectorVisible
 
     if not MissionSelectorVisible then
@@ -772,67 +855,73 @@ function CreateMissionSelectorMenu()
     local card = JobSelectionCard.New("Test 1",
         "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
         , "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, Colours.HUD_COLOUR_FREEMODE, 2, {
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOMission, Colours.HUD_COLOUR_FREEMODE),
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.Deathmatch, Colours.HUD_COLOUR_GOLD),
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.RaceFinish, Colours.HUD_COLOUR_PURPLE),
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOSurvival, Colours.HUD_COLOUR_GREEN),
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.TeamDeathmatch, Colours.HUD_COLOUR_WHITE, true),
-    })
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOMission, Colours.HUD_COLOUR_FREEMODE),
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.Deathmatch, Colours.HUD_COLOUR_GOLD),
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.RaceFinish, Colours.HUD_COLOUR_PURPLE),
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOSurvival, Colours.HUD_COLOUR_GREEN),
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.TeamDeathmatch, Colours.HUD_COLOUR_WHITE,
+                true),
+        })
     ScaleformUI.Scaleforms.JobMissionSelector:AddCard(card)
 
     local card1 = JobSelectionCard.New("Test 2",
         "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
         , "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, Colours.HUD_COLOUR_FREEMODE, 2, {
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOMission, Colours.HUD_COLOUR_FREEMODE),
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.Deathmatch, Colours.HUD_COLOUR_GOLD),
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.RaceFinish, Colours.HUD_COLOUR_PURPLE),
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOSurvival, Colours.HUD_COLOUR_GREEN),
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.TeamDeathmatch, Colours.HUD_COLOUR_WHITE, true),
-    })
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOMission, Colours.HUD_COLOUR_FREEMODE),
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.Deathmatch, Colours.HUD_COLOUR_GOLD),
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.RaceFinish, Colours.HUD_COLOUR_PURPLE),
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOSurvival, Colours.HUD_COLOUR_GREEN),
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.TeamDeathmatch, Colours.HUD_COLOUR_WHITE,
+                true),
+        })
     ScaleformUI.Scaleforms.JobMissionSelector:AddCard(card1)
 
     local card2 = JobSelectionCard.New("Test 3",
         "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
         , "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, Colours.HUD_COLOUR_FREEMODE, 2, {
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOMission, Colours.HUD_COLOUR_FREEMODE),
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.Deathmatch, Colours.HUD_COLOUR_GOLD),
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.RaceFinish, Colours.HUD_COLOUR_PURPLE),
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOSurvival, Colours.HUD_COLOUR_GREEN),
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.TeamDeathmatch, Colours.HUD_COLOUR_WHITE, true),
-    })
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOMission, Colours.HUD_COLOUR_FREEMODE),
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.Deathmatch, Colours.HUD_COLOUR_GOLD),
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.RaceFinish, Colours.HUD_COLOUR_PURPLE),
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOSurvival, Colours.HUD_COLOUR_GREEN),
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.TeamDeathmatch, Colours.HUD_COLOUR_WHITE,
+                true),
+        })
     ScaleformUI.Scaleforms.JobMissionSelector:AddCard(card2)
 
     local card3 = JobSelectionCard.New("Test 4",
         "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
         , "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, Colours.HUD_COLOUR_FREEMODE, 2, {
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOMission, Colours.HUD_COLOUR_FREEMODE),
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.Deathmatch, Colours.HUD_COLOUR_GOLD),
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.RaceFinish, Colours.HUD_COLOUR_PURPLE),
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOSurvival, Colours.HUD_COLOUR_GREEN),
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.TeamDeathmatch, Colours.HUD_COLOUR_WHITE, true),
-    })
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOMission, Colours.HUD_COLOUR_FREEMODE),
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.Deathmatch, Colours.HUD_COLOUR_GOLD),
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.RaceFinish, Colours.HUD_COLOUR_PURPLE),
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOSurvival, Colours.HUD_COLOUR_GREEN),
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.TeamDeathmatch, Colours.HUD_COLOUR_WHITE,
+                true),
+        })
     ScaleformUI.Scaleforms.JobMissionSelector:AddCard(card3)
 
     local card4 = JobSelectionCard.New("Test 5",
         "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
         , "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, Colours.HUD_COLOUR_FREEMODE, 2, {
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOMission, Colours.HUD_COLOUR_FREEMODE),
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.Deathmatch, Colours.HUD_COLOUR_GOLD),
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.RaceFinish, Colours.HUD_COLOUR_PURPLE),
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOSurvival, Colours.HUD_COLOUR_GREEN),
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.TeamDeathmatch, Colours.HUD_COLOUR_WHITE, true),
-    })
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOMission, Colours.HUD_COLOUR_FREEMODE),
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.Deathmatch, Colours.HUD_COLOUR_GOLD),
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.RaceFinish, Colours.HUD_COLOUR_PURPLE),
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOSurvival, Colours.HUD_COLOUR_GREEN),
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.TeamDeathmatch, Colours.HUD_COLOUR_WHITE,
+                true),
+        })
     ScaleformUI.Scaleforms.JobMissionSelector:AddCard(card4)
 
     local card5 = JobSelectionCard.New("Test 6",
         "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
         , "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, Colours.HUD_COLOUR_FREEMODE, 2, {
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOMission, Colours.HUD_COLOUR_FREEMODE),
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.Deathmatch, Colours.HUD_COLOUR_GOLD),
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.RaceFinish, Colours.HUD_COLOUR_PURPLE),
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOSurvival, Colours.HUD_COLOUR_GREEN),
-        MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.TeamDeathmatch, Colours.HUD_COLOUR_WHITE, true),
-    })
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOMission, Colours.HUD_COLOUR_FREEMODE),
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.Deathmatch, Colours.HUD_COLOUR_GOLD),
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.RaceFinish, Colours.HUD_COLOUR_PURPLE),
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.GTAOSurvival, Colours.HUD_COLOUR_GREEN),
+            MissionDetailsItem.New("Left Label", "Right Label", false, JobIcon.TeamDeathmatch, Colours.HUD_COLOUR_WHITE,
+                true),
+        })
     ScaleformUI.Scaleforms.JobMissionSelector:AddCard(card5)
 
     ScaleformUI.Scaleforms.JobMissionSelector.Buttons = {
@@ -875,7 +964,7 @@ function CreateMissionSelectorMenu()
     ScaleformUI.Scaleforms.JobMissionSelector:ShowPlayerVote(3, "PlayerName", Colours.HUD_COLOUR_GREEN, true, true)
 end
 
-function setRowColor(row)
+function SetRowColor(row)
     if row % 5 == 0 then
         return Colours.HUD_COLOUR_BLUE
     elseif row % 3 == 0 then
@@ -905,7 +994,8 @@ end
 CreateThread(function()
     local pos = GetEntityCoords(PlayerPedId(), true)
     --type, position, scale, distance, color, placeOnGround, bobUpDown, rotate, faceCamera, checkZ
-    local marker = Marker.New(1, pos, vector3(2, 2, 2), 100.0, { R = 0, G = 100, B = 50, A = 255 }, true, false, false,
+    local marker = Marker.New(1, pos, vector3(2.0, 2.0, 2.0), 100.0, { R = 0, G = 100, B = 50, A = 255 }, true, false,
+        false,
         false, true)
     -- example for working timerBars.. you can disable them by setting :Enabled(false).. to hide and show them while drawing :)
     local textBar = TextTimerBar.New("Label", "Caption")
@@ -925,7 +1015,7 @@ CreateThread(function()
     local txd = GetPedheadshotTxdString(handle)
 
     for i = scoreboardPlayerCount, 1, -1 do
-        local row = SCPlayerItem.New(GetPlayerName(PlayerId()), setRowColor(i), 65, 50, "", "hello", "", 0, "", 1, txd)
+        local row = SCPlayerItem.New(GetPlayerName(PlayerId()), SetRowColor(i), 65, 50, "", "hello", "", 0, "", 1, txd)
         ScaleformUI.Scaleforms.PlayerListScoreboard:AddRow(row)
     end
 
@@ -971,7 +1061,7 @@ CreateThread(function()
         end
 
         if IsControlJustPressed(0, 56) and not pool:IsAnyMenuOpen() then -- F9
-            local maxPage = math.ceil(scoreboardPlayerCount / 16); -- 16 is the max amount of rows per page
+            local maxPage = math.ceil(scoreboardPlayerCount / 16);       -- 16 is the max amount of rows per page
 
             -- set the title of the menu, the second parameter is the page number, the third is the max page number, you can set your own labels
             ScaleformUI.Scaleforms.PlayerListScoreboard:SetTitle("Title", currentPage .. "/" .. maxPage, 2)

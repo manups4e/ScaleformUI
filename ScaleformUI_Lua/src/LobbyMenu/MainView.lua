@@ -5,6 +5,22 @@ MainView.__call = function()
 end
 MainView.SoundId = GetSoundId()
 
+---@class MainView
+---@field public Title string
+---@field public Subtitle string
+---@field public SideTop string
+---@field public SideMid string
+---@field public SideBot string
+---@field public SettingsColumn SettingsListColumn
+---@field public PlayersColumn PlayerListColumn
+---@field public MissionPanel MissionDetailsPanel
+---@field public InstructionalButtons InstructionalButton[]
+---@field public OnLobbyMenuOpen fun(menu: MainView)
+---@field public OnLobbyMenuClose fun(menu: MainView)
+---@field public TemporarilyHidden boolean
+---@field public controller boolean
+---@field public focusLevel number
+
 function MainView.New(title, subtitle, sideTop, sideMid, sideBot)
     local _data = {
         Title = title or "",
@@ -16,9 +32,9 @@ function MainView.New(title, subtitle, sideTop, sideMid, sideBot)
         _headerPicture = {},
         _crewPicture = {},
         _visible = false,
-        SettingsColumn = {},
-        PlayersColumn = {},
-        MissionPanel = {},
+        SettingsColumn = {} --[[@type SettingsListColumn]],
+        PlayersColumn = {} --[[@type PlayerListColumn]],
+        MissionPanel = {} --[[@type MissionDetailsPanel]],
         focusLevel = 1,
         TemporarilyHidden = false,
         controller = false,
@@ -55,11 +71,12 @@ end
 function MainView:FocusLevel(index)
     if index ~= nil then
         self.focusLevel = index
-        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_FOCUS", false, index-1)
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_FOCUS", false, index - 1)
         if index == 2 then
             CreateThread(function()
                 Wait(100)
-                local ped = ClonePed(self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed, false, true, true);
+                local ped = ClonePed(self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed, false,
+                    true, true);
                 GivePedToPauseMenu(ped, 2)
                 SetPauseMenuPedSleepState(true);
                 SetPauseMenuPedLighting(true);
@@ -78,7 +95,6 @@ function MainView:CanPlayerCloseMenu(canHe)
     end
 end
 
-
 function MainView:Visible(visible)
     if visible ~= nil then
         self._visible = visible
@@ -87,7 +103,7 @@ function MainView:Visible(visible)
         if visible == true then
             if not IsPauseMenuActive() then
                 self.focusLevel = 1
-                PlaySoundFrontend(self.SoundId, "Hit_In", "PLAYER_SWITCH_CUSTOM_SOUNDSET")
+                PlaySoundFrontend(self.SoundId, "Hit_In", "PLAYER_SWITCH_CUSTOM_SOUNDSET", true)
                 ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
                 ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
                 self:BuildPauseMenu()
@@ -106,7 +122,7 @@ function MainView:Visible(visible)
             SetPlayerControl(PlayerId(), true, 0)
             self.ParentPool:ProcessMenus(false)
             if IsPauseMenuActive() then
-                PlaySoundFrontend(self.SoundId, "Hit_Out", "PLAYER_SWITCH_CUSTOM_SOUNDSET")
+                PlaySoundFrontend(self.SoundId, "Hit_Out", "PLAYER_SWITCH_CUSTOM_SOUNDSET", true)
                 ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, false, -1)
             end
             SetFrontendActive(false)
@@ -117,15 +133,16 @@ function MainView:Visible(visible)
 end
 
 function MainView:HeaderPicture(Txd, Txn)
-    if(Txd ~= nil and Txn ~= nil) then
-        self._headerPicture = {txd = Txd, txn = Txn}
+    if (Txd ~= nil and Txn ~= nil) then
+        self._headerPicture = { txd = Txd, txn = Txn }
     else
         return self._headerPicture
     end
 end
+
 function MainView:CrewPicture(Txd, Txn)
-    if(Txd ~= nil and Txn ~= nil) then
-        self._crewPicture = {txd = Txd, txn = Txn}
+    if (Txd ~= nil and Txn ~= nil) then
+        self._crewPicture = { txd = Txd, txn = Txn }
     else
         return self._crewPicture
     end
@@ -135,7 +152,7 @@ function MainView:SetupColumns(columns)
     assert(type(columns) == "table", "^1ScaleformUI [ERROR]: SetupColumns, Table expected^7")
     assert(#columns == 3, "^1ScaleformUI [ERROR]: SetupColumns, you must add 3 columns^7")
     self._listCol = columns
-    for k,v in ipairs(columns) do
+    for k, v in ipairs(columns) do
         local _, subT = v()
         if subT == "SettingsListColumn" then
             self.SettingsColumn = v
@@ -158,7 +175,7 @@ function MainView:ShowHeader()
         ScaleformUI.Scaleforms._pauseMenu:SetHeaderTitle(self.Title)
     else
         ScaleformUI.Scaleforms._pauseMenu:ShiftCoronaDescription(true, false)
-        ScaleformUI.Scaleforms._pauseMenu:SetHeaderTitle(self.Title, self.Subtitle.."\n\n\n\n\n\n\n\n\n\n\n")
+        ScaleformUI.Scaleforms._pauseMenu:SetHeaderTitle(self.Title, self.Subtitle .. "\n\n\n\n\n\n\n\n\n\n\n")
     end
     if (self:HeaderPicture() ~= nil) then
         ScaleformUI.Scaleforms._pauseMenu:SetHeaderCharImg(self:HeaderPicture().txd, self:HeaderPicture().txn, true)
@@ -176,7 +193,8 @@ end
 
 function MainView:BuildPauseMenu()
     self:ShowHeader()
-    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CREATE_MENU", false, self.SettingsColumn.Order-1, self.PlayersColumn.Order-1, self.MissionPanel.Order-1);
+    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CREATE_MENU", false, self.SettingsColumn.Order - 1,
+        self.PlayersColumn.Order - 1, self.MissionPanel.Order - 1);
     Citizen.CreateThread(function()
         local items = self.SettingsColumn.Items
         local it = 1
@@ -184,33 +202,54 @@ function MainView:BuildPauseMenu()
             Citizen.Wait(1)
             local item = items[it]
             local Type, SubType = item()
-            AddTextEntry("menu_lobby_desc_{" .. it .."}", item:Description())
-    
+            AddTextEntry("menu_lobby_desc_{" .. it .. "}", item:Description())
+
             if SubType == "UIMenuListItem" then
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, 1, item:Label(), "menu_lobby_desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), table.concat(item.Items, ","), item:Index()-1, item.Base._mainColor, item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor)
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, 1, item:Label(),
+                    "menu_lobby_desc_{" .. it .. "}", item:Enabled(), item:BlinkDescription(),
+                    table.concat(item.Items, ","),
+                    item:Index() - 1, item.Base._mainColor, item.Base._highlightColor, item.Base._textColor,
+                    item.Base._highlightedTextColor)
             elseif SubType == "UIMenuCheckboxItem" then
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, 2, item:Label(), "menu_lobby_desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item.CheckBoxStyle, item._Checked, item.Base._mainColor, item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor)
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, 2, item:Label(),
+                    "menu_lobby_desc_{" .. it .. "}", item:Enabled(), item:BlinkDescription(), item.CheckBoxStyle,
+                    item._Checked, item.Base._mainColor, item.Base._highlightColor, item.Base._textColor,
+                    item.Base._highlightedTextColor)
             elseif SubType == "UIMenuSliderItem" then
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, 3, item:Label(), "menu_lobby_desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item._Max, item._Multiplier, item:Index(), item.Base._mainColor, item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor, item.SliderColor, item._heritage)
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, 3, item:Label(),
+                    "menu_lobby_desc_{" .. it .. "}", item:Enabled(), item:BlinkDescription(), item._Max,
+                    item._Multiplier,
+                    item:Index(), item.Base._mainColor, item.Base._highlightColor, item.Base._textColor,
+                    item.Base._highlightedTextColor, item.SliderColor, item._heritage)
             elseif SubType == "UIMenuProgressItem" then
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, 4, item:Label(), "menu_lobby_desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item._Max, item._Multiplier, item:Index(), item.Base._mainColor, item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor, item.SliderColor)
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, 4, item:Label(),
+                    "menu_lobby_desc_{" .. it .. "}", item:Enabled(), item:BlinkDescription(), item._Max,
+                    item._Multiplier,
+                    item:Index(), item.Base._mainColor, item.Base._highlightColor, item.Base._textColor,
+                    item.Base._highlightedTextColor, item.SliderColor)
             else
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, 0, item:Label(), "menu_lobby_desc_{" .. it .."}", item:Enabled(), item:BlinkDescription(), item._mainColor, item._highlightColor, item._textColor, item._highlightedTextColor)
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_ITEM_LABEL_RIGHT", false, it - 1, item:RightLabel())
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, 0, item:Label(),
+                    "menu_lobby_desc_{" .. it .. "}", item:Enabled(), item:BlinkDescription(), item._mainColor,
+                    item._highlightColor, item._textColor, item._highlightedTextColor)
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_ITEM_LABEL_RIGHT", false, it - 1,
+                    item:RightLabel())
                 if item._rightBadge ~= BadgeStyle.NONE then
-                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_RIGHT_BADGE", false, it - 1, item._rightBadge)
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_RIGHT_BADGE", false, it - 1,
+                        item._rightBadge)
                 end
             end
-        
+
             if (SubType == "UIMenuItem" and item._leftBadge ~= BadgeStyle.NONE) or (SubType ~= "UIMenuItem" and item.Base._leftBadge ~= BadgeStyle.NONE) then
                 if SubType ~= "UIMenuItem" then
-                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", false, it - 1, item.Base._leftBadge)
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", false, it - 1,
+                        item.Base._leftBadge)
                 else
-                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", false, it - 1, item._leftBadge)
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", false, it - 1,
+                        item._leftBadge)
                 end
             end
-    
-            it = it+1
+
+            it = it + 1
         end
         self.SettingsColumn:CurrentSelection(0)
     end)
@@ -222,25 +261,30 @@ function MainView:BuildPauseMenu()
             local item = items[it]
             local Type, SubType = item()
             if SubType == "FriendItem" then
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_PLAYER_ITEM", false, 1, 1, item:Label(), item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL, item._iconR, item._boolR, item:Status(), item:StatusColor(), item:Rank(), item:CrewTag());
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_PLAYER_ITEM", false, 1, 1, item:Label(),
+                    item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL, item._iconR, item._boolR,
+                    item:Status(),
+                    item:StatusColor(), item:Rank(), item:CrewTag());
             end
             if item.Panel ~= nil then
                 item.Panel:UpdatePanel(true)
             end
-            it = it+1
+            it = it + 1
         end
         self.PlayersColumn:CurrentSelection(0)
     end)
-    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_MISSION_PANEL_PICTURE", false, self.MissionPanel.TextureDict, self.MissionPanel.TextureName);
+    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_MISSION_PANEL_PICTURE", false,
+        self.MissionPanel.TextureDict, self.MissionPanel.TextureName);
     ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSION_PANEL_TITLE", false, self.MissionPanel:Title());
-    for k,item in pairs(self.MissionPanel.Items) do
-        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_MISSION_PANEL_ITEM", false, item.Type, item.TextLeft, item.TextRight, item.Icon, item.IconColor, item.Tick);
+    for k, item in pairs(self.MissionPanel.Items) do
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_MISSION_PANEL_ITEM", false, item.Type, item.TextLeft,
+            item.TextRight, item.Icon, item.IconColor, item.Tick);
     end
 end
 
 function MainView:Draw()
     if not self:Visible() or self.TemporarilyHidden then
-        return 
+        return
     end
     DisableControlAction(0, 199, true)
     DisableControlAction(0, 200, true)
@@ -267,24 +311,25 @@ function MainView:ProcessMouse()
     SetInputExclusive(2, 237)
     SetInputExclusive(2, 238)
 
-    success, event_type, context, item_id = GetScaleformMovieCursorSelection(ScaleformUI.Scaleforms._pauseMenu._lobby.handle)
+    success, event_type, context, item_id = GetScaleformMovieCursorSelection(ScaleformUI.Scaleforms._pauseMenu._lobby
+        .handle)
     if success then
         if event_type == 5 then
-            if self.focusLevel ~= context+1 then
+            if self.focusLevel ~= context + 1 then
                 self:FocusLevel(context + 1)
             end
-            local col = self._listCol[context+1]
+            local col = self._listCol[context + 1]
             local Type, SubType = col()
             if SubType == "SettingsListColumn" then
                 ClearPedInPauseMenu()
-                for k,v in pairs(self.PlayersColumn.Items) do v:Selected(false) end
+                for k, v in pairs(self.PlayersColumn.Items) do v:Selected(false) end
                 if not col.Items[col:CurrentSelection()]:Enabled() then
                     PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
                     return
                 end
-                if col.Items[item_id+1]:Selected() then
+                if col.Items[item_id + 1]:Selected() then
                     ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", false, 16)
-                    local item = col.Items[item_id+1]
+                    local item = col.Items[item_id + 1]
                     local _type, _subType = item()
                     if _subType == "UIMenuCheckboxItem" then
                         item:Checked(not item:Checked())
@@ -301,20 +346,20 @@ function MainView:ProcessMouse()
                     return
                 end
                 col:CurrentSelection(item_id)
-                col.OnIndexChanged(item_id+1)
+                col.OnIndexChanged(item_id + 1)
             elseif SubType == "PlayerListColumn" then
-                for k,v in pairs(self.SettingsColumn.Items) do v:Selected(false) end
+                for k, v in pairs(self.SettingsColumn.Items) do v:Selected(false) end
                 if not col.Items[col:CurrentSelection()]:Enabled() then
                     PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
                     return
                 end
-                if col.Items[item_id+1]:Selected() then
+                if col.Items[item_id + 1]:Selected() then
                     return
                 end
                 col:CurrentSelection(item_id)
-                col.OnIndexChanged(item_id+1)
-                if col.Items[item_id+1].ClonePed ~= nil and col.Items[item_id+1].ClonePed ~= 0 then
-                    local ped = ClonePed(col.Items[item_id+1].ClonePed, false, true, true);
+                col.OnIndexChanged(item_id + 1)
+                if col.Items[item_id + 1].ClonePed ~= nil and col.Items[item_id + 1].ClonePed ~= 0 then
+                    local ped = ClonePed(col.Items[item_id + 1].ClonePed, false, true, true);
                     Citizen.Wait(0)
                     GivePedToPauseMenu(ped, 2)
                     SetPauseMenuPedSleepState(true);
@@ -329,11 +374,11 @@ end
 
 function MainView:ProcessControl()
     if not self:Visible() or self.TemporarilyHidden then
-        return 
+        return
     end
 
     if (IsControlPressed(2, 172)) then
-        if GetGameTimer() - self._time > self._delay then
+        if GlobalGameTimer - self._time > self._delay then
             self:ButtonDelay()
             Citizen.CreateThread(function()
                 self:GoUp()
@@ -342,7 +387,7 @@ function MainView:ProcessControl()
         end
     end
     if (IsControlPressed(2, 173)) then
-        if GetGameTimer() - self._time > self._delay then
+        if GlobalGameTimer - self._time > self._delay then
             self:ButtonDelay()
             Citizen.CreateThread(function()
                 self:GoDown()
@@ -351,7 +396,7 @@ function MainView:ProcessControl()
         end
     end
     if (IsControlPressed(2, 174)) then
-        if GetGameTimer() - self._time > self._delay then
+        if GlobalGameTimer - self._time > self._delay then
             self:ButtonDelay()
             Citizen.CreateThread(function()
                 self:GoLeft()
@@ -360,7 +405,7 @@ function MainView:ProcessControl()
         end
     end
     if (IsControlPressed(2, 175)) then
-        if GetGameTimer() - self._time > self._delay then
+        if GlobalGameTimer - self._time > self._delay then
             self:ButtonDelay()
             Citizen.CreateThread(function()
                 self:GoRight()
@@ -394,7 +439,7 @@ function MainView:ProcessControl()
     if (IsControlJustReleased(0, 172) or IsControlJustReleased(1, 172) or IsControlJustReleased(2, 172)) or
         (IsControlJustReleased(0, 173) or IsControlJustReleased(1, 173) or IsControlJustReleased(2, 173)) or
         (IsControlJustReleased(0, 174) or IsControlJustReleased(1, 174) or IsControlJustReleased(2, 174)) or
-        (IsControlJustReleased(0, 175) or IsControlJustReleased(1, 175) or IsControlJustReleased(2, 175)) 
+        (IsControlJustReleased(0, 175) or IsControlJustReleased(1, 175) or IsControlJustReleased(2, 175))
     then
         self._times = 0
         self._delay = 150
@@ -409,7 +454,7 @@ function MainView:ButtonDelay()
             self._delay = 50
         end
     end
-    self._time = GetGameTimer()
+    self._time = GlobalGameTimer
 end
 
 function MainView:Select()
@@ -419,13 +464,13 @@ function MainView:Select()
     end
     local retVal = GetScaleformMovieMethodReturnValueString(return_value)
 
-    local splitted = split(retVal, ",")
+    local splitted = Split(retVal, ",")
     if self:FocusLevel() == self.SettingsColumn.Order then
         local item = self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]
         local type, subtype = item()
         if not item:Enabled() then
             PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
-            return   
+            return
         end
         if subtype == "UIMenuCheckboxItem" then
             item:Checked(not item:Checked())
@@ -450,13 +495,13 @@ function MainView:GoBack()
 end
 
 function MainView:GoUp()
-    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 8,self._delay)
+    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 8, self._delay)
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
     local retVal = GetScaleformMovieMethodReturnValueString(return_value)
 
-    local splitted = split(retVal, ",")
+    local splitted = Split(retVal, ",")
 
     if self:FocusLevel() == self.SettingsColumn.Order then
         self.SettingsColumn:CurrentSelection(tonumber(splitted[2]))
@@ -464,7 +509,8 @@ function MainView:GoUp()
     elseif self:FocusLevel() == self.PlayersColumn.Order then
         self.PlayersColumn:CurrentSelection(tonumber(splitted[2]))
         if self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= nil and self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
-            local ped = ClonePed(self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed, false, true, true);
+            local ped = ClonePed(self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed, false, true,
+                true);
             Citizen.Wait(0)
             GivePedToPauseMenu(ped, 2)
             SetPauseMenuPedSleepState(true);
@@ -477,13 +523,13 @@ function MainView:GoUp()
 end
 
 function MainView:GoDown()
-    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 9,self._delay)
+    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 9, self._delay)
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
     local retVal = GetScaleformMovieMethodReturnValueString(return_value)
 
-    local splitted = split(retVal, ",")
+    local splitted = Split(retVal, ",")
 
     if self:FocusLevel() == self.SettingsColumn.Order then
         self.SettingsColumn:CurrentSelection(tonumber(splitted[2]))
@@ -491,7 +537,8 @@ function MainView:GoDown()
     elseif self:FocusLevel() == self.PlayersColumn.Order then
         self.PlayersColumn:CurrentSelection(tonumber(splitted[2]))
         if self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= nil and self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
-            local ped = ClonePed(self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed, false, true, true);
+            local ped = ClonePed(self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed, false, true,
+                true);
             Citizen.Wait(0)
             GivePedToPauseMenu(ped, 2)
             SetPauseMenuPedSleepState(true);
@@ -504,16 +551,16 @@ function MainView:GoDown()
 end
 
 function MainView:GoLeft()
-    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 10,self._delay)
+    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 10, self._delay)
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
     local retVal = GetScaleformMovieMethodReturnValueString(return_value)
 
-    local splitted = split(retVal, ",")
+    local splitted = Split(retVal, ",")
 
     if tonumber(splitted[3]) == -1 then
-        self:FocusLevel(tonumber(splitted[1])+1)
+        self:FocusLevel(tonumber(splitted[1]) + 1)
         if self:FocusLevel() == self.SettingsColumn.Order then
             ClearPedInPauseMenu();
             self.SettingsColumn:CurrentSelection(tonumber(splitted[2]))
@@ -521,7 +568,8 @@ function MainView:GoLeft()
         elseif self:FocusLevel() == self.PlayersColumn.Order then
             self.PlayersColumn:CurrentSelection(tonumber(splitted[2]))
             if self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= nil and self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
-                local ped = ClonePed(self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed, false, true, true);
+                local ped = ClonePed(self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed, false,
+                    true, true);
                 Citizen.Wait(0)
                 GivePedToPauseMenu(ped, 2)
                 SetPauseMenuPedSleepState(true);
@@ -535,9 +583,9 @@ function MainView:GoLeft()
         local item = self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()];
         if not item:Enabled() then
             PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
-            return  
+            return
         end
-        local type, subtype = item() 
+        local type, subtype = item()
         if subtype == "UIMenuListItem" then
             item:Index(tonumber(splitted[3]))
             item.OnListChanged(self, item, item._Index)
@@ -553,16 +601,16 @@ function MainView:GoLeft()
 end
 
 function MainView:GoRight()
-    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 11,self._delay)
+    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 11, self._delay)
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
     local retVal = GetScaleformMovieMethodReturnValueString(return_value)
 
-    local splitted = split(retVal, ",")
+    local splitted = Split(retVal, ",")
 
     if tonumber(splitted[3]) == -1 then
-        self:FocusLevel(tonumber(splitted[1])+1)
+        self:FocusLevel(tonumber(splitted[1]) + 1)
         if self:FocusLevel() == self.SettingsColumn.Order then
             ClearPedInPauseMenu();
             self.SettingsColumn:CurrentSelection(tonumber(splitted[2]))
@@ -570,7 +618,8 @@ function MainView:GoRight()
         elseif self:FocusLevel() == self.PlayersColumn.Order then
             self.PlayersColumn:CurrentSelection(tonumber(splitted[2]))
             if self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= nil and self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
-                local ped = ClonePed(self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed, false, true, true);
+                local ped = ClonePed(self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed, false,
+                    true, true);
                 Citizen.Wait(0)
                 GivePedToPauseMenu(ped, 2)
                 SetPauseMenuPedSleepState(true);
@@ -584,9 +633,9 @@ function MainView:GoRight()
         local item = self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()];
         if not item:Enabled() then
             PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
-            return  
+            return
         end
-        local type, subtype = item() 
+        local type, subtype = item()
         if subtype == "UIMenuListItem" then
             item:Index(tonumber(splitted[3]))
             item.OnListChanged(self, item, item._Index)

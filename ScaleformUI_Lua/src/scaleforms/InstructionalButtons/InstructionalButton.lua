@@ -4,8 +4,16 @@ InstructionalButton.__call = function()
     return "InstructionalButton"
 end
 
+---@class InstructionalButton
+---@field public Text string
+---@field public GamepadButtons number[]
+---@field public GamepadButton number
+---@field public KeyboardButtons number[]
+---@field public KeyboardButton number
+---@field public PadCheck number
+
 function InstructionalButton.New(text, padcheck, gamepadControls, keyboardControls, inputGroup)
-    local _button = {
+    local _instructionalButton = {
         Text = text or "",
         GamepadButtons = nil,
         GamepadButton = -1,
@@ -16,29 +24,29 @@ function InstructionalButton.New(text, padcheck, gamepadControls, keyboardContro
 
     if type(gamepadControls) == "table" then
         if padcheck == 0 or padcheck == -1 then
-            _button.GamepadButtons = gamepadControls
+            _instructionalButton.GamepadButtons = gamepadControls
         end
     else
         if padcheck == 0 or padcheck == -1 then
-            _button.GamepadButton = gamepadControls
+            _instructionalButton.GamepadButton = gamepadControls
         else
-            _button.GamepadButton = -1
+            _instructionalButton.GamepadButton = -1
         end
     end
     if type(keyboardControls) == "table" then
         if padcheck == 1 or padcheck == -1 then
-            _button.KeyboardButtons = keyboardControls
+            _instructionalButton.KeyboardButtons = keyboardControls
         end
     else
         if padcheck == 1 or padcheck == -1 then
-            _button.KeyboardButton = keyboardControls
+            _instructionalButton.KeyboardButton = keyboardControls
         else
-            _button.KeyboardButton = -1
+            _instructionalButton.KeyboardButton = -1
         end
     end
-    _button.InputGroupButton = inputGroup or -1
+    _instructionalButton.InputGroupButton = inputGroup or -1
 
-    return setmetatable(_button, InstructionalButton)
+    return setmetatable(_instructionalButton, InstructionalButton)
 end
 
 function InstructionalButton:IsUsingController()

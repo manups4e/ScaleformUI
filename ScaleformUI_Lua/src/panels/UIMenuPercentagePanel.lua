@@ -2,10 +2,20 @@ UIMenuPercentagePanel = setmetatable({}, UIMenuPercentagePanel)
 UIMenuPercentagePanel.__index = UIMenuPercentagePanel
 UIMenuPercentagePanel.__call = function() return "UIMenuPanel", "UIMenuPercentagePanel" end
 
+---@class UIMenuPercentagePanel
+---@field public Min string
+---@field public Max string
+---@field public Title string
+---@field public Percentage number
+---@field public ParentItem table
+---@field public SetParentItem fun(self:UIMenuStatisticsPanel, item:UIMenuItem):UIMenuItem -- required
+---@field public OnPercentagePanelChange function
+
 ---New
 ---@param title string
----@param colorType int
----@param startIndex number
+---@param minText string
+---@param maxText string
+---@param initialValue number
 function UIMenuPercentagePanel.New(title, minText, maxText, initialValue)
     local _UIMenuPercentagePanel = {
         Min = minText or "0%",
@@ -13,7 +23,8 @@ function UIMenuPercentagePanel.New(title, minText, maxText, initialValue)
         Title = title or "Opacity",
         Percentage = initialValue or 0.0,
         ParentItem = nil, -- required
-        OnPercentagePanelChange = function(item, panel, value) end
+        OnPercentagePanelChange = function(item, panel, value)
+        end
     }
     return setmetatable(_UIMenuPercentagePanel, UIMenuPercentagePanel)
 end

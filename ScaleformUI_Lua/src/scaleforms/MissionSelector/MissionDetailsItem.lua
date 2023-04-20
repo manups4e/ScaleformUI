@@ -4,6 +4,14 @@ MissionDetailsItem.__call = function()
     return "MissionDetailsItem"
 end
 
+---@class MissionDetailsItem
+---@field public Type number
+---@field public TextLeft string
+---@field public TextRight string
+---@field public Icon string
+---@field public IconColor number
+---@field public Tick boolean
+
 function MissionDetailsItem.New(textLeft, textRight, seperator, icon, iconColor, tick)
     local _type
     if seperator == true then

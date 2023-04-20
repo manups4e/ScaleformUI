@@ -1,17 +1,16 @@
 ScaleformUI = {}
 ScaleformUI.Scaleforms = {}
 ScaleformUI.Notifications = nil
-ScaleformUI.Scaleforms._ui = 0
-ScaleformUI.Scaleforms._pauseMenu = nil
-ScaleformUI.Scaleforms.MidMessageInstance = nil
-ScaleformUI.Scaleforms.PlayerListScoreboard = nil
-ScaleformUI.Scaleforms.InstructionalButtons = nil
-ScaleformUI.Scaleforms.BigMessageInstance = nil
-ScaleformUI.Scaleforms.Warning = nil
-ScaleformUI.Scaleforms.PlayerListInstance = nil
-ScaleformUI.Scaleforms.JobMissionSelector = nil
-ScaleformUI.Scaleforms.RankbarHandler = nil
-ScaleformUI.Scaleforms.CountdownHandler = nil
+ScaleformUI.Scaleforms._ui = nil --[[@type Scaleform]]                             -- scaleformui
+ScaleformUI.Scaleforms._pauseMenu = nil --[[@type PauseMenu]]                      -- pausemenu
+ScaleformUI.Scaleforms.MidMessageInstance = nil --[[@type MidMessageInstance]]     -- midmessage
+ScaleformUI.Scaleforms.PlayerListScoreboard = nil --[[@type PlayerListScoreboard]] -- playerlist
+ScaleformUI.Scaleforms.InstructionalButtons = nil --[[@type ButtonsHandler]]       -- buttons
+ScaleformUI.Scaleforms.BigMessageInstance = nil --[[@type BigMessageInstance]]     -- bigmessage
+ScaleformUI.Scaleforms.Warning = nil --[[@type WarningInstance]]                   -- warning
+ScaleformUI.Scaleforms.JobMissionSelector = nil --[[@type MissionSelectorHandler]] -- missionselector
+ScaleformUI.Scaleforms.RankbarHandler = nil --[[@type RankbarHandler]]             -- rankbar
+ScaleformUI.Scaleforms.CountdownHandler = nil --[[@type CountdownHandler]]         -- countdown
 
 ScaleformUI.Scaleforms._pauseMenu = nil
 
@@ -49,11 +48,11 @@ Citizen.CreateThread(function()
     while true do
         wait = 850
         if not IsPauseMenuActive() then
-            if ScaleformUI.Scaleforms.BigMessageInstance._sc ~= 0 then
+            if ScaleformUI.Scaleforms.BigMessageInstance._sc ~= nil then
                 ScaleformUI.Scaleforms.BigMessageInstance:Update()
                 wait = 0
             end
-            if ScaleformUI.Scaleforms.MidMessageInstance._sc ~= 0 then
+            if ScaleformUI.Scaleforms.MidMessageInstance._sc ~= nil then
                 ScaleformUI.Scaleforms.MidMessageInstance:Update()
                 wait = 0
             end
@@ -76,15 +75,15 @@ Citizen.CreateThread(function()
             ScaleformUI.Scaleforms.InstructionalButtons:Update()
             wait = 0
         end
-        if ScaleformUI.Scaleforms._ui == 0 or ScaleformUI.Scaleforms._ui == nil then
+        if ScaleformUI.Scaleforms._ui == nil then
             ScaleformUI.Scaleforms._ui = Scaleform.Request("scaleformui")
         end
         if not ScaleformUI.Scaleforms._pauseMenu.Loaded then
             ScaleformUI.Scaleforms._pauseMenu:Load()
         end
 
-        if ScaleformUI.Scaleforms.BigMessageInstance._sc == 0 and
-            ScaleformUI.Scaleforms.MidMessageInstance._sc == 0 and
+        if ScaleformUI.Scaleforms.BigMessageInstance._sc == nil and
+            ScaleformUI.Scaleforms.MidMessageInstance._sc == nil and
             ScaleformUI.Scaleforms.Warning._sc == nil and
             (ScaleformUI.Scaleforms.PlayerListScoreboard._sc ~= nil and not ScaleformUI.Scaleforms.PlayerListScoreboard.Enabled) and
             (ScaleformUI.Scaleforms.JobMissionSelector.enabled or ScaleformUI.Scaleforms.JobMissionSelector._sc == nil) and

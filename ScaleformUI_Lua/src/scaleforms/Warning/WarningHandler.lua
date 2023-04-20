@@ -4,15 +4,21 @@ WarningInstance.__call = function()
     return "WarningInstance"
 end
 
+---@class WarningInstance
+---@field _sc Scaleform
+---@field _disableControls boolean
+---@field _buttonList table<InstructionalButton>
+---@field OnButtonPressed fun(button: InstructionalButton)
+
 function WarningInstance.New()
-    local _warningData = {
-        _sc = nil --[[@as Scaleform]],
+    local data = {
+        _sc = nil --[[@type Scaleform]],
         _disableControls = false,
         _buttonList = {},
         OnButtonPressed = function(button)
         end
     }
-    return setmetatable(_warningData, WarningInstance)
+    return setmetatable(data, WarningInstance)
 end
 
 function WarningInstance:IsShowing()
@@ -35,8 +41,8 @@ function WarningInstance:Load()
     end
 
     local timeout = 1000
-    local start = GetGameTimer()
-    while not self._sc:IsLoaded() and GetGameTimer() - start < timeout do Citizen.Wait(0) end
+    local start = GlobalGameTimer
+    while not self._sc:IsLoaded() and GlobalGameTimer - start < timeout do Citizen.Wait(0) end
 
     if self._sc:IsLoaded() then
         p:resolve()

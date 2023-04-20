@@ -4,7 +4,7 @@ JobSelectionCard.__call = function()
     return "JobSelectionCard"
 end
 
-function JobSelectionCard.New(title, description, txd, txn, rpMult, cashMult, icon, iconColor, apMultiplier,details)
+function JobSelectionCard.New(title, description, txd, txn, rpMult, cashMult, icon, iconColor, apMultiplier, details)
     local data = {
         Title = title,
         Description = description,
