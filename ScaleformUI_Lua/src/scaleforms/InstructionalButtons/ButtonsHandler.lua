@@ -5,6 +5,15 @@ ButtonsHandler.__call = function()
 end
 
 ---@class ButtonsHandler
+---@field public _sc Scaleform
+---@field public UseMouseButtons boolean
+---@field public _enabled boolean
+---@field public IsUsingKeyboard boolean
+---@field private _changed boolean
+---@field private savingTimer number
+---@field public IsSaving boolean
+---@field public ControlButtons table<string, InstructionalButton>
+---@field public Enabled fun(self: table, bool: boolean|nil): boolean
 
 function ButtonsHandler.New()
     local data = {
@@ -20,10 +29,11 @@ function ButtonsHandler.New()
     return setmetatable(data, ButtonsHandler)
 end
 
+---Enables or disables the instructional buttons
+---@param bool boolean?
+---@return boolean
 function ButtonsHandler:Enabled(bool)
-    if bool == nil then
-        return self._enabled
-    else
+    if bool ~= nil then
         if not bool and self._sc ~= nil then
             self._sc:CallFunction("CLEAR_ALL", false)
             self._sc:CallFunction("CLEAR_RENDER", false)
@@ -33,8 +43,10 @@ function ButtonsHandler:Enabled(bool)
         self._enabled = bool
         self._changed = bool
     end
+    return self._enabled
 end
 
+---Loads the instructional buttons
 function ButtonsHandler:Load()
     if self._sc ~= nil then return end
     self._sc = Scaleform.Request("INSTRUCTIONAL_BUTTONS")

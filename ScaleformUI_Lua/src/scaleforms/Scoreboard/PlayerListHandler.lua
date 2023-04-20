@@ -5,7 +5,24 @@ PlayerListScoreboard.__call = function()
 end
 
 ---@class PlayerListScoreboard
+---@field _uptime number
+---@field _start number
+---@field _timer number
+---@field _sc Scaleform
+---@field public Enabled boolean
+---@field public Index number
+---@field public MaxPages number
+---@field public currentPage number
+---@field public PlayerRows table<number, SCPlayerItem>
+---@field public TitleLeftText string
+---@field public TitleRightText string
+---@field public TitleIcon number
+---@field public X number
+---@field public Y number
+---@field public Update fun(self:PlayerListScoreboard):nil
 
+---Creates a new PlayerListScoreboard instance
+---@return PlayerListScoreboard
 function PlayerListScoreboard.New()
     local data = {
         _uptime = 8000,
@@ -26,13 +43,14 @@ function PlayerListScoreboard.New()
     return setmetatable(data, PlayerListScoreboard)
 end
 
+---Current page of the scoreboard
+---@param _c number|nil
+---@return number
 function PlayerListScoreboard:CurrentPage(_c)
-    if _c == nil then
-        return self.currentPage
-    else
+    if _c ~= nil then
         if #self.PlayerRows == 0 then
             self.currentPage = 0
-            return
+            return self.currentPage
         end
         self.currentPage = _c
         if self.currentPage > 0 then
@@ -40,8 +58,10 @@ function PlayerListScoreboard:CurrentPage(_c)
             self:NextPage()
         end
     end
+    return self.currentPage
 end
 
+---Load the scoreboard scaleform
 function PlayerListScoreboard:Load()
     if self._sc ~= nil then return end
     self._sc = Scaleform.Request("MP_MM_CARD_FREEMODE")
@@ -50,6 +70,7 @@ function PlayerListScoreboard:Load()
     while not self._sc:IsLoaded() and GlobalGameTimer - start < timeout do Citizen.Wait(0) end
 end
 
+---Dispose the scoreboard scaleform
 function PlayerListScoreboard:Dispose()
     if self._sc == nil then return end
     self.Enabled = false
@@ -67,29 +88,43 @@ function PlayerListScoreboard:Dispose()
     end
 end
 
+---Set the title of the scoreboard
+---@param title string
+---@param label string
+---@param icon number
 function PlayerListScoreboard:SetTitle(title, label, icon)
     self.TitleLeftText = title or ""
     self.TitleRightText = label or ""
     self.TitleIcon = icon or 0
 end
 
+---Set the position of the scoreboard
+---@param x number
+---@param y number
 function PlayerListScoreboard:SetPosition(x, y)
     self.X = x
     self.Y = y
 end
 
+---Set the duration the scoreboard should be visible
 function PlayerListScoreboard:SetTimer(upTime)
     self.uptime = upTime
 end
 
-function PlayerListScoreboard:AddRow(row)
-    self.PlayerRows[#self.PlayerRows + 1] = row
+---Add a new row to the scoreboard
+---@param player SCPlayerItem
+function PlayerListScoreboard:AddRow(player)
+    self.PlayerRows[#self.PlayerRows + 1] = player
 end
 
-function PlayerListScoreboard:RemoveRow(id)
-    table.remove(self.PlayerRows, id)
+---Remove a row from the scoreboard
+---@param index number
+function PlayerListScoreboard:RemoveRow(index)
+    table.remove(self.PlayerRows, index)
 end
 
+---Get if a row_id should be displayed on the current page
+---@param row_id number
 function PlayerListScoreboard:IsSupposedToShow(row_id)
     if self:CurrentPage() == 0 then return false end
     local max = self:CurrentPage() * 16
@@ -97,10 +132,12 @@ function PlayerListScoreboard:IsSupposedToShow(row_id)
     return row_id >= min and row_id <= max
 end
 
+---Update max pages displayed on the scoreboard
 function PlayerListScoreboard:UpdateMaxPages()
     self.MaxPages = math.ceil(#self.PlayerRows / 16.0)
 end
 
+---Draw the scoreboard on the screen
 function PlayerListScoreboard:Update()
     self._sc:Render2DNormal(self.X, self.Y, 0.28, 0.6)
     if self._start ~= 0 and GlobalGameTimer - self._start > self._timer then
@@ -111,6 +148,7 @@ function PlayerListScoreboard:Update()
     end
 end
 
+---Change the page of the scoreboard
 function PlayerListScoreboard:NextPage()
     self:UpdateMaxPages()
     self._start = GlobalGameTimer
@@ -124,14 +162,22 @@ function PlayerListScoreboard:NextPage()
     end
 end
 
+---Highlight a row on the scoreboard
+---@param idx number
 function PlayerListScoreboard:Highlight(idx)
     self._sc:CallFunction("SET_HIGHLIGHT", false, idx - 1)
 end
 
+---Show microphone icon on a row
+---@param idx number
+---@param show boolean
 function PlayerListScoreboard:ShowMic(idx, show)
     self._sc:CallFunction("DISPLAY_MIC", false, idx - 1, show)
 end
 
+---Update a slot on the scoreboard
+---@param id number
+---@param row SCPlayerItem
 function PlayerListScoreboard:UpdateSlot(id, row)
     if row.CrewLabelText ~= "" then
         self._sc:CallFunction("UPDATE_SLOT", false, id - 1, row.RightText, row.Name, row.Color, row.RightIcon,
@@ -145,6 +191,7 @@ function PlayerListScoreboard:UpdateSlot(id, row)
     end
 end
 
+---Refresh all slots on the scoreboard
 function PlayerListScoreboard:RefreshAll()
     Citizen.CreateThread(function()
         for index, row in pairs(self.PlayerRows) do
@@ -161,13 +208,18 @@ function PlayerListScoreboard:RefreshAll()
     end)
 end
 
+---Set the icon of a row
+---@param idx number
+---@param icon number
+---@param txt string
 function PlayerListScoreboard:SetIcon(idx, icon, txt)
     local row = self.PlayerRows[idx]
     if row ~= nil then
-        self._sc:CallFunction("SET_ICON", idx - 1, icon, txt)
+        self._sc:CallFunction("SET_ICON", false, idx - 1, icon, txt)
     end
 end
 
+---Build the scoreboard
 function PlayerListScoreboard:BuildMenu()
     if self._sc == nil then self:Load() end
     while self._sc == nil or not self._sc:IsLoaded() do Citizen.Wait(0) end

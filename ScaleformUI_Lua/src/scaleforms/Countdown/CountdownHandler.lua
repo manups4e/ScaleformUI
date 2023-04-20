@@ -14,7 +14,7 @@ end
 ---@field public Dispose fun(self:CountdownHandler, force:boolean):nil
 ---@field public Update fun(self:CountdownHandler):nil
 ---@field public ShowMessage fun(self:CountdownHandler, message:string):nil
----@field public Start fun(self:CountdownHandler, number:number, hudColour:number, countdownAudioName:string, countdownAudioRef:string, goAudioName:string, goAudioRef:string):promise
+---@field public Start fun(self:CountdownHandler, number:number|nil, hudColour:number|nil, countdownAudioName:string|nil, countdownAudioRef:string|nil, goAudioName:string|nil, goAudioRef:string|nil):promise
 
 ---Creates a new CountdownHandler
 ---@return CountdownHandler

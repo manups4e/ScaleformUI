@@ -5,7 +5,35 @@ MissionSelectorHandler.__call = function()
 end
 
 ---@class MissionSelectorHandler
+---@field public _sc Scaleform
+---@field public _start number
+---@field public _timer number
+---@field public enabled boolean
+---@field public alreadyVoted boolean
+---@field public Votes table<number, number>
+---@field public VotedFor number
+---@field public MaxVotes number
+---@field public SelectedCard number
+---@field public VotesColor number
+---@field public JobTitle table<string, string>
+---@field public Cards table<number, JobSelectionCard>
+---@field public Buttons table<number, JobSelectionButton>
+---@field public SetTitle fun(self:MissionSelectorHandler, title:string):nil
+---@field public SetVotes fun(self:MissionSelectorHandler, actual:number, label:string):nil
+---@field public AddCard fun(self:MissionSelectorHandler, card:JobSelectionCard):nil
+---@field public AddButton fun(self:MissionSelectorHandler, button:JobSelectionButton):nil
+---@field public Enabled fun(self:MissionSelectorHandler, bool:boolean|nil):boolean
+---@field public AlreadyVoted fun(self:MissionSelectorHandler):boolean
+---@field public BuildMenu fun(self:MissionSelectorHandler):nil
+---@field public Dispose fun(self:MissionSelectorHandler):nil
+---@field public SelectCard fun(self:MissionSelectorHandler, card:number):nil
+---@field public UpdateOwnVote fun(self:MissionSelectorHandler, card:number, oldCard:number, showCheckmark:boolean, flashBackground:boolean):nil
+---@field public ShowPlayerVote fun(self:MissionSelectorHandler, card:number, playerName:string, colour:Colours, showCheckmark:boolean, flashBackground:boolean):nil
+---@field public Load fun(self:MissionSelectorHandler):nil
+---@field public Update fun(self:MissionSelectorHandler):nil
 
+---Creates a new MissionSelectorHandler object
+---@return MissionSelectorHandler
 function MissionSelectorHandler.New()
     local data = {
         _sc = nil,
@@ -29,34 +57,43 @@ function MissionSelectorHandler.New()
     return setmetatable(data, MissionSelectorHandler)
 end
 
+---Sets the title of the mission selector
+---@param title string
 function MissionSelectorHandler:SetTitle(title)
     self.JobTitle.Title = title
 end
 
+---Sets the votes of the mission selector
+---@param actual number
+---@param label string|nil
 function MissionSelectorHandler:SetVotes(actual, label)
     local tot = actual .. " / " .. self.MaxVotes
-    if not string.IsNullOrEmpty(label) then
+    if not string.IsNullOrEmpty(label or "") then
         self.JobTitle.Label = label
     end
     self.JobTitle.Votes = tot .. " " .. self.JobTitle.Label
 end
 
+---Adds a card to the mission selector grid menu (max 9)
+---@param card JobSelectionCard
 function MissionSelectorHandler:AddCard(card)
     if #self.Cards < 9 then
         self.Cards[#self.Cards + 1] = card
     end
 end
 
+---Adds a button to the mission selector grid menu (max 3)
+---@param button JobSelectionButton
 function MissionSelectorHandler:AddButton(button)
     if #self.Buttons < 3 then
         self.Buttons[#self.Buttons + 1] = button
     end
 end
 
+---Toggles the mission selector on or off
+---@param bool boolean|nil
 function MissionSelectorHandler:Enabled(bool)
-    if bool == nil then
-        return self.enabled
-    else
+    if bool ~= nil then
         if bool then
             self:BuildMenu()
         else
@@ -64,17 +101,21 @@ function MissionSelectorHandler:Enabled(bool)
         end
         self.enabled = bool
     end
+    return self.enabled
 end
 
+---Returns true if the player has already voted
 function MissionSelectorHandler:AlreadyVoted()
     return self.alreadyVoted
 end
 
+---Disposes the mission selector
 function MissionSelectorHandler:Dispose()
     self._sc:Dispose()
     self._sc = nil
 end
 
+---Builds the mission selector menu
 function MissionSelectorHandler:BuildMenu()
     self:Load()
     while self._sc == nil or not self._sc:IsLoaded() do Citizen.Wait(0) end
@@ -101,6 +142,7 @@ function MissionSelectorHandler:BuildMenu()
     end
 end
 
+---Selects a card in the mission selector
 function MissionSelectorHandler:SelectCard(idx)
     if idx <= 6 then
         self:SetSelection(idx - 1, self.Cards[idx].Title, self.Cards[idx].Description)
@@ -117,6 +159,7 @@ function MissionSelectorHandler:SelectCard(idx)
     end
 end
 
+---Updates own vote on a card in the mission selector
 function MissionSelectorHandler:UpdateOwnVote(idx, oldidx, showCheckMark, flashBG)
     if showCheckMark == nil then showCheckMark = false end
     if flashBG == nil then flashBG = false end
@@ -132,6 +175,7 @@ function MissionSelectorHandler:UpdateOwnVote(idx, oldidx, showCheckMark, flashB
     self:_SetTitle(self.JobTitle.Title, self.JobTitle.Votes)
 end
 
+---Shows a player's vote on a card in the mission selector
 function MissionSelectorHandler:ShowPlayerVote(idx, playerName, color, showCheckMark, flashBG)
     self.Votes[idx] = self.Votes[idx] + 1
     if showCheckMark == nil then showCheckMark = false end
@@ -148,6 +192,7 @@ function MissionSelectorHandler:ShowPlayerVote(idx, playerName, color, showCheck
     self._sc:CallFunction("SET_GRID_ITEM_VOTE", false, idx - 1, self.Votes[idx], self.VotesColor, showCheckMark, flashBG)
 end
 
+---Loads the mission selector scaleform
 function MissionSelectorHandler:Load()
     if self._sc ~= nil then return end
     self._sc = Scaleform.Request("MP_NEXT_JOB_SELECTION")
@@ -158,6 +203,7 @@ end
 
 local success, event_type, context, item_id
 
+---Updates the mission selector
 function MissionSelectorHandler:Update()
     self._sc:Render2D()
     DisableAllControlActions(0)
@@ -277,6 +323,8 @@ function MissionSelectorHandler:Update()
         end
     end
 end
+
+-- These all don't make much sense based on their names, there is some cross over with naming conventions
 
 function MissionSelectorHandler:_SetTitle(left, votes)
     self._sc:CallFunction("SET_TITLE", false, left, votes);
