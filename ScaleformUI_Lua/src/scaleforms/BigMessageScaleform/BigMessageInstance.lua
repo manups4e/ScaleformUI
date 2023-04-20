@@ -189,7 +189,7 @@ function BigMessageInstance:SetTransition(transition, duration, preventAutoExpan
 
     self._transition = transition
 
-    if duration == nil then duration = 0.15 end
+    if duration == nil then duration = 0.4 end
     self._transitionDuration = duration + .0
 
     if preventAutoExpansion == nil then preventAutoExpansion = true end
