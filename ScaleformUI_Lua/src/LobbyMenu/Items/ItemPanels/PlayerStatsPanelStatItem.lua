@@ -10,6 +10,8 @@ end
 ---@field private _value number
 ---@field private _description string
 ---@field private _label string
+---@field public Label fun(self: PlayerStatsPanelStatItem, label: string?): string
+---@field public Description fun(self: PlayerStatsPanelStatItem, desc: string?): string
 
 ---Creates a new PlayerStatsPanelStatItem.
 ---@param label string

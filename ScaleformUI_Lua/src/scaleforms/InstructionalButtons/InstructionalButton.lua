@@ -14,10 +14,10 @@ end
 
 ---Creates a new InstructionalButton object
 ---@param text string
----@param padcheck number|nil
+---@param padcheck number?
 ---@param gamepadControls number
 ---@param keyboardControls number
----@param inputGroup string|number|nil
+---@param inputGroup string|number?
 ---@return table
 function InstructionalButton.New(text, padcheck, gamepadControls, keyboardControls, inputGroup)
     local _instructionalButton = {

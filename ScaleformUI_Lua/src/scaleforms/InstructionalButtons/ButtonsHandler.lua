@@ -13,7 +13,7 @@ end
 ---@field private savingTimer number
 ---@field public IsSaving boolean
 ---@field public ControlButtons table<string, InstructionalButton>
----@field public Enabled fun(self: table, bool: boolean|nil): boolean
+---@field public Enabled fun(self: table, bool: boolean?): boolean
 
 function ButtonsHandler.New()
     local data = {

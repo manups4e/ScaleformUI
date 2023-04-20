@@ -22,7 +22,7 @@ end
 ---@field public SetVotes fun(self:MissionSelectorHandler, actual:number, label:string):nil
 ---@field public AddCard fun(self:MissionSelectorHandler, card:JobSelectionCard):nil
 ---@field public AddButton fun(self:MissionSelectorHandler, button:JobSelectionButton):nil
----@field public Enabled fun(self:MissionSelectorHandler, bool:boolean|nil):boolean
+---@field public Enabled fun(self:MissionSelectorHandler, bool:boolean?):boolean
 ---@field public AlreadyVoted fun(self:MissionSelectorHandler):boolean
 ---@field public BuildMenu fun(self:MissionSelectorHandler):nil
 ---@field public Dispose fun(self:MissionSelectorHandler):nil
@@ -65,7 +65,7 @@ end
 
 ---Sets the votes of the mission selector
 ---@param actual number
----@param label string|nil
+---@param label string?
 function MissionSelectorHandler:SetVotes(actual, label)
     local tot = actual .. " / " .. self.MaxVotes
     if not string.IsNullOrEmpty(label or "") then
@@ -91,7 +91,7 @@ function MissionSelectorHandler:AddButton(button)
 end
 
 ---Toggles the mission selector on or off
----@param bool boolean|nil
+---@param bool boolean?
 function MissionSelectorHandler:Enabled(bool)
     if bool ~= nil then
         if bool then

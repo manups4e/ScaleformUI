@@ -45,8 +45,8 @@ function Sprite.New(TxtDictionary, TxtName, X, Y, Width, Height, Heading, R, G, 
 end
 
 ---Sets the position of the sprite
----@param X number|nil
----@param Y number|nil
+---@param X number?
+---@param Y number?
 function Sprite:Position(X, Y)
     if tonumber(X) and tonumber(Y) then
         self.X = tonumber(X)
@@ -57,8 +57,8 @@ function Sprite:Position(X, Y)
 end
 
 ---Sets the size of the sprite
----@param Width number|nil
----@param Height number|nil
+---@param Width number?
+---@param Height number?
 function Sprite:Size(Width, Height)
     if tonumber(Width) and tonumber(Width) then
         self.Width = tonumber(Width)
@@ -69,10 +69,10 @@ function Sprite:Size(Width, Height)
 end
 
 ---Sets the Colour of the sprite
----@param R number|nil
----@param G number|nil
----@param B number|nil
----@param A number|nil
+---@param R number?
+---@param G number?
+---@param B number?
+---@param A number?
 function Sprite:Colour(R, G, B, A)
     if tonumber(R) or tonumber(G) or tonumber(B) or tonumber(A) then
         self._Colour.R = tonumber(R) or 255

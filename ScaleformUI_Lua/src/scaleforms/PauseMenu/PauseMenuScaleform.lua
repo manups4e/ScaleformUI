@@ -11,7 +11,7 @@ end
 ---@field public Loaded boolean
 ---@field public _visible boolean
 ---@field public Visible fun(self:PauseMenu, visible:boolean):boolean
----@field public SetHeaderTitle fun(self:PauseMenu, title:string, subtitle:string|nil, shiftUpHeader:boolean|nil):nil
+---@field public SetHeaderTitle fun(self:PauseMenu, title:string, subtitle:string?, shiftUpHeader:boolean?):nil
 ---@field public SetHeaderDetails fun(self:PauseMenu, topDetail:string, midDetail:string, botDetail:string):nil
 ---@field public ShiftCoronaDescription fun(self:PauseMenu, shiftDesc:boolean, hideTabs:boolean):nil
 ---@field public ShowHeaderDetails fun(self:PauseMenu, show:boolean):nil
@@ -19,8 +19,8 @@ end
 ---@field public SetHeaderSecondaryImg fun(self:PauseMenu, txd:string, charTexturePath:string, show:boolean):nil
 ---@field public HeaderGoRight fun(self:PauseMenu):nil
 ---@field public HeaderGoLeft fun(self:PauseMenu):nil
----@field public AddPauseMenuTab fun(self:PauseMenu, title:string, _type:number, _tabContentType:number, color:Colours|nil):nil
----@field public AddLobbyMenuTab fun(self:PauseMenu, title:string, _type:number, _tabContentType:number, color:Colours|nil):nil
+---@field public AddPauseMenuTab fun(self:PauseMenu, title:string, _type:number, _tabContentType:number, color:Colours?):nil
+---@field public AddLobbyMenuTab fun(self:PauseMenu, title:string, _type:number, _tabContentType:number, color:Colours?):nil
 ---@field public SelectTab fun(self:PauseMenu, tab:number):nil
 ---@field public SetFocus fun(self:PauseMenu, focus:number):nil
 ---@field public AddLeftItem fun(self:PauseMenu, tab:number, title:string, _type:number, _tabContentType:number, color:Colours, enabled:boolean):nil
@@ -48,7 +48,7 @@ end
 ---@field public SendScrollEvent fun(self:PauseMenu, scrollEvent:number):nil
 ---@field public SendClickEvent fun(self:PauseMenu):nil
 ---@field public Dispose fun(self:PauseMenu):nil
----@field public Draw fun(self:PauseMenu, isLobby:boolean|nil):nil
+---@field public Draw fun(self:PauseMenu, isLobby:boolean?):nil
 
 ---Creates a new instance of the pause menu
 ---@return PauseMenu
@@ -84,8 +84,8 @@ end
 
 ---Set the header title and subtitle text of the pause menu header
 ---@param title string
----@param subtitle string|nil
----@param shiftUpHeader boolean|nil
+---@param subtitle string?
+---@param shiftUpHeader boolean?
 function PauseMenu:SetHeaderTitle(title, subtitle, shiftUpHeader)
     if (subtitle == nil) then subtitle = "" end
     if (shiftUpHeader == nil) then shiftUpHeader = false end
@@ -143,7 +143,7 @@ end
 ---@param title string
 ---@param _type number
 ---@param _tabContentType number
----@param color Colours|nil - Sets the color of the tab (default: 116)
+---@param color Colours? - Sets the color of the tab (default: 116)
 function PauseMenu:AddPauseMenuTab(title, _type, _tabContentType, color)
     if color == nil then color = 116 end
     self._header:CallFunction("ADD_HEADER_TAB", false, title, _type, color)
@@ -154,7 +154,7 @@ end
 ---@param title string
 ---@param _type number
 ---@param _tabContentType number - Currently not used
----@param color Colours|nil - Sets the color of the tab (default: 116)
+---@param color Colours? - Sets the color of the tab (default: 116)
 function PauseMenu:AddLobbyMenuTab(title, _type, _tabContentType, color)
     if color == nil then color = 116 end
     self._header:CallFunction("ADD_HEADER_TAB", false, title, _type, color)
@@ -177,9 +177,9 @@ end
 ---@param tab number
 ---@param _type number
 ---@param title string
----@param itemColor Colours|nil - Sets the color of the item (default: Colours.NONE)
----@param highlightColor Colours|nil - Sets the color of the item when highlighted (default: Colours.NONE)
----@param enabled boolean|nil - Sets the item to be enabled or disabled
+---@param itemColor Colours? - Sets the color of the item (default: Colours.NONE)
+---@param highlightColor Colours? - Sets the color of the item when highlighted (default: Colours.NONE)
+---@param enabled boolean? - Sets the item to be enabled or disabled
 function PauseMenu:AddLeftItem(tab, _type, title, itemColor, highlightColor, enabled)
     if itemColor == nil then itemColor = Colours.NONE end
     if highlightColor == nil then highlightColor = Colours.NONE end
@@ -230,7 +230,7 @@ end
 ---@param leftItemIndex number
 ---@param label string
 ---@param value number
----@param barColor Colours|nil - Sets the color of the bar (default: Colours.NONE)
+---@param barColor Colours? - Sets the color of the bar (default: Colours.NONE)
 function PauseMenu:AddRightStatItemColorBar(tab, leftItemIndex, label, value, barColor)
     self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItemIndex, 1, 1, label, value, barColor)
 end
@@ -240,7 +240,7 @@ end
 ---@param leftItemIndex number
 ---@param label string
 ---@param rightLabel string
----@param enabled boolean|nil - Sets the item to be enabled or disabled
+---@param enabled boolean? - Sets the item to be enabled or disabled
 function PauseMenu:AddRightSettingsBaseItem(tab, leftItemIndex, label, rightLabel, enabled)
     self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItemIndex, 2, 0, label, enabled, rightLabel)
 end
@@ -251,7 +251,7 @@ end
 ---@param label string
 ---@param items table
 ---@param startIndex number
----@param enabled boolean|nil - Sets the item to be enabled or disabled
+---@param enabled boolean? - Sets the item to be enabled or disabled
 function PauseMenu:AddRightSettingsListItem(tab, leftItemIndex, label, items, startIndex, enabled)
     local stringList = table.concat(items, ",")
     self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItemIndex, 2, 1, label, enabled, stringList,
@@ -263,9 +263,9 @@ end
 ---@param leftItemIndex number
 ---@param label string
 ---@param max number
----@param color Colours|nil - Sets the color of the bar (default: Colours.NONE)
+---@param color Colours? - Sets the color of the bar (default: Colours.NONE)
 ---@param index number
----@param enabled boolean|nil - Sets the item to be enabled or disabled
+---@param enabled boolean? - Sets the item to be enabled or disabled
 function PauseMenu:AddRightSettingsProgressItem(tab, leftItemIndex, label, max, color, index, enabled)
     self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItemIndex, 2, 2, label, enabled, max, color, index)
 end
@@ -275,9 +275,9 @@ end
 ---@param leftItemIndex number
 ---@param label string
 ---@param max number
----@param color Colours|nil - Sets the color of the bar (default: Colours.NONE)
+---@param color Colours? - Sets the color of the bar (default: Colours.NONE)
 ---@param index number
----@param enabled boolean|nil - Sets the item to be enabled or disabled
+---@param enabled boolean? - Sets the item to be enabled or disabled
 function PauseMenu:AddRightSettingsProgressItemAlt(tab, leftItemIndex, label, max, color, index, enabled)
     self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItemIndex, 2, 3, label, enabled, max, color, index)
 end
@@ -287,9 +287,9 @@ end
 ---@param leftItemIndex number
 ---@param label string
 ---@param max number
----@param color Colours|nil - Sets the color of the bar (default: Colours.NONE)
+---@param color Colours? - Sets the color of the bar (default: Colours.NONE)
 ---@param index number
----@param enabled boolean|nil - Sets the item to be enabled or disabled
+---@param enabled boolean? - Sets the item to be enabled or disabled
 function PauseMenu:AddRightSettingsSliderItem(tab, leftItemIndex, label, max, color, index, enabled)
     self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItemIndex, 2, 5, label, enabled, max, color, index)
 end
@@ -300,7 +300,7 @@ end
 ---@param label string
 ---@param style number
 ---@param check boolean
----@param enabled boolean|nil - Sets the item to be enabled or disabled
+---@param enabled boolean? - Sets the item to be enabled or disabled
 function PauseMenu:AddRightSettingsCheckboxItem(tab, leftItemIndex, label, style, check, enabled)
     self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", false, tab, leftItemIndex, 2, 4, label, enabled, style, check)
 end
@@ -408,7 +408,7 @@ end
 ---@param rightItem number
 ---@param label string
 ---@param value number
----@param color Colours|nil - Sets the color of the bar (default: Colours.NONE)
+---@param color Colours? - Sets the color of the bar (default: Colours.NONE)
 function PauseMenu:UpdateStatsItemBar(tab, leftItemIndex, rightItem, label, value, color)
     self._pause:CallFunction("UPDATE_RIGHT_STATS_ITEM", false, tab, leftItemIndex, rightItem, label, value, color)
 end
@@ -417,7 +417,7 @@ end
 ---@param tab number
 ---@param leftItemIndex number
 ---@param rightItem number
----@param color Colours|nil - Sets the color of the bar (default: Colours.NONE)
+---@param color Colours? - Sets the color of the bar (default: Colours.NONE)
 function PauseMenu:UpdateItemColoredBar(tab, leftItemIndex, rightItem, color)
     if (color == nil or color == Colours.NONE) then
         self._pause:CallFunction("UPDATE_COLORED_BAR_COLOR", false, tab, leftItemIndex, rightItem,
@@ -463,7 +463,7 @@ function PauseMenu:Dispose()
 end
 
 ---Draw the pause menu
----@param isLobby boolean|nil
+---@param isLobby boolean?
 function PauseMenu:Draw(isLobby)
     if isLobby == nil then isLobby = false end
     if self._visible and GetCurrentFrontendMenuVersion() == -2060115030 then

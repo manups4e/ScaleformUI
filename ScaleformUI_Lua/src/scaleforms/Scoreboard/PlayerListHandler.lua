@@ -23,7 +23,7 @@ end
 ---@field public NextPage fun(self:PlayerListScoreboard):nil
 ---@field public AddRow fun(self:PlayerListScoreboard, row:SCPlayerItem):nil
 ---@field public RemoveRow fun(self:PlayerListScoreboard, index:number):nil
----@field public CurrentPage fun(self:PlayerListScoreboard, _c:number|nil):number
+---@field public CurrentPage fun(self:PlayerListScoreboard, _c:number?):number
 ---@field public Dispose fun(self:PlayerListScoreboard):nil
 ---@field public Load fun(self:PlayerListScoreboard):nil
 ---@field public SetTitle fun(self:PlayerListScoreboard, title:string, label:string, icon:number):nil
@@ -52,7 +52,7 @@ function PlayerListScoreboard.New()
 end
 
 ---Current page of the scoreboard
----@param _c number|nil
+---@param _c number?
 ---@return number
 function PlayerListScoreboard:CurrentPage(_c)
     if _c ~= nil then

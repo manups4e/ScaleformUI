@@ -46,7 +46,7 @@ end
 ---@param bgColor Colours
 ---@param useDarkerShard boolean
 ---@param useCondensedShard boolean
----@param time number|nil - The time in milliseconds the message should be shown for (default: 5000)
+---@param time number? - The time in milliseconds the message should be shown for (default: 5000)
 function MidMessageInstance:ShowColoredShard(msg, desc, bgColor, useDarkerShard, useCondensedShard, time)
     if time == nil then time = 5000 end
     self:Load()
