@@ -4,6 +4,31 @@ PlayerStatsPanel.__call = function()
     return "ItemPanel", "PlayerStatsPanel"
 end
 
+---@class PlayerStatsPanel
+---@field private _title string
+---@field private _description string
+---@field private _titleColor number
+---@field private _hasPlane boolean
+---@field private _hasVehicle boolean
+---@field private _hasBoat boolean
+---@field private _hasHeli boolean
+---@field public ParentItem FriendItem
+---@field public RankInfo UpperInformation
+---@field public Items PlayerStatsPanelStatItem[]
+---@field public UpdatePanel fun(self: PlayerStatsPanel, override: boolean|nil)
+---@field public Description fun(self: PlayerStatsPanel, desc: string|nil): string
+---@field public HasPlane fun(self: PlayerStatsPanel, bool: boolean|nil): boolean
+---@field public HasHeli fun(self: PlayerStatsPanel, bool: boolean|nil): boolean
+---@field public HasBoat fun(self: PlayerStatsPanel, bool: boolean|nil): boolean
+---@field public HasVehicle fun(self: PlayerStatsPanel, bool: boolean|nil): boolean
+---@field public AddStat fun(self: PlayerStatsPanel, statItem: PlayerStatsPanelStatItem)
+---@field public OnItemChanged fun(item: PlayerStatsPanelStatItem)
+---@field public OnItemActivated fun(item: PlayerStatsPanelStatItem)
+
+---Creates a new PlayerStatsPanel.
+---@param title string
+---@param titleColor number
+---@return PlayerStatsPanel
 function PlayerStatsPanel.New(title, titleColor)
     local _data = {
         ParentItem = nil,
@@ -14,7 +39,7 @@ function PlayerStatsPanel.New(title, titleColor)
         _hasVehicle = false,
         _hasBoat = false,
         _hasHeli = false,
-        RankInfo = UpperInformation.New(self),
+        RankInfo = nil,
         Items = {}
     }
     local retVal = setmetatable(_data, PlayerStatsPanel)
@@ -22,70 +47,85 @@ function PlayerStatsPanel.New(title, titleColor)
     return retVal
 end
 
-
+---Sets the title of the panel if supplied else it will return the current title.
+---@param label string|nil
+---@return string
 function PlayerStatsPanel:Title(label)
-    if label == nil then
-        return self._title
-    else
+    if label ~= nil then
         self._title = label
         self:UpdatePanel()
     end
+    return self._title
 end
 
+---Sets the title color of the panel if supplied else it will return the current color.
+---@param color number|nil
+---@return number
 function PlayerStatsPanel:TitleColor(color)
-    if color == nil then
-        return self._titleColor
-    else
+    if color ~= nil then
         self._titleColor = color
         self:UpdatePanel()
     end
+    return self._titleColor
 end
 
+---Sets the description of the panel if supplied else it will return the current description.
+---@param label string|nil
+---@return string
 function PlayerStatsPanel:Description(label)
-    if label == nil then
-        return self._description
-    else
+    if label ~= nil then
         self._description = label
         self:UpdatePanel()
     end
+    return self._description
 end
 
+---Sets whether the player has a plane or not, if parameter is nill, it will return the current value.
+---@param bool boolean|nil
+---@return boolean
 function PlayerStatsPanel:HasPlane(bool)
-    if bool == nil then
-        return self._hasPlane
-    else
+    if bool ~= nil then
         self._hasPlane = bool
         self:UpdatePanel()
     end
+    return self._hasPlane
 end
 
+---Sets whether the player has a helicopter or not, if parameter is nill, it will return the current value.
+---@param bool boolean|nil
+---@return boolean
 function PlayerStatsPanel:HasHeli(bool)
-    if bool == nil then
-        return self._hasHeli
-    else
+    if bool ~= nil then
         self._hasHeli = bool
         self:UpdatePanel()
     end
+    return self._hasHeli
 end
 
+---Sets whether the player has a boat or not, if parameter is nill, it will return the current value.
+---@param bool boolean|nil
+---@return boolean
 function PlayerStatsPanel:HasBoat(bool)
-    if bool == nil then
-        return self._hasBoat
-    else
+    if bool ~= nil then
         self._hasBoat = bool
         self:UpdatePanel()
     end
+    return self._hasBoat
 end
 
+---Sets whether the player has a vehicle or not, if parameter is nill, it will return the current value.
+---@param bool boolean|nil
+---@return boolean
 function PlayerStatsPanel:HasVehicle(bool)
-    if bool == nil then
-        return self._hasVehicle
-    else
+    if bool ~= nil then
         self._hasVehicle = bool
         self:UpdatePanel()
     end
+    return self._hasVehicle
 end
 
+---Adds a new stat item to the panel.
+---@param statItem PlayerStatsPanelStatItem
 function PlayerStatsPanel:AddStat(statItem)
     statItem.Parent = self
     statItem.idx = #self.Items
@@ -93,124 +133,46 @@ function PlayerStatsPanel:AddStat(statItem)
     self:UpdatePanel()
 end
 
+---Triggers the panel to update.
+---@param override boolean|nil If true, the panel will update regardless of the parent's visibility.
 function PlayerStatsPanel:UpdatePanel(override)
     if override == nil then override = false end
     if ((self.ParentItem ~= nil and self.ParentItem.ParentColumn ~= nil and self.ParentItem.ParentColumn.Parent ~= nil and self.ParentItem.ParentColumn.Parent:Visible()) or override) then
-        local idx = IndexOf(self.ParentItem.ParentColumn.Items, self.ParentItem) -1
+        local idx = IndexOf(self.ParentItem.ParentColumn.Items, self.ParentItem) - 1
         local pSubT = self.ParentItem.ParentColumn.Parent()
         if pSubT == "LobbyMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_PANEL", false, idx, 0, self.ParentItem.ClonePed ~= nil and self.ParentItem.ClonePed ~= 0, self:Title(), self:Description(), self:TitleColor(), self.RankInfo:RankLevel(), self:HasPlane(), self:HasHeli(), self:HasBoat(), self:HasVehicle(), 0, self.RankInfo:LowLabel(), 0, 0, self.RankInfo:MidLabel(), 0, 0, self.RankInfo:UpLabel(), 0, 0)
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_PANEL", false, idx, 0,
+                self.ParentItem.ClonePed ~= nil and self.ParentItem.ClonePed ~= 0, self:Title(), self:Description(),
+                self:TitleColor(), self.RankInfo:RankLevel(), self:HasPlane(), self:HasHeli(), self:HasBoat(),
+                self:HasVehicle(), 0, self.RankInfo:LowLabel(), 0, 0, self.RankInfo:MidLabel(), 0, 0,
+                self.RankInfo:UpLabel(),
+                0, 0)
             if not self:Description():IsNullOrEmpty() then
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_PANEL_DESCRIPTION", false, idx, self:Description(), 0, "", self.ParentItem.ClonePed ~= nil and self.ParentItem.ClonePed ~= 0)
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_PANEL_DESCRIPTION", false, idx,
+                    self:Description(), 0, "", self.ParentItem.ClonePed ~= nil and self.ParentItem.ClonePed ~= 0)
             end
-            for k,stat in pairs(self.Items) do
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_PANEL_STAT", false, idx, stat.idx, 0, stat:Label(), stat:Description(), stat:Value())
+            for k, stat in pairs(self.Items) do
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_PANEL_STAT", false, idx, stat.idx,
+                    0, stat:Label(), stat:Description(), stat:Value())
             end
         elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL", false, self.ParentItem.ParentColumn.ParentTab, idx, 0, self.ParentItem.ClonePed ~= nil and self.ParentItem.ClonePed ~= 0, self:Title(), self:Description(), self:TitleColor(), self.RankInfo:RankLevel(), self:HasPlane(), self:HasHeli(), self:HasBoat(), self:HasVehicle(), 0, self.RankInfo:LowLabel(), 0, 0, self.RankInfo:MidLabel(), 0, 0, self.RankInfo:UpLabel(), 0, 0)
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL", false,
+                self.ParentItem.ParentColumn.ParentTab, idx, 0,
+                self.ParentItem.ClonePed ~= nil and self.ParentItem.ClonePed ~= 0, self:Title(), self:Description(),
+                self:TitleColor(), self.RankInfo:RankLevel(), self:HasPlane(), self:HasHeli(), self:HasBoat(),
+                self:HasVehicle(), 0, self.RankInfo:LowLabel(), 0, 0, self.RankInfo:MidLabel(), 0, 0,
+                self.RankInfo:UpLabel(),
+                0, 0)
             if not self:Description():IsNullOrEmpty() then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_DESCRIPTION", false, self.ParentItem.ParentColumn.ParentTab, idx, self:Description(), 0, "", self.ParentItem.ClonePed ~= nil and self.ParentItem.ClonePed ~= 0)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_DESCRIPTION",
+                    false, self.ParentItem.ParentColumn.ParentTab, idx, self:Description(), 0, "",
+                    self.ParentItem.ClonePed ~= nil and self.ParentItem.ClonePed ~= 0)
             end
-            for k,stat in pairs(self.Items) do
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_STAT", false, self.ParentItem.ParentColumn.ParentTab, idx, stat.idx, 0, stat:Label(), stat:Description(), stat:Value())
+            for k, stat in pairs(self.Items) do
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_STAT", false,
+                    self.ParentItem.ParentColumn.ParentTab, idx, stat.idx, 0, stat:Label(), stat:Description(),
+                    stat:Value())
             end
         end
-    end
-end
-
-UpperInformation = setmetatable({}, UpperInformation)
-UpperInformation.__index = UpperInformation
-UpperInformation.__call = function()
-    return "ItemPanel_Info", "UpperInformation"
-end
-
-function UpperInformation.New(parent)
-    local _data = {
-        _parent = parent,
-        _rankLevel = 0;
-        _upLabel = "";
-        _lowLabel = "";
-        _midLabel = "";
-    }
-    return setmetatable(_data, UpperInformation)
-end
-
-function UpperInformation:RankLevel(rank)
-    if rank == nil then
-        return self._rankLevel
-    else
-        self._rankLevel = rank
-        self._parent:UpdatePanel()
-    end
-end
-
-function UpperInformation:UpLabel(label)
-    if label == nil then
-        return self._upLabel
-    else
-        self._upLabel = label
-        self._parent:UpdatePanel()
-    end
-end
-
-function UpperInformation:MidLabel(label)
-    if label == nil then
-        return self._midLabel
-    else
-        self._midLabel = label
-        self._parent:UpdatePanel()
-    end
-end
-
-function UpperInformation:LowLabel(label)
-    if label == nil then
-        return self._lowLabel
-    else
-        self._lowLabel = label
-        self._parent:UpdatePanel()
-    end
-end
-
-PlayerStatsPanelStatItem = setmetatable({}, PlayerStatsPanelStatItem)
-PlayerStatsPanelStatItem.__index = PlayerStatsPanelStatItem
-PlayerStatsPanelStatItem.__call = function()
-    return "ItemPanel_item", "PlayerStatsPanelStatItem"
-end
-
-function PlayerStatsPanelStatItem.New(label, desc, value)
-    local _data={
-        Parent = parent,
-        _idx = 0,
-        _value = value or 0,
-        _description = desc or "",
-        _label = label or ""
-    }
-    return setmetatable(_data, PlayerStatsPanelStatItem)
-end
-
-function PlayerStatsPanelStatItem:Label(label)
-    if label == nil then
-        return self._label
-    else
-        self._label = label
-        self.Parent:UpdatePanel()
-    end
-end
-
-function PlayerStatsPanelStatItem:Description(desc)
-    if desc == nil then
-        return self._description
-    else
-        self._description = desc
-        self.Parent:UpdatePanel()
-    end
-end
-
-function PlayerStatsPanelStatItem:Value(value)
-    if value == nil then
-        return self._value
-    else
-        self._value = value
-        self.Parent:UpdatePanel()
     end
 end

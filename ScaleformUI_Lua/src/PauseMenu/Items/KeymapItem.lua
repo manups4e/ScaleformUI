@@ -4,6 +4,20 @@ KeymapItem.__call = function()
     return "BasicTabItem", "KeymapItem"
 end
 
+---@class KeymapItem
+---@field public Label string
+---@field public PrimaryKeyboard string
+---@field public PrimaryGamepad string
+---@field public SecondaryKeyboard string
+---@field public SecondaryGamepad string
+
+---Creates a new KeymapItem.
+---@param title string
+---@param primaryKeyboard string|nil
+---@param primaryGamepad string|nil
+---@param secondaryKeyboard string|nil
+---@param secondaryGamepad string|nil
+---@return table
 function KeymapItem.New(title, primaryKeyboard, primaryGamepad, secondaryKeyboard, secondaryGamepad)
     local data = {}
     if secondaryKeyboard == nil and secondaryGamepad == nil then

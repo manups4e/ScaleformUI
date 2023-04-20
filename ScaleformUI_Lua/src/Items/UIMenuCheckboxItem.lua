@@ -2,19 +2,25 @@ UIMenuCheckboxItem = setmetatable({}, UIMenuCheckboxItem)
 UIMenuCheckboxItem.__index = UIMenuCheckboxItem
 UIMenuCheckboxItem.__call = function() return "UIMenuItem", "UIMenuCheckboxItem" end
 
+---@class UIMenuCheckboxItem : UIMenuItem
+---@field public Base UIMenuItem
+
 ---New
 ---@param Text string
 ---@param Check boolean
 ---@param Description string
-function UIMenuCheckboxItem.New(Text, Check, checkStyle, Description, color, highlightColor, textColor, highlightedTextColor)
+function UIMenuCheckboxItem.New(Text, Check, checkStyle, Description, color, highlightColor, textColor,
+                                highlightedTextColor)
     local _UIMenuCheckboxItem = {
-        Base = UIMenuItem.New(Text or "", Description or "", color or 117, highlightColor or 1, textColor or 1, highlightedTextColor or 2),
-        _Checked = tobool(Check),
+        Base = UIMenuItem.New(Text or "", Description or "", color or 117, highlightColor or 1, textColor or 1,
+            highlightedTextColor or 2),
+        _Checked = ToBool(Check),
         Panels = {},
         SidePanel = nil,
         CheckBoxStyle = checkStyle or 0,
         ItemId = 2,
-        OnCheckboxChanged = function(menu, item, checked) end,
+        OnCheckboxChanged = function(menu, item, checked)
+        end,
     }
     return setmetatable(_UIMenuCheckboxItem, UIMenuCheckboxItem)
 end
@@ -42,13 +48,18 @@ function UIMenuCheckboxItem:AddSidePanel(sidePanel)
         sidePanel:SetParentItem(self)
         self.SidePanel = sidePanel
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
-            ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false,
+                IndexOf(self.Base.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType,
+                sidePanel.Title,
+                sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
         end
-    elseif sidePanel() == "UIVehicleColorPickerPanel" then    
-        sidePanel:SetParentItem(self)    
-        self.SidePanel = sidePanel    
+    elseif sidePanel() == "UIVehicleColorPickerPanel" then
+        sidePanel:SetParentItem(self)
+        self.SidePanel = sidePanel
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
-            ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, IndexOf(self.ParentMenu.Items, self) - 1, 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title, sidePanel.TitleColor)
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false,
+                IndexOf(self.ParentMenu.Items, self) - 1, 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title,
+                sidePanel.TitleColor)
         end
     end
 end
@@ -57,7 +68,7 @@ end
 ---@param bool boolean
 function UIMenuCheckboxItem:Selected(bool)
     if bool ~= nil then
-        self.Base:Selected(tobool(bool), self)
+        self.Base:Selected(ToBool(bool), self)
     else
         return self.Base._Selected
     end
@@ -69,17 +80,17 @@ function UIMenuCheckboxItem:LabelFont(fontTable)
     else
         self.Base._labelFont = fontTable
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", false, IndexOf(self.ParentMenu.Items, item) - 1,  self.Base._labelFont[1], self.Base._labelFont[2])
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", false,
+                IndexOf(self.ParentMenu.Items, self) - 1, self.Base._labelFont[1], self.Base._labelFont[2])
         end
     end
 end
-
 
 ---Hovered
 ---@param bool boolean
 function UIMenuCheckboxItem:Hovered(bool)
     if bool ~= nil then
-        self.Base._Hovered = tobool(bool)
+        self.Base._Hovered = ToBool(bool)
     else
         return self.Base._Hovered
     end
@@ -124,10 +135,11 @@ function UIMenuCheckboxItem:Label(Text)
 end
 
 function UIMenuCheckboxItem:MainColor(color)
-    if(color)then
+    if (color) then
         self.Base._mainColor = color
-        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
+        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1,
+                self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
         return self.Base._mainColor
@@ -135,10 +147,11 @@ function UIMenuCheckboxItem:MainColor(color)
 end
 
 function UIMenuCheckboxItem:TextColor(color)
-    if(color)then
+    if (color) then
         self.Base._textColor = color
-        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
+        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1,
+                self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
         return self.Base._textColor
@@ -146,10 +159,11 @@ function UIMenuCheckboxItem:TextColor(color)
 end
 
 function UIMenuCheckboxItem:HighlightColor(color)
-    if(color)then
+    if (color) then
         self.Base._highlightColor = color
-        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
+        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1,
+                self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
         return self.Base._highlightColor
@@ -157,10 +171,11 @@ function UIMenuCheckboxItem:HighlightColor(color)
 end
 
 function UIMenuCheckboxItem:HighlightedTextColor(color)
-    if(color)then
+    if (color) then
         self.Base._highlightedTextColor = color
-        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1, self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
+        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1,
+                self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
         return self.Base._highlightedTextColor
@@ -188,8 +203,8 @@ end
 
 function UIMenuCheckboxItem:Checked(bool)
     if bool ~= nil then
-        self._Checked = tobool(bool)
-        if(self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
+        self._Checked = ToBool(bool)
+        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
             local it = IndexOf(self.Base.ParentMenu.Items, self) - 1
             ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", false, 16, it, self._Checked)
         end

@@ -1,3 +1,4 @@
+---@enum MenuAnimationType
 MenuAnimationType = {
     LINEAR = 0,
     QUADRATIC_IN = 1,
@@ -20,6 +21,7 @@ MenuAnimationType = {
     CIRCULAR_INOUT = 18
 }
 
+---@enum MenuBuildingAnimation
 MenuBuildingAnimation = {
     NONE = 0,
     LEFT = 1,

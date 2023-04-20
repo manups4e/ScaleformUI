@@ -1,9 +1,10 @@
+---@class StatItemType
 StatItemType = {
     Basic = 0,
     ColoredBar = 1,
-    
 }
 
+---@class SettingsItemType
 SettingsItemType = {
     Basic = 0,
     ListItem = 1,
@@ -13,6 +14,7 @@ SettingsItemType = {
     SliderBar = 5
 }
 
+---@class LeftItemType
 LeftItemType = {
     Empty = 0,
     Info = 1,

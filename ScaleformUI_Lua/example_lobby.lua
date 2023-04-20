@@ -1,5 +1,6 @@
+---@diagnostic disable: missing-parameter
 local pool = MenuPool.New()
-lobbyMenu = nil
+LobbyMenu = nil
 
 local currentColumnId = 1
 local currentSelectId = 1
@@ -11,47 +12,51 @@ ColumnCallbackFunction[2] = {}
 local menuLoaded = false
 local firstLoad = true
 local function CreateLobbyMenu()
-    if not lobbyMenu then
-        lobbyMenu = MainView.New("name", "dec", "", "", "")
+    if not LobbyMenu then
+        LobbyMenu = MainView.New("name", "dec", "", "", "")
         local columns = {
             SettingsListColumn.New("COLUMN SETTINGS", Colours.HUD_COLOUR_RED),
             PlayerListColumn.New("COLUMN PLAYERS", Colours.HUD_COLOUR_ORANGE),
             MissionDetailsPanel.New("COLUMN INFO PANEL", Colours.HUD_COLOUR_GREEN),
         }
-        lobbyMenu:SetupColumns(columns)
-        
-        CreateRuntimeTextureFromDuiHandle(CreateRuntimeTxd('ScaleformUI_Lua_duiTxd'), "LobbyHeadshot", GetDuiHandle(CreateDui("https://static.wikia.nocookie.net/gtawiki/images/4/4a/45%C2%B0-GTAO-JobImage.jpg/revision/latest?cb=20190216233424", 320, 180)))
+        LobbyMenu:SetupColumns(columns)
+
+        CreateRuntimeTextureFromDuiHandle(CreateRuntimeTxd('ScaleformUI_Lua_duiTxd'), "LobbyHeadshot",
+            GetDuiHandle(CreateDui(
+                "https://static.wikia.nocookie.net/gtawiki/images/4/4a/45%C2%B0-GTAO-JobImage.jpg/revision/latest?cb=20190216233424",
+                320, 180)))
         local mugshot = RegisterPedheadshot(PlayerPedId())
-        local timer = GetGameTimer()
-        while not IsPedheadshotReady(mugshot) and GetGameTimer() - timer < 1000 do
+        local timer = GlobalGameTimer
+        while not IsPedheadshotReady(mugshot) and GlobalGameTimer - timer < 1000 do
             Citizen.Wait(0)
         end
         local headshot = GetPedheadshotTxdString(mugshot)
         AddReplaceTexture("ScaleformUI_Lua_duiTxd", "LobbyHeadshot", headshot, headshot)
-        lobbyMenu:HeaderPicture("ScaleformUI_Lua_duiTxd", "LobbyHeadshot") -- lobbyMenu:CrewPicture used to add a picture on the left of the HeaderPicture
-        UnregisterPedheadshot(mugshot) -- call it right after adding the menu.. this way the txd will be loaded correctly by the scaleform.. 
-        
-        pool:AddPauseMenu(lobbyMenu)
-        lobbyMenu:CanPlayerCloseMenu(true)
-        
-        local item = UIMenuItem.New("UIMenuItem", "UIMenuItem description")
-        lobbyMenu.SettingsColumn:AddSettings(item)
-        
-        lobbyMenu.MissionPanel:UpdatePanelPicture("scaleformui", "lobby_panelbackground")
-        lobbyMenu.MissionPanel:Title("ScaleformUI - Title")
-        
-        local detailItem = UIMenuFreemodeDetailsItem.New("Left Label", "Right Label", false, BadgeStyle.BRIEFCASE, Colours.HUD_COLOUR_FREEMODE)
-        lobbyMenu.MissionPanel:AddItem(detailItem)
-        
-        local friend = FriendItem.New("", 0, 116, 0, 0, "")
-        lobbyMenu.PlayersColumn:AddPlayer(friend)
+        LobbyMenu:HeaderPicture("ScaleformUI_Lua_duiTxd", "LobbyHeadshot") -- lobbyMenu:CrewPicture used to add a picture on the left of the HeaderPicture
+        UnregisterPedheadshot(mugshot)                                     -- call it right after adding the menu.. this way the txd will be loaded correctly by the scaleform..
 
-        lobbyMenu.SettingsColumn.OnIndexChanged = function(idx)
+        pool:AddPauseMenu(LobbyMenu)
+        LobbyMenu:CanPlayerCloseMenu(true)
+
+        local item = UIMenuItem.New("UIMenuItem", "UIMenuItem description")
+        LobbyMenu.SettingsColumn:AddSettings(item)
+
+        LobbyMenu.MissionPanel:UpdatePanelPicture("scaleformui", "lobby_panelbackground")
+        LobbyMenu.MissionPanel:Title("ScaleformUI - Title")
+
+        local detailItem = UIMenuFreemodeDetailsItem.New("Left Label", "Right Label", false, BadgeStyle.BRIEFCASE,
+            Colours.HUD_COLOUR_FREEMODE)
+        LobbyMenu.MissionPanel:AddItem(detailItem)
+
+        local friend = FriendItem.New("", Colours.HUD_COLOUR_FREEMODE, false, 0, "", "")
+        LobbyMenu.PlayersColumn:AddPlayer(friend)
+
+        LobbyMenu.SettingsColumn.OnIndexChanged = function(idx)
             currentSelectId = idx
             currentColumnId = 1
         end
 
-        lobbyMenu.PlayersColumn.OnIndexChanged = function(idx)
+        LobbyMenu.PlayersColumn.OnIndexChanged = function(idx)
             currentSelectId = idx
             currentColumnId = 2
         end
@@ -67,9 +72,9 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:SetHeaderMenu", function(data)
     while not menuLoaded do
         Wait(0)
     end
-    
+
     local isChange = false
-    for k,v in pairs(data) do
+    for k, v in pairs(data) do
         if not DataSetHeaderMenu[k] then
             isChange = true
             break
@@ -86,54 +91,54 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:SetHeaderMenu", function(data)
             end
         end
     end
-    
+
     if isChange then
         print("ScaleformUI_Lua:lobbymenu:SetHeaderMenu")
-        
+
         if data.Title then
-            lobbyMenu.Title = data.Title
+            LobbyMenu.Title = data.Title
         end
-        
+
         if data.Subtitle then
-            lobbyMenu.Subtitle = data.Subtitle
+            LobbyMenu.Subtitle = data.Subtitle
         end
-        
+
         if data.SideTop then
-            lobbyMenu.SideTop = data.SideTop
+            LobbyMenu.SideTop = data.SideTop
         end
-        
+
         if data.SideMid then
-            lobbyMenu.SideMid = data.SideMid
+            LobbyMenu.SideMid = data.SideMid
         end
-        
+
         if data.SideBot then
-            lobbyMenu.SideBot = data.SideBot
+            LobbyMenu.SideBot = data.SideBot
         end
-        
+
         if data.Col1 then
-            lobbyMenu._listCol[1]._label = data.Col1
+            LobbyMenu._listCol[1]._label = data.Col1
         end
-        
+
         if data.Col2 then
-            lobbyMenu._listCol[2]._label = data.Col2
+            LobbyMenu._listCol[2]._label = data.Col2
         end
-        
+
         if data.Col3 then
-            lobbyMenu._listCol[3]._label = data.Col3
+            LobbyMenu._listCol[3]._label = data.Col3
         end
-        
+
         if data.ColColor1 then
-            lobbyMenu._listCol[1]._color = data.ColColor1
+            LobbyMenu._listCol[1]._color = data.ColColor1
         end
-        
+
         if data.ColColor2 then
-            lobbyMenu._listCol[2]._color = data.ColColor2
+            LobbyMenu._listCol[2]._color = data.ColColor2
         end
-        
+
         if data.ColColor3 then
-            lobbyMenu._listCol[3]._color = data.ColColor3
+            LobbyMenu._listCol[3]._color = data.ColColor3
         end
-        
+
         DataSetHeaderMenu = data
     end
 end)
@@ -144,18 +149,18 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:SetPlayerList", function(data)
     while not menuLoaded do
         Wait(0)
     end
-    
+
     local isChange = false
     local temp = table.deepcopy(data)
-    table.sort(temp, function(a,b)
+    table.sort(temp, function(a, b)
         return a.name < b.name
     end)
-    for k,v in pairs(temp) do
+    for k, v in pairs(temp) do
         if not DataPlayerListUnsort[k] then
             isChange = true
             break
         else
-            for kk,vv in pairs(v) do
+            for kk, vv in pairs(v) do
                 if kk ~= "callbackFunction" and kk ~= "ped" and DataPlayerListUnsort[k][kk] and DataPlayerListUnsort[k][kk] ~= vv then
                     isChange = true
                     break
@@ -170,12 +175,12 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:SetPlayerList", function(data)
     if isChange then
         print("ScaleformUI_Lua:lobbymenu:SetPlayerList")
         DataPlayerListUnsort = table.deepcopy(data)
-        table.sort(DataPlayerListUnsort, function(a,b)
+        table.sort(DataPlayerListUnsort, function(a, b)
             return a.name < b.name
         end)
-        
+
         local HostSource = -1
-        for k,v in pairs(data) do
+        for k, v in pairs(data) do
             if v.LobbyBadgeIcon == 66 then -- JoinAsSpectatorMode
                 v.sortOrder = 3
             elseif v.ped then
@@ -184,28 +189,28 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:SetPlayerList", function(data)
                 v.sortOrder = 4
             end
         end
-        table.sort(data, function(a,b)
+        table.sort(data, function(a, b)
             return a.sortOrder < b.sortOrder
         end)
-        
+
         ColumnCallbackFunction[2] = {}
-        
-        for i=1, #lobbyMenu.PlayersColumn.Items do
-            lobbyMenu.PlayersColumn:RemovePlayer(#lobbyMenu.PlayersColumn.Items)
+
+        for i = 1, #LobbyMenu.PlayersColumn.Items do
+            LobbyMenu.PlayersColumn:RemovePlayer(LobbyMenu.PlayersColumn.Items[i])
             Wait(0)
         end
         Wait(1)
 
         local playerPed = PlayerPedId()
         local playerCoords = GetEntityCoords(playerPed)
-        for k,v in pairs(data) do
+        for k, v in pairs(data) do
             local Status = v.Status
             local Colours = v.Colours
             if HostSource == v.source then
                 Status = "HOST"
                 Colours = 116
             end
-            
+
             if GetPlayerFromServerId(v.source) ~= -1 then
                 v.MP0_STAMINA = Player(v.source).state.ScaleformUI_Lua_MP0_STAMINA or 0
                 v.MP0_STRENGTH = Player(v.source).state.ScaleformUI_Lua_MP0_STRENGTH or 0
@@ -230,8 +235,8 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:SetPlayerList", function(data)
             v.HasPlane = IsPedInAnyPlane(v.ped)
             v.HasHeli = IsPedInAnyHeli(v.ped)
             v.HasBoat = IsPedInAnyBoat(v.ped)
-            v.HasVehicle = IsPedInAnyVehicle(v.ped)
-                
+            v.HasVehicle = IsPedInAnyVehicle(v.ped, false)
+
 
             local LobbyBadge = 120
             if v.LobbyBadgeIcon then
@@ -241,13 +246,13 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:SetPlayerList", function(data)
                     LobbyBadge = LobbyBadgeIcon.IS_CONSOLE_PLAYER
                 end
             end
-            
+
             local friend = FriendItem.New(v.name, Colours, v.rowColor, v.lev, Status, v.CrewTag)
             if v.ped then
                 friend:SetLeftIcon(LobbyBadge, false)
                 friend:AddPedToPauseMenu((v.ped or PlayerPedId())) -- defaulted to 0 if you set it to nil / 0 the ped will be removed from the pause menu
                 local panel = PlayerStatsPanel.New(v.name, v.rowColor)
-                panel:Description("My name is "..v.name)
+                panel:Description("My name is " .. v.name)
                 panel:HasPlane(v.HasPlane)
                 panel:HasHeli(v.HasHeli)
                 panel:HasBoat(v.HasBoat)
@@ -256,13 +261,20 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:SetPlayerList", function(data)
                 panel.RankInfo:LowLabel("This is the low label")
                 panel.RankInfo:MidLabel("This is the middle label")
                 panel.RankInfo:UpLabel("This is the upper label")
-                panel:AddStat(PlayerStatsPanelStatItem.New("Stamina", GetSkillStaminaDescription(v.MP0_STAMINA), v.MP0_STAMINA))
-                panel:AddStat(PlayerStatsPanelStatItem.New("Shooting", GetSkillShootingDescription(v.MP0_SHOOTING_ABILITY), v.MP0_SHOOTING_ABILITY))
-                panel:AddStat(PlayerStatsPanelStatItem.New("Strength", GetSkillStrengthDescription(v.MP0_STRENGTH), v.MP0_STRENGTH))
-                panel:AddStat(PlayerStatsPanelStatItem.New("Stealth", GetSkillStealthDescription(v.MP0_STEALTH_ABILITY), v.MP0_STEALTH_ABILITY))
-                panel:AddStat(PlayerStatsPanelStatItem.New("Driving", GetSkillDrivingDescription(v.MP0_DRIVING_ABILITY), v.MP0_DRIVING_ABILITY))
-                panel:AddStat(PlayerStatsPanelStatItem.New("Flying", GetSkillFlyingDescription(v.MP0_FLYING_ABILITY), v.MP0_FLYING_ABILITY))
-                panel:AddStat(PlayerStatsPanelStatItem.New("Mental State", GetSkillMentalStateDescription(v.MPPLY_KILLS_PLAYERS), v.MPPLY_KILLS_PLAYERS))
+                panel:AddStat(PlayerStatsPanelStatItem.New("Stamina", GetSkillStaminaDescription(v.MP0_STAMINA),
+                    v.MP0_STAMINA))
+                panel:AddStat(PlayerStatsPanelStatItem.New("Shooting",
+                    GetSkillShootingDescription(v.MP0_SHOOTING_ABILITY), v.MP0_SHOOTING_ABILITY))
+                panel:AddStat(PlayerStatsPanelStatItem.New("Strength", GetSkillStrengthDescription(v.MP0_STRENGTH),
+                    v.MP0_STRENGTH))
+                panel:AddStat(PlayerStatsPanelStatItem.New("Stealth", GetSkillStealthDescription(v.MP0_STEALTH_ABILITY),
+                    v.MP0_STEALTH_ABILITY))
+                panel:AddStat(PlayerStatsPanelStatItem.New("Driving", GetSkillDrivingDescription(v.MP0_DRIVING_ABILITY),
+                    v.MP0_DRIVING_ABILITY))
+                panel:AddStat(PlayerStatsPanelStatItem.New("Flying", GetSkillFlyingDescription(v.MP0_FLYING_ABILITY),
+                    v.MP0_FLYING_ABILITY))
+                panel:AddStat(PlayerStatsPanelStatItem.New("Mental State",
+                    GetSkillMentalStateDescription(v.MPPLY_KILLS_PLAYERS), v.MPPLY_KILLS_PLAYERS))
                 friend:AddPanel(panel)
                 friend:Enabled(true)
             else
@@ -270,13 +282,13 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:SetPlayerList", function(data)
                 friend._itemColor = 158
                 friend:Enabled(false)
             end
-            lobbyMenu.PlayersColumn:AddPlayer(friend)
+            LobbyMenu.PlayersColumn:AddPlayer(friend)
 
             if v.callbackFunction then
-                ColumnCallbackFunction[2][#lobbyMenu.PlayersColumn.Items] = v.callbackFunction
+                ColumnCallbackFunction[2][#LobbyMenu.PlayersColumn.Items] = v.callbackFunction
             end
         end
-            
+
         DataPlayerList = table.deepcopy(data)
     end
 end)
@@ -286,14 +298,14 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:SetInfo", function(data)
     while not menuLoaded do
         Wait(0)
     end
-    
+
     local isChange = false
-    for k,v in pairs(data) do
+    for k, v in pairs(data) do
         if not DataSetInfo[k] then
             isChange = true
             break
         else
-            for kk,vv in pairs(v) do
+            for kk, vv in pairs(v) do
                 if DataSetInfo[k][kk] and DataSetInfo[k][kk] ~= vv then
                     isChange = true
                     break
@@ -304,19 +316,19 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:SetInfo", function(data)
             end
         end
     end
-    
+
     if isChange then
         print("ScaleformUI_Lua:lobbymenu:SetInfo")
-    
-        for i=1, #lobbyMenu.MissionPanel.Items do
-            lobbyMenu.MissionPanel:RemoveItem(#lobbyMenu.MissionPanel.Items)
+
+        for i = 1, #LobbyMenu.MissionPanel.Items do
+            LobbyMenu.MissionPanel:RemoveItem(#LobbyMenu.MissionPanel.Items)
         end
-        
-        for k,v in pairs(data) do
+
+        for k, v in pairs(data) do
             local detailItem = UIMenuFreemodeDetailsItem.New(v.LeftLabel, v.RightLabel, false, v.BadgeStyle, v.Colours)
-            lobbyMenu.MissionPanel:AddItem(detailItem)
+            LobbyMenu.MissionPanel:AddItem(detailItem)
         end
-        
+
         DataSetInfo = data
     end
 end)
@@ -326,9 +338,9 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:SetInfoTitle", function(data)
     while not menuLoaded do
         Wait(0)
     end
-    
+
     local isChange = false
-    for k,v in pairs(data) do
+    for k, v in pairs(data) do
         if not DataSetInfoTitle[k] then
             isChange = true
             break
@@ -342,18 +354,18 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:SetInfoTitle", function(data)
             end
         end
     end
-    
+
     if isChange then
         print("ScaleformUI_Lua:lobbymenu:SetInfoTitle")
-        
+
         if data.Title then
-            lobbyMenu.MissionPanel:Title(data.Title)
+            LobbyMenu.MissionPanel:Title(data.Title)
         end
-        
+
         if data.tex and data.txd then
-            lobbyMenu.MissionPanel:UpdatePanelPicture(data.tex, data.txd)
+            LobbyMenu.MissionPanel:UpdatePanelPicture(data.tex, data.txd)
         end
-        
+
         DataSetInfoTitle = data
     end
 end)
@@ -363,14 +375,14 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:SettingsColumn", function(data)
     while not menuLoaded do
         Wait(0)
     end
-    
+
     local isChange = false
-    for k,v in pairs(data) do
+    for k, v in pairs(data) do
         if not DataSettingsColumn[k] then
             isChange = true
             break
         else
-            for kk,vv in pairs(v) do
+            for kk, vv in pairs(v) do
                 if kk ~= "callbackFunction" and DataSettingsColumn[k][kk] and DataSettingsColumn[k][kk] ~= vv then
                     isChange = true
                     break
@@ -381,20 +393,21 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:SettingsColumn", function(data)
             end
         end
     end
-    
+
     if isChange then
         print("ScaleformUI_Lua:lobbymenu:SettingsColumn")
-        
+
         ColumnCallbackFunction[1] = {}
-        
-        for i=1, #lobbyMenu.SettingsColumn.Items do
-            lobbyMenu.SettingsColumn.Items[#lobbyMenu.SettingsColumn.Items] = nil
+
+        for i = 1, #LobbyMenu.SettingsColumn.Items do
+            LobbyMenu.SettingsColumn.Items[#LobbyMenu.SettingsColumn.Items] = nil
         end
-        
-        for k,v in pairs(data) do
+
+        for k, v in pairs(data) do
             local item
             if v.type == "List" then
-                item = UIMenuListItem.New(v.label, v.list, 0, v.dec, v.mainColor, v.highlightColor, v.textColor, v.highlightedTextColor)
+                item = UIMenuListItem.New(v.label, v.list, 0, v.dec, v.mainColor, v.highlightColor, v.textColor,
+                    v.highlightedTextColor)
             elseif v.type == "Checkbox" then
                 item = UIMenuCheckboxItem.New(v.label, true, 1, v.dec)
             elseif v.type == "Slider" then
@@ -407,14 +420,14 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:SettingsColumn", function(data)
                     item:RightLabel(v.rightLabel)
                 end
             end
-            lobbyMenu.SettingsColumn.Items[k] = item
+            LobbyMenu.SettingsColumn.Items[k] = item
             item:BlinkDescription(v.Blink)
-            
+
             if v.callbackFunction then
                 ColumnCallbackFunction[1][k] = v.callbackFunction
             end
         end
-        
+
         DataSettingsColumn = data
     end
 end)
@@ -424,9 +437,9 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:UpdateSettingsColumn", function(index
         Wait(0)
     end
     print("ScaleformUI_Lua:lobbymenu:UpdateSettingsColumn")
-    
+
     ColumnCallbackFunction[1][index] = nil
-    
+
     local item
     if data.type == "List" then
         item = UIMenuListItem.New(data.label, data.list, 0, data.dec)
@@ -437,11 +450,12 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:UpdateSettingsColumn", function(index
     elseif data.type == "Progress" then
         item = UIMenuProgressItem.New(data.label, 10, 5, data.dec)
     else
-        item = UIMenuItem.New(data.label, data.dec, data.mainColor, data.highlightColor, data.textColor, data.highlightedTextColor)
+        item = UIMenuItem.New(data.label, data.dec, data.mainColor, data.highlightColor, data.textColor,
+            data.highlightedTextColor)
     end
-    lobbyMenu.SettingsColumn.Items[index] = item
+    LobbyMenu.SettingsColumn.Items[index] = item
     item:BlinkDescription(data.Blink)
-    
+
     if data.callbackFunction then
         ColumnCallbackFunction[1][index] = data.callbackFunction
     end
@@ -449,86 +463,90 @@ end)
 
 AddEventHandler("ScaleformUI_Lua:lobbymenu:Show", function(FocusLevel, canclose, onClose)
     CreateLobbyMenu()
-    
+
     while IsDisabledControlPressed(0, 199) or IsDisabledControlPressed(0, 200) do
         Wait(0)
     end
-    
+
     while firstLoad do
         Wait(0)
     end
-    
-    if lobbyMenu:Visible() then
-        lobbyMenu:Visible(false)
+
+    if LobbyMenu:Visible() then
+        LobbyMenu:Visible(false)
         -- Wait(100)
         while IsPauseMenuRestarting() or IsFrontendFading() or IsPauseMenuActive() do
             Wait(0)
         end
     end
-    
+
     currentSelectId = 1
     currentColumnId = 1
-    lobbyMenu:CanPlayerCloseMenu(canclose)
+    LobbyMenu:CanPlayerCloseMenu(canclose)
 
-    lobbyMenu:Visible(true)
-    lobbyMenu:FocusLevel(FocusLevel)
+    LobbyMenu:Visible(true)
+    LobbyMenu:FocusLevel(FocusLevel)
     ScaleformUI.Scaleforms.InstructionalButtons:Enabled(false)
-    
+
     local instructional_buttons = Scaleform.Request("instructional_buttons")
     instructional_buttons:CallFunction("CLEAR_ALL")
     local buttonsID = 0
-    instructional_buttons:CallFunction("SET_DATA_SLOT", buttonsID, GetControlInstructionalButton(1, 191, true), GetLabelText("HUD_INPUT2"))
-    buttonsID = buttonsID+1
+    instructional_buttons:CallFunction("SET_DATA_SLOT", false, buttonsID, GetControlInstructionalButton(1, 191, true),
+        GetLabelText("HUD_INPUT2"))
+    buttonsID = buttonsID + 1
     if canclose then
-        instructional_buttons:CallFunction("SET_DATA_SLOT", buttonsID, GetControlInstructionalButton(1, 194, true), GetLabelText("HUD_INPUT3"))
-        buttonsID = buttonsID+1
+        instructional_buttons:CallFunction("SET_DATA_SLOT", false, buttonsID, GetControlInstructionalButton(1, 194, true),
+            GetLabelText("HUD_INPUT3"))
+        buttonsID = buttonsID + 1
     end
-    instructional_buttons:CallFunction("SET_DATA_SLOT", buttonsID, "~INPUTGROUP_FRONTEND_DPAD_ALL~", GetLabelText("HUD_INPUT8"))
-    buttonsID = buttonsID+1
-    instructional_buttons:CallFunction("SET_BACKGROUND_COLOUR", 0, 0, 0, 80)
+    instructional_buttons:CallFunction("SET_DATA_SLOT", false, buttonsID, "~INPUTGROUP_FRONTEND_DPAD_ALL~",
+        GetLabelText("HUD_INPUT8"))
+    buttonsID = buttonsID + 1
+    instructional_buttons:CallFunction("SET_BACKGROUND_COLOUR", false, 0, 0, 0, 80)
     instructional_buttons:CallFunction("DRAW_INSTRUCTIONAL_BUTTONS")
-        
-    while lobbyMenu:Visible() do
+
+    while LobbyMenu:Visible() do
         SetScriptGfxDrawBehindPausemenu(true)
         instructional_buttons:Render2D()
-        
+
         if IsDisabledControlJustPressed(0, 201) then
             if ColumnCallbackFunction[currentColumnId][currentSelectId] then
                 ColumnCallbackFunction[currentColumnId][currentSelectId]()
             end
-            
+
             if currentColumnId == 2 and DataPlayerList[currentSelectId] and DataPlayerList[currentSelectId].ped then
-                lobbyMenu:Visible(false)
-                
+                LobbyMenu:Visible(false)
+
                 while IsPauseMenuRestarting() or IsFrontendFading() or IsPauseMenuActive() do
                     Wait(0)
                 end
-                
+
                 local settingList = {}
                 table.insert(settingList, {
                     label = "Back",
                     dec = "",
                     callbackFunction = function()
-                        playerMenu:Visible(false)
+                        PlayerMenu:Visible(false)
                     end,
                 })
                 TriggerEvent("ScaleformUI_Lua:playermenu:SettingsColumn", settingList)
                 TriggerEvent("ScaleformUI_Lua:playermenu:SetInfo", DataSetInfo)
                 TriggerEvent("ScaleformUI_Lua:playermenu:SetInfoTitle", {
-                    Title = lobbyMenu.MissionPanel._title,
-                    tex = lobbyMenu.MissionPanel.TextureDict,
-                    txd = lobbyMenu.MissionPanel.TextureName,
+                    Title = LobbyMenu.MissionPanel._title,
+                    tex = LobbyMenu.MissionPanel.TextureDict,
+                    txd = LobbyMenu.MissionPanel.TextureName,
                 })
                 TriggerEvent("ScaleformUI_Lua:playermenu:SetHeaderMenu", {
-                    SideTop = lobbyMenu.SideTop,
-                    SideMid = lobbyMenu.SideMid,
-                    SideBot = lobbyMenu.SideBot,
-                    ColColor1 = lobbyMenu._listCol[1]._color,
-                    ColColor2 = lobbyMenu._listCol[2]._color,
-                    ColColor3 = lobbyMenu._listCol[3]._color,
+                    SideTop = LobbyMenu.SideTop,
+                    SideMid = LobbyMenu.SideMid,
+                    SideBot = LobbyMenu.SideBot,
+                    ColColor1 = LobbyMenu._listCol[1]._color,
+                    ColColor2 = LobbyMenu._listCol[2]._color,
+                    ColColor3 = LobbyMenu._listCol[3]._color,
                 })
-                TriggerEvent("ScaleformUI_Lua:playermenu:SetPlayerList", DataPlayerList[currentSelectId], lobbyMenu.MissionPanel.TextureDict, lobbyMenu.MissionPanel.TextureName)
-                
+                TriggerEvent("ScaleformUI_Lua:playermenu:SetPlayerList", DataPlayerList[currentSelectId],
+                    LobbyMenu.MissionPanel.TextureDict, LobbyMenu.MissionPanel.TextureName)
+
                 TriggerEvent("ScaleformUI_Lua:playermenu:Show", 2, true, function()
                     print(111)
                     TriggerEvent("ScaleformUI_Lua:lobbymenu:Show", 1, true)
@@ -538,7 +556,7 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:Show", function(FocusLevel, canclose,
         Wait(0)
     end
     instructional_buttons:Dispose()
-    
+
     if onClose then
         while IsPauseMenuRestarting() or IsFrontendFading() or IsPauseMenuActive() do
             Wait(0)
@@ -551,9 +569,9 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:Hide", function()
     while not menuLoaded do
         Wait(0)
     end
-    
-    if lobbyMenu:Visible() then
-        lobbyMenu:Visible(false)
+
+    if LobbyMenu:Visible() then
+        LobbyMenu:Visible(false)
     end
 end)
 
@@ -573,8 +591,8 @@ RegisterCommand('ScaleformUILua_SetHeaderMenu', function(source, args) -- Use co
         Title = "Lobby",
         Subtitle = "Racing",
         SideTop = GetPlayerName(PlayerId()),
-        SideMid = WeekString[GetClockDayOfWeek()].." "..GetClockHours()..":"..GetClockMinutes(),
-        SideBot = "BANK $"..NetworkGetVcBankBalance().." CASH $"..NetworkGetVcBalance(),
+        SideMid = WeekString[GetClockDayOfWeek()] .. " " .. GetClockHours() .. ":" .. GetClockMinutes(),
+        SideBot = "BANK $" .. NetworkGetVcBankBalance() .. " CASH $" .. NetworkGetVcBalance(),
         Col1 = "🕹️  GAME",
         Col2 = "PLAYERS 1 OF 32",
         Col3 = "INFO",
@@ -582,14 +600,17 @@ RegisterCommand('ScaleformUILua_SetHeaderMenu', function(source, args) -- Use co
         ColColor2 = 116,
         ColColor3 = 116,
     })
-    
-    CreateRuntimeTextureFromDuiHandle(CreateRuntimeTxd('ScaleformUI_Lua_duiTxd'), "stunt-45", GetDuiHandle(CreateDui("https://static.wikia.nocookie.net/gtawiki/images/4/4a/45%C2%B0-GTAO-JobImage.jpg/revision/latest?cb=20190216233424", 320, 180)))
+
+    CreateRuntimeTextureFromDuiHandle(CreateRuntimeTxd('ScaleformUI_Lua_duiTxd'), "stunt-45",
+        GetDuiHandle(CreateDui(
+            "https://static.wikia.nocookie.net/gtawiki/images/4/4a/45%C2%B0-GTAO-JobImage.jpg/revision/latest?cb=20190216233424",
+            320, 180)))
     TriggerEvent("ScaleformUI_Lua:lobbymenu:SetInfoTitle", {
         Title = "Stunt - 45°",
         tex = "ScaleformUI_Lua_duiTxd",
         txd = "stunt-45"
     })
-    
+
     local settingList = {
         {
             label = "Setting",
@@ -623,9 +644,8 @@ RegisterCommand('ScaleformUILua_SetHeaderMenu', function(source, args) -- Use co
             Blink = true,
         },
     }
-    
+
     TriggerEvent("ScaleformUI_Lua:lobbymenu:SettingsColumn", settingList)
-        
 end, false)
 
 RegisterCommand('ScaleformUILua_SetInfo', function(source, args) -- Use command before menu open.
@@ -650,14 +670,14 @@ RegisterCommand('ScaleformUILua_SetInfo', function(source, args) -- Use command 
         },
     }
     TriggerEvent("ScaleformUI_Lua:lobbymenu:SetInfo", infoList)
-end)
+end, false)
 
 RegisterCommand('ScaleformUILua_SetPlayerList1', function(source, args) -- Can use command after menu open.
     local playerList = {}
-    for i=1, 10 do
+    for i = 1, 10 do
         table.insert(playerList, {
             source = GetPlayerServerId(PlayerId()),
-            name = "Player "..i,
+            name = "Player " .. i,
             rowColor = 116,
             Colours = 15,
             Status = "WAITING",
@@ -666,16 +686,16 @@ RegisterCommand('ScaleformUILua_SetPlayerList1', function(source, args) -- Can u
             ped = PlayerPedId(),
         })
     end
-    
+
     TriggerEvent("ScaleformUI_Lua:lobbymenu:SetPlayerList", playerList)
-end)
+end, false)
 
 RegisterCommand('ScaleformUILua_SetPlayerList2', function(source, args) -- Can use command after menu open.
     local playerList = {}
-    for i=11, 20 do
+    for i = 11, 20 do
         table.insert(playerList, {
             source = GetPlayerServerId(PlayerId()),
-            name = "Player "..i,
+            name = "Player " .. i,
             rowColor = 116,
             Colours = 18,
             Status = "PLAYING",
@@ -684,9 +704,9 @@ RegisterCommand('ScaleformUILua_SetPlayerList2', function(source, args) -- Can u
             ped = PlayerPedId(),
         })
     end
-    
+
     TriggerEvent("ScaleformUI_Lua:lobbymenu:SetPlayerList", playerList)
-end)
+end, false)
 
 RegisterCommand('ScaleformUILua_show', function(source, args) -- Use command before menu open.
     TriggerEvent("ScaleformUI_Lua:lobbymenu:Show", 1, true, function()

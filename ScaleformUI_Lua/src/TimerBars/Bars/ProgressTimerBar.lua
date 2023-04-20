@@ -1,3 +1,5 @@
+---@diagnostic disable: missing-parameter -- false positive
+
 ProgressTimerBar = setmetatable({}, ProgressTimerBar)
 ProgressTimerBar.__index = ProgressTimerBar
 ProgressTimerBar.__call = function()
