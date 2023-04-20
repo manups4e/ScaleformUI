@@ -14,7 +14,7 @@ end
 ---@field public Dispose fun(self:CountdownHandler, force:boolean):nil
 ---@field public Update fun(self:CountdownHandler):nil
 ---@field public ShowMessage fun(self:CountdownHandler, message:string):nil
----@field public Start fun(self:CountdownHandler, number:number, hudColour:number, countdownAudioName:string, countdownAudioRef:string, goAudioName:string, goAudioRef:string):promise
+---@field public Start fun(self:CountdownHandler, number:number?, hudColour:number?, countdownAudioName:string?, countdownAudioRef:string?, goAudioName:string?, goAudioRef:string?):promise
 
 ---Creates a new CountdownHandler
 ---@return CountdownHandler
@@ -73,12 +73,12 @@ function CountdownHandler:ShowMessage(message)
 end
 
 ---Starts the countdown
----@param number number|nil - The number to start the countdown from
----@param hudColour number|nil - The hud colour to use for the countdown
----@param countdownAudioName string|nil - The audio name to play for each number
----@param countdownAudioRef string|nil - The audio ref to play for each number
----@param goAudioName string|nil - The audio name to play when the countdown is finished
----@param goAudioRef string|nil - The audio ref to play when the countdown is finished
+---@param number number? - The number to start the countdown from
+---@param hudColour number? - The hud colour to use for the countdown
+---@param countdownAudioName string? - The audio name to play for each number
+---@param countdownAudioRef string? - The audio ref to play for each number
+---@param goAudioName string? - The audio name to play when the countdown is finished
+---@param goAudioRef string? - The audio ref to play when the countdown is finished
 ---@return promise
 function CountdownHandler:Start(number, hudColour, countdownAudioName, countdownAudioRef, goAudioName, goAudioRef)
     local p = promise.new()

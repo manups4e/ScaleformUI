@@ -294,7 +294,7 @@ function MainView:Draw()
     DisableControlAction(2, 200, true)
     ScaleformUI.Scaleforms._pauseMenu:Draw(true)
     if self._firstTick then
-        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("FADE_IN")
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("FADE_IN", false)
         self._firstTick = false
     end
 end
@@ -458,7 +458,7 @@ function MainView:ButtonDelay()
 end
 
 function MainView:Select()
-    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 16)
+    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 16) --[[@as number]]
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
@@ -495,7 +495,7 @@ function MainView:GoBack()
 end
 
 function MainView:GoUp()
-    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 8, self._delay)
+    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 8, self._delay) --[[@as number]]
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
@@ -523,7 +523,7 @@ function MainView:GoUp()
 end
 
 function MainView:GoDown()
-    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 9, self._delay)
+    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 9, self._delay) --[[@as number]]
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
@@ -551,7 +551,7 @@ function MainView:GoDown()
 end
 
 function MainView:GoLeft()
-    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 10, self._delay)
+    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 10, self._delay) --[[@as number]]
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
@@ -601,7 +601,7 @@ function MainView:GoLeft()
 end
 
 function MainView:GoRight()
-    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 11, self._delay)
+    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 11, self._delay) --[[@as number]]
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end

@@ -8,10 +8,18 @@ end
 ---@field public Type number
 ---@field public TextLeft string
 ---@field public TextRight string
----@field public Icon string
----@field public IconColor number
+---@field public Icon JobIcon
+---@field public IconColor Colours
 ---@field public Tick boolean
 
+---Creates a new MissionDetailsItem object
+---@param textLeft string
+---@param textRight string
+---@param seperator boolean
+---@param icon JobIcon
+---@param iconColor Colours
+---@param tick boolean
+---@return MissionDetailsItem
 function MissionDetailsItem.New(textLeft, textRight, seperator, icon, iconColor, tick)
     local _type
     if seperator == true then
