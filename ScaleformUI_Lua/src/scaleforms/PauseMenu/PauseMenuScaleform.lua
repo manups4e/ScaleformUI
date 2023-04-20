@@ -48,7 +48,7 @@ end
 ---@field public SendScrollEvent fun(self:PauseMenu, scrollEvent:number):nil
 ---@field public SendClickEvent fun(self:PauseMenu):nil
 ---@field public Dispose fun(self:PauseMenu):nil
----@field public Draw fun(self:PauseMenu):nil
+---@field public Draw fun(self:PauseMenu, isLobby:boolean|nil):nil
 
 ---Creates a new instance of the pause menu
 ---@return PauseMenu
@@ -463,6 +463,7 @@ function PauseMenu:Dispose()
 end
 
 ---Draw the pause menu
+---@param isLobby boolean|nil
 function PauseMenu:Draw(isLobby)
     if isLobby == nil then isLobby = false end
     if self._visible and GetCurrentFrontendMenuVersion() == -2060115030 then
