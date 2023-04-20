@@ -5,20 +5,31 @@ CountdownHandler.__call = function()
 end
 
 ---@class CountdownHandler
+---@field public _sc Scaleform
+---@field private _start number
+---@field private _timer number
+---@field private _colour {r:number, g:number, b:number, a:number}
+---@field public New fun():CountdownHandler
+---@field public Load fun(self:CountdownHandler):promise
+---@field public Dispose fun(self:CountdownHandler, force:boolean):nil
+---@field public Update fun(self:CountdownHandler):nil
+---@field public ShowMessage fun(self:CountdownHandler, message:string):nil
+---@field public Start fun(self:CountdownHandler, number:number, hudColour:number, countdownAudioName:string, countdownAudioRef:string, goAudioName:string, goAudioRef:string):promise
 
-local _r;
-local _g;
-local _b;
-local _a;
-
+---Creates a new CountdownHandler
+---@return CountdownHandler
 function CountdownHandler.New()
-    local _sc = nil --[[@type Scaleform]]
-    local _start = 0
-    local _timer = 0
-    local data = { _sc = _sc, _start = _start, _timer = _timer }
+    local data = {
+        _sc = nil --[[@type Scaleform]],
+        _start = 0,
+        _timer = 0,
+        _colour = { r = 255, g = 255, b = 255, a = 255 }
+    }
     return setmetatable(data, CountdownHandler)
 end
 
+---Loads the COUNTDOWN scaleform
+---@return promise
 function CountdownHandler:Load()
     local p = promise.new()
 
@@ -43,20 +54,32 @@ function CountdownHandler:Load()
     return p
 end
 
-function CountdownHandler:Dispose(force)
+---Dispose the COUNTDOWN scaleform
+function CountdownHandler:Dispose()
     self._sc:Dispose()
     self._sc = nil
 end
 
+---Update is called every frame to render the COUNTDOWN scaleform to the screen by mainScaleform.lua
 function CountdownHandler:Update()
     self._sc:Render2D()
 end
 
+---Show a message on the COUNTDOWN scaleform
+---@param message string
 function CountdownHandler:ShowMessage(message)
-    self._sc:CallFunction("SET_MESSAGE", false, message, _r, _g, _b, true);
-    self._sc:CallFunction("FADE_MP", false, message, _r, _g, _b);
+    self._sc:CallFunction("SET_MESSAGE", false, message, self._colour.r, self._colour.g, self._colour.b, true);
+    self._sc:CallFunction("FADE_MP", false, message, self._colour.r, self._colour.g, self._colour.b);
 end
 
+---Starts the countdown
+---@param number number|nil (optional) - The number to start the countdown from
+---@param hudColour number|nil (optional) - The hud colour to use for the countdown
+---@param countdownAudioName string|nil (optional) - The audio name to play for each number
+---@param countdownAudioRef string|nil (optional) - The audio ref to play for each number
+---@param goAudioName string|nil (optional) - The audio name to play when the countdown is finished
+---@param goAudioRef string|nil (optional) - The audio ref to play when the countdown is finished
+---@return promise
 function CountdownHandler:Start(number, hudColour, countdownAudioName, countdownAudioRef, goAudioName, goAudioRef)
     local p = promise.new()
 
@@ -68,7 +91,7 @@ function CountdownHandler:Start(number, hudColour, countdownAudioName, countdown
     if goAudioRef == nil then goAudioRef = "Car_Club_Races_Pursuit_Series_Sounds" end
 
     self:Load():next(function()
-        _r, _g, _b, _a = GetHudColour(hudColour)
+        self._colour.r, self._colour.g, self._colour.b, self._colour.a = GetHudColour(hudColour)
 
         local gameTime = GlobalGameTimer
 
@@ -77,7 +100,7 @@ function CountdownHandler:Start(number, hudColour, countdownAudioName, countdown
 
             if GlobalGameTimer - gameTime > 1000 then
                 PlaySoundFrontend(-1, countdownAudioName, countdownAudioRef, true);
-                self:ShowMessage(number)
+                self:ShowMessage(string.format(number))
                 number = number - 1
                 gameTime = GlobalGameTimer
             end
