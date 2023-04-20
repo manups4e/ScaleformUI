@@ -531,7 +531,7 @@ function TabView:GoBack()
 end
 
 function TabView:GoUp()
-    local return_value = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", true, 8)
+    local return_value = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", true, 8) --[[@as number]]
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
@@ -565,7 +565,7 @@ function TabView:GoUp()
 end
 
 function TabView:GoDown()
-    local return_value = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", true, 9)
+    local return_value = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", true, 9) --[[@as number]]
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
@@ -599,7 +599,7 @@ function TabView:GoDown()
 end
 
 function TabView:GoLeft()
-    local return_value = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", true, 10)
+    local return_value = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", true, 10) --[[@as number]]
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end
@@ -679,7 +679,7 @@ function TabView:GoLeft()
 end
 
 function TabView:GoRight()
-    local return_value = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", true, 11)
+    local return_value = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", true, 11) --[[@as number]]
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
     end

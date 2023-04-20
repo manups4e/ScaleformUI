@@ -11,7 +11,7 @@ end
 ---@field public Loaded boolean
 ---@field public _visible boolean
 ---@field public Visible fun(self:PauseMenu, visible:boolean):boolean
----@field public SetHeaderTitle fun(self:PauseMenu, title:string, subtitle:string, shiftUpHeader:boolean):nil
+---@field public SetHeaderTitle fun(self:PauseMenu, title:string, subtitle:string|nil, shiftUpHeader:boolean|nil):nil
 ---@field public SetHeaderDetails fun(self:PauseMenu, topDetail:string, midDetail:string, botDetail:string):nil
 ---@field public ShiftCoronaDescription fun(self:PauseMenu, shiftDesc:boolean, hideTabs:boolean):nil
 ---@field public ShowHeaderDetails fun(self:PauseMenu, show:boolean):nil
@@ -19,10 +19,10 @@ end
 ---@field public SetHeaderSecondaryImg fun(self:PauseMenu, txd:string, charTexturePath:string, show:boolean):nil
 ---@field public HeaderGoRight fun(self:PauseMenu):nil
 ---@field public HeaderGoLeft fun(self:PauseMenu):nil
----@field public AddPauseMenuTab fun(self:PauseMenu, title:string, _type:number, _tabContentType:number, color:Colours):nil
----@field public AddLobbyMenuTab fun(self:PauseMenu, title:string, _type:number, _tabContentType:number, color:Colours):nil
+---@field public AddPauseMenuTab fun(self:PauseMenu, title:string, _type:number, _tabContentType:number, color:Colours|nil):nil
+---@field public AddLobbyMenuTab fun(self:PauseMenu, title:string, _type:number, _tabContentType:number, color:Colours|nil):nil
 ---@field public SelectTab fun(self:PauseMenu, tab:number):nil
----@field public SetFocus fun(self:PauseMenu, tab:number, focus:number):nil
+---@field public SetFocus fun(self:PauseMenu, focus:number):nil
 ---@field public AddLeftItem fun(self:PauseMenu, tab:number, title:string, _type:number, _tabContentType:number, color:Colours, enabled:boolean):nil
 ---@field public AddRightTitle fun(self:PauseMenu, tab:number, leftItemIndex:number, title:string):nil
 ---@field public AddRightListLabel fun(self:PauseMenu, tab:number, leftItemIndex:number, title:string):nil
@@ -36,7 +36,7 @@ end
 ---@field public AddRightSettingsCheckboxItem fun(self:PauseMenu, tab:number, leftItemIndex:number, label:string, style:number, check:boolean, enabled:boolean):nil
 ---@field public AddKeymapTitle fun(self:PauseMenu, tab:number, leftItemIndex:number, title:string, rightLabel:string, rightLabel2:string):nil
 ---@field public AddKeymapItem fun(self:PauseMenu, tab:number, leftItemIndex:number, label:string, control:string, control2:string):nil
----@field public UpdateKeymap fun(self:PauseMenu, tab:number, leftItemIndex:number, control:string, control2:string):nil
+---@field public UpdateKeymap fun(self:PauseMenu, tab:number, leftItemIndex:number, rightIndex:number, control:string, control2:string):nil
 ---@field public SetRightSettingsItemBool fun(self:PauseMenu, tab:number, leftItemIndex:number, rightItemIndex:number, check:boolean):nil
 ---@field public SetRightSettingsItemIndex fun(self:PauseMenu, tab:number, leftItemIndex:number, rightItemIndex:number, value:number):nil
 ---@field public SetRightSettingsItemValue fun(self:PauseMenu, tab:number, leftItemIndex:number, rightItemIndex:number, value:number):nil
@@ -45,7 +45,7 @@ end
 ---@field public UpdateStatsItemBar fun(self:PauseMenu, tab:number, leftItemIndex:number, rightItemIndex:number, label:string, value:number, color:Colours):nil
 ---@field public UpdateItemColoredBar fun(self:PauseMenu, tab:number, leftItemIndex:number, rightItemIndex:number, colour:Colours):nil
 ---@field public SendInputEvent fun(self:PauseMenu, inputEvent:string):nil
----@field public SendScrollEvent fun(self:PauseMenu, scrollEvent:string):nil
+---@field public SendScrollEvent fun(self:PauseMenu, scrollEvent:number):nil
 ---@field public SendClickEvent fun(self:PauseMenu):nil
 ---@field public Dispose fun(self:PauseMenu):nil
 ---@field public Draw fun(self:PauseMenu):nil
@@ -84,8 +84,8 @@ end
 
 ---Set the header title and subtitle text of the pause menu header
 ---@param title string
----@param subtitle string
----@param shiftUpHeader boolean
+---@param subtitle string|nil
+---@param shiftUpHeader boolean|nil
 function PauseMenu:SetHeaderTitle(title, subtitle, shiftUpHeader)
     if (subtitle == nil) then subtitle = "" end
     if (shiftUpHeader == nil) then shiftUpHeader = false end
@@ -439,7 +439,7 @@ function PauseMenu:SendInputEvent(direction) -- to be awaited
 end
 
 ---Send a scroll event to the pause menu
----@param direction any
+---@param direction number
 function PauseMenu:SendScrollEvent(direction)
     self._pause:CallFunction("SET_SCROLL_EVENT", false, direction)
 end
