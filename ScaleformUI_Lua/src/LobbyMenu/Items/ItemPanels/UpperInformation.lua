@@ -30,7 +30,7 @@ function UpperInformation.New(parent)
 end
 
 ---Sets the rank level of the item if supplied else it will return the current rank level.
----@param rank number
+---@param rank number?
 ---@return number
 function UpperInformation:RankLevel(rank)
     if rank ~= nil then
@@ -41,7 +41,7 @@ function UpperInformation:RankLevel(rank)
 end
 
 ---Sets the up label of the item if supplied else it will return the current up label.
----@param label string
+---@param label string?
 ---@return string
 function UpperInformation:UpLabel(label)
     if label ~= nil then
@@ -52,7 +52,7 @@ function UpperInformation:UpLabel(label)
 end
 
 ---Sets the middle label of the item if supplied else it will return the current middle label.
----@param label string
+---@param label string?
 ---@return string
 function UpperInformation:MidLabel(label)
     if label ~= nil then
@@ -63,7 +63,7 @@ function UpperInformation:MidLabel(label)
 end
 
 ---Sets the low label of the item if supplied else it will return the current low label.
----@param label string
+---@param label string?
 ---@return string
 function UpperInformation:LowLabel(label)
     if label ~= nil then
