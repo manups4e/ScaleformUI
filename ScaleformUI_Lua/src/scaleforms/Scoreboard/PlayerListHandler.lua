@@ -20,6 +20,14 @@ end
 ---@field public X number
 ---@field public Y number
 ---@field public Update fun(self:PlayerListScoreboard):nil
+---@field public NextPage fun(self:PlayerListScoreboard):nil
+---@field public AddRow fun(self:PlayerListScoreboard, row:SCPlayerItem):nil
+---@field public RemoveRow fun(self:PlayerListScoreboard, index:number):nil
+---@field public CurrentPage fun(self:PlayerListScoreboard, _c:number|nil):number
+---@field public Dispose fun(self:PlayerListScoreboard):nil
+---@field public Load fun(self:PlayerListScoreboard):nil
+---@field public SetTitle fun(self:PlayerListScoreboard, title:string, label:string, icon:number):nil
+---@field public SetPosition fun(self:PlayerListScoreboard, x:number, y:number):nil
 
 ---Creates a new PlayerListScoreboard instance
 ---@return PlayerListScoreboard

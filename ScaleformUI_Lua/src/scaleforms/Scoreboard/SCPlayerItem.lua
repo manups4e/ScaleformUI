@@ -7,9 +7,9 @@ end
 ---@class SCPlayerItem
 ---@field public Name string
 ---@field public Color Colours
----@field public RightIcon string
----@field public RightText string
----@field public FriendType number
+---@field public RightIcon number
+---@field public RightText number
+---@field public FriendType string
 ---@field public CrewLabelText string
 ---@field public IconOverlayText string
 ---@field public JobPointsDisplayType number
@@ -20,9 +20,9 @@ end
 ---Creates a new SCPlayerItem instance
 ---@param label string
 ---@param color Colours
----@param rightIcon string
----@param rightText string
----@param friendType number
+---@param rightIcon number
+---@param rightText number
+---@param friendType string
 ---@param crewLabel string
 ---@param iconText string
 ---@param jobPointsType number
