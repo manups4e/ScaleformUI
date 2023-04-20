@@ -12,6 +12,13 @@ end
 ---@field public KeyboardButton number
 ---@field public PadCheck number
 
+---Creates a new InstructionalButton object
+---@param text string
+---@param padcheck number?
+---@param gamepadControls number
+---@param keyboardControls number
+---@param inputGroup string|number?
+---@return table
 function InstructionalButton.New(text, padcheck, gamepadControls, keyboardControls, inputGroup)
     local _instructionalButton = {
         Text = text or "",
@@ -49,10 +56,13 @@ function InstructionalButton.New(text, padcheck, gamepadControls, keyboardContro
     return setmetatable(_instructionalButton, InstructionalButton)
 end
 
+---Checks if the player is using a controller
+---@return boolean
 function InstructionalButton:IsUsingController()
     return not IsUsingKeyboard(2)
 end
 
+---Gets the button id for the instructional button
 function InstructionalButton:GetButtonId()
     if self.KeyboardButtons ~= nil or self.GamepadButtons ~= nil then
         local retVal = ""

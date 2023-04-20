@@ -33,7 +33,7 @@ end
 ---@field SidePanel UIMenuPanel -- UIMenuGridPanel, UIMenuPercentagePanel, UIMenuStatisticsPanel, UIMenuColorPanel
 ---@field ItemId number
 ---@field Activated fun(self:UIMenuItem, menu:UIMenu, item:UIMenuItem):boolean
----@field SetParentMenu fun(self:UIMenuItem, menu:UIMenu|nil):UIMenu|nil
+---@field SetParentMenu fun(self:UIMenuItem, menu:UIMenu?):UIMenu?
 
 ---New
 ---@param text string
@@ -94,7 +94,7 @@ end
 
 ---Set the Parent Menu of the Item
 ---@param menu UIMenu
----@return UIMenu|nil -- returns the parent menu if no menu is passed, if a menu is passed it returns the menu if it was set successfully
+---@return UIMenu? -- returns the parent menu if no menu is passed, if a menu is passed it returns the menu if it was set successfully
 function UIMenuItem:SetParentMenu(menu)
     if menu == nil then
         return self.ParentMenu

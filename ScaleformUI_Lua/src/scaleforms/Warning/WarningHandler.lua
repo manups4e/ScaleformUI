@@ -9,7 +9,10 @@ end
 ---@field _disableControls boolean
 ---@field _buttonList table<InstructionalButton>
 ---@field OnButtonPressed fun(button: InstructionalButton)
+---@field public Update fun(self:WarningInstance):nil
 
+---Creates a new WarningInstance instance
+---@return WarningInstance
 function WarningInstance.New()
     local data = {
         _sc = nil --[[@type Scaleform]],
@@ -21,10 +24,14 @@ function WarningInstance.New()
     return setmetatable(data, WarningInstance)
 end
 
+---Returns whether the warning is currently showing
+---@return boolean
 function WarningInstance:IsShowing()
     return self._sc ~= nil
 end
 
+---Loads the warning scaleform
+---@return promise
 function WarningInstance:Load()
     local p = promise.new()
 
@@ -53,6 +60,7 @@ function WarningInstance:Load()
     return p
 end
 
+---Disposes the warning scaleform
 function WarningInstance:Dispose()
     if self._sc == nil then return end
     self._sc:CallFunction("HIDE_POPUP_WARNING", false, 1000)
@@ -61,6 +69,12 @@ function WarningInstance:Dispose()
     self._disableControls = false
 end
 
+---Shows the warning with the given title, subtitle, prompt, error message and warning type
+---@param title string
+---@param subtitle string
+---@param prompt string
+---@param errorMsg string
+---@param warningType number
 function WarningInstance:ShowWarning(title, subtitle, prompt, errorMsg, warningType)
     self:Load():next(function()
         self._sc:CallFunction("SHOW_POPUP_WARNING", false, 1000, title, subtitle, prompt, true, warningType, errorMsg)
@@ -69,6 +83,12 @@ function WarningInstance:ShowWarning(title, subtitle, prompt, errorMsg, warningT
     end)
 end
 
+---Updates the warning with the given title, subtitle, prompt, error message and warning type
+---@param title string
+---@param subtitle string
+---@param prompt string
+---@param errorMsg string
+---@param warningType number
 function WarningInstance:UpdateWarning(title, subtitle, prompt, errorMsg, warningType)
     self:Load():next(function()
         self._sc:CallFunction("SHOW_POPUP_WARNING", false, 1000, title, subtitle, prompt, true, warningType, errorMsg)
@@ -77,6 +97,13 @@ function WarningInstance:UpdateWarning(title, subtitle, prompt, errorMsg, warnin
     end)
 end
 
+---Shows the warning with the given title, subtitle, prompt, error message, warning type and buttons
+---@param title string
+---@param subtitle string
+---@param prompt string
+---@param buttons table<InstructionalButton>
+---@param errorMsg string
+---@param warningType number
 function WarningInstance:ShowWarningWithButtons(title, subtitle, prompt, buttons, errorMsg, warningType)
     self:Load():next(function()
         self._disableControls = true
@@ -91,6 +118,7 @@ function WarningInstance:ShowWarningWithButtons(title, subtitle, prompt, buttons
     end)
 end
 
+---Draws the warning
 function WarningInstance:Update()
     if self._sc == nil then return end
     if not self._sc:IsLoaded() then return end

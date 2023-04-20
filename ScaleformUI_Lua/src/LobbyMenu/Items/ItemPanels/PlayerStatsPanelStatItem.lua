@@ -10,6 +10,9 @@ end
 ---@field private _value number
 ---@field private _description string
 ---@field private _label string
+---@field public Label fun(self: PlayerStatsPanelStatItem, label: string?): string
+---@field public Description fun(self: PlayerStatsPanelStatItem, desc: string?): string
+---@field public Value fun(self: PlayerStatsPanelStatItem, value: number?): number
 
 ---Creates a new PlayerStatsPanelStatItem.
 ---@param label string
@@ -28,7 +31,7 @@ function PlayerStatsPanelStatItem.New(label, desc, value)
 end
 
 ---Sets the label of the item if supplied else it will return the current label.
----@param label string
+---@param label string?
 ---@return string
 function PlayerStatsPanelStatItem:Label(label)
     if label ~= nil then
@@ -39,7 +42,7 @@ function PlayerStatsPanelStatItem:Label(label)
 end
 
 ---Sets the description of the item if supplied else it will return the current description.
----@param desc string
+---@param desc string?
 ---@return string
 function PlayerStatsPanelStatItem:Description(desc)
     if desc ~= nil then
@@ -50,7 +53,7 @@ function PlayerStatsPanelStatItem:Description(desc)
 end
 
 ---Sets the value of the item if supplied else it will return the current value.
----@param value number
+---@param value number?
 ---@return number
 function PlayerStatsPanelStatItem:Value(value)
     if value ~= nil then

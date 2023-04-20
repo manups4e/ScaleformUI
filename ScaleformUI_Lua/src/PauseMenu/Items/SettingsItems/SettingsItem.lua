@@ -12,7 +12,7 @@ end
 
 ---Creates a new SettingsItem.
 ---@param label string
----@param rightLabel string|nil
+---@param rightLabel string?
 ---@return SettingsItem
 function SettingsItem.New(label, rightLabel)
     local data = {

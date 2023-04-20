@@ -5,15 +5,25 @@ RankbarHandler.__call = function()
 end
 
 ---@class RankbarHandler
+---@field public Load fun():promise
+---@field public SetScores fun(limitStart:number, limitEnd:number, previousValue:number, currentValue:number, currentRank:number):nil
+---@field public SetColour fun(rankBarColor:number):nil
+---@field public Remove fun():nil
+---@field public OverrideAnimationSpeed fun(speed:number):nil
+---@field public OverrideOnscreenDuration fun(duration:number):nil
 
 local HUD_COMPONENT_ID = 19
 local _rankBarColor = 116
 
+---Creates a new RankbarHandler instance
+---@return RankbarHandler
 function RankbarHandler.New()
     local data = {}
     return setmetatable(data, RankbarHandler)
 end
 
+---Loads the rankbar scaleform movie
+---@return promise
 function RankbarHandler:Load()
     local p = promise.new()
 
@@ -36,6 +46,12 @@ function RankbarHandler:Load()
     return p
 end
 
+---Set the scores for the rankbar
+---@param limitStart number
+---@param limitEnd number
+---@param previousValue number
+---@param currentValue number
+---@param currentRank number
 function RankbarHandler:SetScores(limitStart, limitEnd, previousValue, currentValue, currentRank)
     self:Load():next(function()
             BeginScaleformScriptHudMovieMethod(HUD_COMPONENT_ID, "SET_COLOUR")
@@ -55,10 +71,13 @@ function RankbarHandler:SetScores(limitStart, limitEnd, previousValue, currentVa
         end)
 end
 
+---Set the colour of the rankbar
+---@param rankBarColor Colours
 function RankbarHandler:SetColour(rankBarColor)
     _rankBarColor = rankBarColor
 end
 
+---Remove the rankbar from the screen
 function RankbarHandler:Remove()
     if HasScaleformScriptHudMovieLoaded(HUD_COMPONENT_ID) then
         BeginScaleformScriptHudMovieMethod(HUD_COMPONENT_ID, "REMOVE");
@@ -66,6 +85,8 @@ function RankbarHandler:Remove()
     end
 end
 
+---Override the animation speed of the rankbar
+---@param speed number -- milliseconds (default 1000)
 function RankbarHandler:OverrideAnimationSpeed(speed)
     self:Load():next(function()
             BeginScaleformScriptHudMovieMethod(HUD_COMPONENT_ID, "OVERRIDE_ANIMATION_SPEED");
@@ -77,6 +98,8 @@ function RankbarHandler:OverrideAnimationSpeed(speed)
         end)
 end
 
+---Override the onscreen duration of the rankbar
+---@param duration number -- milliseconds (default 4000)
 function RankbarHandler:OverrideOnscreenDuration(duration)
     self:Load():next(function()
             BeginScaleformScriptHudMovieMethod(HUD_COMPONENT_ID, "OVERRIDE_ONSCREEN_DURATION");

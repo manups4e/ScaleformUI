@@ -14,7 +14,7 @@ end
 
 ---Creates a new StatsTabItem.
 ---@param label string
----@param rightLabel string|nil
+---@param rightLabel string?
 ---@return table
 function StatsTabItem.NewBasic(label, rightLabel)
     local data = {
@@ -28,8 +28,8 @@ end
 
 ---Adds a new bar to the StatsTabItem.
 ---@param label string
----@param value number|nil
----@param color number|nil
+---@param value number?
+---@param color number?
 ---@return table
 function StatsTabItem.NewBar(label, value, color)
     local data = {

@@ -23,7 +23,7 @@ end
 ---@field public IsInRange fun(self: Marker):boolean
 
 ---Creates a new marker
----@param type MarkerType|nil
+---@param type MarkerType?
 ---@param position vector3
 ---@param scale vector3
 ---@param distance number

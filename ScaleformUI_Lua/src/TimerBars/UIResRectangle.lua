@@ -23,8 +23,8 @@ function UIResRectangle.New(X, Y, Width, Height, R, G, B, A)
 end
 
 ---Position
----@param X number|nil
----@param Y number|nil
+---@param X number?
+---@param Y number?
 function UIResRectangle:Position(X, Y)
     if tonumber(X) and tonumber(Y) then
         self.X = tonumber(X)
@@ -35,8 +35,8 @@ function UIResRectangle:Position(X, Y)
 end
 
 ---Size
----@param Width number|nil
----@param Height number|nil
+---@param Width number?
+---@param Height number?
 function UIResRectangle:Size(Width, Height)
     if tonumber(Width) and tonumber(Height) then
         self.Width = tonumber(Width)
@@ -47,10 +47,10 @@ function UIResRectangle:Size(Width, Height)
 end
 
 ---Colour
----@param R number|nil
----@param G number|nil
----@param B number|nil
----@param A number|nil
+---@param R number?
+---@param G number?
+---@param B number?
+---@param A number?
 function UIResRectangle:Colour(R, G, B, A)
     if tonumber(R) or tonumber(G) or tonumber(B) or tonumber(A) then
         self._Colour.R = tonumber(R) or 255
@@ -69,5 +69,5 @@ function UIResRectangle:Draw()
     Size.Width, Size.Height = FormatXWYH(Size.Width, Size.Height)
     Position.X, Position.Y = FormatXWYH(Position.X, Position.Y)
     DrawRect(Position.X + Size.Width * 0.5, Position.Y + Size.Height * 0.5, Size.Width, Size.Height, self._Colour.R,
-    self._Colour.G, self._Colour.B, self._Colour.A)
+        self._Colour.G, self._Colour.B, self._Colour.A)
 end

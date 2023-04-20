@@ -110,9 +110,9 @@ end
 ---@param B number|255
 ---@param A number|255
 ---@param Font number|0
----@param Alignment number|nil
----@param DropShadow number|nil
----@param Outline number|nil
+---@param Alignment number?
+---@param DropShadow number?
+---@param Outline number?
 ---@param WordWrap number|0
 function UIResText.New(Text, X, Y, Scale, R, G, B, A, Font, Alignment, DropShadow, Outline, WordWrap)
     local _UIResText = {
@@ -131,8 +131,8 @@ function UIResText.New(Text, X, Y, Scale, R, G, B, A, Font, Alignment, DropShado
 end
 
 ---Position
----@param X number|nil
----@param Y number|nil
+---@param X number?
+---@param Y number?
 function UIResText:Position(X, Y)
     if tonumber(X) and tonumber(Y) then
         self.X = tonumber(X)
@@ -143,10 +143,10 @@ function UIResText:Position(X, Y)
 end
 
 ---Colour
----@param R number|nil
----@param G number|nil
----@param B number|nil
----@param A number|nil
+---@param R number?
+---@param G number?
+---@param B number?
+---@param A number?
 function UIResText:Colour(R, G, B, A)
     if tonumber(R) and tonumber(G) and tonumber(B) and tonumber(A) then
         self._Colour.R = tonumber(R)

@@ -61,7 +61,7 @@ function FriendItem.New(label, itemColor, coloredTag, rank, status, crewTag)
 end
 
 ---Sets the label of the item if supplied else it will return the current label.
----@param label string|nil
+---@param label string?
 ---@return string
 function FriendItem:Label(label)
     if label ~= nil then
@@ -81,7 +81,7 @@ function FriendItem:Label(label)
 end
 
 ---Adds a ped to the pause menu or returns the current ped.
----@param ped number|nil If the ped parameter is 0 it will clear the ped.
+---@param ped number? If the ped parameter is 0 it will clear the ped.
 ---@return number -- If the ped parameter is 0 it will return -1.
 function FriendItem:AddPedToPauseMenu(ped)
     if ped ~= nil then
@@ -165,7 +165,7 @@ function FriendItem:ColoredTag(enableColorTag)
 end
 
 ---Sets the rank of the item if supplied else it will return the current rank.
----@param rank number|nil
+---@param rank number?
 ---@return number
 function FriendItem:Rank(rank)
     if rank ~= nil then
@@ -185,7 +185,7 @@ function FriendItem:Rank(rank)
 end
 
 ---Sets the status of the item if supplied else it will return the current status.
----@param status string|nil
+---@param status string?
 ---@return string
 function FriendItem:Status(status)
     if status ~= nil then
@@ -227,7 +227,7 @@ function FriendItem:StatusColor(color)
 end
 
 ---Sets the crew tag of the item if supplied else it will return the current crew tag.
----@param tag string|nil
+---@param tag string?
 ---@return string
 function FriendItem:CrewTag(tag)
     if tag ~= nil then
@@ -247,8 +247,8 @@ function FriendItem:CrewTag(tag)
 end
 
 ---Sets the left icon of the item.
----@param icon LobbyBadgeIcon|nil
----@param isBadge boolean|nil
+---@param icon LobbyBadgeIcon?
+---@param isBadge boolean?
 function FriendItem:SetLeftIcon(icon, isBadge)
     self._iconL = icon;
     self._boolL = isBadge or false;
@@ -266,8 +266,8 @@ function FriendItem:SetLeftIcon(icon, isBadge)
 end
 
 ---Sets the right icon of the item.
----@param icon LobbyBadgeIcon|nil
----@param isBadge boolean|nil
+---@param icon LobbyBadgeIcon?
+---@param isBadge boolean?
 function FriendItem:SetRightIcon(icon, isBadge)
     self._iconR = icon;
     self._boolR = isBadge or false;
@@ -285,7 +285,7 @@ function FriendItem:SetRightIcon(icon, isBadge)
 end
 
 ---Sets the selected state of the item if supplied else it will return the current selected state.
----@param bool boolean|nil
+---@param bool boolean?
 ---@return boolean
 function FriendItem:Selected(bool)
     if bool ~= nil then

@@ -15,12 +15,12 @@ end
 ---@field public ParentItem FriendItem
 ---@field public RankInfo UpperInformation
 ---@field public Items PlayerStatsPanelStatItem[]
----@field public UpdatePanel fun(self: PlayerStatsPanel, override: boolean|nil)
----@field public Description fun(self: PlayerStatsPanel, desc: string|nil): string
----@field public HasPlane fun(self: PlayerStatsPanel, bool: boolean|nil): boolean
----@field public HasHeli fun(self: PlayerStatsPanel, bool: boolean|nil): boolean
----@field public HasBoat fun(self: PlayerStatsPanel, bool: boolean|nil): boolean
----@field public HasVehicle fun(self: PlayerStatsPanel, bool: boolean|nil): boolean
+---@field public UpdatePanel fun(self: PlayerStatsPanel, override: boolean?)
+---@field public Description fun(self: PlayerStatsPanel, desc: string?): string
+---@field public HasPlane fun(self: PlayerStatsPanel, bool: boolean?): boolean
+---@field public HasHeli fun(self: PlayerStatsPanel, bool: boolean?): boolean
+---@field public HasBoat fun(self: PlayerStatsPanel, bool: boolean?): boolean
+---@field public HasVehicle fun(self: PlayerStatsPanel, bool: boolean?): boolean
 ---@field public AddStat fun(self: PlayerStatsPanel, statItem: PlayerStatsPanelStatItem)
 ---@field public OnItemChanged fun(item: PlayerStatsPanelStatItem)
 ---@field public OnItemActivated fun(item: PlayerStatsPanelStatItem)
@@ -48,7 +48,7 @@ function PlayerStatsPanel.New(title, titleColor)
 end
 
 ---Sets the title of the panel if supplied else it will return the current title.
----@param label string|nil
+---@param label string?
 ---@return string
 function PlayerStatsPanel:Title(label)
     if label ~= nil then
@@ -59,7 +59,7 @@ function PlayerStatsPanel:Title(label)
 end
 
 ---Sets the title color of the panel if supplied else it will return the current color.
----@param color number|nil
+---@param color number?
 ---@return number
 function PlayerStatsPanel:TitleColor(color)
     if color ~= nil then
@@ -70,7 +70,7 @@ function PlayerStatsPanel:TitleColor(color)
 end
 
 ---Sets the description of the panel if supplied else it will return the current description.
----@param label string|nil
+---@param label string?
 ---@return string
 function PlayerStatsPanel:Description(label)
     if label ~= nil then
@@ -81,7 +81,7 @@ function PlayerStatsPanel:Description(label)
 end
 
 ---Sets whether the player has a plane or not, if parameter is nill, it will return the current value.
----@param bool boolean|nil
+---@param bool boolean?
 ---@return boolean
 function PlayerStatsPanel:HasPlane(bool)
     if bool ~= nil then
@@ -92,7 +92,7 @@ function PlayerStatsPanel:HasPlane(bool)
 end
 
 ---Sets whether the player has a helicopter or not, if parameter is nill, it will return the current value.
----@param bool boolean|nil
+---@param bool boolean?
 ---@return boolean
 function PlayerStatsPanel:HasHeli(bool)
     if bool ~= nil then
@@ -103,7 +103,7 @@ function PlayerStatsPanel:HasHeli(bool)
 end
 
 ---Sets whether the player has a boat or not, if parameter is nill, it will return the current value.
----@param bool boolean|nil
+---@param bool boolean?
 ---@return boolean
 function PlayerStatsPanel:HasBoat(bool)
     if bool ~= nil then
@@ -114,7 +114,7 @@ function PlayerStatsPanel:HasBoat(bool)
 end
 
 ---Sets whether the player has a vehicle or not, if parameter is nill, it will return the current value.
----@param bool boolean|nil
+---@param bool boolean?
 ---@return boolean
 function PlayerStatsPanel:HasVehicle(bool)
     if bool ~= nil then
@@ -134,7 +134,7 @@ function PlayerStatsPanel:AddStat(statItem)
 end
 
 ---Triggers the panel to update.
----@param override boolean|nil If true, the panel will update regardless of the parent's visibility.
+---@param override boolean? If true, the panel will update regardless of the parent's visibility.
 function PlayerStatsPanel:UpdatePanel(override)
     if override == nil then override = false end
     if ((self.ParentItem ~= nil and self.ParentItem.ParentColumn ~= nil and self.ParentItem.ParentColumn.Parent ~= nil and self.ParentItem.ParentColumn.Parent:Visible()) or override) then

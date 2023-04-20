@@ -35,7 +35,7 @@ function PlayerListColumn.New(label, color)
 end
 
 ---Sets or gets the current selection.
----@param idx number|nil
+---@param idx number?
 ---@return number
 function PlayerListColumn:CurrentSelection(idx)
     if idx == nil then

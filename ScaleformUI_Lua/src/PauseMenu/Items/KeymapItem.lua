@@ -13,10 +13,10 @@ end
 
 ---Creates a new KeymapItem.
 ---@param title string
----@param primaryKeyboard string|nil
----@param primaryGamepad string|nil
----@param secondaryKeyboard string|nil
----@param secondaryGamepad string|nil
+---@param primaryKeyboard string?
+---@param primaryGamepad string?
+---@param secondaryKeyboard string?
+---@param secondaryGamepad string?
 ---@return table
 function KeymapItem.New(title, primaryKeyboard, primaryGamepad, secondaryKeyboard, secondaryGamepad)
     local data = {}

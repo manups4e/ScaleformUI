@@ -177,8 +177,8 @@ end
 
 ---Sets the transition and duration for the scaleform when it is disposed
 ---@param transition string -- TRANSITION_UP, TRANSITION_OUT, TRANSITION_DOWN supported
----@param duration number|nil -- default 0.4
----@param preventAutoExpansion boolean|nil -- default true
+---@param duration number? -- default 0.4
+---@param preventAutoExpansion boolean? -- default true
 ---@return nil
 function BigMessageInstance:SetTransition(transition, duration, preventAutoExpansion)
     if transition == nil then transition = "TRANSITION_OUT" end
@@ -200,13 +200,15 @@ end
 ---@return nil
 function BigMessageInstance:Update()
     self._sc:Render2D()
-    -- Execute transition if it has been set and the timer has expired (minus the transition duration)
-    if self._start ~= 0 and not self._transitionExecuted and (GlobalGameTimer - self._start) > (self._duration - ((self._transitionDuration * .5) * 1000)) then
-        self._sc:CallFunction(self._transition, false, self._transitionDuration, self._transitionPreventAutoExpansion)
-        self._transitionExecuted = true
-    end
-
     if self._start ~= 0 and (GlobalGameTimer - self._start) > self._duration then
-        self:Dispose()
+        if not self._transitionExecuted then
+            self._sc:CallFunction(self._transition, false, self._transitionDuration, self
+                ._transitionPreventAutoExpansion)
+            self._transitionExecuted = true
+            -- add the transition duration to the scaleform duration so the message is displayed for the full duration of the transition
+            self._duration = self._duration + ((self._transitionDuration * .5) * 1000)
+        else
+            self:Dispose()
+        end
     end
 end
