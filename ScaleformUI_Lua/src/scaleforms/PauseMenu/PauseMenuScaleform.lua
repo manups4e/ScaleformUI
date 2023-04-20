@@ -5,12 +5,53 @@ PauseMenu.__call = function()
 end
 
 ---@class PauseMenu
----@field private _header Scaleform
----@field private _pause Scaleform
----@field private _lobby Scaleform
+---@field public _header Scaleform
+---@field public _pause Scaleform
+---@field public _lobby Scaleform
 ---@field public Loaded boolean
----@field private _visible boolean
+---@field public _visible boolean
+---@field public Visible fun(self:PauseMenu, visible:boolean):boolean
+---@field public SetHeaderTitle fun(self:PauseMenu, title:string, subtitle:string, shiftUpHeader:boolean):nil
+---@field public SetHeaderDetails fun(self:PauseMenu, topDetail:string, midDetail:string, botDetail:string):nil
+---@field public ShiftCoronaDescription fun(self:PauseMenu, shiftDesc:boolean, hideTabs:boolean):nil
+---@field public ShowHeaderDetails fun(self:PauseMenu, show:boolean):nil
+---@field public SetHeaderCharImg fun(self:PauseMenu, txd:string, charTexturePath:string, show:boolean):nil
+---@field public SetHeaderSecondaryImg fun(self:PauseMenu, txd:string, charTexturePath:string, show:boolean):nil
+---@field public HeaderGoRight fun(self:PauseMenu):nil
+---@field public HeaderGoLeft fun(self:PauseMenu):nil
+---@field public AddPauseMenuTab fun(self:PauseMenu, title:string, _type:number, _tabContentType:number, color:Colours):nil
+---@field public AddLobbyMenuTab fun(self:PauseMenu, title:string, _type:number, _tabContentType:number, color:Colours):nil
+---@field public SelectTab fun(self:PauseMenu, tab:number):nil
+---@field public SetFocus fun(self:PauseMenu, tab:number, focus:number):nil
+---@field public AddLeftItem fun(self:PauseMenu, tab:number, title:string, _type:number, _tabContentType:number, color:Colours, enabled:boolean):nil
+---@field public AddRightTitle fun(self:PauseMenu, tab:number, leftItemIndex:number, title:string):nil
+---@field public AddRightListLabel fun(self:PauseMenu, tab:number, leftItemIndex:number, title:string):nil
+---@field public AddRightStatItemLabel fun(self:PauseMenu, tab:number, leftItemIndex:number, label:string, rightLabel:string):nil
+---@field public AddRightStatItemColorBar fun(self:PauseMenu, tab:number, leftItemIndex:number, label:string, value:number, color:Colours):nil
+---@field public AddRightSettingsBaseItem fun(self:PauseMenu, tab:number, leftItemIndex:number, label:string, rightLabel:string, enabled:boolean):nil
+---@field public AddRightSettingsListItem fun(self:PauseMenu, tab:number, leftItemIndex:number, label:string, items:table, startIndex:number, enabled:boolean):nil
+---@field public AddRightSettingsProgressItem fun(self:PauseMenu, tab:number, leftItemIndex:number, label:string, max:number, colour:Colours, index:number, enabled:boolean):nil
+---@field public AddRightSettingsProgressItemAlt fun(self:PauseMenu, tab:number, leftItemIndex:number, label:string, max:number, colour:Colours, index:number, enabled:boolean):nil
+---@field public AddRightSettingsSliderItem fun(self:PauseMenu, tab:number, leftItemIndex:number, label:string, max:number, colour:Colours, index:number, enabled:boolean):nil
+---@field public AddRightSettingsCheckboxItem fun(self:PauseMenu, tab:number, leftItemIndex:number, label:string, style:number, check:boolean, enabled:boolean):nil
+---@field public AddKeymapTitle fun(self:PauseMenu, tab:number, leftItemIndex:number, title:string, rightLabel:string, rightLabel2:string):nil
+---@field public AddKeymapItem fun(self:PauseMenu, tab:number, leftItemIndex:number, label:string, control:string, control2:string):nil
+---@field public UpdateKeymap fun(self:PauseMenu, tab:number, leftItemIndex:number, control:string, control2:string):nil
+---@field public SetRightSettingsItemBool fun(self:PauseMenu, tab:number, leftItemIndex:number, rightItemIndex:number, check:boolean):nil
+---@field public SetRightSettingsItemIndex fun(self:PauseMenu, tab:number, leftItemIndex:number, rightItemIndex:number, value:number):nil
+---@field public SetRightSettingsItemValue fun(self:PauseMenu, tab:number, leftItemIndex:number, rightItemIndex:number, value:number):nil
+---@field public UpdateItemRightLabel fun(self:PauseMenu, tab:number, leftItemIndex:number, rightItemIndex:number, rightLabel:string):nil
+---@field public UpdateStatsItemBasic fun(self:PauseMenu, tab:number, leftItemIndex:number, rightItemIndex:number, label:string, rightLabel:string):nil
+---@field public UpdateStatsItemBar fun(self:PauseMenu, tab:number, leftItemIndex:number, rightItemIndex:number, label:string, value:number, color:Colours):nil
+---@field public UpdateItemColoredBar fun(self:PauseMenu, tab:number, leftItemIndex:number, rightItemIndex:number, colour:Colours):nil
+---@field public SendInputEvent fun(self:PauseMenu, inputEvent:string):nil
+---@field public SendScrollEvent fun(self:PauseMenu, scrollEvent:string):nil
+---@field public SendClickEvent fun(self:PauseMenu):nil
+---@field public Dispose fun(self:PauseMenu):nil
+---@field public Draw fun(self:PauseMenu):nil
 
+---Creates a new instance of the pause menu
+---@return PauseMenu
 function PauseMenu.New()
     local _data = {
         _header = nil,
