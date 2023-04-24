@@ -206,7 +206,7 @@ function UIMenuCheckboxItem:Checked(bool)
         self._Checked = ToBool(bool)
         if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
             local it = IndexOf(self.Base.ParentMenu.Items, self) - 1
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", false, 16, it, self._Checked)
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_VALUE", false, it, self._Checked)
         end
     else
         return self._Checked
