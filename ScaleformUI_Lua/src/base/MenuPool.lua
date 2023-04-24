@@ -252,9 +252,10 @@ end
 
 ---CloseAllMenus
 function MenuPool:CloseAllMenus()
-    for k, v in pairs(self.Menus) do
-        if v:Visible() then
-            v:Visible(false)
+    for i=#self.Menus, -1 do
+        local menu = self.Menus[i]
+        if menu:Visible() then
+            menu:GoBack()
         end
     end
     ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
