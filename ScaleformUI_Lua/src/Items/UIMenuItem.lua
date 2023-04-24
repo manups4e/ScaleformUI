@@ -187,8 +187,7 @@ function UIMenuItem:Description(str, item)
         self._Description = tostring(str)
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
             AddTextEntry("desc_{" .. IndexOf(self.ParentMenu.Items, item) .. "}", str)
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_ITEM_DESCRIPTION", false,
-                IndexOf(self.ParentMenu.Items, item) - 1, "desc_{" .. IndexOf(self.ParentMenu.Items, self) .. "}")
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_ITEM_DESCRIPTION", false, IndexOf(self.ParentMenu.Items, item) - 1, "desc_{" .. IndexOf(self.ParentMenu.Items, item) .. "}")
         end
     else
         return self._Description
