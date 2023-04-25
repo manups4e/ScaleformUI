@@ -19,7 +19,7 @@ public class MenuExample : BaseScript
     private long txd;
     public void ExampleMenu()
     {
-        var _titledui = API.CreateDui("https://i.imgur.com/3yrFYbF.gif", 288, 130);
+        long _titledui = API.CreateDui("https://i.imgur.com/3yrFYbF.gif", 288, 130);
         API.CreateRuntimeTextureFromDuiHandle(txd, "bannerbackground", API.GetDuiHandle(_titledui));
 
         UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI SHOWCASE", new PointF(20, 20), "scaleformui", "bannerbackground", true, true); // true means add menu Glare scaleform to the menu
@@ -34,8 +34,8 @@ public class MenuExample : BaseScript
         #region Menu Declaration
 
         #region Ketchup
-        var ketchupItem = new UIMenuCheckboxItem("Scrolling animation enabled? in a very long label to test the text scrolling feature!", UIMenuCheckboxStyle.Tick, enabled, "Do you wish to enable the scrolling animation?");
-        var _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
+        UIMenuCheckboxItem ketchupItem = new UIMenuCheckboxItem("Scrolling animation enabled? in a very long label to test the text scrolling feature!", UIMenuCheckboxStyle.Tick, enabled, "Do you wish to enable the scrolling animation?");
+        long _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
         API.CreateRuntimeTextureFromDuiHandle(txd, "panelbackground", API.GetDuiHandle(_paneldui));
         UIMissionDetailsPanel sidePanel = new UIMissionDetailsPanel(PanelSide.Right, "Side Panel", true, "scaleformui", "panelbackground");
         UIFreemodeDetailsItem detailItem1 = new UIFreemodeDetailsItem("Left Label", "Right Label", BadgeIcon.BRIEFCASE, HudColor.HUD_COLOUR_FREEMODE);
@@ -55,7 +55,7 @@ public class MenuExample : BaseScript
 
         #region Cook
 
-        var cookItem = new UIMenuItem("Cook! in a very long label to test the text scrolling feature!", "Cook the dish with the appropiate ingredients and ketchup.");
+        UIMenuItem cookItem = new UIMenuItem("Cook! in a very long label to test the text scrolling feature!", "Cook the dish with the appropiate ingredients and ketchup.");
         cookItem.SetRightLabel("rightLabel");
         exampleMenu.AddItem(cookItem);
         UIVehicleColourPickerPanel sidePanelB = new UIVehicleColourPickerPanel(PanelSide.Right, "ColorPicker");
@@ -67,11 +67,11 @@ public class MenuExample : BaseScript
             sidePanelB.Title = ((VehicleColor)value).ToString();
         };
 
-        var colorItem = new UIMenuItem("UIMenuItem with Colors", "~b~Look!!~r~I can be colored ~y~too!!~w~~n~Every item now supports custom colors!", HudColor.HUD_COLOUR_PURPLE, HudColor.HUD_COLOUR_PINK);
+        UIMenuItem colorItem = new UIMenuItem("UIMenuItem with Colors", "~b~Look!!~r~I can be colored ~y~too!!~w~~n~Every item now supports custom colors!", HudColor.HUD_COLOUR_PURPLE, HudColor.HUD_COLOUR_PINK);
         exampleMenu.AddItem(colorItem);
 
         float dynamicvalue = 0f;
-        var dynamicItem = new UIMenuDynamicListItem("Dynamic List Item", "Try pressing ~INPUT_FRONTEND_LEFT~ or ~INPUT_FRONTEND_RIGHT~", dynamicvalue.ToString("F3"), async (sender, direction) =>
+        UIMenuDynamicListItem dynamicItem = new UIMenuDynamicListItem("Dynamic List Item", "Try pressing ~INPUT_FRONTEND_LEFT~ or ~INPUT_FRONTEND_RIGHT~", dynamicvalue.ToString("F3"), async (sender, direction) =>
         {
             if (direction == UIMenuDynamicListItem.ChangeDirection.Left) dynamicvalue -= 0.01f;
             else dynamicvalue += 0.01f;
@@ -80,7 +80,7 @@ public class MenuExample : BaseScript
         dynamicItem.BlinkDescription = true;
         exampleMenu.AddItem(dynamicItem);
 
-        var foodsList = new List<dynamic>
+        List<dynamic> foodsList = new List<dynamic>
         {
             "LINEAR",
             "QUADRATIC_IN",
@@ -103,47 +103,47 @@ public class MenuExample : BaseScript
             "CIRCULAR_INOUT"
         };
 
-        var BlankItem = new UIMenuSeparatorItem("Separator (Jumped)", true);
-        var BlankItem_2 = new UIMenuSeparatorItem("Separator (not Jumped)", false);
+        UIMenuSeparatorItem BlankItem = new UIMenuSeparatorItem("Separator (Jumped)", true);
+        UIMenuSeparatorItem BlankItem_2 = new UIMenuSeparatorItem("Separator (not Jumped)", false);
         exampleMenu.AddItem(BlankItem);
         exampleMenu.AddItem(BlankItem_2);
 
-        var colorListItem = new UIMenuListItem("Choose the scrolling animation", foodsList, (int)exampleMenu.AnimationType, "~BLIP_BARBER~ ~BLIP_INFO_ICON~ ~BLIP_TANK~ ~BLIP_OFFICE~ ~BLIP_CRIM_DRUGS~ ~BLIP_WAYPOINT~ ~INPUTGROUP_MOVE~~n~You can use Blips and Inputs in description as you prefer!~n~⚠ 🐌 ❤️ 🥺 💪🏻 You can use Emojis too!", HudColor.HUD_COLOUR_FREEMODE_DARK, HudColor.HUD_COLOUR_FREEMODE);
+        UIMenuListItem colorListItem = new UIMenuListItem("Choose the scrolling animation", foodsList, (int)exampleMenu.AnimationType, "~BLIP_BARBER~ ~BLIP_INFO_ICON~ ~BLIP_TANK~ ~BLIP_OFFICE~ ~BLIP_CRIM_DRUGS~ ~BLIP_WAYPOINT~ ~INPUTGROUP_MOVE~~n~You can use Blips and Inputs in description as you prefer!~n~⚠ 🐌 ❤️ 🥺 💪🏻 You can use Emojis too!", HudColor.HUD_COLOUR_FREEMODE_DARK, HudColor.HUD_COLOUR_FREEMODE);
         colorListItem.BlinkDescription = true;
         exampleMenu.AddItem(colorListItem);
 
-        var slider = new UIMenuSliderItem("Slider Item", "Cool!", true); // by default max is 100 and multipler 5 = 20 steps.
+        UIMenuSliderItem slider = new UIMenuSliderItem("Slider Item", "Cool!", true); // by default max is 100 and multipler 5 = 20 steps.
         exampleMenu.AddItem(slider);
-        var progress = new UIMenuProgressItem("Slider Progress Item", 10, 0);
+        UIMenuProgressItem progress = new UIMenuProgressItem("Slider Progress Item", 10, 0);
         exampleMenu.AddItem(progress);
 
-        var listPanelItem0 = new UIMenuItem("Change Color", "It can be whatever item you want it to be");
-        var ColorPanel = new UIMenuColorPanel("Color Panel Example", ColorPanelType.Hair);
+        UIMenuItem listPanelItem0 = new UIMenuItem("Change Color", "It can be whatever item you want it to be");
+        UIMenuColorPanel ColorPanel = new UIMenuColorPanel("Color Panel Example", ColorPanelType.Hair);
         // you can choose between hair palette or makeup palette or custom
         exampleMenu.AddItem(listPanelItem0);
         listPanelItem0.AddPanel(ColorPanel);
 
-        var listPanelItem1 = new UIMenuItem("Custom palette panel");
-        var ColorPanelCustom = new UIMenuColorPanel("Custom Palette Example", new List<HudColor> { HudColor.HUD_COLOUR_GREEN, HudColor.HUD_COLOUR_RED, HudColor.HUD_COLOUR_FREEMODE, HudColor.HUD_COLOUR_PURPLE, HudColor.HUD_COLOUR_TREVOR }, 0);
+        UIMenuItem listPanelItem1 = new UIMenuItem("Custom palette panel");
+        UIMenuColorPanel ColorPanelCustom = new UIMenuColorPanel("Custom Palette Example", new List<HudColor> { HudColor.HUD_COLOUR_GREEN, HudColor.HUD_COLOUR_RED, HudColor.HUD_COLOUR_FREEMODE, HudColor.HUD_COLOUR_PURPLE, HudColor.HUD_COLOUR_TREVOR }, 0);
         exampleMenu.AddItem(listPanelItem1);
         listPanelItem1.AddPanel(ColorPanelCustom);
 
-        var listPanelItem2 = new UIMenuItem("Change Percentage", "It can be whatever item you want it to be");
-        var PercentagePanel = new UIMenuPercentagePanel("Percentage Panel", "0%", "100%");
+        UIMenuItem listPanelItem2 = new UIMenuItem("Change Percentage", "It can be whatever item you want it to be");
+        UIMenuPercentagePanel PercentagePanel = new UIMenuPercentagePanel("Percentage Panel", "0%", "100%");
         // You can change every text in this Panel
         exampleMenu.AddItem(listPanelItem2);
         listPanelItem2.AddPanel(PercentagePanel);
 
-        var listPanelItem3 = new UIMenuItem("Change Grid Position", "It can be whatever item you want it to be");
-        var GridPanel = new UIMenuGridPanel("Up", "Left", "Right", "Down", new System.Drawing.PointF(.5f, .5f));
-        var HorizontalGridPanel = new UIMenuGridPanel("Left", "Right", new System.Drawing.PointF(.5f, .5f));
+        UIMenuItem listPanelItem3 = new UIMenuItem("Change Grid Position", "It can be whatever item you want it to be");
+        UIMenuGridPanel GridPanel = new UIMenuGridPanel("Up", "Left", "Right", "Down", new System.Drawing.PointF(.5f, .5f));
+        UIMenuGridPanel HorizontalGridPanel = new UIMenuGridPanel("Left", "Right", new System.Drawing.PointF(.5f, .5f));
         // you can choose the text in every position and where to place the starting position of the cirlce
         exampleMenu.AddItem(listPanelItem3);
         listPanelItem3.AddPanel(GridPanel);
         listPanelItem3.AddPanel(HorizontalGridPanel);
 
-        var listPanelItem4 = new UIMenuListItem("Look at Statistics", new List<object> { "Example", "example2" }, 0);
-        var statistics = new UIMenuStatisticsPanel();
+        UIMenuListItem listPanelItem4 = new UIMenuListItem("Look at Statistics", new List<object> { "Example", "example2" }, 0);
+        UIMenuStatisticsPanel statistics = new UIMenuStatisticsPanel();
         exampleMenu.AddItem(listPanelItem4);
         listPanelItem4.AddPanel(statistics);
         statistics.AddStatistics("Look at this!", 0);
@@ -158,20 +158,20 @@ public class MenuExample : BaseScript
         #endregion
 
         #region Windows SubMenu
-        var windowSubmenu = new UIMenu("Windows Menu", "submenu description");
+        UIMenu windowSubmenu = new UIMenu("Windows Menu", "submenu description");
         exampleMenu.AddSubMenu(windowSubmenu, "Windows SubMenu item label", "this is the submenu binded item description");
         windowSubmenu.ParentItem.SetRightLabel(">>>");
-        var heritageWindow = new UIMenuHeritageWindow(0, 0);
-        var statsWindow = new UIMenuDetailsWindow("Parents resemblance", "Dad:", "Mom:", true, new List<UIDetailStat>());
+        UIMenuHeritageWindow heritageWindow = new UIMenuHeritageWindow(0, 0);
+        UIMenuDetailsWindow statsWindow = new UIMenuDetailsWindow("Parents resemblance", "Dad:", "Mom:", true, new List<UIDetailStat>());
         windowSubmenu.AddWindow(heritageWindow);
         windowSubmenu.AddWindow(statsWindow);
         List<dynamic> momfaces = new List<dynamic>() { "Hannah", "Audrey", "Jasmine", "Giselle", "Amelia", "Isabella", "Zoe", "Ava", "Camilla", "Violet", "Sophia", "Eveline", "Nicole", "Ashley", "Grace", "Brianna", "Natalie", "Olivia", "Elizabeth", "Charlotte", "Emma", "Misty" };
         List<dynamic> dadfaces = new List<dynamic>() { "Benjamin", "Daniel", "Joshua", "Noah", "Andrew", "Joan", "Alex", "Isaac", "Evan", "Ethan", "Vincent", "Angel", "Diego", "Adrian", "Gabriel", "Michael", "Santiago", "Kevin", "Louis", "Samuel", "Anthony", "Claude", "Niko", "John" };
         List<dynamic> lista = new List<dynamic>();
         for (int i = 0; i < 101; i++) lista.Add(i);
-        var mom = new UIMenuListItem("Mamma", momfaces, 0);
-        var dad = new UIMenuListItem("Papà", dadfaces, 0);
-        var newItem = new UIMenuSliderItem("Heritage Slider", "This is Useful on heritage", 100, 5, 50, true);
+        UIMenuListItem mom = new UIMenuListItem("Mamma", momfaces, 0);
+        UIMenuListItem dad = new UIMenuListItem("Papà", dadfaces, 0);
+        UIMenuSliderItem newItem = new UIMenuSliderItem("Heritage Slider", "This is Useful on heritage", 100, 5, 50, true);
         windowSubmenu.AddItem(mom);
         windowSubmenu.AddItem(dad);
         windowSubmenu.AddItem(newItem);
@@ -186,7 +186,7 @@ public class MenuExample : BaseScript
 
         #region Scaleforms SubMenu
 
-        var scaleformMenu = _menuPool.AddSubMenu(exampleMenu, "Scaleforms Showdown");
+        UIMenu scaleformMenu = _menuPool.AddSubMenu(exampleMenu, "Scaleforms Showdown");
         UIMenuItem showSimplePopup = new UIMenuItem("Show PopupWarning example", "You can customize it to your needs");
         UIMenuItem showPopupButtons = new UIMenuItem("Show PopupWarning with buttons", "It waits until a button has been pressed!");
         UIMenuListItem customInstr = new UIMenuListItem("SavingNotification", Enum.GetNames(typeof(LoadingSpinnerType)).Cast<dynamic>().ToList(), 0, "InstructionalButtons now give you the ability to dynamically edit, add, remove, customize your buttons, you can even use them outside the menu ~y~without having to run multiple instances of the same scaleform~w~, aren't you happy??");
@@ -205,18 +205,18 @@ public class MenuExample : BaseScript
         #region Notifications SubMenu
 
         UIMenu notifications = _menuPool.AddSubMenu(exampleMenu, "Notifications Showdown");
-        var colors = Enum.GetNames(typeof(NotificationColor)).ToList<dynamic>();
+        List<dynamic> colors = Enum.GetNames(typeof(NotificationColor)).ToList<dynamic>();
         colors.Add("Classic");
-        var char_sprites = new List<dynamic>() { "Abigail", "Amanda", "Ammunation", "Andreas", "Antonia", "Ashley", "BankOfLiberty", "BankFleeca", "BankMaze", "Barry", "Beverly", "BikeSite", "BlankEntry", "Blimp", "Blocked", "BoatSite", "BrokenDownGirl", "BugStars", "Call911", "LegendaryMotorsport", "SSASuperAutos", "Castro", "ChatCall", "Chef", "Cheng", "ChengSenior", "Chop", "Cris", "Dave", "Default", "Denise", "DetonateBomb", "DetonatePhone", "Devin", "SubMarine", "Dom", "DomesticGirl", "Dreyfuss", "DrFriedlander", "Epsilon", "EstateAgent", "Facebook", "FilmNoire", "Floyd", "Franklin", "FranklinTrevor", "GayMilitary", "Hao", "HitcherGirl", "Hunter", "Jimmy", "JimmyBoston", "Joe", "Josef", "Josh", "LamarDog", "Lester", "Skull", "LesterFranklin", "LesterMichael", "LifeInvader", "LsCustoms", "LSTI", "Manuel", "Marnie", "Martin", "MaryAnn", "Maude", "Mechanic", "Michael", "MichaelFranklin", "MichaelTrevor", "WarStock", "Minotaur", "Molly", "MorsMutual", "ArmyContact", "Brucie", "FibContact", "RockStarLogo", "Gerald", "Julio", "MechanicChinese", "MerryWeather", "Unicorn", "Mom", "MrsThornhill", "PatriciaTrevor", "PegasusDelivery", "ElitasTravel", "Sasquatch", "Simeon", "SocialClub", "Solomon", "Taxi", "Trevor", "YouTube", "Wade" };
+        List<dynamic> char_sprites = new List<dynamic>() { "Abigail", "Amanda", "Ammunation", "Andreas", "Antonia", "Ashley", "BankOfLiberty", "BankFleeca", "BankMaze", "Barry", "Beverly", "BikeSite", "BlankEntry", "Blimp", "Blocked", "BoatSite", "BrokenDownGirl", "BugStars", "Call911", "LegendaryMotorsport", "SSASuperAutos", "Castro", "ChatCall", "Chef", "Cheng", "ChengSenior", "Chop", "Cris", "Dave", "Default", "Denise", "DetonateBomb", "DetonatePhone", "Devin", "SubMarine", "Dom", "DomesticGirl", "Dreyfuss", "DrFriedlander", "Epsilon", "EstateAgent", "Facebook", "FilmNoire", "Floyd", "Franklin", "FranklinTrevor", "GayMilitary", "Hao", "HitcherGirl", "Hunter", "Jimmy", "JimmyBoston", "Joe", "Josef", "Josh", "LamarDog", "Lester", "Skull", "LesterFranklin", "LesterMichael", "LifeInvader", "LsCustoms", "LSTI", "Manuel", "Marnie", "Martin", "MaryAnn", "Maude", "Mechanic", "Michael", "MichaelFranklin", "MichaelTrevor", "WarStock", "Minotaur", "Molly", "MorsMutual", "ArmyContact", "Brucie", "FibContact", "RockStarLogo", "Gerald", "Julio", "MechanicChinese", "MerryWeather", "Unicorn", "Mom", "MrsThornhill", "PatriciaTrevor", "PegasusDelivery", "ElitasTravel", "Sasquatch", "Simeon", "SocialClub", "Solomon", "Taxi", "Trevor", "YouTube", "Wade" };
 
-        var noti1 = new UIMenuListItem("Simple Notification", colors, colors.Count - 1, "Can be colored too! Change color and / or select this item to show the notification.");
-        var noti2 = new UIMenuListItem("Advanced Notification", char_sprites, 0, "Change the char and see the notification example! (It can be colored too like the simple notification)");
-        var noti3 = new UIMenuItem("Help Notification", "Insert your text and see the example.");
-        var noti4 = new UIMenuItem("Floating Help Notification", "This is tricky, it's a 3D notification, you'll have to input a Vector3 to show it!");
-        var noti5 = new UIMenuItem("Stats Notification", "This is the notification you see in GTA:O when you improve one of your skills.");
-        var noti6 = new UIMenuItem("VS Notification", "This is the notification you see in GTA:O when you kill someone or get revenge.");
-        var noti7 = new UIMenuItem("3D Text", "This is known a lot.. let's you draw a 3D text in a precise world coordinates.");
-        var noti8 = new UIMenuItem("Simple Text", "This will let you draw a 2D text on screen, you'll have to input the 2D  (X, Y) coordinates.");
+        UIMenuListItem noti1 = new UIMenuListItem("Simple Notification", colors, colors.Count - 1, "Can be colored too! Change color and / or select this item to show the notification.");
+        UIMenuListItem noti2 = new UIMenuListItem("Advanced Notification", char_sprites, 0, "Change the char and see the notification example! (It can be colored too like the simple notification)");
+        UIMenuItem noti3 = new UIMenuItem("Help Notification", "Insert your text and see the example.");
+        UIMenuItem noti4 = new UIMenuItem("Floating Help Notification", "This is tricky, it's a 3D notification, you'll have to input a Vector3 to show it!");
+        UIMenuItem noti5 = new UIMenuItem("Stats Notification", "This is the notification you see in GTA:O when you improve one of your skills.");
+        UIMenuItem noti6 = new UIMenuItem("VS Notification", "This is the notification you see in GTA:O when you kill someone or get revenge.");
+        UIMenuItem noti7 = new UIMenuItem("3D Text", "This is known a lot.. let's you draw a 3D text in a precise world coordinates.");
+        UIMenuItem noti8 = new UIMenuItem("Simple Text", "This will let you draw a 2D text on screen, you'll have to input the 2D  (X, Y) coordinates.");
         notifications.AddItem(noti1);
         notifications.AddItem(noti2);
         notifications.AddItem(noti3);
@@ -857,7 +857,7 @@ public class MenuExample : BaseScript
 
     public async void PauseMenuShowcase(UIMenu _menu)
     {
-        var mainMenu = _menu;
+        UIMenu mainMenu = _menu;
         // tabview is the main menu.. the container of all the tabs.
         TabView pauseMenu = new TabView("PauseMenu example", "Look there's a subtitle too!", "Detail 1", "Detail 2", "Detail 3");
         /*
@@ -965,12 +965,12 @@ public class MenuExample : BaseScript
         playersTab.SettingsColumn.AddSettings(n4);
         playersTab.SettingsColumn.AddSettings(n5);
 
-        var friend = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_GREEN, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
-        var friend1 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_MENU_YELLOW, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
-        var friend2 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_PINK, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
-        var friend3 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_BLUE, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
-        var friend4 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_ORANGE, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
-        var friend5 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_RED, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+        FriendItem friend = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_GREEN, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+        FriendItem friend1 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_MENU_YELLOW, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+        FriendItem friend2 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_PINK, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+        FriendItem friend3 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_BLUE, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+        FriendItem friend4 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_ORANGE, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+        FriendItem friend5 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_RED, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
 
         friend.ClonePed = Game.PlayerPed;
         friend1.ClonePed = Game.PlayerPed;
@@ -986,7 +986,7 @@ public class MenuExample : BaseScript
         playersTab.PlayersColumn.AddPlayer(friend5);
 
 
-        var panel = new PlayerStatsPanel("Player 1", HudColor.HUD_COLOUR_GREEN)
+        PlayerStatsPanel panel = new PlayerStatsPanel("Player 1", HudColor.HUD_COLOUR_GREEN)
         {
             Description = "This is the description for Player 1!!",
             HasPlane = true,
@@ -1003,7 +1003,7 @@ public class MenuExample : BaseScript
         panel.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
         friend.AddPanel(panel);
 
-        var panel1 = new PlayerStatsPanel("Player 2", HudColor.HUD_COLOUR_MENU_YELLOW)
+        PlayerStatsPanel panel1 = new PlayerStatsPanel("Player 2", HudColor.HUD_COLOUR_MENU_YELLOW)
         {
             Description = "This is the description for Player 2!!",
             HasPlane = true,
@@ -1020,7 +1020,7 @@ public class MenuExample : BaseScript
         panel1.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
         friend1.AddPanel(panel1);
 
-        var panel3 = new PlayerStatsPanel("Player 3", HudColor.HUD_COLOUR_PINK)
+        PlayerStatsPanel panel3 = new PlayerStatsPanel("Player 3", HudColor.HUD_COLOUR_PINK)
         {
             Description = "This is the description for Player 3!!",
             HasPlane = true,
@@ -1038,7 +1038,7 @@ public class MenuExample : BaseScript
         panel3.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
         friend2.AddPanel(panel3);
 
-        var panel4 = new PlayerStatsPanel("Player 4", HudColor.HUD_COLOUR_FREEMODE)
+        PlayerStatsPanel panel4 = new PlayerStatsPanel("Player 4", HudColor.HUD_COLOUR_FREEMODE)
         {
             Description = "This is the description for Player 4!!",
             HasPlane = true,
@@ -1056,7 +1056,7 @@ public class MenuExample : BaseScript
         panel4.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
         friend3.AddPanel(panel4);
 
-        var panel5 = new PlayerStatsPanel("Player 5", HudColor.HUD_COLOUR_ORANGE)
+        PlayerStatsPanel panel5 = new PlayerStatsPanel("Player 5", HudColor.HUD_COLOUR_ORANGE)
         {
             Description = "This is the description for Player 5!!",
             HasPlane = true,
@@ -1073,7 +1073,7 @@ public class MenuExample : BaseScript
         panel5.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
         friend4.AddPanel(panel5);
 
-        var panel6 = new PlayerStatsPanel("Player 6", HudColor.HUD_COLOUR_RED)
+        PlayerStatsPanel panel6 = new PlayerStatsPanel("Player 6", HudColor.HUD_COLOUR_RED)
         {
             Description = "This is the description for Player 6!!",
             HasPlane = true,
@@ -1158,29 +1158,29 @@ public class MenuExample : BaseScript
 
     public async void LobbyPauseMenuShowcase(UIMenu _menu)
     {
-        var mainMenu = _menu;
+        UIMenu mainMenu = _menu;
         // tabview is the main menu.. the container of all the tabs.
         MainView pauseMenu = new("Lobby Menu", "ScaleformUI for you by Manups4e!", "Detail 1", "Detail 2", "Detail 3");
         pauseMenu.CanPlayerCloseMenu = true;
         // this is a showcase... CanPlayerCloseMenu is always defaulted to true.. if false players won't be able to close the menu!
-        var columns = new List<Column>()
+        List<Column> columns = new List<Column>()
         {
             new SettingsListColumn("COLUMN SETTINGS", HudColor.HUD_COLOUR_RED),
             new PlayerListColumn("COLUMN PLAYERS", HudColor.HUD_COLOUR_ORANGE),
             new MissionDetailsPanel("COLUMN INFO PANEL", HudColor.HUD_COLOUR_GREEN),
         };
         pauseMenu.SetUpColumns(columns);
-        var mugshot = API.RegisterPedheadshot(Game.PlayerPed.Handle);
+        int mugshot = API.RegisterPedheadshot(Game.PlayerPed.Handle);
         while (!API.IsPedheadshotReady(mugshot)) await BaseScript.Delay(1);
-        var ped_txd = API.GetPedheadshotTxdString(mugshot);
+        string ped_txd = API.GetPedheadshotTxdString(mugshot);
         pauseMenu.HeaderPicture = new(ped_txd, ped_txd);
         _menuPool.Add(pauseMenu);
 
-        var item = new UIMenuItem("UIMenuItem", "UIMenuItem description");
-        var item1 = new UIMenuListItem("UIMenuListItem", new List<dynamic>() { "This", "is", "a", "Test" }, 0, "UIMenuListItem description");
-        var item2 = new UIMenuCheckboxItem("UIMenuCheckboxItem", true, "UIMenuCheckboxItem description");
-        var item3 = new UIMenuSliderItem("UIMenuSliderItem", "UIMenuSliderItem description", 100, 5, 50, false);
-        var item4 = new UIMenuProgressItem("UIMenuProgressItem", 10, 5, "UIMenuProgressItem description");
+        UIMenuItem item = new UIMenuItem("UIMenuItem", "UIMenuItem description");
+        UIMenuListItem item1 = new UIMenuListItem("UIMenuListItem", new List<dynamic>() { "This", "is", "a", "Test" }, 0, "UIMenuListItem description");
+        UIMenuCheckboxItem item2 = new UIMenuCheckboxItem("UIMenuCheckboxItem", true, "UIMenuCheckboxItem description");
+        UIMenuSliderItem item3 = new UIMenuSliderItem("UIMenuSliderItem", "UIMenuSliderItem description", 100, 5, 50, false);
+        UIMenuProgressItem item4 = new UIMenuProgressItem("UIMenuProgressItem", 10, 5, "UIMenuProgressItem description");
         item.BlinkDescription = true;
         pauseMenu.SettingsColumn.AddSettings(item);
         pauseMenu.SettingsColumn.AddSettings(item1);
@@ -1198,12 +1198,12 @@ public class MenuExample : BaseScript
             Screen.ShowSubtitle($"~y~ {item.Label} ~s~~w~ has been selected!");
         };
 
-        var friend = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_GREEN, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
-        var friend1 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_MENU_YELLOW, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
-        var friend2 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_PINK, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
-        var friend3 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_BLUE, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
-        var friend4 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_ORANGE, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
-        var friend5 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_RED, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+        FriendItem friend = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_GREEN, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+        FriendItem friend1 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_MENU_YELLOW, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+        FriendItem friend2 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_PINK, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+        FriendItem friend3 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_BLUE, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+        FriendItem friend4 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_ORANGE, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+        FriendItem friend5 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_RED, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
 
         friend.SetLeftIcon(LobbyBadgeIcon.IS_CONSOLE_PLAYER);
         friend1.SetLeftIcon(LobbyBadgeIcon.IS_PC_PLAYER);
@@ -1219,7 +1219,7 @@ public class MenuExample : BaseScript
         friend4.ClonePed = Game.PlayerPed;
         friend5.ClonePed = Game.PlayerPed;
 
-        var panel = new PlayerStatsPanel("Player 1", HudColor.HUD_COLOUR_GREEN)
+        PlayerStatsPanel panel = new PlayerStatsPanel("Player 1", HudColor.HUD_COLOUR_GREEN)
         {
             Description = "This is the description for Player 1!!",
             HasPlane = true,
@@ -1236,7 +1236,7 @@ public class MenuExample : BaseScript
         panel.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
         friend.AddPanel(panel);
 
-        var panel1 = new PlayerStatsPanel("Player 2", HudColor.HUD_COLOUR_MENU_YELLOW)
+        PlayerStatsPanel panel1 = new PlayerStatsPanel("Player 2", HudColor.HUD_COLOUR_MENU_YELLOW)
         {
             Description = "This is the description for Player 2!!",
             HasPlane = true,
@@ -1253,7 +1253,7 @@ public class MenuExample : BaseScript
         panel1.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
         friend1.AddPanel(panel1);
 
-        var panel3 = new PlayerStatsPanel("Player 3", HudColor.HUD_COLOUR_PINK)
+        PlayerStatsPanel panel3 = new PlayerStatsPanel("Player 3", HudColor.HUD_COLOUR_PINK)
         {
             Description = "This is the description for Player 3!!",
             HasPlane = true,
@@ -1271,7 +1271,7 @@ public class MenuExample : BaseScript
         panel3.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
         friend2.AddPanel(panel3);
 
-        var panel4 = new PlayerStatsPanel("Player 4", HudColor.HUD_COLOUR_FREEMODE)
+        PlayerStatsPanel panel4 = new PlayerStatsPanel("Player 4", HudColor.HUD_COLOUR_FREEMODE)
         {
             Description = "This is the description for Player 4!!",
             HasPlane = true,
@@ -1289,7 +1289,7 @@ public class MenuExample : BaseScript
         panel4.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
         friend3.AddPanel(panel4);
 
-        var panel5 = new PlayerStatsPanel("Player 5", HudColor.HUD_COLOUR_ORANGE)
+        PlayerStatsPanel panel5 = new PlayerStatsPanel("Player 5", HudColor.HUD_COLOUR_ORANGE)
         {
             Description = "This is the description for Player 5!!",
             HasPlane = true,
@@ -1306,7 +1306,7 @@ public class MenuExample : BaseScript
         panel5.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
         friend4.AddPanel(panel5);
 
-        var panel6 = new PlayerStatsPanel("Player 6", HudColor.HUD_COLOUR_RED)
+        PlayerStatsPanel panel6 = new PlayerStatsPanel("Player 6", HudColor.HUD_COLOUR_RED)
         {
             Description = "This is the description for Player 6!!",
             HasPlane = true,
@@ -1330,7 +1330,7 @@ public class MenuExample : BaseScript
         pauseMenu.PlayersColumn.AddPlayer(friend4);
         pauseMenu.PlayersColumn.AddPlayer(friend5);
 
-        var _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
+        long _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
         API.CreateRuntimeTextureFromDuiHandle(txd, "lobby_panelbackground", API.GetDuiHandle(_paneldui));
 
         pauseMenu.MissionPanel.UpdatePanelPicture("scaleformui", "lobby_panelbackground");
@@ -1355,7 +1355,7 @@ public class MenuExample : BaseScript
         _menuPool = new MenuPool();
         _menuPool.RefreshIndex();
 
-        _timerBarPool = new TimerBarPool();        
+        _timerBarPool = new TimerBarPool();
         TextTimerBar textTimerBar = new TextTimerBar("Label", "Caption", CitizenFX.Core.UI.Font.Pricedown);
         _timerBarPool.Add(textTimerBar);
         TextTimerBar textTimerBar2 = new TextTimerBar("Other", "Caption", CitizenFX.Core.UI.Font.ChaletComprimeCologne, CitizenFX.Core.UI.Font.HouseScript);
@@ -1387,8 +1387,8 @@ public class MenuExample : BaseScript
 
             if (Game.IsControlJustPressed(0, (Control)170)) // F3
             {
-                var txd = API.CreateRuntimeTxd("test");
-                var _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
+                long txd = API.CreateRuntimeTxd("test");
+                long _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
                 API.CreateRuntimeTextureFromDuiHandle(txd, "panelbackground", API.GetDuiHandle(_paneldui));
 
                 ScaleformUI.ScaleformUI.JobMissionSelection.SetTitle("MISSION SELECTOR");
@@ -1396,9 +1396,9 @@ public class MenuExample : BaseScript
                 ScaleformUI.ScaleformUI.JobMissionSelection.SetVotes(0, "VOTES");
                 ScaleformUI.ScaleformUI.JobMissionSelection.Cards = new List<JobSelectionCard>();
 
-                var card = new JobSelectionCard("Test 1", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, HudColor.HUD_COLOUR_FREEMODE, 2, new List<MissionDetailsItem>()
+                JobSelectionCard card = new JobSelectionCard("Test 1", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, HudColor.HUD_COLOUR_FREEMODE, 2, new List<MissionDetailsItem>()
                 {
-                    new MissionDetailsItem("Left Label", "Right Label", (JobIcon)0, HudColor.HUD_COLOUR_FREEMODE),
+                    new MissionDetailsItem("Left Label", "Right Label", 0, HudColor.HUD_COLOUR_FREEMODE),
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)1, HudColor.HUD_COLOUR_GOLD),
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)2, HudColor.HUD_COLOUR_PURPLE),
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)3, HudColor.HUD_COLOUR_GREEN),
@@ -1406,7 +1406,7 @@ public class MenuExample : BaseScript
                 });
                 ScaleformUI.ScaleformUI.JobMissionSelection.AddCard(card);
 
-                var card1 = new JobSelectionCard("Test 2", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, HudColor.HUD_COLOUR_FREEMODE, 2, new List<MissionDetailsItem>()
+                JobSelectionCard card1 = new JobSelectionCard("Test 2", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, HudColor.HUD_COLOUR_FREEMODE, 2, new List<MissionDetailsItem>()
                 {
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)5, HudColor.HUD_COLOUR_FREEMODE),
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)6, HudColor.HUD_COLOUR_GOLD),
@@ -1416,7 +1416,7 @@ public class MenuExample : BaseScript
                 });
                 ScaleformUI.ScaleformUI.JobMissionSelection.AddCard(card1);
 
-                var card2 = new JobSelectionCard("Test 3", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, HudColor.HUD_COLOUR_FREEMODE, 2, new List<MissionDetailsItem>()
+                JobSelectionCard card2 = new JobSelectionCard("Test 3", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, HudColor.HUD_COLOUR_FREEMODE, 2, new List<MissionDetailsItem>()
                 {
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)10, HudColor.HUD_COLOUR_FREEMODE),
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)11, HudColor.HUD_COLOUR_GOLD),
@@ -1426,7 +1426,7 @@ public class MenuExample : BaseScript
                 });
                 ScaleformUI.ScaleformUI.JobMissionSelection.AddCard(card2);
 
-                var card3 = new JobSelectionCard("Test 4", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, HudColor.HUD_COLOUR_FREEMODE, 2, new List<MissionDetailsItem>()
+                JobSelectionCard card3 = new JobSelectionCard("Test 4", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, HudColor.HUD_COLOUR_FREEMODE, 2, new List<MissionDetailsItem>()
                 {
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)15, HudColor.HUD_COLOUR_FREEMODE),
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)16, HudColor.HUD_COLOUR_GOLD),
@@ -1436,7 +1436,7 @@ public class MenuExample : BaseScript
                 });
                 ScaleformUI.ScaleformUI.JobMissionSelection.AddCard(card3);
 
-                var card4 = new JobSelectionCard("Test 5", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, HudColor.HUD_COLOUR_FREEMODE, 2, new List<MissionDetailsItem>()
+                JobSelectionCard card4 = new JobSelectionCard("Test 5", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, HudColor.HUD_COLOUR_FREEMODE, 2, new List<MissionDetailsItem>()
                 {
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)20, HudColor.HUD_COLOUR_FREEMODE),
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)21, HudColor.HUD_COLOUR_GOLD),
@@ -1446,9 +1446,9 @@ public class MenuExample : BaseScript
                 });
                 ScaleformUI.ScaleformUI.JobMissionSelection.AddCard(card4);
 
-                var card5 = new JobSelectionCard("Test 6", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, HudColor.HUD_COLOUR_FREEMODE, 2, new List<MissionDetailsItem>()
+                JobSelectionCard card5 = new JobSelectionCard("Test 6", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, HudColor.HUD_COLOUR_FREEMODE, 2, new List<MissionDetailsItem>()
                 {
-                    new MissionDetailsItem("Left Label", "Right Label", (JobIcon)0, HudColor.HUD_COLOUR_FREEMODE),
+                    new MissionDetailsItem("Left Label", "Right Label", 0, HudColor.HUD_COLOUR_FREEMODE),
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)1, HudColor.HUD_COLOUR_GOLD),
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)2, HudColor.HUD_COLOUR_PURPLE),
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)3, HudColor.HUD_COLOUR_GREEN),
