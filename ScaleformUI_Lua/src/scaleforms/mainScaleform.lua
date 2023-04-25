@@ -43,7 +43,7 @@ Citizen.CreateThread(function()
     ScaleformUI.Scaleforms._pauseMenu:Load()
     ScaleformUI.Scaleforms.RankbarHandler = RankbarHandler.New()
     ScaleformUI.Scaleforms.CountdownHandler = CountdownHandler.New()
-    ScaleformUI.Scaleforms.BigFeed = BigFeedHandler.New()
+    ScaleformUI.Scaleforms.BigFeed = BigFeedInstance.New()
 
     local wait = 850
     while true do
