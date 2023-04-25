@@ -72,8 +72,8 @@ function UIMenuStatisticsPanel:UpdateStatistic(index, value)
         self.Items[index].value = value
         if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
             local it = IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem)
-            local van = IndexOf(self.ParentItem.Panels, self)
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_PANEL_STATS_ITEM_VALUE", false, it, van, index - 1, value)
+            local pan = IndexOf(self.ParentItem.Panels, self)
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_PANEL_STATS_ITEM_VALUE", false, it - 1, pan - 1, index - 1, value)
         end
     end
 end
