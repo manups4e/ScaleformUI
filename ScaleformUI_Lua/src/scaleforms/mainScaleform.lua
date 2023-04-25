@@ -43,6 +43,7 @@ Citizen.CreateThread(function()
     ScaleformUI.Scaleforms._pauseMenu:Load()
     ScaleformUI.Scaleforms.RankbarHandler = RankbarHandler.New()
     ScaleformUI.Scaleforms.CountdownHandler = CountdownHandler.New()
+    ScaleformUI.Scaleforms.BigFeed = BigFeedHandler.New()
 
     local wait = 850
     while true do
@@ -66,6 +67,10 @@ Citizen.CreateThread(function()
             end
             if ScaleformUI.Scaleforms.Warning._sc ~= nil then
                 ScaleformUI.Scaleforms.Warning:Update()
+                wait = 0
+            end
+            if ScaleformUI.Scaleforms.BigFeed._sc ~= nil and ScaleformUI.Scaleforms.BigFeed._enabled then
+                ScaleformUI.Scaleforms.BigFeed:Update()
                 wait = 0
             end
         end

@@ -1,5 +1,4 @@
 ﻿using CitizenFX.Core;
-using System;
 using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI
@@ -111,8 +110,8 @@ namespace ScaleformUI
         {
             if (_sc != null) return;
             _sc = new Scaleform("GTAV_ONLINE");
-            var timeout = 1000;
-            var start = DateTime.Now;
+            int timeout = 1000;
+            DateTime start = DateTime.Now;
             while (!_sc.IsLoaded && DateTime.Now.Subtract(start).TotalMilliseconds < timeout) await BaseScript.Delay(0);
             _sc.CallFunction("HIDE_ONLINE_LOGO");
         }
