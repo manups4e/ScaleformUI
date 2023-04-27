@@ -11,8 +11,8 @@ end
 ---@field public IsValid fun(self:Scaleform):boolean
 ---@field public Render2D fun(self:Scaleform):nil
 ---@field public Render2DNormal fun(self:Scaleform, x:number, y:number, width:number, height:number):nil
----@field public Render3D fun(self:Scaleform, x:number, y:number, z:number, rx:number, ry:number, rz:number, scale:number):nil
----@field public Render3DAdditive fun(self:Scaleform, x:number, y:number, z:number, rx:number, ry:number, rz:number, scale:number):nil
+---@field public Render3D fun(self:Scaleform, x:number, y:number, z:number, rx:number, ry:number, rz:number, scaleX:number, scaleY:number, scaleZ:number):nil
+---@field public Render3DAdditive fun(self:Scaleform, x:number, y:number, z:number, rx:number, ry:number, rz:number, scaleX:number, scaleY:number, scaleZ:number):nil
 ---@field public handle number
 
 ---Create a new scaleform instance

@@ -61,7 +61,7 @@ function BigFeedInstance:Texture(txn, txd)
             self:UpdateInfo()
         end
     else
-        return {txd = self._txd, txn = self._txn}
+        return { txd = self._txd, txn = self._txn }
     end
 end
 
@@ -91,16 +91,16 @@ function BigFeedInstance:UpdateInfo()
     if not self._enabled then return end
     AddTextEntry("scaleform_ui_bigFeed", self._bodyText)
     BeginScaleformMovieMethod(self._sc.handle, "SET_BIGFEED_INFO")
-    PushScaleformMovieFunctionParameterString("")
+    ScaleformMovieMethodAddParamTextureNameString("")
     BeginTextCommandScaleformString("scaleform_ui_bigFeed")
     EndTextCommandScaleformString_2()
-    PushScaleformMovieFunctionParameterInt(0)
-    PushScaleformMovieFunctionParameterString(self._txn)
-    PushScaleformMovieFunctionParameterString(self._txd)
-    PushScaleformMovieFunctionParameterString(self._subtitle)
-    PushScaleformMovieFunctionParameterString("")
-    PushScaleformMovieFunctionParameterString(self._title)
-    PushScaleformMovieFunctionParameterInt(0)
+    ScaleformMovieMethodAddParamInt(0)
+    ScaleformMovieMethodAddParamTextureNameString(self._txn)
+    ScaleformMovieMethodAddParamTextureNameString(self._txd)
+    ScaleformMovieMethodAddParamTextureNameString(self._subtitle)
+    ScaleformMovieMethodAddParamTextureNameString("")
+    ScaleformMovieMethodAddParamTextureNameString(self._title)
+    ScaleformMovieMethodAddParamInt(0)
     EndScaleformMovieMethod()
 end
 
