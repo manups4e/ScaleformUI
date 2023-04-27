@@ -29,25 +29,31 @@ RegisterNUICallback('keydown', function(data, cb)
             currentMessage = {};
             SetNuiFocus(false, false);
             ScaleformUI.Scaleforms.MultiplayerChat:SetFocus(ChatVisible.Default);
+            cb('ok')
             return
         elseif key == "Backspace" then
             ScaleformUI.Scaleforms.MultiplayerChat:DeleteText();
             currentMessage[#currentMessage] = nil;
+            cb('ok')
             return
         elseif key == "ArrowUp" or key == "PageUp" then
             ScaleformUI.Scaleforms.MultiplayerChat:PageUp();
+            cb('ok')
             return
         elseif key == "ArrowDown" or key == "PageDown" then
             ScaleformUI.Scaleforms.MultiplayerChat:PageDown();
+            cb('ok')
             return
         elseif key == "Escape" then
             ScaleformUI.Scaleforms.MultiplayerChat:Close();
             currentMessage = {};
             SetNuiFocus(false, false);
+            cb('ok')
             return
         else
             for _, invalidKey in ipairs(invalidKeys) do
                 if key == invalidKey then
+                    cb('ok')
                     return
                 end
             end
