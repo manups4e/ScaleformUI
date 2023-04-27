@@ -26,6 +26,7 @@ RegisterNUICallback('keydown', function(data, cb)
 
         if key == "Enter" then
             ScaleformUI.Scaleforms.MultiplayerChat:SetTypingDone();
+            -- Send the message to the server before removing it
             currentMessage = {};
             SetNuiFocus(false, false);
             ScaleformUI.Scaleforms.MultiplayerChat:SetFocus(ChatVisible.Default);
@@ -51,6 +52,7 @@ RegisterNUICallback('keydown', function(data, cb)
             cb('ok')
             return
         else
+            -- we don't want to add any of the invalid keys to be added to the message
             for _, invalidKey in ipairs(invalidKeys) do
                 if key == invalidKey then
                     cb('ok')
@@ -130,6 +132,7 @@ CreateThread(function()
 
             chatPlayerColour = chatPlayerColour + 1;
 
+            -- text input is reset each time the scope changes, we need to re-add its content and set the scope
             if ScaleformUI.Scaleforms.MultiplayerChat:IsTyping() then
                 ScaleformUI.Scaleforms.MultiplayerChat:StartTyping(currentScope, currentScopeText);
                 for key, text in pairs(currentMessage) do
