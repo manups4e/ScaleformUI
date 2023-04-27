@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script>
+    function debounce(func, waitFor) {
+      let timeout;
+      return (...args) => new Promise(resolve => {
+        if (timeout) {
+          clearTimeout(timeout);
+        }
+        timeout = setTimeout(() => resolve(func(...args)), waitFor);
+      });
+    }
+
+    // catch key presses on window and send to NUI
+    window.addEventListener('keydown', (event) => {
+      // send to NUI
+      debounce(fetch(`https://ScaleformUI_Lua/keydown`, { method: 'POST', body: JSON.stringify({ key: event.key }) }), 100);
+    });
+  </script>
+</head>
+
+<body>
+
+</body>
+
+</html>

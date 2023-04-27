@@ -11,6 +11,8 @@ ScaleformUI.Scaleforms.Warning = nil --[[@type WarningInstance]]                
 ScaleformUI.Scaleforms.JobMissionSelector = nil --[[@type MissionSelectorHandler]] -- missionselector
 ScaleformUI.Scaleforms.RankbarHandler = nil --[[@type RankbarHandler]]             -- rankbar
 ScaleformUI.Scaleforms.CountdownHandler = nil --[[@type CountdownHandler]]         -- countdown
+ScaleformUI.Scaleforms.BigFeed = nil --[[@type BigFeedInstance]]                   -- bigfeed
+ScaleformUI.Scaleforms.MultiplayerChat = nil --[[@type MultiplayerChat]]           -- multiplayerchat
 
 ScaleformUI.Scaleforms._pauseMenu = nil
 
@@ -44,6 +46,7 @@ Citizen.CreateThread(function()
     ScaleformUI.Scaleforms.RankbarHandler = RankbarHandler.New()
     ScaleformUI.Scaleforms.CountdownHandler = CountdownHandler.New()
     ScaleformUI.Scaleforms.BigFeed = BigFeedInstance.New()
+    ScaleformUI.Scaleforms.MultiplayerChat = MultiplayerChat.New()
 
     local wait = 850
     while true do
@@ -73,6 +76,13 @@ Citizen.CreateThread(function()
                 ScaleformUI.Scaleforms.BigFeed:Update()
                 wait = 0
             end
+            if ScaleformUI.Scaleforms.MultiplayerChat._sc ~= nil and (ScaleformUI.Scaleforms.MultiplayerChat._start > 0 or ScaleformUI.Scaleforms.MultiplayerChat._enabled) then
+                ScaleformUI.Scaleforms.MultiplayerChat:Update()
+                wait = 0
+            end
+        end
+        if ScaleformUI.Scaleforms.MultiplayerChat._sc == nil then
+            ScaleformUI.Scaleforms.MultiplayerChat:Load()
         end
         if (ScaleformUI.Scaleforms.InstructionalButtons._sc == nil) then
             ScaleformUI.Scaleforms.InstructionalButtons:Load()

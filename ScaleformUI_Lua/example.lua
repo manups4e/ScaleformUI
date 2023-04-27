@@ -3,6 +3,137 @@ local pool = MenuPool.New()
 local animEnabled = true
 local timerBarPool = TimerBarPool.New()
 
+SetTextChatEnabled(true);
+
+local myTimer = GlobalGameTimer
+local chatPlayerColour = Colours.HUD_COLOUR_WHITE;
+local currentChatScope = ChatScope.Global;
+local chatTypingScope = "Team";
+local currentMessage = {}
+local currentScope = ChatScope.All;
+local currentScopeText = "All";
+
+local invalidKeys = {
+    "Tab", "Shift", "Control", "Shift", "Alt", "Home", "Delete", "Insert", "End", "Pause", "F1", "F2", "F3", "F4", "F5",
+    "F6", "F7", "F8", "F9", "F10", "F11", "F12", "NumLock", "ScrollLock", "MouseLock", "LeftWindows", "RightWindows",
+    "CapsLock"
+}
+
+-- add nui event handler
+RegisterNUICallback('keydown', function(data, cb)
+    if ScaleformUI.Scaleforms.MultiplayerChat:IsTyping() then
+        local key = data.key;
+
+        if key == "Enter" then
+            ScaleformUI.Scaleforms.MultiplayerChat:SetTypingDone();
+            currentMessage = {};
+            SetNuiFocus(false, false);
+            ScaleformUI.Scaleforms.MultiplayerChat:SetFocus(ChatVisible.Default);
+            return
+        elseif key == "Backspace" then
+            ScaleformUI.Scaleforms.MultiplayerChat:DeleteText();
+            currentMessage[#currentMessage] = nil;
+            return
+        elseif key == "ArrowUp" or key == "PageUp" then
+            ScaleformUI.Scaleforms.MultiplayerChat:PageUp();
+            return
+        elseif key == "ArrowDown" or key == "PageDown" then
+            ScaleformUI.Scaleforms.MultiplayerChat:PageDown();
+            return
+        elseif key == "Escape" then
+            ScaleformUI.Scaleforms.MultiplayerChat:Close();
+            currentMessage = {};
+            SetNuiFocus(false, false);
+            return
+        else
+            for _, invalidKey in ipairs(invalidKeys) do
+                if key == invalidKey then
+                    return
+                end
+            end
+        end
+
+        ScaleformUI.Scaleforms.MultiplayerChat:AddText(data.key);
+        currentMessage[#currentMessage + 1] = data.key;
+    end
+    cb('ok')
+end)
+
+CreateThread(function()
+    while true do
+        Wait(0)
+
+
+        local stringToAdd = nil
+
+        if IsControlJustPressed(0, 245) then
+            ScaleformUI.Scaleforms.MultiplayerChat:StartTyping(currentScope, currentScopeText);
+            SetNuiFocus(true, false);
+        elseif ScaleformUI.Scaleforms.MultiplayerChat:IsTyping() then
+            -- NUI Hack?
+        end
+
+        if IsControlJustPressed(0, 201) then
+            -- send message
+        end
+        if IsControlJustPressed(0, 202) then
+            ScaleformUI.Scaleforms.MultiplayerChat:Close();
+            SetNuiFocus(false, false);
+        end
+        if IsControlJustPressed(0, 194) then
+            -- ScaleformUI.Scaleforms.MultiplayerChat:DeleteText(); -- handle if a message came in while typing
+            currentMessage[#currentMessage] = nil;
+        end
+
+        if stringToAdd ~= nil then
+            ScaleformUI.Scaleforms.MultiplayerChat:AddText(stringToAdd);
+            currentMessage[#currentMessage + 1] = stringToAdd;
+            stringToAdd = nil;
+        end
+
+        if GlobalGameTimer - myTimer > 3000 then
+            myTimer = GlobalGameTimer
+
+            local chatScopeText = "Global";
+            if currentChatScope == ChatScope.Team then
+                chatScopeText = "Team";
+            elseif currentChatScope == ChatScope.All then
+                chatScopeText = "All";
+            elseif currentChatScope == ChatScope.Clan then
+                chatScopeText = "Clan";
+            end
+
+            local randomQuote = Quotes[math.random(#Quotes)];
+
+            ScaleformUI.Scaleforms.MultiplayerChat:SetFocus(ChatVisible.Default, "", chatScopeText)
+            ScaleformUI.Scaleforms.MultiplayerChat:AddMessage(randomQuote.author,
+                randomQuote.quote,
+                chatScopeText,
+                currentChatScope == ChatScope.Team,
+                chatPlayerColour);
+
+            if currentChatScope == ChatScope.Global then
+                currentChatScope = ChatScope.Team;
+            elseif currentChatScope == ChatScope.Team then
+                currentChatScope = ChatScope.All;
+            elseif currentChatScope == ChatScope.All then
+                currentChatScope = ChatScope.Clan;
+            elseif currentChatScope == ChatScope.Clan then
+                currentChatScope = ChatScope.Global;
+            end
+
+            chatPlayerColour = chatPlayerColour + 1;
+
+            if ScaleformUI.Scaleforms.MultiplayerChat:IsTyping() then
+                ScaleformUI.Scaleforms.MultiplayerChat:StartTyping(currentScope, currentScopeText);
+                for key, text in pairs(currentMessage) do
+                    ScaleformUI.Scaleforms.MultiplayerChat:AddText(text);
+                end
+            end
+        end
+    end
+end)
+
 function CreateMenu()
     local txd = CreateRuntimeTxd("scaleformui")
     local dui = CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160)

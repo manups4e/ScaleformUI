@@ -4,6 +4,8 @@ BigFeedInstance.__call = function()
     return "BigFeedInstance"
 end
 
+---@class BigFeedInstance
+
 function BigFeedInstance.New()
     local data = {
         _sc = nil --[[@type Scaleform]],
