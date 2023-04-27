@@ -299,7 +299,7 @@ function UIMenu:DisEnableControls(bool)
     if bool then
         EnableAllControlActions(2)
     else
-        EnableAllControlActions(2)
+        DisableAllControlActions(2)
     end
 
     if bool then
