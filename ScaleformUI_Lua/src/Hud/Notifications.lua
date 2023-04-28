@@ -273,6 +273,7 @@ function Notifications:ShowStatNotification(newProgress, oldProgress, title, bli
     local txd = GetPedheadshotTxdString(handle)
     BeginTextCommandThefeedPost("PS_UPDATE")
     AddTextComponentInteger(newProgress)
+    ---@diagnostic disable-next-line: param-type-mismatch -- newProgress is a number but the native wants a boolean
     EndTextCommandThefeedPostStats("ScaleformUIStatsNotification", 2, newProgress, oldProgress, false, txd, txd)
     EndTextCommandThefeedPostTicker(blink, showInBrief)
     UnregisterPedheadshot(handle)
