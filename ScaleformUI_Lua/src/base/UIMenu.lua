@@ -376,7 +376,9 @@ end
 function UIMenu:MouseControlsEnabled(enabled)
     if enabled ~= nil then
         self.Settings.MouseControlsEnabled = ToBool(enabled)
-        ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_MOUSE", false, self.Settings.MouseControlsEnabled)
+        if self:Visible() then
+            ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_MOUSE", false, self.Settings.MouseControlsEnabled)
+        end
     end
     return self.Settings.MouseControlsEnabled
 end
