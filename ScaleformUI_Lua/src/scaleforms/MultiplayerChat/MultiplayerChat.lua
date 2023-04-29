@@ -54,7 +54,7 @@ function MultiplayerChat:Load()
 
   if self._sc:IsLoaded() then
     if not INITIALIZED then
-      self._sc:CallFunction("RESET")
+      self._sc:CallFunction("RESET", false)
       INITIALIZED = true
     end
     p:resolve()
@@ -93,22 +93,22 @@ end
 
 ---Scroll the chat up
 function MultiplayerChat:PageUp()
-  self._sc:CallFunction("PAGE_UP")
+  self._sc:CallFunction("PAGE_UP", false)
 end
 
 ---Scroll the chat down
 function MultiplayerChat:PageDown()
-  self._sc:CallFunction("PAGE_DOWN")
+  self._sc:CallFunction("PAGE_DOWN", false)
 end
 
 ---Delete last character
 function MultiplayerChat:DeleteText()
-  self._sc:CallFunction("DELETE_TEXT")
+  self._sc:CallFunction("DELETE_TEXT", false)
 end
 
 ---Set the typing state as completed
 function MultiplayerChat:SetTypingDone()
-  self._sc:CallFunction("SET_TYPING_DONE")
+  self._sc:CallFunction("SET_TYPING_DONE", false)
   self._isTyping = false
 end
 
@@ -142,17 +142,17 @@ end
 
 ---Complete Text -- this will add the current messahe information to the chat locally, its also called by SetTypingDone
 function MultiplayerChat:CompleteText()
-  self._sc:CallFunction("COMPLETE_TEXT")
+  self._sc:CallFunction("COMPLETE_TEXT", false)
 end
 
 ---Abort Text
 function MultiplayerChat:AbortText()
-  self._sc:CallFunction("ABORT_TEXT")
+  self._sc:CallFunction("ABORT_TEXT", false)
 end
 
 ---Reset Text
 function MultiplayerChat:Reset()
-  self._sc:CallFunction("RESET")
+  self._sc:CallFunction("RESET", false)
 end
 
 function MultiplayerChat:IsEnabled()
