@@ -195,7 +195,10 @@ namespace ScaleformUI
 
         public void InvokeEvent(InstructionalButton control)
         {
-            OnControlSelected?.Invoke(control);
+            if (API.UpdateOnscreenKeyboard() == 0)
+                return;
+
+            OnControlSelected?.Invoke(control);          
         }
     }
 
