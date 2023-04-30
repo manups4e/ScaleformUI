@@ -1,4 +1,7 @@
-﻿namespace ScaleformUI
+﻿using System;
+using System.Threading.Tasks;
+
+namespace ScaleformUI
 {
     public class UIMenuDynamicListItem : UIMenuItem, IListItem
     {
