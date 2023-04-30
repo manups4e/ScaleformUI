@@ -208,9 +208,9 @@ namespace ScaleformUI
         private bool _useMouseButtons;
         private bool _enabled = false;
         internal bool _isUsingKeyboard;
-        internal bool _changed = true;
         internal int savingTimer = 0;
         private bool _isSaving = false;
+        internal static bool _changed = true;
 
         /// <summary>
         /// Show or Hide the Instructional Buttons
@@ -464,5 +464,10 @@ namespace ScaleformUI
         }
 
         public static bool IsControlJustPressed(Control control, PadCheck keyboardOnly = PadCheck.Any) => Game.IsControlJustPressed(2, control) && (keyboardOnly == PadCheck.Keyboard ? API.IsUsingKeyboard(2) : keyboardOnly != PadCheck.Controller || !API.IsUsingKeyboard(2));
+
+        /// <summary>
+        /// Updates the instructional button text.
+        /// </summary>
+        public static void ForceUpdate() => _changed = true;   
     }
 }
