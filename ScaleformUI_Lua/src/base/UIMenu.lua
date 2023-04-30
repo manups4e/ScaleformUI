@@ -1062,6 +1062,10 @@ end
 
 ---GoUp
 function UIMenu:GoUp()
+    -- if menu is building, don't do anything
+    if self._isBuilding then
+        return
+    end
     self.Items[self:CurrentSelection()]:Selected(false)
     local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", true, 8, self._delay) --[[@as number]]
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
@@ -1075,6 +1079,10 @@ end
 
 ---GoDown
 function UIMenu:GoDown()
+    -- if menu is building, don't do anything
+    if self._isBuilding then
+        return
+    end
     self.Items[self:CurrentSelection()]:Selected(false)
     local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", true, 9, self._delay) --[[@as number]]
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
@@ -1088,6 +1096,10 @@ end
 
 ---GoLeft
 function UIMenu:GoLeft()
+    -- if menu is building, don't do anything
+    if self._isBuilding then
+        return
+    end
     local Item = self.Items[self:CurrentSelection()]
     local type, subtype = Item()
     if subtype ~= "UIMenuListItem" and subtype ~= "UIMenuDynamicListItem" and subtype ~= "UIMenuSliderItem" and subtype ~= "UIMenuProgressItem" and subtype ~= "UIMenuStatsItem" then
@@ -1133,6 +1145,10 @@ end
 
 ---GoRight
 function UIMenu:GoRight()
+    -- if menu is building, don't do anything
+    if self._isBuilding then
+        return
+    end
     local Item = self.Items[self:CurrentSelection()]
     local type, subtype = Item()
     if subtype ~= "UIMenuListItem" and subtype ~= "UIMenuDynamicListItem" and subtype ~= "UIMenuSliderItem" and subtype ~= "UIMenuProgressItem" and subtype ~= "UIMenuStatsItem" then
