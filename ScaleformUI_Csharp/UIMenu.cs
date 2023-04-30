@@ -2056,8 +2056,10 @@ namespace ScaleformUI
                 GoBack();
             }
             if (MenuItems.Count == 0) return;
-            if (IsControlBeingPressed(MenuControls.Up, key) && !isBuilding)
+            if (IsControlBeingPressed(MenuControls.Up, key))
             {
+                if (isBuilding && _activeItem <= 0)
+                    return;
                 if (Game.GameTime - time > delay)
                 {
                     ButtonDelay();
@@ -2065,7 +2067,7 @@ namespace ScaleformUI
                 }
             }
 
-            else if (IsControlBeingPressed(MenuControls.Down, key) && !isBuilding)
+            else if (IsControlBeingPressed(MenuControls.Down, key))
             {
                 if (Game.GameTime - time > delay)
                 {
@@ -2074,7 +2076,7 @@ namespace ScaleformUI
                 }
             }
 
-            else if (IsControlBeingPressed(MenuControls.Left, key) && !isBuilding)
+            else if (IsControlBeingPressed(MenuControls.Left, key))
             {
                 if (Game.GameTime - time > delay)
                 {
@@ -2083,7 +2085,7 @@ namespace ScaleformUI
                 }
             }
 
-            else if (IsControlBeingPressed(MenuControls.Right, key) && !isBuilding)
+            else if (IsControlBeingPressed(MenuControls.Right, key))
             {
                 if (Game.GameTime - time > delay)
                 {
@@ -2092,7 +2094,7 @@ namespace ScaleformUI
                 }
             }
 
-            else if (HasControlJustBeenPressed(MenuControls.Select, key) && !isBuilding)
+            else if (HasControlJustBeenPressed(MenuControls.Select, key))
             {
                 Select(true);
             }
