@@ -1813,10 +1813,8 @@ namespace ScaleformUI
             }
         }
 
-        public void GoBack()
         public void GoBack(bool playSound = true)
         {
-            Game.PlaySound(AUDIO_BACK, AUDIO_LIBRARY);
             if (playSound)
                 Game.PlaySound(AUDIO_BACK, AUDIO_LIBRARY);
             if (ParentMenu != null)
