@@ -274,25 +274,19 @@ namespace ScaleformUI
         /// </summary>
         public void CloseAllMenus()
         {
-            if (currentMenu is not null)
+            for (var i = _menuList.Count - 1; i >= 0; i--)
             {
-                foreach (var menu in currentMenu.Children)
+                var menu = _menuList[i];
+                if (menu.Visible)
                 {
-                    if (menu.Value.Visible)
-                    {
-                        menu.Value.Visible = false;
-                    }
-                }
-                if (currentMenu.Visible)
-                    currentMenu.Visible = false;
-                else
-                {
-                    currentMenu.MenuChangeEv(currentMenu, null, MenuState.Closed);
-                    OnMenuStateChanged?.Invoke(currentMenu, null, MenuState.Closed);
+                    if (!menu.CanPlayerCloseMenu)
+                        menu.CanPlayerCloseMenu = true;
+                    menu.GoBack(false);
                 }
             }
             ScaleformUI._ui.CallFunction("CLEAR_ALL");
-            ScaleformUI.InstructionalButtons.Enabled = false;
+            if (ScaleformUI.InstructionalButtons.Enabled)
+                ScaleformUI.InstructionalButtons.Enabled = false;
         }
 
         public void FlushMenus()
