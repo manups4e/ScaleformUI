@@ -1,6 +1,4 @@
 ﻿using CitizenFX.Core;
-using System;
-using System.Threading.Tasks;
 
 namespace ScaleformUI
 {
@@ -9,6 +7,17 @@ namespace ScaleformUI
         internal Scaleform _sc;
         private int _start;
         private int _timer;
+        private bool _transitionExecuted = false;
+
+        public bool ManualDispose { get; set; }
+
+        /// <summary>
+        /// Transitions supported: TRANSITION_UP, TRANSITION_OUT, TRANSITION_DOWN
+        /// </summary>
+        public string Transition { get; set; } = "TRANSITION_OUT";
+        public float TransitionDuration { get; set; } = 0.4f;
+        public bool TransitionAutoExpansion { get; set; } = false;
+
 
         public BigMessageHandler()
         {
@@ -24,76 +33,94 @@ namespace ScaleformUI
             while (!_sc.IsLoaded && DateTime.Now.Subtract(start).TotalMilliseconds < timeout) await BaseScript.Delay(0);
         }
 
-        public void Dispose()
+        public async void Dispose()
         {
+            if (ManualDispose)
+            {
+                _sc.CallFunction(Transition);
+                await BaseScript.Delay((int)(TransitionDuration * .5) * 1000);
+                ManualDispose = false;
+            }
+
+            _transitionExecuted = false;
+            _start = 0;
             _sc.Dispose();
             _sc = null;
         }
 
-        public async void ShowMissionPassedMessage(string msg, int time = 5000)
+        public async void ShowMissionPassedMessage(string msg, int time = 5000, bool manualDispose = false)
         {
             await Load();
             _start = Game.GameTime;
+            ManualDispose = manualDispose;
             _sc.CallFunction("SHOW_MISSION_PASSED_MESSAGE", msg, "", 100, true, 0, true);
             _timer = time;
         }
 
-        public async void ShowColoredShard(string msg, string desc, HudColor textColor, HudColor bgColor, int time = 5000)
+        public async void ShowColoredShard(string msg, string desc, HudColor textColor, HudColor bgColor, int time = 5000, bool manualDispose = false)
         {
             await Load();
             _start = Game.GameTime;
+            ManualDispose = manualDispose;
             _sc.CallFunction("SHOW_SHARD_CENTERED_MP_MESSAGE", msg, desc, (int)bgColor, (int)textColor);
             _timer = time;
         }
 
-        public async void ShowOldMessage(string msg, int time = 5000)
+        public async void ShowOldMessage(string msg, int time = 5000, bool manualDispose = false)
         {
             await Load();
             _start = Game.GameTime;
+            ManualDispose = manualDispose;
             _sc.CallFunction("SHOW_MISSION_PASSED_MESSAGE", msg);
             _timer = time;
         }
 
-        public async void ShowSimpleShard(string title, string subtitle, int time = 5000)
+        public async void ShowSimpleShard(string title, string subtitle, int time = 5000, bool manualDispose = false)
         {
             await Load();
             _start = Game.GameTime;
+            ManualDispose = manualDispose;
             _sc.CallFunction("SHOW_SHARD_CREW_RANKUP_MP_MESSAGE", title, subtitle);
             _timer = time;
         }
 
-        public async void ShowRankupMessage(string msg, string subtitle, int rank, int time = 5000)
+        public async void ShowRankupMessage(string msg, string subtitle, int rank, int time = 5000, bool manualDispose = false)
         {
             await Load();
             _start = Game.GameTime;
+            ManualDispose = manualDispose;
             _sc.CallFunction("SHOW_BIG_MP_MESSAGE", msg, subtitle, rank, "", "");
             _timer = time;
         }
 
-        public async void ShowWeaponPurchasedMessage(string bigMessage, string weaponName, WeaponHash weapon, int time = 5000)
+        public async void ShowWeaponPurchasedMessage(string bigMessage, string weaponName, WeaponHash weapon, int time = 5000, bool manualDispose = false)
         {
             await Load();
             _start = Game.GameTime;
+            ManualDispose = manualDispose;
             _sc.CallFunction("SHOW_WEAPON_PURCHASED", bigMessage, weaponName, unchecked((int)weapon), "", 100);
             _timer = time;
         }
 
-        public async void ShowMpMessageLarge(string msg, int time = 5000)
+        public async void ShowMpMessageLarge(string msg, int time = 5000, bool manualDispose = false)
         {
             await Load();
             _start = Game.GameTime;
+            ManualDispose = manualDispose;
             _sc.CallFunction("SHOW_CENTERED_MP_MESSAGE_LARGE", msg, "test", 100, true, 100);
             _sc.CallFunction("TRANSITION_IN");
             _timer = time;
         }
 
-        public async void ShowMpWastedMessage(string msg, string sub, int time = 5000)
+        public async void ShowMpWastedMessage(string msg, string sub, int time = 5000, bool manualDispose = false)
         {
             await Load();
             _start = Game.GameTime;
+            ManualDispose = manualDispose;
             _sc.CallFunction("SHOW_SHARD_WASTED_MP_MESSAGE", msg, sub);
             _timer = time;
         }
+
         public async void ShowCustomShard(string funcName, params object[] paremeters)
         {
             await Load();
@@ -103,11 +130,21 @@ namespace ScaleformUI
         internal void Update()
         {
             _sc.Render2D();
+
+            if (ManualDispose) return;
+
             if (_start != 0 && Game.GameTime - _start > _timer)
             {
-                _sc.CallFunction("TRANSITION_OUT");
-                _start = 0;
-                Dispose();
+                if (!_transitionExecuted)
+                {
+                    _sc.CallFunction("TRANSITION_OUT");
+                    _transitionExecuted = true;
+                    _timer += (int)(TransitionDuration * .5) * 1000;
+                }
+                else
+                {
+                    Dispose();
+                }
             }
         }
     }
