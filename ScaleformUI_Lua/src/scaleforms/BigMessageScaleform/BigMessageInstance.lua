@@ -69,9 +69,11 @@ function BigMessageInstance:Dispose()
     if self._manualDispose then
         self._sc:CallFunction(self._transition, false, self._transitionDuration, self
             ._transitionPreventAutoExpansion)
+
+        Wait(((self._transitionDuration * .5) * 1000))
+
         self._manualDispose = false
         -- Wait for the transition to finish
-        Wait(((self._transitionDuration * .5) * 1000))
     end
 
     self._start = 0
