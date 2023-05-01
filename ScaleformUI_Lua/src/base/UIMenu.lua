@@ -1239,8 +1239,14 @@ function UIMenu:SelectItem(play)
 end
 
 ---GoBack
-function UIMenu:GoBack()
-    PlaySoundFrontend(-1, self.Settings.Audio.Back, self.Settings.Audio.Library, true)
+function UIMenu:GoBack(boolean)
+    local playSound = true
+    if type(boolean) == "boolean" then
+        playSound = boolean
+    end
+    if playSound then
+        PlaySoundFrontend(-1, self.Settings.Audio.Back, self.Settings.Audio.Library, true)
+    end
     if self.ParentMenu ~= nil then
         self._canBuild = false
         self:Visible(false)
