@@ -31,7 +31,7 @@ AddEventHandler("onResourceStop", function(resName)
 end)
 
 Citizen.CreateThread(function()
-    ScaleformUI.Scaleforms._ui = Scaleform.Request("scaleformui")
+    ScaleformUI.Scaleforms._ui = Scaleform.RequestWidescreen("scaleformui")
     ScaleformUI.Scaleforms.BigMessageInstance = BigMessageInstance.New()
     ScaleformUI.Scaleforms.MidMessageInstance = MidMessageInstance.New()
     ScaleformUI.Scaleforms.Warning = WarningInstance.New()
@@ -81,7 +81,7 @@ Citizen.CreateThread(function()
             wait = 0
         end
         if ScaleformUI.Scaleforms._ui == nil then
-            ScaleformUI.Scaleforms._ui = Scaleform.Request("scaleformui")
+            ScaleformUI.Scaleforms._ui = Scaleform.RequestWidescreen("scaleformui")
         end
         if not ScaleformUI.Scaleforms._pauseMenu.Loaded then
             ScaleformUI.Scaleforms._pauseMenu:Load()

@@ -28,6 +28,19 @@ function Scaleform.Request(Name)
     return setmetatable(_scaleform, Scaleform)
 end
 
+---Create a new scaleform instance
+---@param Name string
+---@return Scaleform
+function Scaleform.RequestWidescreen(Name)
+    assert(Name ~= "string",
+        "^1ScaleformUI [ERROR]: ^7The first argument must be a string, not a ^1" .. type(Name) .. "^7.")
+    local _scaleform = {
+        name = Name,
+        handle = RequestScaleformMovieInstance(Name)
+    }
+    return setmetatable(_scaleform, Scaleform)
+end
+
 ---Call a function on the scaleform
 ---@param theFunction string -- The name of the function to call
 ---@param returndata? boolean -- If true, returns the return value of the function
