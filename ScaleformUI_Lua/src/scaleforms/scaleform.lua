@@ -5,7 +5,7 @@ Scaleform.__call = function()
 end
 
 ---@class Scaleform
----@field public CallFunction fun(self:Scaleform, theFunction:string, returndata:boolean, ...:any):nil|number
+---@field public CallFunction fun(self:Scaleform, theFunction:string, returndata?:boolean, ...:any):nil|number
 ---@field public Dispose fun(self:Scaleform):nil
 ---@field public IsLoaded fun(self:Scaleform):boolean
 ---@field public IsValid fun(self:Scaleform):boolean
@@ -28,9 +28,22 @@ function Scaleform.Request(Name)
     return setmetatable(_scaleform, Scaleform)
 end
 
+---Create a new scaleform instance
+---@param Name string
+---@return Scaleform
+function Scaleform.RequestWidescreen(Name)
+    assert(Name ~= "string",
+        "^1ScaleformUI [ERROR]: ^7The first argument must be a string, not a ^1" .. type(Name) .. "^7.")
+    local _scaleform = {
+        name = Name,
+        handle = RequestScaleformMovieInstance(Name)
+    }
+    return setmetatable(_scaleform, Scaleform)
+end
+
 ---Call a function on the scaleform
 ---@param theFunction string -- The name of the function to call
----@param returndata boolean -- If true, returns the return value of the function
+---@param returndata? boolean -- If true, returns the return value of the function
 ---@vararg any -- The arguments to pass to the function
 ---@return nil|number -- If returndata is true, returns the return value of the function
 function Scaleform:CallFunction(theFunction, returndata, ...)

@@ -1,7 +1,7 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using ScaleformUI.Scaleforms.RankBar;
 using ScaleformUI.Scaleforms.Countdown;
+using ScaleformUI.Scaleforms.RankBar;
 using System;
 using System.Threading.Tasks;
 
@@ -9,6 +9,7 @@ namespace ScaleformUI
 {
     public class ScaleformUI : BaseScript
     {
+        public static int GlobalGameTimer = API.GetGameTimer();
         public static PauseMenuScaleform PauseMenu { get; set; }
         public static MediumMessageHandler MedMessageInstance { get; set; }
         public static InstructionalButtonsScaleform InstructionalButtons { get; set; }
@@ -36,6 +37,7 @@ namespace ScaleformUI
             RankBarInstance = new();
             CountdownInstance = new();
             Tick += ScaleformUIThread_Tick;
+            Tick += OnUpdateGlobalGameTimerAsync;
 
             EventHandlers["onResourceStop"] += new Action<string>((resName) =>
             {
@@ -75,6 +77,12 @@ namespace ScaleformUI
             if (!PauseMenu.Loaded)
                 PauseMenu.Load();
             await Task.FromResult(0);
+        }
+
+        public async Task OnUpdateGlobalGameTimerAsync()
+        {
+            await BaseScript.Delay(1000);
+            GlobalGameTimer = API.GetGameTimer();
         }
     }
 }

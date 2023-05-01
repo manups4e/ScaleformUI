@@ -10,6 +10,7 @@ end
 ---@field _buttonList table<InstructionalButton>
 ---@field OnButtonPressed fun(button: InstructionalButton)
 ---@field public Update fun(self:WarningInstance):nil
+---@field public IsShowing fun(self:WarningInstance):boolean
 
 ---Creates a new WarningInstance instance
 ---@return WarningInstance
