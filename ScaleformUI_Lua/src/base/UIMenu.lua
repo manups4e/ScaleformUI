@@ -648,7 +648,7 @@ function UIMenu:BuildUpMenuAsync()
         local enab = self:AnimationEnabled()
         self:AnimationEnabled(false)
         while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
-        ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self.Title, self.Subtitle, 0, 0,
+        ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self.Title, self.Subtitle, self.Position.x, self.Position.y,
             self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), self:BuildAsync(),
             self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont[1], self.descFont[2])
         if #self.Windows > 0 then
@@ -808,7 +808,7 @@ end
 function UIMenu:BuildUpMenuSync()
     Citizen.CreateThread(function()
         while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
-        ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self.Title, self.Subtitle, 0, 0,
+        ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self.Title, self.Subtitle, self.Position.x, self.Position.y,
             self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), self:BuildAsync(),
             self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont[1], self.descFont[2])
         if #self.Windows > 0 then
@@ -1312,11 +1312,7 @@ function UIMenu:Draw()
         self:DisEnableControls(false)
     end
 
-    local x = self.Position.x / 1280
-    local y = self.Position.y / 720
-    local width = 1280 / self._scaledWidth
-    local height = 720 / 720
-    ScaleformUI.Scaleforms._ui:Render2DNormal(x + (width / 2.0), y + (height / 2.0), width, height)
+    ScaleformUI.Scaleforms._ui:Render2D()
 
     if self.Glare then
         self._menuGlare:CallFunction("SET_DATA_SLOT", false, GetGameplayCamRelativeHeading())
