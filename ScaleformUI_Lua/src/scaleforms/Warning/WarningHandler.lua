@@ -78,6 +78,7 @@ end
 ---@param warningType number
 function WarningInstance:ShowWarning(title, subtitle, prompt, errorMsg, warningType)
     self:Load():next(function()
+        if warningType == nil then warningType = 0 end
         self._sc:CallFunction("SHOW_POPUP_WARNING", false, 1000, title, subtitle, prompt, true, warningType, errorMsg)
     end, function(value)
         print("Error loading warning: " .. value)
@@ -92,6 +93,7 @@ end
 ---@param warningType number
 function WarningInstance:UpdateWarning(title, subtitle, prompt, errorMsg, warningType)
     self:Load():next(function()
+        if warningType == nil then warningType = 0 end
         self._sc:CallFunction("SHOW_POPUP_WARNING", false, 1000, title, subtitle, prompt, true, warningType, errorMsg)
     end, function(value)
         print("Error loading warning: " .. value)
@@ -107,6 +109,7 @@ end
 ---@param warningType number
 function WarningInstance:ShowWarningWithButtons(title, subtitle, prompt, buttons, errorMsg, warningType)
     self:Load():next(function()
+        if warningType == nil then warningType = 0 end
         self._disableControls = true
         self._buttonList = buttons
         if buttons == nil or #buttons == 0 then return end
