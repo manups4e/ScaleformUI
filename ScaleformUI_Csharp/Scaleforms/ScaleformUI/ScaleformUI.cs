@@ -1,5 +1,6 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
+using ScaleformUI.Scaleforms;
 using ScaleformUI.Scaleforms.Countdown;
 using ScaleformUI.Scaleforms.RankBar;
 
@@ -23,7 +24,7 @@ namespace ScaleformUI
         public static RankBarHandler RankBarInstance { get; set; }
         public static CountdownHandler CountdownInstance { get; set; }
 
-        internal static Scaleform _ui { get; set; }
+        internal static ScaleformWideScreen _ui { get; set; }
         public ScaleformUI()
         {
             Warning = new();
@@ -75,7 +76,7 @@ namespace ScaleformUI
                 JobMissionSelection.Update();
             if (BigFeed._sc != null)
                 BigFeed.Update();
-            _ui ??= new Scaleform("ScaleformUI");
+            _ui ??= new("ScaleformUI");
             if (!PauseMenu.Loaded)
                 PauseMenu.Load();
             await Task.FromResult(0);
