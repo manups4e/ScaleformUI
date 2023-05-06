@@ -89,6 +89,7 @@ namespace ScaleformUI
 
         public void Dispose()
         {
+            Votes = new int[9];
             _sc.Dispose();
             _sc = null;
         }
