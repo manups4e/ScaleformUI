@@ -40,13 +40,7 @@ namespace ScaleformUI
             if (ManualDispose)
             {
                 _sc.CallFunction(Transition, TransitionDuration, TransitionAutoExpansion);
-
-                int gameTime = ScaleformUI.GlobalGameTimer;
-                while (ScaleformUI.GlobalGameTimer - gameTime < (int)((TransitionDuration * .5f) * 1000))
-                {
-                    await BaseScript.Delay(0);
-                }
-
+                await BaseScript.Delay((int)((TransitionDuration * .5f) * 1000));
                 ManualDispose = false;
             }
 
