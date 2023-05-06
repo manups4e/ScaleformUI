@@ -28,7 +28,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CitizenFX.Core.Client" Version="1.0.6285" ExcludeAssets="runtime" />
+    <PackageReference Include="CitizenFX.Core.Client" Version="1.0.6370" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <None Include="..\LICENSE.txt">
       <Pack>True</Pack>
