@@ -87,7 +87,7 @@ namespace ScaleformUI
         /// <returns></returns>
         public async Task OnUpdateGlobalGameTimerAsync()
         {
-            await BaseScript.Delay(10);
+            await BaseScript.Delay(100);
             GameTime = API.GetGameTimer();
         }
     }
