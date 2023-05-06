@@ -411,7 +411,7 @@ namespace ScaleformUI.LobbyMenu
             if (!Visible || TemporarilyHidden) return;
             if (Game.IsControlPressed(2, Control.PhoneUp))
             {
-                if (Game.GameTime - time > delay)
+                if (ScaleformUI.GlobalGameTimer - time > delay)
                 {
                     ButtonDelay();
                     GoUp();
@@ -419,7 +419,7 @@ namespace ScaleformUI.LobbyMenu
             }
             else if (Game.IsControlPressed(2, Control.PhoneDown))
             {
-                if (Game.GameTime - time > delay)
+                if (ScaleformUI.GlobalGameTimer - time > delay)
                 {
                     ButtonDelay();
                     GoDown();
@@ -428,7 +428,7 @@ namespace ScaleformUI.LobbyMenu
 
             else if (Game.IsControlPressed(2, Control.PhoneLeft))
             {
-                if (Game.GameTime - time > delay)
+                if (ScaleformUI.GlobalGameTimer - time > delay)
                 {
                     ButtonDelay();
                     GoLeft();
@@ -436,7 +436,7 @@ namespace ScaleformUI.LobbyMenu
             }
             else if (Game.IsControlPressed(2, Control.PhoneRight))
             {
-                if (Game.GameTime - time > delay)
+                if (ScaleformUI.GlobalGameTimer - time > delay)
                 {
                     ButtonDelay();
                     GoRight();
@@ -727,7 +727,7 @@ namespace ScaleformUI.LobbyMenu
                 if (delay < 50) delay = 50;
             }
             // Reset the time to the current game timer.
-            time = Game.GameTime;
+            time = ScaleformUI.GlobalGameTimer;
         }
 
         internal void SendPauseMenuOpen()

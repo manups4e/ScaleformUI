@@ -1,10 +1,7 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 
 namespace ScaleformUI
 {
@@ -329,9 +326,9 @@ namespace ScaleformUI
         {
             _isSaving = true;
             _changed = true;
-            savingTimer = Game.GameTime;
+            savingTimer = ScaleformUI.GlobalGameTimer;
             Screen.LoadingPrompt.Show(text, spinnerType);
-            while (Game.GameTime - savingTimer <= time) await BaseScript.Delay(100);
+            while (ScaleformUI.GlobalGameTimer - savingTimer <= time) await BaseScript.Delay(100);
             Screen.LoadingPrompt.Hide();
             _isSaving = false;
         }
@@ -345,7 +342,7 @@ namespace ScaleformUI
         {
             _isSaving = true;
             _changed = true;
-            savingTimer = Game.GameTime;
+            savingTimer = ScaleformUI.GlobalGameTimer;
             Screen.LoadingPrompt.Show(text, spinnerType);
         }
 
