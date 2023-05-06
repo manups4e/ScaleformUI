@@ -2040,7 +2040,6 @@ namespace ScaleformUI
                 _justOpened = false;
                 return;
             }
-            if (isBuilding && _activeItem <= 0) return;
 
             if (UpdateOnscreenKeyboard() == 0 || IsWarningMessageActive()) return;
 
@@ -2048,7 +2047,11 @@ namespace ScaleformUI
             {
                 GoBack();
             }
-            if (MenuItems.Count == 0) return;
+
+            if (isBuilding && _activeItem <= 0 || MenuItems.Count == 0)
+            {
+                return;
+            }
 
             if (HasControlJustBeenPressed(MenuControls.Up, key))
             {
