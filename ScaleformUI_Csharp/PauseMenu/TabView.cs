@@ -1177,18 +1177,18 @@ namespace ScaleformUI.PauseMenu
 
             if (Game.IsControlPressed(2, Control.LookUpOnly) && !IsUsingKeyboard(2))
             {
-                if (ScaleformUI.GlobalGameTimer - _timer > 175)
+                if (ScaleformUI.GameTime - _timer > 175)
                 {
                     _pause.SendScrollEvent(-1);
-                    _timer = ScaleformUI.GlobalGameTimer;
+                    _timer = ScaleformUI.GameTime;
                 }
             }
             else if (Game.IsControlPressed(2, Control.LookDownOnly) && !IsUsingKeyboard(2))
             {
-                if (ScaleformUI.GlobalGameTimer - _timer > 175)
+                if (ScaleformUI.GameTime - _timer > 175)
                 {
                     _pause.SendScrollEvent(1);
-                    _timer = ScaleformUI.GlobalGameTimer;
+                    _timer = ScaleformUI.GameTime;
                 }
             }
         }

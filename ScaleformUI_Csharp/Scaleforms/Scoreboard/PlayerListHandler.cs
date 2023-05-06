@@ -131,7 +131,7 @@ namespace ScaleformUI
         internal void Update()
         {
             API.DrawScaleformMovie(_sc.Handle, 0.122f, 0.3f, 0.28f, 0.6f, 255, 255, 255, 255, 0);
-            if (_start != 0 && ScaleformUI.GlobalGameTimer - _start > _timer)
+            if (_start != 0 && ScaleformUI.GameTime - _start > _timer)
             {
                 CurrentPage = 0;
                 Enabled = false;
@@ -144,7 +144,7 @@ namespace ScaleformUI
         public void NextPage()
         {
             UpdateMaxPages();
-            _start = ScaleformUI.GlobalGameTimer;
+            _start = ScaleformUI.GameTime;
             _timer = 8000;
             BuildMenu();
             if (CurrentPage > MaxPages)

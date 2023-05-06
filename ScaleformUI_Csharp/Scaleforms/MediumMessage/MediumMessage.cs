@@ -32,7 +32,7 @@ namespace ScaleformUI
         public async void ShowColoredShard(string msg, string desc, HudColor bgColor, bool useDarkerShard = false, bool useCondensedShard = false, int time = 5000)
         {
             await Load();
-            _start = ScaleformUI.GlobalGameTimer;
+            _start = ScaleformUI.GameTime;
             _sc.CallFunction("SHOW_SHARD_MIDSIZED_MESSAGE", msg, desc, (int)bgColor, useDarkerShard, useCondensedShard);
             _timer = time;
             _hasAnimatedOut = false;
@@ -41,7 +41,7 @@ namespace ScaleformUI
         internal async void Update()
         {
             _sc.Render2D();
-            if (_start != 0 && ScaleformUI.GlobalGameTimer - _start > _timer)
+            if (_start != 0 && ScaleformUI.GameTime - _start > _timer)
             {
                 if (!_hasAnimatedOut)
                 {

@@ -326,9 +326,9 @@ namespace ScaleformUI
         {
             _isSaving = true;
             _changed = true;
-            savingTimer = ScaleformUI.GlobalGameTimer;
+            savingTimer = ScaleformUI.GameTime;
             Screen.LoadingPrompt.Show(text, spinnerType);
-            while (ScaleformUI.GlobalGameTimer - savingTimer <= time) await BaseScript.Delay(100);
+            while (ScaleformUI.GameTime - savingTimer <= time) await BaseScript.Delay(100);
             Screen.LoadingPrompt.Hide();
             _isSaving = false;
         }
@@ -342,7 +342,7 @@ namespace ScaleformUI
         {
             _isSaving = true;
             _changed = true;
-            savingTimer = ScaleformUI.GlobalGameTimer;
+            savingTimer = ScaleformUI.GameTime;
             Screen.LoadingPrompt.Show(text, spinnerType);
         }
 
