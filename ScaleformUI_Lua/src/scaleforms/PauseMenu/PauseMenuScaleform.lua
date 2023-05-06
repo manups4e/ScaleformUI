@@ -49,6 +49,7 @@ end
 ---@field public SendClickEvent fun(self:PauseMenu):nil
 ---@field public Dispose fun(self:PauseMenu):nil
 ---@field public Draw fun(self:PauseMenu, isLobby:boolean?):nil
+---@field public Load fun(self:PauseMenu):nil
 
 ---Creates a new instance of the pause menu
 ---@return PauseMenu

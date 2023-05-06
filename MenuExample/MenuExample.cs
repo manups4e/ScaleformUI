@@ -33,6 +33,95 @@ public class MenuExample : BaseScript
 
         #region Menu Declaration
 
+        #region Big Message
+
+        UIMenu uiMenuBigMessage = new UIMenu("Big Message", "Big Message");
+        exampleMenu.AddSubMenu(uiMenuBigMessage, "Big Message Examples");
+
+        UIMenuListItem uiListBigMessageTransition = new UIMenuListItem("Big Message", new List<dynamic>() { "TRANSITION_OUT", "TRANSITION_UP", "TRANSITION_DOWN" }, 0);
+        uiListBigMessageTransition.Description = "Transition type for the big message when disposing";
+        uiMenuBigMessage.AddItem(uiListBigMessageTransition);
+
+        UIMenuCheckboxItem uiCheckboxBigMessageManualDispose = new UIMenuCheckboxItem("Manual Dispose", false, "If enabled, you will have to manually dispose the big message");
+        uiMenuBigMessage.AddItem(uiCheckboxBigMessageManualDispose);
+
+        UIMenuListItem uiListBigMessageType = new UIMenuListItem("Message Type", new List<dynamic>() { "Mission Passed", "Coloured Shard", "Old Message", "Simple Shard", "Rank Up", "MP Message Large",
+            "MP Wasted Message" }, 0);
+        uiListBigMessageType.Description = "Message type for the big message, press ~INPUT_FRONTEND_ACCEPT~ to show the message";
+        uiMenuBigMessage.AddItem(uiListBigMessageType);
+
+        UIMenuItem uiItemBigMessageDispose = new UIMenuItem("Dispose Big Message", "Dispose the big message");
+        uiItemBigMessageDispose.Enabled = false;
+        uiMenuBigMessage.AddItem(uiItemBigMessageDispose);
+
+        uiMenuBigMessage.OnCheckboxChange += (sender, item, _checked) =>
+        {
+            if (item == uiCheckboxBigMessageManualDispose)
+            {
+                if (_checked)
+                    uiItemBigMessageDispose.Enabled = true;
+                else
+                    uiItemBigMessageDispose.Enabled = false;
+            }
+        };
+
+        uiMenuBigMessage.OnItemSelect += (sender, item, index) =>
+        {
+            if (item == uiItemBigMessageDispose)
+            {
+                if (uiCheckboxBigMessageManualDispose.Checked)
+                    ScaleformUI.ScaleformUI.BigMessageInstance.Dispose();
+            }
+        };
+
+        uiMenuBigMessage.OnListSelect += (sender, item, index) =>
+        {
+            if (item == uiListBigMessageTransition)
+            {
+                switch (index)
+                {
+                    case 0:
+                        ScaleformUI.ScaleformUI.BigMessageInstance.Transition = "TRANSITION_OUT";
+                        break;
+                    case 1:
+                        ScaleformUI.ScaleformUI.BigMessageInstance.Transition = "TRANSITION_UP";
+                        break;
+                    case 2:
+                        ScaleformUI.ScaleformUI.BigMessageInstance.Transition = "TRANSITION_Down";
+                        break;
+                }
+            }
+            else if (item == uiListBigMessageType)
+            {
+                switch (index)
+                {
+                    case 0:
+                        ScaleformUI.ScaleformUI.BigMessageInstance.ShowMissionPassedMessage("Mission Passed", manualDispose: uiCheckboxBigMessageManualDispose.Checked);
+                        break;
+                    case 1:
+                        ScaleformUI.ScaleformUI.BigMessageInstance.ShowColoredShard("Coloured Shard", "Showing the coloured shared", HudColor.HUD_COLOUR_WHITE, HudColor.HUD_COLOUR_FREEMODE, manualDispose: uiCheckboxBigMessageManualDispose.Checked);
+                        break;
+                    case 2:
+                        ScaleformUI.ScaleformUI.BigMessageInstance.ShowOldMessage("Old Message", manualDispose: uiCheckboxBigMessageManualDispose.Checked);
+                        break;
+                    case 3:
+                        ScaleformUI.ScaleformUI.BigMessageInstance.ShowSimpleShard("Simple Shard", "Showing the simple shard", manualDispose: uiCheckboxBigMessageManualDispose.Checked);
+                        break;
+                    case 4:
+                        ScaleformUI.ScaleformUI.BigMessageInstance.ShowRankupMessage("Rank Up", "Showing the rank up message", 10, manualDispose: uiCheckboxBigMessageManualDispose.Checked);
+                        break;
+                    case 5:
+                        ScaleformUI.ScaleformUI.BigMessageInstance.ShowMpMessageLarge("MP Message Large", manualDispose: uiCheckboxBigMessageManualDispose.Checked);
+                        break;
+                    case 6:
+                        ScaleformUI.ScaleformUI.BigMessageInstance.ShowMpWastedMessage("MP Wasted Message", "Wasted", manualDispose: uiCheckboxBigMessageManualDispose.Checked);
+                        break;
+                }
+            }
+        };
+
+        #endregion
+
         #region Ketchup
         UIMenuCheckboxItem ketchupItem = new UIMenuCheckboxItem("Scrolling animation enabled? in a very long label to test the text scrolling feature!", UIMenuCheckboxStyle.Tick, enabled, "Do you wish to enable the scrolling animation?");
         long _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);

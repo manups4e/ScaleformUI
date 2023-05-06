@@ -1,6 +1,4 @@
 ﻿using CitizenFX.Core;
-using System;
-using System.Threading.Tasks;
 
 namespace ScaleformUI
 {
@@ -8,7 +6,18 @@ namespace ScaleformUI
     {
         internal Scaleform _sc;
         private int _start;
-        private int _timer;
+        private int _duration;
+        private bool _transitionExecuted = false;
+
+        public bool ManualDispose { get; set; }
+
+        /// <summary>
+        /// Transitions supported: TRANSITION_UP, TRANSITION_OUT, TRANSITION_DOWN
+        /// </summary>
+        public string Transition { get; set; } = "TRANSITION_OUT";
+        public float TransitionDuration { get; set; } = 0.4f;
+        public bool TransitionAutoExpansion { get; set; } = false;
+
 
         public BigMessageHandler()
         {
@@ -20,80 +29,100 @@ namespace ScaleformUI
             if (_sc != null) return;
             _sc = new Scaleform("MP_BIG_MESSAGE_FREEMODE");
             var timeout = 1000;
-            var start = DateTime.Now;
-            while (!_sc.IsLoaded && DateTime.Now.Subtract(start).TotalMilliseconds < timeout) await BaseScript.Delay(0);
+            var start = ScaleformUI.GlobalGameTimer;
+            while (!_sc.IsLoaded && ScaleformUI.GlobalGameTimer - start < timeout) await BaseScript.Delay(0);
         }
 
-        public void Dispose()
+        public async void Dispose()
         {
+            if (_sc == null) return;
+
+            if (ManualDispose)
+            {
+                _sc.CallFunction(Transition, TransitionDuration, TransitionAutoExpansion);
+                await BaseScript.Delay((int)((TransitionDuration * .5f) * 1000));
+                ManualDispose = false;
+            }
+
+            _transitionExecuted = false;
+            _start = 0;
             _sc.Dispose();
             _sc = null;
         }
 
-        public async void ShowMissionPassedMessage(string msg, int time = 5000)
+        public async void ShowMissionPassedMessage(string msg, int time = 5000, bool manualDispose = false)
         {
             await Load();
-            _start = Game.GameTime;
+            _start = ScaleformUI.GlobalGameTimer;
+            ManualDispose = manualDispose;
             _sc.CallFunction("SHOW_MISSION_PASSED_MESSAGE", msg, "", 100, true, 0, true);
-            _timer = time;
+            _duration = time;
         }
 
-        public async void ShowColoredShard(string msg, string desc, HudColor textColor, HudColor bgColor, int time = 5000)
+        public async void ShowColoredShard(string msg, string desc, HudColor textColor, HudColor bgColor, int time = 5000, bool manualDispose = false)
         {
             await Load();
-            _start = Game.GameTime;
+            _start = ScaleformUI.GlobalGameTimer;
+            ManualDispose = manualDispose;
             _sc.CallFunction("SHOW_SHARD_CENTERED_MP_MESSAGE", msg, desc, (int)bgColor, (int)textColor);
-            _timer = time;
+            _duration = time;
         }
 
-        public async void ShowOldMessage(string msg, int time = 5000)
+        public async void ShowOldMessage(string msg, int time = 5000, bool manualDispose = false)
         {
             await Load();
-            _start = Game.GameTime;
+            _start = ScaleformUI.GlobalGameTimer;
+            ManualDispose = manualDispose;
             _sc.CallFunction("SHOW_MISSION_PASSED_MESSAGE", msg);
-            _timer = time;
+            _duration = time;
         }
 
-        public async void ShowSimpleShard(string title, string subtitle, int time = 5000)
+        public async void ShowSimpleShard(string title, string subtitle, int time = 5000, bool manualDispose = false)
         {
             await Load();
-            _start = Game.GameTime;
+            _start = ScaleformUI.GlobalGameTimer;
+            ManualDispose = manualDispose;
             _sc.CallFunction("SHOW_SHARD_CREW_RANKUP_MP_MESSAGE", title, subtitle);
-            _timer = time;
+            _duration = time;
         }
 
-        public async void ShowRankupMessage(string msg, string subtitle, int rank, int time = 5000)
+        public async void ShowRankupMessage(string msg, string subtitle, int rank, int time = 5000, bool manualDispose = false)
         {
             await Load();
-            _start = Game.GameTime;
+            _start = ScaleformUI.GlobalGameTimer;
+            ManualDispose = manualDispose;
             _sc.CallFunction("SHOW_BIG_MP_MESSAGE", msg, subtitle, rank, "", "");
-            _timer = time;
+            _duration = time;
         }
 
-        public async void ShowWeaponPurchasedMessage(string bigMessage, string weaponName, WeaponHash weapon, int time = 5000)
+        public async void ShowWeaponPurchasedMessage(string bigMessage, string weaponName, WeaponHash weapon, int time = 5000, bool manualDispose = false)
         {
             await Load();
-            _start = Game.GameTime;
+            _start = ScaleformUI.GlobalGameTimer;
+            ManualDispose = manualDispose;
             _sc.CallFunction("SHOW_WEAPON_PURCHASED", bigMessage, weaponName, unchecked((int)weapon), "", 100);
-            _timer = time;
+            _duration = time;
         }
 
-        public async void ShowMpMessageLarge(string msg, int time = 5000)
+        public async void ShowMpMessageLarge(string msg, int time = 5000, bool manualDispose = false)
         {
             await Load();
-            _start = Game.GameTime;
+            _start = ScaleformUI.GlobalGameTimer;
+            ManualDispose = manualDispose;
             _sc.CallFunction("SHOW_CENTERED_MP_MESSAGE_LARGE", msg, "test", 100, true, 100);
             _sc.CallFunction("TRANSITION_IN");
-            _timer = time;
+            _duration = time;
         }
 
-        public async void ShowMpWastedMessage(string msg, string sub, int time = 5000)
+        public async void ShowMpWastedMessage(string msg, string sub, int time = 5000, bool manualDispose = false)
         {
             await Load();
-            _start = Game.GameTime;
+            _start = ScaleformUI.GlobalGameTimer;
+            ManualDispose = manualDispose;
             _sc.CallFunction("SHOW_SHARD_WASTED_MP_MESSAGE", msg, sub);
-            _timer = time;
+            _duration = time;
         }
+
         public async void ShowCustomShard(string funcName, params object[] paremeters)
         {
             await Load();
@@ -103,11 +132,21 @@ namespace ScaleformUI
         internal void Update()
         {
             _sc.Render2D();
-            if (_start != 0 && Game.GameTime - _start > _timer)
+
+            if (ManualDispose) return;
+
+            if (_start != 0 && (ScaleformUI.GlobalGameTimer - _start) > _duration)
             {
-                _sc.CallFunction("TRANSITION_OUT");
-                _start = 0;
-                Dispose();
+                if (!_transitionExecuted)
+                {
+                    _sc.CallFunction(Transition, TransitionDuration, TransitionAutoExpansion);
+                    _transitionExecuted = true;
+                    _duration += (int)((TransitionDuration * .5f) * 1000);
+                }
+                else
+                {
+                    Dispose();
+                }
             }
         }
     }
