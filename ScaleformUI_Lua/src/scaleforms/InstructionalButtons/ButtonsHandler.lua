@@ -91,10 +91,11 @@ end
 ---@param spinnerType number
 ---@param text string
 ---@param time number
-function ButtonsHandler:ShowBusySpinner(spinnerType, text, time)
+function ButtonsHandler:ShowBusySpinner(spinnerType, text, time, manualDispose)
     if time == nil or time < 0 then time = 3000 end
     self.IsSaving = true
     self._changed = true
+    self._manualDispose = manualDispose or false
     self.savingTimer = GlobalGameTimer
 
     if text == nil or text == "" then
@@ -104,7 +105,14 @@ function ButtonsHandler:ShowBusySpinner(spinnerType, text, time)
         AddTextComponentSubstringPlayerName(text)
     end
     EndTextCommandBusyspinnerOn(spinnerType)
+    if self._manualDispose then return end
     while GlobalGameTimer - self.savingTimer <= time do Citizen.Wait(100) end
+    BusyspinnerOff()
+    self.IsSaving = false
+end
+
+---Hide Busy Spinner
+function ButtonsHandler:HideBusySpinner()
     BusyspinnerOff()
     self.IsSaving = false
 end
