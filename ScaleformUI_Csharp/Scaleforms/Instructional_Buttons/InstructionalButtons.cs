@@ -192,6 +192,7 @@ namespace ScaleformUI
 
         public void InvokeEvent(InstructionalButton control)
         {
+            if (API.UpdateOnscreenKeyboard() == 0) return;
             OnControlSelected?.Invoke(control);
         }
     }
@@ -287,7 +288,7 @@ namespace ScaleformUI
         /// <param name="buttons">The List of <see cref="InstructionalButton"/> to remove.</param>
         public void RemoveInstructionalButtons(List<InstructionalButton> buttons)
         {
-            foreach (var button in buttons)
+            foreach (InstructionalButton button in buttons)
             {
                 if (ControlButtons.Contains(button))
                     ControlButtons.Remove(button);
@@ -458,5 +459,10 @@ namespace ScaleformUI
         }
 
         public static bool IsControlJustPressed(Control control, PadCheck keyboardOnly = PadCheck.Any) => Game.IsControlJustPressed(2, control) && (keyboardOnly == PadCheck.Keyboard ? API.IsUsingKeyboard(2) : keyboardOnly != PadCheck.Controller || !API.IsUsingKeyboard(2));
+
+        /// <summary>
+        /// Updates the instructional button text.
+        /// </summary>
+        public void ForceUpdate() => _changed = true;
     }
 }
