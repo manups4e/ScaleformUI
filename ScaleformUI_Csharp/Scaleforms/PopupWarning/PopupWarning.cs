@@ -1,7 +1,4 @@
 ﻿using CitizenFX.Core;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace ScaleformUI
 {
@@ -63,10 +60,10 @@ namespace ScaleformUI
         /// <param name="prompt">Prompt usually is used for asking to confirm or cancel (can be anything)</param>
         /// <param name="errorMsg">This string will be shown in the Left-Bottom of the screen as error code or error message</param>
         /// <param name="type">Type of the Warning</param>
-        public async void ShowWarning(string title, string subtitle, string prompt = "", string errorMsg = "", WarningPopupType type = WarningPopupType.Classic)
+        public async void ShowWarning(string title, string subtitle, string prompt = "", string errorMsg = "", WarningPopupType type = WarningPopupType.Classic, bool showBackground = true)
         {
             await Load();
-            _warning.CallFunction("SHOW_POPUP_WARNING", 1000, title, subtitle, prompt, true, (int)type, errorMsg);
+            _warning.CallFunction("SHOW_POPUP_WARNING", 1000, title, subtitle, prompt, showBackground, (int)type, errorMsg);
         }
 
         /// <summary>
@@ -77,9 +74,10 @@ namespace ScaleformUI
         /// <param name="prompt">Prompt usually is used for asking to confirm or cancel (can be anything)</param>
         /// <param name="errorMsg">This string will be shown in the Left-Bottom of the screen as error code or error message</param>
         /// <param name="type">Type of the Warning</param>
-        public void UpdateWarning(string title, string subtitle, string prompt = "", string errorMsg = "", WarningPopupType type = WarningPopupType.Classic)
+        public void UpdateWarning(string title, string subtitle, string prompt = "", string errorMsg = "", WarningPopupType type = WarningPopupType.Classic, bool showBackground = true)
         {
-            _warning.CallFunction("SHOW_POPUP_WARNING", 1000, title, subtitle, prompt, true, (int)type, errorMsg);
+            if (!_warning.IsLoaded) return;
+            _warning.CallFunction("SHOW_POPUP_WARNING", 1000, title, subtitle, prompt, showBackground, (int)type, errorMsg);
         }
 
         /// <summary>
@@ -91,7 +89,7 @@ namespace ScaleformUI
         /// <param name="errorMsg">This string will be shown in the Left-Bottom of the screen as error code or error message</param>
         /// <param name="buttons">List of <see cref="InstructionalButton"/> to show to the user (the user can select with GamePad, Keyboard or Mouse) </param>
         /// <param name="type"></param>
-        public async void ShowWarningWithButtons(string title, string subtitle, string prompt, List<InstructionalButton> buttons, string errorMsg = "", WarningPopupType type = WarningPopupType.Classic)
+        public async void ShowWarningWithButtons(string title, string subtitle, string prompt, List<InstructionalButton> buttons, string errorMsg = "", WarningPopupType type = WarningPopupType.Classic, bool showBackground = true)
         {
             await Load();
             _disableControls = true;
@@ -100,7 +98,7 @@ namespace ScaleformUI
             ScaleformUI.InstructionalButtons.SetInstructionalButtons(_buttonList);
             ScaleformUI.InstructionalButtons.UseMouseButtons = true;
             ScaleformUI.InstructionalButtons.ControlButtons.ForEach(x => x.OnControlSelected += X_OnControlSelected);
-            _warning.CallFunction("SHOW_POPUP_WARNING", 1000, title, subtitle, prompt, true, (int)type, errorMsg);
+            _warning.CallFunction("SHOW_POPUP_WARNING", 1000, title, subtitle, prompt, showBackground, (int)type, errorMsg);
             ScaleformUI.InstructionalButtons.Enabled = true;
         }
 
