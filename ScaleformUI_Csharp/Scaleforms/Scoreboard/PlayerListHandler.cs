@@ -1,9 +1,5 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ScaleformUI
 {
@@ -51,8 +47,8 @@ namespace ScaleformUI
             if (_sc is not null) return;
             _sc = new Scaleform("MP_MM_CARD_FREEMODE");
             var timeout = 1000;
-            var start = DateTime.Now;
-            while (!_sc.IsLoaded && DateTime.Now.Subtract(start).TotalMilliseconds < timeout) await BaseScript.Delay(0);
+            int start = ScaleformUI.GameTime;
+            while (!_sc.IsLoaded && ScaleformUI.GameTime - start < timeout) await BaseScript.Delay(0);
         }
         public void Dispose()
         {

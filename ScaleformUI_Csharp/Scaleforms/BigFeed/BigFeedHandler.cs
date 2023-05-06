@@ -1,5 +1,4 @@
 ﻿using CitizenFX.Core;
-using System;
 using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI
@@ -112,8 +111,8 @@ namespace ScaleformUI
             if (_sc != null) return;
             _sc = new Scaleform("GTAV_ONLINE");
             int timeout = 1000;
-            DateTime start = DateTime.Now;
-            while (!_sc.IsLoaded && DateTime.Now.Subtract(start).TotalMilliseconds < timeout) await BaseScript.Delay(0);
+            int start = ScaleformUI.GameTime;
+            while (!_sc.IsLoaded && ScaleformUI.GameTime - start < timeout) await BaseScript.Delay(0);
             _sc.CallFunction("HIDE_ONLINE_LOGO");
         }
         private void Dispose()

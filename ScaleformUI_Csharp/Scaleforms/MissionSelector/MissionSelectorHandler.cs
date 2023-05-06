@@ -1,9 +1,5 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ScaleformUI
 {
@@ -179,8 +175,8 @@ namespace ScaleformUI
             if (_sc != null) return;
             _sc = new("MP_NEXT_JOB_SELECTION");
             var timeout = 1000;
-            var start = DateTime.Now;
-            while (!_sc.IsLoaded && DateTime.Now.Subtract(start).TotalMilliseconds < timeout) await BaseScript.Delay(0);
+            int start = ScaleformUI.GameTime;
+            while (!_sc.IsLoaded && ScaleformUI.GameTime - start < timeout) await BaseScript.Delay(0);
         }
 
         int eventType = 0;

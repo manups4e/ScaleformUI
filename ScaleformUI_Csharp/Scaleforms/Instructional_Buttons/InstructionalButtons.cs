@@ -247,8 +247,8 @@ namespace ScaleformUI
             if (_sc != null) return;
             _sc = new Scaleform("INSTRUCTIONAL_BUTTONS");
             int timeout = 1000;
-            DateTime start = DateTime.Now;
-            while (!API.HasScaleformMovieLoaded(_sc.Handle) && DateTime.Now.Subtract(start).TotalMilliseconds < timeout) await BaseScript.Delay(0);
+            int start = ScaleformUI.GameTime;
+            while (!_sc.IsLoaded && ScaleformUI.GameTime - start < timeout) await BaseScript.Delay(0);
         }
 
         /// <summary>
