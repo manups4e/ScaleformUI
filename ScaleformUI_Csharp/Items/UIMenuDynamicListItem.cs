@@ -50,12 +50,12 @@ namespace ScaleformUI
 
         public override void SetRightBadge(BadgeIcon badge)
         {
-            throw new Exception("UIMenuListItem cannot have a right badge.");
+            throw new Exception("UIMenuDynamicListItem cannot have a right badge.");
         }
 
         public override void SetRightLabel(string text)
         {
-            throw new Exception("UIMenuListItem cannot have a right label.");
+            throw new Exception("UIMenuDynamicListItem cannot have a right label.");
         }
 
         public string CurrentItem()

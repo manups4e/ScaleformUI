@@ -95,7 +95,7 @@ namespace ScaleformUI
 
         public override void SetRightLabel(string text)
         {
-            throw new Exception("UIMenuListItem cannot have a right label.");
+            throw new Exception("UIMenuCheckboxItem cannot have a right label.");
         }
     }
 }
