@@ -7,7 +7,11 @@ namespace ScaleformUI
 {
     public class ScaleformUI : BaseScript
     {
+        /// <summary>
+        /// Provides the current game time in milliseconds.
+        /// </summary>
         public static int GameTime = API.GetGameTimer();
+
         public static PauseMenuScaleform PauseMenu { get; set; }
         public static MediumMessageHandler MedMessageInstance { get; set; }
         public static InstructionalButtonsScaleform InstructionalButtons { get; set; }
@@ -77,9 +81,13 @@ namespace ScaleformUI
             await Task.FromResult(0);
         }
 
+        /// <summary>
+        /// Updates the game time.
+        /// </summary>
+        /// <returns></returns>
         public async Task OnUpdateGlobalGameTimerAsync()
         {
-            await BaseScript.Delay(1000);
+            await BaseScript.Delay(10);
             GameTime = API.GetGameTimer();
         }
     }
