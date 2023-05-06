@@ -1,10 +1,7 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 
 namespace ScaleformUI
 {
@@ -195,10 +192,8 @@ namespace ScaleformUI
 
         public void InvokeEvent(InstructionalButton control)
         {
-            if (API.UpdateOnscreenKeyboard() == 0)
-                return;
-
-            OnControlSelected?.Invoke(control);          
+            if (API.UpdateOnscreenKeyboard() == 0) return;
+            OnControlSelected?.Invoke(control);
         }
     }
 
@@ -208,9 +203,9 @@ namespace ScaleformUI
         private bool _useMouseButtons;
         private bool _enabled = false;
         internal bool _isUsingKeyboard;
+        internal bool _changed = true;
         internal int savingTimer = 0;
         private bool _isSaving = false;
-        internal static bool _changed = true;
 
         /// <summary>
         /// Show or Hide the Instructional Buttons
@@ -253,8 +248,8 @@ namespace ScaleformUI
             if (_sc != null) return;
             _sc = new Scaleform("INSTRUCTIONAL_BUTTONS");
             int timeout = 1000;
-            DateTime start = DateTime.Now;
-            while (!API.HasScaleformMovieLoaded(_sc.Handle) && DateTime.Now.Subtract(start).TotalMilliseconds < timeout) await BaseScript.Delay(0);
+            int start = ScaleformUI.GameTime;
+            while (!_sc.IsLoaded && ScaleformUI.GameTime - start < timeout) await BaseScript.Delay(0);
         }
 
         /// <summary>
@@ -293,7 +288,7 @@ namespace ScaleformUI
         /// <param name="buttons">The List of <see cref="InstructionalButton"/> to remove.</param>
         public void RemoveInstructionalButtons(List<InstructionalButton> buttons)
         {
-            foreach (var button in buttons)
+            foreach (InstructionalButton button in buttons)
             {
                 if (ControlButtons.Contains(button))
                     ControlButtons.Remove(button);
@@ -332,9 +327,9 @@ namespace ScaleformUI
         {
             _isSaving = true;
             _changed = true;
-            savingTimer = Game.GameTime;
+            savingTimer = ScaleformUI.GameTime;
             Screen.LoadingPrompt.Show(text, spinnerType);
-            while (Game.GameTime - savingTimer <= time) await BaseScript.Delay(100);
+            while (ScaleformUI.GameTime - savingTimer <= time) await BaseScript.Delay(100);
             Screen.LoadingPrompt.Hide();
             _isSaving = false;
         }
@@ -348,7 +343,7 @@ namespace ScaleformUI
         {
             _isSaving = true;
             _changed = true;
-            savingTimer = Game.GameTime;
+            savingTimer = ScaleformUI.GameTime;
             Screen.LoadingPrompt.Show(text, spinnerType);
         }
 
@@ -468,6 +463,6 @@ namespace ScaleformUI
         /// <summary>
         /// Updates the instructional button text.
         /// </summary>
-        public static void ForceUpdate() => _changed = true;   
+        public void ForceUpdate() => _changed = true;
     }
 }

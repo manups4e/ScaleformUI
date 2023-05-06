@@ -28,11 +28,32 @@ function CreateMenu()
         "Transition type for the big message")
     bigMessageExampleMenu:AddItem(uiItemTransitionList)
 
+    local uiItemBigMessageManualDispose = UIMenuCheckboxItem.New("Manual Dispose", false,
+        "Manually dispose the big message")
+    bigMessageExampleMenu:AddItem(uiItemBigMessageManualDispose)
+
     local uiItemMessageType = UIMenuListItem.New("Message Type",
         { "Mission Passed", "Coloured Shard", "Old Message", "Simple Shard", "Rank Up", "MP Message Large",
             "MP Wasted Message" }, 1,
-        "Message type for the big message")
+        "Message type for the big message, press ~INPUT_FRONTEND_ACCEPT~ to show the message")
     bigMessageExampleMenu:AddItem(uiItemMessageType)
+
+    local uiItemDisposeBigMessage = UIMenuItem.New("Dispose Big Message", "Dispose the big message")
+    bigMessageExampleMenu:AddItem(uiItemDisposeBigMessage)
+
+    local manuallyDisposeBigMessage = false
+
+    bigMessageExampleMenu.OnCheckboxChange = function(sender, item, checked_)
+        if item == uiItemBigMessageManualDispose then
+            manuallyDisposeBigMessage = checked_
+        end
+    end
+
+    bigMessageExampleMenu.OnItemSelect = function(sender, item, index)
+        if item == uiItemDisposeBigMessage then
+            ScaleformUI.Scaleforms.BigMessageInstance:Dispose()
+        end
+    end
 
     bigMessageExampleMenu.OnListSelect = function(sender, item, index)
         if item == uiItemTransitionList then
@@ -40,21 +61,26 @@ function CreateMenu()
             ScaleformUI.Notifications:ShowNotification(string.format("Transition set to %s", currentTransition))
         elseif item == uiItemMessageType then
             if index == 1 then
-                ScaleformUI.Scaleforms.BigMessageInstance:ShowMissionPassedMessage("Mission Passed", 5000)
+                ScaleformUI.Scaleforms.BigMessageInstance:ShowMissionPassedMessage("Mission Passed", 5000,
+                    manuallyDisposeBigMessage)
             elseif index == 2 then
                 ScaleformUI.Scaleforms.BigMessageInstance:ShowColoredShard("Coloured Shard", "Description",
                     Colours.HUD_COLOUR_WHITE,
-                    Colours.HUD_COLOUR_FREEMODE, 5000)
+                    Colours.HUD_COLOUR_FREEMODE, 5000, manuallyDisposeBigMessage)
             elseif index == 3 then
-                ScaleformUI.Scaleforms.BigMessageInstance:ShowOldMessage("Old Message", 5000)
+                ScaleformUI.Scaleforms.BigMessageInstance:ShowOldMessage("Old Message", 5000, manuallyDisposeBigMessage)
             elseif index == 4 then
-                ScaleformUI.Scaleforms.BigMessageInstance:ShowSimpleShard("Simple Shard", "Simple Shard Subtitle", 5000)
+                ScaleformUI.Scaleforms.BigMessageInstance:ShowSimpleShard("Simple Shard", "Simple Shard Subtitle", 5000,
+                    manuallyDisposeBigMessage)
             elseif index == 5 then
-                ScaleformUI.Scaleforms.BigMessageInstance:ShowRankupMessage("Rank Up", "Rank Up Subtitle", 10, 5000)
+                ScaleformUI.Scaleforms.BigMessageInstance:ShowRankupMessage("Rank Up", "Rank Up Subtitle", 10, 5000,
+                    manuallyDisposeBigMessage)
             elseif index == 6 then
-                ScaleformUI.Scaleforms.BigMessageInstance:ShowMpMessageLarge("MP Message Large", 5000)
+                ScaleformUI.Scaleforms.BigMessageInstance:ShowMpMessageLarge("MP Message Large", 5000,
+                    manuallyDisposeBigMessage)
             elseif index == 7 then
-                ScaleformUI.Scaleforms.BigMessageInstance:ShowMpWastedMessage("MP Wasted Message", "Subtitle", 5000)
+                ScaleformUI.Scaleforms.BigMessageInstance:ShowMpWastedMessage("MP Wasted Message", "Subtitle", 5000,
+                    manuallyDisposeBigMessage)
             end
             ScaleformUI.Scaleforms.BigMessageInstance:SetTransition(currentTransition, 0.4, true)
         end
