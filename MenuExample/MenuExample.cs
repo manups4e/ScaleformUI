@@ -1476,6 +1476,12 @@ public class MenuExample : BaseScript
 
             if (Game.IsControlJustPressed(0, (Control)170)) // F3
             {
+                if (ScaleformUI.ScaleformUI.JobMissionSelection.Enabled)
+                {
+                    ScaleformUI.ScaleformUI.JobMissionSelection.Enabled = false;
+                    return;
+                }
+
                 long txd = API.CreateRuntimeTxd("test");
                 long _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
                 API.CreateRuntimeTextureFromDuiHandle(txd, "panelbackground", API.GetDuiHandle(_paneldui));

@@ -29,8 +29,8 @@ namespace ScaleformUI
             if (_sc != null) return;
             _sc = new Scaleform("MP_BIG_MESSAGE_FREEMODE");
             var timeout = 1000;
-            var start = ScaleformUI.GlobalGameTimer;
-            while (!_sc.IsLoaded && ScaleformUI.GlobalGameTimer - start < timeout) await BaseScript.Delay(0);
+            var start = ScaleformUI.GameTime;
+            while (!_sc.IsLoaded && ScaleformUI.GameTime - start < timeout) await BaseScript.Delay(0);
         }
 
         public async void Dispose()
@@ -53,7 +53,7 @@ namespace ScaleformUI
         public async void ShowMissionPassedMessage(string msg, int time = 5000, bool manualDispose = false)
         {
             await Load();
-            _start = ScaleformUI.GlobalGameTimer;
+            _start = ScaleformUI.GameTime;
             ManualDispose = manualDispose;
             _sc.CallFunction("SHOW_MISSION_PASSED_MESSAGE", msg, "", 100, true, 0, true);
             _duration = time;
@@ -62,7 +62,7 @@ namespace ScaleformUI
         public async void ShowColoredShard(string msg, string desc, HudColor textColor, HudColor bgColor, int time = 5000, bool manualDispose = false)
         {
             await Load();
-            _start = ScaleformUI.GlobalGameTimer;
+            _start = ScaleformUI.GameTime;
             ManualDispose = manualDispose;
             _sc.CallFunction("SHOW_SHARD_CENTERED_MP_MESSAGE", msg, desc, (int)bgColor, (int)textColor);
             _duration = time;
@@ -71,7 +71,7 @@ namespace ScaleformUI
         public async void ShowOldMessage(string msg, int time = 5000, bool manualDispose = false)
         {
             await Load();
-            _start = ScaleformUI.GlobalGameTimer;
+            _start = ScaleformUI.GameTime;
             ManualDispose = manualDispose;
             _sc.CallFunction("SHOW_MISSION_PASSED_MESSAGE", msg);
             _duration = time;
@@ -80,7 +80,7 @@ namespace ScaleformUI
         public async void ShowSimpleShard(string title, string subtitle, int time = 5000, bool manualDispose = false)
         {
             await Load();
-            _start = ScaleformUI.GlobalGameTimer;
+            _start = ScaleformUI.GameTime;
             ManualDispose = manualDispose;
             _sc.CallFunction("SHOW_SHARD_CREW_RANKUP_MP_MESSAGE", title, subtitle);
             _duration = time;
@@ -89,7 +89,7 @@ namespace ScaleformUI
         public async void ShowRankupMessage(string msg, string subtitle, int rank, int time = 5000, bool manualDispose = false)
         {
             await Load();
-            _start = ScaleformUI.GlobalGameTimer;
+            _start = ScaleformUI.GameTime;
             ManualDispose = manualDispose;
             _sc.CallFunction("SHOW_BIG_MP_MESSAGE", msg, subtitle, rank, "", "");
             _duration = time;
@@ -98,7 +98,7 @@ namespace ScaleformUI
         public async void ShowWeaponPurchasedMessage(string bigMessage, string weaponName, WeaponHash weapon, int time = 5000, bool manualDispose = false)
         {
             await Load();
-            _start = ScaleformUI.GlobalGameTimer;
+            _start = ScaleformUI.GameTime;
             ManualDispose = manualDispose;
             _sc.CallFunction("SHOW_WEAPON_PURCHASED", bigMessage, weaponName, unchecked((int)weapon), "", 100);
             _duration = time;
@@ -107,7 +107,7 @@ namespace ScaleformUI
         public async void ShowMpMessageLarge(string msg, int time = 5000, bool manualDispose = false)
         {
             await Load();
-            _start = ScaleformUI.GlobalGameTimer;
+            _start = ScaleformUI.GameTime;
             ManualDispose = manualDispose;
             _sc.CallFunction("SHOW_CENTERED_MP_MESSAGE_LARGE", msg, "test", 100, true, 100);
             _sc.CallFunction("TRANSITION_IN");
@@ -117,7 +117,7 @@ namespace ScaleformUI
         public async void ShowMpWastedMessage(string msg, string sub, int time = 5000, bool manualDispose = false)
         {
             await Load();
-            _start = ScaleformUI.GlobalGameTimer;
+            _start = ScaleformUI.GameTime;
             ManualDispose = manualDispose;
             _sc.CallFunction("SHOW_SHARD_WASTED_MP_MESSAGE", msg, sub);
             _duration = time;
@@ -135,7 +135,7 @@ namespace ScaleformUI
 
             if (ManualDispose) return;
 
-            if (_start != 0 && (ScaleformUI.GlobalGameTimer - _start) > _duration)
+            if (_start != 0 && (ScaleformUI.GameTime - _start) > _duration)
             {
                 if (!_transitionExecuted)
                 {

@@ -1,10 +1,7 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 
 namespace ScaleformUI
 {
@@ -250,8 +247,8 @@ namespace ScaleformUI
             if (_sc != null) return;
             _sc = new Scaleform("INSTRUCTIONAL_BUTTONS");
             int timeout = 1000;
-            DateTime start = DateTime.Now;
-            while (!API.HasScaleformMovieLoaded(_sc.Handle) && DateTime.Now.Subtract(start).TotalMilliseconds < timeout) await BaseScript.Delay(0);
+            int start = ScaleformUI.GameTime;
+            while (!_sc.IsLoaded && ScaleformUI.GameTime - start < timeout) await BaseScript.Delay(0);
         }
 
         /// <summary>
@@ -329,9 +326,9 @@ namespace ScaleformUI
         {
             _isSaving = true;
             _changed = true;
-            savingTimer = Game.GameTime;
+            savingTimer = ScaleformUI.GameTime;
             Screen.LoadingPrompt.Show(text, spinnerType);
-            while (Game.GameTime - savingTimer <= time) await BaseScript.Delay(100);
+            while (ScaleformUI.GameTime - savingTimer <= time) await BaseScript.Delay(100);
             Screen.LoadingPrompt.Hide();
             _isSaving = false;
         }
@@ -345,7 +342,7 @@ namespace ScaleformUI
         {
             _isSaving = true;
             _changed = true;
-            savingTimer = Game.GameTime;
+            savingTimer = ScaleformUI.GameTime;
             Screen.LoadingPrompt.Show(text, spinnerType);
         }
 

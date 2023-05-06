@@ -2058,7 +2058,7 @@ namespace ScaleformUI
             {
                 if (isBuilding && _activeItem <= 0)
                     return;
-                if (Game.GameTime - time > delay)
+                if (ScaleformUI.GameTime - time > delay)
                 {
                     ButtonDelay();
                     GoUp();
@@ -2067,7 +2067,7 @@ namespace ScaleformUI
 
             else if (IsControlBeingPressed(MenuControls.Down, key))
             {
-                if (Game.GameTime - time > delay)
+                if (ScaleformUI.GameTime - time > delay)
                 {
                     ButtonDelay();
                     GoDown();
@@ -2076,7 +2076,7 @@ namespace ScaleformUI
 
             else if (IsControlBeingPressed(MenuControls.Left, key))
             {
-                if (Game.GameTime - time > delay)
+                if (ScaleformUI.GameTime - time > delay)
                 {
                     ButtonDelay();
                     GoLeft();
@@ -2085,7 +2085,7 @@ namespace ScaleformUI
 
             else if (IsControlBeingPressed(MenuControls.Right, key))
             {
-                if (Game.GameTime - time > delay)
+                if (ScaleformUI.GameTime - time > delay)
                 {
                     ButtonDelay();
                     GoRight();
@@ -2119,7 +2119,7 @@ namespace ScaleformUI
                 if (delay < 50) delay = 50;
             }
             // Reset the time to the current game timer.
-            time = Game.GameTime;
+            time = ScaleformUI.GameTime;
         }
 
         /// <summary>
@@ -2211,13 +2211,13 @@ namespace ScaleformUI
 
                 }
             }
-            var timer = Game.GameTime;
+            var timer = ScaleformUI.GameTime;
             if (MenuItems.Count == 0)
             {
                 while (MenuItems.Count == 0)
                 {
                     await BaseScript.Delay(0);
-                    if (Game.GameTime - timer > 150)
+                    if (ScaleformUI.GameTime - timer > 150)
                     {
                         ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
                         return;
@@ -2440,13 +2440,13 @@ namespace ScaleformUI
 
                 }
             }
-            var timer = Game.GameTime;
+            var timer = ScaleformUI.GameTime;
             if (MenuItems.Count == 0)
             {
                 while (MenuItems.Count == 0)
                 {
                     await BaseScript.Delay(0);
-                    if (Game.GameTime - timer > 150)
+                    if (ScaleformUI.GameTime - timer > 150)
                     {
                         ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", CurrentSelection);
                         return;
