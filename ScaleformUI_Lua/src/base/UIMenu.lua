@@ -110,7 +110,9 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         _isBuilding = false,
         _time = 0,
         _times = 0,
-        _delay = 150,
+        _delay = 100,
+        _delayBeforeOverflow = 350,
+        _timeBeforeOverflow = 0,
         _canHe = true,
         _scaledWidth = (720 * GetAspectRatio(false)),
         Controls = {
@@ -684,7 +686,7 @@ function UIMenu:BuildUpMenuAsync()
         local items = self.Items
         local it = 1
         while it <= #items do
-            Citizen.Wait(50)
+            Citizen.Wait(0)
             if not self:Visible() then return end
             local item = items[it]
             local Type, SubType = item()
@@ -971,67 +973,100 @@ function UIMenu:ProcessControl()
 
     if UpdateOnscreenKeyboard() == 0 or IsWarningMessageActive() then return end
 
-    if self.Controls.Back.Enabled and (IsDisabledControlJustReleased(0, 177) or IsDisabledControlJustReleased(1, 177) or IsDisabledControlJustReleased(2, 177) or IsDisabledControlJustReleased(0, 199) or IsDisabledControlJustReleased(1, 199) or IsDisabledControlJustReleased(2, 199)) then
-        Citizen.CreateThread(function()
-            self:GoBack()
-            Citizen.Wait(125)
-            return
-        end)
+    if self.Controls.Back.Enabled then
+        if IsDisabledControlJustReleased(0, 177) or IsDisabledControlJustReleased(1, 177) or IsDisabledControlJustReleased(2, 177) or IsDisabledControlJustReleased(0, 199) or IsDisabledControlJustReleased(1, 199) or IsDisabledControlJustReleased(2, 199) then
+            Citizen.CreateThread(function()
+                self:GoBack()
+                Citizen.Wait(125)
+                return
+            end)
+        end
     end
 
-    if #self.Items == 0 then
-        return
-    end
+    if #self.Items == 0 or self._isBuilding then return end
 
-    if self.Controls.Up.Enabled and not self._isBuilding and (IsDisabledControlPressed(0, 172) or IsDisabledControlPressed(1, 172) or IsDisabledControlPressed(2, 172) or IsDisabledControlPressed(0, 241) or IsDisabledControlPressed(1, 241) or IsDisabledControlPressed(2, 241) or IsDisabledControlPressed(2, 241)) then
-        if GlobalGameTimer - self._time > self._delay then
-            self:ButtonDelay()
+    if self.Controls.Up.Enabled then
+        if IsDisabledControlJustPressed(0, 172) or IsDisabledControlJustPressed(1, 172) or IsDisabledControlJustPressed(2, 172) or IsDisabledControlJustPressed(0, 241) or IsDisabledControlJustPressed(1, 241) or IsDisabledControlJustPressed(2, 241) or IsDisabledControlJustPressed(2, 241) then
+            self._timeBeforeOverflow = GlobalGameTimer
             Citizen.CreateThread(function()
                 self:GoUp()
                 return
             end)
+        elseif IsDisabledControlPressed(0, 172) or IsDisabledControlPressed(1, 172) or IsDisabledControlPressed(2, 172) or IsDisabledControlPressed(0, 241) or IsDisabledControlPressed(1, 241) or IsDisabledControlPressed(2, 241) or IsDisabledControlPressed(2, 241) then
+            if GlobalGameTimer - self._timeBeforeOverflow > self._delayBeforeOverflow then
+                if GlobalGameTimer - self._time > self._delay then
+                    self:ButtonDelay()
+                    Citizen.CreateThread(function()
+                        self:GoUp()
+                        return
+                    end)
+                end
+            end
         end
     end
 
-    if self.Controls.Down.Enabled and not self._isBuilding and (IsDisabledControlPressed(0, 173) or IsDisabledControlPressed(1, 173) or IsDisabledControlPressed(2, 173) or IsDisabledControlPressed(0, 242) or IsDisabledControlPressed(1, 242) or IsDisabledControlPressed(2, 242)) then
-        if GlobalGameTimer - self._time > self._delay then
-            self:ButtonDelay()
+    if self.Controls.Down.Enabled then
+        if IsDisabledControlJustPressed(0, 173) or IsDisabledControlJustPressed(1, 173) or IsDisabledControlJustPressed(2, 173) or IsDisabledControlJustPressed(0, 242) or IsDisabledControlJustPressed(1, 242) or IsDisabledControlJustPressed(2, 242) then
+            self._timeBeforeOverflow = GlobalGameTimer
             Citizen.CreateThread(function()
                 self:GoDown()
                 return
             end)
+        elseif IsDisabledControlPressed(0, 173) or IsDisabledControlPressed(1, 173) or IsDisabledControlPressed(2, 173) or IsDisabledControlPressed(0, 242) or IsDisabledControlPressed(1, 242) or IsDisabledControlPressed(2, 242) then
+            if GlobalGameTimer - self._timeBeforeOverflow > self._delayBeforeOverflow then
+                if GlobalGameTimer - self._time > self._delay then
+                    self:ButtonDelay()
+                    Citizen.CreateThread(function()
+                        self:GoDown()
+                        return
+                    end)
+                end
+            end
         end
     end
 
-    if self.Controls.Left.Enabled and not self._isBuilding and (IsDisabledControlPressed(0, 174) or IsDisabledControlPressed(1, 174) or IsDisabledControlPressed(2, 174)) then
-        if GlobalGameTimer - self._time > self._delay then
-            self:ButtonDelay()
+    if self.Controls.Left.Enabled then
+        if IsDisabledControlJustPressed(0, 174) or IsDisabledControlJustPressed(1, 174) or IsDisabledControlJustPressed(2, 174) then
+            self._timeBeforeOverflow = GlobalGameTimer
             Citizen.CreateThread(function()
                 self:GoLeft()
                 return
             end)
+        elseif IsDisabledControlPressed(0, 174) or IsDisabledControlPressed(1, 174) or IsDisabledControlPressed(2, 174) then
+            if GlobalGameTimer - self._timeBeforeOverflow > self._delayBeforeOverflow then
+                if GlobalGameTimer - self._time > self._delay then
+                    self:ButtonDelay()
+                    Citizen.CreateThread(function()
+                        self:GoLeft()
+                        return
+                    end)
+                end
+            end
         end
     end
 
-    if self.Controls.Right.Enabled and not self._isBuilding and (IsDisabledControlPressed(0, 175) or IsDisabledControlPressed(1, 175) or IsDisabledControlPressed(2, 175)) then
-        if GlobalGameTimer - self._time > self._delay then
-            self:ButtonDelay()
+    if self.Controls.Right.Enabled then
+        if IsDisabledControlJustPressed(0, 175) or IsDisabledControlJustPressed(1, 175) or IsDisabledControlJustPressed(2, 175) then
+            self._timeBeforeOverflow = GlobalGameTimer
             Citizen.CreateThread(function()
                 self:GoRight()
                 return
             end)
+        elseif IsDisabledControlPressed(0, 175) or IsDisabledControlPressed(1, 175) or IsDisabledControlPressed(2, 175) then
+            if GlobalGameTimer - self._timeBeforeOverflow > self._delayBeforeOverflow then
+                if GlobalGameTimer - self._time > self._delay then
+                    self:ButtonDelay()
+                    Citizen.CreateThread(function()
+                        self:GoRight()
+                        return
+                    end)
+                end
+            end
         end
     end
 
-    if self.Controls.Select.Enabled and not self._isBuilding and (IsDisabledControlJustPressed(0, 201) or IsDisabledControlJustPressed(1, 201) or IsDisabledControlJustPressed(2, 201)) then
-        Citizen.CreateThread(function()
-            self:SelectItem()
-            Citizen.Wait(125)
-            return
-        end)
-    end
-
-    if self.Controls.Select.Enabled and not self._isBuilding and (IsDisabledControlJustPressed(0, 24) or IsDisabledControlJustPressed(1, 24) or IsDisabledControlJustPressed(2, 24)) and not self.Settings.MouseControlsEnabled then
+    if self.Controls.Select.Enabled and ((IsDisabledControlJustPressed(0, 201) or IsDisabledControlJustPressed(1, 201) or IsDisabledControlJustPressed(2, 201)) or
+    (IsDisabledControlJustPressed(0, 24) or IsDisabledControlJustPressed(1, 24) or IsDisabledControlJustPressed(2, 24)) and not self.Settings.MouseControlsEnabled) then
         Citizen.CreateThread(function()
             self:SelectItem()
             Citizen.Wait(125)
@@ -1045,7 +1080,7 @@ function UIMenu:ProcessControl()
         (IsDisabledControlJustReleased(0, 175) or IsDisabledControlJustReleased(1, 175) or IsDisabledControlJustReleased(2, 175))
     then
         self._times = 0
-        self._delay = 150
+        self._delay = 100
     end
 end
 

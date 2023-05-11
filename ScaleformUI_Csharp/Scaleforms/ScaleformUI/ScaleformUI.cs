@@ -1,15 +1,18 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
+using ScaleformUI.Scaleforms;
 using ScaleformUI.Scaleforms.Countdown;
 using ScaleformUI.Scaleforms.RankBar;
-using System;
-using System.Threading.Tasks;
 
 namespace ScaleformUI
 {
     public class ScaleformUI : BaseScript
     {
-        public static int GlobalGameTimer = API.GetGameTimer();
+        /// <summary>
+        /// Provides the current game time in milliseconds.
+        /// </summary>
+        public static int GameTime = API.GetGameTimer();
+
         public static PauseMenuScaleform PauseMenu { get; set; }
         public static MediumMessageHandler MedMessageInstance { get; set; }
         public static InstructionalButtonsScaleform InstructionalButtons { get; set; }
@@ -21,7 +24,7 @@ namespace ScaleformUI
         public static RankBarHandler RankBarInstance { get; set; }
         public static CountdownHandler CountdownInstance { get; set; }
 
-        internal static Scaleform _ui { get; set; }
+        internal static ScaleformWideScreen _ui { get; set; }
         public ScaleformUI()
         {
             Warning = new();
@@ -61,7 +64,7 @@ namespace ScaleformUI
             if (InstructionalButtons._sc != null && InstructionalButtons.Enabled && ((InstructionalButtons.ControlButtons != null || InstructionalButtons.ControlButtons.Count != 0) || InstructionalButtons.IsSaving))
                 InstructionalButtons.Update();
             if (Game.IsPaused) return;
-            if (Warning._warning != null)
+            if (Warning._sc != null)
                 Warning.Update();
             if (MedMessageInstance._sc != null)
                 MedMessageInstance.Update();
@@ -73,16 +76,20 @@ namespace ScaleformUI
                 JobMissionSelection.Update();
             if (BigFeed._sc != null)
                 BigFeed.Update();
-            _ui ??= new Scaleform("ScaleformUI");
+            _ui ??= new("ScaleformUI");
             if (!PauseMenu.Loaded)
                 PauseMenu.Load();
             await Task.FromResult(0);
         }
 
+        /// <summary>
+        /// Updates the game time.
+        /// </summary>
+        /// <returns></returns>
         public async Task OnUpdateGlobalGameTimerAsync()
         {
-            await BaseScript.Delay(1000);
-            GlobalGameTimer = API.GetGameTimer();
+            await BaseScript.Delay(100);
+            GameTime = API.GetGameTimer();
         }
     }
 }

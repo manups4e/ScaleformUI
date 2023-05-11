@@ -1,7 +1,5 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using System;
-using System.Threading.Tasks;
 
 namespace ScaleformUI.Scaleforms.Countdown
 {
@@ -64,8 +62,8 @@ namespace ScaleformUI.Scaleforms.Countdown
             API.RequestScriptAudioBank("HUD_321_GO", false);
             _sc = new Scaleform(SCALEFORM_NAME);
             var timeout = 1000;
-            var start = DateTime.Now;
-            while (!_sc.IsLoaded && DateTime.Now.Subtract(start).TotalMilliseconds < timeout) await BaseScript.Delay(0);
+            int start = ScaleformUI.GameTime;
+            while (!_sc.IsLoaded && ScaleformUI.GameTime - start < timeout) await BaseScript.Delay(0);
         }
 
         private async void Dispose()
