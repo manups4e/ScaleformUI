@@ -61,9 +61,16 @@ function Scaleform:CallFunction(theFunction, returndata, ...)
                     ScaleformMovieMethodAddParamFloat(arg[i])
                 end
             elseif sType == "string" then
-                if arg[i]:find("^desc_{") ~= nil or arg[i]:find("^menu_lobby_desc_{") ~= nil or arg[i]:find("^PauseMenu_") or arg[i]:find("^menu_pause_playerTab{") then
+                if arg[i]:find("^desc_{") or arg[i]:find("^menu_lobby_desc_{") or arg[i]:find("^PauseMenu_") or arg[i]:find("^menu_pause_playerTab{") then
                     BeginTextCommandScaleformString(arg[i])
                     EndTextCommandScaleformString_2()
+                elseif arg[i]:find("label_") then
+                    local label = (string.gsub(arg[i], "label_", ""))
+                    BeginTextCommandScaleformString(label)
+                    EndTextCommandScaleformString()
+                elseif arg[i]:find("literal_") then
+                    local label = (string.gsub(arg[i], "literal_", ""))
+                    ScaleformMovieMethodAddParamTextureNameString_2(label) -- SCALEFORM_MOVIE_METHOD_ADD_PARAM_LITERAL_STRING
                 else
                     ScaleformMovieMethodAddParamTextureNameString(arg[i])
                 end
