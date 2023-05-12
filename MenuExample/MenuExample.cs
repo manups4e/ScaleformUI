@@ -1073,12 +1073,9 @@ public class MenuExample : BaseScript
         friend4.ClonePed = Game.PlayerPed;
         friend5.ClonePed = Game.PlayerPed;
 
-        friend.ClonePedAsleep = false;
-        friend.ClonePedLighting = true;
-        friend3.ClonePedAsleep = false;
-        friend3.ClonePedLighting = true;
-        friend5.ClonePedAsleep = false;
-        friend5.ClonePedLighting = true;
+        friend.SetOnline();
+        friend3.SetOnline();
+        friend5.SetOnline();
 
         playersTab.PlayersColumn.AddPlayer(friend);
         playersTab.PlayersColumn.AddPlayer(friend2);

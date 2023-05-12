@@ -59,6 +59,18 @@ namespace ScaleformUI
             }
         }
 
+        public void SetOffline()
+        {
+            ClonePedLighting = false;
+            ClonePedAsleep = true;
+        }
+
+        public void SetOnline()
+        {
+            ClonePedLighting = true;
+            ClonePedAsleep = false;
+        }
+
         internal void CreateClonedPed(Ped ped)
         {
             if (ped == null) API.ClearPedInPauseMenu();
