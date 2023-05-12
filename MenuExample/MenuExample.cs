@@ -2,6 +2,7 @@
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
 using ScaleformUI;
+using ScaleformUI.Elements;
 using ScaleformUI.LobbyMenu;
 using ScaleformUI.PauseMenu;
 using System;
@@ -46,7 +47,7 @@ public class MenuExample : BaseScript
         uiMenuBigMessage.AddItem(uiCheckboxBigMessageManualDispose);
 
         UIMenuListItem uiListBigMessageType = new UIMenuListItem("Message Type", new List<dynamic>() { "Mission Passed", "Coloured Shard", "Old Message", "Simple Shard", "Rank Up", "MP Message Large",
-            "MP Wasted Message" }, 0);
+            "MP Wasted Message", "Mission Passed: Label" }, 0);
         uiListBigMessageType.Description = "Message type for the big message, press ~INPUT_FRONTEND_ACCEPT~ to show the message";
         uiMenuBigMessage.AddItem(uiListBigMessageType);
 
@@ -115,6 +116,12 @@ public class MenuExample : BaseScript
                         break;
                     case 6:
                         ScaleformUI.ScaleformUI.BigMessageInstance.ShowMpWastedMessage("MP Wasted Message", "Wasted", manualDispose: uiCheckboxBigMessageManualDispose.Checked);
+                        break;
+                    case 7:
+                        const string CUSTOM_LABEL = "SCALEFORMUI_CUSTOM_LABEL";
+                        API.AddTextEntry(CUSTOM_LABEL, "ScaleformUI is the best solution!");
+                        ScaleformLabel scaleformLabel = CUSTOM_LABEL;
+                        ScaleformUI.ScaleformUI.BigMessageInstance.ShowMissionPassedMessage(scaleformLabel, manualDispose: uiCheckboxBigMessageManualDispose.Checked);
                         break;
                 }
             }

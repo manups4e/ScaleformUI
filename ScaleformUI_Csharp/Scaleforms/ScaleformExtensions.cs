@@ -1,6 +1,7 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
+using ScaleformUI.Elements;
 using System.Drawing;
 
 namespace ScaleformUI.Scaleforms
@@ -91,9 +92,18 @@ namespace ScaleformUI.Scaleforms
                 {
                     API.PushScaleformMovieMethodParameterBool((bool)argument);
                 }
+                else if (argument.GetType() == typeof(ScaleformLabel))
+                {
+                    API.BeginTextCommandScaleformString(((ScaleformLabel)argument).Label);
+                    API.EndTextCommandScaleformString();
+                }
+                else if (argument.GetType() == typeof(ScaleformLiteralString))
+                {
+                    API.ScaleformMovieMethodAddParamTextureNameString_2(((ScaleformLiteralString)argument).LiteralString);
+                }
                 else
                 {
-                    throw new ArgumentException(string.Format("Unknown argument type {0} passed to scaleform with handle {1}.", argument.GetType().Name, Handle), "arguments");
+                    throw new ArgumentException(string.Format("Unknown argument type '{0}' passed to scaleform with handle {1}...", argument.GetType().Name, Handle), "arguments");
                 }
             }
             API.EndScaleformMovieMethod();

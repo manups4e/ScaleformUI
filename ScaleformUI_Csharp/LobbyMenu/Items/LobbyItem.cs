@@ -11,6 +11,7 @@ namespace ScaleformUI
         private bool _enabled = true;
         private bool _selected;
         private Ped clonePed;
+        private int _cloneHandle;
 
         /// <summary>
         /// Whether this item is currently selected.
@@ -67,10 +68,21 @@ namespace ScaleformUI
 
         private async void UpdateClone()
         {
-            var ped = new Ped(API.ClonePed(ClonePed.Handle, 0, true, true));
-            API.GivePedToPauseMenu(ped.Handle, 2);
+            if (API.DoesEntityExist(_cloneHandle))
+            {
+                API.DeleteEntity(ref _cloneHandle);
+            }
+
+            _cloneHandle = API.ClonePed(ClonePed.Handle, 0, false, true);
+            API.GivePedToPauseMenu(_cloneHandle, 2);
             API.SetPauseMenuPedSleepState(true);
             API.SetPauseMenuPedLighting(ParentColumn.Parent is not TabView || (ParentColumn.Parent as TabView).FocusLevel != 0);
+            API.SetEntityVisible(_cloneHandle, true, false);
+            API.FreezeEntityPosition(_cloneHandle, true);
+            API.SetEntityInvincible(_cloneHandle, true);
+            API.SetEntityCollision(_cloneHandle, false, false);
+            Vector3 pos = ClonePed.Position + new Vector3(0, 0, -10f);
+            API.SetEntityCoords(_cloneHandle, pos.X, pos.Y, pos.Z, true, false, false, false);
         }
 
 

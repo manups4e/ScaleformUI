@@ -6,7 +6,7 @@ namespace ScaleformUI.Scaleforms.Countdown
     public class CountdownHandler
     {
         private const string SCALEFORM_NAME = "COUNTDOWN";
-        private Scaleform _sc;
+        private ScaleformWideScreen _sc;
 
         public CountdownHandler() { }
 
@@ -60,7 +60,7 @@ namespace ScaleformUI.Scaleforms.Countdown
             if (_sc is not null) return;
 
             API.RequestScriptAudioBank("HUD_321_GO", false);
-            _sc = new Scaleform(SCALEFORM_NAME);
+            _sc = new ScaleformWideScreen(SCALEFORM_NAME);
             var timeout = 1000;
             int start = ScaleformUI.GameTime;
             while (!_sc.IsLoaded && ScaleformUI.GameTime - start < timeout) await BaseScript.Delay(0);
