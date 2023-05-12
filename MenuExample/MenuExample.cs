@@ -1061,19 +1061,24 @@ public class MenuExample : BaseScript
         playersTab.SettingsColumn.AddSettings(n4);
         playersTab.SettingsColumn.AddSettings(n5);
 
-        FriendItem friend = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_GREEN, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
-        FriendItem friend1 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_MENU_YELLOW, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
-        FriendItem friend2 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_PINK, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
-        FriendItem friend3 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_BLUE, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
-        FriendItem friend4 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_ORANGE, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
-        FriendItem friend5 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_RED, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+        FriendItem friend = new FriendItem(Game.Player.Name + " #1", HudColor.HUD_COLOUR_GREEN, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+        FriendItem friend2 = new FriendItem(Game.Player.Name + " #2", HudColor.HUD_COLOUR_PINK, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+        FriendItem friend3 = new FriendItem(Game.Player.Name + " #3", HudColor.HUD_COLOUR_BLUE, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+        FriendItem friend4 = new FriendItem(Game.Player.Name + " #4", HudColor.HUD_COLOUR_ORANGE, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+        FriendItem friend5 = new FriendItem(Game.Player.Name + " #5", HudColor.HUD_COLOUR_RED, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
 
         friend.ClonePed = Game.PlayerPed;
-        friend1.ClonePed = Game.PlayerPed;
         friend2.ClonePed = Game.PlayerPed;
         friend3.ClonePed = Game.PlayerPed;
         friend4.ClonePed = Game.PlayerPed;
         friend5.ClonePed = Game.PlayerPed;
+
+        friend.ClonePedAsleep = false;
+        friend.ClonePedLighting = true;
+        friend3.ClonePedAsleep = false;
+        friend3.ClonePedLighting = true;
+        friend5.ClonePedAsleep = false;
+        friend5.ClonePedLighting = true;
 
         playersTab.PlayersColumn.AddPlayer(friend);
         playersTab.PlayersColumn.AddPlayer(friend2);
@@ -1099,31 +1104,32 @@ public class MenuExample : BaseScript
         panel.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
         friend.AddPanel(panel);
 
-        PlayerStatsPanel panel1 = new PlayerStatsPanel("Player 2", HudColor.HUD_COLOUR_MENU_YELLOW)
+        PlayerStatsPanel panel2 = new PlayerStatsPanel("Player 2", HudColor.HUD_COLOUR_PINK)
         {
             Description = "This is the description for Player 2!!",
-            HasPlane = true,
-            HasVehicle = true,
-        };
-        panel1.RankInfo.RankLevel = 70;
-        panel1.RankInfo.LowLabel = "This is the low label";
-        panel1.RankInfo.MidLabel = "This is the middle label";
-        panel1.RankInfo.UpLabel = "This is the upper label";
-        panel1.AddStat(new PlayerStatsPanelStatItem("Statistic 1", "Description 1", API.GetRandomIntInRange(30, 150)));
-        panel1.AddStat(new PlayerStatsPanelStatItem("Statistic 2", "Description 2", API.GetRandomIntInRange(30, 150)));
-        panel1.AddStat(new PlayerStatsPanelStatItem("Statistic 3", "Description 3", API.GetRandomIntInRange(30, 150)));
-        panel1.AddStat(new PlayerStatsPanelStatItem("Statistic 4", "Description 4", API.GetRandomIntInRange(30, 150)));
-        panel1.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
-        friend1.AddPanel(panel1);
-
-        PlayerStatsPanel panel3 = new PlayerStatsPanel("Player 3", HudColor.HUD_COLOUR_PINK)
-        {
-            Description = "This is the description for Player 3!!",
             HasPlane = true,
             HasHeli = true,
             HasVehicle = true
         };
-        panel3.RankInfo.RankLevel = 15;
+        panel2.RankInfo.RankLevel = 15;
+        panel2.RankInfo.LowLabel = "This is the low label";
+        panel2.RankInfo.MidLabel = "This is the middle label";
+        panel2.RankInfo.UpLabel = "This is the upper label";
+        panel2.AddStat(new PlayerStatsPanelStatItem("Statistic 1", "Description 1", API.GetRandomIntInRange(30, 150)));
+        panel2.AddStat(new PlayerStatsPanelStatItem("Statistic 2", "Description 2", API.GetRandomIntInRange(30, 150)));
+        panel2.AddStat(new PlayerStatsPanelStatItem("Statistic 3", "Description 3", API.GetRandomIntInRange(30, 150)));
+        panel2.AddStat(new PlayerStatsPanelStatItem("Statistic 4", "Description 4", API.GetRandomIntInRange(30, 150)));
+        panel2.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
+        friend2.AddPanel(panel2);
+
+        PlayerStatsPanel panel3 = new PlayerStatsPanel("Player 3", HudColor.HUD_COLOUR_FREEMODE)
+        {
+            Description = "This is the description for Player 3!!",
+            HasPlane = true,
+            HasHeli = true,
+            HasBoat = true
+        };
+        panel3.RankInfo.RankLevel = 10;
         panel3.RankInfo.LowLabel = "This is the low label";
         panel3.RankInfo.MidLabel = "This is the middle label";
         panel3.RankInfo.UpLabel = "This is the upper label";
@@ -1132,16 +1138,15 @@ public class MenuExample : BaseScript
         panel3.AddStat(new PlayerStatsPanelStatItem("Statistic 3", "Description 3", API.GetRandomIntInRange(30, 150)));
         panel3.AddStat(new PlayerStatsPanelStatItem("Statistic 4", "Description 4", API.GetRandomIntInRange(30, 150)));
         panel3.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
-        friend2.AddPanel(panel3);
+        friend3.AddPanel(panel3);
 
-        PlayerStatsPanel panel4 = new PlayerStatsPanel("Player 4", HudColor.HUD_COLOUR_FREEMODE)
+        PlayerStatsPanel panel4 = new PlayerStatsPanel("Player 4", HudColor.HUD_COLOUR_ORANGE)
         {
             Description = "This is the description for Player 4!!",
             HasPlane = true,
             HasHeli = true,
-            HasBoat = true
         };
-        panel4.RankInfo.RankLevel = 10;
+        panel4.RankInfo.RankLevel = 1000;
         panel4.RankInfo.LowLabel = "This is the low label";
         panel4.RankInfo.MidLabel = "This is the middle label";
         panel4.RankInfo.UpLabel = "This is the upper label";
@@ -1150,15 +1155,15 @@ public class MenuExample : BaseScript
         panel4.AddStat(new PlayerStatsPanelStatItem("Statistic 3", "Description 3", API.GetRandomIntInRange(30, 150)));
         panel4.AddStat(new PlayerStatsPanelStatItem("Statistic 4", "Description 4", API.GetRandomIntInRange(30, 150)));
         panel4.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
-        friend3.AddPanel(panel4);
+        friend4.AddPanel(panel4);
 
-        PlayerStatsPanel panel5 = new PlayerStatsPanel("Player 5", HudColor.HUD_COLOUR_ORANGE)
+        PlayerStatsPanel panel5 = new PlayerStatsPanel("Player 5", HudColor.HUD_COLOUR_RED)
         {
             Description = "This is the description for Player 5!!",
             HasPlane = true,
             HasHeli = true,
         };
-        panel5.RankInfo.RankLevel = 1000;
+        panel5.RankInfo.RankLevel = 22;
         panel5.RankInfo.LowLabel = "This is the low label";
         panel5.RankInfo.MidLabel = "This is the middle label";
         panel5.RankInfo.UpLabel = "This is the upper label";
@@ -1167,34 +1172,20 @@ public class MenuExample : BaseScript
         panel5.AddStat(new PlayerStatsPanelStatItem("Statistic 3", "Description 3", API.GetRandomIntInRange(30, 150)));
         panel5.AddStat(new PlayerStatsPanelStatItem("Statistic 4", "Description 4", API.GetRandomIntInRange(30, 150)));
         panel5.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
-        friend4.AddPanel(panel5);
-
-        PlayerStatsPanel panel6 = new PlayerStatsPanel("Player 6", HudColor.HUD_COLOUR_RED)
-        {
-            Description = "This is the description for Player 6!!",
-            HasPlane = true,
-            HasHeli = true,
-        };
-        panel6.RankInfo.RankLevel = 22;
-        panel6.RankInfo.LowLabel = "This is the low label";
-        panel6.RankInfo.MidLabel = "This is the middle label";
-        panel6.RankInfo.UpLabel = "This is the upper label";
-        panel6.AddStat(new PlayerStatsPanelStatItem("Statistic 1", "Description 1", API.GetRandomIntInRange(30, 150)));
-        panel6.AddStat(new PlayerStatsPanelStatItem("Statistic 2", "Description 2", API.GetRandomIntInRange(30, 150)));
-        panel6.AddStat(new PlayerStatsPanelStatItem("Statistic 3", "Description 3", API.GetRandomIntInRange(30, 150)));
-        panel6.AddStat(new PlayerStatsPanelStatItem("Statistic 4", "Description 4", API.GetRandomIntInRange(30, 150)));
-        panel6.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
-        friend5.AddPanel(panel6);
+        friend5.AddPanel(panel5);
 
         pauseMenu.OnPauseMenuOpen += (menu) =>
         {
             Screen.ShowSubtitle(menu.Title + " Opened!");
+            Debug.WriteLine(menu.Title + " Opened!");
             if (mainMenu != null)
                 mainMenu.Visible = false;
         };
+
         pauseMenu.OnPauseMenuClose += async (menu) =>
         {
             Screen.ShowSubtitle(menu.Title + " Closed!");
+            Debug.WriteLine(menu.Title + " Closed!");
             // to prevent the pause menu to close the menu too!
             await BaseScript.Delay(250);
             if (mainMenu != null)
@@ -1204,11 +1195,13 @@ public class MenuExample : BaseScript
         pauseMenu.OnPauseMenuTabChanged += (menu, tab, tabIndex) =>
         {
             Screen.ShowSubtitle(tab.Title + " Selected!");
+            Debug.WriteLine(tab.Title + " Selected!");
         };
 
         pauseMenu.OnPauseMenuFocusChanged += (menu, tab, focusLevel) =>
         {
             Screen.ShowSubtitle(tab.Title + " Focus at level => ~y~" + focusLevel + "~w~!");
+            Debug.WriteLine(tab.Title + " Focus at level => ~y~" + focusLevel + "~w~!");
             if (focusLevel == 1)
             {
                 if (tab is TextTab)
@@ -1232,21 +1225,25 @@ public class MenuExample : BaseScript
         pauseMenu.OnLeftItemChange += (menu, leftItem, leftItemIndex) =>
         {
             Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, and left Item ~o~N° " + (leftItemIndex + 1) + "~w~ selected!");
+            Debug.WriteLine(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, and left Item ~o~N° " + (leftItemIndex + 1) + "~w~ selected!");
         };
 
         pauseMenu.OnLeftItemSelect += (menu, leftItem, leftItemIndex) =>
         {
             Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, and left Item ~o~N° " + (leftItemIndex + 1) + "~w~ selected!");
+            Debug.WriteLine(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, and left Item ~o~N° " + (leftItemIndex + 1) + "~w~ selected!");
         };
 
         pauseMenu.OnRightItemChange += (menu, item, leftItemIndex, rightItemIndex) =>
         {
             Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, left Item ~o~N° " + (leftItemIndex + 1) + "~w~ and right Item ~b~N° " + (rightItemIndex + 1) + "~w~ selected!");
+            Debug.WriteLine(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, left Item ~o~N° " + (leftItemIndex + 1) + "~w~ and right Item ~b~N° " + (rightItemIndex + 1) + "~w~ selected!");
         };
 
         pauseMenu.OnRightItemSelect += (menu, item, leftItemIndex, rightItemIndex) =>
         {
             Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + "~w~, left Item ~o~N° " + (leftItemIndex + 1) + "~w~ and right Item ~b~N° " + (rightItemIndex + 1) + "~w~ of type ~p~" + item.ItemType + "~w~ selected!");
+            Debug.WriteLine(menu.Tabs[menu.Index].Title + "~w~, left Item ~o~N° " + (leftItemIndex + 1) + "~w~ and right Item ~b~N° " + (rightItemIndex + 1) + "~w~ of type ~p~" + item.ItemType + "~w~ selected!");
         };
         pauseMenu.Visible = true;
         //API.UnregisterPedheadshot(mugshot);

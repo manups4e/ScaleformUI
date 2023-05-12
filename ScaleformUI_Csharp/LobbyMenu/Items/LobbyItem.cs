@@ -11,7 +11,9 @@ namespace ScaleformUI
         private bool _enabled = true;
         private bool _selected;
         private Ped clonePed;
-        private int _cloneHandle;
+        private int _clonePedHandle;
+        private bool _clonePedAsleep = true;
+        private bool _clonePedLighting = false;
 
         /// <summary>
         /// Whether this item is currently selected.
@@ -24,6 +26,7 @@ namespace ScaleformUI
                 _selected = value;
             }
         }
+
         public Ped ClonePed
         {
             get => clonePed;
@@ -31,6 +34,28 @@ namespace ScaleformUI
             {
                 clonePed = value;
                 CreateClonedPed(clonePed);
+            }
+        }
+
+        public bool ClonePedAsleep
+        {
+            get => _clonePedAsleep;
+            set
+            {
+                _clonePedAsleep = value;
+                // Don't ask me why its in reverse, it just is.
+                // They should have called it SetPauseMenuPedAwakeState
+                API.SetPauseMenuPedSleepState(!_clonePedAsleep);
+            }
+        }
+
+        public bool ClonePedLighting
+        {
+            get => _clonePedLighting;
+            set
+            {
+                _clonePedLighting = value;
+                API.SetPauseMenuPedLighting(_clonePedLighting);
             }
         }
 
@@ -68,23 +93,22 @@ namespace ScaleformUI
 
         private async void UpdateClone()
         {
-            if (API.DoesEntityExist(_cloneHandle))
+            if (API.DoesEntityExist(_clonePedHandle))
             {
-                API.DeleteEntity(ref _cloneHandle);
+                API.DeleteEntity(ref _clonePedHandle);
             }
 
-            _cloneHandle = API.ClonePed(ClonePed.Handle, 0, false, true);
-            API.GivePedToPauseMenu(_cloneHandle, 2);
-            API.SetPauseMenuPedSleepState(true);
-            API.SetPauseMenuPedLighting(ParentColumn.Parent is not TabView || (ParentColumn.Parent as TabView).FocusLevel != 0);
-            API.SetEntityVisible(_cloneHandle, true, false);
-            API.FreezeEntityPosition(_cloneHandle, true);
-            API.SetEntityInvincible(_cloneHandle, true);
-            API.SetEntityCollision(_cloneHandle, false, false);
+            _clonePedHandle = API.ClonePed(ClonePed.Handle, 0, false, true);
+            API.GivePedToPauseMenu(_clonePedHandle, 2);
+            API.SetPauseMenuPedSleepState(!_clonePedAsleep);
+            API.SetPauseMenuPedLighting(_clonePedLighting);
+            API.SetEntityVisible(_clonePedHandle, true, false);
+            API.FreezeEntityPosition(_clonePedHandle, true);
+            API.SetEntityInvincible(_clonePedHandle, true);
+            API.SetEntityCollision(_clonePedHandle, false, false);
             Vector3 pos = ClonePed.Position + new Vector3(0, 0, -10f);
-            API.SetEntityCoords(_cloneHandle, pos.X, pos.Y, pos.Z, true, false, false, false);
+            API.SetEntityCoords(_clonePedHandle, pos.X, pos.Y, pos.Z, true, false, false, false);
         }
-
 
         /// <summary>
         /// Whether this item is currently being hovered on with a mouse.
