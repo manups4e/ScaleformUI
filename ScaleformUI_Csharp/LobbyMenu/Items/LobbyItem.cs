@@ -11,7 +11,8 @@ namespace ScaleformUI
         private bool _enabled = true;
         private bool _selected;
         private Ped clonePed;
-        private int _clonePedHandle;
+        private Ped _clonePed;
+        private Ped _clonePedForPauseMenu;
         private bool _clonePedAsleep = true;
         private bool _clonePedLighting = false;
 
@@ -27,13 +28,20 @@ namespace ScaleformUI
             }
         }
 
+        /// <summary>
+        /// Cloned ped for the pause menu. This is the ped that will be shown in the pause menu.
+        /// The ped is put under the players position when the menu is opened.
+        /// </summary>
         public Ped ClonePed
         {
             get => clonePed;
             set
             {
                 clonePed = value;
-                CreateClonedPed(clonePed);
+                if (clonePed != null)
+                    CreateClonedPed();
+                else
+                    API.ClearPedInPauseMenu();
             }
         }
 
@@ -71,55 +79,80 @@ namespace ScaleformUI
             ClonePedAsleep = false;
         }
 
-        internal void CreateClonedPed(Ped ped)
+        internal void CreateClonedPed()
         {
-            if (ped == null) API.ClearPedInPauseMenu();
-            else
+            // create a ped that we can use for the pause menu and hide it
+            if (_clonePedForPauseMenu is null || !_clonePedForPauseMenu.Exists())
             {
-                if (ParentColumn != null && ParentColumn.Parent != null && ParentColumn.Parent.Visible)
+                _clonePedForPauseMenu = clonePed.Clone();
+                HidePed(_clonePedForPauseMenu);
+            }
+
+            if (ParentColumn != null && ParentColumn.Parent != null && ParentColumn.Parent.Visible)
+            {
+                if (Panel != null)
                 {
-                    if (Panel != null)
+                    Panel.UpdatePanel();
+                }
+                if (ParentColumn.Parent is MainView lobby)
+                {
+                    if (lobby.PlayersColumn.Items[lobby.PlayersColumn.CurrentSelection] == this)
                     {
-                        Panel.UpdatePanel();
+                        UpdateClone();
                     }
-                    if (ParentColumn.Parent is MainView lobby)
+                }
+                else if (ParentColumn.Parent is TabView pause)
+                {
+                    if (pause.Tabs[pause.Index] is PlayerListTab tab)
                     {
-                        if (lobby.PlayersColumn.Items[lobby.PlayersColumn.CurrentSelection] == this)
+                        if (tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection] == this)
                         {
                             UpdateClone();
-                        }
-                    }
-                    else if (ParentColumn.Parent is TabView pause)
-                    {
-                        if (pause.Tabs[pause.Index] is PlayerListTab tab)
-                        {
-                            if (tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection] == this)
-                            {
-                                UpdateClone();
-                            }
                         }
                     }
                 }
             }
         }
 
+        private void HidePed(Ped ped)
+        {
+            ped.IsVisible = true;
+            ped.IsInvincible = true;
+            ped.IsCollisionEnabled = false;
+            ped.IsPositionFrozen = true;
+            ped.IsPersistent = true;
+            ped.Position = ped.Position + new Vector3(0, 0, -10f);
+        }
+
         private async void UpdateClone()
         {
-            if (API.DoesEntityExist(_clonePedHandle))
+            // delete the old ped if it exists
+            if (_clonePed is not null && _clonePed.Exists())
             {
-                API.DeleteEntity(ref _clonePedHandle);
+                _clonePed.Delete();
             }
 
-            _clonePedHandle = API.ClonePed(ClonePed.Handle, 0, false, true);
-            API.GivePedToPauseMenu(_clonePedHandle, 2);
+            // clone the ped we cached away for the pause menu
+            _clonePed = _clonePedForPauseMenu.Clone();
+
+            API.GivePedToPauseMenu(_clonePed.Handle, 2);
             API.SetPauseMenuPedSleepState(!_clonePedAsleep);
             API.SetPauseMenuPedLighting(_clonePedLighting);
-            API.SetEntityVisible(_clonePedHandle, true, false);
-            API.FreezeEntityPosition(_clonePedHandle, true);
-            API.SetEntityInvincible(_clonePedHandle, true);
-            API.SetEntityCollision(_clonePedHandle, false, false);
-            Vector3 pos = ClonePed.Position + new Vector3(0, 0, -10f);
-            API.SetEntityCoords(_clonePedHandle, pos.X, pos.Y, pos.Z, true, false, false, false);
+
+            HidePed(_clonePed);
+        }
+
+        public void Dispose()
+        {
+            if (_clonePed.Exists())
+            {
+                _clonePed.Delete();
+            }
+
+            if (_clonePedForPauseMenu.Exists())
+            {
+                _clonePedForPauseMenu.Delete();
+            }
         }
 
         /// <summary>
