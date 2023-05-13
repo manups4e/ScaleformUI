@@ -1,8 +1,8 @@
 ﻿namespace ScaleformUI.Elements
 {
-    public class ScaleformLabel
+    public struct ScaleformLabel
     {
-        private string _label;
+        private readonly string _label;
 
         public ScaleformLabel(string label)
         {
@@ -34,7 +34,7 @@
 
         public override bool Equals(object obj)
         {
-            return obj is ScaleformLabel && this == (ScaleformLabel)obj;
+            return obj is ScaleformLabel label && this == label;
         }
 
         public override int GetHashCode()
