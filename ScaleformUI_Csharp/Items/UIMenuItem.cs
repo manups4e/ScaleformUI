@@ -492,7 +492,7 @@ namespace ScaleformUI
             set
             {
                 _enabled = value;
-                if (Parent != null)
+                if (Parent is not null && Parent.Visible)
                 {
                     var it = Parent.MenuItems.IndexOf(this);
                     ScaleformUI._ui.CallFunction("ENABLE_ITEM", it, _enabled);
