@@ -1,8 +1,8 @@
 ﻿namespace ScaleformUI.Elements
 {
-    public class ScaleformLiteralString
+    public struct ScaleformLiteralString
     {
-        private string _literalString;
+        private readonly string _literalString;
 
         public ScaleformLiteralString(string literalString)
         {
@@ -34,7 +34,7 @@
 
         public override bool Equals(object obj)
         {
-            return obj is ScaleformLiteralString && this == (ScaleformLiteralString)obj;
+            return obj is ScaleformLiteralString literal && this == literal;
         }
 
         public override int GetHashCode()
