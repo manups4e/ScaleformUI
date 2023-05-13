@@ -1,4 +1,5 @@
 ﻿using CitizenFX.Core;
+using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI
 {
@@ -12,7 +13,7 @@ namespace ScaleformUI
 
     public class PopupWarning
     {
-        internal Scaleform _sc;
+        internal ScaleformWideScreen _sc;
         private bool _disableControls;
         private List<InstructionalButton> _buttonList;
 
@@ -34,7 +35,7 @@ namespace ScaleformUI
         private async Task Load()
         {
             if (_sc != null) return;
-            _sc = new Scaleform("POPUP_WARNING");
+            _sc = new ScaleformWideScreen("POPUP_WARNING");
             int timeout = 1000;
             int start = ScaleformUI.GameTime;
             while (!_sc.IsLoaded && ScaleformUI.GameTime - start < timeout) await BaseScript.Delay(0);

@@ -1,11 +1,12 @@
 ﻿using CitizenFX.Core;
+using ScaleformUI.Scaleforms;
 using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI
 {
     public class BigFeedHandler
     {
-        internal Scaleform _sc;
+        internal ScaleformWideScreen _sc;
         private bool enabled;
         private string title = "";
         private string subtitle = "";
@@ -109,7 +110,7 @@ namespace ScaleformUI
         private async void Load()
         {
             if (_sc != null) return;
-            _sc = new Scaleform("GTAV_ONLINE");
+            _sc = new ScaleformWideScreen("GTAV_ONLINE");
             int timeout = 1000;
             int start = ScaleformUI.GameTime;
             while (!_sc.IsLoaded && ScaleformUI.GameTime - start < timeout) await BaseScript.Delay(0);

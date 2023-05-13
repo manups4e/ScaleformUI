@@ -1,5 +1,6 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
+using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI
 {
@@ -30,7 +31,7 @@ namespace ScaleformUI
 
     public class MissionSelectorHandler
     {
-        internal Scaleform _sc;
+        internal ScaleformWideScreen _sc;
         private bool enabled;
         private bool alreadyVoted;
         public int[] Votes = new int[9];

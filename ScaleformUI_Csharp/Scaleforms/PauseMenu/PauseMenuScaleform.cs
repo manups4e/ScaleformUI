@@ -1,15 +1,14 @@
 ﻿using CitizenFX.Core;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using ScaleformUI.Scaleforms;
 using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI
 {
     public class PauseMenuScaleform
     {
-        public Scaleform _header;
-        public Scaleform _pause;
-        public Scaleform _lobby;
+        public ScaleformWideScreen _header;
+        public ScaleformWideScreen _pause;
+        public ScaleformWideScreen _lobby;
         private bool _visible;
         internal bool Loaded => _header is not null && _header.IsLoaded && _pause is not null && _pause.IsLoaded;
         public bool Visible { get => _visible; set => _visible = value; }
@@ -20,9 +19,9 @@ namespace ScaleformUI
 
         public void Load()
         {
-            _header = new Scaleform("pausemenuheader");
-            _pause = new Scaleform("pausemenu");
-            _lobby = new Scaleform("lobbymenu");
+            _header = new ScaleformWideScreen("pausemenuheader");
+            _pause = new ScaleformWideScreen("pausemenu");
+            _lobby = new ScaleformWideScreen("lobbymenu");
         }
 
         public void SetHeaderTitle(string title, string subtitle = "", bool shiftUpHeader = false)

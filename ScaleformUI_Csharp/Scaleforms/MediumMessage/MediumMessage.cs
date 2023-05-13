@@ -1,10 +1,11 @@
 ﻿using CitizenFX.Core;
+using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI
 {
     public class MediumMessageHandler
     {
-        internal Scaleform _sc;
+        internal ScaleformWideScreen _sc;
         private int _start;
         private int _timer;
         private bool _hasAnimatedOut;
@@ -14,7 +15,7 @@ namespace ScaleformUI
         public async Task Load()
         {
             if (_sc != null) return;
-            _sc = new Scaleform("MIDSIZED_MESSAGE");
+            _sc = new ScaleformWideScreen("MIDSIZED_MESSAGE");
 
             var timeout = 1000;
             int start = ScaleformUI.GameTime;

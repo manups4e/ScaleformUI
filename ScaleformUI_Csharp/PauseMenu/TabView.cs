@@ -1,8 +1,5 @@
 ﻿using CitizenFX.Core;
 using ScaleformUI.LobbyMenu;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI.PauseMenu
@@ -378,15 +375,15 @@ namespace ScaleformUI.PauseMenu
                         PushScaleformMovieFunctionParameterInt((int)item.TextColor);
                         PushScaleformMovieFunctionParameterInt((int)item.HighlightedTextColor);
                         EndScaleformMovieMethod();
-                        _pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL_RIGHT", tab, index, item.RightLabel);
+                        _pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL_RIGHT", tab.Focused, index, item.RightLabel);
                         if (item.RightBadge != BadgeIcon.NONE)
                         {
-                            _pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_BADGE", tab, index, (int)item.RightBadge);
+                            _pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_BADGE", tab.Focused, index, (int)item.RightBadge);
                         }
                         break;
                 }
                 if (item.LeftBadge != BadgeIcon.NONE)
-                    _pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", tab, index, (int)item.LeftBadge);
+                    _pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", tab.Focused, index, (int)item.LeftBadge);
                 i++;
             }
             tab.SettingsColumn.CurrentSelection = 0;
@@ -633,7 +630,7 @@ namespace ScaleformUI.PauseMenu
                         {
                             case 0:
                                 plTab.PlayersColumn.CurrentSelection = retVal;
-                                plTab.PlayersColumn.Items[retVal].CreateClonedPed(plTab.PlayersColumn.Items[retVal].ClonePed);
+                                plTab.PlayersColumn.Items[retVal].CreateClonedPed();
                                 break;
                             case 1:
                                 plTab.SettingsColumn.CurrentSelection = retVal;
@@ -667,7 +664,7 @@ namespace ScaleformUI.PauseMenu
                         {
                             case 0:
                                 plTab.PlayersColumn.CurrentSelection = retVal;
-                                plTab.PlayersColumn.Items[retVal].CreateClonedPed(plTab.PlayersColumn.Items[retVal].ClonePed);
+                                plTab.PlayersColumn.Items[retVal].CreateClonedPed();
                                 break;
                             case 1:
                                 plTab.SettingsColumn.CurrentSelection = retVal;
@@ -699,7 +696,7 @@ namespace ScaleformUI.PauseMenu
                         _pause.HeaderGoLeft();
                         Index = retVal;
                         if (Tabs[Index] is PlayerListTab _plTab)
-                            _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].CreateClonedPed(_plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].ClonePed);
+                            _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].CreateClonedPed();
                         else ClearPedInPauseMenu();
                         break;
                     case 1:
@@ -709,7 +706,7 @@ namespace ScaleformUI.PauseMenu
                                 switch (plTab.Focus)
                                 {
                                     case 0:
-                                        plTab.PlayersColumn.Items[retVal].CreateClonedPed(plTab.PlayersColumn.Items[retVal].ClonePed);
+                                        plTab.PlayersColumn.Items[retVal].CreateClonedPed();
                                         break;
                                     case 1:
                                         var item = plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection];
@@ -792,7 +789,7 @@ namespace ScaleformUI.PauseMenu
                         _pause.HeaderGoRight();
                         Index = retVal;
                         if (Tabs[Index] is PlayerListTab _plTab)
-                            _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].CreateClonedPed(_plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].ClonePed);
+                            _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].CreateClonedPed();
                         else ClearPedInPauseMenu();
                         break;
                     case 1:
@@ -802,7 +799,7 @@ namespace ScaleformUI.PauseMenu
                                 switch (plTab.Focus)
                                 {
                                     case 0:
-                                        plTab.PlayersColumn.Items[retVal].CreateClonedPed(plTab.PlayersColumn.Items[retVal].ClonePed);
+                                        plTab.PlayersColumn.Items[retVal].CreateClonedPed();
                                         break;
                                     case 1:
                                         var item = plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection];
@@ -901,7 +898,7 @@ namespace ScaleformUI.PauseMenu
                                 FocusLevel = 1;
                                 Index = itemId;
                                 if (Tabs[Index] is PlayerListTab tab)
-                                    tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].CreateClonedPed(tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].ClonePed);
+                                    tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].CreateClonedPed();
                                 else
                                     ClearPedInPauseMenu();
                                 Game.PlaySound("SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET");
@@ -961,7 +958,7 @@ namespace ScaleformUI.PauseMenu
                                     }
                                     else
                                         tab.PlayersColumn.CurrentSelection = itemId;
-                                    tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].CreateClonedPed(tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].ClonePed);
+                                    tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].CreateClonedPed();
                                 }
                                 break;
                             case 1: // left item in subitem tab pressed or playerListTab settings selected
