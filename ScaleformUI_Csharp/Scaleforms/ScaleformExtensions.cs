@@ -68,38 +68,30 @@ namespace ScaleformUI.Scaleforms
             API.BeginScaleformMovieMethod(Handle, function);
             foreach (object argument in arguments)
             {
-                if (argument is int)
+                if (argument is int argInt)
                 {
-                    API.PushScaleformMovieMethodParameterInt((int)argument);
+                    API.PushScaleformMovieMethodParameterInt(argInt);
                 }
-                else if (argument is string)
-                {
-                    API.PushScaleformMovieMethodParameterString((string)argument);
-                }
-                else if (argument is char)
+                else if (argument is string || argument is char)
                 {
                     API.PushScaleformMovieMethodParameterString(argument.ToString());
                 }
-                else if (argument is float)
+                else if (argument is double || argument is float)
                 {
                     API.PushScaleformMovieMethodParameterFloat((float)argument);
                 }
-                else if (argument is double)
+                else if (argument is bool argBool)
                 {
-                    API.PushScaleformMovieMethodParameterFloat((float)(double)argument);
+                    API.PushScaleformMovieMethodParameterBool(argBool);
                 }
-                else if (argument is bool)
+                else if (argument is ScaleformLabel argLabel)
                 {
-                    API.PushScaleformMovieMethodParameterBool((bool)argument);
-                }
-                else if (argument is ScaleformLabel)
-                {
-                    API.BeginTextCommandScaleformString(((ScaleformLabel)argument).Label);
+                    API.BeginTextCommandScaleformString(argLabel.Label);
                     API.EndTextCommandScaleformString();
                 }
-                else if (argument is ScaleformLiteralString)
+                else if (argument is ScaleformLiteralString argLiteral)
                 {
-                    API.ScaleformMovieMethodAddParamTextureNameString_2(((ScaleformLiteralString)argument).LiteralString);
+                    API.ScaleformMovieMethodAddParamTextureNameString_2(argLiteral.LiteralString);
                 }
                 else
                 {
