@@ -92,12 +92,12 @@ namespace ScaleformUI.Scaleforms
                 {
                     API.PushScaleformMovieMethodParameterBool((bool)argument);
                 }
-                else if (argument.GetType() == typeof(ScaleformLabel))
+                else if (argument is ScaleformLabel)
                 {
                     API.BeginTextCommandScaleformString(((ScaleformLabel)argument).Label);
                     API.EndTextCommandScaleformString();
                 }
-                else if (argument.GetType() == typeof(ScaleformLiteralString))
+                else if (argument is ScaleformLiteralString)
                 {
                     API.ScaleformMovieMethodAddParamTextureNameString_2(((ScaleformLiteralString)argument).LiteralString);
                 }
