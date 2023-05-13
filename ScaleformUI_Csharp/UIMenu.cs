@@ -1,5 +1,6 @@
 using CitizenFX.Core;
 using CitizenFX.Core.UI;
+using ScaleformUI.Scaleforms;
 using System.Drawing;
 using static CitizenFX.Core.Native.API;
 using Control = CitizenFX.Core.Control;
@@ -887,7 +888,7 @@ namespace ScaleformUI
         private readonly Dictionary<MenuControls, Tuple<List<Keys>, List<Tuple<Control, int>>>> _keyDictionary =
             new Dictionary<MenuControls, Tuple<List<Keys>, List<Tuple<Control, int>>>>();
 
-        private readonly Scaleform _menuGlare;
+        private readonly ScaleformWideScreen _menuGlare;
 
         private static readonly MenuControls[] _menuControls = Enum.GetValues(typeof(MenuControls)).Cast<MenuControls>().ToArray();
 
@@ -1139,7 +1140,7 @@ namespace ScaleformUI
             Children = new Dictionary<UIMenuItem, UIMenu>();
             WidthOffset = 0;
             Glare = glare;
-            _menuGlare = new Scaleform("mp_menu_glare");
+            _menuGlare = new ScaleformWideScreen("mp_menu_glare");
             Title = title;
             Subtitle = subtitle;
             AlternativeTitle = alternativeTitle;

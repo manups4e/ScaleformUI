@@ -5,7 +5,7 @@ namespace ScaleformUI.Scaleforms.MultiplayerChat
     public class MultiplayerChatHandler
     {
         private const string SCALEFORM_NAME = "MULTIPLAYER_CHAT";
-        private Scaleform _sc;
+        private ScaleformWideScreen _sc;
 
         private bool _isTyping;
         private int _start = 0;
@@ -16,7 +16,7 @@ namespace ScaleformUI.Scaleforms.MultiplayerChat
         private async void Load()
         {
             if (_sc is not null) return;
-            _sc = new Scaleform(SCALEFORM_NAME);
+            _sc = new ScaleformWideScreen(SCALEFORM_NAME);
             int timeout = 1000;
             int start = ScaleformUI.GameTime;
             while (!_sc.IsLoaded && ScaleformUI.GameTime - start < timeout) await BaseScript.Delay(0);

@@ -1,6 +1,7 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
+using ScaleformUI.Scaleforms;
 using System.Drawing;
 
 namespace ScaleformUI
@@ -199,7 +200,7 @@ namespace ScaleformUI
 
     public class InstructionalButtonsScaleform
     {
-        internal Scaleform _sc;
+        internal ScaleformWideScreen _sc;
         private bool _useMouseButtons;
         private bool _enabled = false;
         internal bool _isUsingKeyboard;
@@ -246,7 +247,7 @@ namespace ScaleformUI
         internal async void Load()
         {
             if (_sc != null) return;
-            _sc = new Scaleform("INSTRUCTIONAL_BUTTONS");
+            _sc = new ScaleformWideScreen("INSTRUCTIONAL_BUTTONS");
             int timeout = 1000;
             int start = ScaleformUI.GameTime;
             while (!_sc.IsLoaded && ScaleformUI.GameTime - start < timeout) await BaseScript.Delay(0);

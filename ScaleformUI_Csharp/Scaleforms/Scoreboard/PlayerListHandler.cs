@@ -1,5 +1,6 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
+using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI
 {
@@ -8,7 +9,7 @@ namespace ScaleformUI
         private int _start;
         private int _timer;
         public bool Enabled { get; set; }
-        internal Scaleform _sc { get; set; }
+        internal ScaleformWideScreen _sc { get; set; }
         private int Index { get; set; } = 0;
         public int MaxPages { get; set; } = 1;
 
@@ -45,7 +46,7 @@ namespace ScaleformUI
         public async Task Load()
         {
             if (_sc is not null) return;
-            _sc = new Scaleform("MP_MM_CARD_FREEMODE");
+            _sc = new ScaleformWideScreen("MP_MM_CARD_FREEMODE");
             var timeout = 1000;
             int start = ScaleformUI.GameTime;
             while (!_sc.IsLoaded && ScaleformUI.GameTime - start < timeout) await BaseScript.Delay(0);

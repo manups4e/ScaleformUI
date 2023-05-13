@@ -1,10 +1,12 @@
 ﻿using CitizenFX.Core;
+using ScaleformUI.Elements;
+using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI
 {
     public class BigMessageHandler
     {
-        internal Scaleform _sc;
+        internal ScaleformWideScreen _sc;
         private int _start;
         private int _duration;
         private bool _transitionExecuted = false;
@@ -27,7 +29,7 @@ namespace ScaleformUI
         public async Task Load()
         {
             if (_sc != null) return;
-            _sc = new Scaleform("MP_BIG_MESSAGE_FREEMODE");
+            _sc = new ScaleformWideScreen("MP_BIG_MESSAGE_FREEMODE");
             var timeout = 1000;
             var start = ScaleformUI.GameTime;
             while (!_sc.IsLoaded && ScaleformUI.GameTime - start < timeout) await BaseScript.Delay(0);
@@ -51,6 +53,15 @@ namespace ScaleformUI
         }
 
         public async void ShowMissionPassedMessage(string msg, int time = 5000, bool manualDispose = false)
+        {
+            await Load();
+            _start = ScaleformUI.GameTime;
+            ManualDispose = manualDispose;
+            _sc.CallFunction("SHOW_MISSION_PASSED_MESSAGE", msg, "", 100, true, 0, true);
+            _duration = time;
+        }
+
+        public async void ShowMissionPassedMessage(ScaleformLabel msg, int time = 5000, bool manualDispose = false)
         {
             await Load();
             _start = ScaleformUI.GameTime;
