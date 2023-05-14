@@ -9,7 +9,7 @@ end
 ---@field private _label string
 ---@field private _color number
 ---@field public Parent MissionDetailsPanel
----@field public Items MissionDetailsItem[]
+---@field public Items table<MissionDetailsItem>
 ---@field public TextureDict string
 ---@field public TextureName string
 ---@field public Title fun(self: MissionDetailsPanel, label: string): string
@@ -23,7 +23,7 @@ function MissionDetailsPanel.New(label, color)
         _label = label or "",
         _color = color or 116,
         Parent = nil,
-        Items = {} --[[@type MissionDetailsItem[]],
+        Items = {} --[[@type table<MissionDetailsItem>]],
         TextureDict = "",
         TextureName = "",
         OnIndexChanged = function(index)
