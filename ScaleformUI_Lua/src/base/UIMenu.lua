@@ -1273,7 +1273,8 @@ function UIMenu:SelectItem(play)
     end
 end
 
----GoBack
+---Go back to the previous menu
+---@param boolean boolean? Play sound
 function UIMenu:GoBack(boolean)
     local playSound = true
     if type(boolean) == "boolean" then
