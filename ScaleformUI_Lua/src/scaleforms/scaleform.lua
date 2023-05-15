@@ -78,7 +78,7 @@ function Scaleform:CallFunction(theFunction, returndata, ...)
                     else
                         ScaleformMovieMethodAddParamTextureNameString_2(label) -- SCALEFORM_MOVIE_METHOD_ADD_PARAM_LITERAL_STRING
                     end
-                elseif tType == "playerNameComp" then
+                elseif tType == "playerName" then
                     local label = arg[i].data
                     BeginTextCommandScaleformString("STRING")
                     AddTextComponentSubstringPlayerName(label)
