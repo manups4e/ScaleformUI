@@ -10,6 +10,7 @@ end
 ---@field public IsLoaded fun(self:Scaleform):boolean
 ---@field public IsValid fun(self:Scaleform):boolean
 ---@field public Render2D fun(self:Scaleform):nil
+---@field public Render2DMasked fun(self:Scaleform, scaleformToMask:Scaleform):nil
 ---@field public Render2DNormal fun(self:Scaleform, x:number, y:number, width:number, height:number):nil
 ---@field public Render3D fun(self:Scaleform, x:number, y:number, z:number, rx:number, ry:number, rz:number, scale:number):nil
 ---@field public Render3DAdditive fun(self:Scaleform, x:number, y:number, z:number, rx:number, ry:number, rz:number, scale:number):nil
@@ -61,16 +62,32 @@ function Scaleform:CallFunction(theFunction, returndata, ...)
                     ScaleformMovieMethodAddParamFloat(arg[i])
                 end
             elseif sType == "table" then
-                local type = arg[i].type
-                if type == "label" then
+                local tType = arg[i].type
+                if tType == "label" then
                     local label = arg[i].data
                     BeginTextCommandScaleformString(label)
                     EndTextCommandScaleformString() -- END_TEXT_COMMAND_SCALEFORM_STRING
-                elseif type == "literal" then
+                elseif tType == "literal" then
                     local label = arg[i].data
-                    ScaleformMovieMethodAddParamTextureNameString_2(label) -- SCALEFORM_MOVIE_METHOD_ADD_PARAM_LITERAL_STRING
+                    local labelType = type(label)
+
+                    if labelType == "table" then
+                        for lt = 1, #label do
+                            ScaleformMovieMethodAddParamTextureNameString_2(label[lt]) -- SCALEFORM_MOVIE_METHOD_ADD_PARAM_LITERAL_STRING
+                        end
+                    else
+                        ScaleformMovieMethodAddParamTextureNameString_2(label) -- SCALEFORM_MOVIE_METHOD_ADD_PARAM_LITERAL_STRING
+                    end
+                elseif tType == "playerNameComp" then
+                    local label = arg[i].data
+                    BeginTextCommandScaleformString("STRING")
+                    AddTextComponentSubstringPlayerName(label)
+                    EndTextCommandScaleformString()
+                elseif tType == "playerNameString" then
+                    local label = arg[i].data
+                    ScaleformMovieMethodAddParamPlayerNameString(label)
                 else
-                    assert(false, "^1ScaleformUI [ERROR]: ^7Unknown type ^1" .. type .. "^7.")
+                    assert(false, "^1ScaleformUI [ERROR]: ^7Unknown type ^1" .. tType .. "^7.")
                 end
             elseif sType == "string" then
                 if arg[i]:find("^desc_{") or arg[i]:find("^menu_lobby_desc_{") or arg[i]:find("^PauseMenu_") or arg[i]:find("^menu_pause_playerTab{") then
@@ -118,6 +135,11 @@ end
 ---Render the scaleform in 3D space with additive blending
 function Scaleform:Render3DAdditive(x, y, z, rx, ry, rz, scalex, scaley, scalez)
     DrawScaleformMovie_3d(self.handle, x, y, z, rx, ry, rz, 2.0, 2.0, 1.0, scalex, scaley, scalez, 2)
+end
+
+---Mask this scaleform with another scaleform full screen
+function Scaleform:Render2DMasked(scaleformToMask)
+    DrawScaleformMovieFullscreenMasked(self.handle, scaleformToMask.handle, 255, 255, 255, 255)
 end
 
 ---Disposes the scaleform
