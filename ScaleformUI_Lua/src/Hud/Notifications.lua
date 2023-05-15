@@ -208,15 +208,21 @@ end
 ---Show a floating help notification
 ---@param msg string @The message
 ---@param coords vector3 @The coordinates of the notification
----@param duration number @The display duration in milliseconds (-1 for infinite)
+---@param duration number @The display duration in milliseconds
 ---@return nil
 function Notifications:ShowFloatingHelpNotification(msg, coords, duration)
-    if (duration == nil) then duration = -1 end
-    AddTextEntry("ScaleformUIFloatingHelpText", msg)
-    SetFloatingHelpTextWorldPosition(1, coords.x, coords.y, coords.z)
-    SetFloatingHelpTextStyle(1, 1, 2, -1, 3, 0)
-    BeginTextCommandDisplayHelp("ScaleformUIFloatingHelpText")
-    EndTextCommandDisplayHelp(2, false, false, duration)
+    Citizen.CreateThread(function()
+        local display_notification = true
+        Citizen.SetTimeout(3000, function() display_notification = false end)
+        while display_notification do
+            Citizen.Wait(0)
+            AddTextEntry("ScaleformUIFloatingHelpText", msg)
+            SetFloatingHelpTextWorldPosition(1, coords.x, coords.y, coords.z)
+            SetFloatingHelpTextStyle(1, 1, 2, -1, 3, 0)
+            BeginTextCommandDisplayHelp("ScaleformUIFloatingHelpText")
+            EndTextCommandDisplayHelp(2, false, false, duration)
+        end
+    end)
 end
 
 ---Show an advanced notification
