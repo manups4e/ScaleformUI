@@ -213,14 +213,14 @@ end
 function Notifications:ShowFloatingHelpNotification(msg, coords, duration)
     Citizen.CreateThread(function()
         local display_notification = true
-        Citizen.SetTimeout(3000, function() display_notification = false end)
+        Citizen.SetTimeout(duration, function() display_notification = false end)
         while display_notification do
             Citizen.Wait(0)
             AddTextEntry("ScaleformUIFloatingHelpText", msg)
             SetFloatingHelpTextWorldPosition(1, coords.x, coords.y, coords.z)
             SetFloatingHelpTextStyle(1, 1, 2, -1, 3, 0)
             BeginTextCommandDisplayHelp("ScaleformUIFloatingHelpText")
-            EndTextCommandDisplayHelp(2, false, false, duration)
+            EndTextCommandDisplayHelp(2, false, false, -1)
         end
     end)
 end
