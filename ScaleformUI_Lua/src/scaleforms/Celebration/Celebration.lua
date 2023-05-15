@@ -265,16 +265,13 @@ end
 ---@see CelebrationCustomSounds
 function CelebrationInstance:SetCustomSound(soundSet)
   self._scalformMain:CallFunction("SET_CUSTOM_SOUND", false,
-    0,
-    { type = "literal", data = { "Blade_Appear", soundSet } }
+    { type = "literal", data = { 0, "Blade_Appear", soundSet } }
   )
   self._scalformMain:CallFunction("SET_CUSTOM_SOUND", false,
-    7,
-    { type = "literal", data = { "Blade_Beasts_Fail", soundSet } }
+    { type = "literal", data = { 7, "Blade_Beasts_Fail", soundSet } }
   )
   self._scalformMain:CallFunction("SET_CUSTOM_SOUND", false,
-    8,
-    { type = "literal", data = { "Blade_Beasts_Win", soundSet } }
+    { type = "literal", data = { 8, "Blade_Beasts_Win", soundSet } }
   )
 end
 
