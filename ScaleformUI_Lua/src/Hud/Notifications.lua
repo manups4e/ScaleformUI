@@ -14,7 +14,7 @@ end
 ---@field public ShowNotification fun(self:Notifications, msg:string, blink:boolean, showInBrief:boolean):nil
 ---@field public ShowNotificationWithColor fun(self:Notifications, msg:string, color:Colours, blink:boolean, showInBrief:boolean):nil
 ---@field public ShowHelpNotification fun(self:Notifications, helpText:string, duration:number):nil
----@field public ShowFloatingHelpNotification fun(self:Notifications, helpText:string, coords:vector3, duration:number):nil
+---@field public ShowFloatingHelpNotification fun(self:Notifications, helpText:string, coords:vector3):nil
 ---@field public ShowAdvancedNotification fun(self:Notifications, title:string, subtitle:string, body:string, character:NotificationCharacters, icon:NotificationIcon, backgroundColor:Colours, flashColoir:table<number, number, number>, blink:boolean, type:NotificationType, sound:string):nil
 ---@field public ShowStatNotification fun(self:Notifications, newProgress:number, oldProgress:number, title:string, blink:boolean, showInBrief:boolean):nil
 ---@field public ShowVSNotification fun(self:Notifications, ped1:number, ped2:number, colour1:Colours, colour2:Colours):nil
@@ -208,15 +208,13 @@ end
 ---Show a floating help notification
 ---@param msg string @The message
 ---@param coords vector3 @The coordinates of the notification
----@param duration number @The display duration in milliseconds (-1 for infinite)
 ---@return nil
-function Notifications:ShowFloatingHelpNotification(msg, coords, duration)
-    if (duration == nil) then duration = -1 end
+function Notifications:ShowFloatingHelpNotification(msg, coords)
     AddTextEntry("ScaleformUIFloatingHelpText", msg)
-    SetFloatingHelpTextWorldPosition(1, coords.x, coords.y, coords.z)
+    SetFloatingHelpTextWorldPosition(1, coords)
     SetFloatingHelpTextStyle(1, 1, 2, -1, 3, 0)
     BeginTextCommandDisplayHelp("ScaleformUIFloatingHelpText")
-    EndTextCommandDisplayHelp(2, false, false, duration)
+    EndTextCommandDisplayHelp(2, false, false, -1)
 end
 
 ---Show an advanced notification
