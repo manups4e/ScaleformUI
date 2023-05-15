@@ -73,7 +73,11 @@ function Scaleform:CallFunction(theFunction, returndata, ...)
 
                     if labelType == "table" then
                         for lt = 1, #label do
-                            ScaleformMovieMethodAddParamTextureNameString_2(label[lt]) -- SCALEFORM_MOVIE_METHOD_ADD_PARAM_LITERAL_STRING
+                            if type(lt) == "number" then
+                                ScaleformMovieMethodAddParamInt(label[lt])
+                            else
+                                ScaleformMovieMethodAddParamTextureNameString_2(label[lt]) -- SCALEFORM_MOVIE_METHOD_ADD_PARAM_LITERAL_STRING
+                            end
                         end
                     else
                         ScaleformMovieMethodAddParamTextureNameString_2(label) -- SCALEFORM_MOVIE_METHOD_ADD_PARAM_LITERAL_STRING
