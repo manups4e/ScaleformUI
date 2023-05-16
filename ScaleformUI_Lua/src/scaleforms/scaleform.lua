@@ -64,32 +64,16 @@ function Scaleform:CallFunction(theFunction, returndata, ...)
             elseif sType == "table" then
                 local tType = arg[i].type
                 if tType == "label" then
-                    local label = arg[i].data
-                    BeginTextCommandScaleformString(label)
-                    EndTextCommandScaleformString() -- END_TEXT_COMMAND_SCALEFORM_STRING
+                    BeginTextCommandScaleformString(arg[i].data)
+                    EndTextCommandScaleformString()                              -- END_TEXT_COMMAND_SCALEFORM_STRING
                 elseif tType == "literal" then
-                    local label = arg[i].data
-                    local labelType = type(label)
-
-                    if labelType == "table" then
-                        for lt = 1, #label do
-                            if type(lt) == "number" then
-                                ScaleformMovieMethodAddParamInt(label[lt])
-                            else
-                                ScaleformMovieMethodAddParamTextureNameString_2(label[lt]) -- SCALEFORM_MOVIE_METHOD_ADD_PARAM_LITERAL_STRING
-                            end
-                        end
-                    else
-                        ScaleformMovieMethodAddParamTextureNameString_2(label) -- SCALEFORM_MOVIE_METHOD_ADD_PARAM_LITERAL_STRING
-                    end
+                    ScaleformMovieMethodAddParamTextureNameString_2(arg[i].data) -- SCALEFORM_MOVIE_METHOD_ADD_PARAM_LITERAL_STRING
                 elseif tType == "playerNameComp" then
-                    local label = arg[i].data
                     BeginTextCommandScaleformString("STRING")
-                    AddTextComponentSubstringPlayerName(label)
+                    AddTextComponentSubstringPlayerName(arg[i].data)
                     EndTextCommandScaleformString()
                 elseif tType == "playerNameString" then
-                    local label = arg[i].data
-                    ScaleformMovieMethodAddParamPlayerNameString(label)
+                    ScaleformMovieMethodAddParamPlayerNameString(arg[i].data)
                 else
                     assert(false, "^1ScaleformUI [ERROR]: ^7Unknown type ^1" .. tType .. "^7.")
                 end
