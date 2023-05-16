@@ -4,6 +4,21 @@ CelebrationInstance.__call = function()
   return "Celebration"
 end
 
+---@enum CelebrationSound
+CelebrationSound = {
+  ScreenSwipe = 0,
+  ScreenStats = 1,
+  ScreenFlash = 2,
+  FinishedPlace = 3,
+  Rankup = 4,
+  NumberTurn = 5,
+  NumberTurnStop = 6,
+  ScreenStart = 7,
+  Winner = 8,
+  NumberCount = 9,
+  NumberCountStop = 10
+}
+
 ---@enum CelebrationTexture
 CelebrationTexture = {
   Shard = 1,
@@ -23,13 +38,6 @@ CelebrationType = {
   Multiplayer = 1,
   Heist1 = 2,
   Heist2 = 3,
-}
-
----@enum CelebrationCustomSounds
-CelebrationCustomSounds = {
-  Default = "APT_BvS_Soundset",
-  Beast = "DLC_GR_PM_Beast_Soundset",
-  BeastRemix = "DLC_BTL_TP_Remix_Beast_Soundset"
 }
 
 ---Get the scaleform names for the celebration type
@@ -261,23 +269,15 @@ function CelebrationInstance:CreateMainStatWall(wallId, colour, alpha)
 end
 
 ---Set custom sounds for the wall
----@param soundSet CelebrationCustomSounds
----@see CelebrationCustomSounds
-function CelebrationInstance:SetCustomSound(soundSet)
+---@param id CelebrationSound
+---@param sound string
+---@param soundSet string
+---@see CelebrationSound
+function CelebrationInstance:SetCustomSound(id, sound, soundSet)
   self._scalformMain:CallFunction("SET_CUSTOM_SOUND", false,
-    0,
-    { type = "literal", data = "Blade_Appear" },
-    { type = "literal", data = soundSet }
-  )
-  self._scalformMain:CallFunction("SET_CUSTOM_SOUND", false,
-    7,
-    { type = "literal", data = "Blade_Beasts_Fail" },
-    { type = "literal", data = soundSet }
-  )
-  self._scalformMain:CallFunction("SET_CUSTOM_SOUND", false,
-    8,
-    { type = "literal", data = "Blade_Beasts_Win" },
-    { type = "literal", data = soundSet }
+    id,
+    { type = "playerNameComp", data = sound },
+    { type = "playerNameComp", data = soundSet }
   )
 end
 
@@ -316,5 +316,27 @@ function CelebrationInstance:AddTimeToWall(wallId, time, timeTitleLabel, timeDif
     time,
     { type = "playerNameString", data = timeTitleLabel },
     timeDifference
+  )
+end
+
+---Add ready to a wall
+---@param wallId string
+---@param readyLabel string
+function CelebrationInstance:AddReadyToWall(wallId, readyLabel)
+  self:CallAllFunction("ADD_READY_TO_WALL", false,
+    { type = "playerNameComp", data = wallId },
+    { type = "playerNameComp", data = readyLabel }
+  )
+end
+
+---Add a cash amount to a wall
+---@param wallId string @Wall ID
+---@param cashAmount number @Amount of cash
+---@param xAlign string @Alignment left, right, or center
+function CelebrationInstance:AddCashToWall(wallId, cashAmount, xAlign)
+  self:CallAllFunction("ADD_CASH_TO_WALL", false,
+    { type = "playerNameComp", data = wallId },
+    cashAmount,
+    { type = "playerNameComp", data = xAlign }
   )
 end
