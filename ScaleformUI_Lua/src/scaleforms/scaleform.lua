@@ -62,20 +62,19 @@ function Scaleform:CallFunction(theFunction, returndata, ...)
                     ScaleformMovieMethodAddParamFloat(arg[i])
                 end
             elseif sType == "table" then
-                local tType = arg[i].type
-                if tType == "label" then
+                if arg[i].type == "label" then
                     BeginTextCommandScaleformString(arg[i].data)
                     EndTextCommandScaleformString()                              -- END_TEXT_COMMAND_SCALEFORM_STRING
-                elseif tType == "literal" then
+                elseif arg[i].type == "literal" then
                     ScaleformMovieMethodAddParamTextureNameString_2(arg[i].data) -- SCALEFORM_MOVIE_METHOD_ADD_PARAM_LITERAL_STRING
-                elseif tType == "playerNameComp" then
+                elseif arg[i].type == "playerNameComp" then
                     BeginTextCommandScaleformString("STRING")
                     AddTextComponentSubstringPlayerName(arg[i].data)
                     EndTextCommandScaleformString()
-                elseif tType == "playerNameString" then
+                elseif arg[i].type == "playerNameString" then
                     ScaleformMovieMethodAddParamPlayerNameString(arg[i].data)
                 else
-                    assert(false, "^1ScaleformUI [ERROR]: ^7Unknown type ^1" .. tType .. "^7.")
+                    assert(false, "^1ScaleformUI [ERROR]: ^7Unknown type ^1" .. arg[i].type .. "^7.")
                 end
             elseif sType == "string" then
                 if arg[i]:find("^desc_{") or arg[i]:find("^menu_lobby_desc_{") or arg[i]:find("^PauseMenu_") or arg[i]:find("^menu_pause_playerTab{") then
