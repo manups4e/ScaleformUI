@@ -3,6 +3,7 @@ using CitizenFX.Core.Native;
 
 namespace ScaleformUI
 {
+    // TODO: Add ClearHistory() / CloseAndClearBreadcrumbs() method to handle close and reset.
 
     public delegate void MenuStateChangeEvent(UIMenu oldMenu, UIMenu newMenu, MenuState state);
 
