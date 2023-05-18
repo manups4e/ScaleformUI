@@ -1,7 +1,4 @@
 ﻿using CitizenFX.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI.LobbyMenu
@@ -89,7 +86,8 @@ namespace ScaleformUI.LobbyMenu
                     ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
                     SetPlayerControl(Game.Player.Handle, false, 0);
                     _firstDrawTick = true;
-                    _poolcontainer.ProcessMenus(true);
+                    MenuPool.currentBase = this;
+                    MenuPool.ProcessMenus(true);
                 }
                 else
                 {
@@ -98,7 +96,8 @@ namespace ScaleformUI.LobbyMenu
                     AnimpostfxPlay("PauseMenuOut", 800, false);
                     SendPauseMenuClose();
                     SetPlayerControl(Game.Player.Handle, true, 0);
-                    _poolcontainer.ProcessMenus(false);
+                    MenuPool.currentBase = null;
+                    MenuPool.ProcessMenus(false);
                     ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY_NO_BACKGROUND"), false, -1);
                 }
             }
@@ -114,7 +113,7 @@ namespace ScaleformUI.LobbyMenu
                 throw new Exception("you must have 3 columns!");
 
             listCol = columns;
-            foreach (var col in columns)
+            foreach (Column col in columns)
             {
                 switch (col)
                 {
@@ -171,7 +170,7 @@ namespace ScaleformUI.LobbyMenu
             _pause._lobby.CallFunction("SET_MISSION_PANEL_TITLE", MissionPanel.Title);
             if (MissionPanel.Items.Count > 0)
             {
-                foreach (var item in MissionPanel.Items)
+                foreach (UIFreemodeDetailsItem item in MissionPanel.Items)
                 {
                     _pause._lobby.CallFunction("ADD_MISSION_PANEL_ITEM", item.Type, item.TextLeft, item.TextRight, (int)item.Icon, (int)item.IconColor, item.Tick);
                 }
@@ -182,13 +181,13 @@ namespace ScaleformUI.LobbyMenu
         {
             if (SettingsColumn.Items.Count > 0)
             {
-                var i = 0;
+                int i = 0;
                 while (i < SettingsColumn.Items.Count)
                 {
                     await BaseScript.Delay(1);
                     if (!canBuild) break;
-                    var item = SettingsColumn.Items[i];
-                    var index = SettingsColumn.Items.IndexOf(item);
+                    UIMenuItem item = SettingsColumn.Items[i];
+                    int index = SettingsColumn.Items.IndexOf(item);
                     AddTextEntry($"menu_lobby_desc_{index}", item.Description);
                     BeginScaleformMovieMethod(_pause._lobby.Handle, "ADD_LEFT_ITEM");
                     PushScaleformMovieFunctionParameterInt(item._itemId);
@@ -262,13 +261,13 @@ namespace ScaleformUI.LobbyMenu
                             PushScaleformMovieFunctionParameterInt((int)item.HighlightedTextColor);
                             EndScaleformMovieMethod();
                             _pause._lobby.CallFunction("UPDATE_SETTINGS_ITEM_LABEL_RIGHT", index, item.RightLabel);
-                            if(item.RightBadge != BadgeIcon.NONE)
+                            if (item.RightBadge != BadgeIcon.NONE)
                             {
                                 _pause._lobby.CallFunction("SET_SETTINGS_ITEM_RIGHT_BADGE", index, (int)item.RightBadge);
                             }
                             break;
                     }
-                    if (item.LeftBadge != BadgeIcon.NONE) 
+                    if (item.LeftBadge != BadgeIcon.NONE)
                         _pause._lobby.CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", index, (int)item.LeftBadge);
                     i++;
                 }
@@ -280,15 +279,15 @@ namespace ScaleformUI.LobbyMenu
         {
             if (PlayersColumn.Items.Count > 0)
             {
-                var i = 0;
+                int i = 0;
                 while (i < PlayersColumn.Items.Count)
                 {
-                    var item = PlayersColumn.Items[i];
-                    var index = PlayersColumn.Items.IndexOf(item);
+                    LobbyItem item = PlayersColumn.Items[i];
+                    int index = PlayersColumn.Items.IndexOf(item);
                     switch (item)
                     {
                         case FriendItem:
-                            var fi = (FriendItem)item;
+                            FriendItem fi = (FriendItem)item;
                             _pause._lobby.CallFunction("ADD_PLAYER_ITEM", 1, 1, fi.Label, (int)fi.ItemColor, fi.ColoredTag, fi.iconL, fi.boolL, fi.iconR, fi.boolR, fi.Status, (int)fi.StatusColor, fi.Rank, fi.CrewTag);
                             break;
                     }
@@ -332,7 +331,7 @@ namespace ScaleformUI.LobbyMenu
             SetInputExclusive(2, 237);
             SetInputExclusive(2, 238);
 
-            var success = GetScaleformMovieCursorSelection(_pause._lobby.Handle, ref eventType, ref context, ref itemId, ref unused);
+            bool success = GetScaleformMovieCursorSelection(_pause._lobby.Handle, ref eventType, ref context, ref itemId, ref unused);
             if (success)
             {
                 switch (eventType)
@@ -345,8 +344,8 @@ namespace ScaleformUI.LobbyMenu
                             case SettingsListColumn:
                                 {
                                     ClearPedInPauseMenu();
-                                    var col = listCol[context] as SettingsListColumn;
-                                    foreach (var p in PlayersColumn.Items) p.Selected = false;
+                                    SettingsListColumn col = listCol[context] as SettingsListColumn;
+                                    foreach (LobbyItem p in PlayersColumn.Items) p.Selected = false;
                                     if (!col.Items[col.CurrentSelection].Enabled)
                                     {
                                         Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
@@ -357,11 +356,11 @@ namespace ScaleformUI.LobbyMenu
                                         BeginScaleformMovieMethod(_pause._lobby.Handle, "SET_INPUT_EVENT");
                                         ScaleformMovieMethodAddParamInt(16);
                                         EndScaleformMovieMethod();
-                                        var item = col.Items[itemId];
+                                        UIMenuItem item = col.Items[itemId];
                                         switch (item)
                                         {
                                             case UIMenuCheckboxItem:
-                                                var cbIt = item as UIMenuCheckboxItem;
+                                                UIMenuCheckboxItem cbIt = item as UIMenuCheckboxItem;
                                                 cbIt.Checked = !cbIt.Checked;
                                                 cbIt.CheckboxEventTrigger();
                                                 break;
@@ -376,8 +375,8 @@ namespace ScaleformUI.LobbyMenu
                                 break;
                             case PlayerListColumn:
                                 {
-                                    var col = listCol[context] as PlayerListColumn;
-                                    foreach (var p in SettingsColumn.Items) p.Selected = false;
+                                    PlayerListColumn col = listCol[context] as PlayerListColumn;
+                                    foreach (UIMenuItem p in SettingsColumn.Items) p.Selected = false;
                                     if (!col.Items[col.CurrentSelection].Enabled)
                                     {
                                         Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
@@ -391,7 +390,7 @@ namespace ScaleformUI.LobbyMenu
                                     col.CurrentSelection = itemId;
                                     if (col.Items[itemId].ClonePed != null)
                                     {
-                                        var ped = ClonePed(col.Items[itemId].ClonePed.Handle, 0, true, true);
+                                        int ped = ClonePed(col.Items[itemId].ClonePed.Handle, 0, true, true);
                                         await BaseScript.Delay(1);
                                         GivePedToPauseMenu(ped, 2);
                                         SetPauseMenuPedSleepState(true);
@@ -474,14 +473,14 @@ namespace ScaleformUI.LobbyMenu
         {
             BeginScaleformMovieMethod(_pause._lobby.Handle, "SET_INPUT_EVENT");
             ScaleformMovieMethodAddParamInt(16);
-            var ret = EndScaleformMovieMethodReturnValue();
+            int ret = EndScaleformMovieMethodReturnValue();
             while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            var result = GetScaleformMovieFunctionReturnString(ret);
+            string result = GetScaleformMovieFunctionReturnString(ret);
 
-            var split = result.Split(',').Select(int.Parse).ToArray();
+            int[] split = result.Split(',').Select(int.Parse).ToArray();
             if (FocusLevel == SettingsColumn.Order)
             {
-                var item = SettingsColumn.Items[SettingsColumn.CurrentSelection];
+                UIMenuItem item = SettingsColumn.Items[SettingsColumn.CurrentSelection];
                 if (!item.Enabled)
                 {
                     Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
@@ -490,7 +489,7 @@ namespace ScaleformUI.LobbyMenu
                 switch (item)
                 {
                     case UIMenuCheckboxItem:
-                        var cbIt = item as UIMenuCheckboxItem;
+                        UIMenuCheckboxItem cbIt = item as UIMenuCheckboxItem;
                         cbIt.Checked = !cbIt.Checked;
                         cbIt.CheckboxEventTrigger();
                         break;
@@ -515,11 +514,11 @@ namespace ScaleformUI.LobbyMenu
         {
             BeginScaleformMovieMethod(_pause._lobby.Handle, "SET_INPUT_EVENT");
             ScaleformMovieMethodAddParamInt(8);
-            var ret = EndScaleformMovieMethodReturnValue();
+            int ret = EndScaleformMovieMethodReturnValue();
             while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            var result = GetScaleformMovieFunctionReturnString(ret);
+            string result = GetScaleformMovieFunctionReturnString(ret);
 
-            var split = result.Split(',').Select(int.Parse).ToArray();
+            int[] split = result.Split(',').Select(int.Parse).ToArray();
             FocusLevel = split[0];
             if (FocusLevel == SettingsColumn.Order)
             {
@@ -531,7 +530,7 @@ namespace ScaleformUI.LobbyMenu
                 PlayersColumn.CurrentSelection = split[1];
                 if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
                 {
-                    var ped = ClonePed(PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed.Handle, 0, true, true);
+                    int ped = ClonePed(PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed.Handle, 0, true, true);
                     await BaseScript.Delay(1);
                     GivePedToPauseMenu(ped, 2);
                     SetPauseMenuPedSleepState(true);
@@ -546,11 +545,11 @@ namespace ScaleformUI.LobbyMenu
         {
             BeginScaleformMovieMethod(_pause._lobby.Handle, "SET_INPUT_EVENT");
             ScaleformMovieMethodAddParamInt(9);
-            var ret = EndScaleformMovieMethodReturnValue();
+            int ret = EndScaleformMovieMethodReturnValue();
             while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            var result = GetScaleformMovieFunctionReturnString(ret);
+            string result = GetScaleformMovieFunctionReturnString(ret);
 
-            var split = result.Split(',').Select(int.Parse).ToArray();
+            int[] split = result.Split(',').Select(int.Parse).ToArray();
             FocusLevel = split[0];
             if (FocusLevel == SettingsColumn.Order)
             {
@@ -562,7 +561,7 @@ namespace ScaleformUI.LobbyMenu
                 PlayersColumn.CurrentSelection = split[1];
                 if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
                 {
-                    var ped = new Ped(ClonePed(PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed.Handle, 0, true, true));
+                    Ped ped = new Ped(ClonePed(PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed.Handle, 0, true, true));
                     await BaseScript.Delay(0);
                     GivePedToPauseMenu(ped.Handle, 2);
                     SetPauseMenuPedSleepState(true);
@@ -577,11 +576,11 @@ namespace ScaleformUI.LobbyMenu
         {
             BeginScaleformMovieMethod(_pause._lobby.Handle, "SET_INPUT_EVENT");
             ScaleformMovieMethodAddParamInt(10);
-            var ret = EndScaleformMovieMethodReturnValue();
+            int ret = EndScaleformMovieMethodReturnValue();
             while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            var result = GetScaleformMovieFunctionReturnString(ret);
+            string result = GetScaleformMovieFunctionReturnString(ret);
 
-            var split = result.Split(',').Select(int.Parse).ToArray();
+            int[] split = result.Split(',').Select(int.Parse).ToArray();
 
             if (split[2] == -1)
             {
@@ -597,7 +596,7 @@ namespace ScaleformUI.LobbyMenu
                     PlayersColumn.CurrentSelection = split[1];
                     if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
                     {
-                        var ped = new Ped(ClonePed(PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed.Handle, 0, true, true));
+                        Ped ped = new Ped(ClonePed(PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed.Handle, 0, true, true));
                         await BaseScript.Delay(0);
                         GivePedToPauseMenu(ped.Handle, 2);
                         SetPauseMenuPedSleepState(true);
@@ -609,7 +608,7 @@ namespace ScaleformUI.LobbyMenu
             }
             else
             {
-                var item = SettingsColumn.Items[SettingsColumn.CurrentSelection];
+                UIMenuItem item = SettingsColumn.Items[SettingsColumn.CurrentSelection];
                 if (!item.Enabled)
                 {
                     Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
@@ -647,11 +646,11 @@ namespace ScaleformUI.LobbyMenu
         {
             BeginScaleformMovieMethod(_pause._lobby.Handle, "SET_INPUT_EVENT");
             ScaleformMovieMethodAddParamInt(11);
-            var ret = EndScaleformMovieMethodReturnValue();
+            int ret = EndScaleformMovieMethodReturnValue();
             while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            var result = GetScaleformMovieFunctionReturnString(ret);
+            string result = GetScaleformMovieFunctionReturnString(ret);
 
-            var split = result.Split(',').Select(int.Parse).ToArray();
+            int[] split = result.Split(',').Select(int.Parse).ToArray();
 
             if (split[2] == -1)
             {
@@ -667,7 +666,7 @@ namespace ScaleformUI.LobbyMenu
                     PlayersColumn.CurrentSelection = split[1];
                     if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
                     {
-                        var ped = new Ped(ClonePed(PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed.Handle, 0, true, true));
+                        Ped ped = new Ped(ClonePed(PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed.Handle, 0, true, true));
                         await BaseScript.Delay(0);
                         GivePedToPauseMenu(ped.Handle, 2);
                         SetPauseMenuPedSleepState(true);
@@ -679,7 +678,7 @@ namespace ScaleformUI.LobbyMenu
             }
             else
             {
-                var item = SettingsColumn.Items[SettingsColumn.CurrentSelection];
+                UIMenuItem item = SettingsColumn.Items[SettingsColumn.CurrentSelection];
                 if (!item.Enabled)
                 {
                     Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");

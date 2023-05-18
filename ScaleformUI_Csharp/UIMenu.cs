@@ -892,7 +892,6 @@ namespace ScaleformUI
 
         private static readonly MenuControls[] _menuControls = Enum.GetValues(typeof(MenuControls)).Cast<MenuControls>().ToArray();
 
-        internal MenuPool _poolcontainer;
         private bool isBuilding = false;
         private MenuBuildingAnimation buildingAnimation = MenuBuildingAnimation.LEFT;
         private string title;
@@ -1137,7 +1136,6 @@ namespace ScaleformUI
         {
             _customTexture = new KeyValuePair<string, string>(spriteLibrary, spriteName);
             Offset = offset;
-            Children = new Dictionary<UIMenuItem, UIMenu>();
             WidthOffset = 0;
             Glare = glare;
             _menuGlare = new ScaleformWideScreen("mp_menu_glare");
@@ -1266,7 +1264,7 @@ namespace ScaleformUI
         {
             BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "UPDATE_ITEM_DESCRIPTION");
             ScaleformMovieMethodAddParamInt(CurrentSelection);
-            BeginTextCommandScaleformString($"menu_{_poolcontainer._menuList.IndexOf(this)}_desc_{CurrentSelection}");
+            BeginTextCommandScaleformString($"menu_{MenuPool.CurrentDepth}_desc_{CurrentSelection}");
             EndTextCommandScaleformString_2();
             EndScaleformMovieMethod();
         }
@@ -1286,45 +1284,6 @@ namespace ScaleformUI
         public void RemoveItem(UIMenuItem item)
         {
             RemoveItemAt(MenuItems.IndexOf(item));
-        }
-
-        public void AddSubMenu(UIMenu menu, string text, bool OffsetInheritance = true)
-        {
-            PointF Offset = PointF.Empty;
-            if (OffsetInheritance)
-                Offset = this.Offset;
-            AddSubMenu(menu, text, "", Offset);
-        }
-        public void AddSubMenu(UIMenu menu, string text, PointF offset)
-        {
-            AddSubMenu(menu, text, "", offset);
-        }
-        public void AddSubMenu(UIMenu menu, string text, string description, bool OffsetInheritance = true)
-        {
-            PointF Offset = PointF.Empty;
-            if (OffsetInheritance)
-                Offset = this.Offset;
-            AddSubMenu(menu, text, description, Offset);
-        }
-        public void AddSubMenu(UIMenu menu, string text, string description, PointF offset, bool BannerInheritance = true)
-        {
-            UIMenuItem item = new UIMenuItem(text, description);
-            this.AddItem(item);
-            menu.Offset = offset;
-
-            if (BannerInheritance && this._customTexture.Key != null && this._customTexture.Value != null)
-                menu.SetBannerType(this._customTexture);
-
-            menu.MouseEdgeEnabled = this.MouseEdgeEnabled;
-            menu.MouseWheelControlEnabled = this.MouseWheelControlEnabled;
-            menu.MouseControlsEnabled = this.MouseControlsEnabled;
-            menu.MaxItemsOnScreen = this.MaxItemsOnScreen;
-            menu.BuildAsync = this.BuildAsync;
-            menu.AnimationType = this.AnimationType;
-            menu.BuildingAnimation = this.BuildingAnimation;
-            _poolcontainer.Add(menu);
-            this.BindMenuToItem(menu, item);
-            menu._poolcontainer = this._poolcontainer;
         }
 
         /// <summary>
@@ -1489,50 +1448,6 @@ namespace ScaleformUI
             if (tmpControls.Any(tuple => Game.IsControlPressed(tuple.Item2, tuple.Item1)))
                 return true;
             return false;
-        }
-
-        [Obsolete("Use InstructionalButtons.Add instead")]
-        public void AddInstructionalButton(InstructionalButton button)
-        {
-            //_instructionalButtons.Add(button);
-        }
-
-        [Obsolete("Use InstructionalButtons.Remove instead")]
-        public void RemoveInstructionalButton(InstructionalButton button)
-        {
-            //_instructionalButtons.Remove(button);
-        }
-
-        /// <summary>
-        /// Makes the specified item open a menu when is activated.
-        /// </summary>
-        /// <param name="menuToBind">The menu that is going to be opened when the item is activated.</param>
-        /// <param name="itemToBindTo">The item that is going to activate the menu.</param>
-        public void BindMenuToItem(UIMenu menuToBind, UIMenuItem itemToBindTo)
-        {
-            if (!MenuItems.Contains(itemToBindTo))
-                AddItem(itemToBindTo);
-            menuToBind.ParentMenu = this;
-            menuToBind.ParentItem = itemToBindTo;
-            if (Children.ContainsKey(itemToBindTo))
-                Children[itemToBindTo] = menuToBind;
-            else
-                Children.Add(itemToBindTo, menuToBind);
-        }
-
-
-        /// <summary>
-        /// Remove menu binding from button.
-        /// </summary>
-        /// <param name="releaseFrom">Button to release from.</param>
-        /// <returns>Returns true if the operation was successful.</returns>
-        public bool ReleaseMenuFromItem(UIMenuItem releaseFrom)
-        {
-            if (!Children.ContainsKey(releaseFrom)) return false;
-            Children[releaseFrom].ParentItem = null;
-            Children[releaseFrom].ParentMenu = null;
-            Children.Remove(releaseFrom);
-            return true;
         }
 
         #endregion
@@ -1812,6 +1727,10 @@ namespace ScaleformUI
         {
             if (playSound)
                 Game.PlaySound(AUDIO_BACK, AUDIO_LIBRARY);
+            // TODO: MenuPool handle breadcrumb SwitchTo (SwitchFrom)
+            // if no breadcrumb.. visible = false
+
+            /*
             if (ParentMenu != null)
             {
                 canBuild = false;
@@ -1819,7 +1738,7 @@ namespace ScaleformUI
                 ScaleformUI.InstructionalButtons.Enabled = true;
                 ScaleformUI.InstructionalButtons.SetInstructionalButtons(ParentMenu.InstructionalButtons);
                 _visible = false;
-                _poolcontainer.MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
+                MenuPool.MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
                 ParentMenu.MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
                 MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
                 ParentMenu.canBuild = true;
@@ -1833,6 +1752,7 @@ namespace ScaleformUI
             {
                 if (CanPlayerCloseMenu) Visible = false;
             }
+            */
         }
 
         public async void GoUp()
@@ -2010,13 +1930,18 @@ namespace ScaleformUI
                 default:
                     ItemSelect(MenuItems[CurrentSelection], CurrentSelection);
                     MenuItems[CurrentSelection].ItemActivate(this);
+
+                    // NO MORE "SUBMENUS" NOW DEVS CAN MenuPool.SwitchTo() or menu.SwitchTo()
+                    // without binding menus to items.. super cool!
+
+                    /*
                     if (!Children.ContainsKey(MenuItems[CurrentSelection])) return;
                     canBuild = false;
                     _visible = false;
                     ScaleformUI._ui.CallFunction("CLEAR_ALL");
                     ScaleformUI.InstructionalButtons.Enabled = true;
                     ScaleformUI.InstructionalButtons.SetInstructionalButtons(Children[MenuItems[CurrentSelection]].InstructionalButtons);
-                    _poolcontainer.MenuChangeEv(this, Children[MenuItems[CurrentSelection]], MenuState.ChangeForward);
+                    MenuPool.MenuChangeEv(this, Children[MenuItems[CurrentSelection]], MenuState.ChangeForward);
                     MenuChangeEv(this, Children[MenuItems[CurrentSelection]], MenuState.ChangeForward);
                     Children[MenuItems[CurrentSelection]].MenuChangeEv(this, Children[MenuItems[CurrentSelection]], MenuState.ChangeForward);
                     Children[MenuItems[CurrentSelection]].canBuild = true;
@@ -2026,6 +1951,8 @@ namespace ScaleformUI
                     else
                         Children[MenuItems[CurrentSelection]].BuildUpMenuSync();
                     Children[MenuItems[CurrentSelection]].MouseEdgeEnabled = MouseEdgeEnabled;
+                    */
+
                     break;
             }
         }
@@ -2169,28 +2096,27 @@ namespace ScaleformUI
                 _visible = value;
                 _justOpened = value;
                 _itemsDirty = value;
-                if (ParentMenu is not null) return;
-                if (Children.Count > 0 && Children.ContainsKey(MenuItems[CurrentSelection]) && Children[MenuItems[CurrentSelection]].Visible) return;
                 ScaleformUI.InstructionalButtons.Enabled = value;
                 ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
                 if (value)
                 {
-                    _poolcontainer.MenuChangeEv(null, this, MenuState.Opened);
+                    MenuPool.MenuChangeEv(null, this, MenuState.Opened);
                     MenuChangeEv(null, this, MenuState.Opened);
                     if (BuildAsync)
                         BuildUpMenuAsync();
                     else
                         BuildUpMenuSync();
-                    _poolcontainer.currentMenu = this;
-                    _poolcontainer.ProcessMenus(true);
+                    MenuPool.currentMenu = this;
+                    MenuPool.ProcessMenus(true);
                     timeBeforeOverflow = ScaleformUI.GameTime;
                 }
                 else
                 {
-                    _poolcontainer.MenuChangeEv(this, null, MenuState.Closed);
+                    MenuPool.MenuChangeEv(this, null, MenuState.Closed);
                     MenuChangeEv(this, null, MenuState.Closed);
                     ScaleformUI._ui.CallFunction("CLEAR_ALL");
-                    _poolcontainer.ProcessMenus(false);
+                    MenuPool.ProcessMenus(false);
+                    MenuPool.currentMenu = null;
                 }
                 if (!value) return;
                 if (!ResetCursorOnOpen) return;
@@ -2254,7 +2180,7 @@ namespace ScaleformUI
                 UIMenuItem item = MenuItems[i];
                 int index = i;
 
-                AddTextEntry($"menu_{_poolcontainer._menuList.IndexOf(this)}_desc_{index}", item.Description);
+                AddTextEntry($"menu_{MenuPool.CurrentDepth}_desc_{index}", item.Description);
 
                 BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "ADD_ITEM");
                 PushScaleformMovieFunctionParameterInt(item._itemId);
@@ -2267,7 +2193,7 @@ namespace ScaleformUI
                 }
                 else
                 {
-                    BeginTextCommandScaleformString($"menu_{_poolcontainer._menuList.IndexOf(this)}_desc_{index}");
+                    BeginTextCommandScaleformString($"menu_{MenuPool.CurrentDepth}_desc_{index}");
                     EndTextCommandScaleformString_2();
                 }
                 PushScaleformMovieFunctionParameterBool(item.Enabled);
@@ -2476,7 +2402,7 @@ namespace ScaleformUI
             foreach (UIMenuItem item in MenuItems)
             {
                 int index = MenuItems.IndexOf(item);
-                AddTextEntry($"menu_{_poolcontainer._menuList.IndexOf(this)}_desc_{index}", item.Description);
+                AddTextEntry($"menu_{MenuPool.CurrentDepth}_desc_{index}", item.Description);
 
                 BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "ADD_ITEM");
                 PushScaleformMovieFunctionParameterInt(item._itemId);
@@ -2489,7 +2415,7 @@ namespace ScaleformUI
                 }
                 else
                 {
-                    BeginTextCommandScaleformString($"menu_{_poolcontainer._menuList.IndexOf(this)}_desc_{index}");
+                    BeginTextCommandScaleformString($"menu_{MenuPool.CurrentDepth}_desc_{index}");
                     EndTextCommandScaleformString_2();
                 }
                 PushScaleformMovieFunctionParameterBool(item.Enabled);
@@ -2727,20 +2653,6 @@ namespace ScaleformUI
                 }
             }
         }
-
-        /// <summary>
-        /// If this is a nested menu, returns the parent menu. You can also set it to a menu so when pressing Back it goes to that menu.
-        /// </summary>
-        public UIMenu ParentMenu { get; internal set; }
-
-
-        /// <summary>
-        /// If this is a nested menu, returns the item it was bound to.
-        /// </summary>
-        public UIMenuItem ParentItem { get; set; }
-
-        //Tree structure
-        public Dictionary<UIMenuItem, UIMenu> Children { get; internal set; }
 
         /// <summary>
         /// Returns the current width offset.

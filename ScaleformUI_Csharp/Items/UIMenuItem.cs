@@ -1,6 +1,5 @@
 ﻿using CitizenFX.Core.Native;
 using ScaleformUI.LobbyMenu;
-using System.Collections.Generic;
 namespace ScaleformUI
 {
     public enum BadgeIcon
@@ -451,10 +450,10 @@ namespace ScaleformUI
                 if (descriptionHash != 0) descriptionHash = 0;
                 if (Parent is not null && Parent.Visible)
                 {
-                    API.AddTextEntry($"menu_{Parent._poolcontainer._menuList.IndexOf(Parent)}_desc_{Parent.MenuItems.IndexOf(this)}", description);
+                    API.AddTextEntry($"menu_{MenuPool.CurrentDepth}_desc_{Parent.MenuItems.IndexOf(this)}", description);
                     API.BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "UPDATE_ITEM_DESCRIPTION");
                     API.ScaleformMovieMethodAddParamInt(Parent.MenuItems.IndexOf(this));
-                    API.BeginTextCommandScaleformString($"menu_{Parent._poolcontainer._menuList.IndexOf(Parent)}_desc_{Parent.MenuItems.IndexOf(this)}");
+                    API.BeginTextCommandScaleformString($"menu_{MenuPool.CurrentDepth}_desc_{Parent.MenuItems.IndexOf(this)}");
                     API.EndTextCommandScaleformString_2();
                     API.EndScaleformMovieMethod();
                 }
@@ -494,7 +493,7 @@ namespace ScaleformUI
                 _enabled = value;
                 if (Parent is not null && Parent.Visible)
                 {
-                    var it = Parent.MenuItems.IndexOf(this);
+                    int it = Parent.MenuItems.IndexOf(this);
                     ScaleformUI._ui.CallFunction("ENABLE_ITEM", it, _enabled);
                 }
             }
@@ -671,9 +670,9 @@ namespace ScaleformUI
                 switch (panel)
                 {
                     case UIMissionDetailsPanel:
-                        var mis = (UIMissionDetailsPanel)panel;
+                        UIMissionDetailsPanel mis = (UIMissionDetailsPanel)panel;
                         ScaleformUI._ui.CallFunction("ADD_SIDE_PANEL_TO_ITEM", Parent.MenuItems.IndexOf(this), 0, (int)mis.PanelSide, (int)mis._titleType, mis.Title, (int)mis.TitleColor, mis.TextureDict, mis.TextureName);
-                        foreach (var _it in mis.Items)
+                        foreach (UIFreemodeDetailsItem _it in mis.Items)
                             ScaleformUI._ui.CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", Parent.MenuItems.IndexOf(this), _it.Type, _it.TextLeft, _it.TextRight, (int)_it.Icon, (int)_it.IconColor, _it.Tick);
                         break;
                 }

@@ -1,9 +1,5 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using Control = CitizenFX.Core.Control;
 
 namespace ScaleformUI
 {
@@ -13,8 +9,12 @@ namespace ScaleformUI
     /// <summary>
     /// Helper class that handles all of your Menus. After instatiating it, you will have to add your menu by using the Add method.
     /// </summary>
-    public class MenuPool
+    public static class MenuPool
     {
+        internal static Dictionary<int, UIMenu> breadCrumbs = new Dictionary<int, UIMenu>();
+        internal static UIMenu currentMenu;
+        internal static PauseMenuBase currentBase;
+        internal static bool ableToDraw;
         private static Ped _ped;
         internal static Ped PlayerPed
         {
@@ -31,232 +31,110 @@ namespace ScaleformUI
             }
         }
 
-        public bool MouseEdgeEnabled { set { _menuList.ForEach(m => m.MouseEdgeEnabled = value); } }
+        public static bool MouseEdgeEnabled { set { currentMenu.MouseEdgeEnabled = value; } }
 
-        public bool ControlDisablingEnabled { set { _menuList.ForEach(m => m.ControlDisablingEnabled = value); } }
+        public static bool ControlDisablingEnabled { set { currentMenu.ControlDisablingEnabled = value; } }
 
-        public bool ResetCursorOnOpen { set { _menuList.ForEach(m => m.ResetCursorOnOpen = value); } }
+        public static bool ResetCursorOnOpen { set { currentMenu.ResetCursorOnOpen = value; } }
 
-        public string AUDIO_LIBRARY { set { _menuList.ForEach(m => m.AUDIO_LIBRARY = value); } }
+        public static int WidthOffset { set { currentMenu.SetMenuWidthOffset(value); } }
 
-        public string AUDIO_UPDOWN { set { _menuList.ForEach(m => m.AUDIO_UPDOWN = value); } }
+        public static bool DisableInstructionalButtons { set { currentMenu.DisableInstructionalButtons(value); } }
 
-        public string AUDIO_SELECT { set { _menuList.ForEach(m => m.AUDIO_SELECT = value); } }
+        public static bool BannerInheritance = true;
 
-        public string AUDIO_BACK { set { _menuList.ForEach(m => m.AUDIO_BACK = value); } }
+        public static bool OffsetInheritance = true;
+        public static int CurrentDepth
+        {
+            get
+            {
+                if (breadCrumbs.Count == 0) return 0;
+                return breadCrumbs.Count - 1;
+            }
+        }
 
-        public string AUDIO_ERROR { set { _menuList.ForEach(m => m.AUDIO_ERROR = value); } }
-
-        public int WidthOffset { set { _menuList.ForEach(m => m.SetMenuWidthOffset(value)); } }
-
-        public bool DisableInstructionalButtons { set { _menuList.ForEach(m => m.DisableInstructionalButtons(value)); } }
-
-        public bool BannerInheritance = true;
-
-        public bool OffsetInheritance = true;
-        internal UIMenu currentMenu;
-        internal bool ableToDraw;
+        public static UIMenu CurrentMenu
+        {
+            get => currentMenu;
+            private set => currentMenu = value;
+        }
 
         /// <summary>
         /// Called when user either opens or closes the main menu, clicks on a binded button, goes back to a parent menu.
         /// </summary>
-        public event MenuStateChangeEvent OnMenuStateChanged;
+        public static event MenuStateChangeEvent OnMenuStateChanged;
 
-        internal readonly List<UIMenu> _menuList = new List<UIMenu>();
-        internal readonly List<PauseMenuBase> _pauseMenuList = new List<PauseMenuBase>();
 
-        /// <summary>
-        /// Add your menu to the menu pool.
-        /// </summary>
-        /// <param name="menu"></param>
-        public void Add(UIMenu menu)
+        public static void SwitchTo(this UIMenu menu, UIMenu newMenu, int newMenuCurrentSelection = 0, bool inheritOldMenuParams = false)
         {
-            _menuList.Add(menu);
-            currentMenu = menu;
-            menu._poolcontainer = this;
-        }
-        public void Add(PauseMenuBase menu)
-        {
-            _pauseMenuList.Add(menu);
-            menu._poolcontainer = this;
-        }
+            if (menu == null)
+                throw new ArgumentNullException("The menu you're switching from cannot be null.");
+            if (menu != currentMenu)
+                throw new Exception("The menu you're switching from must be opened.");
+            if (newMenu == null)
+                throw new ArgumentNullException("The menu you're switching to cannot be null.");
+            if (newMenu == menu)
+                throw new Exception("You cannot switch a menu to itself.");
 
-        /// <summary>
-        /// Create and add a submenu to the menu pool.
-        /// Adds an item with the given text to the menu, creates a corresponding submenu, and binds the submenu to the item.
-        /// The submenu inherits its title from the menu, and its subtitle from the item text.
-        /// </summary>
-        /// <param name="menu">The parent menu to which the submenu must be added.</param>
-        /// <param name="text">The name of the submenu.</param>
-        /// <returns>The newly created submenu.</returns>
-        public UIMenu AddSubMenu(UIMenu menu, string text)
-        {
-            PointF Offset = PointF.Empty;
-            if (OffsetInheritance)
-                Offset = menu.Offset;
-            return AddSubMenu(menu, text, "", Offset);
-        }
-
-        /// <summary>
-        /// Create and add a submenu to the menu pool with a custom offset.
-        /// Adds an item with the given text to the menu, creates a corresponding submenu, and binds the submenu to the item.
-        /// The submenu inherits its title from the menu, and its subtitle from the item text.
-        /// </summary>
-        /// <param name="menu">The parent menu to which the submenu must be added.</param>
-        /// <param name="text">The name of the submenu</param>
-        /// <param name="offset">The offset of the menu</param>
-        /// <returns>The newly created submenu.</returns>
-        public UIMenu AddSubMenu(UIMenu menu, string text, PointF offset)
-        {
-            return AddSubMenu(menu, text, "", offset);
-        }
-
-        /// <summary>
-        /// Create and add a submenu to the menu pool.
-        /// Adds an item with the given text and description to the menu, creates a corresponding submenu, and binds the submenu to the item.
-        /// The submenu inherits its title from the menu, and its subtitle from the item text.
-        /// </summary>
-        /// <param name="menu">The parent menu to which the submenu must be added.</param>
-        /// <param name="text">The name of the submenu.</param>
-        /// <param name="description">The name of the submenu.</param>
-        /// <returns>The newly created submenu.</returns>
-        public UIMenu AddSubMenu(UIMenu menu, string text, string description)
-        {
-            PointF Offset = PointF.Empty;
-            if (OffsetInheritance)
-                Offset = menu.Offset;
-            return AddSubMenu(menu, text, description, Offset);
-        }
-
-        /// <summary>
-        /// Create and add a submenu to the menu pool.
-        /// Adds an item with the given text and description to the menu, creates a corresponding submenu, and binds the submenu to the item.
-        /// The submenu inherits its title from the menu, and its subtitle from the item text.
-        /// </summary>
-        /// <param name="menu">The parent menu to which the submenu must be added.</param>
-        /// <param name="text">The name of the submenu.</param>
-        /// <param name="description">The name of the submenu.</param>
-        /// <returns>The newly created submenu.</returns>
-        public UIMenu AddSubMenu(UIMenu menu, string text, string description, PointF offset)
-        {
-            UIMenuItem item = new UIMenuItem(text, description);
-            menu.AddItem(item);
-            UIMenu submenu = new UIMenu(menu.Title, text, offset, menu.Glare, menu.AlternativeTitle);
-            if (BannerInheritance && menu._customTexture.Key != null && menu._customTexture.Value != null)
-                submenu.SetBannerType(menu._customTexture);
-            submenu.MouseEdgeEnabled = menu.MouseEdgeEnabled;
-            submenu.MouseEdgeEnabled = menu.MouseEdgeEnabled;
-            submenu.MouseWheelControlEnabled = menu.MouseWheelControlEnabled;
-            submenu.MouseControlsEnabled = menu.MouseControlsEnabled;
-            submenu.MaxItemsOnScreen = menu.MaxItemsOnScreen;
-            submenu.BuildAsync = menu.BuildAsync;
-            submenu.AnimationType = menu.AnimationType;
-            submenu.BuildingAnimation = menu.BuildingAnimation;
-            Add(submenu);
-            menu.BindMenuToItem(submenu, item);
-            menu._poolcontainer = this;
-            return submenu;
-
-        }
-
-        /// <summary>
-        /// Refresh index of every menu in the pool.
-        /// Use this after you have finished constructing the entire menu pool.
-        /// </summary>
-        public void RefreshIndex()
-        {
-            foreach (UIMenu menu in _menuList) menu.RefreshIndex();
-        }
-
-        /// <summary>
-        /// Returns all of your menus.
-        /// </summary>
-        /// <returns></returns>
-        public List<UIMenu> ToList()
-        {
-            return _menuList;
+            if (inheritOldMenuParams)
+            {
+                if (BannerInheritance && menu._customTexture.Key != null && menu._customTexture.Value != null)
+                    newMenu.SetBannerType(menu._customTexture);
+                newMenu.MouseEdgeEnabled = menu.MouseEdgeEnabled;
+                newMenu.MouseEdgeEnabled = menu.MouseEdgeEnabled;
+                newMenu.MouseWheelControlEnabled = menu.MouseWheelControlEnabled;
+                newMenu.MouseControlsEnabled = menu.MouseControlsEnabled;
+                newMenu.MaxItemsOnScreen = menu.MaxItemsOnScreen;
+                newMenu.BuildAsync = menu.BuildAsync;
+                newMenu.AnimationType = menu.AnimationType;
+                newMenu.BuildingAnimation = menu.BuildingAnimation;
+            }
+            menu.Visible = false;
+            newMenu.Visible = true;
         }
 
         /// <summary>
         /// Processes all of your visible menus' controls.
         /// </summary>
-        public void ProcessControl()
+        public static void ProcessControl()
         {
-            /*foreach (var menu in _menuList.Where(menu => menu.Visible)) // foreach works slower with List. Also why make a new enumerable every tick
-            {
-                menu.ProcessControl();
-            }*/
-
-            for (int i = 0; i < _menuList.ToList().Count; i++)
-            {
-                if (_menuList[i].Visible)
-                    _menuList[i].ProcessControl();
-            }
-            var pauseMenu = _pauseMenuList.SingleOrDefault(x => x.Visible);
-            if (pauseMenu is not null)
-                pauseMenu.ProcessControls();
-        }
-
-
-        /// <summary>
-        /// Processes all of your visible menus' keys.
-        /// </summary>
-        /// <param name="key"></param>
-        public void ProcessKey(Keys key)
-        {
-            for (int i = 0; i < _menuList.ToList().Count; i++)
-            {
-                if (_menuList[i].Visible)
-                    _menuList[i].ProcessKey(key);
-            }
+            currentMenu?.ProcessControl();
+            currentBase?.ProcessControls();
         }
 
 
         /// <summary>
         /// Processes all of your visible menus' mouses.
         /// </summary>
-        public void ProcessMouse()
+        public static void ProcessMouse()
         {
-            for (int i = 0; i < _menuList.ToList().Count; i++)
-            {
-                if (_menuList[i].Visible)
-                    _menuList[i].ProcessMouse();
-            }
-
-            var pauseMenu = _pauseMenuList.SingleOrDefault(x => x.Visible);
-            if (pauseMenu is not null)
-                pauseMenu.ProcessMouse();
+            currentMenu?.ProcessMouse();
+            currentBase?.ProcessMouse();
         }
 
 
         /// <summary>
         /// Draws all visible menus.
         /// </summary>
-        public void Draw()
+        public static void Draw()
         {
-            for (int i = 0; i < _menuList.ToList().Count; i++)
-            {
-                if (_menuList[i].Visible)
-                    _menuList[i].Draw();
-            }
-            var pauseMenu = _pauseMenuList.SingleOrDefault(x => x.Visible);
-            if (pauseMenu is not null)
-                pauseMenu.Draw();
+            currentMenu?.Draw();
+            currentBase?.Draw();
         }
 
 
         /// <summary>
         /// Checks if any menu is currently visible.
         /// </summary>
-        /// <returns>true if at least one menu is visible, false if not.</returns>
-        public bool IsAnyMenuOpen => _menuList.Any(menu => menu.Visible) || _pauseMenuList.Any(menu => menu.Visible);
+        /// <returns>true if one menu is visible, false if not.</returns>
+        public static bool IsAnyMenuOpen => currentMenu?.Visible ?? false;
 
-        public bool IsAnyPauseMenuOpen => _pauseMenuList.Any(menu => menu.Visible);
+        public static bool IsAnyPauseMenuOpen => currentBase?.Visible ?? false;
 
         /// <summary>
         /// Process all of your menus' functions. Call this in a tick event.
         /// </summary>
-        public async void ProcessMenus(bool draw)
+        public static async void ProcessMenus(bool draw)
         {
             ableToDraw = draw;
             while (ableToDraw)
@@ -268,60 +146,16 @@ namespace ScaleformUI
             }
         }
 
-
         /// <summary>
-        /// Closes all of your menus.
+        /// Closes any opened ScaleformUI menu or PauseMenu menu.
         /// </summary>
-        public void CloseAllMenus()
+        public static void CloseAllMenus()
         {
-            for (var i = _menuList.Count - 1; i >= 0; i--)
-            {
-                var menu = _menuList[i];
-                if (menu.Visible)
-                {
-                    if (!menu.CanPlayerCloseMenu)
-                        menu.CanPlayerCloseMenu = true;
-                    menu.GoBack(false);
-                }
-            }
-            ScaleformUI._ui.CallFunction("CLEAR_ALL");
-            if (ScaleformUI.InstructionalButtons.Enabled)
-                ScaleformUI.InstructionalButtons.Enabled = false;
+            if (currentMenu != null) currentMenu.Visible = false;
+            if (currentBase != null) currentBase.Visible = false;
         }
 
-        public void FlushMenus()
-        {
-            _menuList.ForEach(async menu => { if (menu.Visible) menu.Visible = false; });
-            _menuList.Clear();
-        }
-
-        public void FlushPauseMenus()
-        {
-            _pauseMenuList.ForEach(async menu => { if (menu.Visible) menu.Visible = false; });
-            _pauseMenuList.Clear();
-        }
-
-        public void SetKey(UIMenu.MenuControls menuControl, Control control)
-        {
-            _menuList.ForEach(m => m.SetKey(menuControl, control));
-        }
-
-        public void SetKey(UIMenu.MenuControls menuControl, Control control, int controllerIndex)
-        {
-            _menuList.ForEach(m => m.SetKey(menuControl, control, controllerIndex));
-        }
-
-        public void SetKey(UIMenu.MenuControls menuControl, Keys control)
-        {
-            _menuList.ForEach(m => m.SetKey(menuControl, control));
-        }
-
-        public void ResetKey(UIMenu.MenuControls menuControl)
-        {
-            _menuList.ForEach(m => m.ResetKey(menuControl));
-        }
-
-        public void MenuChangeEv(UIMenu oldmenu, UIMenu newmenu, MenuState state)
+        public static void MenuChangeEv(UIMenu oldmenu, UIMenu newmenu, MenuState state)
         {
             OnMenuStateChanged?.Invoke(oldmenu, newmenu, state);
         }
