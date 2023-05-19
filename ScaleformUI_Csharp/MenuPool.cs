@@ -12,7 +12,6 @@ namespace ScaleformUI
     /// </summary>
     public static class MenuPool
     {
-        internal static List<UIMenu> breadCrumbs = new();
         internal static UIMenu currentMenu;
         internal static PauseMenuBase currentBase;
         internal static bool ableToDraw;
@@ -45,14 +44,6 @@ namespace ScaleformUI
         public static bool BannerInheritance = true;
 
         public static bool OffsetInheritance = true;
-        public static int CurrentDepth
-        {
-            get
-            {
-                if (breadCrumbs.Count == 0) return 0;
-                return breadCrumbs.IndexOf(currentMenu);
-            }
-        }
 
         public static UIMenu CurrentMenu
         {
@@ -81,6 +72,7 @@ namespace ScaleformUI
             {
                 if (BannerInheritance && menu._customTexture.Key != null && menu._customTexture.Value != null)
                     newMenu.SetBannerType(menu._customTexture);
+                newMenu.Offset = menu.Offset;
                 newMenu.MouseEdgeEnabled = menu.MouseEdgeEnabled;
                 newMenu.MouseEdgeEnabled = menu.MouseEdgeEnabled;
                 newMenu.MouseWheelControlEnabled = menu.MouseWheelControlEnabled;
@@ -93,7 +85,7 @@ namespace ScaleformUI
             newMenu.CurrentSelection = newMenuCurrentSelection != 0 ? newMenuCurrentSelection : 0;
             menu.Visible = false;
             newMenu.Visible = true;
-            breadCrumbs.Add(newMenu);
+            BreadcrumbsHandler.Forward(newMenu);
         }
 
         /// <summary>
@@ -137,16 +129,12 @@ namespace ScaleformUI
         /// <summary>
         /// Process all of your menus' functions. Call this in a tick event.
         /// </summary>
-        public static async void ProcessMenus(bool draw)
+        public static async void ProcessMenus()
         {
-            ableToDraw = draw;
-            while (ableToDraw)
-            {
-                await BaseScript.Delay(0);
-                ProcessControl();
-                ProcessMouse();
-                Draw();
-            }
+            await BaseScript.Delay(0);
+            ProcessControl();
+            ProcessMouse();
+            Draw();
         }
 
         /// <summary>
@@ -156,7 +144,7 @@ namespace ScaleformUI
         {
             if (currentMenu != null) currentMenu.Visible = false;
             if (currentBase != null) currentBase.Visible = false;
-            breadCrumbs.Clear();
+            BreadcrumbsHandler.Clear();
         }
 
         public static void MenuChangeEv(UIMenu oldmenu, UIMenu newmenu, MenuState state)

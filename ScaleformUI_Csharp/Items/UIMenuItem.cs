@@ -450,10 +450,10 @@ namespace ScaleformUI
                 if (descriptionHash != 0) descriptionHash = 0;
                 if (Parent is not null && Parent.Visible)
                 {
-                    API.AddTextEntry($"menu_{MenuPool.CurrentDepth}_desc_{Parent.MenuItems.IndexOf(this)}", description);
+                    API.AddTextEntry($"menu_{BreadcrumbsHandler.CurrentDepth}_desc_{Parent.MenuItems.IndexOf(this)}", description);
                     API.BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "UPDATE_ITEM_DESCRIPTION");
                     API.ScaleformMovieMethodAddParamInt(Parent.MenuItems.IndexOf(this));
-                    API.BeginTextCommandScaleformString($"menu_{MenuPool.CurrentDepth}_desc_{Parent.MenuItems.IndexOf(this)}");
+                    API.BeginTextCommandScaleformString($"menu_{BreadcrumbsHandler.CurrentDepth}_desc_{Parent.MenuItems.IndexOf(this)}");
                     API.EndTextCommandScaleformString_2();
                     API.EndScaleformMovieMethod();
                 }

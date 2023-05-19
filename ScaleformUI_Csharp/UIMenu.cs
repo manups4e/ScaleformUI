@@ -1264,7 +1264,7 @@ namespace ScaleformUI
         {
             BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "UPDATE_ITEM_DESCRIPTION");
             ScaleformMovieMethodAddParamInt(CurrentSelection);
-            BeginTextCommandScaleformString($"menu_{MenuPool.CurrentDepth}_desc_{CurrentSelection}");
+            BeginTextCommandScaleformString($"menu_{BreadcrumbsHandler.CurrentDepth}_desc_{CurrentSelection}");
             EndTextCommandScaleformString_2();
             EndScaleformMovieMethod();
         }
@@ -1727,32 +1727,21 @@ namespace ScaleformUI
         {
             if (playSound)
                 Game.PlaySound(AUDIO_BACK, AUDIO_LIBRARY);
-            // TODO: MenuPool handle breadcrumb SwitchTo (SwitchFrom)
-            // if no breadcrumb.. visible = false
-
-            /*
-            if (ParentMenu != null)
+            if (BreadcrumbsHandler.CurrentDepth == 0)
             {
-                canBuild = false;
-                ScaleformUI._ui.CallFunction("CLEAR_ALL");
-                ScaleformUI.InstructionalButtons.Enabled = true;
-                ScaleformUI.InstructionalButtons.SetInstructionalButtons(ParentMenu.InstructionalButtons);
-                _visible = false;
-                MenuPool.MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
-                ParentMenu.MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
-                MenuChangeEv(this, ParentMenu, MenuState.ChangeBackward);
-                ParentMenu.canBuild = true;
-                ParentMenu._visible = true;
-                if (ParentMenu.BuildAsync)
-                    ParentMenu.BuildUpMenuAsync();
-                else
-                    ParentMenu.BuildUpMenuSync();
+                if (CanPlayerCloseMenu)
+                {
+                    Visible = false;
+                    BreadcrumbsHandler.Clear();
+                }
             }
             else
             {
-                if (CanPlayerCloseMenu) Visible = false;
+                UIMenu prevMenu = BreadcrumbsHandler.PreviousMenu;
+                BreadcrumbsHandler.Backwards();
+                Visible = false;
+                prevMenu.Visible = true;
             }
-            */
         }
 
         public async void GoUp()
@@ -1930,29 +1919,6 @@ namespace ScaleformUI
                 default:
                     ItemSelect(MenuItems[CurrentSelection], CurrentSelection);
                     MenuItems[CurrentSelection].ItemActivate(this);
-
-                    // NO MORE "SUBMENUS" NOW DEVS CAN MenuPool.SwitchTo() or menu.SwitchTo()
-                    // without binding menus to items.. super cool!
-
-                    /*
-                    if (!Children.ContainsKey(MenuItems[CurrentSelection])) return;
-                    canBuild = false;
-                    _visible = false;
-                    ScaleformUI._ui.CallFunction("CLEAR_ALL");
-                    ScaleformUI.InstructionalButtons.Enabled = true;
-                    ScaleformUI.InstructionalButtons.SetInstructionalButtons(Children[MenuItems[CurrentSelection]].InstructionalButtons);
-                    MenuPool.MenuChangeEv(this, Children[MenuItems[CurrentSelection]], MenuState.ChangeForward);
-                    MenuChangeEv(this, Children[MenuItems[CurrentSelection]], MenuState.ChangeForward);
-                    Children[MenuItems[CurrentSelection]].MenuChangeEv(this, Children[MenuItems[CurrentSelection]], MenuState.ChangeForward);
-                    Children[MenuItems[CurrentSelection]].canBuild = true;
-                    Children[MenuItems[CurrentSelection]].Visible = true;
-                    if (Children[MenuItems[CurrentSelection]].BuildAsync)
-                        Children[MenuItems[CurrentSelection]].BuildUpMenuAsync();
-                    else
-                        Children[MenuItems[CurrentSelection]].BuildUpMenuSync();
-                    Children[MenuItems[CurrentSelection]].MouseEdgeEnabled = MouseEdgeEnabled;
-                    */
-
                     break;
             }
         }
@@ -2102,21 +2068,25 @@ namespace ScaleformUI
                 {
                     MenuPool.MenuChangeEv(null, this, MenuState.Opened);
                     MenuChangeEv(null, this, MenuState.Opened);
+                    canBuild = true;
+                    MenuPool.currentMenu = this;
+                    MenuPool.ableToDraw = true;
                     if (BuildAsync)
                         BuildUpMenuAsync();
                     else
                         BuildUpMenuSync();
-                    MenuPool.currentMenu = this;
-                    MenuPool.ProcessMenus(true);
                     timeBeforeOverflow = ScaleformUI.GameTime;
+                    if (BreadcrumbsHandler.Count == 0)
+                        BreadcrumbsHandler.Forward(this);
                 }
                 else
                 {
+                    canBuild = false;
                     MenuPool.MenuChangeEv(this, null, MenuState.Closed);
                     MenuChangeEv(this, null, MenuState.Closed);
-                    ScaleformUI._ui.CallFunction("CLEAR_ALL");
-                    MenuPool.ProcessMenus(false);
+                    MenuPool.ableToDraw = false;
                     MenuPool.currentMenu = null;
+                    ScaleformUI._ui.CallFunction("CLEAR_ALL");
                 }
                 if (!value) return;
                 if (!ResetCursorOnOpen) return;
@@ -2180,7 +2150,7 @@ namespace ScaleformUI
                 UIMenuItem item = MenuItems[i];
                 int index = i;
 
-                AddTextEntry($"menu_{MenuPool.CurrentDepth}_desc_{index}", item.Description);
+                AddTextEntry($"menu_{BreadcrumbsHandler.CurrentDepth}_desc_{index}", item.Description);
 
                 BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "ADD_ITEM");
                 PushScaleformMovieFunctionParameterInt(item._itemId);
@@ -2193,7 +2163,7 @@ namespace ScaleformUI
                 }
                 else
                 {
-                    BeginTextCommandScaleformString($"menu_{MenuPool.CurrentDepth}_desc_{index}");
+                    BeginTextCommandScaleformString($"menu_{BreadcrumbsHandler.CurrentDepth}_desc_{index}");
                     EndTextCommandScaleformString_2();
                 }
                 PushScaleformMovieFunctionParameterBool(item.Enabled);
@@ -2402,7 +2372,7 @@ namespace ScaleformUI
             foreach (UIMenuItem item in MenuItems)
             {
                 int index = MenuItems.IndexOf(item);
-                AddTextEntry($"menu_{MenuPool.CurrentDepth}_desc_{index}", item.Description);
+                AddTextEntry($"menu_{BreadcrumbsHandler.CurrentDepth}_desc_{index}", item.Description);
 
                 BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "ADD_ITEM");
                 PushScaleformMovieFunctionParameterInt(item._itemId);
@@ -2415,7 +2385,7 @@ namespace ScaleformUI
                 }
                 else
                 {
-                    BeginTextCommandScaleformString($"menu_{MenuPool.CurrentDepth}_desc_{index}");
+                    BeginTextCommandScaleformString($"menu_{BreadcrumbsHandler.CurrentDepth}_desc_{index}");
                     EndTextCommandScaleformString_2();
                 }
                 PushScaleformMovieFunctionParameterBool(item.Enabled);

@@ -15,7 +15,6 @@ public class MenuExample : BaseScript
 {
     private bool enabled = true;
     private string dish = "Banana";
-    private MenuPool _menuPool;
     private TimerBarPool _timerBarPool;
     private long txd;
     private Random Random = new Random(API.GetGameTimer());
@@ -32,15 +31,14 @@ public class MenuExample : BaseScript
         exampleMenu.AnimationType = MenuAnimationType.BACK_INOUT;
         //exampleMenu.CounterColor = HudColor.HUD_COLOUR_PINK;
         // let's add the menu to the Pool
-        _menuPool.Add(exampleMenu);
 
         #region Menu Declaration
 
         #region Big Message
 
+        UIMenuItem bigMessageItem = new UIMenuItem("Big Message Examples", "Select me to switch to the BigMessage menu!");
         UIMenu uiMenuBigMessage = new UIMenu("Big Message", "Big Message");
-        exampleMenu.AddSubMenu(uiMenuBigMessage, "Big Message Examples");
-
+        exampleMenu.AddItem(bigMessageItem);
         UIMenuListItem uiListBigMessageTransition = new UIMenuListItem("Big Message", new List<dynamic>() { "TRANSITION_OUT", "TRANSITION_UP", "TRANSITION_DOWN" }, 0);
         uiListBigMessageTransition.Description = "Transition type for the big message when disposing";
         uiMenuBigMessage.AddItem(uiListBigMessageTransition);
@@ -127,6 +125,11 @@ public class MenuExample : BaseScript
                         break;
                 }
             }
+        };
+
+        bigMessageItem.Activated += (menu, item) =>
+        {
+            menu.SwitchTo(uiMenuBigMessage, inheritOldMenuParams: true);
         };
 
         #endregion
@@ -257,8 +260,10 @@ public class MenuExample : BaseScript
 
         #region Windows SubMenu
         UIMenu windowSubmenu = new UIMenu("Windows Menu", "submenu description");
-        exampleMenu.AddSubMenu(windowSubmenu, "Windows SubMenu item label", "this is the submenu binded item description");
-        windowSubmenu.ParentItem.SetRightLabel(">>>");
+        UIMenuItem windowsItem = new UIMenuItem("Windows SubMenu item label", "this is the submenu binded item description");
+        windowsItem.SetRightLabel(">>>");
+        exampleMenu.AddItem(windowsItem);
+
         UIMenuHeritageWindow heritageWindow = new UIMenuHeritageWindow(0, 0);
         UIMenuDetailsWindow statsWindow = new UIMenuDetailsWindow("Parents resemblance", "Dad:", "Mom:", true, new List<UIDetailStat>());
         windowSubmenu.AddWindow(heritageWindow);
@@ -280,11 +285,19 @@ public class MenuExample : BaseScript
             new UIDetailStat(100-newItem.Value, HudColor.HUD_COLOUR_PINK),
             new UIDetailStat(newItem.Value, HudColor.HUD_COLOUR_FREEMODE),
         };
+
+        windowsItem.Activated += (sender, e) =>
+        {
+            sender.SwitchTo(windowSubmenu, inheritOldMenuParams: true);
+        };
         #endregion
 
         #region Scaleforms SubMenu
+        UIMenuItem scaleformItem = new UIMenuItem("Scaleforms Showdown", "Let's try them!");
+        scaleformItem.SetRightLabel(">>>");
+        exampleMenu.AddItem(scaleformItem);
 
-        UIMenu scaleformMenu = _menuPool.AddSubMenu(exampleMenu, "Scaleforms Showdown");
+        UIMenu scaleformMenu = new("Scaleforms Showdown", "Let's try them!");
         UIMenuItem showSimplePopup = new UIMenuItem("Show PopupWarning example", "You can customize it to your needs");
         UIMenuItem showPopupButtons = new UIMenuItem("Show PopupWarning with buttons", "It waits until a button has been pressed!");
         UIMenuListItem customInstr = new UIMenuListItem("SavingNotification", Enum.GetNames(typeof(LoadingSpinnerType)).Cast<dynamic>().ToList(), 0, "InstructionalButtons now give you the ability to dynamically edit, add, remove, customize your buttons, you can even use them outside the menu ~y~without having to run multiple instances of the same scaleform~w~, aren't you happy??");
@@ -298,11 +311,21 @@ public class MenuExample : BaseScript
         scaleformMenu.AddItem(bigMessage);
         scaleformMenu.AddItem(midMessage);
 
+        scaleformItem.Activated += (sender, args) =>
+        {
+            sender.SwitchTo(scaleformMenu);
+        };
+
         #endregion
 
         #region Notifications SubMenu
 
-        UIMenu notifications = _menuPool.AddSubMenu(exampleMenu, "Notifications Showdown");
+        UIMenuItem notificationsItem = new UIMenuItem("Scaleforms Showdown", "Let's try them!");
+        notificationsItem.SetRightLabel(">>>");
+        exampleMenu.AddItem(notificationsItem);
+
+        UIMenu notificationsMenu = new("Notifications Showdown", "Let's try them!");
+
         List<dynamic> colors = Enum.GetNames(typeof(NotificationColor)).ToList<dynamic>();
         colors.Add("Classic");
         List<dynamic> char_sprites = new List<dynamic>() { "Abigail", "Amanda", "Ammunation", "Andreas", "Antonia", "Ashley", "BankOfLiberty", "BankFleeca", "BankMaze", "Barry", "Beverly", "BikeSite", "BlankEntry", "Blimp", "Blocked", "BoatSite", "BrokenDownGirl", "BugStars", "Call911", "LegendaryMotorsport", "SSASuperAutos", "Castro", "ChatCall", "Chef", "Cheng", "ChengSenior", "Chop", "Cris", "Dave", "Default", "Denise", "DetonateBomb", "DetonatePhone", "Devin", "SubMarine", "Dom", "DomesticGirl", "Dreyfuss", "DrFriedlander", "Epsilon", "EstateAgent", "Facebook", "FilmNoire", "Floyd", "Franklin", "FranklinTrevor", "GayMilitary", "Hao", "HitcherGirl", "Hunter", "Jimmy", "JimmyBoston", "Joe", "Josef", "Josh", "LamarDog", "Lester", "Skull", "LesterFranklin", "LesterMichael", "LifeInvader", "LsCustoms", "LSTI", "Manuel", "Marnie", "Martin", "MaryAnn", "Maude", "Mechanic", "Michael", "MichaelFranklin", "MichaelTrevor", "WarStock", "Minotaur", "Molly", "MorsMutual", "ArmyContact", "Brucie", "FibContact", "RockStarLogo", "Gerald", "Julio", "MechanicChinese", "MerryWeather", "Unicorn", "Mom", "MrsThornhill", "PatriciaTrevor", "PegasusDelivery", "ElitasTravel", "Sasquatch", "Simeon", "SocialClub", "Solomon", "Taxi", "Trevor", "YouTube", "Wade" };
@@ -315,15 +338,19 @@ public class MenuExample : BaseScript
         UIMenuItem noti6 = new UIMenuItem("VS Notification", "This is the notification you see in GTA:O when you kill someone or get revenge.");
         UIMenuItem noti7 = new UIMenuItem("3D Text", "This is known a lot.. let's you draw a 3D text in a precise world coordinates.");
         UIMenuItem noti8 = new UIMenuItem("Simple Text", "This will let you draw a 2D text on screen, you'll have to input the 2D  (X, Y) coordinates.");
-        notifications.AddItem(noti1);
-        notifications.AddItem(noti2);
-        notifications.AddItem(noti3);
-        notifications.AddItem(noti4);
-        notifications.AddItem(noti5);
-        notifications.AddItem(noti6);
-        notifications.AddItem(noti7);
-        notifications.AddItem(noti8);
+        notificationsMenu.AddItem(noti1);
+        notificationsMenu.AddItem(noti2);
+        notificationsMenu.AddItem(noti3);
+        notificationsMenu.AddItem(noti4);
+        notificationsMenu.AddItem(noti5);
+        notificationsMenu.AddItem(noti6);
+        notificationsMenu.AddItem(noti7);
+        notificationsMenu.AddItem(noti8);
 
+        notificationsItem.Activated += (sender, args) =>
+        {
+            sender.SwitchTo(notificationsMenu);
+        };
         #endregion
 
         #region PauseMenu Enabler
@@ -478,7 +505,7 @@ public class MenuExample : BaseScript
         // ====================================================================
 
         ScaleformUI.ScaleformUINotification notification = null;
-        notifications.OnListChange += (_menu, _item, _index) =>
+        notificationsMenu.OnListChange += (_menu, _item, _index) =>
         {
             if (_item == noti1)
             {
@@ -827,7 +854,7 @@ public class MenuExample : BaseScript
             }
         };
 
-        notifications.OnItemSelect += async (_menu, _item, _index) =>
+        notificationsMenu.OnItemSelect += async (_menu, _item, _index) =>
         {
             API.AddTextEntry("FMMC_KEY_TIP8", "Insert text (Max 50 chars):");
             string text = await Game.GetUserInput("", 50); // i set max 50 chars here as example but it can be way more!
@@ -964,7 +991,6 @@ public class MenuExample : BaseScript
         var txd = API.GetPedheadshotTxdString(mugshot);
         pauseMenu.HeaderPicture = new(txd, txd);
         */
-        _menuPool.Add(pauseMenu);
         TextTab basicTab = new TextTab("TabTextItem", "This is the title!");
         basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
         basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
@@ -1188,11 +1214,11 @@ public class MenuExample : BaseScript
             // to prevent the pause menu to close the menu too!
 
             // clear the player list
-            foreach (var tab in menu.Tabs)
+            foreach (BaseTab tab in menu.Tabs)
             {
                 if (tab is PlayerListTab)
                 {
-                    var t = tab as PlayerListTab;
+                    PlayerListTab t = tab as PlayerListTab;
                     t.PlayersColumn.Items.ForEach(item => item.Dispose());
                 }
             }
@@ -1278,7 +1304,6 @@ public class MenuExample : BaseScript
         while (!API.IsPedheadshotReady(mugshot)) await BaseScript.Delay(1);
         string ped_txd = API.GetPedheadshotTxdString(mugshot);
         pauseMenu.HeaderPicture = new(ped_txd, ped_txd);
-        _menuPool.Add(pauseMenu);
 
         UIMenuItem item = new UIMenuItem("UIMenuItem", "UIMenuItem description");
         UIMenuListItem item1 = new UIMenuListItem("UIMenuListItem", new List<dynamic>() { "This", "is", "a", "Test" }, 0, "UIMenuListItem description");
@@ -1452,9 +1477,6 @@ public class MenuExample : BaseScript
     bool feedOpen = false;
     public MenuExample()
     {
-        _menuPool = new MenuPool();
-        _menuPool.RefreshIndex();
-
         _timerBarPool = new TimerBarPool();
         TextTimerBar textTimerBar = new TextTimerBar("Label", "Caption", CitizenFX.Core.UI.Font.Pricedown);
         _timerBarPool.Add(textTimerBar);
@@ -1475,13 +1497,13 @@ public class MenuExample : BaseScript
             if (playerMarker.IsInRange)
                 Notifications.DrawText($"IsInMarker => {playerMarker.IsInMarker}");
 
-            if (Game.IsControlJustPressed(0, Control.SelectCharacterMichael) && !_menuPool.IsAnyMenuOpen) // Our menu enabler (to exit menu simply press Back on the main menu)
+            if (Game.IsControlJustPressed(0, Control.SelectCharacterMichael) && !MenuPool.IsAnyMenuOpen) // Our menu enabler (to exit menu simply press Back on the main menu)
                 ExampleMenu();
 
             // to open the pause menu without opening the normal menu.
-            if (Game.IsControlJustPressed(0, Control.SelectCharacterFranklin) && !_menuPool.IsAnyMenuOpen && !_menuPool.IsAnyPauseMenuOpen)
+            if (Game.IsControlJustPressed(0, Control.SelectCharacterFranklin) && !MenuPool.IsAnyMenuOpen && !MenuPool.IsAnyPauseMenuOpen)
                 PauseMenuShowcase(null);
-            if (Game.IsControlJustPressed(0, Control.SelectCharacterTrevor) && !_menuPool.IsAnyMenuOpen && !_menuPool.IsAnyPauseMenuOpen)
+            if (Game.IsControlJustPressed(0, Control.SelectCharacterTrevor) && !MenuPool.IsAnyMenuOpen && !MenuPool.IsAnyPauseMenuOpen)
                 LobbyPauseMenuShowcase(null);
             await Task.FromResult(0);
 

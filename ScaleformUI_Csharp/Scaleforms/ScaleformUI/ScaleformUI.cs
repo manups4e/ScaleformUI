@@ -77,6 +77,8 @@ namespace ScaleformUI
             if (BigFeed._sc != null)
                 BigFeed.Update();
             _ui ??= new("ScaleformUI");
+            if (MenuPool.ableToDraw)
+                MenuPool.ProcessMenus();
             if (!PauseMenu.Loaded)
                 PauseMenu.Load();
             await Task.FromResult(0);

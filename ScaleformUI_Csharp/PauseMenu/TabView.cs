@@ -126,7 +126,7 @@ namespace ScaleformUI.PauseMenu
                     SetPlayerControl(Game.Player.Handle, false, 0);
                     BuildPauseMenu();
                     MenuPool.currentBase = this;
-                    MenuPool.ProcessMenus(true);
+                    MenuPool.ableToDraw = true;
                 }
                 else
                 {
@@ -136,7 +136,7 @@ namespace ScaleformUI.PauseMenu
                     SendPauseMenuClose();
                     SetPlayerControl(Game.Player.Handle, true, 0);
                     MenuPool.currentBase = null;
-                    MenuPool.ProcessMenus(false);
+                    MenuPool.ableToDraw = false;
                     ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY_NO_BACKGROUND"), false, -1);
                 }
             }
