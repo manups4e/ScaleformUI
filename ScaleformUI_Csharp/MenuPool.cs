@@ -12,7 +12,7 @@ namespace ScaleformUI
     /// </summary>
     public static class MenuPool
     {
-        internal static Dictionary<int, UIMenu> breadCrumbs = new Dictionary<int, UIMenu>();
+        internal static List<UIMenu> breadCrumbs = new();
         internal static UIMenu currentMenu;
         internal static PauseMenuBase currentBase;
         internal static bool ableToDraw;
@@ -50,7 +50,7 @@ namespace ScaleformUI
             get
             {
                 if (breadCrumbs.Count == 0) return 0;
-                return breadCrumbs.Count - 1;
+                return breadCrumbs.IndexOf(currentMenu);
             }
         }
 
@@ -90,8 +90,10 @@ namespace ScaleformUI
                 newMenu.AnimationType = menu.AnimationType;
                 newMenu.BuildingAnimation = menu.BuildingAnimation;
             }
+            newMenu.CurrentSelection = newMenuCurrentSelection != 0 ? newMenuCurrentSelection : 0;
             menu.Visible = false;
             newMenu.Visible = true;
+            breadCrumbs.Add(newMenu);
         }
 
         /// <summary>
@@ -150,10 +152,11 @@ namespace ScaleformUI
         /// <summary>
         /// Closes any opened ScaleformUI menu or PauseMenu menu.
         /// </summary>
-        public static void CloseAllMenus()
+        public static void CloseAndClearHistory()
         {
             if (currentMenu != null) currentMenu.Visible = false;
             if (currentBase != null) currentBase.Visible = false;
+            breadCrumbs.Clear();
         }
 
         public static void MenuChangeEv(UIMenu oldmenu, UIMenu newmenu, MenuState state)
