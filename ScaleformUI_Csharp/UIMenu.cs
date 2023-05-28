@@ -859,7 +859,7 @@ namespace ScaleformUI
         private bool _visible;
         private bool _justOpened = true;
         private bool _itemsDirty = false;
-        private PaginationHandler Pagination;
+        internal PaginationHandler Pagination;
 
         internal KeyValuePair<string, string> _customTexture;
 
@@ -1484,11 +1484,6 @@ namespace ScaleformUI
                 UpdateDescription();
                 _changed = false;
             }
-
-            Notifications.DrawText(0.25f, 0.8f, "Pagination.CurrentMenuIndex: " + Pagination.CurrentMenuIndex);
-            Notifications.DrawText(0.25f, 0.825f, "Pagination.CurrentPage: " + Pagination.CurrentPage);
-            Notifications.DrawText(0.25f, 0.85f, "Pagination.CurrentPageIndex: " + Pagination.CurrentPageIndex);
-            Notifications.DrawText(0.25f, 0.875f, "ScaleformIndex: " + Pagination.ScaleformIndex);
         }
 
         int eventType = 0;
@@ -2144,6 +2139,8 @@ namespace ScaleformUI
             int max = Pagination.ItemsPerPage;
             if (MenuItems.Count < max)
                 max = MenuItems.Count;
+            Pagination.MinItem = Pagination.CurrentPageStartIndex;
+            Pagination.MaxItem = Pagination.CurrentPageEndIndex;
             while (i < max)
             {
                 await BaseScript.Delay(0);

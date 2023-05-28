@@ -16,7 +16,21 @@
         internal int CurrentPageEndIndex => CurrentPageStartIndex + itemsPerPage - 1;
         internal int CurrentPageIndex { get => _currentPageIndex; set => _currentPageIndex = GetPageIndex(value); }
         internal int CurrentMenuIndex { get => _currentMenuIndex; set => _currentMenuIndex = value; }
+        internal int MinItem { get => minItem; set => minItem = value; }
+        internal int MaxItem { get => maxItem; set => maxItem = value; }
         internal int ScaleformIndex;
+        private int minItem;
+        private int maxItem;
+
+        internal bool IsItemVisible(int menuIndex)
+        {
+            return menuIndex >= minItem && menuIndex <= maxItem;
+        }
+
+        internal int GetScaleformIndex(int menuIndex)
+        {
+            return GetPageIndex(menuIndex);
+        }
 
         internal int GetPageIndex(int menuIndex)
         {
@@ -47,6 +61,12 @@
             CurrentPage = GetPage(CurrentMenuIndex);
             if (ScaleformIndex < 0)
             {
+                minItem--;
+                maxItem--;
+                if (minItem < 0)
+                    minItem = TotalItems - 1;
+                if (maxItem < 0)
+                    maxItem = TotalItems - 1;
                 if (TotalItems < itemsPerPage)
                 {
                     ScaleformIndex = TotalItems - 1;
@@ -74,6 +94,12 @@
             else if (ScaleformIndex >= itemsPerPage)
             {
                 ScaleformIndex = itemsPerPage - 1;
+                minItem++;
+                maxItem++;
+                if (minItem >= totalItems)
+                    minItem = 0;
+                if (maxItem >= totalItems)
+                    maxItem = 0;
                 return true;
             }
             return false;
