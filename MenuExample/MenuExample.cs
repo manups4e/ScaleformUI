@@ -320,7 +320,7 @@ public class MenuExample : BaseScript
 
         #region Notifications SubMenu
 
-        UIMenuItem notificationsItem = new UIMenuItem("Scaleforms Showdown", "Let's try them!");
+        UIMenuItem notificationsItem = new UIMenuItem("This item goes to the notifications", "Let's try them!");
         notificationsItem.SetRightLabel(">>>");
         exampleMenu.AddItem(notificationsItem);
 
