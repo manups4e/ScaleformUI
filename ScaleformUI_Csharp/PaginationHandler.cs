@@ -1,4 +1,6 @@
-﻿namespace ScaleformUI
+﻿using CitizenFX.Core;
+
+namespace ScaleformUI
 {
     internal class PaginationHandler
     {
@@ -6,6 +8,8 @@
         private int _currentMenuIndex;
         private int currentPage;
         private int itemsPerPage;
+        private int minItem;
+        private int maxItem;
         private int totalItems;
 
         internal int CurrentPage { get => currentPage; set => currentPage = value; }
@@ -13,14 +17,12 @@
         internal int TotalItems { get => totalItems; set => totalItems = value; }
         internal int TotalPages => (int)Math.Floor(totalItems / (float)itemsPerPage);
         internal int CurrentPageStartIndex => CurrentPage * itemsPerPage;
-        internal int CurrentPageEndIndex => CurrentPageStartIndex + itemsPerPage - 1;
-        internal int CurrentPageIndex { get => _currentPageIndex; set => _currentPageIndex = GetPageIndex(value); }
+        internal int CurrentPageEndIndex => CurrentPageStartIndex + (totalItems >= itemsPerPage ? itemsPerPage - 1 : totalItems);
+        internal int CurrentPageIndex { get => _currentPageIndex; set => _currentPageIndex = GetPageIndexFromMenuIndex(value); }
         internal int CurrentMenuIndex { get => _currentMenuIndex; set => _currentMenuIndex = value; }
         internal int MinItem { get => minItem; set => minItem = value; }
         internal int MaxItem { get => maxItem; set => maxItem = value; }
-        internal int ScaleformIndex;
-        private int minItem;
-        private int maxItem;
+        internal int ScaleformIndex { get; set; }
 
         internal bool IsItemVisible(int menuIndex)
         {
@@ -29,17 +31,44 @@
 
         internal int GetScaleformIndex(int menuIndex)
         {
-            return GetPageIndex(menuIndex);
+            int id = 0;
+            if (minItem <= menuIndex)
+            {
+                id = menuIndex - minItem;
+            }
+            else if (minItem > menuIndex && maxItem >= menuIndex)
+            {
+                id = (menuIndex - maxItem) + (itemsPerPage - 1);
+            }
+
+            Debug.WriteLine("GetScaleformIndex:" + id);
+            Debug.WriteLine("minItem:" + minItem);
+            Debug.WriteLine("maxItem:" + maxItem);
+            return id;
         }
 
-        internal int GetPageIndex(int menuIndex)
+        internal int GetMenuIndexFromScaleformIndex(int scaleformIndex)
+        {
+            int id = 0;
+            if (minItem <= scaleformIndex)
+            {
+                id = scaleformIndex + minItem;
+            }
+            else if (minItem > scaleformIndex && maxItem >= scaleformIndex)
+            {
+                id = GetMenuIndexFromPageIndex(0, (TotalItems - minItem) - scaleformIndex);
+            }
+            return id;
+        }
+
+        internal int GetPageIndexFromMenuIndex(int menuIndex)
         {
             int page = GetPage(menuIndex);
             int startIndex = page * itemsPerPage;
             return menuIndex - startIndex;
         }
-        // se la pagina ha meno di 7 elementi? cosa restituiamo? (elementi infiniti.. quindi si dovrebbe ripartire da 0)
-        internal int GetMenuIndex(int page, int index)
+
+        internal int GetMenuIndexFromPageIndex(int page, int index)
         {
             int initialIndex = page * itemsPerPage;
             int endIndex = initialIndex + itemsPerPage - 1;
