@@ -26,7 +26,6 @@ public class MenuExample : BaseScript
 
         UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI SHOWCASE", new PointF(20, 20), "scaleformui", "bannerbackground", true, true); // true means add menu Glare scaleform to the menu
         exampleMenu.MaxItemsOnScreen = 7; // To decide max items on screen at time, default 7
-        exampleMenu.BuildAsync = true; // set to false might freeze the game a couple of milliseconds to load high N items menus. (default true)
         exampleMenu.BuildingAnimation = MenuBuildingAnimation.LEFT_RIGHT;
         exampleMenu.AnimationType = MenuAnimationType.BACK_INOUT;
         //exampleMenu.CounterColor = HudColor.HUD_COLOUR_PINK;
