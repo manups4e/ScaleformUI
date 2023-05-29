@@ -1,6 +1,4 @@
-﻿using CitizenFX.Core;
-
-namespace ScaleformUI
+﻿namespace ScaleformUI
 {
     internal class PaginationHandler
     {
@@ -26,7 +24,7 @@ namespace ScaleformUI
 
         internal bool IsItemVisible(int menuIndex)
         {
-            return menuIndex >= minItem && menuIndex <= maxItem;
+            return menuIndex >= minItem || menuIndex <= minItem && menuIndex <= maxItem;
         }
 
         internal int GetScaleformIndex(int menuIndex)
@@ -40,10 +38,6 @@ namespace ScaleformUI
             {
                 id = (menuIndex - maxItem) + (itemsPerPage - 1);
             }
-
-            Debug.WriteLine("GetScaleformIndex:" + id);
-            Debug.WriteLine("minItem:" + minItem);
-            Debug.WriteLine("maxItem:" + maxItem);
             return id;
         }
 
