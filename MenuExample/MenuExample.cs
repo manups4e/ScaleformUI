@@ -35,7 +35,7 @@ public class MenuExample : BaseScript
 
         #region Big Message
 
-        UIMenuItem bigMessageItem = new UIMenuItem("Big Message Examples", "Select me to switch to the BigMessage menu!");
+        UIMenuItem bigMessageItem = new UIMenuItem("~g~Big ~w~Message ~r~Examples", "Select me to switch to the BigMessage menu!");
         UIMenu uiMenuBigMessage = new UIMenu("Big Message", "Big Message");
         exampleMenu.AddItem(bigMessageItem);
         UIMenuListItem uiListBigMessageTransition = new UIMenuListItem("Big Message", new List<dynamic>() { "TRANSITION_OUT", "TRANSITION_UP", "TRANSITION_DOWN" }, 0);
@@ -134,7 +134,7 @@ public class MenuExample : BaseScript
         #endregion
 
         #region Ketchup
-        UIMenuCheckboxItem ketchupItem = new UIMenuCheckboxItem("Scrolling animation enabled? in a very long label to test the text scrolling feature!", UIMenuCheckboxStyle.Tick, enabled, "Do you wish to enable the scrolling animation?");
+        UIMenuCheckboxItem ketchupItem = new UIMenuCheckboxItem("~g~Scrolling animation enabled? ~b~in a very long label to ~o~test the text scrolling feature!", UIMenuCheckboxStyle.Tick, enabled, "Do you wish to enable the scrolling animation?");
         long _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
         API.CreateRuntimeTextureFromDuiHandle(txd, "panelbackground", API.GetDuiHandle(_paneldui));
         UIMissionDetailsPanel sidePanel = new UIMissionDetailsPanel(PanelSide.Right, "Side Panel", true, "scaleformui", "panelbackground");
@@ -258,10 +258,10 @@ public class MenuExample : BaseScript
         #endregion
 
         #region Windows SubMenu
-        UIMenu windowSubmenu = new UIMenu("Windows Menu", "submenu description");
         UIMenuItem windowsItem = new UIMenuItem("Windows SubMenu item label", "this is the submenu binded item description");
         windowsItem.SetRightLabel(">>>");
         exampleMenu.AddItem(windowsItem);
+        UIMenu windowSubmenu = new UIMenu("Windows Menu", "submenu description");
 
         UIMenuHeritageWindow heritageWindow = new UIMenuHeritageWindow(0, 0);
         UIMenuDetailsWindow statsWindow = new UIMenuDetailsWindow("Parents resemblance", "Dad:", "Mom:", true, new List<UIDetailStat>());
@@ -312,7 +312,7 @@ public class MenuExample : BaseScript
 
         scaleformItem.Activated += (sender, args) =>
         {
-            sender.SwitchTo(scaleformMenu);
+            sender.SwitchTo(scaleformMenu, inheritOldMenuParams: true);
         };
 
         #endregion
@@ -348,7 +348,7 @@ public class MenuExample : BaseScript
 
         notificationsItem.Activated += (sender, args) =>
         {
-            sender.SwitchTo(notificationsMenu);
+            sender.SwitchTo(notificationsMenu, inheritOldMenuParams: true);
         };
         #endregion
 
