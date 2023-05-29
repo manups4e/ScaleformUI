@@ -1,5 +1,6 @@
 ﻿using CitizenFX.Core.Native;
 using ScaleformUI.LobbyMenu;
+
 namespace ScaleformUI
 {
     public enum BadgeIcon
@@ -191,11 +192,11 @@ namespace ScaleformUI
     public class UIMenuItem
     {
         internal int _itemId = 0;
-        private bool _selected;
-        private string _label;
-        private string _formatLeftLabel;
+        internal string _formatLeftLabel = "";
+        internal string _formatRightLabel = "";
+        private bool _selected = false;
+        private string _label = "";
         private string _rightLabel = "";
-        private string _formatRightLabel;
         private bool _enabled;
         private bool blinkDescription;
         private HudColor mainColor;
@@ -355,7 +356,6 @@ namespace ScaleformUI
             HighlightColor = highlightColor;
             TextColor = textColor;
             HighlightedTextColor = highlightedTextColor;
-
             Label = text;
             this.description = string.Empty;
             DescriptionHash = descriptionHash;
@@ -388,45 +388,25 @@ namespace ScaleformUI
                 _selected = value;
                 if (value)
                 {
-                    if (highlightedTextColor == HudColor.HUD_COLOUR_BLACK)
+                    _formatLeftLabel = _formatLeftLabel.Replace("~w~", "~l~");
+                    _formatLeftLabel = _formatLeftLabel.Replace("~s~", "~l~");
+                    if (!string.IsNullOrWhiteSpace(_formatRightLabel))
                     {
-                        if (!_formatLeftLabel.StartsWith("~"))
-                            _formatLeftLabel = _formatLeftLabel.Insert(0, "~l~");
-                        if (_formatLeftLabel.Contains("~"))
-                        {
-                            _formatLeftLabel = _formatLeftLabel.Replace("~w~", "~l~");
-                            _formatLeftLabel = _formatLeftLabel.Replace("~s~", "~l~");
-                        }
-                        if (!string.IsNullOrWhiteSpace(_formatRightLabel))
-                        {
-                            if (!_formatRightLabel.StartsWith("~"))
-                                _formatRightLabel = _formatRightLabel.Insert(0, "~l~");
-                            if (_formatRightLabel.Contains("~"))
-                            {
-                                _formatRightLabel = _formatRightLabel.Replace("~w~", "~l~");
-                                _formatRightLabel = _formatRightLabel.Replace("~s~", "~l~");
-                            }
-                        }
+                        _formatRightLabel = _formatRightLabel.Replace("~w~", "~l~");
+                        _formatRightLabel = _formatRightLabel.Replace("~s~", "~l~");
                     }
                 }
                 else
                 {
-                    if (textColor == HudColor.HUD_COLOUR_WHITE)
+                    _formatLeftLabel = _formatLeftLabel.Replace("~l~", "~s~");
+                    if (!string.IsNullOrWhiteSpace(_formatRightLabel))
                     {
-                        _formatLeftLabel = _formatLeftLabel.Replace("~l~", "~s~");
-                        if (!_formatLeftLabel.StartsWith("~"))
-                            _formatLeftLabel = _formatLeftLabel.Insert(0, "~s~");
-                        if (!string.IsNullOrWhiteSpace(_formatRightLabel))
-                        {
-                            _formatRightLabel = _formatRightLabel.Replace("~l~", "~s~");
-                            if (!_formatRightLabel.StartsWith("~"))
-                                _formatRightLabel = _formatRightLabel.Insert(0, "~s~");
-                        }
+                        _formatRightLabel = _formatRightLabel.Replace("~l~", "~s~");
                     }
                 }
-                if (Parent is not null && Parent.Visible && textColor == HudColor.HUD_COLOUR_WHITE && highlightedTextColor == HudColor.HUD_COLOUR_BLACK)
+                if (Parent is not null && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    ScaleformUI._ui.CallFunction("SET_ITEM_LABELS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _formatLeftLabel, _rightLabel);
+                    ScaleformUI._ui.CallFunction("SET_ITEM_LABELS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _formatLeftLabel, _formatRightLabel);
                 }
             }
         }
@@ -515,30 +495,17 @@ namespace ScaleformUI
             set
             {
                 _label = value;
-                _formatLeftLabel = value;
+                _formatLeftLabel = value.StartsWith("~") ? value : "~s~" + value;
                 if (_selected)
                 {
-                    if (highlightedTextColor == HudColor.HUD_COLOUR_BLACK)
-                    {
-                        if (_formatLeftLabel.Contains("~"))
-                        {
-                            _formatLeftLabel = _formatLeftLabel.Replace("~w~", "~l~");
-                            _formatLeftLabel = _formatLeftLabel.Replace("~s~", "~l~");
-                            if (!_formatLeftLabel.StartsWith("~"))
-                                _formatLeftLabel = _formatLeftLabel.Insert(0, "~l~");
-                        }
-                    }
+                    _formatLeftLabel = _formatLeftLabel.Replace("~w~", "~l~");
+                    _formatLeftLabel = _formatLeftLabel.Replace("~s~", "~l~");
                 }
                 else
                 {
-                    if (textColor == HudColor.HUD_COLOUR_WHITE)
-                    {
-                        _formatLeftLabel = _formatLeftLabel.Replace("~l~", "~s~");
-                        if (!_formatLeftLabel.StartsWith("~"))
-                            _formatLeftLabel = _formatLeftLabel.Insert(0, "~s~");
-                    }
+                    _formatLeftLabel = _formatLeftLabel.Replace("~l~", "~s~");
                 }
-                if (Parent is not null && Parent.Visible && textColor == HudColor.HUD_COLOUR_WHITE && highlightedTextColor == HudColor.HUD_COLOUR_BLACK)
+                if (Parent is not null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
                     ScaleformUI._ui.CallFunction("SET_LEFT_LABEL", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _formatLeftLabel);
                 }
@@ -599,30 +566,17 @@ namespace ScaleformUI
             private set
             {
                 _rightLabel = value;
-                _formatRightLabel = value;
+                _formatRightLabel = value.StartsWith("~") ? value : "~s~" + value;
                 if (_selected)
                 {
-                    if (highlightedTextColor == HudColor.HUD_COLOUR_BLACK)
-                    {
-                        if (_formatRightLabel.Contains("~"))
-                        {
-                            _formatRightLabel = _formatRightLabel.Replace("~w~", "~l~");
-                            _formatRightLabel = _formatRightLabel.Replace("~s~", "~l~");
-                            if (!_formatRightLabel.StartsWith("~"))
-                                _formatRightLabel = _formatRightLabel.Insert(0, "~l~");
-                        }
-                    }
+                    _formatRightLabel = _formatRightLabel.Replace("~w~", "~l~");
+                    _formatRightLabel = _formatRightLabel.Replace("~s~", "~l~");
                 }
                 else
                 {
-                    if (textColor == HudColor.HUD_COLOUR_WHITE)
-                    {
-                        _formatRightLabel = _formatRightLabel.Replace("~l~", "~s~");
-                        if (!_formatRightLabel.StartsWith("~"))
-                            _formatRightLabel = _formatRightLabel.Insert(0, "~s~");
-                    }
+                    _formatRightLabel = _formatRightLabel.Replace("~l~", "~s~");
                 }
-                if (Parent is not null && Parent.Visible && textColor == HudColor.HUD_COLOUR_WHITE && highlightedTextColor == HudColor.HUD_COLOUR_BLACK)
+                if (Parent is not null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
                     ScaleformUI._ui.CallFunction("SET_RIGHT_LABEL", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _formatRightLabel);
                 }
