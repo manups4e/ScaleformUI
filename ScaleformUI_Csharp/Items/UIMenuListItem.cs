@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ScaleformUI
+﻿namespace ScaleformUI
 {
     public class UIMenuListItem : UIMenuItem, IListItem
     {
@@ -33,8 +30,8 @@ namespace ScaleformUI
                     _index = Items.Count - 1;
                 else
                     _index = value;
-                if (Parent is not null && Parent.Visible)
-                    ScaleformUI._ui.CallFunction("SET_ITEM_VALUE", Parent.MenuItems.IndexOf(this), _index);
+                if (Parent is not null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
+                    ScaleformUI._ui.CallFunction("SET_ITEM_VALUE", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _index);
             }
         }
 
@@ -136,8 +133,8 @@ namespace ScaleformUI
             _items.Clear();
             _items = list;
             _index = index;
-            if (Parent.Visible)
-                ScaleformUI._ui.CallFunction("UPDATE_LISTITEM_LIST", Parent.MenuItems.IndexOf(this), string.Join(",", _items), index);
+            if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
+                ScaleformUI._ui.CallFunction("UPDATE_LISTITEM_LIST", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), string.Join(",", _items), index);
         }
 
         public override void SetRightBadge(BadgeIcon badge)

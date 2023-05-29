@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ScaleformUI
+﻿namespace ScaleformUI
 {
     public class UIMenuStatisticsPanel : UIMenuPanel
     {
@@ -20,8 +18,8 @@ namespace ScaleformUI
                 _value = 0;
             StatisticsForPanel item = new(Name, _value);
             Items.Add(item);
-            var it = ParentItem.Parent.MenuItems.IndexOf(ParentItem);
-            var van = ParentItem.Panels.IndexOf(this);
+            int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(ParentItem));
+            int van = ParentItem.Panels.IndexOf(this);
             ScaleformUI._ui.CallFunction("ADD_STATISTIC_TO_PANEL", it, van, Name, _value);
         }
 
@@ -37,8 +35,8 @@ namespace ScaleformUI
                 Items[ItemId].Value = 100;
             if (Items[ItemId].Value < 0)
                 Items[ItemId].Value = 0;
-            var it = ParentItem.Parent.MenuItems.IndexOf(ParentItem);
-            var van = ParentItem.Panels.IndexOf(this);
+            int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(ParentItem));
+            int van = ParentItem.Panels.IndexOf(this);
             ScaleformUI._ui.CallFunction("SET_PANEL_STATS_ITEM_VALUE", it, van, ItemId, Items[ItemId].Value);
         }
     }

@@ -1,6 +1,5 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using System;
 using System.Drawing;
 
 namespace ScaleformUI
@@ -78,24 +77,24 @@ namespace ScaleformUI
 
         private void _setValue(PointF value)
         {
-            var it = ParentItem.Parent.MenuItems.IndexOf(ParentItem);
-            var van = ParentItem.Panels.IndexOf(this);
+            int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(ParentItem));
+            int van = ParentItem.Panels.IndexOf(this);
             ScaleformUI._ui.CallFunction("SET_GRID_PANEL_VALUE_RETURN_VALUE", it, van, value.X, value.Y);
         }
 
         public async void SetMousePosition(PointF mouse)
         {
-            var it = ParentItem.Parent.MenuItems.IndexOf(ParentItem);
-            var van = ParentItem.Panels.IndexOf(this);
+            int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(ParentItem));
+            int van = ParentItem.Panels.IndexOf(this);
             API.BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_GRID_PANEL_POSITION_RETURN_VALUE");
             API.ScaleformMovieMethodAddParamInt(0);
             API.ScaleformMovieMethodAddParamInt(1);
             API.ScaleformMovieMethodAddParamFloat(mouse.X);
             API.ScaleformMovieMethodAddParamFloat(mouse.Y);
-            var ret = API.EndScaleformMovieMethodReturnValue();
+            int ret = API.EndScaleformMovieMethodReturnValue();
             while (!API.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            var res = API.GetScaleformMovieMethodReturnValueString(ret);
-            var returned = res.Split(',');
+            string res = API.GetScaleformMovieMethodReturnValueString(ret);
+            string[] returned = res.Split(',');
             _value = new PointF(Convert.ToSingle(returned[0]), Convert.ToSingle(returned[1]));
         }
 

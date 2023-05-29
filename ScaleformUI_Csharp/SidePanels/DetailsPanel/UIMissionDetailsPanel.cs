@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ScaleformUI
+﻿namespace ScaleformUI
 {
     public class UIMissionDetailsPanel : UIMenuSidePanel
     {
@@ -14,9 +12,9 @@ namespace ScaleformUI
             set
             {
                 title = value;
-                if (ParentItem is not null)
+                if (ParentItem is not null && ParentItem.Parent != null && ParentItem.Parent.Visible)
                 {
-                    ScaleformUI._ui.CallFunction("UPDATE_SIDE_PANEL_TITLE", ParentItem.Parent.MenuItems.IndexOf(ParentItem), title);
+                    ScaleformUI._ui.CallFunction("UPDATE_SIDE_PANEL_TITLE", ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(this.ParentItem)), title);
                 }
             }
         }
@@ -73,7 +71,7 @@ namespace ScaleformUI
             TextureName = txn;
             if (ParentItem is not null)
             {
-                var wid = ParentItem.Parent.MenuItems.IndexOf(ParentItem);
+                int wid = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
                 ScaleformUI._ui.CallFunction("UPDATE_MISSION_DETAILS_PANEL_IMG", wid, TextureDict, TextureName);
             }
 
@@ -86,9 +84,9 @@ namespace ScaleformUI
         public void AddItem(UIFreemodeDetailsItem item)
         {
             Items.Add(item);
-            if (ParentItem is not null)
+            if (ParentItem is not null && ParentItem.Parent != null && ParentItem.Parent.Visible)
             {
-                var wid = ParentItem.Parent.MenuItems.IndexOf(ParentItem);
+                int wid = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
                 ScaleformUI._ui.CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", wid, item.Type, item.TextLeft, item.TextRight, (int)item.Icon, (int)item.IconColor, item.Tick);
             }
         }
@@ -100,9 +98,9 @@ namespace ScaleformUI
         public void RemoveItem(int idx)
         {
             Items.RemoveAt(idx);
-            if (ParentItem is not null)
+            if (ParentItem is not null && ParentItem.Parent != null && ParentItem.Parent.Visible)
             {
-                var wid = ParentItem.Parent.MenuItems.IndexOf(ParentItem);
+                int wid = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
                 ScaleformUI._ui.CallFunction("REMOVE_MISSION_DETAILS_DESC_ITEM", wid, TextureDict, TextureName);
             }
         }
