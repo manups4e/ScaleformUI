@@ -222,9 +222,9 @@ namespace ScaleformUI
         {
             BeginScaleformMovieMethod(_pause.Handle, "SET_INPUT_EVENT");
             ScaleformMovieMethodAddParamInt(direction);
-            var ret = EndScaleformMovieMethodReturnValue();
+            int ret = EndScaleformMovieMethodReturnValue();
             while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            var res = GetScaleformMovieFunctionReturnString(ret);
+            string res = GetScaleformMovieFunctionReturnString(ret);
             return res;
         }
 
@@ -235,9 +235,9 @@ namespace ScaleformUI
         public async Task<string> SendClickEvent()
         {
             BeginScaleformMovieMethod(_pause.Handle, "MOUSE_CLICK_EVENT");
-            var ret = EndScaleformMovieMethodReturnValue();
+            int ret = EndScaleformMovieMethodReturnValue();
             while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            var res = GetScaleformMovieFunctionReturnString(ret);
+            string res = GetScaleformMovieFunctionReturnString(ret);
             return res;
         }
 
@@ -253,7 +253,6 @@ namespace ScaleformUI
         {
             if (_visible && GetCurrentFrontendMenuVersion() == -2060115030)
             {
-
                 SetScriptGfxDrawBehindPausemenu(true);
                 DrawScaleformMovie(_header.Handle, 0.501f, 0.162f, 0.6782f, 0.145f, 255, 255, 255, 255, 0);
                 if (!isLobby)

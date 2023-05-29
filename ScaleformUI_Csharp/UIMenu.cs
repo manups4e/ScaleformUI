@@ -2207,7 +2207,7 @@ namespace ScaleformUI
             BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "ADD_ITEM");
             PushScaleformMovieFunctionParameterBool(before);
             PushScaleformMovieFunctionParameterInt(item._itemId);
-            PushScaleformMovieMethodParameterString(item.Label);
+            PushScaleformMovieMethodParameterString(item._formatLeftLabel);
             if (item.DescriptionHash != 0 && string.IsNullOrWhiteSpace(item.Description))
             {
                 BeginTextCommandScaleformString("STRTNM1");
@@ -2306,7 +2306,7 @@ namespace ScaleformUI
                     PushScaleformMovieFunctionParameterInt((int)item.TextColor);
                     PushScaleformMovieFunctionParameterInt((int)item.HighlightedTextColor);
                     EndScaleformMovieMethod();
-                    ScaleformUI._ui.CallFunction("SET_RIGHT_LABEL", scaleformIndex, item.RightLabel);
+                    ScaleformUI._ui.CallFunction("SET_RIGHT_LABEL", scaleformIndex, item._formatRightLabel);
                     if (item.RightBadge != BadgeIcon.NONE)
                         ScaleformUI._ui.CallFunction("SET_RIGHT_BADGE", scaleformIndex, (int)item.RightBadge);
                     break;
@@ -2382,7 +2382,7 @@ namespace ScaleformUI
                 }
                 else if (value >= MenuItems.Count)
                 {
-                    value = MenuItems.Count - 1;
+                    value = MenuItems.Count;
                 }
                 MenuItems[CurrentSelection].Selected = false;
 
