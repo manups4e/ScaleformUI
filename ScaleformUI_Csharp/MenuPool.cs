@@ -78,7 +78,6 @@ namespace ScaleformUI
                 newMenu.MouseWheelControlEnabled = menu.MouseWheelControlEnabled;
                 newMenu.MouseControlsEnabled = menu.MouseControlsEnabled;
                 newMenu.MaxItemsOnScreen = menu.MaxItemsOnScreen;
-                newMenu.BuildAsync = menu.BuildAsync;
                 newMenu.AnimationType = menu.AnimationType;
                 newMenu.BuildingAnimation = menu.BuildingAnimation;
             }
