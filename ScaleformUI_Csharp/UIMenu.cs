@@ -1770,6 +1770,7 @@ namespace ScaleformUI
                 }
                 while (MenuItems[CurrentSelection] is UIMenuSeparatorItem sp && sp.Jumpable)
                 {
+                    await BaseScript.Delay(0);
                     if (Pagination.GoUp())
                     {
                         _itemCreation(Pagination.GetPage(CurrentSelection), Pagination.CurrentPageIndex, true);
@@ -1800,6 +1801,7 @@ namespace ScaleformUI
                 }
                 while (MenuItems[CurrentSelection] is UIMenuSeparatorItem sp && sp.Jumpable)
                 {
+                    await BaseScript.Delay(0);
                     if (Pagination.GoDown())
                     {
                         _itemCreation(Pagination.GetPage(CurrentSelection), Pagination.CurrentPageIndex, false);
@@ -2131,7 +2133,6 @@ namespace ScaleformUI
         internal async void BuildUpMenuAsync()
         {
             isBuilding = true;
-            ScaleformUI._ui.CallFunction("IS_BUILDING", true);
             bool _animEnabled = EnableAnimation;
             EnableAnimation = false;
             while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
@@ -2175,7 +2176,6 @@ namespace ScaleformUI
             }
 
             int i = 0;
-            Pagination.ScaleformIndex = Pagination.GetPageIndexFromMenuIndex(CurrentSelection);
             int max = Pagination.ItemsPerPage;
             if (MenuItems.Count < max)
                 max = MenuItems.Count;
@@ -2188,7 +2188,9 @@ namespace ScaleformUI
                 _itemCreation(Pagination.CurrentPage, i, false);
                 i++;
             }
-            ScaleformUI._ui.CallFunction("IS_BUILDING", false);
+
+            Pagination.ScaleformIndex = Pagination.GetScaleformIndex(CurrentSelection);
+
             ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", Pagination.ScaleformIndex);
             ScaleformUI._ui.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
 
@@ -2397,7 +2399,7 @@ namespace ScaleformUI
                 }
                 else if (value >= MenuItems.Count)
                 {
-                    value = MenuItems.Count;
+                    Pagination.CurrentMenuIndex = MenuItems.Count;
                 }
                 MenuItems[CurrentSelection].Selected = false;
 
