@@ -1519,6 +1519,7 @@ namespace ScaleformUI
             SetInputExclusive(2, 238);
 
             bool success = GetScaleformMovieCursorSelection(ScaleformUI._ui.Handle, ref eventType, ref context, ref itemId, ref unused);
+
             if (success && !isBuilding)
             {
                 switch (eventType)
@@ -1528,7 +1529,7 @@ namespace ScaleformUI
                         {
                             case 0:
                                 {
-                                    UIMenuItem item = MenuItems[Pagination.GetMenuIndexFromScaleformIndex(itemId)];
+                                    UIMenuItem item = MenuItems[itemId];
                                     if ((MenuItems[itemId] is UIMenuSeparatorItem && (MenuItems[itemId] as UIMenuSeparatorItem).Jumpable) || !MenuItems[itemId].Enabled)
                                     {
                                         Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
@@ -1556,13 +1557,19 @@ namespace ScaleformUI
                                                         case UIMenuListItem:
                                                             {
                                                                 UIMenuListItem it = MenuItems[CurrentSelection] as UIMenuListItem;
+                                                                Debug.WriteLine("it.Index:" + it.Index + ", value:" + value);
                                                                 if (it.Index != value)
                                                                 {
                                                                     it.Index = value;
                                                                     ListChange(it, it.Index);
                                                                     it.ListChangedTrigger(it.Index);
                                                                 }
-                                                                else it.ListSelectedTrigger(value);
+                                                                else
+                                                                {
+                                                                    it.ListSelectedTrigger(value);
+                                                                    it.ItemActivate(this);
+                                                                    ListSelect(it, value);
+                                                                }
                                                             }
                                                             break;
                                                         case UIMenuSliderItem:
@@ -1574,7 +1581,11 @@ namespace ScaleformUI
                                                                     it.SliderChanged(it.Value);
                                                                     SliderChange(it, it.Value);
                                                                 }
-                                                                else it.ItemActivate(this);
+                                                                else
+                                                                {
+                                                                    it.ItemActivate(this);
+                                                                    this.ItemSelect(it, CurrentSelection);
+                                                                }
                                                             }
                                                             break;
                                                         case UIMenuProgressItem:
@@ -1586,7 +1597,11 @@ namespace ScaleformUI
                                                                     it.ProgressChanged(it.Value);
                                                                     ProgressChange(it, it.Value);
                                                                 }
-                                                                else it.ItemActivate(this);
+                                                                else
+                                                                {
+                                                                    it.ItemActivate(this);
+                                                                    this.ItemSelect(it, CurrentSelection);
+                                                                }
                                                             }
                                                             break;
                                                     }
@@ -1595,8 +1610,7 @@ namespace ScaleformUI
                                         }
                                         return;
                                     }
-                                    Pagination.ScaleformIndex = itemId;
-                                    CurrentSelection = Pagination.GetMenuIndexFromScaleformIndex(itemId);
+                                    CurrentSelection = itemId;
                                     ScaleformUI._ui.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
                                     Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
                                 }
@@ -2207,6 +2221,7 @@ namespace ScaleformUI
             BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "ADD_ITEM");
             PushScaleformMovieFunctionParameterBool(before);
             PushScaleformMovieFunctionParameterInt(item._itemId);
+            PushScaleformMovieFunctionParameterInt(menuIndex);
             PushScaleformMovieMethodParameterString(item._formatLeftLabel);
             if (item.DescriptionHash != 0 && string.IsNullOrWhiteSpace(item.Description))
             {
@@ -2389,6 +2404,7 @@ namespace ScaleformUI
                 Pagination.CurrentMenuIndex = value;
                 Pagination.CurrentPage = Pagination.GetPage(Pagination.CurrentMenuIndex);
                 Pagination.CurrentPageIndex = value;
+                Pagination.ScaleformIndex = Pagination.GetScaleformIndex(value);
 
                 if (_visible)
                     ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", Pagination.GetScaleformIndex(Pagination.CurrentMenuIndex));
