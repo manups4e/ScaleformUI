@@ -1504,7 +1504,6 @@ public class MenuExample : BaseScript
                 PauseMenuShowcase(null);
             if (Game.IsControlJustPressed(0, Control.SelectCharacterTrevor) && !MenuPool.IsAnyMenuOpen && !MenuPool.IsAnyPauseMenuOpen)
                 LobbyPauseMenuShowcase(null);
-            await Task.FromResult(0);
 
             if (Game.IsControlJustPressed(0, (Control)170)) // F3
             {

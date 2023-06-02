@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ScaleformUI
+﻿namespace ScaleformUI
 {
     public class TimerBarPool
     {
@@ -28,10 +26,13 @@ namespace ScaleformUI
 
         public void Draw()
         {
-            var off = ScaleformUI.InstructionalButtons.Enabled || ScaleformUI.InstructionalButtons.IsSaving ? 9 : 0;
-            for (int i = 0; i < _bars.Count; i++)
+            int off = ScaleformUI.InstructionalButtons.Enabled || ScaleformUI.InstructionalButtons.IsSaving ? 9 : 0;
+            if (_bars.Count > 0)
             {
-                _bars[i].Draw((i * 10) + off);
+                for (int i = 0; i < _bars.Count; i++)
+                {
+                    _bars[i].Draw((i * 10) + off);
+                }
             }
         }
     }

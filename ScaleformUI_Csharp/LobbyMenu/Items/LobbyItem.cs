@@ -144,14 +144,19 @@ namespace ScaleformUI
 
         public void Dispose()
         {
-            if (_clonePed.Exists())
+            if (_clonePed != null)
             {
-                _clonePed.Delete();
+                if (_clonePed.Exists())
+                {
+                    _clonePed.Delete();
+                }
             }
-
-            if (_clonePedForPauseMenu.Exists())
+            if (_clonePedForPauseMenu != null)
             {
-                _clonePedForPauseMenu.Delete();
+                if (_clonePedForPauseMenu.Exists())
+                {
+                    _clonePedForPauseMenu.Delete();
+                }
             }
         }
 
@@ -171,7 +176,7 @@ namespace ScaleformUI
                 _enabled = value;
                 if (ParentColumn != null)
                 {
-                    var it = ParentColumn.Items.IndexOf(this);
+                    int it = ParentColumn.Items.IndexOf(this);
                     //ParentColumn.Parent._pause._lobby.CallFunction("ENABLE_ITEM", it, _enabled);
                 }
             }

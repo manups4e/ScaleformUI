@@ -51,38 +51,44 @@ namespace ScaleformUI
             private set => currentMenu = value;
         }
 
+        public static PauseMenuBase CurrentPauseMenu
+        {
+            get => currentBase;
+            private set => currentBase = value;
+        }
+
         /// <summary>
         /// Called when user either opens or closes the main menu, clicks on a binded button, goes back to a parent menu.
         /// </summary>
         public static event MenuStateChangeEvent OnMenuStateChanged;
 
 
-        public static void SwitchTo(this UIMenu menu, UIMenu newMenu, int newMenuCurrentSelection = 0, bool inheritOldMenuParams = false)
+        public static void SwitchTo(this UIMenu currentMenu, UIMenu newMenu, int newMenuCurrentSelection = 0, bool inheritOldMenuParams = false)
         {
-            if (menu == null)
+            if (currentMenu == null)
                 throw new ArgumentNullException("The menu you're switching from cannot be null.");
-            if (menu != currentMenu)
+            if (currentMenu != MenuPool.currentMenu)
                 throw new Exception("The menu you're switching from must be opened.");
             if (newMenu == null)
                 throw new ArgumentNullException("The menu you're switching to cannot be null.");
-            if (newMenu == menu)
+            if (newMenu == currentMenu)
                 throw new Exception("You cannot switch a menu to itself.");
 
             if (inheritOldMenuParams)
             {
-                if (BannerInheritance && menu._customTexture.Key != null && menu._customTexture.Value != null)
-                    newMenu.SetBannerType(menu._customTexture);
-                newMenu.Offset = menu.Offset;
-                newMenu.MouseEdgeEnabled = menu.MouseEdgeEnabled;
-                newMenu.MouseEdgeEnabled = menu.MouseEdgeEnabled;
-                newMenu.MouseWheelControlEnabled = menu.MouseWheelControlEnabled;
-                newMenu.MouseControlsEnabled = menu.MouseControlsEnabled;
-                newMenu.MaxItemsOnScreen = menu.MaxItemsOnScreen;
-                newMenu.AnimationType = menu.AnimationType;
-                newMenu.BuildingAnimation = menu.BuildingAnimation;
+                if (BannerInheritance && currentMenu._customTexture.Key != null && currentMenu._customTexture.Value != null)
+                    newMenu.SetBannerType(currentMenu._customTexture);
+                newMenu.Offset = currentMenu.Offset;
+                newMenu.MouseEdgeEnabled = currentMenu.MouseEdgeEnabled;
+                newMenu.MouseEdgeEnabled = currentMenu.MouseEdgeEnabled;
+                newMenu.MouseWheelControlEnabled = currentMenu.MouseWheelControlEnabled;
+                newMenu.MouseControlsEnabled = currentMenu.MouseControlsEnabled;
+                newMenu.MaxItemsOnScreen = currentMenu.MaxItemsOnScreen;
+                newMenu.AnimationType = currentMenu.AnimationType;
+                newMenu.BuildingAnimation = currentMenu.BuildingAnimation;
             }
             newMenu.CurrentSelection = newMenuCurrentSelection != 0 ? newMenuCurrentSelection : 0;
-            menu.Visible = false;
+            currentMenu.Visible = false;
             newMenu.Visible = true;
             BreadcrumbsHandler.Forward(newMenu);
         }
@@ -130,7 +136,6 @@ namespace ScaleformUI
         /// </summary>
         public static async void ProcessMenus()
         {
-            await BaseScript.Delay(0);
             ProcessControl();
             ProcessMouse();
             Draw();
@@ -141,8 +146,8 @@ namespace ScaleformUI
         /// </summary>
         public static void CloseAndClearHistory()
         {
-            if (currentMenu != null) currentMenu.Visible = false;
-            if (currentBase != null) currentBase.Visible = false;
+            currentMenu!.Visible = false;
+            currentBase!.Visible = false;
             BreadcrumbsHandler.Clear();
         }
 

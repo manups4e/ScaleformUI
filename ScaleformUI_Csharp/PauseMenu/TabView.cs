@@ -115,8 +115,6 @@ namespace ScaleformUI.PauseMenu
             {
                 Game.IsPaused = value;
                 ScaleformUI.InstructionalButtons.Enabled = value;
-                _pause.Visible = value;
-                _visible = value;
                 if (value)
                 {
                     ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY_NO_BACKGROUND"), true, -1);
@@ -126,7 +124,6 @@ namespace ScaleformUI.PauseMenu
                     SetPlayerControl(Game.Player.Handle, false, 0);
                     BuildPauseMenu();
                     MenuPool.currentBase = this;
-                    MenuPool.ableToDraw = true;
                 }
                 else
                 {
@@ -136,9 +133,11 @@ namespace ScaleformUI.PauseMenu
                     SendPauseMenuClose();
                     SetPlayerControl(Game.Player.Handle, true, 0);
                     MenuPool.currentBase = null;
-                    MenuPool.ableToDraw = false;
                     ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY_NO_BACKGROUND"), false, -1);
                 }
+                base.Visible = value;
+                _visible = value;
+                _pause.Visible = value;
             }
         }
         public void AddTab(BaseTab item)
