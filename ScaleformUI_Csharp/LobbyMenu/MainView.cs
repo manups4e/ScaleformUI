@@ -88,7 +88,6 @@ namespace ScaleformUI.LobbyMenu
                     _firstDrawTick = true;
                     MenuPool.currentBase = this;
                     MenuPool.ableToDraw = true;
-                    MenuPool.ProcessMenus();
                 }
                 else
                 {
