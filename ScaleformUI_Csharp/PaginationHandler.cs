@@ -9,6 +9,7 @@
         private int minItem;
         private int maxItem;
         private int totalItems;
+        private int scaleformIndex;
 
         internal int CurrentPage { get => currentPage; set => currentPage = value; }
         internal int ItemsPerPage { get => itemsPerPage; set => itemsPerPage = value; }
@@ -20,7 +21,7 @@
         internal int CurrentMenuIndex { get => _currentMenuIndex; set => _currentMenuIndex = value; }
         internal int MinItem { get => minItem; set => minItem = value; }
         internal int MaxItem { get => maxItem; set => maxItem = value; }
-        internal int ScaleformIndex { get; set; }
+        internal int ScaleformIndex { get => scaleformIndex; set => scaleformIndex = value; }
 
         internal bool IsItemVisible(int menuIndex)
         {
@@ -65,7 +66,6 @@
         internal int GetMenuIndexFromPageIndex(int page, int index)
         {
             int initialIndex = page * itemsPerPage;
-            int endIndex = initialIndex + itemsPerPage - 1;
             return initialIndex + index;
         }
 
