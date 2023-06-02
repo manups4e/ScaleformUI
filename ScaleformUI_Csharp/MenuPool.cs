@@ -80,7 +80,6 @@ namespace ScaleformUI
                     newMenu.SetBannerType(currentMenu._customTexture);
                 newMenu.Offset = currentMenu.Offset;
                 newMenu.MouseEdgeEnabled = currentMenu.MouseEdgeEnabled;
-                newMenu.MouseEdgeEnabled = currentMenu.MouseEdgeEnabled;
                 newMenu.MouseWheelControlEnabled = currentMenu.MouseWheelControlEnabled;
                 newMenu.MouseControlsEnabled = currentMenu.MouseControlsEnabled;
                 newMenu.MaxItemsOnScreen = currentMenu.MaxItemsOnScreen;
