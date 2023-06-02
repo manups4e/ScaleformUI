@@ -63,6 +63,8 @@ namespace ScaleformUI
         {
             if (InstructionalButtons._sc != null && InstructionalButtons.Enabled && ((InstructionalButtons.ControlButtons != null || InstructionalButtons.ControlButtons.Count != 0) || InstructionalButtons.IsSaving))
                 InstructionalButtons.Update();
+            if (MenuPool.ableToDraw)
+                MenuPool.ProcessMenus();
             if (Game.IsPaused) return;
             if (Warning._sc != null)
                 Warning.Update();
@@ -77,8 +79,6 @@ namespace ScaleformUI
             if (BigFeed._sc != null)
                 BigFeed.Update();
             _ui ??= new("ScaleformUI");
-            if (MenuPool.ableToDraw)
-                MenuPool.ProcessMenus();
             if (!PauseMenu.Loaded)
                 PauseMenu.Load();
             await Task.FromResult(0);
