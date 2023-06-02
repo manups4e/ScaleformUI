@@ -536,14 +536,10 @@ end
 function UIMenu:RefreshIndex()
     if #self.Items == 0 then
         self.ActiveItem = 0
-        self.Pagination.Max = self.Pagination.Total + 1
-        self.Pagination.Min = 0
         return
     end
     self.Items[self:CurrentSelection()]:Selected(false)
     self.ActiveItem = 1000 - (1000 % #self.Items)
-    self.Pagination.Max = self.Pagination.Total + 1
-    self.Pagination.Min = 0
 end
 
 ---Clear
