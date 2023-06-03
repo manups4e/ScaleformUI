@@ -80,7 +80,10 @@
             if (CurrentMenuIndex < 0)
                 CurrentMenuIndex = TotalItems - 1;
             CurrentPageIndex = CurrentMenuIndex;
-            ScaleformIndex--;
+            if (TotalItems < itemsPerPage)
+                ScaleformIndex = CurrentMenuIndex;
+            else
+                ScaleformIndex--;
             CurrentPage = GetPage(CurrentMenuIndex);
             if (ScaleformIndex < 0)
             {
