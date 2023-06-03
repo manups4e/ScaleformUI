@@ -80,24 +80,21 @@
             if (CurrentMenuIndex < 0)
                 CurrentMenuIndex = TotalItems - 1;
             CurrentPageIndex = CurrentMenuIndex;
-            if (TotalItems < itemsPerPage)
-                ScaleformIndex = CurrentMenuIndex;
-            else
-                ScaleformIndex--;
+            ScaleformIndex--;
             CurrentPage = GetPage(CurrentMenuIndex);
             if (ScaleformIndex < 0)
             {
+                if (TotalItems < itemsPerPage)
+                {
+                    ScaleformIndex = TotalItems - 1;
+                    return false;
+                }
                 minItem--;
                 maxItem--;
                 if (minItem < 0)
                     minItem = TotalItems - 1;
                 if (maxItem < 0)
                     maxItem = TotalItems - 1;
-                if (TotalItems < itemsPerPage)
-                {
-                    ScaleformIndex = TotalItems - 1;
-                    return false;
-                }
                 ScaleformIndex = 0;
                 return true;
             }
