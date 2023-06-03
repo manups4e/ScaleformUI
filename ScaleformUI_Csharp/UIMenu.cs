@@ -1205,15 +1205,6 @@ namespace ScaleformUI
         }
 
         /// <summary>
-        /// Enable or disable the instructional buttons.
-        /// </summary>
-        /// <param name="disable"></param>
-        public void DisableInstructionalButtons(bool disable)
-        {
-            ScaleformUI.InstructionalButtons.Enabled = !disable;
-        }
-
-        /// <summary>
         /// Set the banner to your own custom texture. Set it to "" if you want to restore the banner.
         /// </summary>
         /// <param name="pathToCustomSprite">Path to your sprite image.</param>
@@ -2088,10 +2079,9 @@ namespace ScaleformUI
                 _visible = value;
                 _justOpened = value;
                 _itemsDirty = value;
-                ScaleformUI.InstructionalButtons.Enabled = value;
-                ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
                 if (value)
                 {
+                    ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
                     MenuPool.MenuChangeEv(null, this, MenuState.Opened);
                     MenuChangeEv(null, this, MenuState.Opened);
                     canBuild = true;
@@ -2110,6 +2100,7 @@ namespace ScaleformUI
                     MenuPool.ableToDraw = false;
                     MenuPool.currentMenu = null;
                     ScaleformUI._ui.CallFunction("CLEAR_ALL");
+                    ScaleformUI.InstructionalButtons.ClearButtonList();
                 }
                 if (!value) return;
                 if (!ResetCursorOnOpen) return;

@@ -100,14 +100,13 @@ namespace ScaleformUI
             ScaleformUI.InstructionalButtons.UseMouseButtons = true;
             ScaleformUI.InstructionalButtons.ControlButtons.ForEach(x => x.OnControlSelected += X_OnControlSelected);
             _sc.CallFunction("SHOW_POPUP_WARNING", 1000, title, subtitle, prompt, showBackground, (int)type, errorMsg);
-            ScaleformUI.InstructionalButtons.Enabled = true;
         }
 
         private void X_OnControlSelected(InstructionalButton control)
         {
             Dispose();
             OnButtonPressed?.Invoke(control);
-            ScaleformUI.InstructionalButtons.Enabled = false;
+            ScaleformUI.InstructionalButtons.ClearButtonList();
             ScaleformUI.InstructionalButtons.UseMouseButtons = false;
             OnButtonPressed = null;
         }

@@ -202,29 +202,10 @@ namespace ScaleformUI
     {
         internal ScaleformWideScreen _sc;
         private bool _useMouseButtons;
-        private bool _enabled = false;
         internal bool _isUsingKeyboard;
         internal bool _changed = true;
         internal int savingTimer = 0;
         private bool _isSaving = false;
-
-        /// <summary>
-        /// Show or Hide the Instructional Buttons
-        /// </summary>
-        public bool Enabled
-        {
-            get => _enabled;
-            set
-            {
-                if (!value)
-                {
-                    _sc.CallFunction("CLEAR_ALL");
-                    _sc.CallFunction("CLEAR_RENDER");
-                }
-                _enabled = value;
-                _changed = true;
-            }
-        }
 
         /// <summary>
         /// If you set this to true the user will see the mouse cursor on screen

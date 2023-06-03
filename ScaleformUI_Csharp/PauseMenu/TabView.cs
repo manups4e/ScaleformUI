@@ -114,7 +114,6 @@ namespace ScaleformUI.PauseMenu
             set
             {
                 Game.IsPaused = value;
-                ScaleformUI.InstructionalButtons.Enabled = value;
                 if (value)
                 {
                     ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY_NO_BACKGROUND"), true, -1);

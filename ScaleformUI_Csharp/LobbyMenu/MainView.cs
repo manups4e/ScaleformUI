@@ -74,7 +74,6 @@ namespace ScaleformUI.LobbyMenu
             set
             {
                 Game.IsPaused = value;
-                ScaleformUI.InstructionalButtons.Enabled = value;
                 if (value)
                 {
                     ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY_NO_BACKGROUND"), true, -1);
@@ -95,6 +94,7 @@ namespace ScaleformUI.LobbyMenu
                     SetPlayerControl(Game.Player.Handle, true, 0);
                     MenuPool.currentBase = null;
                     ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY_NO_BACKGROUND"), false, -1);
+                    ScaleformUI.InstructionalButtons.ClearButtonList();
                 }
                 base.Visible = value;
                 _visible = value;
