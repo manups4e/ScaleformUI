@@ -47,9 +47,9 @@ function UIMenuSeperatorItem:LabelFont(fontTable)
         return self.Base._labelFont
     else
         self.Base._labelFont = fontTable
-        if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", false,
-                IndexOf(self.ParentMenu.Items, self) - 1, self.Base._labelFont[1], self.Base._labelFont[2])
+                IndexOf(self.Base.ParentMenu.Items, self), self.Base._labelFont[1], self.Base._labelFont[2])
         end
     end
 end
@@ -77,8 +77,8 @@ end
 function UIMenuSeperatorItem:MainColor(color)
     if color ~= nil then
         self.Base._mainColor = color
-        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1,
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
                 self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
@@ -89,8 +89,8 @@ end
 function UIMenuSeperatorItem:TextColor(color)
     if color ~= nil then
         self.Base._textColor = color
-        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1,
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
                 self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
@@ -101,8 +101,8 @@ end
 function UIMenuSeperatorItem:HighlightColor(color)
     if color ~= nil then
         self.Base._highlightColor = color
-        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1,
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
                 self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
@@ -113,8 +113,8 @@ end
 function UIMenuSeperatorItem:HighlightedTextColor(color)
     if color ~= nil then
         self.Base._highlightedTextColor = color
-        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1,
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
                 self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else

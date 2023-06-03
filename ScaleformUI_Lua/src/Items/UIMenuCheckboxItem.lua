@@ -47,18 +47,18 @@ function UIMenuCheckboxItem:AddSidePanel(sidePanel)
     if sidePanel() == "UIMissionDetailsPanel" then
         sidePanel:SetParentItem(self)
         self.SidePanel = sidePanel
-        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
             ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false,
-                IndexOf(self.Base.ParentMenu.Items, self) - 1, 0, sidePanel.PanelSide, sidePanel.TitleType,
+                 self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)), 0, sidePanel.PanelSide, sidePanel.TitleType,
                 sidePanel.Title,
                 sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
         end
     elseif sidePanel() == "UIVehicleColorPickerPanel" then
         sidePanel:SetParentItem(self)
         self.SidePanel = sidePanel
-        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
             ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false,
-                IndexOf(self.ParentMenu.Items, self) - 1, 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title,
+                IndexOf(self.Base.ParentMenu.Items, self), 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title,
                 sidePanel.TitleColor)
         end
     end
@@ -79,9 +79,9 @@ function UIMenuCheckboxItem:LabelFont(fontTable)
         return self.Base._labelFont
     else
         self.Base._labelFont = fontTable
-        if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", false,
-                IndexOf(self.ParentMenu.Items, self) - 1, self.Base._labelFont[1], self.Base._labelFont[2])
+                IndexOf(self.Base.ParentMenu.Items, self), self.Base._labelFont[1], self.Base._labelFont[2])
         end
     end
 end
@@ -137,8 +137,8 @@ end
 function UIMenuCheckboxItem:MainColor(color)
     if (color) then
         self.Base._mainColor = color
-        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1,
+        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false,  self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
                 self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
@@ -149,8 +149,8 @@ end
 function UIMenuCheckboxItem:TextColor(color)
     if (color) then
         self.Base._textColor = color
-        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1,
+        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false,  self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
                 self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
@@ -161,8 +161,8 @@ end
 function UIMenuCheckboxItem:HighlightColor(color)
     if (color) then
         self.Base._highlightColor = color
-        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1,
+        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false,  self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
                 self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
@@ -173,8 +173,8 @@ end
 function UIMenuCheckboxItem:HighlightedTextColor(color)
     if (color) then
         self.Base._highlightedTextColor = color
-        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, IndexOf(self.Base.ParentMenu.Items, self) - 1,
+        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
                 self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
@@ -204,8 +204,9 @@ end
 function UIMenuCheckboxItem:Checked(bool)
     if bool ~= nil then
         self._Checked = ToBool(bool)
-        if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
-            local it = IndexOf(self.Base.ParentMenu.Items, self) - 1
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
+            local it = self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self))
+            print(it)
             ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_VALUE", false, it, self._Checked)
         end
     else

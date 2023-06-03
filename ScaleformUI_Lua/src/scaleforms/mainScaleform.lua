@@ -74,6 +74,9 @@ Citizen.CreateThread(function()
                 wait = 0
             end
         end
+        if MenuPool.ableToDraw then
+            MenuPool:ProcessMenus()
+        end
         if (ScaleformUI.Scaleforms.InstructionalButtons._sc == nil) then
             ScaleformUI.Scaleforms.InstructionalButtons:Load()
         elseif ScaleformUI.Scaleforms.InstructionalButtons:Enabled() or ScaleformUI.Scaleforms.InstructionalButtons.IsSaving then

@@ -1762,22 +1762,19 @@ namespace ScaleformUI
             try
             {
                 MenuItems[CurrentSelection].Selected = false;
-                if (Pagination.GoUp())
-                {
-                    _itemCreation(Pagination.GetPage(CurrentSelection), Pagination.CurrentPageIndex, true);
-                    ScaleformUI._ui.CallFunction("SET_INPUT_EVENT", 8, delay);
-                    //await ScaleformUI._ui.CallFunctionReturnValueInt("REMOVE_ITEM", Pagination.ItemsPerPage - 1);
-                }
-                while (MenuItems[CurrentSelection] is UIMenuSeparatorItem sp && sp.Jumpable)
+                do
                 {
                     await BaseScript.Delay(0);
                     if (Pagination.GoUp())
                     {
                         _itemCreation(Pagination.GetPage(CurrentSelection), Pagination.CurrentPageIndex, true);
                         ScaleformUI._ui.CallFunction("SET_INPUT_EVENT", 8, delay);
-                        //await ScaleformUI._ui.CallFunctionReturnValueInt("REMOVE_ITEM", Pagination.ItemsPerPage - 1);
+                        ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", Pagination.ScaleformIndex);
+                        ScaleformUI._ui.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
                     }
                 }
+                while (MenuItems[CurrentSelection] is UIMenuSeparatorItem sp && sp.Jumpable);
+
                 ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", Pagination.ScaleformIndex);
                 ScaleformUI._ui.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
                 MenuItems[CurrentSelection].Selected = true;
@@ -1793,22 +1790,18 @@ namespace ScaleformUI
             try
             {
                 MenuItems[CurrentSelection].Selected = false;
-                if (Pagination.GoDown())
-                {
-                    _itemCreation(Pagination.GetPage(CurrentSelection), Pagination.CurrentPageIndex, false);
-                    ScaleformUI._ui.CallFunction("SET_INPUT_EVENT", 9, delay);
-                    //await ScaleformUI._ui.CallFunctionReturnValueInt("REMOVE_ITEM", 0);
-                }
-                while (MenuItems[CurrentSelection] is UIMenuSeparatorItem sp && sp.Jumpable)
+                do
                 {
                     await BaseScript.Delay(0);
                     if (Pagination.GoDown())
                     {
                         _itemCreation(Pagination.GetPage(CurrentSelection), Pagination.CurrentPageIndex, false);
                         ScaleformUI._ui.CallFunction("SET_INPUT_EVENT", 9, delay);
-                        //await ScaleformUI._ui.CallFunctionReturnValueInt("REMOVE_ITEM", 0);
+                        ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", Pagination.ScaleformIndex);
+                        ScaleformUI._ui.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
                     }
                 }
+                while (MenuItems[CurrentSelection] is UIMenuSeparatorItem sp && sp.Jumpable);
                 ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", Pagination.ScaleformIndex);
                 ScaleformUI._ui.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
                 MenuItems[CurrentSelection].Selected = true;

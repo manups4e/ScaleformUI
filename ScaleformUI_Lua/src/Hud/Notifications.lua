@@ -349,8 +349,8 @@ function Notifications:DrawText(x, y, text, color, font, textAlignment, shadow, 
     if (color == nil) then color = { r = 255, g = 255, b = 255, a = 255 } end
     if (font == nil) then font = 4 end
     if (textAlignment == nil) then textAlignment = 1 end
-    if (shadow == nil) then shadow = false end
-    if (outline == nil) then outline = false end
+    if (shadow == nil) then shadow = true end
+    if (outline == nil) then outline = true end
     if (wrap == nil) then wrap = 0 end
 
     local screenw, screenh = GetActiveScreenResolution()
