@@ -43,6 +43,13 @@ end
 ---@param textColor number|1
 ---@param highlightedTextColor number|2
 function UIMenuItem.New(text, description, color, highlightColor, textColor, highlightedTextColor)
+
+    local __label = (tostring(text))
+    local __formatLeftLabel = (tostring(text))
+    if not __formatLeftLabel:StartsWith("~") then
+        __formatLeftLabel = __formatLeftLabel:Insert(0, "~s~")
+    end
+
     _UIMenuItem = {
         _label = tostring(text) or "",
         _Description = tostring(description) or "",
@@ -51,7 +58,7 @@ function UIMenuItem.New(text, description, color, highlightColor, textColor, hig
         _Hovered = false,
         _Enabled = true,
         blinkDescription = false,
-        _formatLeftLabel = "",
+        _formatLeftLabel = __formatLeftLabel or "",
         _rightLabel = "",
         _formatRightLabel = "",
         _rightBadge = 0,
@@ -66,11 +73,9 @@ function UIMenuItem.New(text, description, color, highlightColor, textColor, hig
         SidePanel = nil,
         ItemId = 0,
         Activated = function(menu, item)
-        end,
+        end
     }
-    local it = setmetatable(_UIMenuItem, UIMenuItem)
-    it:Label(text)
-    return it
+    return setmetatable(_UIMenuItem, UIMenuItem)
 end
 
 function UIMenuItem:ItemData(data)
@@ -157,10 +162,6 @@ function UIMenuItem:Enabled(bool, item)
     else
         return self._Enabled
     end
-end
-
-function UIMenuItem:Activated(menu, item)
-    self.Activated(menu, item)
 end
 
 function UIMenuItem:Description(str, item)
