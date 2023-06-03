@@ -936,9 +936,9 @@ function UIMenu:GoUp()
             self:_itemCreation(self.Pagination:GetPage(self:CurrentSelection()), self.Pagination:CurrentPageIndex(), true)
             ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", false, 8, self._delay) --[[@as number]]
         end
+        ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, self.Pagination:ScaleformIndex())
+        ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", false, self:CurrentSelection(), #self.Items)
     until self.Items[self:CurrentSelection()].ItemId ~= 6 or (self.Items[self:CurrentSelection()].ItemId == 6 and not self.Items[self:CurrentSelection()].Jumpable)
-    ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, self.Pagination:ScaleformIndex())
-    ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", false, self:CurrentSelection(), #self.Items)
     PlaySoundFrontend(-1, self.Settings.Audio.UpDown, self.Settings.Audio.Library, true)
     self.Items[self:CurrentSelection()]:Selected(true)
     self.OnIndexChange(self, self:CurrentSelection())
@@ -953,9 +953,9 @@ function UIMenu:GoDown()
             self:_itemCreation(self.Pagination:GetPage(self:CurrentSelection()), self.Pagination:CurrentPageIndex(), false)
             ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", false, 9, self._delay) --[[@as number]]
         end
+        ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, self.Pagination:ScaleformIndex())
+        ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", false, self:CurrentSelection(), #self.Items)
     until self.Items[self:CurrentSelection()].ItemId ~= 6 or (self.Items[self:CurrentSelection()].ItemId == 6 and not self.Items[self:CurrentSelection()].Jumpable)
-    ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, self.Pagination:ScaleformIndex())
-    ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", false, self:CurrentSelection(), #self.Items)
     --PlaySoundFrontend(-1, self.Settings.Audio.UpDown, self.Settings.Audio.Library, true)
     self.Items[self:CurrentSelection()]:Selected(true)
     self.OnIndexChange(self, self:CurrentSelection())

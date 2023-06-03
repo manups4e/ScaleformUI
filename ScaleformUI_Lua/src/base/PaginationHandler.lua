@@ -146,7 +146,7 @@ function PaginationHandler:GoUp()
     self.scaleformIndex = self.scaleformIndex-1
     self:CurrentPage(self:GetPage(self._currentMenuIndex))
     if self.scaleformIndex < 0 then
-        if self.totalItems < self.itemsPerPage then
+        if self.totalItems <= self.itemsPerPage then
             self.scaleformIndex = self.totalItems
             return false
         end
@@ -165,27 +165,27 @@ function PaginationHandler:GoUp()
 end
 
 function PaginationHandler:GoDown()
-    self._currentMenuIndex = self._currentMenuIndex + 1;
+    self._currentMenuIndex = self._currentMenuIndex + 1
     if self._currentMenuIndex > self.totalItems then
-        self._currentMenuIndex = 1;
+        self._currentMenuIndex = 1
     end
     self:CurrentPageIndex(self._currentMenuIndex)
     self.scaleformIndex = self.scaleformIndex + 1
     self:CurrentPage(self:GetPage(self._currentMenuIndex))
     if self.scaleformIndex > self.totalItems then
-        self.scaleformIndex = 0;
-        return false;
+        self.scaleformIndex = 0
+        return false
     elseif self.scaleformIndex > self.itemsPerPage - 1 then
-        self.scaleformIndex = self.itemsPerPage - 1;
-        self.minItem = self.minItem+1;
-        self.maxItem = self.maxItem+1;
+        self.scaleformIndex = self.itemsPerPage - 1
+        self.minItem = self.minItem+1
+        self.maxItem = self.maxItem+1
         if self.minItem > self.totalItems then
-            self.minItem = 1;
+            self.minItem = 1
         end
         if self.maxItem > self.totalItems then
-            self.maxItem = 1;
+            self.maxItem = 1
         end
-        return true;
+        return true
     end
-    return false;
+    return false
 end
