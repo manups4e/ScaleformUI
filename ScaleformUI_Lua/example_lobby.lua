@@ -486,7 +486,6 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:Show", function(FocusLevel, canclose,
 
     LobbyMenu:Visible(true)
     LobbyMenu:FocusLevel(FocusLevel)
-    ScaleformUI.Scaleforms.InstructionalButtons:Enabled(false)
 
     local instructional_buttons = Scaleform.Request("instructional_buttons")
     instructional_buttons:CallFunction("CLEAR_ALL")

@@ -98,7 +98,6 @@ end
 function MainView:Visible(visible)
     if visible ~= nil then
         self._visible = visible
-        ScaleformUI.Scaleforms.InstructionalButtons:Enabled(visible)
         ScaleformUI.Scaleforms._pauseMenu:Visible(visible)
         if visible == true then
             if not IsPauseMenuActive() then
@@ -116,6 +115,7 @@ function MainView:Visible(visible)
             end
         else
             ScaleformUI.Scaleforms._pauseMenu:Dispose()
+            ScaleformUI.Scaleforms.InstructionalButtons:ClearButtonList()
             AnimpostfxStop("PauseMenuIn")
             AnimpostfxPlay("PauseMenuOut", 800, false)
             self.OnLobbyMenuClose(self)
