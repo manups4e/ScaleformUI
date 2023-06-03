@@ -11,11 +11,12 @@ function BreadcrumbsHandler:CurrentDepth()
 end
 
 function BreadcrumbsHandler:PreviousMenu()
-    return self.breadcrumbs[#self.breadcrumbs]
+    return self.breadcrumbs[#self.breadcrumbs-1]
 end
 
 function BreadcrumbsHandler:Forward(menu)
     table.insert(self.breadcrumbs, menu)
+    print(#self.breadcrumbs)
 end
 
 function BreadcrumbsHandler:Clear()
