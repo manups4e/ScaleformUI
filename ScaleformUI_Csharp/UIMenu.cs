@@ -1769,14 +1769,11 @@ namespace ScaleformUI
                     {
                         _itemCreation(Pagination.GetPage(CurrentSelection), Pagination.CurrentPageIndex, true);
                         ScaleformUI._ui.CallFunction("SET_INPUT_EVENT", 8, delay);
-                        ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", Pagination.ScaleformIndex);
-                        ScaleformUI._ui.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
                     }
+                    ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", Pagination.ScaleformIndex);
+                    ScaleformUI._ui.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
                 }
                 while (MenuItems[CurrentSelection] is UIMenuSeparatorItem sp && sp.Jumpable);
-
-                ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", Pagination.ScaleformIndex);
-                ScaleformUI._ui.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
                 MenuItems[CurrentSelection].Selected = true;
                 IndexChange(CurrentSelection);
             }
@@ -1797,13 +1794,11 @@ namespace ScaleformUI
                     {
                         _itemCreation(Pagination.GetPage(CurrentSelection), Pagination.CurrentPageIndex, false);
                         ScaleformUI._ui.CallFunction("SET_INPUT_EVENT", 9, delay);
-                        ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", Pagination.ScaleformIndex);
-                        ScaleformUI._ui.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
                     }
+                    ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", Pagination.ScaleformIndex);
+                    ScaleformUI._ui.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
                 }
                 while (MenuItems[CurrentSelection] is UIMenuSeparatorItem sp && sp.Jumpable);
-                ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", Pagination.ScaleformIndex);
-                ScaleformUI._ui.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
                 MenuItems[CurrentSelection].Selected = true;
                 IndexChange(CurrentSelection);
             }
@@ -2194,7 +2189,8 @@ namespace ScaleformUI
                     GoDown();
                 }
             }
-            ScaleformUI._ui.CallFunction("ENABLE_MOUSE", MouseControlsEnabled);
+            if ()
+                ScaleformUI._ui.CallFunction("ENABLE_MOUSE", MouseControlsEnabled);
             EnableAnimation = _animEnabled;
             isBuilding = false;
         }

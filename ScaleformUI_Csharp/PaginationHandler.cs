@@ -84,7 +84,7 @@
             CurrentPage = GetPage(CurrentMenuIndex);
             if (ScaleformIndex < 0)
             {
-                if (TotalItems < itemsPerPage)
+                if (TotalItems <= itemsPerPage)
                 {
                     ScaleformIndex = TotalItems - 1;
                     return false;
