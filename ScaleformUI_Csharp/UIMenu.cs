@@ -2189,8 +2189,7 @@ namespace ScaleformUI
                     GoDown();
                 }
             }
-            if ()
-                ScaleformUI._ui.CallFunction("ENABLE_MOUSE", MouseControlsEnabled);
+            ScaleformUI._ui.CallFunction("ENABLE_MOUSE", MouseControlsEnabled);
             EnableAnimation = _animEnabled;
             isBuilding = false;
         }
