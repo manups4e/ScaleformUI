@@ -1,5 +1,4 @@
 ---@diagnostic disable: missing-parameter
-local pool = MenuPool.New()
 local animEnabled = true
 local timerBarPool = TimerBarPool.New()
 
@@ -13,14 +12,13 @@ function CreateMenu()
     exampleMenu:MouseControlsEnabled(true)
     exampleMenu:MouseEdgeEnabled(false)
     exampleMenu:ControlDisablingEnabled(true)
-    exampleMenu:BuildAsync(true) -- set to false to build in a sync way (might freeze game for a couple ms for high N of items in menus)
     exampleMenu:BuildingAnimation(MenuBuildingAnimation.LEFT_RIGHT)
     exampleMenu:AnimationType(MenuAnimationType.CUBIC_INOUT)
-    pool:Add(exampleMenu)
 
     local currentTransition = "TRANSITION_OUT"
+    local bigMessageItem = UIMenuItem.New("Big Message Example", "Big Message Examples")
+    exampleMenu:AddItem(bigMessageItem)
     local bigMessageExampleMenu = UIMenu.New("Big Message Example", "Big Message Examples", 50, 50, true, nil, nil, true)
-    exampleMenu:AddSubMenu(bigMessageExampleMenu, "Big Message Example", "Big Message Examples")
 
     local uiItemTransitionList = UIMenuListItem.New("Transition",
         { "TRANSITION_OUT", "TRANSITION_UP", "TRANSITION_DOWN" },
@@ -86,7 +84,14 @@ function CreateMenu()
         end
     end
 
-    local ketchupItem = UIMenuCheckboxItem.New("Scrolling animation enabled?", animEnabled, 1,
+    -- the new "SwitchTo" method will give your menus the ability to fly
+    -- parameters are: UIMenu:SwitchTo([UIMenu]newMenu, [number]newMenuInitialIndex, [bool]inheritPrevMenuParams)
+    -- if not specified, the last to parameters will always be [1, false] to allow every menu to be rendered separately
+    bigMessageItem.Activated = function(menu, item)
+        menu:SwitchTo(bigMessageExampleMenu, 1, true)
+    end
+
+    local ketchupItem = UIMenuCheckboxItem.New("~g~Scrolling ~w~animation ~r~enabled?", animEnabled, 1,
         "Do you wish to enable the scrolling animation?")
     ketchupItem:LeftBadge(BadgeStyle.STAR)
     local sidePanel = UIMissionDetailsPanel.New(1, "Side Panel", 6, true, "scaleformui", "sidepanel")
@@ -138,7 +143,7 @@ function CreateMenu()
         ScaleformUI.Notifications:ShowNotification("Item with label '" .. item:Label() .. "' was clicked.")
     end
 
-    local colorItem = UIMenuItem.New("UIMenuItem with Colors", "~b~Look!!~r~I can be colored ~y~too!!~w~", 21, 24)
+    local colorItem = UIMenuItem.New("~HUD_COLOUR_FREEMODE~UIMenuItem ~w~with ~HUD_COLOUR_ORANGELIGHT~Colors", "~b~Look!!~r~I can be colored ~y~too!!~w~", 21, 24)
     colorItem:LeftBadge(BadgeStyle.STAR)
     exampleMenu:AddItem(colorItem)
     local sidePanelVehicleColor = UIVehicleColorPickerPanel.New(1, "ColorPicker", 6)
@@ -216,19 +221,13 @@ function CreateMenu()
         end
     end
 
-    --[[
-        2 ways to add submenus..
-        - the old way => local submenu = pool:AddSubMenu(parent, ...)
-        - way.New =>
-            local subMenu = UIMenu.New()
-            parent:AddSubMenu(subMenu, itemText, itemDescription, offset, KeepBanner)
-    ]]
-    local windowSubmenu = UIMenu.New("Windows Submenu", "Windows Subtitle")
-    exampleMenu:AddSubMenu(windowSubmenu, "Windows Menu", "separate descriptions yeeeeah", nil, true)
-    local heritageWindow = UIMenuHeritageWindow.New(0, 0)
+    local windowMenu = UIMenu.New("Windows Submenu", "it is not a submenu.. but a totally cool separate menu now")
+    local windowItem = UIMenuItem.New("Windows item", "Yeah created on its own and handled on item selection")
+    windowItem:RightLabel("~HUD_COLOUR_DEGEN_CYAN~>>>")
+    exampleMenu:AddItem(windowItem)    local heritageWindow = UIMenuHeritageWindow.New(0, 0)
     local detailsWindow = UIMenuDetailsWindow.New("Parents resemblance", "Dad:", "Mom:", true, {})
-    windowSubmenu:AddWindow(heritageWindow)
-    windowSubmenu:AddWindow(detailsWindow)
+    windowMenu:AddWindow(heritageWindow)
+    windowMenu:AddWindow(detailsWindow)
     local momNames           = { "Hannah", "Audrey", "Jasmine", "Giselle", "Amelia", "Isabella", "Zoe", "Ava", "Camilla",
         "Violet",
         "Sophia", "Eveline", "Nicole", "Ashley", "Grace", "Brianna", "Natalie", "Olivia", "Elizabeth", "Charlotte",
@@ -241,9 +240,9 @@ function CreateMenu()
     local momListItem        = UIMenuListItem.New("Mom", momNames, 0)
     local dadListItem        = UIMenuListItem.New("Dad", dadNames, 0)
     local heritageSliderItem = UIMenuSliderItem.New("Heritage Slider", 100, 5, 0, true, "This is Useful on heritage")
-    windowSubmenu:AddItem(momListItem)
-    windowSubmenu:AddItem(dadListItem)
-    windowSubmenu:AddItem(heritageSliderItem)
+    windowMenu:AddItem(momListItem)
+    windowMenu:AddItem(dadListItem)
+    windowMenu:AddItem(heritageSliderItem)
 
     detailsWindow.DetailMid = "Dad: " .. heritageSliderItem:Index() .. "%"
     detailsWindow.DetailBottom = "Mom: " .. (100 - heritageSliderItem:Index()) .. "%"
@@ -259,6 +258,12 @@ function CreateMenu()
     }
 
     detailsWindow:UpdateStatsToWheel()
+
+    -- parameters are: UIMenu:SwitchTo([UIMenu]newMenu, [number]newMenuInitialIndex, [bool]inheritPrevMenuParams)
+    -- if not specified, the last to parameters will always be [1, false] to allow every menu to be rendered separately
+    windowItem.Activated = function(menu, item)
+        menu:SwitchTo(windowMenu, 1, true) 
+    end
 
     exampleMenu.OnMenuChanged = function(old, new, type)
         if type == "opened" then
@@ -325,7 +330,7 @@ function CreateMenu()
     local MomIndex = 0
     local DadIndex = 0
 
-    windowSubmenu.OnListChange = function(menu, item, newindex)
+    windowMenu.OnListChange = function(menu, item, newindex)
         if (item == momListItem) then
             MomIndex = newindex
         elseif (item == dadListItem) then
@@ -1071,22 +1076,22 @@ CreateThread(function()
         -- TIMER BARS FOR THE MOMENT ARE A SET OF SPRITES TEXTS AND RECTS, DRAWING THEM WILL INCREASE A LOT SCALEFORMUI'S CPU TIME!
         timerBarPool:Draw()
 
-        if IsControlJustPressed(0, 166) and not pool:IsAnyMenuOpen() then -- F5
+        if IsControlJustPressed(0, 166) and not MenuPool:IsAnyMenuOpen() then -- F5
             CreateMenu()
         end
-        if IsControlJustPressed(0, 167) and not pool:IsAnyMenuOpen() then -- F6
+        if IsControlJustPressed(0, 167) and not MenuPool:IsAnyMenuOpen() then -- F6
             CreatePauseMenu()
         end
-        if IsControlJustPressed(0, 168) and not pool:IsAnyMenuOpen() then -- F7
+        if IsControlJustPressed(0, 168) and not MenuPool:IsAnyMenuOpen() then -- F7
             CreateLobbyMenu()
             AddAndRemoveFriend()
         end
 
-        if IsControlJustPressed(0, 170) or IsDisabledControlJustPressed(0, 170) and not pool:IsAnyMenuOpen() then -- F3
+        if IsControlJustPressed(0, 170) or IsDisabledControlJustPressed(0, 170) and not MenuPool:IsAnyMenuOpen() then -- F3
             CreateMissionSelectorMenu()
         end
 
-        if IsControlJustPressed(0, 56) and not pool:IsAnyMenuOpen() then -- F9
+        if IsControlJustPressed(0, 56) and not MenuPool:IsAnyMenuOpen() then -- F9
             local maxPage = math.ceil(scoreboardPlayerCount / 16);       -- 16 is the max amount of rows per page
 
             -- set the title of the menu, the second parameter is the page number, the third is the max page number, you can set your own labels
@@ -1115,11 +1120,12 @@ CreateThread(function()
         if not ScaleformUI.Scaleforms.PlayerListScoreboard.Enabled then
             currentPage = 1;
         end
-
-        -- this is used to free memory from all the menus in the MenuPool emptying its tables.
-        -- YOU WILL NEED TO REBUILD YOUR MENUS IN CODE TO MAKE THEM WORK AGAIN!
-        if IsControlJustPressed(0, 47) then -- G
-            pool:FlushAllMenus()
-        end
     end
 end)
+
+
+--[[
+Changes:
+- InstructionalButtons are now dynamically drawn! No need to set them Enabled, they'll draw as soon as you add some buttons.. and will stop drawing when you clear the button List
+- Colorful labels! No more need to "specify your text color" you can now format your items labels and right labels as you wish!! simply use the classic ~ formatting
+]]
