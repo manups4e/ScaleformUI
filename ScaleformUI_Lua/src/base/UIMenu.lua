@@ -5,8 +5,8 @@ UIMenu.__call = function()
 end
 
 ---@class UIMenu
----@field public Title string -- Sets the menu title
----@field public Subtitle string -- Sets the menu subtitle
+---@field public _Title string -- Sets the menu title
+---@field public _Subtitle string -- Sets the menu subtitle
 ---@field public AlternativeTitle boolean -- Enable or disable the alternative title (default: false)
 ---@field public Position vector2 -- Sets the menu position (default: { X = 0.0, Y = 0.0 })
 ---@field public Pagination table -- Menu pagination settings (default: { Min = 0, Max = 7, Total = 7 })
@@ -79,8 +79,8 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         alternativeTitleStyle = false
     end
     local _UIMenu = {
-        Title = title,
-        Subtitle = subTitle,
+        _Title = title,
+        _Subtitle = subTitle,
         AlternativeTitle = alternativeTitleStyle,
         counterColor = Colours.HUD_COLOUR_FREEMODE,
         Position = { x = X, y = Y },
@@ -233,7 +233,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
     }
     _UIMenu.Pagination.itemsPerPage = 7
     if subTitle ~= "" and subTitle ~= nil then
-        _UIMenu.Subtitle = subTitle
+        _UIMenu._Subtitle = subTitle
     end
     if (_UIMenu._menuGlare == 0) then
         _UIMenu._menuGlare = Scaleform.Request("mp_menu_glare")
@@ -243,11 +243,11 @@ end
 
 function UIMenu:Title(title)
     if title == nil then
-        return self.Title
+        return self._Title
     else
-        self.Title = title
+        self._Title = title
         if self:Visible() then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_TITLE_SUBTITLE", false, self.Title, self.Subtitle,
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_TITLE_SUBTITLE", false, self._Title, self._Subtitle,
                 self.alternativeTitle)
         end
     end
@@ -266,11 +266,11 @@ end
 
 function UIMenu:Subtitle(sub)
     if sub == nil then
-        return self.Subtitle
+        return self._Subtitle
     else
-        self.Subtitle = sub
+        self._Subtitle = sub
         if self:Visible() then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_TITLE_SUBTITLE", false, self.Title, self.Subtitle,
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_TITLE_SUBTITLE", false, self._Title, self._Subtitle,
                 self.alternativeTitle)
         end
     end
@@ -610,7 +610,7 @@ function UIMenu:BuildUpMenuAsync()
         local enab = self:AnimationEnabled()
         self:AnimationEnabled(false)
         while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
-        ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self.Title, self.Subtitle, self.Position.x, self.Position.y,
+        ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self._Title, self._Subtitle, self.Position.x, self.Position.y,
             self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, true,
             self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont[1], self.descFont[2])
         if #self.Windows > 0 then
