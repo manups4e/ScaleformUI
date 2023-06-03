@@ -90,7 +90,6 @@ end
 
 function TabView:Visible(visible)
     if visible ~= nil then
-        ScaleformUI.Scaleforms.InstructionalButtons:Enabled(visible)
         self._visible = visible
         ScaleformUI.Scaleforms._pauseMenu:Visible(visible)
         if visible == true then
@@ -107,6 +106,7 @@ function TabView:Visible(visible)
             end
         else
             ScaleformUI.Scaleforms._pauseMenu:Dispose()
+            ScaleformUI.Scaleforms.InstructionalButtons:ClearButtonList()
             AnimpostfxStop("PauseMenuIn")
             AnimpostfxPlay("PauseMenuOut", 800, false)
             self.OnPauseMenuClose(self)
