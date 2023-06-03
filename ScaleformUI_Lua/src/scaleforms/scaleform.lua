@@ -23,7 +23,7 @@ function Scaleform.Request(Name)
         "^1ScaleformUI [ERROR]: ^7The first argument must be a string, not a ^1" .. type(Name) .. "^7.")
     local _scaleform = {
         name = Name,
-        handle = RequestScaleformMovieInstance(Name)
+        handle = RequestScaleformMovie(Name)
     }
     return setmetatable(_scaleform, Scaleform)
 end
