@@ -434,18 +434,18 @@ end
 ---@param value number?
 function UIMenu:CurrentSelection(value)
     if value ~= nil then
-        if value < 0 then
-            self.Pagination:CurrentMenuIndex(0)
+        if value < 1 then
+            self.Pagination:CurrentMenuIndex(1)
         elseif value > #self.Items then
             self.Pagination:CurrentMenuIndex(#self.Items)
         end
 
-        self.Items[self.Pagination:CurrentMenuIndex()]:Selected(false)
+        self.Items[self:CurrentSelection()]:Selected(false)
         self.Pagination:CurrentMenuIndex(value);
         self.Pagination:CurrentPage(self.Pagination:GetPage(self.Pagination:CurrentMenuIndex()));
         self.Pagination:CurrentPageIndex(value);
         self.Pagination:ScaleformIndex(self.Pagination:GetScaleformIndex(self.Pagination:CurrentMenuIndex()));
-        self.Items[self.Pagination:CurrentMenuIndex()]:Selected(true)
+        self.Items[self:CurrentSelection()]:Selected(true)
         if self:Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, self.Pagination:GetScaleformIndex(self.Pagination:CurrentMenuIndex()))
         end
@@ -563,8 +563,8 @@ function UIMenu:SwitchTo(newMenu, newMenuCurrentSelection, inheritOldMenuParams)
         newMenu:AnimationType(self:AnimationType())
         newMenu:BuildingAnimation(self:BuildingAnimation())
     end
-    newMenu:CurrentSelection(newMenuCurrentSelection)
     self:Visible(false)
+    newMenu:CurrentSelection(newMenuCurrentSelection)
     newMenu:Visible(true)
     BreadcrumbsHandler:Forward(newMenu)
 end
@@ -588,12 +588,12 @@ function UIMenu:Visible(bool)
             end
 
         else
+            ScaleformUI.Scaleforms.InstructionalButtons:ClearButtonList()
             self.OnMenuChanged(self, nil, "closed")
             ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
             MenuPool._currentMenu = nil
             MenuPool.ableToDraw = false
         end
-        ScaleformUI.Scaleforms.InstructionalButtons:Enabled(bool)
         if self.Settings.ResetCursorOnOpen then
             local W, H = GetScreenResolution()
             SetCursorLocation(W / 2, H / 2)
@@ -654,12 +654,14 @@ function UIMenu:BuildUpMenuAsync()
         self.Pagination:MinItem(self.Pagination:CurrentPageStartIndex())
         self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
 
-        while i <= max do
-            Citizen.Wait(0)
-            if not self:Visible() then return end
-            self:_itemCreation(self.Pagination:CurrentPage(), i, false)
-            i = i + 1
-        end
+        Citizen.CreateThread(function()
+            while i <= max do
+                Citizen.Wait(0)
+                if not self:Visible() then return end
+                self:_itemCreation(self.Pagination:CurrentPage(), i, false)
+                i = i + 1
+            end
+        end)
 
         ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, self.Pagination:GetScaleformIndex(self.Pagination:CurrentMenuIndex()))
         ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", false, self:CurrentSelection(), #self.Items)
@@ -1090,7 +1092,7 @@ function UIMenu:SelectItem(play)
         Item.OnStatsSelected(self, Item, Item._Index)
     else
         self.OnItemSelect(self, Item, self:CurrentSelection())
-        Item:Activated(self, Item)
+        Item.Activated(self, Item)
     end
 end
 
@@ -1108,29 +1110,12 @@ function UIMenu:GoBack(boolean)
         if self:CanPlayerCloseMenu() then
             self:Visible(false)
             BreadcrumbsHandler:Clear()
-        else
-            local prevMenu = BreadcrumbsHandler:PreviousMenu()
-            BreadcrumbsHandler:Backwards()
-            self:Visible(false)
-            prevMenu:Visible(true)
         end
-    end
-
-    if self.ParentMenu ~= nil then
-        self._canBuild = false
-        self:Visible(false)
-        ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
-        ScaleformUI.Scaleforms.InstructionalButtons:Enabled(true)
-        ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.ParentMenu.InstructionalButtons)
-        self.ParentMenu._canBuild = true
-        self.ParentMenu._Visible = true
-        self.ParentMenu:BuildUpMenuAsync()
-        self.OnMenuChanged(self, self.ParentMenu, "backwards")
-        self.ParentMenu.OnMenuChanged(self, self.ParentMenu, "backwards")
     else
-        if self:CanPlayerCloseMenu() then
-            self:Visible(false)
-        end
+        local prevMenu = BreadcrumbsHandler:PreviousMenu()
+        BreadcrumbsHandler:Backwards()
+        self:Visible(false)
+        prevMenu:Visible(true)
     end
 end
 
@@ -1168,22 +1153,13 @@ end
 ---Draw
 function UIMenu:Draw()
     if not self._Visible or ScaleformUI.Scaleforms.Warning:IsShowing() then return end
-    if not ScaleformUI.Scaleforms._ui:IsLoaded() then
-        while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
-    end
+    while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
 
     HideHudComponentThisFrame(19)
 
     if self.Settings.ControlDisablingEnabled then
         self:DisEnableControls(false)
     end
-
-    ScaleformUI.Notifications:DrawText(0.3, 0.775, "Pagination.CurrentMenuIndex: " .. self.Pagination:CurrentMenuIndex());
-    ScaleformUI.Notifications:DrawText(0.3, 0.8, "self:CurrentSelection: " .. self:CurrentSelection());
-    ScaleformUI.Notifications:DrawText(0.3, 0.825, "Pagination.CurrentPage: " .. self.Pagination:CurrentPage());
-    ScaleformUI.Notifications:DrawText(0.3, 0.85, "Pagination.CurrentPageIndex: " .. self.Pagination:CurrentPageIndex());
-    ScaleformUI.Notifications:DrawText(0.3, 0.875, "ScaleformIndex: " .. self.Pagination:ScaleformIndex());
-    ScaleformUI.Notifications:DrawText(0.3, 0.9, "Pagination.GetScaleformIndex: " .. self.Pagination:GetScaleformIndex(self.Pagination:CurrentMenuIndex()));
 
     ScaleformUI.Scaleforms._ui:Render2D()
 
