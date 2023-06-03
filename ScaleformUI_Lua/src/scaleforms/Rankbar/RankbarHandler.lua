@@ -15,13 +15,6 @@ end
 local HUD_COMPONENT_ID = 19
 local _rankBarColor = 116
 
----Creates a new RankbarHandler instance
----@return RankbarHandler
-function RankbarHandler.New()
-    local data = {}
-    return setmetatable(data, RankbarHandler)
-end
-
 ---Loads the rankbar scaleform movie
 ---@return promise
 function RankbarHandler:Load()

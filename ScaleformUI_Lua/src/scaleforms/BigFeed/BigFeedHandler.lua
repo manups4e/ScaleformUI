@@ -1,4 +1,14 @@
-BigFeedInstance = setmetatable({}, BigFeedInstance)
+BigFeedInstance = setmetatable({
+    _sc = nil --[[@type Scaleform]],
+    _title = "",
+    _subtitle = "",
+    _bodyText = "",
+    _txn = "",
+    _txd = "",
+    _enabled = false,
+    _rightAligned = false,
+    _disabledNotifications = false,
+}, BigFeedInstance)
 BigFeedInstance.__index = BigFeedInstance
 BigFeedInstance.__call = function()
     return "BigFeedInstance"
@@ -28,15 +38,6 @@ end
 ---@return BigFeedInstance
 function BigFeedInstance.New()
     local data = {
-        _sc = nil --[[@type Scaleform]],
-        _title = "",
-        _subtitle = "",
-        _bodyText = "",
-        _txn = "",
-        _txd = "",
-        _enabled = false,
-        _rightAligned = false,
-        _disabledNotifications = false,
     }
     return setmetatable(data, BigFeedInstance)
 end
@@ -132,7 +133,7 @@ end
 ---Updates the information displayed on the BigFeedInstance
 ---@return nil
 function BigFeedInstance:UpdateInfo()
-    if not self._enabled then return end
+    if self._sc == nil or not self._enabled then return end
     AddTextEntry("scaleform_ui_bigFeed", self._bodyText)
     BeginScaleformMovieMethod(self._sc.handle, "SET_BIGFEED_INFO")
     ScaleformMovieMethodAddParamTextureNameString("")
@@ -151,6 +152,7 @@ end
 ---Draws the BigFeedInstance on the screen
 ---@return nil
 function BigFeedInstance:Update()
+    if self._sc == nil or self._sc == 0 then return end
     self._sc:Render2D()
 end
 
