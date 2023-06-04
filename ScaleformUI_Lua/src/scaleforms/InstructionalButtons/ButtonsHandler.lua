@@ -127,7 +127,7 @@ function ButtonsHandler:UpdateButtons()
     local count = 0
 
     for k, button in pairs(self.ControlButtons) do
-        if button:IsUsingController() then
+        if not IsUsingKeyboard(2) then
             if button.PadCheck == 0 or button.PadCheck == -1 then
                 if ScaleformUI.Scaleforms.Warning:IsShowing() then
                     self._sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text, 0, -1)
