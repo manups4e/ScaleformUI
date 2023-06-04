@@ -132,6 +132,7 @@ namespace ScaleformUI.PauseMenu
                     SendPauseMenuClose();
                     SetPlayerControl(Game.Player.Handle, true, 0);
                     MenuPool.currentBase = null;
+                    ScaleformUI.InstructionalButtons.ClearButtonList();
                     ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY_NO_BACKGROUND"), false, -1);
                 }
                 base.Visible = value;
