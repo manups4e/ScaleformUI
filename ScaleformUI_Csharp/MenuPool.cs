@@ -31,20 +31,6 @@ namespace ScaleformUI
             }
         }
 
-        public static bool MouseEdgeEnabled { set { currentMenu.MouseEdgeEnabled = value; } }
-
-        public static bool ControlDisablingEnabled { set { currentMenu.ControlDisablingEnabled = value; } }
-
-        public static bool ResetCursorOnOpen { set { currentMenu.ResetCursorOnOpen = value; } }
-
-        public static int WidthOffset { set { currentMenu.SetMenuWidthOffset(value); } }
-
-        public static bool DisableInstructionalButtons { set { currentMenu.DisableInstructionalButtons(value); } }
-
-        public static bool BannerInheritance = true;
-
-        public static bool OffsetInheritance = true;
-
         public static UIMenu CurrentMenu
         {
             get => currentMenu;
@@ -76,7 +62,7 @@ namespace ScaleformUI
 
             if (inheritOldMenuParams)
             {
-                if (BannerInheritance && currentMenu._customTexture.Key != null && currentMenu._customTexture.Value != null)
+                if (currentMenu._customTexture.Key != null && currentMenu._customTexture.Value != null)
                     newMenu.SetBannerType(currentMenu._customTexture);
                 newMenu.Offset = currentMenu.Offset;
                 newMenu.MouseEdgeEnabled = currentMenu.MouseEdgeEnabled;
