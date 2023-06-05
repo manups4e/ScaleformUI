@@ -28,7 +28,7 @@ public class MenuExample : BaseScript
         exampleMenu.MaxItemsOnScreen = 7; // To decide max items on screen at time, default 7
         exampleMenu.BuildingAnimation = MenuBuildingAnimation.LEFT_RIGHT;
         exampleMenu.AnimationType = MenuAnimationType.BACK_INOUT;
-        exampleMenu.ScrollingType = ScrollingType.Infinite;
+        exampleMenu.ScrollingType = ScrollingType.ENDLESS;
 
         //exampleMenu.CounterColor = HudColor.HUD_COLOUR_PINK;
         // let's add the menu to the Pool
@@ -165,7 +165,7 @@ public class MenuExample : BaseScript
             sidePanelB.Title = ((VehicleColor)value).ToString();
         };
 
-        UIMenuListItem scrollType = new UIMenuListItem("Choose how this menu will scroll!", new List<dynamic>() { "Classic", "Paginated", "Infinite" }, (int)exampleMenu.ScrollingType);
+        UIMenuListItem scrollType = new UIMenuListItem("Choose how this menu will scroll!", new List<dynamic>() { "CLASSIC", "PAGINATED", "ENDLESS" }, (int)exampleMenu.ScrollingType);
         exampleMenu.AddItem(scrollType);
 
         scrollType.OnListChanged += (item, index) =>

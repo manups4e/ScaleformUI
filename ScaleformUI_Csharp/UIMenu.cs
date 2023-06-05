@@ -850,9 +850,9 @@ namespace ScaleformUI
 
     public enum ScrollingType
     {
-        Classic,
-        Paginated,
-        Infinite
+        CLASSIC,
+        PAGINATED,
+        ENDLESS
     }
 
     #endregion
@@ -1499,7 +1499,7 @@ namespace ScaleformUI
         int unused = 0;
         bool cursorPressed;
         private KeyValuePair<string, int> descriptionFont = new("$Font2", 0);
-        private ScrollingType scrollingType = ScrollingType.Classic;
+        private ScrollingType scrollingType = ScrollingType.CLASSIC;
 
         /// <summary>
         /// Process the mouse's position and check if it's hovering over any UI element. Call this in OnTick
@@ -1778,12 +1778,12 @@ namespace ScaleformUI
                     bool overflow = CurrentSelection == 0;
                     if (Pagination.GoUp())
                     {
-                        if (scrollingType == ScrollingType.Infinite || (scrollingType == ScrollingType.Classic && !overflow))
+                        if (scrollingType == ScrollingType.ENDLESS || (scrollingType == ScrollingType.CLASSIC && !overflow))
                         {
                             _itemCreation(Pagination.GetPage(CurrentSelection), Pagination.CurrentPageIndex, true);
                             ScaleformUI._ui.CallFunction("SET_INPUT_EVENT", 8, delay);
                         }
-                        else if (scrollingType == ScrollingType.Paginated || (scrollingType == ScrollingType.Classic && overflow))
+                        else if (scrollingType == ScrollingType.PAGINATED || (scrollingType == ScrollingType.CLASSIC && overflow))
                         {
                             isBuilding = true;
                             ScaleformUI._ui.CallFunction("CLEAR_ITEMS");
@@ -1825,12 +1825,12 @@ namespace ScaleformUI
                     bool overflow = CurrentSelection == MenuItems.Count - 1;
                     if (Pagination.GoDown())
                     {
-                        if (scrollingType == ScrollingType.Infinite || (scrollingType == ScrollingType.Classic && !overflow))
+                        if (scrollingType == ScrollingType.ENDLESS || (scrollingType == ScrollingType.CLASSIC && !overflow))
                         {
                             _itemCreation(Pagination.GetPage(CurrentSelection), Pagination.CurrentPageIndex, false);
                             ScaleformUI._ui.CallFunction("SET_INPUT_EVENT", 9, delay);
                         }
-                        else if (scrollingType == ScrollingType.Paginated || (scrollingType == ScrollingType.Classic && overflow))
+                        else if (scrollingType == ScrollingType.PAGINATED || (scrollingType == ScrollingType.CLASSIC && overflow))
                         {
                             isBuilding = true;
                             ScaleformUI._ui.CallFunction("CLEAR_ITEMS");
@@ -2255,14 +2255,14 @@ namespace ScaleformUI
             {
                 if (Pagination.GetPageItemsCount(page) < Pagination.ItemsPerPage && Pagination.CurrentPage > 0)
                 {
-                    if (scrollingType == ScrollingType.Infinite)
+                    if (scrollingType == ScrollingType.ENDLESS)
                     {
                         if (menuIndex > MenuItems.Count - 1)
                         {
                             menuIndex -= MenuItems.Count - 1;
                         }
                     }
-                    else if (scrollingType == ScrollingType.Classic)//not needed for paginated as each page is on its own.
+                    else if (scrollingType == ScrollingType.CLASSIC)//not needed for paginated as each page is on its own.
                     {
                         int missingItems = Pagination.ItemsPerPage - Pagination.GetPageItemsCount(page);
                         menuIndex -= missingItems;

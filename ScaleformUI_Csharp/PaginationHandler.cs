@@ -11,7 +11,7 @@
         private int totalItems;
         private int scaleformIndex;
 
-        internal ScrollingType scrollType = ScrollingType.Classic;
+        internal ScrollingType scrollType = ScrollingType.CLASSIC;
         internal int CurrentPage { get => currentPage; set => currentPage = value; }
         internal int ItemsPerPage { get => itemsPerPage; set => itemsPerPage = value; }
         internal int TotalItems { get => totalItems; set => totalItems = value; }
@@ -133,7 +133,7 @@
                     ScaleformIndex = TotalItems - 1;
                     return false;
                 }
-                if (scrollType == ScrollingType.Infinite || (scrollType == ScrollingType.Classic && !overflow))
+                if (scrollType == ScrollingType.ENDLESS || (scrollType == ScrollingType.CLASSIC && !overflow))
                 {
                     minItem--;
                     maxItem--;
@@ -144,12 +144,12 @@
                     ScaleformIndex = 0;
                     return true;
                 }
-                else if (scrollType == ScrollingType.Paginated || (scrollType == ScrollingType.Classic && overflow))
+                else if (scrollType == ScrollingType.PAGINATED || (scrollType == ScrollingType.CLASSIC && overflow))
                 {
                     minItem = CurrentPageStartIndex;
                     maxItem = CurrentPageEndIndex;
                     ScaleformIndex = GetPageIndexFromMenuIndex(CurrentPageEndIndex);
-                    if (scrollType == ScrollingType.Classic)
+                    if (scrollType == ScrollingType.CLASSIC)
                     {
                         int missingItems = GetMissingItems();
                         ScaleformIndex += missingItems;
@@ -178,7 +178,7 @@
             }
             else if (scaleformIndex > itemsPerPage - 1)
             {
-                if (scrollType == ScrollingType.Infinite || (scrollType == ScrollingType.Classic && !overflow))
+                if (scrollType == ScrollingType.ENDLESS || (scrollType == ScrollingType.CLASSIC && !overflow))
                 {
                     CurrentPage = GetPage(CurrentMenuIndex);
                     ScaleformIndex = itemsPerPage - 1;
@@ -190,7 +190,7 @@
                         maxItem = 0;
                     return true;
                 }
-                else if (scrollType == ScrollingType.Paginated || (scrollType == ScrollingType.Classic && overflow))
+                else if (scrollType == ScrollingType.PAGINATED || (scrollType == ScrollingType.CLASSIC && overflow))
                 {
                     CurrentPage = GetPage(CurrentMenuIndex);
                     minItem = CurrentPageStartIndex;
