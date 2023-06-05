@@ -207,6 +207,10 @@ namespace ScaleformUI
         internal int savingTimer = 0;
         private bool _isSaving = false;
 
+        public InstructionalButtonsScaleform()
+        {
+            Load();
+        }
         /// <summary>
         /// If you set this to true the user will see the mouse cursor on screen
         /// </summary>
@@ -296,6 +300,8 @@ namespace ScaleformUI
         {
             ControlButtons.Clear();
             _changed = true;
+            _sc.CallFunction("CLEAR_ALL");
+            _sc.CallFunction("CLEAR_RENDER");
         }
 
 
@@ -403,6 +409,9 @@ namespace ScaleformUI
 
         internal void Update()
         {
+            if (_sc == null)
+                Load();
+            if (ControlButtons.Count == 0) return;
             if (API.IsUsingKeyboard(2))
             {
                 if (!_isUsingKeyboard)
