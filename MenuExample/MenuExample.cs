@@ -28,6 +28,8 @@ public class MenuExample : BaseScript
         exampleMenu.MaxItemsOnScreen = 7; // To decide max items on screen at time, default 7
         exampleMenu.BuildingAnimation = MenuBuildingAnimation.LEFT_RIGHT;
         exampleMenu.AnimationType = MenuAnimationType.BACK_INOUT;
+        exampleMenu.ScrollingType = ScrollingType.Infinite;
+
         //exampleMenu.CounterColor = HudColor.HUD_COLOUR_PINK;
         // let's add the menu to the Pool
 
@@ -133,7 +135,6 @@ public class MenuExample : BaseScript
 
         #endregion
 
-        #region Ketchup
         UIMenuCheckboxItem ketchupItem = new UIMenuCheckboxItem("~g~Scrolling animation enabled? ~b~in a very long label to ~o~test the text scrolling feature!", UIMenuCheckboxStyle.Tick, enabled, "Do you wish to enable the scrolling animation?");
         long _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
         API.CreateRuntimeTextureFromDuiHandle(txd, "panelbackground", API.GetDuiHandle(_paneldui));
@@ -151,9 +152,6 @@ public class MenuExample : BaseScript
         ketchupItem.AddSidePanel(sidePanel);
         ketchupItem.SetLeftBadge(BadgeIcon.STAR);
         exampleMenu.AddItem(ketchupItem);
-        #endregion
-
-        #region Cook
 
         UIMenuItem cookItem = new UIMenuItem("Cook! in a very long label to test the text scrolling feature!", "Cook the dish with the appropiate ingredients and ketchup.");
         cookItem.SetRightLabel("rightLabel");
@@ -165,6 +163,14 @@ public class MenuExample : BaseScript
         {
             Notifications.ShowNotification($"Vehicle Color: {(VehicleColor)value}");
             sidePanelB.Title = ((VehicleColor)value).ToString();
+        };
+
+        UIMenuListItem scrollType = new UIMenuListItem("Choose how this menu will scroll!", new List<dynamic>() { "Classic", "Paginated", "Infinite" }, (int)exampleMenu.ScrollingType);
+        exampleMenu.AddItem(scrollType);
+
+        scrollType.OnListChanged += (item, index) =>
+        {
+            exampleMenu.ScrollingType = (ScrollingType)index;
         };
 
         UIMenuItem colorItem = new UIMenuItem("UIMenuItem with Colors", "~b~Look!!~r~I can be colored ~y~too!!~w~~n~Every item now supports custom colors!", HudColor.HUD_COLOUR_PURPLE, HudColor.HUD_COLOUR_PINK);
@@ -255,7 +261,6 @@ public class MenuExample : BaseScript
         statistics.UpdateStatistic(2, 100f);
         //and you can get / set their percentage
 
-        #endregion
 
         #region Windows SubMenu
         UIMenuItem windowsItem = new UIMenuItem("Windows SubMenu item label", "this is the submenu binded item description");
