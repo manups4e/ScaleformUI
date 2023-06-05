@@ -43,6 +43,7 @@
             int id = 0;
             if (minItem <= menuIndex)
             {
+                id = menuIndex - minItem;
             }
             else if (minItem > menuIndex && maxItem >= menuIndex)
             {
