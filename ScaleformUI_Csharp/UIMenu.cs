@@ -1567,7 +1567,6 @@ namespace ScaleformUI
                                                         case UIMenuListItem:
                                                             {
                                                                 UIMenuListItem it = MenuItems[CurrentSelection] as UIMenuListItem;
-                                                                Debug.WriteLine("it.Index:" + it.Index + ", value:" + value);
                                                                 if (it.Index != value)
                                                                 {
                                                                     it.Index = value;
