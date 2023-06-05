@@ -176,7 +176,6 @@
                 ScaleformIndex = 0;
                 return false;
             }
-            // sempre falso se passso da 20 a 1 (fine menu torno a menu) perché aggiornando menuIndex aggiorno pagina passando da max5 a max6
             else if (scaleformIndex > itemsPerPage - 1)
             {
                 if (scrollType == ScrollingType.Infinite || (scrollType == ScrollingType.Classic && !overflow))
