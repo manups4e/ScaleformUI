@@ -133,6 +133,7 @@
                 {
                     minItem = CurrentPageStartIndex;
                     maxItem = CurrentPageEndIndex;
+                    ScaleformIndex = GetPageIndexFromMenuIndex(CurrentPageEndIndex);
                     if (scrollType == ScrollingType.CLASSIC)
                     {
                         int missingItems = GetMissingItems();
