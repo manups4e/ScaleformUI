@@ -202,27 +202,5 @@
             CurrentPage = GetPage(CurrentMenuIndex);
             return false;
         }
-
-        public override string ToString()
-        {
-            string returned = "";
-            returned += "CurrentPageStartIndex:" + CurrentPageStartIndex + "\n";
-            returned += "CurrentPageEndIndex:" + CurrentPageEndIndex + "\n";
-            returned += "GetPageIndexFromMenuIndex(CurrentPageStartIndex):" + GetPageIndexFromMenuIndex(CurrentPageStartIndex) + "\n";
-            returned += "GetPageIndexFromMenuIndex(CurrentPageEndIndex):" + GetPageIndexFromMenuIndex(CurrentPageEndIndex) + "\n";
-            returned += "GetPageIndexFromMenuIndex(totalItems):" + GetPageIndexFromMenuIndex(totalItems) + "\n";
-            returned += "ScaleformIndex:" + ScaleformIndex + "\n";
-            returned += "TotalPages:" + TotalPages + "\n";
-            returned += "_currentPageIndex: " + _currentPageIndex + "\n";
-            returned += "_currentMenuIndex: " + _currentMenuIndex + "\n";
-            returned += "currentPage: " + currentPage + "\n";
-            returned += "itemsPerPage: " + itemsPerPage + "\n";
-            returned += "minItem: " + minItem + "\n";
-            returned += "maxItem: " + maxItem + "\n";
-            returned += "totalItems: " + totalItems + "\n";
-            returned += "scaleformIndex: " + scaleformIndex + "\n";
-            returned += "/////////////////////////////////////////////\n";
-            return returned;
-        }
     }
 }
