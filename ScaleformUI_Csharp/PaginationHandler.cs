@@ -21,25 +21,10 @@
         {
             get
             {
-                if (totalItems > itemsPerPage)
-                {
-                    if (totalItems % itemsPerPage == 0)
-                    {
-                        return CurrentPageStartIndex + itemsPerPage - 1;
-                    }
-                    else
-                    {
-                        if (currentPage == TotalPages)
-                            return CurrentPageStartIndex + GetPageIndexFromMenuIndex(totalItems - 1);
-                        else
-                            return CurrentPageStartIndex + itemsPerPage - 1;
-
-                    }
-                }
-                else
-                {
-                    return totalItems;
-                }
+                int index = CurrentPageStartIndex + itemsPerPage - 1;
+                if (index >= totalItems)
+                    index = totalItems - 1;
+                return index;
             }
         }
         internal int CurrentPageIndex { get => _currentPageIndex; set => _currentPageIndex = GetPageIndexFromMenuIndex(value); }
