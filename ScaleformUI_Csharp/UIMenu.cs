@@ -1775,7 +1775,7 @@ namespace ScaleformUI
                 do
                 {
                     await BaseScript.Delay(0);
-                    bool overflow = CurrentSelection == 0;
+                    bool overflow = CurrentSelection == 0 && Pagination.TotalPages > 1;
                     if (Pagination.GoUp())
                     {
                         if (scrollingType == ScrollingType.ENDLESS || (scrollingType == ScrollingType.CLASSIC && !overflow))
@@ -1793,11 +1793,9 @@ namespace ScaleformUI
                             {
                                 await BaseScript.Delay(0);
                                 if (!Visible) return;
-                                _itemCreation(Pagination.CurrentPage, i, false);
+                                _itemCreation(Pagination.CurrentPage, i, false, true);
                                 i++;
                             }
-                            ScaleformUI._ui.CallFunction("SET_INPUT_EVENT", 9, delay);
-                            ScaleformUI._ui.CallFunction("SET_INPUT_EVENT", 8, delay);
                             isBuilding = false;
                         }
                     }
@@ -1822,7 +1820,7 @@ namespace ScaleformUI
                 do
                 {
                     await BaseScript.Delay(0);
-                    bool overflow = CurrentSelection == MenuItems.Count - 1;
+                    bool overflow = CurrentSelection == MenuItems.Count - 1 && Pagination.TotalPages > 1;
                     if (Pagination.GoDown())
                     {
                         if (scrollingType == ScrollingType.ENDLESS || (scrollingType == ScrollingType.CLASSIC && !overflow))
@@ -1843,8 +1841,6 @@ namespace ScaleformUI
                                 _itemCreation(Pagination.CurrentPage, i, false);
                                 i++;
                             }
-                            ScaleformUI._ui.CallFunction("SET_INPUT_EVENT", 8, delay);
-                            ScaleformUI._ui.CallFunction("SET_INPUT_EVENT", 9, delay);
                             isBuilding = false;
                         }
                     }
@@ -2232,6 +2228,7 @@ namespace ScaleformUI
 
             Pagination.ScaleformIndex = Pagination.GetScaleformIndex(CurrentSelection);
 
+            MenuItems[CurrentSelection].Selected = true;
             ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", Pagination.ScaleformIndex);
             ScaleformUI._ui.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
 
@@ -2247,28 +2244,33 @@ namespace ScaleformUI
             isBuilding = false;
         }
 
-        private void _itemCreation(int page, int pageIndex, bool before)
+        private void _itemCreation(int page, int pageIndex, bool before, bool isOverflow = false)
         {
             int menuIndex = Pagination.GetMenuIndexFromPageIndex(page, pageIndex);
-            int scaleformIndex = Pagination.GetScaleformIndex(menuIndex);
             if (!before)
             {
-                if (Pagination.GetPageItemsCount(page) < Pagination.ItemsPerPage && Pagination.CurrentPage > 0)
+                if (Pagination.GetPageItemsCount(page) < Pagination.ItemsPerPage)
                 {
                     if (scrollingType == ScrollingType.ENDLESS)
                     {
-                        if (menuIndex > MenuItems.Count - 1)
+                        if (menuIndex > Pagination.TotalItems - 1)
                         {
-                            menuIndex -= MenuItems.Count - 1;
+                            menuIndex -= Pagination.TotalItems;
+                            Pagination.MaxItem = menuIndex;
                         }
                     }
-                    else if (scrollingType == ScrollingType.CLASSIC)//not needed for paginated as each page is on its own.
+                    else if (scrollingType == ScrollingType.CLASSIC && isOverflow)
                     {
                         int missingItems = Pagination.ItemsPerPage - Pagination.GetPageItemsCount(page);
                         menuIndex -= missingItems;
                     }
+                    else if (scrollingType == ScrollingType.PAGINATED)
+                        if (menuIndex >= MenuItems.Count) return;
                 }
             }
+
+            int scaleformIndex = Pagination.GetScaleformIndex(menuIndex);
+
             UIMenuItem item = MenuItems[menuIndex];
             AddTextEntry($"menu_{BreadcrumbsHandler.CurrentDepth}_desc_{menuIndex}", item.Description);
 

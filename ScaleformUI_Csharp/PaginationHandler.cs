@@ -43,13 +43,12 @@
             int id = 0;
             if (minItem <= menuIndex)
             {
-                id = menuIndex - minItem;
             }
             else if (minItem > menuIndex && maxItem >= menuIndex)
             {
                 id = (menuIndex - maxItem) + (itemsPerPage - 1);
             }
-            return id + GetMissingItems();
+            return id;
         }
 
         internal int GetMenuIndexFromScaleformIndex(int scaleformIndex)
@@ -106,7 +105,7 @@
             if (CurrentMenuIndex < 0)
             {
                 CurrentMenuIndex = TotalItems - 1;
-                overflow = true;
+                overflow = TotalPages > 1;
             }
             CurrentPageIndex = CurrentMenuIndex;
             ScaleformIndex--;
@@ -133,11 +132,14 @@
                 {
                     minItem = CurrentPageStartIndex;
                     maxItem = CurrentPageEndIndex;
-                    ScaleformIndex = GetPageIndexFromMenuIndex(CurrentPageEndIndex);
                     if (scrollType == ScrollingType.CLASSIC)
                     {
                         int missingItems = GetMissingItems();
-                        ScaleformIndex += missingItems;
+                        if (missingItems > 0)
+                        {
+                            ScaleformIndex = GetPageIndexFromMenuIndex(CurrentPageEndIndex) + missingItems;
+                            minItem = CurrentPageStartIndex - missingItems;
+                        }
                     }
                     return true;
                 }
@@ -152,10 +154,11 @@
             if (CurrentMenuIndex >= TotalItems)
             {
                 CurrentMenuIndex = 0;
-                overflow = true;
+                overflow = TotalPages > 1;
             }
             CurrentPageIndex = CurrentMenuIndex;
             ScaleformIndex++;
+            CurrentPage = GetPage(CurrentMenuIndex);
             if (ScaleformIndex >= totalItems)
             {
                 ScaleformIndex = 0;
@@ -165,7 +168,6 @@
             {
                 if (scrollType == ScrollingType.ENDLESS || (scrollType == ScrollingType.CLASSIC && !overflow))
                 {
-                    CurrentPage = GetPage(CurrentMenuIndex);
                     ScaleformIndex = itemsPerPage - 1;
                     minItem++;
                     maxItem++;
@@ -177,14 +179,19 @@
                 }
                 else if (scrollType == ScrollingType.PAGINATED || (scrollType == ScrollingType.CLASSIC && overflow))
                 {
-                    CurrentPage = GetPage(CurrentMenuIndex);
                     minItem = CurrentPageStartIndex;
                     maxItem = CurrentPageEndIndex;
                     ScaleformIndex = 0;
                     return true;
                 }
             }
-            CurrentPage = GetPage(CurrentMenuIndex);
+            else if (scrollType == ScrollingType.PAGINATED && scaleformIndex > GetPageIndexFromMenuIndex(CurrentPageEndIndex))
+            {
+                minItem = CurrentPageStartIndex;
+                maxItem = CurrentPageEndIndex;
+                ScaleformIndex = 0;
+                return true;
+            }
             return false;
         }
     }
