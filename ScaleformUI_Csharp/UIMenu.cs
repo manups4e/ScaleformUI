@@ -2217,12 +2217,24 @@ namespace ScaleformUI
             if (MenuItems.Count < max)
                 max = MenuItems.Count;
             Pagination.MinItem = Pagination.CurrentPageStartIndex;
+
+            if (scrollingType == ScrollingType.CLASSIC && Pagination.TotalPages > 1)
+            {
+                int missingItems = Pagination.GetMissingItems();
+                if (missingItems > 0)
+                {
+                    Pagination.ScaleformIndex = Pagination.GetPageIndexFromMenuIndex(Pagination.CurrentPageEndIndex) + missingItems;
+                    Pagination.MinItem = Pagination.CurrentPageStartIndex - missingItems;
+                }
+            }
+
+
             Pagination.MaxItem = Pagination.CurrentPageEndIndex;
             while (i < max)
             {
                 await BaseScript.Delay(0);
                 if (!Visible) return;
-                _itemCreation(Pagination.CurrentPage, i, false);
+                _itemCreation(Pagination.CurrentPage, i, false, true);
                 i++;
             }
 
@@ -2249,7 +2261,7 @@ namespace ScaleformUI
             int menuIndex = Pagination.GetMenuIndexFromPageIndex(page, pageIndex);
             if (!before)
             {
-                if (Pagination.GetPageItemsCount(page) < Pagination.ItemsPerPage)
+                if (Pagination.GetPageItemsCount(page) < Pagination.ItemsPerPage && Pagination.TotalPages > 1)
                 {
                     if (scrollingType == ScrollingType.ENDLESS)
                     {
