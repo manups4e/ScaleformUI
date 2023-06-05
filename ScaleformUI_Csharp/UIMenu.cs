@@ -848,6 +848,13 @@ namespace ScaleformUI
         LEFT_RIGHT,
     }
 
+    public enum ScrollingType
+    {
+        Classic,
+        Paginated,
+        Infinite
+    }
+
     #endregion
 
     /// <summary>
@@ -960,6 +967,17 @@ namespace ScaleformUI
                 }
             }
         }
+
+        public ScrollingType ScrollingType
+        {
+            get => scrollingType;
+            set
+            {
+                Pagination.scrollType = value;
+                scrollingType = value;
+            }
+        }
+
 
         public bool MouseWheelControlEnabled
         {
@@ -1481,6 +1499,7 @@ namespace ScaleformUI
         int unused = 0;
         bool cursorPressed;
         private KeyValuePair<string, int> descriptionFont = new("$Font2", 0);
+        private ScrollingType scrollingType = ScrollingType.Classic;
 
         /// <summary>
         /// Process the mouse's position and check if it's hovering over any UI element. Call this in OnTick
@@ -1752,19 +1771,41 @@ namespace ScaleformUI
         {
             try
             {
+                if (isBuilding) return;
                 MenuItems[CurrentSelection].Selected = false;
                 do
                 {
                     await BaseScript.Delay(0);
+                    bool overflow = CurrentSelection == 0;
                     if (Pagination.GoUp())
                     {
-                        _itemCreation(Pagination.GetPage(CurrentSelection), Pagination.CurrentPageIndex, true);
-                        ScaleformUI._ui.CallFunction("SET_INPUT_EVENT", 8, delay);
+                        if (scrollingType == ScrollingType.Infinite || (scrollingType == ScrollingType.Classic && !overflow))
+                        {
+                            _itemCreation(Pagination.GetPage(CurrentSelection), Pagination.CurrentPageIndex, true);
+                            ScaleformUI._ui.CallFunction("SET_INPUT_EVENT", 8, delay);
+                        }
+                        else if (scrollingType == ScrollingType.Paginated || (scrollingType == ScrollingType.Classic && overflow))
+                        {
+                            isBuilding = true;
+                            ScaleformUI._ui.CallFunction("CLEAR_ITEMS");
+                            int i = 0;
+                            int max = Pagination.ItemsPerPage;
+                            while (i < max)
+                            {
+                                await BaseScript.Delay(0);
+                                if (!Visible) return;
+                                _itemCreation(Pagination.CurrentPage, i, false);
+                                i++;
+                            }
+                            ScaleformUI._ui.CallFunction("SET_INPUT_EVENT", 9, delay);
+                            ScaleformUI._ui.CallFunction("SET_INPUT_EVENT", 8, delay);
+                            isBuilding = false;
+                        }
                     }
-                    ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", Pagination.ScaleformIndex);
-                    ScaleformUI._ui.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
                 }
                 while (MenuItems[CurrentSelection] is UIMenuSeparatorItem sp && sp.Jumpable);
+                ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", Pagination.ScaleformIndex);
+                ScaleformUI._ui.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
                 MenuItems[CurrentSelection].Selected = true;
                 IndexChange(CurrentSelection);
             }
@@ -1777,19 +1818,41 @@ namespace ScaleformUI
         {
             try
             {
+                if (isBuilding) return;
                 MenuItems[CurrentSelection].Selected = false;
                 do
                 {
                     await BaseScript.Delay(0);
+                    bool overflow = CurrentSelection == MenuItems.Count - 1;
                     if (Pagination.GoDown())
                     {
-                        _itemCreation(Pagination.GetPage(CurrentSelection), Pagination.CurrentPageIndex, false);
-                        ScaleformUI._ui.CallFunction("SET_INPUT_EVENT", 9, delay);
+                        if (scrollingType == ScrollingType.Infinite || (scrollingType == ScrollingType.Classic && !overflow))
+                        {
+                            _itemCreation(Pagination.GetPage(CurrentSelection), Pagination.CurrentPageIndex, false);
+                            ScaleformUI._ui.CallFunction("SET_INPUT_EVENT", 9, delay);
+                        }
+                        else if (scrollingType == ScrollingType.Paginated || (scrollingType == ScrollingType.Classic && overflow))
+                        {
+                            isBuilding = true;
+                            ScaleformUI._ui.CallFunction("CLEAR_ITEMS");
+                            int i = 0;
+                            int max = Pagination.ItemsPerPage;
+                            while (i < max)
+                            {
+                                await BaseScript.Delay(0);
+                                if (!Visible) return;
+                                _itemCreation(Pagination.CurrentPage, i, false);
+                                i++;
+                            }
+                            ScaleformUI._ui.CallFunction("SET_INPUT_EVENT", 8, delay);
+                            ScaleformUI._ui.CallFunction("SET_INPUT_EVENT", 9, delay);
+                            isBuilding = false;
+                        }
                     }
-                    ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", Pagination.ScaleformIndex);
-                    ScaleformUI._ui.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
                 }
                 while (MenuItems[CurrentSelection] is UIMenuSeparatorItem sp && sp.Jumpable);
+                ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", Pagination.ScaleformIndex);
+                ScaleformUI._ui.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
                 MenuItems[CurrentSelection].Selected = true;
                 IndexChange(CurrentSelection);
             }
@@ -1959,7 +2022,7 @@ namespace ScaleformUI
                 GoBack();
             }
 
-            if (isBuilding && CurrentSelection <= 0 || MenuItems.Count == 0)
+            if (isBuilding || MenuItems.Count == 0)
             {
                 return;
             }
@@ -2191,9 +2254,20 @@ namespace ScaleformUI
             int scaleformIndex = Pagination.GetScaleformIndex(menuIndex);
             if (!before)
             {
-                if (menuIndex > MenuItems.Count - 1)
+                if (Pagination.GetPageItemsCount(page) < Pagination.ItemsPerPage && Pagination.CurrentPage > 0)
                 {
-                    menuIndex -= MenuItems.Count - 1;
+                    if (scrollingType == ScrollingType.Infinite)
+                    {
+                        if (menuIndex > MenuItems.Count - 1)
+                        {
+                            menuIndex -= MenuItems.Count - 1;
+                        }
+                    }
+                    else if (scrollingType == ScrollingType.Classic)//not needed for paginated as each page is on its own.
+                    {
+                        int missingItems = Pagination.ItemsPerPage - Pagination.GetPageItemsCount(page);
+                        menuIndex -= missingItems;
+                    }
                 }
             }
             UIMenuItem item = MenuItems[menuIndex];
