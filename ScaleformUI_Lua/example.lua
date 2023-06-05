@@ -14,6 +14,7 @@ function CreateMenu()
     exampleMenu:ControlDisablingEnabled(true)
     exampleMenu:BuildingAnimation(MenuBuildingAnimation.LEFT_RIGHT)
     exampleMenu:AnimationType(MenuAnimationType.CUBIC_INOUT)
+    exampleMenu:ScrollingType(MenuScrollingType.CLASSIC)
 
     local currentTransition = "TRANSITION_OUT"
     local bigMessageItem = UIMenuItem.New("Big Message Example", "Big Message Examples")
@@ -130,6 +131,13 @@ function CreateMenu()
         , Colours.HUD_COLOUR_FREEMODE_DARK, Colours.HUD_COLOUR_FREEMODE)
     scrollingItem:BlinkDescription(true)
     exampleMenu:AddItem(scrollingItem)
+
+    local scrollItem = UIMenuListItem.New("Choose how this menu will ~o~scroll~s~!", { "CLASSIC", "PAGINATED", "ENDLESS" }, exampleMenu:ScrollingType())
+    exampleMenu:AddItem(scrollItem)
+
+    scrollItem.OnListChanged = function (menu, item, index)
+        exampleMenu:ScrollingType(index)
+    end
 
     local cookItem = UIMenuItem.New("Cook!", "Cook the dish with the appropiate ingredients and ketchup.")
     exampleMenu:AddItem(cookItem)
@@ -1122,10 +1130,3 @@ CreateThread(function()
         end
     end
 end)
-
-
---[[
-Changes:
-- InstructionalButtons are now dynamically drawn! No need to set them Enabled, they'll draw as soon as you add some buttons.. and will stop drawing when you clear the button List
-- Colorful labels! No more need to "specify your text color" you can now format your items labels and right labels as you wish!! simply use the classic ~ formatting
-]]

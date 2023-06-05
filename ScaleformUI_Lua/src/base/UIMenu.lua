@@ -88,6 +88,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         enableAnimation = true,
         animationType = MenuAnimationType.LINEAR,
         buildingAnimation = MenuBuildingAnimation.NONE,
+        scrollingType = MenuScrollingType.CLASSIC,
         descFont = { "$Font2", 0 },
         Extra = {},
         Description = {},
@@ -430,6 +431,18 @@ function UIMenu:BuildingAnimation(buildingAnimationType)
     return self.buildingAnimation
 end
 
+--- Decides how menu behaves on scrolling and overflowing.
+---@param scrollType MenuScrollingType?
+---@return MenuScrollingType
+---@see MenuScrollingType
+function UIMenu:ScrollingType(scrollType)
+    if scrollType ~= nil then
+        self.scrollingType = scrollType
+        self.Pagination.scrollType = scrollType
+    end
+    return self.scrollingType
+end
+
 ---CurrentSelection
 ---@param value number?
 function UIMenu:CurrentSelection(value)
@@ -646,22 +659,33 @@ function UIMenu:BuildUpMenuAsync()
 
 
         local i = 1
-        self.Pagination:ScaleformIndex(self.Pagination:GetScaleformIndex(self:CurrentSelection()))
         local max = self.Pagination:ItemsPerPage()
         if #self.Items < max then
             max = #self.Items
         end
         self.Pagination:MinItem(self.Pagination:CurrentPageStartIndex())
+
+        if self.scrollingType == MenuScrollingType.CLASSIC and self.Pagination:TotalPages() > 1 then
+            local missingItems = self.Pagination:GetMissingItems()
+            if missingItems > 0 then
+                self.Pagination:ScaleformIndex(self.Pagination:GetPageIndexFromMenuIndex(self.Pagination:CurrentPageEndIndex()) + missingItems -1 )
+                self.Pagination.minItem = self.Pagination:CurrentPageStartIndex() - missingItems
+            end
+        end
+
         self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
 
         Citizen.CreateThread(function()
             while i <= max do
                 Citizen.Wait(0)
                 if not self:Visible() then return end
-                self:_itemCreation(self.Pagination:CurrentPage(), i, false)
+                self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
                 i = i + 1
             end
         end)
+
+        self.Pagination:ScaleformIndex(self.Pagination:GetScaleformIndex(self:CurrentSelection()))
+        self.Items[self:CurrentSelection()]:Selected(true)
 
         ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, self.Pagination:GetScaleformIndex(self.Pagination:CurrentMenuIndex()))
         ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", false, self:CurrentSelection(), #self.Items)
@@ -678,17 +702,27 @@ function UIMenu:BuildUpMenuAsync()
     end)
 end
 
-function UIMenu:_itemCreation(page, pageIndex, before)
+function UIMenu:_itemCreation(page, pageIndex, before, overflow)
     local menuIndex = self.Pagination:GetMenuIndexFromPageIndex(page, pageIndex)
-    local scaleformIndex = self.Pagination:GetScaleformIndex(menuIndex)
     if not before then
-        if menuIndex > #self.Items then
-            menuIndex = menuIndex - #self.Items
+        if self.Pagination:GetPageItemsCount(page) < self.Pagination:ItemsPerPage() and self.Pagination:TotalPages() > 1 then
+            if self.scrollingType == MenuScrollingType.ENDLESS then
+                if menuIndex > #self.Items then
+                    menuIndex = menuIndex - #self.Items
+                    self.Pagination:MaxItem(menuIndex)
+                end
+            elseif self.scrollingType == MenuScrollingType.CLASSIC and overflow then
+                local missingItems = self.Pagination:ItemsPerPage() - self.Pagination:GetPageItemsCount(page)
+                menuIndex = menuIndex - missingItems
+            elseif self.scrollingType == MenuScrollingType.PAGINATED then
+                if menuIndex > #self.Items then return end
+            end
         end
     end
 
-    local item = self.Items[menuIndex]
+    local scaleformIndex = self.Pagination:GetScaleformIndex(menuIndex)
 
+    local item = self.Items[menuIndex]
     local Type, SubType = item()
     local textEntry = "menu_"..BreadcrumbsHandler:CurrentDepth().."_desc_" .. menuIndex
     AddTextEntry(textEntry, item:Description())
@@ -824,7 +858,6 @@ function UIMenu:ProcessControl()
             self._timeBeforeOverflow = GlobalGameTimer
             Citizen.CreateThread(function()
                 self:GoUp()
-                return
             end)
         elseif IsDisabledControlPressed(0, 172) or IsDisabledControlPressed(1, 172) or IsDisabledControlPressed(2, 172) or IsDisabledControlPressed(0, 241) or IsDisabledControlPressed(1, 241) or IsDisabledControlPressed(2, 241) or IsDisabledControlPressed(2, 241) then
             if GlobalGameTimer - self._timeBeforeOverflow > self._delayBeforeOverflow then
@@ -832,7 +865,6 @@ function UIMenu:ProcessControl()
                     self:ButtonDelay()
                     Citizen.CreateThread(function()
                         self:GoUp()
-                        return
                     end)
                 end
             end
@@ -844,7 +876,6 @@ function UIMenu:ProcessControl()
             self._timeBeforeOverflow = GlobalGameTimer
             Citizen.CreateThread(function()
                 self:GoDown()
-                return
             end)
         elseif IsDisabledControlPressed(0, 173) or IsDisabledControlPressed(1, 173) or IsDisabledControlPressed(2, 173) or IsDisabledControlPressed(0, 242) or IsDisabledControlPressed(1, 242) or IsDisabledControlPressed(2, 242) then
             if GlobalGameTimer - self._timeBeforeOverflow > self._delayBeforeOverflow then
@@ -852,7 +883,6 @@ function UIMenu:ProcessControl()
                     self:ButtonDelay()
                     Citizen.CreateThread(function()
                         self:GoDown()
-                        return
                     end)
                 end
             end
@@ -934,14 +964,29 @@ function UIMenu:GoUp()
     self.Items[self:CurrentSelection()]:Selected(false)
     repeat
         Citizen.Wait(0)
+        local overflow = self:CurrentSelection() == 1 and self.Pagination:TotalPages() > 1
         if self.Pagination:GoUp() then
-            self:_itemCreation(self.Pagination:GetPage(self:CurrentSelection()), self.Pagination:CurrentPageIndex(), true)
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", false, 8, self._delay) --[[@as number]]
+            if self.scrollingType == MenuScrollingType.ENDLESS or (self.scrollingType == MenuScrollingType.CLASSIC and not overflow) then
+                self:_itemCreation(self.Pagination:GetPage(self:CurrentSelection()), self.Pagination:CurrentPageIndex(), true, false)
+                ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", false, 8, self._delay) --[[@as number]]
+            elseif self.scrollingType == MenuScrollingType.PAGINATED or (self.scrollingType == MenuScrollingType.CLASSIC and overflow)  then
+                self._isBuilding = true
+                ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ITEMS", false)
+                local i = 1
+                local max = self.Pagination:ItemsPerPage()
+                while i <= max do
+                    Citizen.Wait(0)
+                    if not self:Visible() then return end
+                    self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
+                    i = i + 1
+                end
+                self._isBuilding = false
+            end
         end
-        ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, self.Pagination:ScaleformIndex())
-        ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", false, self:CurrentSelection(), #self.Items)
     until self.Items[self:CurrentSelection()].ItemId ~= 6 or (self.Items[self:CurrentSelection()].ItemId == 6 and not self.Items[self:CurrentSelection()].Jumpable)
     PlaySoundFrontend(-1, self.Settings.Audio.UpDown, self.Settings.Audio.Library, true)
+    ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, self.Pagination:ScaleformIndex())
+    ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", false, self:CurrentSelection(), #self.Items)
     self.Items[self:CurrentSelection()]:Selected(true)
     self.OnIndexChange(self, self:CurrentSelection())
 end
@@ -951,14 +996,29 @@ function UIMenu:GoDown()
     self.Items[self:CurrentSelection()]:Selected(false)
     repeat
         Citizen.Wait(0)
+        local overflow = self:CurrentSelection() == #self.Items and self.Pagination:TotalPages() > 1
         if self.Pagination:GoDown() then
-            self:_itemCreation(self.Pagination:GetPage(self:CurrentSelection()), self.Pagination:CurrentPageIndex(), false)
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", false, 9, self._delay) --[[@as number]]
+            if self.scrollingType == MenuScrollingType.ENDLESS or (self.scrollingType == MenuScrollingType.CLASSIC and not overflow) then
+                self:_itemCreation(self.Pagination:GetPage(self:CurrentSelection()), self.Pagination:CurrentPageIndex(), false, overflow)
+                ScaleformUI.Scaleforms._ui:CallFunction("SET_INPUT_EVENT", false, 9, self._delay) --[[@as number]]
+            elseif self.scrollingType == MenuScrollingType.PAGINATED or (self.scrollingType == MenuScrollingType.CLASSIC and overflow)  then
+                self._isBuilding = true
+                ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ITEMS", false)
+                local i = 1
+                local max = self.Pagination:ItemsPerPage()
+                while i <= max do
+                    Citizen.Wait(0)
+                    if not self:Visible() then return end
+                    self:_itemCreation(self.Pagination:CurrentPage(), i, false, overflow)
+                    i = i + 1
+                end
+                self._isBuilding = false
+            end
         end
-        ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, self.Pagination:ScaleformIndex())
-        ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", false, self:CurrentSelection(), #self.Items)
     until self.Items[self:CurrentSelection()].ItemId ~= 6 or (self.Items[self:CurrentSelection()].ItemId == 6 and not self.Items[self:CurrentSelection()].Jumpable)
-    --PlaySoundFrontend(-1, self.Settings.Audio.UpDown, self.Settings.Audio.Library, true)
+    PlaySoundFrontend(-1, self.Settings.Audio.UpDown, self.Settings.Audio.Library, true)
+    ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, self.Pagination:ScaleformIndex())
+    ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", false, self:CurrentSelection(), #self.Items)
     self.Items[self:CurrentSelection()]:Selected(true)
     self.OnIndexChange(self, self:CurrentSelection())
 end
@@ -1307,12 +1367,12 @@ function UIMenu:ProcessMouse()
         elseif event_type == 8 then -- ON NOT HOVER
             cursor_pressed = false
             if context == 0 then
-                self.Items[item_id + 1]:Hovered(false)
+                self.Items[item_id]:Hovered(false)
             end
             SetMouseCursorSprite(1)
         elseif event_type == 9 then -- ON HOVERED
             if context == 0 then
-                self.Items[item_id + 1]:Hovered(true)
+                self.Items[item_id]:Hovered(true)
             end
             SetMouseCursorSprite(5)
         elseif event_type == 0 then -- DRAGGED OUTSIDE
