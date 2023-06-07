@@ -142,7 +142,7 @@ namespace ScaleformUI.Scaleforms
         {
             int ret = CallFunctionReturnInternal(function, arguments);
             while (!API.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            return API.GetScaleformMovieFunctionReturnBool(ret);
+            return API.GetScaleformMovieMethodReturnValueBool(ret);
         }
         public async Task<string> CallFunctionReturnValueString(string function, params object[] arguments)
         {
