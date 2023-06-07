@@ -39,15 +39,14 @@ function MenuPool:SwitchTo(currentMenu, newMenu, newMenuCurrentSelection, inheri
         newMenu.Settings.MouseControlsEnabled = currentMenu.Settings.MouseControlsEnabled
         newMenu.Settings.MouseEdgeEnabled = currentMenu.Settings.MouseEdgeEnabled
         newMenu:MaxItemsOnScreen(currentMenu:MaxItemsOnScreen())
-        newMenu:BuildAsync(currentMenu:BuildAsync())
         newMenu:AnimationEnabled(currentMenu:AnimationEnabled())
         newMenu:AnimationType(currentMenu:AnimationType())
         newMenu:BuildingAnimation(currentMenu:BuildingAnimation())
         newMenu:ScrollingType(currentMenu:ScrollingType())
     end
-    newMenu:CurrentSelection(newMenuCurrentSelection)
     currentMenu:FadeOutMenu()
     currentMenu:Visible(false)
+    newMenu:CurrentSelection(newMenuCurrentSelection)
     newMenu:Visible(true)
     currentMenu:FadeInMenu()
     BreadcrumbsHandler:Forward(newMenu)

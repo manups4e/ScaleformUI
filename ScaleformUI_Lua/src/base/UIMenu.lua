@@ -631,10 +631,13 @@ function UIMenu:SwitchTo(newMenu, newMenuCurrentSelection, inheritOldMenuParams)
         newMenu:AnimationEnabled(self:AnimationEnabled())
         newMenu:AnimationType(self:AnimationType())
         newMenu:BuildingAnimation(self:BuildingAnimation())
+        newMenu:ScrollingType(self:ScrollingType())
     end
+    self:FadeOutMenu()
     self:Visible(false)
     newMenu:CurrentSelection(newMenuCurrentSelection)
     newMenu:Visible(true)
+    currentMenu:FadeInMenu()
     BreadcrumbsHandler:Forward(newMenu)
 end
 
