@@ -735,14 +735,12 @@ function UIMenu:BuildUpMenuAsync()
 
         self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
 
-        Citizen.CreateThread(function()
-            while i <= max do
-                Citizen.Wait(0)
-                if not self:Visible() then return end
-                self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
-                i = i + 1
-            end
-        end)
+        while i <= max do
+            Citizen.Wait(0)
+            if not self:Visible() then return end
+            self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
+            i = i + 1
+        end
 
         self.Pagination:ScaleformIndex(self.Pagination:GetScaleformIndex(self:CurrentSelection()))
         self.Items[self:CurrentSelection()]:Selected(true)
