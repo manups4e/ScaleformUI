@@ -43,10 +43,13 @@ function MenuPool:SwitchTo(currentMenu, newMenu, newMenuCurrentSelection, inheri
         newMenu:AnimationEnabled(currentMenu:AnimationEnabled())
         newMenu:AnimationType(currentMenu:AnimationType())
         newMenu:BuildingAnimation(currentMenu:BuildingAnimation())
+        newMenu:ScrollingType(currentMenu:ScrollingType())
     end
     newMenu:CurrentSelection(newMenuCurrentSelection)
+    currentMenu:FadeOutMenu()
     currentMenu:Visible(false)
     newMenu:Visible(true)
+    currentMenu:FadeInMenu()
     BreadcrumbsHandler:Forward(newMenu)
 end
 

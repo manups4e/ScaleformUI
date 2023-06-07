@@ -49,7 +49,7 @@ namespace ScaleformUI
         public static event MenuStateChangeEvent OnMenuStateChanged;
 
 
-        public static void SwitchTo(this UIMenu currentMenu, UIMenu newMenu, int newMenuCurrentSelection = 0, bool inheritOldMenuParams = false)
+        public static async void SwitchTo(this UIMenu currentMenu, UIMenu newMenu, int newMenuCurrentSelection = 0, bool inheritOldMenuParams = false)
         {
             if (currentMenu == null)
                 throw new ArgumentNullException("The menu you're switching from cannot be null.");
@@ -71,10 +71,13 @@ namespace ScaleformUI
                 newMenu.MaxItemsOnScreen = currentMenu.MaxItemsOnScreen;
                 newMenu.AnimationType = currentMenu.AnimationType;
                 newMenu.BuildingAnimation = currentMenu.BuildingAnimation;
+                newMenu.ScrollingType = currentMenu.ScrollingType;
             }
             newMenu.CurrentSelection = newMenuCurrentSelection != 0 ? newMenuCurrentSelection : 0;
+            await currentMenu.FadeOutMenu();
             currentMenu.Visible = false;
             newMenu.Visible = true;
+            await currentMenu.FadeInMenu();
             BreadcrumbsHandler.Forward(newMenu);
         }
 
