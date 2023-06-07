@@ -15,6 +15,7 @@ namespace ScaleformUI
         internal static UIMenu currentMenu;
         internal static PauseMenuBase currentBase;
         internal static bool ableToDraw;
+        internal static bool isChanging;
         private static Ped _ped;
         internal static Ped PlayerPed
         {
@@ -59,7 +60,10 @@ namespace ScaleformUI
                 throw new ArgumentNullException("The menu you're switching to cannot be null.");
             if (newMenu == currentMenu)
                 throw new Exception("You cannot switch a menu to itself.");
+            if (isChanging)
+                return;
 
+            isChanging = true;
             if (inheritOldMenuParams)
             {
                 if (currentMenu._customTexture.Key != null && currentMenu._customTexture.Value != null)
@@ -79,6 +83,7 @@ namespace ScaleformUI
             newMenu.Visible = true;
             await currentMenu.FadeInMenu();
             BreadcrumbsHandler.Forward(newMenu);
+            isChanging = false;
         }
 
         /// <summary>

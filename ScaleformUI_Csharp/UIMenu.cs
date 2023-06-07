@@ -1791,6 +1791,9 @@ namespace ScaleformUI
         {
             if (playSound)
                 Game.PlaySound(AUDIO_BACK, AUDIO_LIBRARY);
+            if (MenuPool.isChanging)
+                return;
+            MenuPool.isChanging = true;
             await FadeOutMenu();
             if (BreadcrumbsHandler.CurrentDepth == 0)
             {
@@ -1807,6 +1810,7 @@ namespace ScaleformUI
                 Visible = false;
                 prevMenu.Visible = true;
             }
+            MenuPool.isChanging = false;
         }
 
         public async void GoUp()
