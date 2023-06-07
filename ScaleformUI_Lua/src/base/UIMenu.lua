@@ -637,7 +637,7 @@ function UIMenu:SwitchTo(newMenu, newMenuCurrentSelection, inheritOldMenuParams)
     self:Visible(false)
     newMenu:CurrentSelection(newMenuCurrentSelection)
     newMenu:Visible(true)
-    currentMenu:FadeInMenu()
+    self:FadeInMenu()
     BreadcrumbsHandler:Forward(newMenu)
 end
 
