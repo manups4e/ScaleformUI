@@ -6,7 +6,7 @@
         internal static int Count => breadcrumbs.Count;
         internal static int CurrentDepth => breadcrumbs.Count - 1;
         internal static UIMenu PreviousMenu => breadcrumbs[CurrentDepth - 1];
-        internal static bool SwitchInProgress = false;
+        public static bool SwitchInProgress = false;
 
         internal static void Forward(UIMenu menu)
         {

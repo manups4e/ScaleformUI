@@ -112,6 +112,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         _timeBeforeOverflow = 0,
         _canHe = true,
         _scaledWidth = (720 * GetAspectRatio(false)),
+        isFading = false,
         Controls = {
             Back = {
                 Enabled = true,
@@ -448,57 +449,56 @@ end
 
 function UIMenu:FadeOutMenu()
     ScaleformUI.Scaleforms._ui:CallFunction("FADE_OUT_MENU", false)
-    local isFading = false;
     repeat
         Citizen.Wait(0)
         local return_value = ScaleformUI.Scaleforms._ui:CallFunction("GET_IS_FADING", true) --[[@as number]]
         while not IsScaleformMovieMethodReturnValueReady(return_value) do
             Citizen.Wait(0)
         end
-        isFading = GetScaleformMovieMethodReturnValueBool(return_value)
-    until not isFading
+        self.isFading = GetScaleformMovieMethodReturnValueBool(return_value)
+    until not self.isFading
 
 end
 
 function UIMenu:FadeInMenu()
     ScaleformUI.Scaleforms._ui:CallFunction("FADE_IN_MENU", false)
-    local isFading = false;
+
     repeat
         Citizen.Wait(0)
         local return_value = ScaleformUI.Scaleforms._ui:CallFunction("GET_IS_FADING", true) --[[@as number]]
         while not IsScaleformMovieMethodReturnValueReady(return_value) do
             Citizen.Wait(0)
         end
-        isFading = GetScaleformMovieMethodReturnValueBool(return_value)
-    until not isFading
+        self.isFading = GetScaleformMovieMethodReturnValueBool(return_value)
+    until not self.isFading
 
 end
 
 function UIMenu:FadeOutItems()
     ScaleformUI.Scaleforms._ui:CallFunction("FADE_OUT_ITEMS", false)
-    local isFading = false;
+
     repeat
         Citizen.Wait(0)
         local return_value = ScaleformUI.Scaleforms._ui:CallFunction("GET_IS_FADING", true) --[[@as number]]
         while not IsScaleformMovieMethodReturnValueReady(return_value) do
             Citizen.Wait(0)
         end
-        isFading = GetScaleformMovieMethodReturnValueBool(return_value)
-    until not isFading
+        self.isFading = GetScaleformMovieMethodReturnValueBool(return_value)
+    until not self.isFading
 
 end
 
 function UIMenu:FadeInItems()
     ScaleformUI.Scaleforms._ui:CallFunction("FADE_IN_ITEMS", false)
-    local isFading = false;
+
     repeat
         Citizen.Wait(0)
         local return_value = ScaleformUI.Scaleforms._ui:CallFunction("GET_IS_FADING", true) --[[@as number]]
         while not IsScaleformMovieMethodReturnValueReady(return_value) do
             Citizen.Wait(0)
         end
-        isFading = GetScaleformMovieMethodReturnValueBool(return_value)
-    until not isFading
+        self.isFading = GetScaleformMovieMethodReturnValueBool(return_value)
+    until not self.isFading
 
 end
 
@@ -866,7 +866,7 @@ function UIMenu:ProcessControl()
         return
     end
 
-    if UpdateOnscreenKeyboard() == 0 or IsWarningMessageActive() or BreadcrumbsHandler.SwitchInProgress then return end
+    if UpdateOnscreenKeyboard() == 0 or IsWarningMessageActive() or BreadcrumbsHandler.SwitchInProgress or self.isFading then return end
 
     if self.Controls.Back.Enabled then
         if IsDisabledControlJustReleased(0, 177) or IsDisabledControlJustReleased(1, 177) or IsDisabledControlJustReleased(2, 177) or IsDisabledControlJustReleased(0, 199) or IsDisabledControlJustReleased(1, 199) or IsDisabledControlJustReleased(2, 199) then
@@ -989,7 +989,6 @@ end
 ---GoUp
 function UIMenu:GoUp()
     self.Items[self:CurrentSelection()]:Selected(false)
-    local isFaded = false
     repeat
         Citizen.Wait(0)
         local overflow = self:CurrentSelection() == 1 and self.Pagination:TotalPages() > 1
@@ -1000,7 +999,7 @@ function UIMenu:GoUp()
             elseif self.scrollingType == MenuScrollingType.PAGINATED or (self.scrollingType == MenuScrollingType.CLASSIC and overflow)  then
                 self._isBuilding = true
                 self:FadeOutItems()
-                isFaded = true
+                self.isFading = true
                 ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ITEMS", false)
                 local i = 1
                 local max = self.Pagination:ItemsPerPage()
@@ -1018,7 +1017,7 @@ function UIMenu:GoUp()
     ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, self.Pagination:ScaleformIndex())
     ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", false, self:CurrentSelection(), #self.Items)
     self.Items[self:CurrentSelection()]:Selected(true)
-    if isFaded then
+    if self.isFading then
         self:FadeInItems()
     end
     self.OnIndexChange(self, self:CurrentSelection())
@@ -1027,7 +1026,6 @@ end
 ---GoDown
 function UIMenu:GoDown()
     self.Items[self:CurrentSelection()]:Selected(false)
-    local isFaded = false
     repeat
         Citizen.Wait(0)
         local overflow = self:CurrentSelection() == #self.Items and self.Pagination:TotalPages() > 1
@@ -1038,7 +1036,7 @@ function UIMenu:GoDown()
             elseif self.scrollingType == MenuScrollingType.PAGINATED or (self.scrollingType == MenuScrollingType.CLASSIC and overflow)  then
                 self._isBuilding = true
                 self:FadeOutItems()
-                isFaded = true
+                self.isFading = true
                 ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ITEMS", false)
                 local i = 1
                 local max = self.Pagination:ItemsPerPage()
@@ -1056,7 +1054,7 @@ function UIMenu:GoDown()
     ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, self.Pagination:ScaleformIndex())
     ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", false, self:CurrentSelection(), #self.Items)
     self.Items[self:CurrentSelection()]:Selected(true)
-    if isFaded then
+    if self.isFading then
         self:FadeInItems()
     end
     self.OnIndexChange(self, self:CurrentSelection())
@@ -1201,7 +1199,6 @@ function UIMenu:GoBack(boolean)
     if type(boolean) == "boolean" then
         playSound = boolean
     end
-    BreadcrumbsHandler.SwitchInProgress = true
     self:FadeOutMenu()
     if playSound then
         PlaySoundFrontend(-1, self.Settings.Audio.Back, self.Settings.Audio.Library, true)
@@ -1213,12 +1210,13 @@ function UIMenu:GoBack(boolean)
             BreadcrumbsHandler:Clear()
         end
     else
+        BreadcrumbsHandler.SwitchInProgress = true
         local prevMenu = BreadcrumbsHandler:PreviousMenu()
         BreadcrumbsHandler:Backwards()
         self:Visible(false)
         prevMenu:Visible(true)
+        BreadcrumbsHandler.SwitchInProgress = false
     end
-    BreadcrumbsHandler.SwitchInProgress = false
 end
 
 ---BindMenuToItem

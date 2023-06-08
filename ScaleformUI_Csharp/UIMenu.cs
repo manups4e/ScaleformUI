@@ -1011,6 +1011,8 @@ namespace ScaleformUI
         private bool mouseControlsEnabled = true;
         public bool AlternativeTitle = false;
         private bool canBuild = true;
+        private bool isFading;
+
         public PointF Offset { get; internal set; }
 
         public List<UIMenuWindow> Windows = new List<UIMenuWindow>();
@@ -1209,7 +1211,6 @@ namespace ScaleformUI
         public async Task FadeOutMenu()
         {
             ScaleformUI._ui.CallFunction("FADE_OUT_MENU");
-            bool isFading;
             do
             {
                 await BaseScript.Delay(0);
@@ -1219,7 +1220,6 @@ namespace ScaleformUI
         public async Task FadeInMenu()
         {
             ScaleformUI._ui.CallFunction("FADE_IN_MENU");
-            bool isFading;
             do
             {
                 await BaseScript.Delay(0);
@@ -1229,7 +1229,6 @@ namespace ScaleformUI
         public async Task FadeOutItems()
         {
             ScaleformUI._ui.CallFunction("FADE_OUT_ITEMS");
-            bool isFading;
             do
             {
                 await BaseScript.Delay(0);
@@ -1239,7 +1238,6 @@ namespace ScaleformUI
         public async Task FadeInItems()
         {
             ScaleformUI._ui.CallFunction("FADE_IN_ITEMS");
-            bool isFading;
             do
             {
                 await BaseScript.Delay(0);
@@ -1783,7 +1781,6 @@ namespace ScaleformUI
         {
             if (playSound)
                 Game.PlaySound(AUDIO_BACK, AUDIO_LIBRARY);
-            BreadcrumbsHandler.SwitchInProgress = true;
             await FadeOutMenu();
             if (BreadcrumbsHandler.CurrentDepth == 0)
             {
@@ -1795,12 +1792,13 @@ namespace ScaleformUI
             }
             else
             {
+                BreadcrumbsHandler.SwitchInProgress = true;
                 UIMenu prevMenu = BreadcrumbsHandler.PreviousMenu;
                 BreadcrumbsHandler.Backwards();
                 Visible = false;
                 prevMenu.Visible = true;
+                BreadcrumbsHandler.SwitchInProgress = false;
             }
-            BreadcrumbsHandler.SwitchInProgress = false;
         }
 
         public async void GoUp()
@@ -1808,7 +1806,6 @@ namespace ScaleformUI
             try
             {
                 if (isBuilding) return;
-                bool isFaded = false;
                 MenuItems[CurrentSelection].Selected = false;
                 do
                 {
@@ -1825,7 +1822,7 @@ namespace ScaleformUI
                         {
                             isBuilding = true;
                             await FadeOutItems();
-                            isFaded = true;
+                            isFading = true;
                             ScaleformUI._ui.CallFunction("CLEAR_ITEMS");
                             int i = 0;
                             int max = Pagination.ItemsPerPage;
@@ -1844,7 +1841,7 @@ namespace ScaleformUI
                 ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", Pagination.ScaleformIndex);
                 ScaleformUI._ui.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
                 MenuItems[CurrentSelection].Selected = true;
-                if (isFaded)
+                if (isFading)
                     await FadeInItems();
                 IndexChange(CurrentSelection);
             }
@@ -1858,7 +1855,6 @@ namespace ScaleformUI
             try
             {
                 if (isBuilding) return;
-                bool isFaded = false;
                 MenuItems[CurrentSelection].Selected = false;
                 do
                 {
@@ -1875,7 +1871,7 @@ namespace ScaleformUI
                         {
                             isBuilding = true;
                             await FadeOutItems();
-                            isFaded = true;
+                            isFading = true;
                             ScaleformUI._ui.CallFunction("CLEAR_ITEMS");
                             int i = 0;
                             int max = Pagination.ItemsPerPage;
@@ -1894,7 +1890,7 @@ namespace ScaleformUI
                 ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", Pagination.ScaleformIndex);
                 ScaleformUI._ui.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
                 MenuItems[CurrentSelection].Selected = true;
-                if (isFaded)
+                if (isFading)
                     await FadeInItems();
                 IndexChange(CurrentSelection);
             }
@@ -2057,7 +2053,7 @@ namespace ScaleformUI
                 return;
             }
 
-            if (UpdateOnscreenKeyboard() == 0 || IsWarningMessageActive() || BreadcrumbsHandler.SwitchInProgress) return;
+            if (UpdateOnscreenKeyboard() == 0 || IsWarningMessageActive() || BreadcrumbsHandler.SwitchInProgress || isFading) return;
 
             if (HasControlJustBeenReleased(MenuControls.Back, key))
             {
