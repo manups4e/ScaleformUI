@@ -931,28 +931,17 @@ public class MenuExample : BaseScript
             if (item == colorListItem)
                 sender.AnimationType = (MenuAnimationType)index;
         };
-        exampleMenu.OnMenuStateChanged += (oldMenu, newMenu, state) =>
+
+        exampleMenu.OnMenuOpen += (menu) =>
         {
-            if (state == MenuState.Opened)
-            {
-                Screen.ShowSubtitle($"{newMenu.Title} just opened!", 3000);
-                Debug.WriteLine($"{newMenu.Title} just opened!");
-            }
-            else if (state == MenuState.ChangeForward)
-            {
-                Screen.ShowSubtitle($"{oldMenu.Title} => {newMenu.Title}", 3000);
-                Debug.WriteLine($"{oldMenu.Title} => {newMenu.Title}");
-            }
-            else if (state == MenuState.ChangeBackward)
-            {
-                Screen.ShowSubtitle($"{newMenu.Title} <= {oldMenu.Title}", 3000);
-                Debug.WriteLine($"{newMenu.Title} <= {oldMenu.Title}");
-            }
-            else if (state == MenuState.Closed)
-            {
-                Screen.ShowSubtitle($"{oldMenu.Title} just closed!", 3000);
-                Debug.WriteLine($"{oldMenu.Title} just closed!");
-            }
+            Screen.ShowSubtitle($"{menu.Title} just opened!", 3000);
+            Debug.WriteLine($"{menu.Title} just opened!");
+        };
+
+        exampleMenu.OnMenuClose += (menu) =>
+        {
+            Screen.ShowSubtitle($"{menu.Title} just closed!", 3000);
+            Debug.WriteLine($"{menu.Title} just closed!");
         };
 
         #endregion

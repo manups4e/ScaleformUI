@@ -5,8 +5,6 @@ namespace ScaleformUI
 {
     // TODO: Add ClearHistory() / CloseAndClearBreadcrumbs() method to handle close and reset.
 
-    public delegate void MenuStateChangeEvent(UIMenu oldMenu, UIMenu newMenu, MenuState state);
-
     /// <summary>
     /// Helper class that handles all of your Menus. After instatiating it, you will have to add your menu by using the Add method.
     /// </summary>
@@ -42,12 +40,6 @@ namespace ScaleformUI
             get => currentBase;
             private set => currentBase = value;
         }
-
-        /// <summary>
-        /// Called when user either opens or closes the main menu, clicks on a binded button, goes back to a parent menu.
-        /// </summary>
-        public static event MenuStateChangeEvent OnMenuStateChanged;
-
 
         public static async void SwitchTo(this UIMenu currentMenu, UIMenu newMenu, int newMenuCurrentSelection = 0, bool inheritOldMenuParams = false)
         {
@@ -137,11 +129,6 @@ namespace ScaleformUI
             currentMenu!.Visible = false;
             currentBase!.Visible = false;
             BreadcrumbsHandler.Clear();
-        }
-
-        public static void MenuChangeEv(UIMenu oldmenu, UIMenu newmenu, MenuState state)
-        {
-            OnMenuStateChanged?.Invoke(oldmenu, newmenu, state);
         }
     }
 }

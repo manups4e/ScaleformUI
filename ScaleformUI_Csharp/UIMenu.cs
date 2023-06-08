@@ -790,14 +790,6 @@ namespace ScaleformUI
         Alt = 262144
     }
 
-    public enum MenuState
-    {
-        Opened,
-        Closed,
-        ChangeForward,
-        ChangeBackward
-    }
-
     public delegate void IndexChangedEvent(UIMenu sender, int newIndex);
     public delegate void ListChangedEvent(UIMenu sender, UIMenuListItem listItem, int newIndex);
     public delegate void SliderChangedEvent(UIMenu sender, UIMenuSliderItem listItem, int newIndex);
@@ -816,6 +808,8 @@ namespace ScaleformUI
     public delegate void VehicleColorPickerSelectEvent(UIMenuItem menu, UIVehicleColourPickerPanel panel, int index);
     public delegate void PercentagePanelChangedEvent(UIMenuItem menu, UIMenuPercentagePanel panel, float value);
     public delegate void GridPanelChangedEvent(UIMenuItem menu, UIMenuGridPanel panel, PointF value);
+    public delegate void MenuOpenedEvent(UIMenu menu);
+    public delegate void MenuClosedEvent(UIMenu menu);
 
     public enum MenuAnimationType
     {
@@ -858,7 +852,7 @@ namespace ScaleformUI
     #endregion
 
     /// <summary>
-    /// Base class for ScaleformUI. Calls the next events: OnIndexChange, OnListChanged, OnCheckboxChange, OnItemSelect, OnMenuClose, OnMenuchange.
+    /// Base class for ScaleformUI. Calls the next events: OnIndexChange, OnListChanged, OnCheckboxChange, OnItemSelect, OnMenuOpen, OnMenuClose.
     /// </summary>
     public class UIMenu
     {
@@ -1086,10 +1080,8 @@ namespace ScaleformUI
         /// </summary>
         public event ItemSelectEvent OnItemSelect;
 
-        /// <summary>
-        /// Called when user either opens or closes the main menu, clicks on a binded button, goes back to a parent menu.
-        /// </summary>
-        public event MenuStateChangeEvent OnMenuStateChanged;
+        public event MenuOpenedEvent OnMenuOpen;
+        public event MenuClosedEvent OnMenuClose;
 
         /// <summary>
         /// Called every time a Stat item changes value
@@ -2193,12 +2185,11 @@ namespace ScaleformUI
                 if (value)
                 {
                     ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
-                    MenuPool.MenuChangeEv(null, this, MenuState.Opened);
-                    MenuChangeEv(null, this, MenuState.Opened);
                     canBuild = true;
                     MenuPool.currentMenu = this;
                     MenuPool.ableToDraw = true;
                     BuildUpMenuAsync();
+                    MenuOpenEv(this);
                     timeBeforeOverflow = ScaleformUI.GameTime;
                     if (BreadcrumbsHandler.Count == 0)
                         BreadcrumbsHandler.Forward(this);
@@ -2207,8 +2198,7 @@ namespace ScaleformUI
                 {
                     canBuild = false;
                     FadeOutMenu();
-                    MenuPool.MenuChangeEv(this, null, MenuState.Closed);
-                    MenuChangeEv(this, null, MenuState.Closed);
+                    MenuCloseEv(this);
                     MenuPool.ableToDraw = false;
                     MenuPool.currentMenu = null;
                     ScaleformUI._ui.CallFunction("CLEAR_ALL");
@@ -2658,9 +2648,14 @@ namespace ScaleformUI
             OnStatsItemChanged?.Invoke(this, item, value);
         }
 
-        internal virtual void MenuChangeEv(UIMenu oldmenu, UIMenu newmenu, MenuState state)
+        public virtual void MenuOpenEv(UIMenu menu)
         {
-            OnMenuStateChanged?.Invoke(oldmenu, newmenu, state);
+            OnMenuOpen?.Invoke(menu);
+        }
+
+        public virtual void MenuCloseEv(UIMenu menu)
+        {
+            OnMenuClose?.Invoke(menu);
         }
 
         protected virtual void ColorPanelChange(UIMenuItem item, UIMenuColorPanel panel, int index)
