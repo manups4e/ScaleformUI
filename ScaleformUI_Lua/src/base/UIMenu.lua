@@ -32,7 +32,8 @@ end
 ---@field public OnSliderSelect fun(menu: UIMenu, item: UIMenuItem, index: number)
 ---@field public OnStatsSelect fun(menu: UIMenu, item: UIMenuItem, index: number)
 ---@field public OnItemSelect fun(menu: UIMenu, item: UIMenuItem, checked: boolean)
----@field public OnMenuChanged fun(oldmenu: UIMenu, newmenu: UIMenu, change: any)
+---@field public OnMenuOpen fun(menu: UIMenu)
+---@field public OnMenuClose fun(menu: UIMenu)
 ---@field public BuildAsync fun(self: UIMenu, enabled: boolean?):boolean -- If the menu should be built async (default: false)
 ---@field public AnimationEnabled fun(self: UIMenu, enabled: boolean?):boolean -- If the menu animation is enabled or disabled (default: true)
 ---@field public AnimationType fun(self: UIMenu, type: MenuAnimationType?):MenuAnimationType -- Animation type for the menu (default: MenuAnimationType.LINEAR)
@@ -159,7 +160,9 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         end,
         OnItemSelect = function(menu, item, index)
         end,
-        OnMenuChanged = function(oldmenu, newmenu, change)
+        OnMenuOpen = function(menu)
+        end,
+        OnMenuClose = function(menu)
         end,
         OnColorPanelChanged = function(menu, item, index)
         end,
@@ -603,42 +606,7 @@ function UIMenu:MaxItemsOnScreen(max)
 end
 
 function UIMenu:SwitchTo(newMenu, newMenuCurrentSelection, inheritOldMenuParams)
-    assert(self ~= nil, "The menu you're switching from cannot be null")
-    assert(self ~= self._self, "The menu you're switching from must be opened")
-    assert(newMenu ~= nil, "The menu you're switching to cannot be null")
-    assert(newMenu ~= self, "You cannot switch a menu to itself")
-
-    if newMenuCurrentSelection == nil then newMenuCurrentSelection = 1 end
-    if inheritOldMenuParams == nil then inheritOldMenuParams = false end
-    if inheritOldMenuParams then
-        if self.TxtDictionary ~= "" and self.TxtDictionary ~= nil and self.TxtName ~= "" and self.TxtName ~= nil then
-            newMenu.TxtDictionary = self.TxtDictionary
-            newMenu.TxtName = self.TxtName
-        end
-            newMenu.Position = self.Position
-
-        if self.Logo ~= nil then
-            newMenu.Logo = self.Logo
-        else
-            newMenu.Logo = nil
-            newMenu.Banner = self.Banner
-        end
-
-        newMenu.Glare = self.Glare
-        newMenu.Settings.MouseControlsEnabled = self.Settings.MouseControlsEnabled
-        newMenu.Settings.MouseEdgeEnabled = self.Settings.MouseEdgeEnabled
-        newMenu:MaxItemsOnScreen(self:MaxItemsOnScreen())
-        newMenu:AnimationEnabled(self:AnimationEnabled())
-        newMenu:AnimationType(self:AnimationType())
-        newMenu:BuildingAnimation(self:BuildingAnimation())
-        newMenu:ScrollingType(self:ScrollingType())
-    end
-    self:FadeOutMenu()
-    self:Visible(false)
-    newMenu:CurrentSelection(newMenuCurrentSelection)
-    newMenu:Visible(true)
-    self:FadeInMenu()
-    BreadcrumbsHandler:Forward(newMenu)
+    MenuHandler:SwitchTo(self, newMenu, newMenuCurrentSelection, inheritOldMenuParams)
 end
 
 ---Visible
@@ -651,10 +619,10 @@ function UIMenu:Visible(bool)
 
         if bool then
             ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
-            self.OnMenuChanged(nil, self, "opened")
+            self.OnMenuOpen(self)
             self:BuildUpMenuAsync()
-            MenuPool._currentMenu = self
-            MenuPool.ableToDraw = true
+            MenuHandler._currentMenu = self
+            MenuHandler.ableToDraw = true
             if BreadcrumbsHandler:Count() == 0 then
                 BreadcrumbsHandler:Forward(self)
             end
@@ -662,10 +630,10 @@ function UIMenu:Visible(bool)
         else
             self:FadeOutMenu()
             ScaleformUI.Scaleforms.InstructionalButtons:ClearButtonList()
-            self.OnMenuChanged(self, nil, "closed")
+            self.OnMenuClose(self)
             ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
-            MenuPool._currentMenu = nil
-            MenuPool.ableToDraw = false
+            MenuHandler._currentMenu = nil
+            MenuHandler.ableToDraw = false
         end
         if self.Settings.ResetCursorOnOpen then
             local W, H = GetScreenResolution()
@@ -898,7 +866,7 @@ function UIMenu:ProcessControl()
         return
     end
 
-    if UpdateOnscreenKeyboard() == 0 or IsWarningMessageActive() then return end
+    if UpdateOnscreenKeyboard() == 0 or IsWarningMessageActive() or BreadcrumbsHandler.SwitchInProgress then return end
 
     if self.Controls.Back.Enabled then
         if IsDisabledControlJustReleased(0, 177) or IsDisabledControlJustReleased(1, 177) or IsDisabledControlJustReleased(2, 177) or IsDisabledControlJustReleased(0, 199) or IsDisabledControlJustReleased(1, 199) or IsDisabledControlJustReleased(2, 199) then
@@ -1233,6 +1201,7 @@ function UIMenu:GoBack(boolean)
     if type(boolean) == "boolean" then
         playSound = boolean
     end
+    BreadcrumbsHandler.SwitchInProgress = true
     self:FadeOutMenu()
     if playSound then
         PlaySoundFrontend(-1, self.Settings.Audio.Back, self.Settings.Audio.Library, true)
@@ -1249,6 +1218,7 @@ function UIMenu:GoBack(boolean)
         self:Visible(false)
         prevMenu:Visible(true)
     end
+    BreadcrumbsHandler.SwitchInProgress = false
 end
 
 ---BindMenuToItem

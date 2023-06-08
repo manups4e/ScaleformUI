@@ -126,17 +126,17 @@ function CreateMenu()
         animations[#animations + 1] = k
     end
 
-    local scrollingItem = UIMenuListItem.New("Choose the scrolling animation", animations, exampleMenu:AnimationType(),
+    local scrollingAnimationItem = UIMenuListItem.New("Choose the scrolling animation", animations, exampleMenu:AnimationType(),
         "~BLIP_BARBER~ ~BLIP_INFO_ICON~ ~BLIP_TANK~ ~BLIP_OFFICE~ ~BLIP_CRIM_DRUGS~ ~BLIP_WAYPOINT~ ~INPUTGROUP_MOVE~~n~You can use Blips and Inputs in description as you prefer!~n~⚠ 🐌 ❤️ 🥺 💪🏻 You can use Emojis too!"
         , Colours.HUD_COLOUR_FREEMODE_DARK, Colours.HUD_COLOUR_FREEMODE)
-    scrollingItem:BlinkDescription(true)
-    exampleMenu:AddItem(scrollingItem)
+    scrollingAnimationItem:BlinkDescription(true)
+    exampleMenu:AddItem(scrollingAnimationItem)
 
-    local scrollItem = UIMenuListItem.New("Choose how this menu will ~o~scroll~s~!", { "CLASSIC", "PAGINATED", "ENDLESS" }, exampleMenu:ScrollingType())
+	local scrollItem = UIMenuListItem.New("Choose how this menu will ~o~scroll~s~!", { "CLASSIC", "PAGINATED", "ENDLESS" }, exampleMenu:ScrollingType())
     exampleMenu:AddItem(scrollItem)
 
     scrollItem.OnListChanged = function (menu, item, index)
-        exampleMenu:ScrollingType(index)
+		menu:ScrollingType(index)
     end
 
     local cookItem = UIMenuItem.New("Cook!", "Cook the dish with the appropiate ingredients and ketchup.")
@@ -273,30 +273,26 @@ function CreateMenu()
         menu:SwitchTo(windowMenu, 1, true) 
     end
 
-    exampleMenu.OnMenuChanged = function(old, new, type)
-        if type == "opened" then
-            print("Menu opened!")
-        elseif type == "closed" then
-            print("Menu closed!")
-        elseif type == "backwards" then
-            print("Menu going backwards!")
-        elseif type == "forwards" then
-            print("Menu going forwards!")
-        end
+    exampleMenu.OnMenuOpen = function(menu)
+		print("Menu opened!")
     end
+    exampleMenu.OnMenuClose = function(menu)
+        print("Menu closed!")
+    end
+
 
     ketchupItem.OnCheckboxChanged = function(menu, item, checked)
         sidePanel:UpdatePanelTitle(tostring(checked))
         menu:AnimationEnabled(checked)
-        scrollingItem:Enabled(checked)
+        scrollingAnimationItem:Enabled(checked)
         if checked then
-            scrollingItem:LeftBadge(BadgeStyle.NONE)
+            scrollingAnimationItem:LeftBadge(BadgeStyle.NONE)
         else
-            scrollingItem:LeftBadge(1)
+            scrollingAnimationItem:LeftBadge(1)
         end
     end
 
-    scrollingItem.OnListChanged = function(menu, item, index)
+    scrollingAnimationItem.OnListChanged = function(menu, item, index)
         menu:AnimationType(index)
     end
 
@@ -1084,22 +1080,22 @@ CreateThread(function()
         -- TIMER BARS FOR THE MOMENT ARE A SET OF SPRITES TEXTS AND RECTS, DRAWING THEM WILL INCREASE A LOT SCALEFORMUI'S CPU TIME!
         timerBarPool:Draw()
 
-        if IsControlJustPressed(0, 166) and not MenuPool:IsAnyMenuOpen() then -- F5
+        if IsControlJustPressed(0, 166) and not MenuHandler:IsAnyMenuOpen() then -- F5
             CreateMenu()
         end
-        if IsControlJustPressed(0, 167) and not MenuPool:IsAnyMenuOpen() then -- F6
+        if IsControlJustPressed(0, 167) and not MenuHandler:IsAnyMenuOpen() then -- F6
             CreatePauseMenu()
         end
-        if IsControlJustPressed(0, 168) and not MenuPool:IsAnyMenuOpen() then -- F7
+        if IsControlJustPressed(0, 168) and not MenuHandler:IsAnyMenuOpen() then -- F7
             CreateLobbyMenu()
             AddAndRemoveFriend()
         end
 
-        if IsControlJustPressed(0, 170) or IsDisabledControlJustPressed(0, 170) and not MenuPool:IsAnyMenuOpen() then -- F3
+        if IsControlJustPressed(0, 170) or IsDisabledControlJustPressed(0, 170) and not MenuHandler:IsAnyMenuOpen() then -- F3
             CreateMissionSelectorMenu()
         end
 
-        if IsControlJustPressed(0, 56) and not MenuPool:IsAnyMenuOpen() then -- F9
+        if IsControlJustPressed(0, 56) and not MenuHandler:IsAnyMenuOpen() then -- F9
             local maxPage = math.ceil(scoreboardPlayerCount / 16);       -- 16 is the max amount of rows per page
 
             -- set the title of the menu, the second parameter is the page number, the third is the max page number, you can set your own labels

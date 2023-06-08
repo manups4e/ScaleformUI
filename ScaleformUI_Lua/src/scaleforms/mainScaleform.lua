@@ -55,8 +55,8 @@ Citizen.CreateThread(function()
             ScaleformUI.Scaleforms.Warning:Update()
             ScaleformUI.Scaleforms.BigFeed:Update()
         end
-        if MenuPool.ableToDraw then
-            MenuPool:ProcessMenus()
+        if MenuHandler.ableToDraw then
+            MenuHandler:ProcessMenus()
         end
         ScaleformUI.Scaleforms.InstructionalButtons:Update()
         if ScaleformUI.Scaleforms._ui == nil then

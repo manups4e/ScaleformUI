@@ -1,24 +1,26 @@
-MenuPool = setmetatable({
+MenuHandler = setmetatable({
     _currentMenu = nil,
     _currentPauseMenu = nil,
     ableToDraw = false
-}, MenuPool)
-MenuPool.__index = MenuPool
-MenuPool.__call = function()
-    return "MenuPool"
+}, MenuHandler)
+MenuHandler.__index = MenuHandler
+MenuHandler.__call = function()
+    return "MenuHandler"
 end
 
----@class MenuPool
+---@class MenuHandler
 ---@field _currentMenu UIMenu
 ---@field _currentPauseMenu table
 ---@field ableToDraw boolean
 
-function MenuPool:SwitchTo(currentMenu, newMenu, newMenuCurrentSelection, inheritOldMenuParams)
+function MenuHandler:SwitchTo(currentMenu, newMenu, newMenuCurrentSelection, inheritOldMenuParams)
     assert(currentMenu ~= nil, "The menu you're switching from cannot be null")
-    assert(currentMenu ~= self._currentMenu, "The menu you're switching from must be opened")
+    assert(currentMenu == self._currentMenu, "The menu you're switching from must be opened")
     assert(newMenu ~= nil, "The menu you're switching to cannot be null")
     assert(newMenu ~= currentMenu, "You cannot switch a menu to itself")
-
+    if BreadcrumbsHandler.SwitchInProgress then return end
+    BreadcrumbsHandler.SwitchInProgress = true
+    
     if newMenuCurrentSelection == nil then newMenuCurrentSelection = 1 end
     if inheritOldMenuParams == nil then inheritOldMenuParams = false end
     if inheritOldMenuParams then
@@ -50,15 +52,16 @@ function MenuPool:SwitchTo(currentMenu, newMenu, newMenuCurrentSelection, inheri
     newMenu:Visible(true)
     currentMenu:FadeInMenu()
     BreadcrumbsHandler:Forward(newMenu)
+    BreadcrumbsHandler.SwitchInProgress = false
 end
 
-function MenuPool:ProcessMenus()
+function MenuHandler:ProcessMenus()
     self:ProcessControl()
     self:Draw()
 end
 
 ---ProcessControl
-function MenuPool:ProcessControl()
+function MenuHandler:ProcessControl()
     if self._currentMenu ~= nil then
         self._currentMenu:ProcessControl()
         self._currentMenu:ProcessMouse()
@@ -71,7 +74,7 @@ function MenuPool:ProcessControl()
 end
 
 ---Draw
-function MenuPool:Draw()
+function MenuHandler:Draw()
     if self._currentMenu ~= nil then
         self._currentMenu:Draw()
     end
@@ -80,7 +83,7 @@ function MenuPool:Draw()
     end
 end
 
-function MenuPool:CloseAndClearHistory()
+function MenuHandler:CloseAndClearHistory()
     if self._currentMenu ~= nil and self._currentMenu:Visible() then
         self._currentMenu:Visible(false)
     end
@@ -91,10 +94,10 @@ function MenuPool:CloseAndClearHistory()
 end
 
 ---IsAnyMenuOpen
-function MenuPool:IsAnyMenuOpen()
-    return self._currentMenu ~= nil and self._currentMenu:Visible()
+function MenuHandler:IsAnyMenuOpen()
+    return (self._currentMenu ~= nil and self._currentMenu:Visible()) or BreadcrumbsHandler:Count() > 0
 end
 
-function MenuPool:IsAnyPauseMenuOpen()
+function MenuHandler:IsAnyPauseMenuOpen()
     return self._currentPauseMenu ~= nil and self._currentPauseMenu:Visible()
 end

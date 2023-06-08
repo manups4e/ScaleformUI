@@ -1,5 +1,5 @@
 ---@diagnostic disable: missing-parameter
-local pool = MenuPool.New()
+local pool = MenuHandler.New()
 LobbyMenu = nil
 
 local currentColumnId = 1

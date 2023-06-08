@@ -1,5 +1,6 @@
 BreadcrumbsHandler = setmetatable({
-    breadcrumbs = {}
+    breadcrumbs = {},
+    SwitchInProgress = false
 }, BreadcrumbsHandler)
 
 function BreadcrumbsHandler:Count()
