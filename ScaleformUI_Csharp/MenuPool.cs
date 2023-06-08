@@ -41,7 +41,7 @@ namespace ScaleformUI
             private set => currentBase = value;
         }
 
-        public static async void SwitchTo(this UIMenu currentMenu, UIMenu newMenu, int newMenuCurrentSelection = 0, bool inheritOldMenuParams = false)
+        public static async Task SwitchTo(this UIMenu currentMenu, UIMenu newMenu, int newMenuCurrentSelection = 0, bool inheritOldMenuParams = false)
         {
             if (currentMenu == null)
                 throw new ArgumentNullException("The menu you're switching from cannot be null.");
@@ -51,6 +51,9 @@ namespace ScaleformUI
                 throw new ArgumentNullException("The menu you're switching to cannot be null.");
             if (newMenu == currentMenu)
                 throw new Exception("You cannot switch a menu to itself.");
+            if (BreadcrumbsHandler.SwitchInProgress) return;
+
+            BreadcrumbsHandler.SwitchInProgress = true;
 
             if (inheritOldMenuParams)
             {
@@ -71,6 +74,7 @@ namespace ScaleformUI
             newMenu.Visible = true;
             await currentMenu.FadeInMenu();
             BreadcrumbsHandler.Forward(newMenu);
+            BreadcrumbsHandler.SwitchInProgress = false;
         }
 
         /// <summary>

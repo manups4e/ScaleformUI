@@ -1783,6 +1783,7 @@ namespace ScaleformUI
         {
             if (playSound)
                 Game.PlaySound(AUDIO_BACK, AUDIO_LIBRARY);
+            BreadcrumbsHandler.SwitchInProgress = true;
             await FadeOutMenu();
             if (BreadcrumbsHandler.CurrentDepth == 0)
             {
@@ -1799,6 +1800,7 @@ namespace ScaleformUI
                 Visible = false;
                 prevMenu.Visible = true;
             }
+            BreadcrumbsHandler.SwitchInProgress = false;
         }
 
         public async void GoUp()
@@ -2055,7 +2057,7 @@ namespace ScaleformUI
                 return;
             }
 
-            if (UpdateOnscreenKeyboard() == 0 || IsWarningMessageActive()) return;
+            if (UpdateOnscreenKeyboard() == 0 || IsWarningMessageActive() || BreadcrumbsHandler.SwitchInProgress) return;
 
             if (HasControlJustBeenReleased(MenuControls.Back, key))
             {
