@@ -1462,7 +1462,7 @@ end
 ---AddInstructionButton
 ---@param button table
 function UIMenu:AddInstructionButton(button)
-    if type(button) == "table" and #button == 2 then
+    if type(button) == "table" then
         self.InstructionalButtons[#self.InstructionalButtons + 1] = button
     end
 end
