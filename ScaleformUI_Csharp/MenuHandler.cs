@@ -8,7 +8,7 @@ namespace ScaleformUI
     /// <summary>
     /// Helper class that handles all of your Menus. After instatiating it, you will have to add your menu by using the Add method.
     /// </summary>
-    public static class MenuPool
+    public static class MenuHandler
     {
         internal static UIMenu currentMenu;
         internal static PauseMenuBase currentBase;
@@ -45,7 +45,7 @@ namespace ScaleformUI
         {
             if (currentMenu == null)
                 throw new ArgumentNullException("The menu you're switching from cannot be null.");
-            if (currentMenu != MenuPool.currentMenu)
+            if (currentMenu != MenuHandler.currentMenu)
                 throw new Exception("The menu you're switching from must be opened.");
             if (newMenu == null)
                 throw new ArgumentNullException("The menu you're switching to cannot be null.");
@@ -111,7 +111,7 @@ namespace ScaleformUI
         /// Checks if any menu is currently visible.
         /// </summary>
         /// <returns>true if one menu is visible, false if not.</returns>
-        public static bool IsAnyMenuOpen => currentMenu?.Visible ?? false;
+        public static bool IsAnyMenuOpen => currentMenu?.Visible ?? false || BreadcrumbsHandler.Count > 0;
 
         public static bool IsAnyPauseMenuOpen => currentBase?.Visible ?? false;
 

@@ -24,7 +24,7 @@ namespace ScaleformUI
             await Task.FromResult(0);
         }
 
-        private List<Marker> FilterMarkers() => _markerList.Where(x => MenuPool.PlayerPed.IsInRangeOf(x.Position, x.Distance)).ToList();
+        private List<Marker> FilterMarkers() => _markerList.Where(x => MenuHandler.PlayerPed.IsInRangeOf(x.Position, x.Distance)).ToList();
 
         /// <summary>
         /// Adds a marker to the list

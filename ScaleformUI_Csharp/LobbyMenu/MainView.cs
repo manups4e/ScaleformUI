@@ -83,7 +83,7 @@ namespace ScaleformUI.LobbyMenu
                     ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
                     SetPlayerControl(Game.Player.Handle, false, 0);
                     _firstDrawTick = true;
-                    MenuPool.currentBase = this;
+                    MenuHandler.currentBase = this;
                 }
                 else
                 {
@@ -92,7 +92,7 @@ namespace ScaleformUI.LobbyMenu
                     AnimpostfxPlay("PauseMenuOut", 800, false);
                     SendPauseMenuClose();
                     SetPlayerControl(Game.Player.Handle, true, 0);
-                    MenuPool.currentBase = null;
+                    MenuHandler.currentBase = null;
                     ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY_NO_BACKGROUND"), false, -1);
                     ScaleformUI.InstructionalButtons.ClearButtonList();
                 }

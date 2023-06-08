@@ -10,7 +10,7 @@ namespace ScaleformUI
             set
             {
                 visible = value;
-                MenuPool.ableToDraw = value;
+                MenuHandler.ableToDraw = value;
             }
         }
         /// <summary>

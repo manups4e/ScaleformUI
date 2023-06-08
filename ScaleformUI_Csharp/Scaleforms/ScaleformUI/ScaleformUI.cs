@@ -63,8 +63,8 @@ namespace ScaleformUI
         {
             if (InstructionalButtons._sc != null && (InstructionalButtons.ControlButtons != null && InstructionalButtons.ControlButtons.Count != 0) || InstructionalButtons.IsSaving)
                 InstructionalButtons.Update();
-            if (MenuPool.ableToDraw)
-                MenuPool.ProcessMenus();
+            if (MenuHandler.ableToDraw)
+                MenuHandler.ProcessMenus();
             if (Game.IsPaused) return;
             if (Warning._sc != null)
                 Warning.Update();

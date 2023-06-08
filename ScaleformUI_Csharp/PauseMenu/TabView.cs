@@ -122,7 +122,7 @@ namespace ScaleformUI.PauseMenu
                     ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
                     SetPlayerControl(Game.Player.Handle, false, 0);
                     BuildPauseMenu();
-                    MenuPool.currentBase = this;
+                    MenuHandler.currentBase = this;
                 }
                 else
                 {
@@ -131,7 +131,7 @@ namespace ScaleformUI.PauseMenu
                     AnimpostfxPlay("PauseMenuOut", 800, false);
                     SendPauseMenuClose();
                     SetPlayerControl(Game.Player.Handle, true, 0);
-                    MenuPool.currentBase = null;
+                    MenuHandler.currentBase = null;
                     ScaleformUI.InstructionalButtons.ClearButtonList();
                     ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY_NO_BACKGROUND"), false, -1);
                 }

@@ -1490,13 +1490,13 @@ public class MenuExample : BaseScript
             if (playerMarker.IsInRange)
                 Notifications.DrawText($"IsInMarker => {playerMarker.IsInMarker}");
 
-            if (Game.IsControlJustPressed(0, Control.SelectCharacterMichael) && !MenuPool.IsAnyMenuOpen) // Our menu enabler (to exit menu simply press Back on the main menu)
+            if (Game.IsControlJustPressed(0, Control.SelectCharacterMichael) && !MenuHandler.IsAnyMenuOpen) // Our menu enabler (to exit menu simply press Back on the main menu)
                 ExampleMenu();
 
             // to open the pause menu without opening the normal menu.
-            if (Game.IsControlJustPressed(0, Control.SelectCharacterFranklin) && !MenuPool.IsAnyMenuOpen && !MenuPool.IsAnyPauseMenuOpen)
+            if (Game.IsControlJustPressed(0, Control.SelectCharacterFranklin) && !MenuHandler.IsAnyMenuOpen && !MenuHandler.IsAnyPauseMenuOpen)
                 PauseMenuShowcase(null);
-            if (Game.IsControlJustPressed(0, Control.SelectCharacterTrevor) && !MenuPool.IsAnyMenuOpen && !MenuPool.IsAnyPauseMenuOpen)
+            if (Game.IsControlJustPressed(0, Control.SelectCharacterTrevor) && !MenuHandler.IsAnyMenuOpen && !MenuHandler.IsAnyPauseMenuOpen)
                 LobbyPauseMenuShowcase(null);
 
             if (Game.IsControlJustPressed(0, (Control)170)) // F3

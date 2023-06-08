@@ -2188,8 +2188,8 @@ namespace ScaleformUI
                 {
                     ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
                     canBuild = true;
-                    MenuPool.currentMenu = this;
-                    MenuPool.ableToDraw = true;
+                    MenuHandler.currentMenu = this;
+                    MenuHandler.ableToDraw = true;
                     BuildUpMenuAsync();
                     MenuOpenEv(this);
                     timeBeforeOverflow = ScaleformUI.GameTime;
@@ -2201,8 +2201,8 @@ namespace ScaleformUI
                     canBuild = false;
                     FadeOutMenu();
                     MenuCloseEv(this);
-                    MenuPool.ableToDraw = false;
-                    MenuPool.currentMenu = null;
+                    MenuHandler.ableToDraw = false;
+                    MenuHandler.currentMenu = null;
                     ScaleformUI._ui.CallFunction("CLEAR_ALL");
                     ScaleformUI.InstructionalButtons.ClearButtonList();
                 }
