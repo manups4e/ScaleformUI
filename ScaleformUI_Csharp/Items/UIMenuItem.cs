@@ -485,6 +485,7 @@ namespace ScaleformUI
             get => _enabled;
             set
             {
+                _enabled = value;
                 if (!value)
                     _formatLeftLabel = _formatLeftLabel.ReplaceRstarColorsWith("~c~");
                 else
