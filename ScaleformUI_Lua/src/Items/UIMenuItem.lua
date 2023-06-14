@@ -155,9 +155,16 @@ function UIMenuItem:Enabled(bool, item)
     if bool ~= nil then
         if item == nil then item = self end
         self._Enabled = ToBool(bool)
+        if not self._Enabled then
+            self._formatLeftLabel = ReplaceRstarColorsWith(self._formatLeftLabel, "~c~")
+        else
+            self:Label(self._label)
+        end
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, item)) then
             ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_ITEM", false, self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
                 self._Enabled)
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABELS", false, self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
+                self._formatLeftLabel, self._formatRightLabel)
         end
     else
         return self._Enabled
