@@ -471,9 +471,13 @@ namespace ScaleformUI
             get => _enabled;
             set
             {
-                _enabled = value;
+                if (!value)
+                    _formatLeftLabel = _formatLeftLabel.ReplaceRstarColorsWith("~c~");
+                else
+                    Label = _label;
                 if (Parent is not null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
+                    ScaleformUI._ui.CallFunction("SET_ITEM_LABELS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _formatLeftLabel, _formatRightLabel);
                     ScaleformUI._ui.CallFunction("ENABLE_ITEM", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _enabled);
                 }
             }
