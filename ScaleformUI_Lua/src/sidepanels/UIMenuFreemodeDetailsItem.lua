@@ -19,7 +19,18 @@ function UIMenuFreemodeDetailsItem.New(textLeft, textRight, seperator, icon, ico
         TextRight = textRight,
         Icon = icon,
         IconColor = iconColor,
-        Tick = tick or false
+        Tick = tick or false,
+        _labelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY,
+        _rightLabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY
     }
     return setmetatable(_UIMenuFreemodeDetailsItem, UIMenuFreemodeDetailsItem)
+end
+
+function UIMenuFreemodeDetailsItem:SetLabelsFonts(leftFont, rightFont)
+    if leftFont then
+        self._labelFont = leftFont
+    end
+    if rightFont then
+        self._rightLabelFont = rightFont
+    end
 end

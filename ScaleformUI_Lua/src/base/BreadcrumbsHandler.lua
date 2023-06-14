@@ -17,7 +17,6 @@ end
 
 function BreadcrumbsHandler:Forward(menu)
     table.insert(self.breadcrumbs, menu)
-    print(#self.breadcrumbs)
 end
 
 function BreadcrumbsHandler:Clear()

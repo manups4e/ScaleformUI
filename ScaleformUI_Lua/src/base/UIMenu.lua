@@ -43,7 +43,7 @@ end
 ---@field private enableAnimation boolean -- Enable or disable the menu animation (default: true)
 ---@field private animationType MenuAnimationType -- Sets the menu animation type (default: MenuAnimationType.LINEAR)
 ---@field private buildingAnimation MenuBuildingAnimation -- Sets the menu building animation type (default: MenuBuildingAnimation.NONE)
----@field private descFont table -- { "$Font2", 0 }
+---@field private descFont ItemFont -- Sets the desctiption text font. (default: ScaleformFonts.CHALET_LONDON_NINETEENSIXTY)
 
 ---Creates a new UIMenu.
 ---@param title string -- Menu title
@@ -90,7 +90,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         animationType = MenuAnimationType.LINEAR,
         buildingAnimation = MenuBuildingAnimation.NONE,
         scrollingType = MenuScrollingType.CLASSIC,
-        descFont = { "$Font2", 0 },
+        descFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY,
         Extra = {},
         Description = {},
         Items = {},
@@ -264,7 +264,7 @@ function UIMenu:DescriptionFont(fontTable)
     else
         self.descFont = fontTable
         if self:Visible() then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_DESC_FONT", false, self.descFont[1], self.descFont[2])
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_DESC_FONT", false, self.descFont.FontName, self.descFont.FontID)
         end
     end
 end
@@ -653,7 +653,7 @@ function UIMenu:BuildUpMenuAsync()
         while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
         ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self._Title, self._Subtitle, self.Position.x, self.Position.y,
             self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, true,
-            self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont[1], self.descFont[2])
+            self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName, self.descFont.FontID)
         if #self.Windows > 0 then
             for w_id, window in pairs(self.Windows) do
                 local Type, SubType = window()
@@ -797,14 +797,16 @@ function UIMenu:_itemCreation(page, pageIndex, before, overflow)
         end
     end
 
-    if (SubType == "UIMenuItem" and item._leftBadge ~= BadgeStyle.NONE) or (SubType ~= "UIMenuItem" and item.Base._leftBadge ~= BadgeStyle.NONE) then
-        if SubType ~= "UIMenuItem" then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", false, scaleformIndex, item.Base._labelFont
-                [1], item.Base._labelFont[2])
+    if SubType ~= "UIMenuItem" then
+        ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", false, scaleformIndex, item.Base._labelFont.FontName, item.Base._labelFont.FontID)
+        ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_RIGHT_LABEL_FONT", false, scaleformIndex, item.Base._rightLabelFont.FontName, item.Base._rightLabelFont.FontID)
+        if item.Base._leftBadge ~= BadgeStyle.NONE then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_BADGE", false, scaleformIndex, item.Base._leftBadge)
-        else
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", false, scaleformIndex, item._labelFont[1],
-                item._labelFont[2])
+        end
+    else
+        ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", false, scaleformIndex, item._labelFont.FontName, item._labelFont.FontID)
+        ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_RIGHT_LABEL_FONT", false, scaleformIndex, item._rightLabelFont.FontName, item._rightLabelFont.FontID)
+        if item._leftBadge ~= BadgeStyle.NONE then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_BADGE", false, scaleformIndex, item._leftBadge)
         end
     end
@@ -816,7 +818,8 @@ function UIMenu:_itemCreation(page, pageIndex, before, overflow)
                 item.SidePanel.TextureDict, item.SidePanel.TextureName)
             for key, value in pairs(item.SidePanel.Items) do
                 ScaleformUI.Scaleforms._ui:CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", false, scaleformIndex,
-                    value.Type, value.TextLeft, value.TextRight, value.Icon, value.IconColor, value.Tick)
+                    value.Type, value.TextLeft, value.TextRight, value.Icon, value.IconColor, value.Tick, value._labelFont.FontName, value._labelFont.FontID, 
+                    value._rightLabelFont.FontName, value._rightLabelFont.FontID)
             end
         elseif item.SidePanel() == "UIVehicleColorPickerPanel" then
             ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false, scaleformIndex, 1,
