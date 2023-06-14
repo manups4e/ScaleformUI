@@ -2450,7 +2450,7 @@ namespace ScaleformUI
                         ScaleformUI._ui.CallFunction("ADD_SIDE_PANEL_TO_ITEM", scaleformIndex, 0, (int)mis.PanelSide, (int)mis._titleType, mis.Title, (int)mis.TitleColor, mis.TextureDict, mis.TextureName);
                         foreach (UIFreemodeDetailsItem _it in mis.Items)
                         {
-                            ScaleformUI._ui.CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", scaleformIndex, _it.Type, _it.TextLeft, _it.TextRight, (int)_it.Icon, (int)_it.IconColor, _it.Tick);
+                            ScaleformUI._ui.CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", scaleformIndex, _it.Type, _it.TextLeft, _it.TextRight, (int)_it.Icon, (int)_it.IconColor, _it.Tick, _it._labelFont.FontName, _it._labelFont.FontID, _it._rightLabelFont.FontName, _it._rightLabelFont.FontID);
                         }
                         break;
                     case UIVehicleColourPickerPanel:
