@@ -439,7 +439,6 @@ namespace ScaleformUI
                     @char = tmp.Substring(index, length);
                 else if (tmp.Substring(index, 11) == "~HUD_COLOUR") // classic color naming format
                     @char = tmp.Substring(index, length);
-
                 else if (tmp.Substring(index, 4) == "~HC_") // short color naming format (can be either HC_13 or HC_FREEMODE styled
                     @char = tmp.Substring(index, length);
                 if (string.IsNullOrEmpty(@char)) continue;

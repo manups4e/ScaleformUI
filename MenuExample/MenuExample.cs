@@ -139,11 +139,11 @@ public class MenuExample : BaseScript
         long _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
         API.CreateRuntimeTextureFromDuiHandle(txd, "panelbackground", API.GetDuiHandle(_paneldui));
         UIMissionDetailsPanel sidePanel = new UIMissionDetailsPanel(PanelSide.Right, "Side Panel", true, "scaleformui", "panelbackground");
-        UIFreemodeDetailsItem detailItem1 = new UIFreemodeDetailsItem("Left Label", "Right Label", BadgeIcon.BRIEFCASE, HudColor.HUD_COLOUR_FREEMODE);
-        UIFreemodeDetailsItem detailItem2 = new UIFreemodeDetailsItem("Left Label", "Right Label", BadgeIcon.STAR, HudColor.HUD_COLOUR_GOLD);
-        UIFreemodeDetailsItem detailItem3 = new UIFreemodeDetailsItem("Left Label", "Right Label", BadgeIcon.ARMOR, HudColor.HUD_COLOUR_PURPLE);
-        UIFreemodeDetailsItem detailItem4 = new UIFreemodeDetailsItem("Left Label", "Right Label", BadgeIcon.BRAND_DILETTANTE, HudColor.HUD_COLOUR_GREEN);
-        UIFreemodeDetailsItem detailItem5 = new UIFreemodeDetailsItem("Left Label", "Right Label", BadgeIcon.COUNTRY_ITALY, HudColor.HUD_COLOUR_WHITE, true);
+        UIFreemodeDetailsItem detailItem1 = new UIFreemodeDetailsItem("Left Label", "RIGHT LABEL", ScaleformFonts.SIGNPAINTER_HOUSESCRIPT, ScaleformFonts.GTAV_TAXI_DIGITAL, BadgeIcon.BRIEFCASE, HudColor.HUD_COLOUR_FREEMODE);
+        UIFreemodeDetailsItem detailItem2 = new UIFreemodeDetailsItem("Left Label", "RIGHT LABEL", ScaleformFonts.SIGNPAINTER_HOUSESCRIPT, ScaleformFonts.GTAV_TAXI_DIGITAL, BadgeIcon.STAR, HudColor.HUD_COLOUR_GOLD);
+        UIFreemodeDetailsItem detailItem3 = new UIFreemodeDetailsItem("Left Label", "RIGHT LABEL", ScaleformFonts.SIGNPAINTER_HOUSESCRIPT, ScaleformFonts.GTAV_TAXI_DIGITAL, BadgeIcon.ARMOR, HudColor.HUD_COLOUR_PURPLE);
+        UIFreemodeDetailsItem detailItem4 = new UIFreemodeDetailsItem("Left Label", "RIGHT LABEL", ScaleformFonts.SIGNPAINTER_HOUSESCRIPT, ScaleformFonts.GTAV_TAXI_DIGITAL, BadgeIcon.BRAND_DILETTANTE, HudColor.HUD_COLOUR_GREEN);
+        UIFreemodeDetailsItem detailItem5 = new UIFreemodeDetailsItem("Left Label", "RIGHT LABEL", ScaleformFonts.SIGNPAINTER_HOUSESCRIPT, ScaleformFonts.GTAV_TAXI_DIGITAL, BadgeIcon.COUNTRY_ITALY, HudColor.HUD_COLOUR_WHITE, true);
         sidePanel.AddItem(detailItem1);
         sidePanel.AddItem(detailItem2);
         sidePanel.AddItem(detailItem3);
@@ -155,6 +155,8 @@ public class MenuExample : BaseScript
 
         UIMenuItem cookItem = new UIMenuItem("Cook! in a very long label to test the text scrolling feature!", "Cook the dish with the appropiate ingredients and ketchup.");
         cookItem.SetRightLabel("rightLabel");
+        cookItem.LabelFont = ScaleformFonts.ENGRAVERS_OLD_ENGLISH_MT_STD;
+        cookItem.RightLabelFont = ScaleformFonts.PRICEDOWN_GTAV_INT;
         exampleMenu.AddItem(cookItem);
         UIVehicleColourPickerPanel sidePanelB = new UIVehicleColourPickerPanel(PanelSide.Right, "ColorPicker");
         cookItem.AddSidePanel(sidePanelB);

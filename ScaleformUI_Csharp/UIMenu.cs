@@ -994,7 +994,7 @@ namespace ScaleformUI
             }
         }
 
-        public KeyValuePair<string, int> DescriptionFont
+        public ItemFont DescriptionFont
         {
             get => descriptionFont;
             set
@@ -1002,7 +1002,7 @@ namespace ScaleformUI
                 descriptionFont = value;
                 if (Visible)
                 {
-                    ScaleformUI._ui.CallFunction("SET_DESC_FONT", descriptionFont.Key, descriptionFont.Value);
+                    ScaleformUI._ui.CallFunction("SET_DESC_FONT", descriptionFont.FontName, descriptionFont.FontID);
                 }
             }
         }
@@ -1530,7 +1530,7 @@ namespace ScaleformUI
         int context = 0;
         int unused = 0;
         bool cursorPressed;
-        private KeyValuePair<string, int> descriptionFont = new("$Font2", 0);
+        private ItemFont descriptionFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
         private ScrollingType scrollingType = ScrollingType.CLASSIC;
 
         /// <summary>
@@ -2215,7 +2215,7 @@ namespace ScaleformUI
             bool _animEnabled = EnableAnimation;
             EnableAnimation = false;
             while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
-            ScaleformUI._ui.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, EnableAnimation, (int)AnimationType, (int)buildingAnimation, (int)counterColor, descriptionFont.Key, descriptionFont.Value);
+            ScaleformUI._ui.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, EnableAnimation, (int)AnimationType, (int)buildingAnimation, (int)counterColor, descriptionFont.FontName, descriptionFont.FontID);
             if (Windows.Count > 0)
             {
                 foreach (UIMenuWindow wind in Windows)
@@ -2437,7 +2437,8 @@ namespace ScaleformUI
                         ScaleformUI._ui.CallFunction("SET_RIGHT_BADGE", scaleformIndex, (int)item.RightBadge);
                     break;
             }
-            ScaleformUI._ui.CallFunction("SET_ITEM_LABEL_FONT", scaleformIndex, item.LabelFont.Key, item.labelFont.Value);
+            ScaleformUI._ui.CallFunction("SET_ITEM_LABEL_FONT", scaleformIndex, item.labelFont.FontName, item.labelFont.FontID);
+            ScaleformUI._ui.CallFunction("SET_ITEM_RIGHT_LABEL_FONT", scaleformIndex, item.rightLabelFont.FontName, item.rightLabelFont.FontID);
             if (item.LeftBadge != BadgeIcon.NONE)
                 ScaleformUI._ui.CallFunction("SET_LEFT_BADGE", scaleformIndex, (int)item.LeftBadge);
             if (item.SidePanel != null)
