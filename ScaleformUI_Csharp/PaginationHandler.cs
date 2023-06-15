@@ -15,7 +15,7 @@
         internal int CurrentPage { get => currentPage; set => currentPage = value; }
         internal int ItemsPerPage { get => itemsPerPage; set => itemsPerPage = value; }
         internal int TotalItems { get => totalItems; set => totalItems = value; }
-        internal int TotalPages => (int)Math.Floor(totalItems / (float)itemsPerPage);
+        internal int TotalPages => (int)Math.Ceiling(totalItems / (float)itemsPerPage);
         internal int CurrentPageStartIndex => CurrentPage * itemsPerPage;
         internal int CurrentPageEndIndex
         {
