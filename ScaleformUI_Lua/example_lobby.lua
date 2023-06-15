@@ -547,7 +547,6 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:Show", function(FocusLevel, canclose,
                     LobbyMenu.MissionPanel.TextureDict, LobbyMenu.MissionPanel.TextureName)
 
                 TriggerEvent("ScaleformUI_Lua:playermenu:Show", 2, true, function()
-                    print(111)
                     TriggerEvent("ScaleformUI_Lua:lobbymenu:Show", 1, true)
                 end)
             end

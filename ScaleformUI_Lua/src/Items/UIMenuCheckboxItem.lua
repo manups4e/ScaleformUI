@@ -74,18 +74,6 @@ function UIMenuCheckboxItem:Selected(bool)
     end
 end
 
-function UIMenuCheckboxItem:LabelFont(fontTable)
-    if fontTable == nil then
-        return self.Base._labelFont
-    else
-        self.Base._labelFont = fontTable
-        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", false,
-                IndexOf(self.Base.ParentMenu.Items, self), self.Base._labelFont[1], self.Base._labelFont[2])
-        end
-    end
-end
-
 ---Hovered
 ---@param bool boolean
 function UIMenuCheckboxItem:Hovered(bool)
@@ -182,6 +170,15 @@ function UIMenuCheckboxItem:HighlightedTextColor(color)
     end
 end
 
+function UIMenuCheckboxItem:LabelFont(fontTable)
+    if fontTable == nil then
+        return self.Base:LabelFont()
+    else
+        self.Base:LabelFont(fontTable)
+    end
+end
+
+
 ---LeftBadge
 function UIMenuCheckboxItem:LeftBadge(Badge)
     if tonumber(Badge) then
@@ -206,7 +203,6 @@ function UIMenuCheckboxItem:Checked(bool)
         self._Checked = ToBool(bool)
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
             local it = self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self))
-            print(it)
             ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_VALUE", false, it, self._Checked)
         end
     else

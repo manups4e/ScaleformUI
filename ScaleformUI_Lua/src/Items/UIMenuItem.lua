@@ -13,7 +13,8 @@ end
 ---@class UIMenuItem
 ---@field _label string
 ---@field _Description string
----@field _labelFont table
+---@field _labelFont ItemFont
+---@field _rightLabelFont ItemFont
 ---@field _Selected boolean
 ---@field _Hovered boolean
 ---@field _Enabled boolean
@@ -47,13 +48,14 @@ function UIMenuItem.New(text, description, color, highlightColor, textColor, hig
     local __label = (tostring(text))
     local __formatLeftLabel = (tostring(text))
     if not __formatLeftLabel:StartsWith("~") then
-        __formatLeftLabel = __formatLeftLabel:Insert(0, "~s~")
+        __formatLeftLabel = "~s~"..__formatLeftLabel
     end
 
     _UIMenuItem = {
         _label = tostring(text) or "",
         _Description = tostring(description) or "",
-        _labelFont = { "$Font2", 0 },
+        _labelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY,
+        _rightLabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY,
         _Selected = false,
         _Hovered = false,
         _Enabled = true,
@@ -87,14 +89,27 @@ function UIMenuItem:ItemData(data)
 end
 
 -- not supported on Lobby and Pause menu yet
-function UIMenuItem:LabelFont(fontTable)
-    if fontTable == nil then
+function UIMenuItem:LabelFont(itemFont)
+    if itemFont == nil then
         return self._labelFont
     else
-        self._labelFont = fontTable
+        self._labelFont = itemFont
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, self) - 1) then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", false,
-                 self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, self) - 1), self._labelFont[1], self._labelFont[2])
+                 self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, self) - 1), self._labelFont.FontName, self._labelFont.FontID)
+        end
+    end
+end
+
+-- not supported on Lobby and Pause menu yet
+function UIMenuItem:RightLabelFont(itemFont)
+    if itemFont == nil then
+        return self._rightLabelFont
+    else
+        self._rightLabelFont = itemFont
+        if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, self) - 1) then
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_RIGHT_LABEL_FONT", false,
+                 self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, self) - 1), self._rightLabelFont.FontName, self._rightLabelFont.FontID)
         end
     end
 end
@@ -155,7 +170,14 @@ function UIMenuItem:Enabled(bool, item)
     if bool ~= nil then
         if item == nil then item = self end
         self._Enabled = ToBool(bool)
+        if not self._Enabled then
+            self._formatLeftLabel = ReplaceRstarColorsWith(self._formatLeftLabel, "~c~")
+        else
+            self:Label(self._label)
+        end
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, item)) then
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABELS", false, self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
+                self._formatLeftLabel, self._formatRightLabel)
             ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_ITEM", false, self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
                 self._Enabled)
         end
@@ -233,10 +255,10 @@ end
 function UIMenuItem:Label(Text, item)
     if tostring(Text) and Text ~= nil then
         if item == nil then item = self end
-        self._label = (tostring(Text))
-        self._formatLeftLabel = (tostring(Text))
+        self._label = tostring(Text)
+        self._formatLeftLabel = tostring(Text)
         if not self._formatLeftLabel:StartsWith("~") then
-            self._formatLeftLabel = self._formatLeftLabel:Insert(0, "~s~")
+            self._formatLeftLabel = "~s~"..self._formatLeftLabel
         end
         if self:Selected() then
             self._formatLeftLabel = self._formatLeftLabel:gsub("~w~", "~l~")
@@ -257,14 +279,14 @@ function UIMenuItem:RightLabel(Text)
     if tostring(Text) and Text ~= nil then
         self._rightLabel = tostring(Text)
         self._formatRightLabel = tostring(Text)
+        if not self._formatRightLabel:StartsWith("~") then
+            self._formatRightLabel = "~s~"..self._formatRightLabel
+        end
         if self:Selected() then
-            if not self._formatRightLabel:StartsWith("~") then
-                self._formatRightLabel = self._formatRightLabel:Insert(0, "~s~")
-            end
             self._formatRightLabel = self._formatRightLabel:gsub("~w~", "~l~")
             self._formatRightLabel = self._formatRightLabel:gsub("~s~", "~l~")
         else
-                self._formatRightLabel = self._formatRightLabel:gsub("~l~", "~s~")
+            self._formatRightLabel = self._formatRightLabel:gsub("~l~", "~s~")
         end
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self._textColor == 1 and self._highlightedTextColor == 2 and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, self) - 1) then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_LABEL", false, self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, self)),

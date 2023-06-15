@@ -205,7 +205,8 @@ namespace ScaleformUI
         private HudColor highlightedTextColor = HudColor.HUD_COLOUR_BLACK;
         private string description;
         private uint descriptionHash;
-        internal KeyValuePair<string, int> labelFont = new("$Font2", 0);
+        internal ItemFont labelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
+        internal ItemFont rightLabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
 
         /// <summary>
         /// The item color when not highlighted
@@ -269,7 +270,7 @@ namespace ScaleformUI
             }
         }
 
-        public KeyValuePair<string, int> LabelFont
+        public ItemFont LabelFont
         {
             get => labelFont;
             set
@@ -277,7 +278,20 @@ namespace ScaleformUI
                 labelFont = value;
                 if (Parent is not null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    ScaleformUI._ui.CallFunction("SET_ITEM_LABEL_FONT", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), labelFont.Key, labelFont.Value);
+                    ScaleformUI._ui.CallFunction("SET_ITEM_LABEL_FONT", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), labelFont.FontName, labelFont.FontID);
+                }
+            }
+        }
+
+        public ItemFont RightLabelFont
+        {
+            get => rightLabelFont;
+            set
+            {
+                rightLabelFont = value;
+                if (Parent is not null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
+                {
+                    ScaleformUI._ui.CallFunction("SET_ITEM_RIGHT_LABEL_FONT", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), rightLabelFont.FontName, rightLabelFont.FontID);
                 }
             }
         }
@@ -472,8 +486,13 @@ namespace ScaleformUI
             set
             {
                 _enabled = value;
+                if (!value)
+                    _formatLeftLabel = _formatLeftLabel.ReplaceRstarColorsWith("~c~");
+                else
+                    Label = _label;
                 if (Parent is not null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
+                    ScaleformUI._ui.CallFunction("SET_ITEM_LABELS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _formatLeftLabel, _formatRightLabel);
                     ScaleformUI._ui.CallFunction("ENABLE_ITEM", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _enabled);
                 }
             }

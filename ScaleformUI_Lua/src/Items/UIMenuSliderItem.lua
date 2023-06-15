@@ -56,18 +56,6 @@ function UIMenuSliderItem:SetParentMenu(Menu)
     end
 end
 
-function UIMenuSliderItem:LabelFont(fontTable)
-    if fontTable == nil then
-        return self.Base._labelFont
-    else
-        self.Base._labelFont = fontTable
-        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", false,
-                IndexOf(self.Base.ParentMenu.Items, self), self.Base._labelFont[1], self.Base._labelFont[2])
-        end
-    end
-end
-
 function UIMenuSliderItem:AddSidePanel(sidePanel)
     if sidePanel() == "UIMissionDetailsPanel" then
         sidePanel:SetParentItem(self)
@@ -197,6 +185,15 @@ function UIMenuSliderItem:SliderColor(color)
         end
     else
         return self.SliderColor
+    end
+end
+
+-- not supported on Lobby and Pause menu yet
+function UIMenuSliderItem:LabelFont(fontTable)
+    if fontTable == nil then
+        return self.Base:LabelFont()
+    else
+        self.Base:LabelFont(fontTable)
     end
 end
 
