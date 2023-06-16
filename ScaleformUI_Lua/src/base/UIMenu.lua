@@ -1199,26 +1199,27 @@ end
 ---GoBack
 function UIMenu:GoBack(boolean)
     local playSound = true
+
     if type(boolean) == "boolean" then
         playSound = boolean
     end
-    self:FadeOutMenu()
-    if playSound then
-        PlaySoundFrontend(-1, self.Settings.Audio.Back, self.Settings.Audio.Library, true)
-    end
 
-    if BreadcrumbsHandler:CurrentDepth() == 1 then
-        if self:CanPlayerCloseMenu() then
-            self:Visible(false)
-            BreadcrumbsHandler:Clear()
+    if self:CanPlayerCloseMenu() then
+        self:FadeOutMenu()
+        if playSound then
+            PlaySoundFrontend(-1, self.Settings.Audio.Back, self.Settings.Audio.Library, true)
         end
-    else
-        BreadcrumbsHandler.SwitchInProgress = true
-        local prevMenu = BreadcrumbsHandler:PreviousMenu()
-        BreadcrumbsHandler:Backwards()
-        self:Visible(false)
-        prevMenu:Visible(true)
-        BreadcrumbsHandler.SwitchInProgress = false
+        if BreadcrumbsHandler:CurrentDepth() == 1 then
+            BreadcrumbsHandler:Clear()
+            self:Visible(false)
+        else
+            BreadcrumbsHandler.SwitchInProgress = true
+            local prevMenu = BreadcrumbsHandler:PreviousMenu()
+            BreadcrumbsHandler:Backwards()
+            self:Visible(false)
+            prevMenu:Visible(true)
+            BreadcrumbsHandler.SwitchInProgress = false
+        end
     end
 end
 
