@@ -20,8 +20,6 @@ function BreadcrumbsHandler:Forward(menu)
 end
 
 function BreadcrumbsHandler:Clear()
-    local count = #self.breadcrumbs
-    for i=0, count do self.breadcrumbs[i]=nil end
     self.breadcrumbs = {}
 end
 
