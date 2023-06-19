@@ -678,7 +678,6 @@ function UIMenu:BuildUpMenuAsync()
             while #self.Items == 0 do
                 Citizen.Wait(0)
                 if GlobalGameTimer - timer > 150 then
-                    self:CurrentSelection(1)
                     ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, 0)
                     return
                 end
