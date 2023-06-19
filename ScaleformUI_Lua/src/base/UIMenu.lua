@@ -679,6 +679,7 @@ function UIMenu:BuildUpMenuAsync()
                 Citizen.Wait(0)
                 if GlobalGameTimer - timer > 150 then
                     ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, 0)
+                    assert(#self.Items ~= 0, "ScaleformUI cannot build a menu with no items")
                     return
                 end
             end
