@@ -111,16 +111,18 @@ function MainView:Visible(visible)
                 ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
                 SetPlayerControl(PlayerId(), false, 0)
                 self._firstTick = true
-                self.ParentPool:ProcessMenus(true)
+                MenuHandler._currentPauseMenu = this;
+                MenuHandler.ableToDraw = true;
             end
         else
+            MenuHandler.ableToDraw = false;
+            MenuHandler._currentPauseMenu = nil;
             ScaleformUI.Scaleforms._pauseMenu:Dispose()
             ScaleformUI.Scaleforms.InstructionalButtons:ClearButtonList()
             AnimpostfxStop("PauseMenuIn")
             AnimpostfxPlay("PauseMenuOut", 800, false)
             self.OnLobbyMenuClose(self)
             SetPlayerControl(PlayerId(), true, 0)
-            self.ParentPool:ProcessMenus(false)
             if IsPauseMenuActive() then
                 PlaySoundFrontend(self.SoundId, "Hit_Out", "PLAYER_SWITCH_CUSTOM_SOUNDSET", true)
                 ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, false, -1)
