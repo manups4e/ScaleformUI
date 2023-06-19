@@ -153,6 +153,7 @@ end
 ---@return nil
 function BigFeedInstance:Update()
     if self._sc == nil or self._sc == 0 then return end
+    ScaleformUI.WaitTime = 0
     self._sc:Render2D()
 end
 

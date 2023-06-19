@@ -53,6 +53,7 @@ end
 ---Shows a message on the screen
 function MidMessageInstance:Update()
     if self._sc == nil or self._sc == 0 then return end
+    ScaleformUI.WaitTime = 0
     self._sc:Render2D()
     if self._start ~= 0 and GlobalGameTimer - self._start > self._timer then
         if not self._hasAnimatedOut then

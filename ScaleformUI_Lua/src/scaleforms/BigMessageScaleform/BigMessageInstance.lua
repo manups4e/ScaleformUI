@@ -223,6 +223,7 @@ end
 ---@return nil
 function BigMessageInstance:Update()
     if self._sc == nil or self._sc == 0 then return end
+    ScaleformUI.WaitTime = 0
     self._sc:Render2D()
 
     -- if the user wants to manually dispose the scaleform, don't do it automatically

@@ -119,6 +119,7 @@ function WarningInstance:Update()
     if self._sc == nil then return end
     if not self._sc:IsLoaded() then return end
 
+    ScaleformUI.WaitTime = 0
     self._sc:Render2D()
     if self._disableControls then
         ScaleformUI.Scaleforms.InstructionalButtons:Draw()

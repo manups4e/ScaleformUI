@@ -168,6 +168,7 @@ end
 ---Update is called every frame to render the MULTIPLAYER_CHAT scaleform to the screen by mainScaleform.lua
 function MultiplayerChat:Update()
   if self._sc == nil then return end
+  ScaleformUI.WaitTime = 0
   self._sc:Render2D()
 
   if self._enabled then

@@ -148,6 +148,7 @@ end
 ---Draw the scoreboard on the screen
 function PlayerListScoreboard:Update()
     if self._sc == nil or not self.Enabled then return end
+    ScaleformUI.WaitTime = 0
     self._sc:Render2DNormal(self.X, self.Y, 0.28, 0.6)
     if self._start ~= 0 and GlobalGameTimer - self._start > self._timer then
         self:CurrentPage(0)

@@ -199,6 +199,7 @@ local success, event_type, context, item_id
 ---Updates the mission selector
 function MissionSelectorHandler:Update()
     if self._sc == nil or not self.enabled then return end
+    ScaleformUI.WaitTime = 0
     self._sc:Render2D()
     DisableAllControlActions(0)
     DisableAllControlActions(1)
