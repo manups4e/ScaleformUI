@@ -111,12 +111,12 @@ function MainView:Visible(visible)
                 ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
                 SetPlayerControl(PlayerId(), false, 0)
                 self._firstTick = true
-                MenuHandler._currentPauseMenu = this;
+                MenuHandler._currentPauseMenu = self
                 MenuHandler.ableToDraw = true;
             end
         else
             MenuHandler.ableToDraw = false;
-            MenuHandler._currentPauseMenu = nil;
+            MenuHandler._currentPauseMenu = nil
             ScaleformUI.Scaleforms._pauseMenu:Dispose()
             ScaleformUI.Scaleforms.InstructionalButtons:ClearButtonList()
             AnimpostfxStop("PauseMenuIn")
