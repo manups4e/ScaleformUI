@@ -35,7 +35,6 @@ local function CreateLobbyMenu()
         LobbyMenu:HeaderPicture("ScaleformUI_Lua_duiTxd", "LobbyHeadshot") -- lobbyMenu:CrewPicture used to add a picture on the left of the HeaderPicture
         UnregisterPedheadshot(mugshot)                                     -- call it right after adding the menu.. this way the txd will be loaded correctly by the scaleform..
 
-        pool:AddPauseMenu(LobbyMenu)
         LobbyMenu:CanPlayerCloseMenu(true)
 
         local item = UIMenuItem.New("UIMenuItem", "UIMenuItem description")

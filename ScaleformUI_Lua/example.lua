@@ -364,9 +364,7 @@ function CreatePauseMenu()
     print("PedHandle => " .. handle)
     UnregisterPedheadshot(handle)            -- call it right after adding the menu.. this way the txd will be loaded correctly by the scaleform..
 
-    pool:AddPauseMenu(pauseMenuExample)
-
-    local basicTab = TextTab.New("TEXTTAB", "This is the Title!")
+     local basicTab = TextTab.New("TEXTTAB", "This is the Title!")
     basicTab:AddItem(BasicTabItem.New(
         "~BLIP_INFO_ICON~ ~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
     basicTab:AddItem(BasicTabItem.New(
@@ -690,7 +688,6 @@ function CreateLobbyMenu()
 
     UnregisterPedheadshot(handle)     -- call it right after adding the menu.. this way the txd will be loaded correctly by the scaleform..
 
-    pool:AddPauseMenu(lobbyMenu)
     lobbyMenu:CanPlayerCloseMenu(true)
     -- this is just an example..CanPlayerCloseMenu is always defaulted to true.. if you set this to false.. be sure to give the players a way out of your menu!!!
     local item = UIMenuItem.New("UIMenuItem", "UIMenuItem description")
