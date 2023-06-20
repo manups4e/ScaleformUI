@@ -235,6 +235,7 @@ function BigMessageInstance:Update()
                 ._transitionPreventAutoExpansion)
             self._transitionExecuted = true
             -- add the transition duration to the scaleform duration so the message is displayed for the full duration of the transition
+            -- calculation is based on the scaleform duration for the transition to be executed MP_BIG_MESSAGE_FREEMODE.as line 936
             self._duration = self._duration + ((self._transitionDuration * .5) * 1000)
         else
             self:Dispose()
