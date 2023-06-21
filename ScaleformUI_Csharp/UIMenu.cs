@@ -1012,6 +1012,7 @@ namespace ScaleformUI
         public bool AlternativeTitle = false;
         private bool canBuild = true;
         private bool isFading;
+        private float fadingTime = 0.1f;
 
         public PointF Offset { get; internal set; }
 
@@ -1140,7 +1141,7 @@ namespace ScaleformUI
         /// <param name="spriteName">Sprite name for the banner.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
         /// <param name="alternativeTitle">Set the alternative type to the title?.</param>
-        public UIMenu(string title, string subtitle, PointF offset, string spriteLibrary, string spriteName, bool glare = false, bool alternativeTitle = false)
+        public UIMenu(string title, string subtitle, PointF offset, string spriteLibrary, string spriteName, bool glare = false, bool alternativeTitle = false, float fadingTime = 0.1f)
         {
             _customTexture = new KeyValuePair<string, string>(spriteLibrary, spriteName);
             Offset = offset;
@@ -1152,6 +1153,7 @@ namespace ScaleformUI
             AlternativeTitle = alternativeTitle;
             MouseWheelControlEnabled = true;
             Pagination = new PaginationHandler();
+            this.fadingTime = fadingTime;
 
             SetKey(MenuControls.Up, Control.PhoneUp);
             SetKey(MenuControls.Down, Control.PhoneDown);
@@ -2215,7 +2217,7 @@ namespace ScaleformUI
             bool _animEnabled = EnableAnimation;
             EnableAnimation = false;
             while (!ScaleformUI._ui.IsLoaded) await BaseScript.Delay(0);
-            ScaleformUI._ui.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, EnableAnimation, (int)AnimationType, (int)buildingAnimation, (int)counterColor, descriptionFont.FontName, descriptionFont.FontID);
+            ScaleformUI._ui.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, EnableAnimation, (int)AnimationType, (int)buildingAnimation, (int)counterColor, descriptionFont.FontName, descriptionFont.FontID, fadingTime);
             if (Windows.Count > 0)
             {
                 foreach (UIMenuWindow wind in Windows)

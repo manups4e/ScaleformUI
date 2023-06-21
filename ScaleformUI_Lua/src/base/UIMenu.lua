@@ -54,7 +54,7 @@ end
 ---@param txtDictionary string? -- Custom texture dictionary for the menu banner background (default: commonmenu)
 ---@param txtName string? -- Custom texture name for the menu banner background (default: interaction_bgd)
 ---@param alternativeTitleStyle boolean? -- Use alternative title style (default: false)
-function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, alternativeTitleStyle)
+function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, alternativeTitleStyle, fadeTime)
     local X, Y = tonumber(x) or 0, tonumber(y) or 0
     if title ~= nil then
         title = tostring(title) or ""
@@ -113,6 +113,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         _canHe = true,
         _scaledWidth = (720 * GetAspectRatio(false)),
         isFading = false,
+        fadingTime = fadeTime or 0.1
         Controls = {
             Back = {
                 Enabled = true,
@@ -653,7 +654,7 @@ function UIMenu:BuildUpMenuAsync()
         while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
         ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self._Title, self._Subtitle, self.Position.x, self.Position.y,
             self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, true,
-            self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName, self.descFont.FontID)
+            self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName, self.descFont.FontID, self.fadingTime)
         if #self.Windows > 0 then
             for w_id, window in pairs(self.Windows) do
                 local Type, SubType = window()
