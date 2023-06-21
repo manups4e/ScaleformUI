@@ -38,12 +38,14 @@ function CreateMenu()
     bigMessageExampleMenu:AddItem(uiItemMessageType)
 
     local uiItemDisposeBigMessage = UIMenuItem.New("Dispose Big Message", "Dispose the big message")
+    uiItemDisposeBigMessage:Enabled(uiItemBigMessageManualDispose:Checked())
     bigMessageExampleMenu:AddItem(uiItemDisposeBigMessage)
 
     local manuallyDisposeBigMessage = false
 
     bigMessageExampleMenu.OnCheckboxChange = function(sender, item, checked_)
         if item == uiItemBigMessageManualDispose then
+            uiItemDisposeBigMessage:Enabled(checked_)
             manuallyDisposeBigMessage = checked_
         end
     end
@@ -126,17 +128,19 @@ function CreateMenu()
         animations[#animations + 1] = k
     end
 
-    local scrollingAnimationItem = UIMenuListItem.New("Choose the scrolling animation", animations, exampleMenu:AnimationType(),
+    local scrollingAnimationItem = UIMenuListItem.New("Choose the scrolling animation", animations,
+        exampleMenu:AnimationType(),
         "~BLIP_BARBER~ ~BLIP_INFO_ICON~ ~BLIP_TANK~ ~BLIP_OFFICE~ ~BLIP_CRIM_DRUGS~ ~BLIP_WAYPOINT~ ~INPUTGROUP_MOVE~~n~You can use Blips and Inputs in description as you prefer!~n~⚠ 🐌 ❤️ 🥺 💪🏻 You can use Emojis too!"
         , Colours.HUD_COLOUR_FREEMODE_DARK, Colours.HUD_COLOUR_FREEMODE)
     scrollingAnimationItem:BlinkDescription(true)
     exampleMenu:AddItem(scrollingAnimationItem)
 
-	local scrollItem = UIMenuListItem.New("Choose how this menu will ~o~scroll~s~!", { "CLASSIC", "PAGINATED", "ENDLESS" }, exampleMenu:ScrollingType())
+    local scrollItem = UIMenuListItem.New("Choose how this menu will ~o~scroll~s~!",
+        { "CLASSIC", "PAGINATED", "ENDLESS" }, exampleMenu:ScrollingType())
     exampleMenu:AddItem(scrollItem)
 
-    scrollItem.OnListChanged = function (menu, item, index)
-		menu:ScrollingType(index)
+    scrollItem.OnListChanged = function(menu, item, index)
+        menu:ScrollingType(index)
     end
 
     local cookItem = UIMenuItem.New("Cook!", "Cook the dish with the appropiate ingredients and ketchup.")
@@ -151,7 +155,8 @@ function CreateMenu()
         ScaleformUI.Notifications:ShowNotification("Item with label '" .. item:Label() .. "' was clicked.")
     end
 
-    local colorItem = UIMenuItem.New("~HUD_COLOUR_FREEMODE~UIMenuItem ~w~with ~HUD_COLOUR_ORANGELIGHT~Colors", "~b~Look!!~r~I can be colored ~y~too!!~w~", 21, 24)
+    local colorItem = UIMenuItem.New("~HUD_COLOUR_FREEMODE~UIMenuItem ~w~with ~HUD_COLOUR_ORANGELIGHT~Colors",
+        "~b~Look!!~r~I can be colored ~y~too!!~w~", 21, 24)
     colorItem:LeftBadge(BadgeStyle.STAR)
     exampleMenu:AddItem(colorItem)
     local sidePanelVehicleColor = UIVehicleColorPickerPanel.New(1, "ColorPicker", 6)
@@ -232,7 +237,8 @@ function CreateMenu()
     local windowMenu = UIMenu.New("Windows Submenu", "it is not a submenu.. but a totally cool separate menu now")
     local windowItem = UIMenuItem.New("Windows item", "Yeah created on its own and handled on item selection")
     windowItem:RightLabel("~HUD_COLOUR_DEGEN_CYAN~>>>")
-    exampleMenu:AddItem(windowItem)    local heritageWindow = UIMenuHeritageWindow.New(0, 0)
+    exampleMenu:AddItem(windowItem)
+    local heritageWindow = UIMenuHeritageWindow.New(0, 0)
     local detailsWindow = UIMenuDetailsWindow.New("Parents resemblance", "Dad:", "Mom:", true, {})
     windowMenu:AddWindow(heritageWindow)
     windowMenu:AddWindow(detailsWindow)
@@ -270,11 +276,11 @@ function CreateMenu()
     -- parameters are: UIMenu:SwitchTo([UIMenu]newMenu, [number]newMenuInitialIndex, [bool]inheritPrevMenuParams)
     -- if not specified, the last to parameters will always be [1, false] to allow every menu to be rendered separately
     windowItem.Activated = function(menu, item)
-        menu:SwitchTo(windowMenu, 1, true) 
+        menu:SwitchTo(windowMenu, 1, true)
     end
 
     exampleMenu.OnMenuOpen = function(menu)
-		print("Menu opened!")
+        print("Menu opened!")
     end
     exampleMenu.OnMenuClose = function(menu)
         print("Menu closed!")
@@ -286,9 +292,11 @@ function CreateMenu()
         menu:AnimationEnabled(checked)
         scrollingAnimationItem:Enabled(checked)
         if checked then
+            exampleMenu:BuildingAnimation(MenuBuildingAnimation.LEFT_RIGHT)
             scrollingAnimationItem:LeftBadge(BadgeStyle.NONE)
         else
-            scrollingAnimationItem:LeftBadge(1)
+            exampleMenu:BuildingAnimation(MenuBuildingAnimation.NONE)
+            scrollingAnimationItem:LeftBadge(BadgeStyle.LOCK)
         end
     end
 
@@ -364,7 +372,7 @@ function CreatePauseMenu()
     print("PedHandle => " .. handle)
     UnregisterPedheadshot(handle)            -- call it right after adding the menu.. this way the txd will be loaded correctly by the scaleform..
 
-     local basicTab = TextTab.New("TEXTTAB", "This is the Title!")
+    local basicTab = TextTab.New("TEXTTAB", "This is the Title!")
     basicTab:AddItem(BasicTabItem.New(
         "~BLIP_INFO_ICON~ ~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
     basicTab:AddItem(BasicTabItem.New(
@@ -847,13 +855,13 @@ function CreateLobbyMenu()
     local detailItem6 = UIMenuFreemodeDetailsItem.New("Left Label", "Right Label", true)
     local detailItem7 = UIMenuFreemodeDetailsItem.New("Left Label", "Right Label", false)
     --local missionItem4 = new("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "", false)
-    lobbyMenu.MissionPanel.AddItem(detailItem1)
-    lobbyMenu.MissionPanel.AddItem(detailItem2)
-    lobbyMenu.MissionPanel.AddItem(detailItem3)
-    lobbyMenu.MissionPanel.AddItem(detailItem4)
-    lobbyMenu.MissionPanel.AddItem(detailItem5)
-    lobbyMenu.MissionPanel.AddItem(detailItem6)
-    lobbyMenu.MissionPanel.AddItem(detailItem7)
+    lobbyMenu.MissionPanel:AddItem(detailItem1)
+    lobbyMenu.MissionPanel:AddItem(detailItem2)
+    lobbyMenu.MissionPanel:AddItem(detailItem3)
+    lobbyMenu.MissionPanel:AddItem(detailItem4)
+    lobbyMenu.MissionPanel:AddItem(detailItem5)
+    lobbyMenu.MissionPanel:AddItem(detailItem6)
+    lobbyMenu.MissionPanel:AddItem(detailItem7)
 
     lobbyMenu.SettingsColumn.OnIndexChanged = function(idx)
         ScaleformUI.Notifications:ShowSubtitle("SettingsColumn index =>~b~ " .. idx .. "~w~.")
@@ -1061,7 +1069,6 @@ CreateThread(function()
         marker:Draw()
         ScaleformUI.Notifications:DrawText(0.3, 0.9, "Ped is in Range => " .. tostring(marker:IsInRange()))
         ScaleformUI.Notifications:DrawText(0.3, 0.925, "Ped is in Marker =>" .. tostring(marker.IsInMarker))
-        ScaleformUI.Notifications:DrawText(0.3, 0.95, "pool menu count =>" .. (#pool.Menus + #pool.PauseMenus))
 
         -- example for adding/removing timerBars
         count = count + 1
@@ -1093,7 +1100,7 @@ CreateThread(function()
         end
 
         if IsControlJustPressed(0, 56) and not MenuHandler:IsAnyMenuOpen() then -- F9
-            local maxPage = math.ceil(scoreboardPlayerCount / 16);       -- 16 is the max amount of rows per page
+            local maxPage = math.ceil(scoreboardPlayerCount / 16);              -- 16 is the max amount of rows per page
 
             -- set the title of the menu, the second parameter is the page number, the third is the max page number, you can set your own labels
             ScaleformUI.Scaleforms.PlayerListScoreboard:SetTitle("Title", currentPage .. "/" .. maxPage, 2)

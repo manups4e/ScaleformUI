@@ -36,7 +36,7 @@ Citizen.CreateThread(function()
     ScaleformUI.Scaleforms.BigMessageInstance = BigMessageInstance
     ScaleformUI.Scaleforms.MidMessageInstance = MidMessageInstance
     ScaleformUI.Scaleforms.Warning = WarningInstance
-    ScaleformUI.Scaleforms.PlayerListScoreboard = PlayerListScoreboard
+    ScaleformUI.Scaleforms.PlayerListScoreboard = PlayerListScoreboard.New()
     ScaleformUI.Scaleforms.JobMissionSelector = MissionSelectorHandler
     ScaleformUI.Scaleforms.InstructionalButtons = ButtonsHandler
     ScaleformUI.Scaleforms._pauseMenu = PauseMenu.New()
