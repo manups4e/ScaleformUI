@@ -1,8 +1,8 @@
-UIMenuSeperatorItem = setmetatable({}, UIMenuSeperatorItem)
-UIMenuSeperatorItem.__index = UIMenuSeperatorItem
-UIMenuSeperatorItem.__call = function() return "UIMenuItem", "UIMenuSeperatorItem" end
+UIMenuSeparatorItem = setmetatable({}, UIMenuSeparatorItem)
+UIMenuSeparatorItem.__index = UIMenuSeparatorItem
+UIMenuSeparatorItem.__call = function() return "UIMenuItem", "UIMenuSeparatorItem" end
 
----@class UIMenuSeperatorItem : UIMenuItem
+---@class UIMenuSeparatorItem : UIMenuItem
 ---@field public Base UIMenuItem
 
 ---New
@@ -12,8 +12,8 @@ UIMenuSeperatorItem.__call = function() return "UIMenuItem", "UIMenuSeperatorIte
 ---@param highlightColor number|1
 ---@param textColor number|1
 ---@param highlightedTextColor number|2
-function UIMenuSeperatorItem.New(Text, jumpable, mainColor, highlightColor, textColor, highlightedTextColor)
-    local _UIMenuSeperatorItem = {
+function UIMenuSeparatorItem.New(Text, jumpable, mainColor, highlightColor, textColor, highlightedTextColor)
+    local _UIMenuSeparatorItem = {
         Base = UIMenuItem.New(Text or "", "", mainColor or 117, highlightColor or 1, textColor or 1,
             highlightedTextColor or 2),
         Panels = {},
@@ -21,10 +21,10 @@ function UIMenuSeperatorItem.New(Text, jumpable, mainColor, highlightColor, text
         Jumpable = jumpable,
         ItemId = 6
     }
-    return setmetatable(_UIMenuSeperatorItem, UIMenuSeperatorItem)
+    return setmetatable(_UIMenuSeparatorItem, UIMenuSeparatorItem)
 end
 
-function UIMenuSeperatorItem:ItemData(data)
+function UIMenuSeparatorItem:ItemData(data)
     if data == nil then
         return self.Base._itemData
     else
@@ -34,7 +34,7 @@ end
 
 ---SetParentMenu
 ---@param Menu table
-function UIMenuSeperatorItem:SetParentMenu(Menu)
+function UIMenuSeparatorItem:SetParentMenu(Menu)
     if Menu() == "UIMenu" then
         self.Base.ParentMenu = Menu
     else
@@ -44,7 +44,7 @@ end
 
 ---Description
 ---@param str string
-function UIMenuSeperatorItem:Description(str)
+function UIMenuSeparatorItem:Description(str)
     if tostring(str) and str ~= nil then
         self.Base:Description(tostring(str), self)
     else
@@ -54,7 +54,7 @@ end
 
 ---Text
 ---@param Text string
-function UIMenuSeperatorItem:Label(Text)
+function UIMenuSeparatorItem:Label(Text)
     if tostring(Text) and Text ~= nil then
         self.Base:Label(tostring(Text), self)
     else
@@ -62,7 +62,7 @@ function UIMenuSeperatorItem:Label(Text)
     end
 end
 
-function UIMenuSeperatorItem:MainColor(color)
+function UIMenuSeparatorItem:MainColor(color)
     if color ~= nil then
         self.Base._mainColor = color
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
@@ -74,7 +74,7 @@ function UIMenuSeperatorItem:MainColor(color)
     end
 end
 
-function UIMenuSeperatorItem:TextColor(color)
+function UIMenuSeparatorItem:TextColor(color)
     if color ~= nil then
         self.Base._textColor = color
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
@@ -86,7 +86,7 @@ function UIMenuSeperatorItem:TextColor(color)
     end
 end
 
-function UIMenuSeperatorItem:HighlightColor(color)
+function UIMenuSeparatorItem:HighlightColor(color)
     if color ~= nil then
         self.Base._highlightColor = color
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
@@ -98,7 +98,7 @@ function UIMenuSeperatorItem:HighlightColor(color)
     end
 end
 
-function UIMenuSeperatorItem:HighlightedTextColor(color)
+function UIMenuSeparatorItem:HighlightedTextColor(color)
     if color ~= nil then
         self.Base._highlightedTextColor = color
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
@@ -111,7 +111,7 @@ function UIMenuSeperatorItem:HighlightedTextColor(color)
 end
 
 -- not supported on Lobby and Pause menu yet
-function UIMenuSeperatorItem:LabelFont(fontTable)
+function UIMenuSeparatorItem:LabelFont(fontTable)
     if fontTable == nil then
         return self.Base:LabelFont()
     else
@@ -121,7 +121,7 @@ end
 
 ---Selected
 ---@param bool number
-function UIMenuSeperatorItem:Selected(bool)
+function UIMenuSeparatorItem:Selected(bool)
     if bool ~= nil then
         self.Base:Selected(ToBool(bool), self)
     else
@@ -131,7 +131,7 @@ end
 
 ---Hovered
 ---@param bool boolean
-function UIMenuSeperatorItem:Hovered(bool)
+function UIMenuSeparatorItem:Hovered(bool)
     if bool ~= nil then
         self.Base._Hovered = ToBool(bool)
     else
@@ -141,7 +141,7 @@ end
 
 ---Enabled
 ---@param bool boolean
-function UIMenuSeperatorItem:Enabled(bool)
+function UIMenuSeparatorItem:Enabled(bool)
     if bool ~= nil then
         self.Base:Enabled(bool, self)
     else
@@ -149,7 +149,7 @@ function UIMenuSeperatorItem:Enabled(bool)
     end
 end
 
-function UIMenuSeperatorItem:BlinkDescription(bool)
+function UIMenuSeparatorItem:BlinkDescription(bool)
     if bool ~= nil then
         self.Base:BlinkDescription(bool, self)
     else
@@ -158,16 +158,16 @@ function UIMenuSeperatorItem:BlinkDescription(bool)
 end
 
 ---LeftBadge
-function UIMenuSeperatorItem:LeftBadge()
+function UIMenuSeparatorItem:LeftBadge()
     error("This item does not support badges")
 end
 
 ---RightBadge
-function UIMenuSeperatorItem:RightBadge()
+function UIMenuSeparatorItem:RightBadge()
     error("This item does not support badges")
 end
 
 ---RightLabel
-function UIMenuSeperatorItem:RightLabel()
+function UIMenuSeparatorItem:RightLabel()
     error("This item does not support a right label")
 end
