@@ -1,3 +1,4 @@
+---@enum ScaleformFonts
 ScaleformFonts = {
     CHALET_LONDON_NINETEENSIXTY = ItemFont.New("$Font2"),
     SIGNPAINTER_HOUSESCRIPT = ItemFont.New("$Font5"),

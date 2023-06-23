@@ -289,16 +289,27 @@ local ignoredFormats = {
     "~PAD_RSTICK_ROTATE"
 }
 
+local function getAllIndexes(label, substr)
+    local first = 0
+    local result = {}
+    while true do
+        first = label:find(substr, first + 1)
+        if not first then break end
+        table.insert(result, first)
+    end
+    return result
+end
+
 function ReplaceRstarColorsWith(label, color)
     if not label:find("~") then return label end
     local findIndexes = getAllIndexes(label, "~")
-    
+
     local tmp = label
-    for i=#findIndexes-1, 1, -2 do
+    for i = #findIndexes - 1, 1, -2 do
         local index = findIndexes[i]
-        local length =  findIndexes[i+1] - index + 1
+        local length = findIndexes[i + 1] - index + 1
         local toContinue = false
-        for k,v in pairs(ignoredFormats) do
+        for k, v in pairs(ignoredFormats) do
             if string.starts(tmp:sub(index, length), v) then
                 toContinue = true
                 break
@@ -310,15 +321,4 @@ function ReplaceRstarColorsWith(label, color)
         end
     end
     return tmp
-end
-
-function getAllIndexes(label, substr)
-    local first, last = 0
-    local result = {}
-    while true do
-        first = label:find(substr, first+1)
-        if not first then break end
-        table.insert(result, first)
-    end
-    return result
 end

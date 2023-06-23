@@ -13,8 +13,8 @@ end
 ---@class UIMenuItem
 ---@field _label string
 ---@field _Description string
----@field _labelFont ItemFont
----@field _rightLabelFont ItemFont
+---@field _labelFont ScaleformFonts
+---@field _rightLabelFont ScaleformFonts
 ---@field _Selected boolean
 ---@field _Hovered boolean
 ---@field _Enabled boolean
@@ -44,11 +44,10 @@ end
 ---@param textColor number|1
 ---@param highlightedTextColor number|2
 function UIMenuItem.New(text, description, color, highlightColor, textColor, highlightedTextColor)
-
     local __label = (tostring(text))
     local __formatLeftLabel = (tostring(text))
     if not __formatLeftLabel:StartsWith("~") then
-        __formatLeftLabel = "~s~"..__formatLeftLabel
+        __formatLeftLabel = "~s~" .. __formatLeftLabel
     end
 
     _UIMenuItem = {
@@ -96,7 +95,8 @@ function UIMenuItem:LabelFont(itemFont)
         self._labelFont = itemFont
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, self) - 1) then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", false,
-                 self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, self) - 1), self._labelFont.FontName, self._labelFont.FontID)
+                self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, self) - 1),
+                self._labelFont.FontName, self._labelFont.FontID)
         end
     end
 end
@@ -109,7 +109,8 @@ function UIMenuItem:RightLabelFont(itemFont)
         self._rightLabelFont = itemFont
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, self) - 1) then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_RIGHT_LABEL_FONT", false,
-                 self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, self) - 1), self._rightLabelFont.FontName, self._rightLabelFont.FontID)
+                self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, self) - 1),
+                self._rightLabelFont.FontName, self._rightLabelFont.FontID)
         end
     end
 end
@@ -150,7 +151,8 @@ function UIMenuItem:Selected(bool, item)
             end
         end
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, item)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABELS", false, self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABELS", false,
+                self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
                 self._formatLeftLabel, self._formatRightLabel)
         end
     else
@@ -176,9 +178,11 @@ function UIMenuItem:Enabled(bool, item)
             self:Label(self._label)
         end
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, item)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABELS", false, self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABELS", false,
+                self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
                 self._formatLeftLabel, self._formatRightLabel)
-            ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_ITEM", false, self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
+            ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_ITEM", false,
+                self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
                 self._Enabled)
         end
     else
@@ -191,9 +195,11 @@ function UIMenuItem:Description(str, item)
         if item == nil then item = self end
         self._Description = tostring(str)
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, item)) then
-            local desc = "menu_"..BreadcrumbsHandler:CurrentDepth().."_desc_" .. (IndexOf(self.ParentMenu.Items, item)-1)
+            local desc = "menu_" ..
+            BreadcrumbsHandler:CurrentDepth() .. "_desc_" .. (IndexOf(self.ParentMenu.Items, item) - 1)
             AddTextEntry(desc, str)
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_ITEM_DESCRIPTION", false, self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)), desc)
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_ITEM_DESCRIPTION", false,
+                self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)), desc)
         end
     else
         return self._Description
@@ -205,7 +211,8 @@ function UIMenuItem:MainColor(color, item)
         if item == nil then item = self end
         self._mainColor = color
         if (self.ParentMenu ~= nil and self.ParentMenu:Visible()) and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, item)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false,
+                self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
                 self._mainColor, self._highlightColor, self._textColor, self._highlightedTextColor)
         end
     else
@@ -218,7 +225,8 @@ function UIMenuItem:TextColor(color, item)
         if item == nil then item = self end
         self._textColor = color
         if (self.ParentMenu ~= nil and self.ParentMenu:Visible()) and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, item)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false,
+                self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
                 self._mainColor, self._highlightColor, self._textColor, self._highlightedTextColor)
         end
     else
@@ -231,7 +239,8 @@ function UIMenuItem:HighlightColor(color, item)
         if item == nil then item = self end
         self._highlightColor = color
         if (self.ParentMenu ~= nil and self.ParentMenu:Visible()) and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, item)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false,
+                self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
                 self._mainColor, self._highlightColor, self._textColor, self._highlightedTextColor)
         end
     else
@@ -244,7 +253,8 @@ function UIMenuItem:HighlightedTextColor(color, item)
         if item == nil then item = self end
         self._highlightedTextColor = color
         if (self.ParentMenu ~= nil and self.ParentMenu:Visible()) and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, item)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false,
+                self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
                 self._mainColor, self._highlightColor, self._textColor, self._highlightedTextColor)
         end
     else
@@ -258,7 +268,7 @@ function UIMenuItem:Label(Text, item)
         self._label = tostring(Text)
         self._formatLeftLabel = tostring(Text)
         if not self._formatLeftLabel:StartsWith("~") then
-            self._formatLeftLabel = "~s~"..self._formatLeftLabel
+            self._formatLeftLabel = "~s~" .. self._formatLeftLabel
         end
         if self:Selected() then
             self._formatLeftLabel = self._formatLeftLabel:gsub("~w~", "~l~")
@@ -267,7 +277,8 @@ function UIMenuItem:Label(Text, item)
             self._formatLeftLabel = self._formatLeftLabel:gsub("~l~", "~s~")
         end
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, item)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_LABEL", false, self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_LABEL", false,
+                self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
                 self._formatLeftLabel)
         end
     else
@@ -280,7 +291,7 @@ function UIMenuItem:RightLabel(Text)
         self._rightLabel = tostring(Text)
         self._formatRightLabel = tostring(Text)
         if not self._formatRightLabel:StartsWith("~") then
-            self._formatRightLabel = "~s~"..self._formatRightLabel
+            self._formatRightLabel = "~s~" .. self._formatRightLabel
         end
         if self:Selected() then
             self._formatRightLabel = self._formatRightLabel:gsub("~w~", "~l~")
@@ -289,7 +300,8 @@ function UIMenuItem:RightLabel(Text)
             self._formatRightLabel = self._formatRightLabel:gsub("~l~", "~s~")
         end
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self._textColor == 1 and self._highlightedTextColor == 2 and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, self) - 1) then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_LABEL", false, self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, self)),
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_LABEL", false,
+                self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, self)),
                 self._formatRightLabel)
         end
     else
@@ -302,7 +314,8 @@ function UIMenuItem:RightBadge(Badge, item)
         if item == nil then item = self end
         self._rightBadge = tonumber(Badge)
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, item)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_BADGE", false, self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_BADGE", false,
+                self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
                 self._rightBadge)
         end
     else
@@ -315,7 +328,8 @@ function UIMenuItem:LeftBadge(Badge, item)
         if item == nil then item = self end
         self._leftBadge = tonumber(Badge)
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, item)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_BADGE", false, self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_BADGE", false,
+                self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
                 self._leftBadge)
         end
     else
@@ -336,7 +350,8 @@ function UIMenuItem:AddSidePanel(sidePanel)
         self.SidePanel = sidePanel
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, self) - 1) then
             ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false,
-                 self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, self) - 1), 0, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title,
+                self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, self) - 1), 0,
+                sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title,
                 sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
         end
     elseif sidePanel() == "UIVehicleColorPickerPanel" then
@@ -344,7 +359,8 @@ function UIMenuItem:AddSidePanel(sidePanel)
         self.SidePanel = sidePanel
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, self) - 1) then
             ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false,
-                 self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, self) - 1), 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title,
+                self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, self) - 1), 1,
+                sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title,
                 sidePanel.TitleColor)
         end
     end
@@ -354,7 +370,7 @@ function UIMenuItem:RemoveSidePanel()
     self.SidePanel = nil
     if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, self) - 1) then
         ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_SIDE_PANEL_TO_ITEM", false,
-        self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, self) - 1))
+            self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, self) - 1))
     end
 end
 
@@ -393,7 +409,8 @@ function UIMenuItem:BlinkDescription(bool, item)
         if item == nil then item = self end
         self.blinkDescription = bool
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, item)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_BLINK_DESC", false, self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_BLINK_DESC", false,
+                self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)),
                 self.blinkDescription)
         end
     else

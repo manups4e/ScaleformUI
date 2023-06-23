@@ -54,14 +54,13 @@ function UIMenuDynamicListItem:LabelFont(fontTable)
 end
 
 -- not supported on Lobby and Pause menu yet
-function UIMenuDynamicListItem:RightLabelFont(itemFont)
+function UIMenuDynamicListItem:RightLabelFont(fontTable)
     if fontTable == nil then
         return self.Base:RightLabelFont()
     else
         self.Base:RightLabelFont(fontTable)
     end
 end
-
 
 function UIMenuDynamicListItem:CurrentListItem(item)
     if item == nil then
@@ -70,7 +69,8 @@ function UIMenuDynamicListItem:CurrentListItem(item)
         self._currentItem = item
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_LISTITEM_LIST", false,
-                 self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)), tostring(self._currentItem), 0)
+                self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
+                tostring(self._currentItem), 0)
         end
     end
 end
@@ -91,7 +91,8 @@ function UIMenuDynamicListItem:AddSidePanel(sidePanel)
         self.SidePanel = sidePanel
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
             ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false,
-                 self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)), 0, sidePanel.PanelSide, sidePanel.TitleType,
+                self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)), 0,
+                sidePanel.PanelSide, sidePanel.TitleType,
                 sidePanel.Title,
                 sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
         end
@@ -168,7 +169,8 @@ function UIMenuDynamicListItem:MainColor(color)
     if (color) then
         self.Base._mainColor = color
         if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false,  self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false,
+                self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
                 self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
@@ -180,7 +182,8 @@ function UIMenuDynamicListItem:TextColor(color)
     if (color) then
         self.Base._textColor = color
         if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false,  self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false,
+                self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
                 self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
@@ -192,7 +195,8 @@ function UIMenuDynamicListItem:HighlightColor(color)
     if (color) then
         self.Base._highlightColor = color
         if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false,  self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false,
+                self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
                 self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
@@ -204,7 +208,8 @@ function UIMenuDynamicListItem:HighlightedTextColor(color)
     if (color) then
         self.Base._highlightedTextColor = color
         if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false,  self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false,
+                self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
                 self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
