@@ -13,7 +13,7 @@
     <BaseOutputPath>..\CompiledLibs\</BaseOutputPath>
     <Title>ScaleformUI</Title>
     <PackageProjectUrl>https://github.com/manups4e/ScaleformUI</PackageProjectUrl>
-    <Copyright>Copyright Leonardo Emanuele</Copyright>
+    <Copyright>Copyright Leonardo Emanuele Colecchia</Copyright>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <DebugType>embedded</DebugType>
