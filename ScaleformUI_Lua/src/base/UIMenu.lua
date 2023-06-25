@@ -789,7 +789,7 @@ function UIMenu:_itemCreation(page, pageIndex, before, overflow)
             textEntry,
             item:Enabled(), item:BlinkDescription(), item:Index(), item._Type, item._Color, item.Base._mainColor,
             item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor)
-    elseif SubType == "UIMenuSeperatorItem" then
+    elseif SubType == "UIMenuSeparatorItem" then
         ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, before, 6, menuIndex, item.Base._formatLeftLabel,
             textEntry,
             item:Enabled(), item:BlinkDescription(), item.Jumpable, item.Base._mainColor,
