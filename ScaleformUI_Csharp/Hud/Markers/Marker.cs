@@ -28,7 +28,7 @@ namespace ScaleformUI
         public bool Rotate { get; set; }
         public bool FaceCamera { get; set; }
         public bool IsInMarker { get; private set; }
-        public bool IsInRange { get => MenuPool.PlayerPed.IsInRangeOf(Position, Distance); }
+        public bool IsInRange { get => MenuHandler.PlayerPed.IsInRangeOf(Position, Distance); }
         public bool CheckZ { get; set; }
         /// <summary>
         /// It doesn't work on water and under the map!
@@ -98,12 +98,12 @@ namespace ScaleformUI
             World.DrawMarker(MarkerType, Position, Direction, Rotation, Scale, Color, BobUpDown, FaceCamera, Rotate);
             if (CheckZ)
             {
-                float distanceSquared = Position.DistanceToSquared(MenuPool.PlayerPed.Position);
+                float distanceSquared = Position.DistanceToSquared(MenuHandler.PlayerPed.Position);
                 IsInMarker = (distanceSquared < Math.Pow(Scale.X / 2, 2) || distanceSquared < Math.Pow(Scale.Y / 2, 2)) || distanceSquared < Math.Pow(Scale.Z / 2, 2);
             }
             else
             {
-                var distanceSquared = Position.DistanceToSquared2D(MenuPool.PlayerPed.Position);
+                var distanceSquared = Position.DistanceToSquared2D(MenuHandler.PlayerPed.Position);
                 IsInMarker = distanceSquared <= Math.Pow(Scale.X / 2, 2) || distanceSquared <= Math.Pow(Scale.Y / 2, 2);
             }
         }

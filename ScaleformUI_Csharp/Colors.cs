@@ -2,7 +2,7 @@
 
 namespace ScaleformUI
 {
-    public abstract class Colors
+    public static class Colors
     {
         public static readonly Color Transparent = Color.FromArgb(16777215);
         public static readonly Color AliceBlue = Color.FromArgb(-984833);
@@ -349,5 +349,102 @@ namespace ScaleformUI
         public static readonly Color DegenMagenta = Color.FromArgb(255, 255, 0, 255);
         public static readonly Color Stunt1 = Color.FromArgb(255, 38, 136, 234);
         public static readonly Color Stunt2 = Color.FromArgb(255, 224, 50, 50);
+
+        private static readonly List<string> notColours = new List<string>()
+        {
+            "~n",
+            "~h",
+            "~bold",
+            "~italic",
+            "~ws",
+            "~wanted_star",
+            "~nrt",
+            "~EX_R*",
+            "~BLIP_",
+            "~a",
+            "~1",
+            "~a_",
+            "~1_",
+            "~x",
+            "~z",
+            "~INPUT_",
+            "~INPUTGROUP_",
+            "~ACCEPT",
+            "~CANCEL",
+            "~PAD_UP",
+            "~PAD_DOWN",
+            "~PAD_LEFT",
+            "~PAD_RIGHT",
+            "~PAD_A",
+            "~PAD_B",
+            "~PAD_X",
+            "~PAD_Y",
+            "~PAD_START",
+            "~PAD_BACK",
+            "~PAD_LB",
+            "~PAD_LT",
+            "~PAD_RB",
+            "~PAD_RT",
+            "~PAD_DPAD_UP",
+            "~PAD_DPAD_DOWN",
+            "~PAD_DPAD_LEFT",
+            "~PAD_DPAD_RIGHT",
+            "~PAD_DPAD_NONE",
+            "~PAD_DPAD_ALL",
+            "~PAD_DPAD_UPDOWN",
+            "~PAD_DPAD_LEFTRIGHT",
+            "~PAD_LSTICK_UP",
+            "~PAD_LSTICK_DOWN",
+            "~PAD_LSTICK_LEFT",
+            "~PAD_LSTICK_RIGHT",
+            "~PAD_LSTICK_NONE",
+            "~PAD_LSTICK_ALL",
+            "~PAD_LSTICK_UPDOWN",
+            "~PAD_LSTICK_LEFTRIGHT",
+            "~PAD_LSTICK_ROTATE",
+            "~PAD_RSTICK_UP",
+            "~PAD_RSTICK_DOWN",
+            "~PAD_RSTICK_LEFT",
+            "~PAD_RSTICK_RIGHT",
+            "~PAD_RSTICK_NONE",
+            "~PAD_RSTICK_ALL",
+            "~PAD_RSTICK_UPDOWN",
+            "~PAD_RSTICK_LEFTRIGHT",
+            "~PAD_RSTICK_ROTATE"
+        };
+
+        public static string ReplaceRstarColorsWith(this string label, string color)
+        {
+            if (!label.Contains("~")) return label;
+            List<int> foundIndexes = new List<int>();
+            for (int i = label.IndexOf('~'); i > -1; i = label.IndexOf('~', i + 1))
+            {
+                // for loop end when i=-1 || ('~' not found)
+                foundIndexes.Add(i);
+            }
+
+            // we start from the end of the label to not fuck with the indexes (if we start from 0 the first index is right.. the others might change?
+            string tmp = label;
+            for (int i = foundIndexes.Count - 2; i > -1; i -= 2)
+            {
+                int index = foundIndexes[i];
+                int length = foundIndexes[i + 1] - index + 1;
+                // not a colour to be changed.. we can skip it.
+                if (notColours.Any(x => tmp.Substring(index, length).StartsWith(x))) continue;
+
+                string @char = "";
+                // we handle it in couples.. since usually colors are handled in pairs.
+
+                if (tmp.Substring(index + 2, 1) == "~") // single char format
+                    @char = tmp.Substring(index, length);
+                else if (tmp.Substring(index, 11) == "~HUD_COLOUR") // classic color naming format
+                    @char = tmp.Substring(index, length);
+                else if (tmp.Substring(index, 4) == "~HC_") // short color naming format (can be either HC_13 or HC_FREEMODE styled
+                    @char = tmp.Substring(index, length);
+                if (string.IsNullOrEmpty(@char)) continue;
+                tmp = tmp.Replace(@char, color);
+            }
+            return tmp;
+        }
     }
 }

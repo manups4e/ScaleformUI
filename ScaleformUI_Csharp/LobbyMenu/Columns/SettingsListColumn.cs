@@ -1,5 +1,4 @@
 ﻿using ScaleformUI.PauseMenu;
-using System.Collections.Generic;
 
 namespace ScaleformUI.LobbyMenu
 {
@@ -10,7 +9,6 @@ namespace ScaleformUI.LobbyMenu
         public int ParentTab { get; internal set; }
         public event IndexChanged OnIndexChanged;
         public List<UIMenuItem> Items { get; internal set; }
-        public PauseMenuBase Parent { get; internal set; }
         public SettingsListColumn(string label, HudColor color) : base(label, color)
         {
             Items = new List<UIMenuItem>();

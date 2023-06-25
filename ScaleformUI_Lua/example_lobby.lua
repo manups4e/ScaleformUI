@@ -1,5 +1,5 @@
 ---@diagnostic disable: missing-parameter
-local pool = MenuPool.New()
+local pool = MenuHandler.New()
 LobbyMenu = nil
 
 local currentColumnId = 1
@@ -35,7 +35,6 @@ local function CreateLobbyMenu()
         LobbyMenu:HeaderPicture("ScaleformUI_Lua_duiTxd", "LobbyHeadshot") -- lobbyMenu:CrewPicture used to add a picture on the left of the HeaderPicture
         UnregisterPedheadshot(mugshot)                                     -- call it right after adding the menu.. this way the txd will be loaded correctly by the scaleform..
 
-        pool:AddPauseMenu(LobbyMenu)
         LobbyMenu:CanPlayerCloseMenu(true)
 
         local item = UIMenuItem.New("UIMenuItem", "UIMenuItem description")
@@ -486,7 +485,6 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:Show", function(FocusLevel, canclose,
 
     LobbyMenu:Visible(true)
     LobbyMenu:FocusLevel(FocusLevel)
-    ScaleformUI.Scaleforms.InstructionalButtons:Enabled(false)
 
     local instructional_buttons = Scaleform.Request("instructional_buttons")
     instructional_buttons:CallFunction("CLEAR_ALL")
@@ -548,7 +546,6 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:Show", function(FocusLevel, canclose,
                     LobbyMenu.MissionPanel.TextureDict, LobbyMenu.MissionPanel.TextureName)
 
                 TriggerEvent("ScaleformUI_Lua:playermenu:Show", 2, true, function()
-                    print(111)
                     TriggerEvent("ScaleformUI_Lua:lobbymenu:Show", 1, true)
                 end)
             end

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ScaleformUI
+﻿namespace ScaleformUI
 {
     public enum UIMenuCheckboxStyle
     {
@@ -75,10 +73,9 @@ namespace ScaleformUI
             set
             {
                 _checked = value;
-                if (Parent != null && Parent.Visible)
+                if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    var it = Parent.MenuItems.IndexOf(this);
-                    ScaleformUI._ui.CallFunction("SET_INPUT_EVENT", 16, it, value);
+                    ScaleformUI._ui.CallFunction("SET_INPUT_EVENT", 16, Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), value);
                 }
             }
         }

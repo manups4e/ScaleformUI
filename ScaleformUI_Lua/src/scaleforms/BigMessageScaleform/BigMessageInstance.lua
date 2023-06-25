@@ -1,4 +1,13 @@
-BigMessageInstance = setmetatable({}, BigMessageInstance)
+BigMessageInstance = setmetatable({
+    _sc = nil --[[@type Scaleform]],
+    _start = 0,
+    _duration = 0,
+    _transition = "TRANSITION_OUT", -- TRANSITION_UP, TRANSITION_OUT, TRANSITION_DOWN supported
+    _transitionDuration = 0.15,
+    _transitionPreventAutoExpansion = false,
+    _transitionExecuted = false,
+    _manualDispose = false
+}, BigMessageInstance)
 BigMessageInstance.__index = BigMessageInstance
 BigMessageInstance.__call = function()
     return "BigMessageInstance"
@@ -36,21 +45,6 @@ end
     SHOW_CENTERED_MP_MESSAGE_LARGE - TRANSITION_OUT,
     SHOW_SHARD_WASTED_MP_MESSAGE - TRANSITION_OUT,
 ]]
----Creates a new BigMessageInstance
----@return BigMessageInstance
-function BigMessageInstance.New()
-    local data = {
-        _sc = nil --[[@type Scaleform]],
-        _start = 0,
-        _duration = 0,
-        _transition = "TRANSITION_OUT", -- TRANSITION_UP, TRANSITION_OUT, TRANSITION_DOWN supported
-        _transitionDuration = 0.15,
-        _transitionPreventAutoExpansion = false,
-        _transitionExecuted = false,
-        _manualDispose = false
-    }
-    return setmetatable(data, BigMessageInstance)
-end
 
 ---Loads the MP_BIG_MESSAGE_FREEMODE scaleform
 ---@return nil
@@ -228,6 +222,8 @@ end
 ---Renders the scaleform and checks if the timer has expired, if so it will dispose the scaleform
 ---@return nil
 function BigMessageInstance:Update()
+    if self._sc == nil or self._sc == 0 then return end
+    ScaleformUI.WaitTime = 0
     self._sc:Render2D()
 
     -- if the user wants to manually dispose the scaleform, don't do it automatically
@@ -239,6 +235,7 @@ function BigMessageInstance:Update()
                 ._transitionPreventAutoExpansion)
             self._transitionExecuted = true
             -- add the transition duration to the scaleform duration so the message is displayed for the full duration of the transition
+            -- calculation is based on the scaleform duration for the transition to be executed MP_BIG_MESSAGE_FREEMODE.as line 936
             self._duration = self._duration + ((self._transitionDuration * .5) * 1000)
         else
             self:Dispose()

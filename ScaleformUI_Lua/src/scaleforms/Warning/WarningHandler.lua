@@ -1,4 +1,10 @@
-WarningInstance = setmetatable({}, WarningInstance)
+WarningInstance = setmetatable({
+    _sc = nil --[[@type Scaleform]],
+    _disableControls = false,
+    _buttonList = {},
+    OnButtonPressed = function(button)
+    end
+}, WarningInstance)
 WarningInstance.__index = WarningInstance
 WarningInstance.__call = function()
     return "WarningInstance"
@@ -11,19 +17,6 @@ end
 ---@field OnButtonPressed fun(button: InstructionalButton)
 ---@field public Update fun(self:WarningInstance):nil
 ---@field public IsShowing fun(self:WarningInstance):boolean
-
----Creates a new WarningInstance instance
----@return WarningInstance
-function WarningInstance.New()
-    local data = {
-        _sc = nil --[[@type Scaleform]],
-        _disableControls = false,
-        _buttonList = {},
-        OnButtonPressed = function(button)
-        end
-    }
-    return setmetatable(data, WarningInstance)
-end
 
 ---Returns whether the warning is currently showing
 ---@return boolean
@@ -116,7 +109,6 @@ function WarningInstance:ShowWarningWithButtons(title, subtitle, prompt, buttons
         ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self._buttonList)
         ScaleformUI.Scaleforms.InstructionalButtons.UseMouseButtons = true
         self._sc:CallFunction("SHOW_POPUP_WARNING", false, 1000, title, subtitle, prompt, showBackground, warningType, errorMsg)
-        ScaleformUI.Scaleforms.InstructionalButtons:Enabled(true)
     end, function(value)
         print("Error loading warning: " .. value)
     end)
@@ -127,6 +119,7 @@ function WarningInstance:Update()
     if self._sc == nil then return end
     if not self._sc:IsLoaded() then return end
 
+    ScaleformUI.WaitTime = 0
     self._sc:Render2D()
     if self._disableControls then
         ScaleformUI.Scaleforms.InstructionalButtons:Draw()
@@ -134,7 +127,7 @@ function WarningInstance:Update()
             if IsControlJustPressed(1, v.GamepadButton) or IsControlJustPressed(1, v.KeyboardButton) then
                 self.OnButtonPressed(v)
                 self:Dispose()
-                ScaleformUI.Scaleforms.InstructionalButtons:Enabled(false)
+                ScaleformUI.Scaleforms.InstructionalButtons:ClearButtonList()
                 ScaleformUI.Scaleforms.InstructionalButtons.UseMouseButtons = false
             end
         end

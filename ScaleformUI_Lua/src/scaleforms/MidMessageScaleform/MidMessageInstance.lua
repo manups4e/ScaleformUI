@@ -1,4 +1,9 @@
-MidMessageInstance = setmetatable({}, MidMessageInstance)
+MidMessageInstance = setmetatable({
+    _sc = nil, --[[@type Scaleform]]
+    _start = 0,
+    _timer = 0,
+    _hasAnimatedOut = false,
+}, MidMessageInstance)
 MidMessageInstance.__index = MidMessageInstance
 MidMessageInstance.__call = function()
     return "MidMessageInstance"
@@ -13,17 +18,6 @@ end
 ---@field public Load fun(self:MidMessageInstance):nil
 ---@field public Dispose fun(self:MidMessageInstance, force:boolean):nil
 ---@field public Update fun(self:MidMessageInstance):nil
-
----Creates a new MidMessageInstance object
----@return MidMessageInstance
-function MidMessageInstance.New()
-    local _sc = nil --[[@type Scaleform]]
-    local _start = 0
-    local _timer = 0
-    local _hasAnimatedOut = false
-    local data = { _sc = _sc, _start = _start, _timer = _timer, _hasAnimatedOut = _hasAnimatedOut }
-    return setmetatable(data, MidMessageInstance)
-end
 
 ---Loads the MIDSIZED_MESSAGE scaleform
 function MidMessageInstance:Load()
@@ -58,6 +52,8 @@ end
 
 ---Shows a message on the screen
 function MidMessageInstance:Update()
+    if self._sc == nil or self._sc == 0 then return end
+    ScaleformUI.WaitTime = 0
     self._sc:Render2D()
     if self._start ~= 0 and GlobalGameTimer - self._start > self._timer then
         if not self._hasAnimatedOut then

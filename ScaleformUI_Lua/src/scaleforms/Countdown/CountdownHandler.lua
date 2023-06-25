@@ -1,4 +1,9 @@
-CountdownHandler = setmetatable({}, CountdownHandler)
+CountdownHandler = setmetatable({
+    _sc = nil --[[@type Scaleform]],
+    _start = 0,
+    _timer = 0,
+    _colour = { r = 255, g = 255, b = 255, a = 255 }
+}, CountdownHandler)
 CountdownHandler.__index = CountdownHandler
 CountdownHandler.__call = function()
     return "CountdownHandler"
@@ -15,18 +20,6 @@ end
 ---@field public Update fun(self:CountdownHandler):nil
 ---@field public ShowMessage fun(self:CountdownHandler, message:string):nil
 ---@field public Start fun(self:CountdownHandler, number:number?, hudColour:number?, countdownAudioName:string?, countdownAudioRef:string?, goAudioName:string?, goAudioRef:string?):promise
-
----Creates a new CountdownHandler
----@return CountdownHandler
-function CountdownHandler.New()
-    local data = {
-        _sc = nil --[[@type Scaleform]],
-        _start = 0,
-        _timer = 0,
-        _colour = { r = 255, g = 255, b = 255, a = 255 }
-    }
-    return setmetatable(data, CountdownHandler)
-end
 
 ---Loads the COUNTDOWN scaleform
 ---@return promise
@@ -62,6 +55,7 @@ end
 
 ---Update is called every frame to render the COUNTDOWN scaleform to the screen by mainScaleform.lua
 function CountdownHandler:Update()
+    if self._sc == nil or self._sc == 0 then return end
     self._sc:Render2D()
 end
 

@@ -73,7 +73,7 @@ function Scaleform:CallFunction(theFunction, returndata, ...)
                     assert(false, "^1ScaleformUI [ERROR]: ^7Unknown type ^1" .. type .. "^7.")
                 end
             elseif sType == "string" then
-                if arg[i]:find("^desc_{") or arg[i]:find("^menu_lobby_desc_{") or arg[i]:find("^PauseMenu_") or arg[i]:find("^menu_pause_playerTab{") then
+                if arg[i]:find("^menu_") or arg[i]:find("^menu_lobby_desc_{") or arg[i]:find("^PauseMenu_") or arg[i]:find("^menu_pause_playerTab{") then
                     BeginTextCommandScaleformString(arg[i])
                     EndTextCommandScaleformString_2()
                 else

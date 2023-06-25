@@ -61,8 +61,10 @@ namespace ScaleformUI
 
         private async Task ScaleformUIThread_Tick()
         {
-            if (InstructionalButtons._sc != null && InstructionalButtons.Enabled && ((InstructionalButtons.ControlButtons != null || InstructionalButtons.ControlButtons.Count != 0) || InstructionalButtons.IsSaving))
+            if (InstructionalButtons._sc != null && (InstructionalButtons.ControlButtons != null && InstructionalButtons.ControlButtons.Count != 0) || InstructionalButtons.IsSaving)
                 InstructionalButtons.Update();
+            if (MenuHandler.ableToDraw)
+                MenuHandler.ProcessMenus();
             if (Game.IsPaused) return;
             if (Warning._sc != null)
                 Warning.Update();

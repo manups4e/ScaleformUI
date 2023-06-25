@@ -1,6 +1,5 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using System.Collections.Generic;
 
 namespace ScaleformUI
 {
@@ -71,20 +70,21 @@ namespace ScaleformUI
 
         public async void _getValue()
         {
-            var it = this.ParentItem.Parent.MenuItems.IndexOf(this.ParentItem);
-            var van = this.ParentItem.Panels.IndexOf(this);
+            int it = this.ParentItem.Parent.Pagination.GetScaleformIndex(this.ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
+            int van = this.ParentItem.Panels.IndexOf(this);
             API.BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "GET_VALUE_FROM_PANEL");
             API.ScaleformMovieMethodAddParamInt(it);
             API.ScaleformMovieMethodAddParamInt(van);
-            var ret = API.EndScaleformMovieMethodReturnValue();
+            int ret = API.EndScaleformMovieMethodReturnValue();
             while (!API.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
             _value = API.GetScaleformMovieMethodReturnValueInt(ret);
         }
 
         public void _setValue(int val)
         {
-            var it = ParentItem.Parent.MenuItems.IndexOf(this.ParentItem);
-            var van = ParentItem.Panels.IndexOf(this);
+
+            int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
+            int van = ParentItem.Panels.IndexOf(this);
             ScaleformUI._ui.CallFunction("SET_COLOR_PANEL_VALUE", it, van, val);
         }
     }

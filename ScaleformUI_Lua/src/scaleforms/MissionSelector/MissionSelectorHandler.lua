@@ -1,4 +1,22 @@
-MissionSelectorHandler = setmetatable({}, MissionSelectorHandler)
+MissionSelectorHandler = setmetatable({
+    _sc = nil,
+    _start = 0,
+    _timer = 0,
+    enabled = false,
+    alreadyVoted = false,
+    Votes = { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    VotedFor = -1,
+    MaxVotes = 0,
+    SelectedCard = 1,
+    VotesColor = Colours.HUD_COLOUR_BLUE,
+    JobTitle = {
+        Title = "",
+        Label = "",
+        Votes = "",
+    },
+    Cards = {},
+    Buttons = {},
+}, MissionSelectorHandler)
 MissionSelectorHandler.__index = MissionSelectorHandler
 MissionSelectorHandler.__call = function()
     return "MissionSelectorHandler"
@@ -31,31 +49,6 @@ end
 ---@field public ShowPlayerVote fun(self:MissionSelectorHandler, card:number, playerName:string, colour:Colours, showCheckmark:boolean, flashBackground:boolean):nil
 ---@field public Load fun(self:MissionSelectorHandler):nil
 ---@field public Update fun(self:MissionSelectorHandler):nil
-
----Creates a new MissionSelectorHandler object
----@return MissionSelectorHandler
-function MissionSelectorHandler.New()
-    local data = {
-        _sc = nil,
-        _start = 0,
-        _timer = 0,
-        enabled = false,
-        alreadyVoted = false,
-        Votes = { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-        VotedFor = -1,
-        MaxVotes = 0,
-        SelectedCard = 1,
-        VotesColor = Colours.HUD_COLOUR_BLUE,
-        JobTitle = {
-            Title = "",
-            Label = "",
-            Votes = "",
-        },
-        Cards = {},
-        Buttons = {},
-    }
-    return setmetatable(data, MissionSelectorHandler)
-end
 
 ---Sets the title of the mission selector
 ---@param title string
@@ -205,6 +198,8 @@ local success, event_type, context, item_id
 
 ---Updates the mission selector
 function MissionSelectorHandler:Update()
+    if self._sc == nil or not self.enabled then return end
+    ScaleformUI.WaitTime = 0
     self._sc:Render2D()
     DisableAllControlActions(0)
     DisableAllControlActions(1)

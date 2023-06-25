@@ -68,37 +68,87 @@ namespace ScaleformUI.Scaleforms
             API.BeginScaleformMovieMethod(Handle, function);
             foreach (object argument in arguments)
             {
-                if (argument is int argInt)
+                switch (argument)
                 {
-                    API.PushScaleformMovieMethodParameterInt(argInt);
-                }
-                else if (argument is string || argument is char)
-                {
-                    API.PushScaleformMovieMethodParameterString(argument.ToString());
-                }
-                else if (argument is double || argument is float)
-                {
-                    API.PushScaleformMovieMethodParameterFloat((float)argument);
-                }
-                else if (argument is bool argBool)
-                {
-                    API.PushScaleformMovieMethodParameterBool(argBool);
-                }
-                else if (argument is ScaleformLabel argLabel)
-                {
-                    API.BeginTextCommandScaleformString(argLabel.Label);
-                    API.EndTextCommandScaleformString();
-                }
-                else if (argument is ScaleformLiteralString argLiteral)
-                {
-                    API.ScaleformMovieMethodAddParamTextureNameString_2(argLiteral.LiteralString);
-                }
-                else
-                {
-                    throw new ArgumentException(string.Format("Unknown argument type '{0}' passed to scaleform with handle {1}...", argument.GetType().Name, Handle), "arguments");
+                    case int argInt:
+                        API.PushScaleformMovieMethodParameterInt(argInt);
+                        break;
+                    case string:
+                    case char:
+                        API.PushScaleformMovieMethodParameterString(argument.ToString());
+                        break;
+                    case double:
+                    case float:
+                        API.PushScaleformMovieMethodParameterFloat((float)argument);
+                        break;
+                    case bool argBool:
+                        API.PushScaleformMovieMethodParameterBool(argBool);
+                        break;
+                    case ScaleformLabel argLabel:
+                        API.BeginTextCommandScaleformString(argLabel.Label);
+                        API.EndTextCommandScaleformString();
+                        break;
+                    case ScaleformLiteralString argLiteral:
+                        API.ScaleformMovieMethodAddParamTextureNameString_2(argLiteral.LiteralString);
+                        break;
+                    default:
+                        throw new ArgumentException(string.Format("Unknown argument type '{0}' passed to scaleform with handle {1}...", argument.GetType().Name, Handle), "arguments");
                 }
             }
             API.EndScaleformMovieMethod();
+        }
+
+        private int CallFunctionReturnInternal(string function, params object[] arguments)
+        {
+            API.BeginScaleformMovieMethod(Handle, function);
+            foreach (object argument in arguments)
+            {
+                switch (argument)
+                {
+                    case int argInt:
+                        API.PushScaleformMovieMethodParameterInt(argInt);
+                        break;
+                    case string:
+                    case char:
+                        API.PushScaleformMovieMethodParameterString(argument.ToString());
+                        break;
+                    case double:
+                    case float:
+                        API.PushScaleformMovieMethodParameterFloat((float)argument);
+                        break;
+                    case bool argBool:
+                        API.PushScaleformMovieMethodParameterBool(argBool);
+                        break;
+                    case ScaleformLabel argLabel:
+                        API.BeginTextCommandScaleformString(argLabel.Label);
+                        API.EndTextCommandScaleformString();
+                        break;
+                    case ScaleformLiteralString argLiteral:
+                        API.ScaleformMovieMethodAddParamTextureNameString_2(argLiteral.LiteralString);
+                        break;
+                    default:
+                        throw new ArgumentException(string.Format("Unknown argument type '{0}' passed to scaleform with handle {1}...", argument.GetType().Name, Handle), "arguments");
+                }
+            }
+            return API.EndScaleformMovieMethodReturnValue();
+        }
+        public async Task<int> CallFunctionReturnValueInt(string function, params object[] arguments)
+        {
+            int ret = CallFunctionReturnInternal(function, arguments);
+            while (!API.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            return API.GetScaleformMovieFunctionReturnInt(ret);
+        }
+        public async Task<bool> CallFunctionReturnValueBool(string function, params object[] arguments)
+        {
+            int ret = CallFunctionReturnInternal(function, arguments);
+            while (!API.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            return API.GetScaleformMovieMethodReturnValueBool(ret);
+        }
+        public async Task<string> CallFunctionReturnValueString(string function, params object[] arguments)
+        {
+            int ret = CallFunctionReturnInternal(function, arguments);
+            while (!API.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            return API.GetScaleformMovieFunctionReturnString(ret);
         }
 
         public void Render2D()
@@ -122,5 +172,26 @@ namespace ScaleformUI.Scaleforms
         {
             API.DrawScaleformMovie_3d(Handle, position.X, position.Y, position.Z, rotation.X, rotation.Y, rotation.Z, 2.0f, 2.0f, 1.0f, scale.X, scale.Y, scale.Z, 2);
         }
+    }
+
+    public static class TypeCache<T>
+    {
+        static TypeCache()
+        {
+            Type = typeof(T);
+            IsSimpleType = true;
+            switch (Type.GetTypeCode(Type))
+            {
+                case TypeCode.Object:
+                case TypeCode.DBNull:
+                case TypeCode.Empty:
+                case TypeCode.DateTime:
+                    IsSimpleType = false;
+                    break;
+            }
+        }
+
+        public static bool IsSimpleType { get; }
+        public static Type Type { get; }
     }
 }

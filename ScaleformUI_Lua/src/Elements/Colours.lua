@@ -226,3 +226,99 @@ Colours = {
     HUD_COLOUR_TECH_RED = 222,
     HUD_COLOUR_TECH_GREEN_VERY_DARK = 223,
 }
+
+local ignoredFormats = {
+    "~n",
+    "~h",
+    "~bold",
+    "~italic",
+    "~ws",
+    "~wanted_star",
+    "~nrt",
+    "~EX_R*",
+    "~BLIP_",
+    "~a",
+    "~1",
+    "~a_",
+    "~1_",
+    "~x",
+    "~z",
+    "~INPUT_",
+    "~INPUTGROUP_",
+    "~ACCEPT",
+    "~CANCEL",
+    "~PAD_UP",
+    "~PAD_DOWN",
+    "~PAD_LEFT",
+    "~PAD_RIGHT",
+    "~PAD_A",
+    "~PAD_B",
+    "~PAD_X",
+    "~PAD_Y",
+    "~PAD_START",
+    "~PAD_BACK",
+    "~PAD_LB",
+    "~PAD_LT",
+    "~PAD_RB",
+    "~PAD_RT",
+    "~PAD_DPAD_UP",
+    "~PAD_DPAD_DOWN",
+    "~PAD_DPAD_LEFT",
+    "~PAD_DPAD_RIGHT",
+    "~PAD_DPAD_NONE",
+    "~PAD_DPAD_ALL",
+    "~PAD_DPAD_UPDOWN",
+    "~PAD_DPAD_LEFTRIGHT",
+    "~PAD_LSTICK_UP",
+    "~PAD_LSTICK_DOWN",
+    "~PAD_LSTICK_LEFT",
+    "~PAD_LSTICK_RIGHT",
+    "~PAD_LSTICK_NONE",
+    "~PAD_LSTICK_ALL",
+    "~PAD_LSTICK_UPDOWN",
+    "~PAD_LSTICK_LEFTRIGHT",
+    "~PAD_LSTICK_ROTATE",
+    "~PAD_RSTICK_UP",
+    "~PAD_RSTICK_DOWN",
+    "~PAD_RSTICK_LEFT",
+    "~PAD_RSTICK_RIGHT",
+    "~PAD_RSTICK_NONE",
+    "~PAD_RSTICK_ALL",
+    "~PAD_RSTICK_UPDOWN",
+    "~PAD_RSTICK_LEFTRIGHT",
+    "~PAD_RSTICK_ROTATE"
+}
+
+local function getAllIndexes(label, substr)
+    local first = 0
+    local result = {}
+    while true do
+        first = label:find(substr, first + 1)
+        if not first then break end
+        table.insert(result, first)
+    end
+    return result
+end
+
+function ReplaceRstarColorsWith(label, color)
+    if not label:find("~") then return label end
+    local findIndexes = getAllIndexes(label, "~")
+
+    local tmp = label
+    for i = #findIndexes - 1, 1, -2 do
+        local index = findIndexes[i]
+        local length = findIndexes[i + 1] - index + 1
+        local toContinue = false
+        for k, v in pairs(ignoredFormats) do
+            if string.starts(tmp:sub(index, length), v) then
+                toContinue = true
+                break
+            end
+        end
+        if not toContinue then
+            local char = tmp:sub(index, length)
+            tmp = tmp:gsub(char, color)
+        end
+    end
+    return tmp
+end

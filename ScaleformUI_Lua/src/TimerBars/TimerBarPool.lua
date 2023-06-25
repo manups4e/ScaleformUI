@@ -19,7 +19,7 @@ end
 
 function TimerBarPool:Draw()
     local offset = 0
-    if ScaleformUI.Scaleforms.InstructionalButtons:Enabled() or ScaleformUI.Scaleforms.InstructionalButtons.IsSaving then
+    if  #ScaleformUI.Scaleforms.InstructionalButtons.ControlButtons > 0 or ScaleformUI.Scaleforms.InstructionalButtons.IsSaving then
         offset = 9
     end
     for k, v in pairs(self.Bars) do
