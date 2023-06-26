@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ScaleformUI.PauseMenu
+﻿namespace ScaleformUI.PauseMenu
 {
     public class TextTab : BaseTab
     {

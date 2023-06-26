@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ScaleformUI
+﻿namespace ScaleformUI
 {
     public class UIMenuSeparatorItem : UIMenuItem
     {

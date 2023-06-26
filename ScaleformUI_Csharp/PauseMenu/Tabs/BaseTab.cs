@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using EventHandler = System.EventHandler;
 
 namespace ScaleformUI.PauseMenu
 {

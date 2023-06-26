@@ -1,6 +1,4 @@
-﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace ScaleformUI
 {
@@ -56,13 +54,13 @@ namespace ScaleformUI
         {
             int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(ParentItem));
             int van = ParentItem.Panels.IndexOf(this);
-            API.BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_PERCENT_PANEL_POSITION_RETURN_VALUE");
-            API.ScaleformMovieMethodAddParamInt(it);
-            API.ScaleformMovieMethodAddParamInt(van);
-            API.ScaleformMovieMethodAddParamFloat(mouse.X);
-            int ret = API.EndScaleformMovieMethodReturnValue();
-            while (!API.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            _value = Convert.ToSingle(API.GetScaleformMovieMethodReturnValueString(ret));
+            BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "SET_PERCENT_PANEL_POSITION_RETURN_VALUE");
+            ScaleformMovieMethodAddParamInt(it);
+            ScaleformMovieMethodAddParamInt(van);
+            ScaleformMovieMethodAddParamFloat(mouse.X);
+            int ret = EndScaleformMovieMethodReturnValue();
+            while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            _value = Convert.ToSingle(GetScaleformMovieMethodReturnValueString(ret));
         }
 
         internal void PercentagePanelChange()

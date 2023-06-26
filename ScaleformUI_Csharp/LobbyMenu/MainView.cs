@@ -1,7 +1,4 @@
-﻿using CitizenFX.Core;
-using static CitizenFX.Core.Native.API;
-
-namespace ScaleformUI.LobbyMenu
+﻿namespace ScaleformUI.LobbyMenu
 {
     public delegate void LobbyMenuOpenEvent(MainView menu);
     public delegate void LobbyMenuCloseEvent(MainView menu);
@@ -316,7 +313,6 @@ namespace ScaleformUI.LobbyMenu
         private int eventType = 0;
         private int itemId = 0;
         private int context = 0;
-        private int unused = 0;
         private bool cursorPressed;
         public override async void ProcessMouse()
         {
@@ -330,7 +326,8 @@ namespace ScaleformUI.LobbyMenu
             SetInputExclusive(2, 237);
             SetInputExclusive(2, 238);
 
-            bool success = GetScaleformMovieCursorSelection(_pause._lobby.Handle, ref eventType, ref context, ref itemId, ref unused);
+            bool recieved = false;
+            bool success = GetScaleformMovieCursorSelection(_pause._lobby.Handle, ref recieved, ref eventType, ref context, ref itemId);
             if (success)
             {
                 switch (eventType)
@@ -389,7 +386,7 @@ namespace ScaleformUI.LobbyMenu
                                     col.CurrentSelection = itemId;
                                     if (col.Items[itemId].ClonePed != null)
                                     {
-                                        int ped = ClonePed(col.Items[itemId].ClonePed.Handle, 0, true, true);
+                                        int ped = ClonePed(col.Items[itemId].ClonePed.Handle, false, true, true);
                                         await BaseScript.Delay(1);
                                         GivePedToPauseMenu(ped, 2);
                                         SetPauseMenuPedSleepState(true);
@@ -529,7 +526,7 @@ namespace ScaleformUI.LobbyMenu
                 PlayersColumn.CurrentSelection = split[1];
                 if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
                 {
-                    int ped = ClonePed(PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed.Handle, 0, true, true);
+                    int ped = ClonePed(PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed.Handle, false, true, true);
                     await BaseScript.Delay(1);
                     GivePedToPauseMenu(ped, 2);
                     SetPauseMenuPedSleepState(true);
@@ -560,7 +557,7 @@ namespace ScaleformUI.LobbyMenu
                 PlayersColumn.CurrentSelection = split[1];
                 if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
                 {
-                    Ped ped = new Ped(ClonePed(PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed.Handle, 0, true, true));
+                    Ped ped = new Ped(ClonePed(PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed.Handle, false, true, true));
                     await BaseScript.Delay(0);
                     GivePedToPauseMenu(ped.Handle, 2);
                     SetPauseMenuPedSleepState(true);
@@ -595,7 +592,7 @@ namespace ScaleformUI.LobbyMenu
                     PlayersColumn.CurrentSelection = split[1];
                     if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
                     {
-                        Ped ped = new Ped(ClonePed(PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed.Handle, 0, true, true));
+                        Ped ped = new Ped(ClonePed(PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed.Handle, false, true, true));
                         await BaseScript.Delay(0);
                         GivePedToPauseMenu(ped.Handle, 2);
                         SetPauseMenuPedSleepState(true);
@@ -665,7 +662,7 @@ namespace ScaleformUI.LobbyMenu
                     PlayersColumn.CurrentSelection = split[1];
                     if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
                     {
-                        Ped ped = new Ped(ClonePed(PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed.Handle, 0, true, true));
+                        Ped ped = new Ped(ClonePed(PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed.Handle, false, true, true));
                         await BaseScript.Delay(0);
                         GivePedToPauseMenu(ped.Handle, 2);
                         SetPauseMenuPedSleepState(true);

@@ -1,9 +1,4 @@
-﻿using CitizenFX.Core;
-using System;
-using System.Drawing;
-using static CitizenFX.Core.Native.API;
-
-namespace ScaleformUI
+﻿namespace ScaleformUI
 {
     public class Marker
     {

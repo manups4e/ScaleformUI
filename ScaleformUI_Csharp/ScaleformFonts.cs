@@ -1,11 +1,4 @@
-﻿using CitizenFX.Core.Native;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ScaleformUI
+﻿namespace ScaleformUI
 {
     public static class ScaleformFonts
     {
@@ -72,8 +65,8 @@ namespace ScaleformUI
         public static ItemFont RegisterFont(string gfxName, string fontName)
         {
             ItemFont ret = new ItemFont(fontName);
-            API.RegisterFontFile(gfxName);
-            ret.FontID = API.RegisterFontId(fontName);
+            RegisterFontFile(gfxName);
+            ret.FontID = RegisterFontId(fontName);
             return ret;
         }
     }

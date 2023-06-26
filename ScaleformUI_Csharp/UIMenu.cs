@@ -1,9 +1,6 @@
-using CitizenFX.Core;
-using CitizenFX.Core.UI;
 using ScaleformUI.Scaleforms;
 using System.Drawing;
-using static CitizenFX.Core.Native.API;
-using Control = CitizenFX.Core.Control;
+using Control = CitizenFX.FiveM.Control;
 
 namespace ScaleformUI
 {
@@ -1562,7 +1559,8 @@ namespace ScaleformUI
             SetInputExclusive(2, 237);
             SetInputExclusive(2, 238);
 
-            bool success = GetScaleformMovieCursorSelection(ScaleformUI._ui.Handle, ref eventType, ref context, ref itemId, ref unused);
+            bool recieved = false;
+            bool success = GetScaleformMovieCursorSelection(ScaleformUI._ui.Handle, ref recieved, ref eventType, ref context, ref itemId);
 
             if (success && !isBuilding)
             {

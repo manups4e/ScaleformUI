@@ -1,6 +1,4 @@
-﻿using CitizenFX.Core;
-
-namespace ScaleformUI.Scaleforms.MultiplayerChat
+﻿namespace ScaleformUI.Scaleforms.MultiplayerChat
 {
     public class MultiplayerChatHandler
     {

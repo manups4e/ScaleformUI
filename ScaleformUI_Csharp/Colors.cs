@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace ScaleformUI
+﻿namespace ScaleformUI
 {
     public static class Colors
     {

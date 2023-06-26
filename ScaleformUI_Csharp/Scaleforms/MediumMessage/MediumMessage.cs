@@ -1,5 +1,4 @@
-﻿using CitizenFX.Core;
-using ScaleformUI.Scaleforms;
+﻿using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI
 {

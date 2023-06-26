@@ -1,6 +1,4 @@
-﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using ScaleformUI.LobbyMenu;
+﻿using ScaleformUI.LobbyMenu;
 using ScaleformUI.PauseMenu;
 
 namespace ScaleformUI
@@ -41,7 +39,7 @@ namespace ScaleformUI
                 if (clonePed != null)
                     CreateClonedPed();
                 else
-                    API.ClearPedInPauseMenu();
+                    ClearPedInPauseMenu();
             }
         }
 
@@ -53,7 +51,7 @@ namespace ScaleformUI
                 _clonePedAsleep = value;
                 // Don't ask me why its in reverse, it just is.
                 // They should have called it SetPauseMenuPedAwakeState
-                API.SetPauseMenuPedSleepState(!_clonePedAsleep);
+                SetPauseMenuPedSleepState(!_clonePedAsleep);
             }
         }
 
@@ -63,7 +61,7 @@ namespace ScaleformUI
             set
             {
                 _clonePedLighting = value;
-                API.SetPauseMenuPedLighting(_clonePedLighting);
+                SetPauseMenuPedLighting(_clonePedLighting);
             }
         }
 
@@ -135,9 +133,9 @@ namespace ScaleformUI
             // clone the ped we cached away for the pause menu
             _clonePed = _clonePedForPauseMenu.Clone();
 
-            API.GivePedToPauseMenu(_clonePed.Handle, 2);
-            API.SetPauseMenuPedSleepState(!_clonePedAsleep);
-            API.SetPauseMenuPedLighting(_clonePedLighting);
+            GivePedToPauseMenu(_clonePed.Handle, 2);
+            SetPauseMenuPedSleepState(!_clonePedAsleep);
+            SetPauseMenuPedLighting(_clonePedLighting);
 
             HidePed(_clonePed);
         }

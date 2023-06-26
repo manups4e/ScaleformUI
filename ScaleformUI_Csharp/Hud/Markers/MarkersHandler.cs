@@ -1,9 +1,4 @@
-﻿using CitizenFX.Core;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ScaleformUI
+﻿namespace ScaleformUI
 {
     public class MarkersHandler : BaseScript
     {
@@ -15,7 +10,7 @@ namespace ScaleformUI
             Tick += MainHandler;
         }
 
-        public async Task MainHandler()
+        public async Coroutine MainHandler()
         {
             if (_markerList.Count == 0) return;
 

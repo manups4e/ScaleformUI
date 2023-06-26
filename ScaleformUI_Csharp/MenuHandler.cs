@@ -1,7 +1,4 @@
-﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
-
-namespace ScaleformUI
+﻿namespace ScaleformUI
 {
     // TODO: Add ClearHistory() / CloseAndClearBreadcrumbs() method to handle close and reset.
 
@@ -18,7 +15,7 @@ namespace ScaleformUI
         {
             get
             {
-                int handle = API.PlayerPedId();
+                int handle = PlayerPedId();
 
                 if (_ped is null || handle != _ped.Handle)
                 {

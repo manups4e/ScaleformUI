@@ -1,9 +1,4 @@
-﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using CitizenFX.Core.UI;
-using System;
-using System.Drawing;
-using static CitizenFX.Core.Native.API;
+﻿using System.Drawing;
 
 namespace ScaleformUI
 {
@@ -44,8 +39,8 @@ namespace ScaleformUI
             // Get the resolution while maintaining the ratio.
             SizeF res = ResolutionMaintainRatio;
             // Then, get the position of mouse on the screen while relative to the current resolution
-            int mouseX = (int)Math.Round(API.GetDisabledControlNormal(0, 239) * res.Width);
-            int mouseY = (int)Math.Round(API.GetDisabledControlNormal(0, 240) * res.Height);
+            int mouseX = (int)Math.Round(GetDisabledControlNormal(0, 239) * res.Width);
+            int mouseY = (int)Math.Round(GetDisabledControlNormal(0, 240) * res.Height);
             // And check if the mouse is on the rectangle bounds
             bool isX = mouseX >= topLeft.X && mouseX <= topLeft.X + boxSize.Width;
             bool isY = mouseY > topLeft.Y && mouseY < topLeft.Y + boxSize.Height;
@@ -75,8 +70,8 @@ namespace ScaleformUI
             Game.EnableControlThisFrame(0, Control.CursorY);
             SizeF res = ResolutionMaintainRatio;
 
-            int mouseX = (int)Math.Round(API.GetDisabledControlNormal(0, 239) * res.Width);
-            int mouseY = (int)Math.Round(API.GetDisabledControlNormal(0, 240) * res.Height);
+            int mouseX = (int)Math.Round(GetDisabledControlNormal(0, 239) * res.Width);
+            int mouseY = (int)Math.Round(GetDisabledControlNormal(0, 240) * res.Height);
 
             mouseX += DrawOffset.X;
             mouseY += DrawOffset.Y;
@@ -139,7 +134,7 @@ namespace ScaleformUI
         /// <param name="font">Game font used for measurements.</param>
         /// <param name="scale">The scale of the characters.</param>
         /// <returns>The width of the string based on the font and scale.</returns>
-        public static float GetTextWidth(string text, CitizenFX.Core.UI.Font font, float scale)
+        public static float GetTextWidth(string text, Font font, float scale)
         {
             // Start by requesting the game to start processing a width measurement
             SetTextEntryForWidth("CELL_EMAIL_BCON"); // _BEGIN_TEXT_COMMAND_WIDTH
@@ -162,7 +157,7 @@ namespace ScaleformUI
         /// <param name="position">The position of the text.</param>
         /// <param name="font">The font to use.</param>
         /// <returns>The number of lines used.</returns>
-        public static int GetLineCount(string text, Point position, CitizenFX.Core.UI.Font font, float scale, int wrap)
+        public static int GetLineCount(string text, Point position, Font font, float scale, int wrap)
         {
             // Tell the game that we are going to request the number of lines
             BeginTextCommandLineCount("CELL_EMAIL_BCON"); // _BEGIN_TEXT_COMMAND_LINE_COUNT
@@ -192,7 +187,7 @@ namespace ScaleformUI
             return GetTextScreenLineCount(x, y); // _GET_TEXT_SCREEN_LINE_COUNT
         }
 
-        public static int GetLineCount(string text, PointF position, CitizenFX.Core.UI.Font font, float scale, float wrap)
+        public static int GetLineCount(string text, PointF position, Font font, float scale, float wrap)
         {
             // Tell the game that we are going to request the number of lines
             BeginTextCommandLineCount("CELL_EMAIL_BCON"); // _BEGIN_TEXT_COMMAND_LINE_COUNT

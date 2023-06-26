@@ -1,5 +1,4 @@
-﻿using CitizenFX.Core.Native;
-using ScaleformUI.LobbyMenu;
+﻿using ScaleformUI.LobbyMenu;
 
 namespace ScaleformUI
 {
@@ -444,12 +443,12 @@ namespace ScaleformUI
                 if (descriptionHash != 0) descriptionHash = 0;
                 if (Parent is not null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    API.AddTextEntry($"menu_{BreadcrumbsHandler.CurrentDepth}_desc_{Parent.MenuItems.IndexOf(this)}", description);
-                    API.BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "UPDATE_ITEM_DESCRIPTION");
-                    API.ScaleformMovieMethodAddParamInt(Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)));
-                    API.BeginTextCommandScaleformString($"menu_{BreadcrumbsHandler.CurrentDepth}_desc_{Parent.MenuItems.IndexOf(this)}");
-                    API.EndTextCommandScaleformString_2();
-                    API.EndScaleformMovieMethod();
+                    AddTextEntry($"menu_{BreadcrumbsHandler.CurrentDepth}_desc_{Parent.MenuItems.IndexOf(this)}", description);
+                    BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "UPDATE_ITEM_DESCRIPTION");
+                    ScaleformMovieMethodAddParamInt(Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)));
+                    BeginTextCommandScaleformString($"menu_{BreadcrumbsHandler.CurrentDepth}_desc_{Parent.MenuItems.IndexOf(this)}");
+                    EndTextCommandScaleformString_2();
+                    EndScaleformMovieMethod();
                 }
             }
         }
@@ -466,12 +465,12 @@ namespace ScaleformUI
                     description = string.Empty;
                 if (Parent is not null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    API.BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "UPDATE_ITEM_DESCRIPTION");
-                    API.ScaleformMovieMethodAddParamInt(Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)));
-                    API.BeginTextCommandScaleformString("STRTNM1");
-                    API.AddTextComponentSubstringTextLabelHashKey(descriptionHash);
-                    API.EndTextCommandScaleformString_2();
-                    API.EndScaleformMovieMethod();
+                    BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "UPDATE_ITEM_DESCRIPTION");
+                    ScaleformMovieMethodAddParamInt(Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)));
+                    BeginTextCommandScaleformString("STRTNM1");
+                    AddTextComponentSubstringTextLabelHashKey(descriptionHash);
+                    EndTextCommandScaleformString_2();
+                    EndScaleformMovieMethod();
                 }
             }
         }

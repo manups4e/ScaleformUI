@@ -1,6 +1,5 @@
 ﻿
 using System.Drawing;
-using Font = CitizenFX.Core.UI.Font;
 
 namespace ScaleformUI
 {

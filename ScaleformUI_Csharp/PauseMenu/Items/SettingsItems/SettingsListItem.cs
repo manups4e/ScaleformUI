@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ScaleformUI.PauseMenu
+﻿namespace ScaleformUI.PauseMenu
 {
     public delegate void SettingsListItemChanged(SettingsListItem item, int value, string listItem);
     public delegate void SettingsListItemSelected(SettingsListItem item, int value, string listItem);

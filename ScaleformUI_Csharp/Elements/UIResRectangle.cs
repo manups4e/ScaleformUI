@@ -1,13 +1,11 @@
-﻿using CitizenFX.Core.Native;
-using CitizenFX.Core.UI;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace ScaleformUI
 {
     /// <summary>
     /// A rectangle in 1080 pixels height system.
     /// </summary>
-    public class UIResRectangle : CitizenFX.Core.UI.Rectangle
+    public class UIResRectangle : CitizenFX.FiveM.UI.Rectangle
     {
         public UIResRectangle()
         { }
@@ -32,7 +30,7 @@ namespace ScaleformUI
             float x = ((Position.X + offset.Width) / width) + w * 0.5f;
             float y = ((Position.Y + offset.Height) / height) + h * 0.5f;
 
-            API.DrawRect(x, y, w, h, Color.R, Color.G, Color.B, Color.A);
+            DrawRect(x, y, w, h, Color.R, Color.G, Color.B, Color.A);
         }
 
         public static void Draw(float xPos, float yPos, int boxWidth, int boxHeight, Color color)
@@ -48,7 +46,7 @@ namespace ScaleformUI
             float x = ((xPos) / width) + w * 0.5f;
             float y = ((yPos) / height) + h * 0.5f;
 
-            API.DrawRect(x, y, w, h, color.R, color.G, color.B, color.A);
+            DrawRect(x, y, w, h, color.R, color.G, color.B, color.A);
         }
     }
 }

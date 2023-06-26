@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ScaleformUI.LobbyMenu
+﻿namespace ScaleformUI.LobbyMenu
 {
     public class MissionDetailsPanel : Column
     {

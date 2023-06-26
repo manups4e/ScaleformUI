@@ -1,6 +1,4 @@
-﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using ScaleformUI.Scaleforms;
+﻿using ScaleformUI.Scaleforms;
 using ScaleformUI.Scaleforms.Countdown;
 using ScaleformUI.Scaleforms.RankBar;
 
@@ -11,7 +9,7 @@ namespace ScaleformUI
         /// <summary>
         /// Provides the current game time in milliseconds.
         /// </summary>
-        public static int GameTime = API.GetGameTimer();
+        public static int GameTime = GetGameTimer();
 
         public static PauseMenuScaleform PauseMenu { get; set; }
         public static MediumMessageHandler MedMessageInstance { get; set; }
@@ -39,18 +37,18 @@ namespace ScaleformUI
             InstructionalButtons.Load();
             RankBarInstance = new();
             CountdownInstance = new();
-            Tick += ScaleformUIThread_Tick;
-            Tick += OnUpdateGlobalGameTimerAsync;
+            Tick += ScaleformUIThreadAsync;
+            Tick += UpdateGlobalGameTimerAsync;
 
             EventHandlers["onResourceStop"] += new Action<string>((resName) =>
             {
-                if (resName == API.GetCurrentResourceName())
+                if (resName == GetCurrentResourceName())
                 {
-                    if (Game.IsPaused && API.GetCurrentFrontendMenuVersion() == -2060115030)
+                    if (Game.IsPaused && GetCurrentFrontendMenuVersion() == -2060115030)
                     {
-                        API.ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY_NO_BACKGROUND"), false, -1);
-                        API.AnimpostfxStop("PauseMenuIn");
-                        API.AnimpostfxPlay("PauseMenuOut", 800, false);
+                        ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY_NO_BACKGROUND"), false, -1);
+                        AnimpostfxStop("PauseMenuIn");
+                        AnimpostfxPlay("PauseMenuOut", 800, false);
                     }
                     _ui.CallFunction("CLEAR_ALL");
                     _ui.Dispose();
@@ -59,7 +57,7 @@ namespace ScaleformUI
             });
         }
 
-        private async Task ScaleformUIThread_Tick()
+        private async Coroutine ScaleformUIThreadAsync()
         {
             if (InstructionalButtons._sc != null && (InstructionalButtons.ControlButtons != null && InstructionalButtons.ControlButtons.Count != 0) || InstructionalButtons.IsSaving)
                 InstructionalButtons.Update();
@@ -88,10 +86,10 @@ namespace ScaleformUI
         /// Updates the game time.
         /// </summary>
         /// <returns></returns>
-        public async Task OnUpdateGlobalGameTimerAsync()
+        public async Coroutine UpdateGlobalGameTimerAsync()
         {
             await BaseScript.Delay(100);
-            GameTime = API.GetGameTimer();
+            GameTime = GetGameTimer();
         }
     }
 }

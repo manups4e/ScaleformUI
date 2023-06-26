@@ -1,6 +1,4 @@
-﻿using CitizenFX.Core;
-using ScaleformUI.LobbyMenu;
-using static CitizenFX.Core.Native.API;
+﻿using ScaleformUI.LobbyMenu;
 
 namespace ScaleformUI.PauseMenu
 {
@@ -871,7 +869,6 @@ namespace ScaleformUI.PauseMenu
         private int eventType = 0;
         private int itemId = 0;
         private int context = 0;
-        private int unused = 0;
 
         public override async void ProcessMouse()
         {
@@ -886,7 +883,8 @@ namespace ScaleformUI.PauseMenu
             SetInputExclusive(2, 237);
             SetInputExclusive(2, 238);
 
-            bool successHeader = GetScaleformMovieCursorSelection(ScaleformUI.PauseMenu._header.Handle, ref eventType, ref context, ref itemId, ref unused);
+            bool recieved = false;
+            bool successHeader = GetScaleformMovieCursorSelection(ScaleformUI.PauseMenu._header.Handle, ref recieved, ref eventType, ref context, ref itemId);
             if (successHeader)
             {
                 switch (eventType)

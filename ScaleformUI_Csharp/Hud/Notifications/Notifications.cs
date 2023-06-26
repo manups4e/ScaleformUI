@@ -1,12 +1,4 @@
-﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using CitizenFX.Core.UI;
-using System;
-using System.Drawing;
-using System.Threading.Tasks;
-using static CitizenFX.Core.Native.API;
-using Font = CitizenFX.Core.UI.Font;
-namespace ScaleformUI
+﻿namespace ScaleformUI
 {
     public enum BusySpinner
     {
@@ -173,7 +165,7 @@ namespace ScaleformUI
         public static async void ShowStatNotification(int newProgress, int oldProgress, string title, bool blink = false, bool showBrief = true)
         {
             AddTextEntry("ScaleformUIStatsNotification", title);
-            Tuple<int, string> mug = await GetPedMugshotAsync(Game.PlayerPed);
+            Tuple<int, CString> mug = await GetPedMugshotAsync(Game.PlayerPed);
             BeginTextCommandThefeedPost("PS_UPDATE");
             AddTextComponentInteger(newProgress);
             Function.Call(Hash.END_TEXT_COMMAND_THEFEED_POST_STATS, "ScaleformUIStatsNotification", 2, newProgress, oldProgress, false, mug.Item2, mug.Item2);
@@ -402,7 +394,7 @@ namespace ScaleformUI
         /// <param name="Shadow">True to set a text shadow</param>
         /// <param name="Outline">True to outline the text</param>
         /// <param name="Wrap">Wrap the text at desired boundries</param>
-        public static void DrawText(float x, float y, string text, Color color, CitizenFX.Core.UI.Font font, Alignment TextAlignment, bool Shadow = false, bool Outline = false, float Wrap = 0)
+        public static void DrawText(float x, float y, string text, Color color, Font font, Alignment TextAlignment, bool Shadow = false, bool Outline = false, float Wrap = 0)
         {
             int screenw = Screen.Resolution.Width;
             int screenh = Screen.Resolution.Height;
@@ -462,14 +454,14 @@ namespace ScaleformUI
             BusyspinnerOff();
         }
 
-        internal static async Task<Tuple<int, string>> GetPedMugshotAsync(Ped ped, bool transparent = false)
+        internal static async Task<Tuple<int, CString>> GetPedMugshotAsync(Ped ped, bool transparent = false)
         {
             var mugshot = RegisterPedheadshot(ped.Handle);
             if (transparent) mugshot = RegisterPedheadshotTransparent(ped.Handle);
             while (!IsPedheadshotReady(mugshot)) await BaseScript.Delay(1);
-            var txd = GetPedheadshotTxdString(mugshot);
+            var txd = (CString)GetPedheadshotTxdString(mugshot);
 
-            return new Tuple<int, string>(mugshot, txd);
+            return new Tuple<int, CString>(mugshot, txd);
         }
     }
 }

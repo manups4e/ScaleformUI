@@ -1,8 +1,4 @@
-﻿using CitizenFX.Core.Native;
-using CitizenFX.Core.UI;
-using System;
-using System.Drawing;
-using Font = CitizenFX.Core.UI.Font;
+﻿using System.Drawing;
 
 namespace ScaleformUI
 {
@@ -23,7 +19,7 @@ namespace ScaleformUI
         }
 
         public UIResText(string caption, PointF position, float scale, Color color, Font font, Alignment justify)
-            : base(caption, position, scale, color, font, CitizenFX.Core.UI.Alignment.Left)
+            : base(caption, position, scale, color, font, CitizenFX.FiveM.UI.Alignment.Left)
         {
             TextAlignment = justify;
         }
@@ -56,7 +52,7 @@ namespace ScaleformUI
             for (int i = 0; i < input.Length; i += maxByteLengthPerString)
             {
                 string substr = (input.Substring(i, Math.Min(maxByteLengthPerString, input.Length - i)));
-                API.AddTextComponentString(substr);
+                AddTextComponentString(substr);
             }
         }
 
@@ -78,7 +74,7 @@ namespace ScaleformUI
             var utf8ByteCount = enc.GetByteCount(input);
             if (utf8ByteCount < maxByteLengthPerString)
             {
-                API.AddTextComponentString(input);
+                AddTextComponentString(input);
                 return;
             }
 
@@ -90,13 +86,13 @@ namespace ScaleformUI
                 if (enc.GetByteCount(input.Substring(startIndex, length)) > maxByteLengthPerString)
                 {
                     string substr = (input.Substring(startIndex, length - 1));
-                    API.AddTextComponentString(substr);
+                    AddTextComponentString(substr);
 
                     i -= 1;
                     startIndex = (startIndex + length - 1);
                 }
             }
-            API.AddTextComponentString(input.Substring(startIndex, input.Length - startIndex));
+            AddTextComponentString(input.Substring(startIndex, input.Length - startIndex));
         }
 
         [Obsolete("Use ScreenTools.GetTextWidth instead.", true)]
@@ -130,75 +126,34 @@ namespace ScaleformUI
             float x = (Position.X) / width;
             float y = (Position.Y) / height;
 
-            API.SetTextFont((int)Font);
-            API.SetTextScale(1.0f, Scale);
-            API.SetTextColour(Color.R, Color.G, Color.B, Color.A);
+            SetTextFont((int)Font);
+            SetTextScale(1.0f, Scale);
+            SetTextColour(this.Color.R, this.Color.G, this.Color.B, this.Color.A);
             if (Shadow)
-                API.SetTextDropShadow();
+                SetTextDropShadow();
             if (Outline)
-                API.SetTextOutline();
+                SetTextOutline();
             switch (TextAlignment)
             {
                 case Alignment.Center:
-                    API.SetTextCentre(true);
+                    SetTextCentre(true);
                     break;
                 case Alignment.Right:
-                    API.SetTextRightJustify(true);
-                    API.SetTextWrap(0, x);
+                    SetTextRightJustify(true);
+                    SetTextWrap(0, x);
                     break;
             }
 
             if (Wrap != 0)
             {
                 float xsize = (Position.X + Wrap) / width;
-                API.SetTextWrap(x, xsize);
+                SetTextWrap(x, xsize);
             }
 
-            API.SetTextEntry("jamyfafi");
+            SetTextEntry("jamyfafi");
             AddLongString(Caption);
 
-            API.DrawText(x, y);
+            DrawText(x, y);
         }
-
-        //public static void Draw(string caption, int xPos, int yPos, Font font, float scale, UnknownColors color, Alignment alignment, bool Shadow, bool outline, int wordWrap)
-        //{
-        //    int screenw = Screen.Resolution.Width;
-        //    int screenh = Screen.Resolution.Height;
-        //    const float height = 1080f;
-        //    float ratio = (float)screenw / screenh;
-        //    var width = height * ratio;
-
-        //    float x = (xPos) / width;
-        //    float y = (yPos) / height;
-
-        //    Function.Call(Hash.SET_TEXT_FONT, (int)font);
-        //    Function.Call(Hash.SET_TEXT_SCALE, 1.0f, scale);
-        //    Function.Call(Hash.SET_TEXT_COLOUR, color.R, color.G, color.B, color.A);
-        //    if (Shadow)
-        //        Function.Call(Hash.SET_TEXT_DROP_SHADOW);
-        //    if (outline)
-        //        Function.Call(Hash.SET_TEXT_OUTLINE);
-        //    switch (alignment)
-        //    {
-        //        case Alignment.Center:
-        //            Function.Call(Hash.SET_TEXT_CENTRE, true);
-        //            break;
-        //        case Alignment.Right:
-        //            Function.Call(Hash.SET_TEXT_RIGHT_JUSTIFY, true);
-        //            Function.Call(Hash.SET_TEXT_WRAP, 0, x);
-        //            break;
-        //    }
-
-        //    if (wordWrap != 0)
-        //    {
-        //        float xsize = (xPos + wordWrap) / width;
-        //        Function.Call(Hash.SET_TEXT_WRAP, x, xsize);
-        //    }
-
-        //    Function.Call(Hash._SET_TEXT_ENTRY, "jamyfafi");
-        //    AddLongString(caption);
-
-        //    Function.Call(Hash._DRAW_TEXT, x, y);
-        //}
     }
 }

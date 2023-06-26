@@ -1,5 +1,4 @@
 ﻿using ScaleformUI.PauseMenu;
-using System.Collections.Generic;
 
 namespace ScaleformUI.LobbyMenu
 {

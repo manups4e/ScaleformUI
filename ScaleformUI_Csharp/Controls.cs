@@ -1,8 +1,4 @@
-﻿using CitizenFX.Core;
-using System.Linq;
-using static CitizenFX.Core.Native.API;
-
-namespace ScaleformUI
+﻿namespace ScaleformUI
 {
     /// <summary>
     /// Class that provides tools to handle the game controls.

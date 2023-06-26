@@ -1,7 +1,4 @@
-﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
-
-namespace ScaleformUI
+﻿namespace ScaleformUI
 {
     public enum ColorPanelType { Hair, Makeup }
     public class UIMenuColorPanel : UIMenuPanel
@@ -72,12 +69,12 @@ namespace ScaleformUI
         {
             int it = this.ParentItem.Parent.Pagination.GetScaleformIndex(this.ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
             int van = this.ParentItem.Panels.IndexOf(this);
-            API.BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "GET_VALUE_FROM_PANEL");
-            API.ScaleformMovieMethodAddParamInt(it);
-            API.ScaleformMovieMethodAddParamInt(van);
-            int ret = API.EndScaleformMovieMethodReturnValue();
-            while (!API.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            _value = API.GetScaleformMovieMethodReturnValueInt(ret);
+            BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "GET_VALUE_FROM_PANEL");
+            ScaleformMovieMethodAddParamInt(it);
+            ScaleformMovieMethodAddParamInt(van);
+            int ret = EndScaleformMovieMethodReturnValue();
+            while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            _value = GetScaleformMovieMethodReturnValueInt(ret);
         }
 
         public void _setValue(int val)

@@ -1,6 +1,4 @@
-﻿using CitizenFX.Core.Native;
-
-namespace ScaleformUI
+﻿namespace ScaleformUI
 {
     public class PauseMenuBase
     {
@@ -29,12 +27,12 @@ namespace ScaleformUI
         }
         public virtual void Draw()
         {
-            API.DisableControlAction(0, 199, true);
-            API.DisableControlAction(0, 200, true);
-            API.DisableControlAction(1, 199, true);
-            API.DisableControlAction(1, 200, true);
-            API.DisableControlAction(2, 199, true);
-            API.DisableControlAction(2, 200, true);
+            DisableControlAction(0, 199, true);
+            DisableControlAction(0, 200, true);
+            DisableControlAction(1, 199, true);
+            DisableControlAction(1, 200, true);
+            DisableControlAction(2, 199, true);
+            DisableControlAction(2, 200, true);
         }
     }
 }
