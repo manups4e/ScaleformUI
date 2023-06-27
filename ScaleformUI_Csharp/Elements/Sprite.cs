@@ -55,7 +55,7 @@ namespace ScaleformUI
         /// <param name="textureName"></param>
         /// <param name="position"></param>
         /// <param name="size"></param>
-        public Sprite(string textureDict, string textureName, PointF position, SizeF size) : this(textureDict, textureName, position, size, 0f, Color.FromArgb(255, 255, 255, 255))
+        public Sprite(string textureDict, string textureName, PointF position, SizeF size) : this(textureDict, textureName, position, size, 0f, new Color(255, 255, 255, 255))
         {
         }
 
