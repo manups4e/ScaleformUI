@@ -142,15 +142,15 @@ namespace ScaleformUI
         /// <param name="type">The <see cref="NotificationType"/></param>
         /// <param name="showInBrief">True to show it in Briefing page in Pause Menu</param>
         /// <param name="sound">If true a sound will be played on notification appearing</param>
-        public static ScaleformUINotification ShowAdvancedNotification(string title, string subtitle, string text, string iconSet = "Default", string icon = "Default", HudColor bgColor = HudColor.NONE, Color flashColor = new Color(), bool blink = false, NotificationType type = NotificationType.Default, bool showInBrief = true, bool sound = true)
+        public static ScaleformUINotification ShowAdvancedNotification(string title, string subtitle, string text, string iconSet = "Default", string icon = "Default", HudColor bgColor = HudColor.NONE, Color? flashColor = null, bool blink = false, NotificationType type = NotificationType.Default, bool showInBrief = true, bool sound = true)
         {
             AddTextEntry("ScaleformUIAdvancedNotification", text);
             BeginTextCommandThefeedPost("ScaleformUIAdvancedNotification");
             AddTextComponentSubstringPlayerName(text);
             if (bgColor != HudColor.NONE)
                 SetNotificationBackgroundColor((int)bgColor);
-            if (!flashColor.IsEmpty && !blink)
-                SetNotificationFlashColor(flashColor.R, flashColor.G, flashColor.B, flashColor.A);
+            if (flashColor is not null && !blink)
+                SetNotificationFlashColor((int)flashColor?.R, (int)flashColor?.G, (int)flashColor?.B, (int)flashColor?.A);
             if (sound) Audio.PlaySoundFrontend("DELETE", "HUD_DEATHMATCH_SOUNDSET");
             return new ScaleformUINotification(EndTextCommandThefeedPostMessagetext(iconSet, icon, true, (int)type, title, subtitle));
             //return new Notification(EndTextCommandThefeedPostTicker(blink, showInBrief));
