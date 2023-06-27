@@ -882,7 +882,7 @@ function UIMenu:ProcessControl()
         return
     end
 
-    if UpdateOnscreenKeyboard() == 0 or IsWarningMessageActive() or BreadcrumbsHandler.SwitchInProgress or self.isFading then return end
+    if UpdateOnscreenKeyboard() == 0 or IsWarningMessageActive() or ScaleformUI.Scaleforms.Warning:IsShowing() or BreadcrumbsHandler.SwitchInProgress or self.isFading then return end
 
     if self.Controls.Back.Enabled then
         if IsDisabledControlJustReleased(0, 177) or IsDisabledControlJustReleased(1, 177) or IsDisabledControlJustReleased(2, 177) or IsDisabledControlJustReleased(0, 199) or IsDisabledControlJustReleased(1, 199) or IsDisabledControlJustReleased(2, 199) then
