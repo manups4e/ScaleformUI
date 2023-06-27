@@ -149,8 +149,8 @@ namespace ScaleformUI
             AddTextComponentSubstringPlayerName(text);
             if (bgColor != HudColor.NONE)
                 SetNotificationBackgroundColor((int)bgColor);
-            if (flashColor is not null && !blink)
-                SetNotificationFlashColor((int)flashColor?.R, (int)flashColor?.G, (int)flashColor?.B, (int)flashColor?.A);
+            if (flashColor.HasValue && !blink)
+                SetNotificationFlashColor(flashColor.Value.R, flashColor.Value.G, flashColor.Value.B, flashColor.Value.A);
             if (sound) Audio.PlaySoundFrontend("DELETE", "HUD_DEATHMATCH_SOUNDSET");
             return new ScaleformUINotification(EndTextCommandThefeedPostMessagetext(iconSet, icon, true, (int)type, title, subtitle));
             //return new Notification(EndTextCommandThefeedPostTicker(blink, showInBrief));
