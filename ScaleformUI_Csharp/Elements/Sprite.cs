@@ -17,8 +17,8 @@ namespace ScaleformUI
             set
             {
                 _textureDict = value;
-                //if(_autoload && !Function.Call<bool>(Hash.HAS_STREAMED_TEXTURE_DICT_LOADED, value))
-                //Function.Call(Hash.REQUEST_STREAMED_TEXTURE_DICT, value, true);
+                //if(_autoload && !Natives.Call<bool>(Hash.HAS_STREAMED_TEXTURE_DICT_LOADED, value))
+                //Natives.Call(Hash.REQUEST_STREAMED_TEXTURE_DICT, value, true);
             }
         }
 
@@ -36,8 +36,8 @@ namespace ScaleformUI
         /// <param name="color"></param>
         public Sprite(string textureDict, string textureName, PointF position, SizeF size, float heading, Color color) //BASE
         {
-            //if (!Function.Call<bool>(Hash.HAS_STREAMED_TEXTURE_DICT_LOADED, textureDict))
-            //Function.Call(Hash.REQUEST_STREAMED_TEXTURE_DICT, textureDict, true);
+            //if (!Natives.Call<bool>(Hash.HAS_STREAMED_TEXTURE_DICT_LOADED, textureDict))
+            //Natives.Call(Hash.REQUEST_STREAMED_TEXTURE_DICT, textureDict, true);
             TextureDict = textureDict;
             TextureName = textureName;
 

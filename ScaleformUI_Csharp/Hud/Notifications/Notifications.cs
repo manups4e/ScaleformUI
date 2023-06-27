@@ -1,4 +1,6 @@
-﻿namespace ScaleformUI
+﻿using CitizenFX.FiveM.Native;
+
+namespace ScaleformUI
 {
     public enum BusySpinner
     {
@@ -168,7 +170,7 @@
             Tuple<int, CString> mug = await GetPedMugshotAsync(Game.PlayerPed);
             BeginTextCommandThefeedPost("PS_UPDATE");
             AddTextComponentInteger(newProgress);
-            Function.Call(Hash.END_TEXT_COMMAND_THEFEED_POST_STATS, "ScaleformUIStatsNotification", 2, newProgress, oldProgress, false, mug.Item2, mug.Item2);
+            Natives.Call(Hash.END_TEXT_COMMAND_THEFEED_POST_STATS, "ScaleformUIStatsNotification", 2, newProgress, oldProgress, false, mug.Item2, mug.Item2);
             EndTextCommandThefeedPostTicker(blink, showBrief);
             UnregisterPedheadshot(mug.Item1);
         }
@@ -184,7 +186,7 @@
             var mug = await GetPedMugshotAsync(Game.PlayerPed);
             var otherMug = await GetPedMugshotAsync(otherPed);
             BeginTextCommandThefeedPost("");
-            Function.Call(Hash.END_TEXT_COMMAND_THEFEED_POST_VERSUS_TU, mug.Item2, mug.Item2, 12, otherMug.Item2, otherMug.Item2, 1, color1, color2);
+            Natives.Call(Hash.END_TEXT_COMMAND_THEFEED_POST_VERSUS_TU, mug.Item2, mug.Item2, 12, otherMug.Item2, otherMug.Item2, 1, color1, color2);
         }
 
         /// <summary>
@@ -199,7 +201,7 @@
             var mug = await GetPedMugshotAsync(otherPed1);
             var otherMug = await GetPedMugshotAsync(otherPed2);
             BeginTextCommandThefeedPost("");
-            Function.Call(Hash.END_TEXT_COMMAND_THEFEED_POST_VERSUS_TU, mug.Item2, mug.Item2, 12, otherMug.Item2, otherMug.Item2, 1, color1, color2);
+            Natives.Call(Hash.END_TEXT_COMMAND_THEFEED_POST_VERSUS_TU, mug.Item2, mug.Item2, 12, otherMug.Item2, otherMug.Item2, 1, color1, color2);
         }
 
         /// <summary>
