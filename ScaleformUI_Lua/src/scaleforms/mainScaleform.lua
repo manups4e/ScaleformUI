@@ -56,7 +56,7 @@ Citizen.CreateThread(function()
             ScaleformUI.Scaleforms.Warning:Update()
             ScaleformUI.Scaleforms.BigFeed:Update()
         end
-        if MenuHandler.ableToDraw then
+        if MenuHandler.ableToDraw and not (IsWarningMessageActive() or ScaleformUI.Scaleforms.Warning:IsShowing()) then
             ScaleformUI.WaitTime = 0
             MenuHandler:ProcessMenus()
         end
