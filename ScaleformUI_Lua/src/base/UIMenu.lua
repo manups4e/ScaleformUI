@@ -717,8 +717,9 @@ function UIMenu:BuildUpMenuAsync()
             self.Pagination:GetScaleformIndex(self.Pagination:CurrentMenuIndex()))
         ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", false, self:CurrentSelection(), #self.Items)
 
-        local type = self.Items[self:CurrentSelection()]
-        if type == "UIMenuSeparatorItem" then
+        local Item = self.Items[self:CurrentSelection()]
+        local _, subtype = Item()
+        if subtype == "UIMenuSeparatorItem" then
             if (self.Items[self:CurrentSelection()].Jumpable) then
                 self:GoDown()
             end
