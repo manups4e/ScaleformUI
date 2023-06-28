@@ -335,6 +335,19 @@ end
 function UIMenu:CanPlayerCloseMenu(playerCanCloseMenu)
     if playerCanCloseMenu ~= nil then
         self._canHe = playerCanCloseMenu
+        if playerCanCloseMenu then
+            self.InstructionalButtons = {
+                InstructionalButton.New(GetLabelText("HUD_INPUT2"), -1, 176, 176, -1),
+                InstructionalButton.New(GetLabelText("HUD_INPUT3"), -1, 177, 177, -1)
+            }
+        else
+            self.InstructionalButtons = {
+                InstructionalButton.New(GetLabelText("HUD_INPUT2"), -1, 176, 176, -1),
+            }
+        end
+        if self:Visible() then
+            ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
+        end
     end
     return self._canHe
 end
