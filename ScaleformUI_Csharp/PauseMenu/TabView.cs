@@ -927,7 +927,8 @@ namespace ScaleformUI.PauseMenu
                 }
             }
 
-            bool successPause = GetScaleformMovieCursorSelection(ScaleformUI.PauseMenu._pause.Handle, ref eventType, ref context, ref itemId, ref unused);
+            recieved = false;
+            bool successPause = GetScaleformMovieCursorSelection(ScaleformUI.PauseMenu._pause.Handle, ref recieved, ref eventType, ref context, ref itemId);
             if (successPause)
             {
                 switch (eventType)

@@ -5,7 +5,7 @@ namespace ScaleformUI
     /// <summary>
     /// A rectangle in 1080 pixels height system.
     /// </summary>
-    public class UIResRectangle : CitizenFX.FiveM.UI.Rectangle
+    public class UIResRectangle : Elements.Rectangle
     {
         public UIResRectangle()
         { }

@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using ScaleformUI.Elements;
+using System.Drawing;
 
 namespace ScaleformUI
 {
@@ -19,7 +20,7 @@ namespace ScaleformUI
         }
 
         public UIResText(string caption, PointF position, float scale, Color color, Font font, Alignment justify)
-            : base(caption, position, scale, color, font, CitizenFX.FiveM.UI.Alignment.Left)
+            : base(caption, position, scale, color, font, Alignment.Left)
         {
             TextAlignment = justify;
         }
