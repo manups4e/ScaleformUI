@@ -1100,7 +1100,7 @@ namespace ScaleformUI
         /// <param name="title">Title that appears on the big banner.</param>
         /// <param name="subtitle">Subtitle that appears in capital letters in a small black bar.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
-        public UIMenu(string title, string subtitle, bool glare = false, bool alternativeTitle = false) : this(title, subtitle, new PointF(0, 0), "commonmenu", "interaction_bgd", glare, alternativeTitle)
+        public UIMenu(string title, string subtitle, bool glare = false, bool alternativeTitle = false, float fadingTime = 0.1f) : this(title, subtitle, new PointF(0, 0), "commonmenu", "interaction_bgd", glare, alternativeTitle, fadingTime)
         {
         }
 
@@ -1113,7 +1113,7 @@ namespace ScaleformUI
         /// <param name="offset">PointF object with X and Y data for offsets. Applied to all menu elements.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
         /// <param name="alternativeTitle">Set the alternative type to the title?.</param>
-        public UIMenu(string title, string subtitle, PointF offset, bool glare = false, bool alternativeTitle = false) : this(title, subtitle, offset, "commonmenu", "interaction_bgd", glare, alternativeTitle)
+        public UIMenu(string title, string subtitle, PointF offset, bool glare = false, bool alternativeTitle = false, float fadingTime = 0.1f) : this(title, subtitle, offset, "commonmenu", "interaction_bgd", glare, alternativeTitle, fadingTime)
         {
         }
 
@@ -1126,7 +1126,7 @@ namespace ScaleformUI
         /// <param name="customBanner">Path to your custom texture.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
         /// <param name="alternativeTitle">Set the alternative type to the title?.</param>
-        public UIMenu(string title, string subtitle, PointF offset, KeyValuePair<string, string> customBanner, bool glare = false, bool alternativeTitle = false) : this(title, subtitle, offset, customBanner.Key, customBanner.Value, glare, alternativeTitle)
+        public UIMenu(string title, string subtitle, PointF offset, KeyValuePair<string, string> customBanner, bool glare = false, bool alternativeTitle = false, float fadingTime = 0.1f) : this(title, subtitle, offset, customBanner.Key, customBanner.Value, glare, alternativeTitle, fadingTime)
         {
         }
 
