@@ -867,7 +867,7 @@ namespace ScaleformUI
         /// <summary>
         /// Players won't be able to close the menu if this is false! Make sure players can close the menu in some way!!!!!!
         /// </summary>
-        public bool CanPlayerCloseMenu = true;
+        private bool canPlayerCloseMenu = true;
         //Pagination
         public int MaxItemsOnScreen
         {
@@ -2604,6 +2604,34 @@ namespace ScaleformUI
                     ScaleformUI._ui.CallFunction("ENABLE_MOUSE", value);
                 }
             }
+        }
+
+        public bool CanPlayerCloseMenu 
+        { 
+            get => canPlayerCloseMenu;
+            set 
+            {
+                canPlayerCloseMenu = value;
+                if (value)
+                {
+                    InstructionalButtons = new List<InstructionalButton>()
+                    {
+                        new InstructionalButton(Control.PhoneSelect, _selectTextLocalized),
+                        new InstructionalButton(Control.PhoneCancel, _backTextLocalized)
+                    };
+                }
+                else
+                {
+                    InstructionalButtons = new List<InstructionalButton>()
+                    {
+                        new InstructionalButton(Control.PhoneSelect, _selectTextLocalized),
+                    };
+                }
+                if (Visible)
+                {
+                    ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
+                }
+            } 
         }
 
         #endregion
