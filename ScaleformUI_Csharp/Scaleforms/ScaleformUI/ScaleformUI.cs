@@ -40,11 +40,12 @@ namespace ScaleformUI
             Tick += ScaleformUIThreadAsync;
             Tick += UpdateGlobalGameTimerAsync;
 
-            EventHandlers["onResourceStop"] += new Action<string>((resName) =>
+            EventHandlers["onResourceStop"] += Func.Create<string>((resName) =>
             {
                 if (resName == GetCurrentResourceName())
                 {
-                    if (Game.IsPaused && GetCurrentFrontendMenuVersion() == -2060115030)
+                    int frontend = -2060115030;
+                    if (Game.IsPaused && GetCurrentFrontendMenuVersion() == (uint)frontend)
                     {
                         ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY_NO_BACKGROUND"), false, -1);
                         AnimpostfxStop("PauseMenuIn");
@@ -79,7 +80,6 @@ namespace ScaleformUI
             _ui ??= new("ScaleformUI");
             if (!PauseMenu.Loaded)
                 PauseMenu.Load();
-            await Task.FromResult(0);
         }
 
         /// <summary>
