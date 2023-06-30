@@ -864,7 +864,7 @@ namespace ScaleformUI
         /// <summary>
         /// Players won't be able to close the menu if this is false! Make sure players can close the menu in some way!!!!!!
         /// </summary>
-        public bool CanPlayerCloseMenu = true;
+        private bool canPlayerCloseMenu = true;
         //Pagination
         public int MaxItemsOnScreen
         {
@@ -1097,7 +1097,7 @@ namespace ScaleformUI
         /// <param name="title">Title that appears on the big banner.</param>
         /// <param name="subtitle">Subtitle that appears in capital letters in a small black bar.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
-        public UIMenu(string title, string subtitle, bool glare = false, bool alternativeTitle = false) : this(title, subtitle, new PointF(0, 0), "commonmenu", "interaction_bgd", glare, alternativeTitle)
+        public UIMenu(string title, string subtitle, bool glare = false, bool alternativeTitle = false, float fadingTime = 0.1f) : this(title, subtitle, new PointF(0, 0), "commonmenu", "interaction_bgd", glare, alternativeTitle, fadingTime)
         {
         }
 
@@ -1110,7 +1110,7 @@ namespace ScaleformUI
         /// <param name="offset">PointF object with X and Y data for offsets. Applied to all menu elements.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
         /// <param name="alternativeTitle">Set the alternative type to the title?.</param>
-        public UIMenu(string title, string subtitle, PointF offset, bool glare = false, bool alternativeTitle = false) : this(title, subtitle, offset, "commonmenu", "interaction_bgd", glare, alternativeTitle)
+        public UIMenu(string title, string subtitle, PointF offset, bool glare = false, bool alternativeTitle = false, float fadingTime = 0.1f) : this(title, subtitle, offset, "commonmenu", "interaction_bgd", glare, alternativeTitle, fadingTime)
         {
         }
 
@@ -1123,7 +1123,7 @@ namespace ScaleformUI
         /// <param name="customBanner">Path to your custom texture.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
         /// <param name="alternativeTitle">Set the alternative type to the title?.</param>
-        public UIMenu(string title, string subtitle, PointF offset, KeyValuePair<string, string> customBanner, bool glare = false, bool alternativeTitle = false) : this(title, subtitle, offset, customBanner.Key, customBanner.Value, glare, alternativeTitle)
+        public UIMenu(string title, string subtitle, PointF offset, KeyValuePair<string, string> customBanner, bool glare = false, bool alternativeTitle = false, float fadingTime = 0.1f) : this(title, subtitle, offset, customBanner.Key, customBanner.Value, glare, alternativeTitle, fadingTime)
         {
         }
 
@@ -2602,6 +2602,34 @@ namespace ScaleformUI
                     ScaleformUI._ui.CallFunction("ENABLE_MOUSE", value);
                 }
             }
+        }
+
+        public bool CanPlayerCloseMenu 
+        { 
+            get => canPlayerCloseMenu;
+            set 
+            {
+                canPlayerCloseMenu = value;
+                if (value)
+                {
+                    InstructionalButtons = new List<InstructionalButton>()
+                    {
+                        new InstructionalButton(Control.PhoneSelect, _selectTextLocalized),
+                        new InstructionalButton(Control.PhoneCancel, _backTextLocalized)
+                    };
+                }
+                else
+                {
+                    InstructionalButtons = new List<InstructionalButton>()
+                    {
+                        new InstructionalButton(Control.PhoneSelect, _selectTextLocalized),
+                    };
+                }
+                if (Visible)
+                {
+                    ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
+                }
+            } 
         }
 
         #endregion

@@ -335,6 +335,19 @@ end
 function UIMenu:CanPlayerCloseMenu(playerCanCloseMenu)
     if playerCanCloseMenu ~= nil then
         self._canHe = playerCanCloseMenu
+        if playerCanCloseMenu then
+            self.InstructionalButtons = {
+                InstructionalButton.New(GetLabelText("HUD_INPUT2"), -1, 176, 176, -1),
+                InstructionalButton.New(GetLabelText("HUD_INPUT3"), -1, 177, 177, -1)
+            }
+        else
+            self.InstructionalButtons = {
+                InstructionalButton.New(GetLabelText("HUD_INPUT2"), -1, 176, 176, -1),
+            }
+        end
+        if self:Visible() then
+            ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
+        end
     end
     return self._canHe
 end
@@ -717,8 +730,9 @@ function UIMenu:BuildUpMenuAsync()
             self.Pagination:GetScaleformIndex(self.Pagination:CurrentMenuIndex()))
         ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", false, self:CurrentSelection(), #self.Items)
 
-        local type = self.Items[self:CurrentSelection()]
-        if type == "UIMenuSeparatorItem" then
+        local Item = self.Items[self:CurrentSelection()]
+        local _, subtype = Item()
+        if subtype == "UIMenuSeparatorItem" then
             if (self.Items[self:CurrentSelection()].Jumpable) then
                 self:GoDown()
             end
