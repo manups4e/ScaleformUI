@@ -5,8 +5,8 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ScaleformUI</RootNamespace>
     <AssemblyName>ScaleformUI</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFramework>net472</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
