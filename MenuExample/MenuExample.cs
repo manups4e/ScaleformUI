@@ -278,8 +278,6 @@ public class MenuExample : BaseScript
         windowSubmenu.AddWindow(statsWindow);
         List<dynamic> momfaces = new List<dynamic>() { "Hannah", "Audrey", "Jasmine", "Giselle", "Amelia", "Isabella", "Zoe", "Ava", "Camilla", "Violet", "Sophia", "Eveline", "Nicole", "Ashley", "Grace", "Brianna", "Natalie", "Olivia", "Elizabeth", "Charlotte", "Emma", "Misty" };
         List<dynamic> dadfaces = new List<dynamic>() { "Benjamin", "Daniel", "Joshua", "Noah", "Andrew", "Joan", "Alex", "Isaac", "Evan", "Ethan", "Vincent", "Angel", "Diego", "Adrian", "Gabriel", "Michael", "Santiago", "Kevin", "Louis", "Samuel", "Anthony", "Claude", "Niko", "John" };
-        List<dynamic> lista = new List<dynamic>();
-        for (int i = 0; i < 101; i++) lista.Add(i);
         UIMenuListItem mom = new UIMenuListItem("Mamma", momfaces, 0);
         UIMenuListItem dad = new UIMenuListItem("Papà", dadfaces, 0);
         UIMenuSliderItem newItem = new UIMenuSliderItem("Heritage Slider", "This is Useful on heritage", 100, 5, 50, true);
