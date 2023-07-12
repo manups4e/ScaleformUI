@@ -101,7 +101,7 @@ end
 ---Updates the instructional buttons
 function ButtonsHandler:UpdateButtons()
     if not self._changed then return end
-    if self._sc == nil then return end
+    if self._sc == nil or self.ControlButtons == nil or #self.ControlButtons == 0 then return end
 
     self._sc:CallFunction("SET_DATA_SLOT_EMPTY", false)
     self._sc:CallFunction("TOGGLE_MOUSE_BUTTONS", false, self.UseMouseButtons)
@@ -139,18 +139,21 @@ end
 
 ---Draws the instructional buttons on the screen
 function ButtonsHandler:Draw()
+    if self._sc == nil or self.ControlButtons == nil or #self.ControlButtons == 0 then return end
     SetScriptGfxDrawBehindPausemenu(true)
     self._sc:Render2D()
 end
 
 ---Draws the instructional buttons on the screen with a custom position
 function ButtonsHandler:DrawScreenSpace(x, y)
+    if self._sc == nil or self.ControlButtons == nil or #self.ControlButtons == 0 then return end
     self._sc:Render2DNormal(0.5 - x, 0.5 - y, 1, 1)
 end
 
 ---Draws the instructional buttons on the screen with a custom position
 ---@deprecated Use DrawScreenSpace() instead
 function ButtonsHandler:DrawScreeSpace(x, y)
+    if self._sc == nil or self.ControlButtons == nil or #self.ControlButtons == 0 then return end
     self._sc:Render2DNormal(0.5 - x, 0.5 - y, 1, 1)
 end
 
