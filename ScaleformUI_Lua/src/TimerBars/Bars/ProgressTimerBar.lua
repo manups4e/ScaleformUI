@@ -9,8 +9,10 @@ end
 function ProgressTimerBar.New(label, backgroundColor, foregroundColor, percentage, time)
     if backgroundColor == nil then backgroundColor = { R = 112, G = 25, B = 25, A = 255 } end
     if foregroundColor == nil then foregroundColor = { R = 224, G = 50, B = 50, A = 255 } end
+    if percentage == nil then percentage = 0 end
     if percentage > 1 then percentage = 1 end
     if percentage < 0 then percentage = 0 end
+    if time == nil then time = 0 end
     if time < 0 then time = 0 end
     local _data = {
         _label = label or "",
