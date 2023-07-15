@@ -176,8 +176,8 @@ function CreateMenu()
     exampleMenu:AddItem(dynamicListItem)
     dynamicListItem:LeftBadge(BadgeStyle.STAR)
 
-    local seperatorItem1 = UIMenuSeperatorItem.New("Separator (Jumped)", true)
-    local seperatorItem2 = UIMenuSeperatorItem.New("Separator (not Jumped)", false)
+    local seperatorItem1 = UIMenuSeparatorItem.New("Separator (Jumped)", true)
+    local seperatorItem2 = UIMenuSeparatorItem.New("Separator (not Jumped)", false)
     exampleMenu:AddItem(seperatorItem1)
     exampleMenu:AddItem(seperatorItem2)
 
