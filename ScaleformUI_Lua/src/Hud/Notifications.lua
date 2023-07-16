@@ -275,9 +275,11 @@ end
 ---@param ped2 number @The second ped
 ---@param color1 Colours @The color of the first ped
 ---@param color2 Colours @The color of the second ped
+---@param score number @The score of the first ped
+---@param score2 number @The score of the second ped
 ---@see Colours
 ---@return nil
-function Notifications:ShowVSNotification(ped1, ped2, color1, color2)
+function Notifications:ShowVSNotification(ped1, ped2, color1, color2, score, score2)
     local handle_1 = RegisterPedheadshot(ped1)
     while not IsPedheadshotReady(handle_1) or not IsPedheadshotValid(handle_1) do Citizen.Wait(0) end
     local txd_1 = GetPedheadshotTxdString(handle_1)
@@ -288,7 +290,7 @@ function Notifications:ShowVSNotification(ped1, ped2, color1, color2)
 
     BeginTextCommandThefeedPost("")
     ---@diagnostic disable-next-line: redundant-parameter -- This is a bug in the linter
-    EndTextCommandThefeedPostVersusTu(txd_1, txd_1, 12, txd_2, txd_2, 1, color1, color2)
+    EndTextCommandThefeedPostVersusTu(txd_1, txd_1, score, txd_2, txd_2, score2, color1, color2)
 
     UnregisterPedheadshot(handle_1)
     UnregisterPedheadshot(handle_2)

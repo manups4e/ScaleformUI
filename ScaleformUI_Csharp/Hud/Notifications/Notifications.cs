@@ -187,12 +187,14 @@ namespace ScaleformUI
         /// <param name="otherPed">The other Ped to show in notification</param>
         /// <param name="color1">My color</param>
         /// <param name="color2">Other ped color</param>
-        public static async void ShowVSNotification(Ped otherPed, HudColor color1, HudColor color2)
+        /// <param name="score">My score</param>
+        /// <param name="score2">Other ped score</param>
+        public static async void ShowVSNotification(Ped otherPed, HudColor color1, HudColor color2, int score = 0, int score2 = 0)
         {
             var mug = await GetPedMugshotAsync(Game.PlayerPed);
             var otherMug = await GetPedMugshotAsync(otherPed);
             BeginTextCommandThefeedPost("");
-            Function.Call(Hash.END_TEXT_COMMAND_THEFEED_POST_VERSUS_TU, mug.Item2, mug.Item2, 12, otherMug.Item2, otherMug.Item2, 1, color1, color2);
+            Function.Call(Hash.END_TEXT_COMMAND_THEFEED_POST_VERSUS_TU, mug.Item2, mug.Item2, score, otherMug.Item2, otherMug.Item2, score2, color1, color2);
         }
 
         /// <summary>
@@ -202,12 +204,14 @@ namespace ScaleformUI
         /// <param name="otherPed2">Ped on the right</param>
         /// <param name="color1">Color for Ped on the left</param>
         /// <param name="color2">Color for ped on the right</param>
-        public static async void ShowVSNotification(Ped otherPed1, Ped otherPed2, HudColor color1, HudColor color2)
+        /// <param name="score">My score</param>
+        /// <param name="score2">Other ped score</param>
+        public static async void ShowVSNotification(Ped otherPed1, Ped otherPed2, HudColor color1, HudColor color2, int score = 0, int score2 = 0)
         {
             var mug = await GetPedMugshotAsync(otherPed1);
             var otherMug = await GetPedMugshotAsync(otherPed2);
             BeginTextCommandThefeedPost("");
-            Function.Call(Hash.END_TEXT_COMMAND_THEFEED_POST_VERSUS_TU, mug.Item2, mug.Item2, 12, otherMug.Item2, otherMug.Item2, 1, color1, color2);
+            Function.Call(Hash.END_TEXT_COMMAND_THEFEED_POST_VERSUS_TU, mug.Item2, mug.Item2, score, otherMug.Item2, otherMug.Item2, score2, color1, color2);
         }
 
         /// <summary>
