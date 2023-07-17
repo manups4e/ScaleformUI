@@ -49,7 +49,6 @@ function SettingsListColumn:CurrentSelection(idx)
         end
         self.Items[self:CurrentSelection()]:Selected(false)
         self._currentSelection = 1000000 - (1000000 % #self.Items) + tonumber(idx)
-        self.Items[self:CurrentSelection()]:Selected(true)
         if self.Parent ~= nil and self.Parent:Visible() then
             local pSubT = self.Parent()
             if pSubT == "LobbyMenu" then
@@ -60,13 +59,19 @@ function SettingsListColumn:CurrentSelection(idx)
                     self.ParentTab, self:CurrentSelection() - 1)
             end
         end
+        self.Items[self:CurrentSelection()]:Selected(true)
     end
 end
 
 ---Add a new item to the column.
 ---@param item UIMenuItem|UIMenuListItem|UIMenuCheckboxItem|UIMenuSliderItem|UIMenuProgressItem
 function SettingsListColumn:AddSettings(item)
-    item.ParentColumn = self
+    local a,b = item()
+    if b == "UIMenuItem" then
+        item.ParentColumn = self
+    else
+        item.Base.ParentColumn = self
+    end
     self.Items[#self.Items + 1] = item
 end
 

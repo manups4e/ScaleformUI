@@ -106,7 +106,7 @@ function FriendItem:AddPedToPauseMenu(ped)
                         SetPauseMenuPedLighting(true)
                     end
                 elseif pSubT == "PauseMenu" then
-                    local tab = self.ParentColumn.Parent.Tabs[self.ParentColumn.Parent.Index]
+                    local tab = self.ParentColumn.Parent.Tabs[self.ParentColumn.Parent.index]
                     local _, subT = tab()
                     if subT == "PlayerListTab" then
                         if self.ParentColumn.Items[self.ParentColumn:CurrentSelection()] == self then

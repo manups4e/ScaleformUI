@@ -11,9 +11,10 @@ end
 ---Creates a new BasicTabItem.
 ---@param label string
 ---@return BasicTabItem
-function BasicTabItem.New(label)
+function BasicTabItem.New(label, labelFont)
     local data = {
         Label = label or "",
+        LabelFont = labelFont or ScaleformFonts.CHALET_LONDON_NINETEENSIXTY,
         Parent = nil
     }
     return setmetatable(data, BasicTabItem)

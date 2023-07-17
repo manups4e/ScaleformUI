@@ -21,7 +21,9 @@ function StatsTabItem.NewBasic(label, rightLabel)
         Base = BasicTabItem.New(label or ""),
         Type = StatItemType.Basic,
         Label = label or "",
-        _rightLabel = rightLabel or ""
+        _rightLabel = rightLabel or "",
+        LabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY,
+        RightLabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY
     }
     return setmetatable(data, StatsTabItem)
 end
@@ -37,7 +39,8 @@ function StatsTabItem.NewBar(label, value, color)
         Type = StatItemType.ColoredBar,
         Label = label or "",
         _value = value,
-        _coloredBarColor = color or Colours.HUD_COLOUR_FREEMODE
+        _coloredBarColor = color or Colours.HUD_COLOUR_FREEMODE,
+        LabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY
     }
     return setmetatable(data, StatsTabItem)
 end

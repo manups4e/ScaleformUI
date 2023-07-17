@@ -148,3 +148,20 @@ function IsVectorInsideSphere(vector, position, scale)
     local radius = GetVectorMagnitude(scale) / 2
     return GetVectorMagnitude(distance) <= radius
 end
+
+function AllTrue(t)
+    for _, v in pairs(t) do
+        if not v then return false end
+    end
+
+    return true
+end
+
+function AllFalse(t)
+    for _, v in pairs(t) do
+        if v then return true end
+    end
+
+    return false
+end
+

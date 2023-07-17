@@ -201,40 +201,41 @@ function MainView:BuildPauseMenu()
         local items = self.SettingsColumn.Items
         local it = 1
         while it <= #items do
-            Citizen.Wait(1)
+            Citizen.Wait(0)
             local item = items[it]
             local Type, SubType = item()
-            AddTextEntry("menu_lobby_desc_{" .. it .. "}", item:Description())
+            local descLabel = "menu_lobby_desc_{" .. it .. "}"
+            AddTextEntry(descLabel, item:Description())
 
             if SubType == "UIMenuListItem" then
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, 1, item:Label(),
-                    "menu_lobby_desc_{" .. it .. "}", item:Enabled(), item:BlinkDescription(),
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, 1, item.Base._formatLeftLabel,
+                    descLabel, item:Enabled(), item:BlinkDescription(),
                     table.concat(item.Items, ","),
                     item:Index() - 1, item.Base._mainColor, item.Base._highlightColor, item.Base._textColor,
                     item.Base._highlightedTextColor)
             elseif SubType == "UIMenuCheckboxItem" then
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, 2, item:Label(),
-                    "menu_lobby_desc_{" .. it .. "}", item:Enabled(), item:BlinkDescription(), item.CheckBoxStyle,
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, 2, item.Base._formatLeftLabel,
+                    descLabel, item:Enabled(), item:BlinkDescription(), item.CheckBoxStyle,
                     item._Checked, item.Base._mainColor, item.Base._highlightColor, item.Base._textColor,
                     item.Base._highlightedTextColor)
             elseif SubType == "UIMenuSliderItem" then
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, 3, item:Label(),
-                    "menu_lobby_desc_{" .. it .. "}", item:Enabled(), item:BlinkDescription(), item._Max,
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, 3, item.Base._formatLeftLabel,
+                    descLabel, item:Enabled(), item:BlinkDescription(), item._Max,
                     item._Multiplier,
                     item:Index(), item.Base._mainColor, item.Base._highlightColor, item.Base._textColor,
                     item.Base._highlightedTextColor, item.SliderColor, item._heritage)
             elseif SubType == "UIMenuProgressItem" then
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, 4, item:Label(),
-                    "menu_lobby_desc_{" .. it .. "}", item:Enabled(), item:BlinkDescription(), item._Max,
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, 4, item.Base._formatLeftLabel,
+                    descLabel, item:Enabled(), item:BlinkDescription(), item._Max,
                     item._Multiplier,
                     item:Index(), item.Base._mainColor, item.Base._highlightColor, item.Base._textColor,
                     item.Base._highlightedTextColor, item.SliderColor)
             else
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, 0, item:Label(),
-                    "menu_lobby_desc_{" .. it .. "}", item:Enabled(), item:BlinkDescription(), item._mainColor,
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, 0, item._formatLeftLabel,
+                    descLabel, item:Enabled(), item:BlinkDescription(), item._mainColor,
                     item._highlightColor, item._textColor, item._highlightedTextColor)
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_ITEM_LABEL_RIGHT", false, it - 1,
-                    item:RightLabel())
+                    item._formatRightLabel)
                 if item._rightBadge ~= BadgeStyle.NONE then
                     ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_RIGHT_BADGE", false, it - 1,
                         item._rightBadge)
@@ -243,11 +244,13 @@ function MainView:BuildPauseMenu()
 
             if (SubType == "UIMenuItem" and item._leftBadge ~= BadgeStyle.NONE) or (SubType ~= "UIMenuItem" and item.Base._leftBadge ~= BadgeStyle.NONE) then
                 if SubType ~= "UIMenuItem" then
-                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", false, it - 1,
-                        item.Base._leftBadge)
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", false, it - 1, item.Base._leftBadge)
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LABEL_FONT", false, it - 1, item.Base._labelFont.FontName, item.Base._labelFont.FontID)
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LABEL_FONT", false, it - 1, item.Base._rightLabelFont.FontName, item.Base._rightLabelFont.FontID)
                 else
-                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", false, it - 1,
-                        item._leftBadge)
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", false, it - 1, item._leftBadge)
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LABEL_FONT", false, it - 1, item._labelFont.FontName, item._labelFont.FontID)
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LABEL_FONT", false, it - 1, item._rightLabelFont.FontName, item._rightLabelFont.FontID)
                 end
             end
 
@@ -259,7 +262,7 @@ function MainView:BuildPauseMenu()
         local items = self.PlayersColumn.Items
         local it = 1
         while it <= #items do
-            Citizen.Wait(1)
+            Citizen.Wait(0)
             local item = items[it]
             local Type, SubType = item()
             if SubType == "FriendItem" then
@@ -280,7 +283,7 @@ function MainView:BuildPauseMenu()
     ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSION_PANEL_TITLE", false, self.MissionPanel:Title());
     for k, item in pairs(self.MissionPanel.Items) do
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_MISSION_PANEL_ITEM", false, item.Type, item.TextLeft,
-            item.TextRight, item.Icon, item.IconColor, item.Tick);
+            item.TextRight, item.Icon or 0, item.IconColor or 0, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID)
     end
 end
 
@@ -568,6 +571,7 @@ function MainView:GoLeft()
             self.SettingsColumn:CurrentSelection(tonumber(splitted[2]))
             self.SettingsColumn.OnIndexChanged(self.SettingsColumn:CurrentSelection());
         elseif self:FocusLevel() == self.PlayersColumn.Order then
+            self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]:Selected(false)
             self.PlayersColumn:CurrentSelection(tonumber(splitted[2]))
             if self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= nil and self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
                 local ped = ClonePed(self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed, false,
@@ -618,6 +622,7 @@ function MainView:GoRight()
             self.SettingsColumn:CurrentSelection(tonumber(splitted[2]))
             self.SettingsColumn.OnIndexChanged(self.SettingsColumn:CurrentSelection());
         elseif self:FocusLevel() == self.PlayersColumn.Order then
+            self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]:Selected(false)
             self.PlayersColumn:CurrentSelection(tonumber(splitted[2]))
             if self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= nil and self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
                 local ped = ClonePed(self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed, false,
