@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ScaleformUI.PauseMenu
+﻿namespace ScaleformUI.PauseMenu
 {
     public enum LeftItemType
     {
@@ -16,13 +14,17 @@ namespace ScaleformUI.PauseMenu
 
     public class TabLeftItem
     {
+        internal UIMenuItem _internalItem;
         private bool enabled = true;
         private string label;
+        internal string _formatLeftLabel;
         private HudColor mainColor;
         private HudColor highlightColor;
         private string textTitle;
         private string keymapRightLabel_1;
         private string keymapRightLabel_2;
+        internal ItemFont _labelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
+        internal ItemFont _rightLabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
         public LeftItemType ItemType { get; internal set; }
         public string Label
         {
@@ -30,11 +32,21 @@ namespace ScaleformUI.PauseMenu
             set
             {
                 label = value;
+                _formatLeftLabel = value.StartsWith("~") ? value : "~s~" + value;
+                if (Selected)
+                {
+                    _formatLeftLabel = _formatLeftLabel.Replace("~w~", "~l~");
+                    _formatLeftLabel = _formatLeftLabel.Replace("~s~", "~l~");
+                }
+                else
+                {
+                    _formatLeftLabel = _formatLeftLabel.Replace("~l~", "~s~");
+                }
                 if (Parent != null && Parent.Visible)
                 {
-                    var tab = Parent.Parent.Tabs.IndexOf(Parent);
-                    var it = Parent.LeftItemList.IndexOf(this);
-                    Parent.Parent._pause._pause.CallFunction("UPDATE_LEFT_ITEM_LABEL", tab, it, label);
+                    int tab = Parent.Parent.Tabs.IndexOf(Parent);
+                    int it = Parent.LeftItemList.IndexOf(this);
+                    Parent.Parent._pause._pause.CallFunction("UPDATE_LEFT_ITEM_LABEL", tab, it, _formatLeftLabel);
                 }
             }
         }
@@ -46,21 +58,53 @@ namespace ScaleformUI.PauseMenu
             set
             {
                 enabled = value;
+                if (!value)
+                    _formatLeftLabel = _formatLeftLabel.ReplaceRstarColorsWith("~c~");
+                else
+                    Label = label;
+
                 if (Parent != null && Parent.Visible)
                 {
-                    var tab = Parent.Parent.Tabs.IndexOf(Parent);
-                    var it = Parent.LeftItemList.IndexOf(this);
+                    int tab = Parent.Parent.Tabs.IndexOf(Parent);
+                    int it = Parent.LeftItemList.IndexOf(this);
                     Parent.Parent._pause._pause.CallFunction("ENABLE_LEFT_ITEM", tab, it, enabled);
+                    Parent.Parent._pause._pause.CallFunction("UPDATE_LEFT_ITEM_LABEL", tab, it, _formatLeftLabel);
                 }
             }
         }
 
         public bool Hovered { get; internal set; }
-        public bool Selected { get; internal set; }
+
+        public bool Selected
+        {
+            get => selected;
+            internal set
+            {
+                selected = value;
+
+                if (value)
+                {
+                    _formatLeftLabel = _formatLeftLabel.Replace("~w~", "~l~");
+                    _formatLeftLabel = _formatLeftLabel.Replace("~s~", "~l~");
+                }
+                else
+                {
+                    _formatLeftLabel = _formatLeftLabel.Replace("~l~", "~s~");
+                }
+                if (Parent != null && Parent.Visible)
+                {
+                    int tab = Parent.Parent.Tabs.IndexOf(Parent);
+                    int it = Parent.LeftItemList.IndexOf(this);
+                    Parent.Parent._pause._pause.CallFunction("UPDATE_LEFT_ITEM_LABEL", tab, it, _formatLeftLabel);
+                }
+            }
+        }
+
         public int ItemIndex { get; internal set; }
         public List<BasicTabItem> ItemList = new List<BasicTabItem>();
+        private bool selected;
 
-        public string TextTitle
+        public string RightTitle
         {
             get => textTitle;
             set
@@ -68,12 +112,13 @@ namespace ScaleformUI.PauseMenu
                 textTitle = value;
                 if (Parent != null && Parent.Visible)
                 {
-                    var tab = Parent.Parent.Tabs.IndexOf(Parent);
-                    var it = Parent.LeftItemList.IndexOf(this);
-                    Parent.Parent._pause._pause.CallFunction("UPDATE_LEFT_ITEM_LABEL", tab, it, textTitle, KeymapRightLabel_1, KeymapRightLabel_2);
+                    int tab = Parent.Parent.Tabs.IndexOf(Parent);
+                    int it = Parent.LeftItemList.IndexOf(this);
+                    Parent.Parent._pause._pause.CallFunction("ADD_RIGHT_TITLE", tab, it, textTitle, KeymapRightLabel_1, KeymapRightLabel_2);
                 }
             }
         }
+
         public string KeymapRightLabel_1
         {
             get => keymapRightLabel_1;
@@ -82,9 +127,9 @@ namespace ScaleformUI.PauseMenu
                 keymapRightLabel_1 = value;
                 if (Parent != null && Parent.Visible)
                 {
-                    var tab = Parent.Parent.Tabs.IndexOf(Parent);
-                    var it = Parent.LeftItemList.IndexOf(this);
-                    Parent.Parent._pause._pause.CallFunction("UPDATE_LEFT_ITEM_LABEL", tab, it, TextTitle, keymapRightLabel_1, KeymapRightLabel_2);
+                    int tab = Parent.Parent.Tabs.IndexOf(Parent);
+                    int it = Parent.LeftItemList.IndexOf(this);
+                    Parent.Parent._pause._pause.CallFunction("ADD_RIGHT_TITLE", tab, it, textTitle, keymapRightLabel_1, KeymapRightLabel_2);
                 }
             }
         }
@@ -96,9 +141,9 @@ namespace ScaleformUI.PauseMenu
                 keymapRightLabel_2 = value;
                 if (Parent != null && Parent.Visible)
                 {
-                    var tab = Parent.Parent.Tabs.IndexOf(Parent);
-                    var it = Parent.LeftItemList.IndexOf(this);
-                    Parent.Parent._pause._pause.CallFunction("UPDATE_LEFT_ITEM_LABEL", tab, it, TextTitle, KeymapRightLabel_1, keymapRightLabel_2);
+                    int tab = Parent.Parent.Tabs.IndexOf(Parent);
+                    int it = Parent.LeftItemList.IndexOf(this);
+                    Parent.Parent._pause._pause.CallFunction("ADD_RIGHT_TITLE", tab, it, textTitle, KeymapRightLabel_1, keymapRightLabel_2);
                 }
             }
         }
@@ -113,6 +158,14 @@ namespace ScaleformUI.PauseMenu
             ItemType = type;
             MainColor = mainColor;
             HighlightColor = highlightColor;
+        }
+        public TabLeftItem(string label, LeftItemType type, ItemFont labelFont, HudColor mainColor = HudColor.NONE, HudColor highlightColor = HudColor.NONE)
+        {
+            Label = label;
+            ItemType = type;
+            MainColor = mainColor;
+            HighlightColor = highlightColor;
+            _labelFont = labelFont;
         }
 
         public void AddItem(BasicTabItem item)

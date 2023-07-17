@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ScaleformUI.PauseMenu
+﻿namespace ScaleformUI.PauseMenu
 {
     public class BaseTab
     {
@@ -11,7 +8,7 @@ namespace ScaleformUI.PauseMenu
             Title = name;
         }
 
-        public virtual bool Visible { get; set; }
+        public bool Visible { get; set; }
         public virtual bool Focused { get; set; }
         public string Title { get; set; }
         public bool Active { get; set; }

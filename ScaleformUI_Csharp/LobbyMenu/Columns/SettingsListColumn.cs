@@ -27,7 +27,6 @@ namespace ScaleformUI.LobbyMenu
                 if (Items.Count == 0) currentSelection = 0;
                 Items[CurrentSelection].Selected = false;
                 currentSelection = 1000000 - (1000000 % Items.Count) + value;
-                Items[CurrentSelection].Selected = true;
                 if (Parent != null && Parent.Visible)
                 {
                     if (Parent is MainView lobby)
@@ -35,6 +34,7 @@ namespace ScaleformUI.LobbyMenu
                     else if (Parent is TabView pause)
                         pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", ParentTab, CurrentSelection);
                 }
+                Items[CurrentSelection].Selected = true;
             }
         }
 
@@ -103,9 +103,9 @@ namespace ScaleformUI.LobbyMenu
             if (Parent != null)
             {
                 if (Parent is MainView lobby)
-                    lobby._pause._lobby.CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", index, (int)badge);
+                    lobby._pause._lobby.CallFunction("SET_SETTINGS_ITEM_RIGHT_BADGE", index, (int)badge);
                 else if (Parent is TabView pause)
-                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", ParentTab, index, (int)badge);
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_BADGE", ParentTab, index, (int)badge);
             }
         }
 

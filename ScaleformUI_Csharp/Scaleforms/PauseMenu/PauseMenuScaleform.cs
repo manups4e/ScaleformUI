@@ -99,7 +99,7 @@ namespace ScaleformUI
             _pause.CallFunction("ADD_RIGHT_TITLE", tab, leftItem, title);
         }
 
-        public void AddRightListLabel(int tab, int leftItem, string label)
+        public void AddRightListLabel(int tab, int leftItem, string label, string fontName, int fontId)
         {
             AddTextEntry($"PauseMenu_{tab}_{leftItem}", label);
             BeginScaleformMovieMethod(_pause.Handle, "ADD_RIGHT_LIST_ITEM");
@@ -108,17 +108,19 @@ namespace ScaleformUI
             ScaleformMovieMethodAddParamInt(0);
             BeginTextCommandScaleformString($"PauseMenu_{tab}_{leftItem}");
             EndTextCommandScaleformString_2();
+            ScaleformMovieMethodAddParamPlayerNameString(fontName);
+            ScaleformMovieMethodAddParamInt(fontId);
             EndScaleformMovieMethod();
         }
 
-        public void AddRightStatItemLabel(int tab, int leftItem, string label, string rightLabel)
+        public void AddRightStatItemLabel(int tab, int leftItem, string label, string rightLabel, ItemFont labelFont, ItemFont rLabelFont)
         {
-            _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 1, 0, label, rightLabel);
+            _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 1, 0, label, rightLabel, -1, labelFont.FontName, labelFont.FontID, rLabelFont.FontName, rLabelFont.FontID);
         }
 
-        public void AddRightStatItemColorBar(int tab, int leftItem, string label, int value, HudColor barColor)
+        public void AddRightStatItemColorBar(int tab, int leftItem, string label, int value, HudColor barColor, ItemFont labelFont)
         {
-            _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 1, 1, label, value, (int)barColor);
+            _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 1, 1, label, value, (int)barColor, labelFont.FontName, labelFont.FontID);
         }
 
         public void AddRightSettingsBaseItem(int tab, int leftItem, string label, string rightLabel, bool enabled)

@@ -171,7 +171,7 @@ namespace ScaleformUI.LobbyMenu
             {
                 foreach (UIFreemodeDetailsItem item in MissionPanel.Items)
                 {
-                    _pause._lobby.CallFunction("ADD_MISSION_PANEL_ITEM", item.Type, item.TextLeft, item.TextRight, (int)item.Icon, (int)item.IconColor, item.Tick);
+                    _pause._lobby.CallFunction("ADD_MISSION_PANEL_ITEM", item.Type, item.TextLeft, item.TextRight, (int)item.Icon, (int)item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID);
                 }
             }
         }
@@ -190,7 +190,7 @@ namespace ScaleformUI.LobbyMenu
                     AddTextEntry($"menu_lobby_desc_{index}", item.Description);
                     BeginScaleformMovieMethod(_pause._lobby.Handle, "ADD_LEFT_ITEM");
                     PushScaleformMovieFunctionParameterInt(item._itemId);
-                    PushScaleformMovieMethodParameterString(item.Label);
+                    PushScaleformMovieMethodParameterString(item._formatLeftLabel);
                     if (item.DescriptionHash != 0 && string.IsNullOrWhiteSpace(item.Description))
                     {
                         BeginTextCommandScaleformString("STRTNM1");
@@ -259,13 +259,15 @@ namespace ScaleformUI.LobbyMenu
                             PushScaleformMovieFunctionParameterInt((int)item.TextColor);
                             PushScaleformMovieFunctionParameterInt((int)item.HighlightedTextColor);
                             EndScaleformMovieMethod();
-                            _pause._lobby.CallFunction("UPDATE_SETTINGS_ITEM_LABEL_RIGHT", index, item.RightLabel);
+                            _pause._lobby.CallFunction("UPDATE_SETTINGS_ITEM_LABEL_RIGHT", index, item._formatLeftLabel);
                             if (item.RightBadge != BadgeIcon.NONE)
                             {
                                 _pause._lobby.CallFunction("SET_SETTINGS_ITEM_RIGHT_BADGE", index, (int)item.RightBadge);
                             }
                             break;
                     }
+                    _pause._lobby.CallFunction("SET_SETTINGS_ITEM_LABEL_FONT", index, item.labelFont.FontName, item.labelFont.FontID);
+                    _pause._lobby.CallFunction("SET_SETTINGS_ITEM_RIGHT_LABEL_FONT", index, item.rightLabelFont.FontName, item.rightLabelFont.FontID);
                     if (item.LeftBadge != BadgeIcon.NONE)
                         _pause._lobby.CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", index, (int)item.LeftBadge);
                     i++;
@@ -592,6 +594,7 @@ namespace ScaleformUI.LobbyMenu
                 }
                 else if (FocusLevel == PlayersColumn.Order)
                 {
+                    SettingsColumn.Items[SettingsColumn.CurrentSelection].Selected = false;
                     PlayersColumn.CurrentSelection = split[1];
                     if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
                     {
@@ -662,6 +665,7 @@ namespace ScaleformUI.LobbyMenu
                 }
                 else if (FocusLevel == PlayersColumn.Order)
                 {
+                    SettingsColumn.Items[SettingsColumn.CurrentSelection].Selected = false;
                     PlayersColumn.CurrentSelection = split[1];
                     if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
                     {

@@ -10,6 +10,9 @@
         private string rightLabel;
         private HudColor coloredBarColor;
         private int _value;
+        internal ItemFont labelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
+        internal ItemFont rightLabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
+
 
         public StatItemType Type { get; set; }
         public string RightLabel

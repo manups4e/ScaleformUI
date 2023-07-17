@@ -987,7 +987,8 @@ public class MenuExample : BaseScript
         pauseMenu.HeaderPicture = new(txd, txd);
         */
         TextTab basicTab = new TextTab("TabTextItem", "This is the title!");
-        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+        basicTab.AddItem(new BasicTabItem("~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+        basicTab.LabelsList[0].LabelFont = ScaleformFonts.HANDSTYLE_HEIST;
         basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
         basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~b~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
         basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~g~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
@@ -1014,7 +1015,7 @@ public class MenuExample : BaseScript
         multiItemTab.AddLeftItem(fourth);
         multiItemTab.AddLeftItem(fifth);
 
-        second.TextTitle = "Info Title!!";
+        second.RightTitle = "Info Title!!";
         second.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
         second.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
         second.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~b~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
@@ -1056,7 +1057,7 @@ public class MenuExample : BaseScript
         fourth.AddItem(_settings5);
         fourth.AddItem(_settings6);
 
-        fifth.TextTitle = "ACTION";
+        fifth.RightTitle = "ACTION";
         fifth.KeymapRightLabel_1 = "PRIMARY";
         fifth.KeymapRightLabel_2 = "SECONDARY";
         KeymapItem key1 = new KeymapItem("Simple Keymap", "~INPUT_FRONTEND_ACCEPT~", "~INPUT_VEH_EXIT~");
@@ -1301,10 +1302,11 @@ public class MenuExample : BaseScript
         pauseMenu.HeaderPicture = new(ped_txd, ped_txd);
 
         UIMenuItem item = new UIMenuItem("UIMenuItem", "UIMenuItem description");
-        UIMenuListItem item1 = new UIMenuListItem("UIMenuListItem", new List<dynamic>() { "This", "is", "a", "Test" }, 0, "UIMenuListItem description");
-        UIMenuCheckboxItem item2 = new UIMenuCheckboxItem("UIMenuCheckboxItem", true, "UIMenuCheckboxItem description");
-        UIMenuSliderItem item3 = new UIMenuSliderItem("UIMenuSliderItem", "UIMenuSliderItem description", 100, 5, 50, false);
-        UIMenuProgressItem item4 = new UIMenuProgressItem("UIMenuProgressItem", 10, 5, "UIMenuProgressItem description");
+        UIMenuListItem item1 = new UIMenuListItem("~g~UIMenuListItem", new List<dynamic>() { "This", "is", "a", "Test" }, 0, "UIMenuListItem description");
+        UIMenuCheckboxItem item2 = new UIMenuCheckboxItem("~b~UIMenuCheckboxItem", true, "UIMenuCheckboxItem description");
+        UIMenuSliderItem item3 = new UIMenuSliderItem("~p~UIMenuSliderItem", "UIMenuSliderItem description", 100, 5, 50, false);
+        UIMenuProgressItem item4 = new UIMenuProgressItem("~o~UIMenuProgressItem", 10, 5, "UIMenuProgressItem description");
+        item.LabelFont = ScaleformFonts.ENGRAVERS_OLD_ENGLISH_MT_STD;
         item.BlinkDescription = true;
         pauseMenu.SettingsColumn.AddSettings(item);
         pauseMenu.SettingsColumn.AddSettings(item1);
@@ -1455,9 +1457,9 @@ public class MenuExample : BaseScript
 
         pauseMenu.MissionPanel.UpdatePanelPicture("scaleformui", "lobby_panelbackground");
         pauseMenu.MissionPanel.Title = "ScaleformUI - Title";
-        UIFreemodeDetailsItem missionItem1 = new("Hellooooo", "I'm here too!", false);
-        UIFreemodeDetailsItem missionItem2 = new("Hellooooo", "I'm here too!", BadgeIcon.COUNTRY_ITALY, HudColor.HUD_COLOUR_PURE_WHITE, true);
-        UIFreemodeDetailsItem missionItem3 = new("Hellooooo", "I'm here too!", true);
+        UIFreemodeDetailsItem missionItem1 = new("Hellooooo", "I'm here too!", false, ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST);
+        UIFreemodeDetailsItem missionItem2 = new("Hellooooo", "I'm here too!", ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST, BadgeIcon.COUNTRY_ITALY, HudColor.HUD_COLOUR_PURE_WHITE, true);
+        UIFreemodeDetailsItem missionItem3 = new("Hellooooo", "I'm here too!", true, ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST);
         //UIFreemodeDetailsItem missionItem4 = new("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "", false);
         pauseMenu.MissionPanel.AddItem(missionItem1);
         pauseMenu.MissionPanel.AddItem(missionItem2);
