@@ -9,6 +9,13 @@
         Keymap
     }
 
+    public enum LeftItemBGType
+    {
+        Full,
+        Masked,
+        Resized
+    }
+
     public delegate void IndexChangeEvent(SettingsItem item, int index);
     public delegate void ActivatedEvent(TabLeftItem item, int index);
 
@@ -23,6 +30,10 @@
         private string textTitle;
         private string keymapRightLabel_1;
         private string keymapRightLabel_2;
+        public string TextureDict { get; private set; }
+        public string TextureName { get; private set; }
+        public LeftItemBGType LeftItemBGType { get; private set; }
+
         internal ItemFont _labelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
         internal ItemFont _rightLabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
         public LeftItemType ItemType { get; internal set; }
@@ -166,6 +177,22 @@
             MainColor = mainColor;
             HighlightColor = highlightColor;
             _labelFont = labelFont;
+        }
+
+        /// <summary>
+        /// Image suggested not bigger than 720 x 576
+        /// </summary>
+        /// <param name="txd"></param>
+        /// <param name="txn"></param>
+        public void UpdateBackground(string txd, string txn, LeftItemBGType resizeType)
+        {
+            TextureDict = txd;
+            TextureName = txn;
+            LeftItemBGType = resizeType;
+            if (Parent != null && Parent.Visible && Parent.Parent != null && Parent.Parent.Visible)
+            {
+                Parent.Parent._pause._pause.CallFunction("UPDATE_LEFT_ITEM_RIGHT_BACKGROUND", Parent.Parent.Tabs.IndexOf(Parent), Parent.LeftItemList.IndexOf(this), txd, txn, (int)resizeType);
+            }
         }
 
         public void AddItem(BasicTabItem item)

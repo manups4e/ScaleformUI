@@ -15,6 +15,8 @@ function TextTab.New(name, _title)
         LeftItemList = {},
         Index = 0,
         Focused = false,
+        TextureDict = "",
+        TextureName = "",
         Parent = nil
     }
     return setmetatable(data, TextTab)
@@ -28,4 +30,13 @@ end
 
 function TextTab:AddItem(item)
     self.LabelsList[#self.LabelsList + 1] = item
+end
+
+function TextTab:UpdateBackground(txd, txn)
+    self.TextureDict = txd
+    self.TextureName = txn
+    if self.Parent ~= nil and self.Base.Parent ~= nil and self.Base.Parent:Visible() then
+        local tab = IndexOf(self.Base.Parent.Tabs, self.Parent) - 1
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_LEFT_ITEM_RIGHT_BACKGROUND", false, tab, txd, txn)
+    end
 end

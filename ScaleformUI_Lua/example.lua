@@ -371,8 +371,12 @@ function CreatePauseMenu()
     pauseMenuExample:HeaderPicture(txd, txd) -- pauseMenuExample:CrewPicture used to add a picture on the left of the HeaderPicture
     print("PedHandle => " .. handle)
     UnregisterPedheadshot(handle)            -- call it right after adding the menu.. this way the txd will be loaded correctly by the scaleform..
+	local _pauseDict = CreateRuntimeTxd("scaleformui")
 
-    local basicTab = TextTab.New("TEXTTAB", "This is the Title!")
+	local basicTab = TextTab.New("TEXTTAB", "This is the Title!")
+	local bg_dui = CreateDui("https://giphy.com/embed/sxwk9hGlsULcYm6hDX", 1280, 720);
+	CreateRuntimeTextureFromDuiHandle(_pauseDict, "pausebigbg", GetDuiHandle(bg_dui));
+	basicTab:UpdateBackground("scaleformui", "pausebigbg");
     basicTab:AddItem(BasicTabItem.New(
         "~BLIP_INFO_ICON~ ~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"))
     basicTab:AddItem(BasicTabItem.New(
@@ -405,6 +409,18 @@ function CreatePauseMenu()
     local third = TabLeftItem.New("3 - Statistics", LeftItemType.Statistics) -- for statistics
     local fourth = TabLeftItem.New("4 - Settings", LeftItemType.Settings)    -- well.. settings..
     local fifth = TabLeftItem.New("5 - Keymaps", LeftItemType.Keymap)        -- keymaps for custom keymapping
+
+    local _bginfo = CreateDui("https://giphy.com/embed/bG1oRM2Qp2kN3MTZCO", 480, 480);
+	CreateRuntimeTextureFromDuiHandle(_pauseDict, "pauseinfobg", GetDuiHandle(_bginfo));
+	local _bgstats = CreateDui("https://giphy.com/embed/xT9IgsHTiYHILDGDM4", 480, 480);
+	CreateRuntimeTextureFromDuiHandle(_pauseDict, "pausestatsbg", GetDuiHandle(_bgstats));
+	local _bgsets = CreateDui("https://giphy.com/embed/xT9IgsHTiYHILDGDM4", 480, 480);
+	CreateRuntimeTextureFromDuiHandle(_pauseDict, "pausesetsbg", GetDuiHandle(_bgsets));
+
+	second:UpdateBackground("scaleformui", "pauseinfobg", 0) --(full)
+	third:UpdateBackground("scaleformui", "pausestatsbg", 1) --(masked)
+	fourth:UpdateBackground("scaleformui", "pausesetsbg", 2) --(resized)
+
     first:Enabled(false)
     multiItemTab:AddLeftItem(first)
     multiItemTab:AddLeftItem(second)

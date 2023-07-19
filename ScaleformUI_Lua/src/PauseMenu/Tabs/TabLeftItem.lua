@@ -48,6 +48,9 @@ function TabLeftItem.New(label, _type, mainColor, highlightColor, labelFont)
         _formatLeftLabel = __formatLeftLabel or "",
         KeymapRightLabel_1 = "",
         KeymapRightLabel_2 = "",
+        TextureDict = "",
+        TextureName = "",
+        LeftItemBGType = 0,
         _labelFont = labelFont or ScaleformFonts.CHALET_LONDON_NINETEENSIXTY,
         --_rightLabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY,
         OnIndexChanged = function(item, index)
@@ -172,5 +175,16 @@ function TabLeftItem:KeymapRightLabel_2(rtit)
         end
     else
         return self.KeymapRightLabel_2
+    end
+end
+
+function TabLeftItem:UpdateBackground(txd, txn, resizeType)
+    self.TextureDict = txd
+    self.TextureName = txn
+    self.LeftItemBGType = resizeType
+    if self.Parent ~= nil and self.Parent.Base.Parent ~= nil and self.Parent.Base.Parent:Visible() then
+        local tab = IndexOf(self.Parent.Base.Parent.Tabs, self.Parent) - 1
+        local leftItem = IndexOf(self.Parent.LeftItemList, self) - 1
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_LEFT_ITEM_RIGHT_BACKGROUND", false, tab, leftItem, txd, txn, resizeType)
     end
 end

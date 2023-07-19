@@ -3,8 +3,8 @@
     public class UIMissionDetailsPanel : UIMenuSidePanel
     {
         private string title;
-        public string TextureDict;
-        public string TextureName;
+        public string TextureDict { get; private set; }
+        public string TextureName { get; private set; }
         internal SidePanelsTitleType _titleType;
         public string Title
         {

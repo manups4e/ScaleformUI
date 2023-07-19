@@ -862,26 +862,25 @@ public class MenuExample : BaseScript
 
         notificationsMenu.OnItemSelect += async (_menu, _item, _index) =>
         {
-            API.AddTextEntry("FMMC_KEY_TIP8", "Insert text (Max 50 chars):");
-            string text = await Game.GetUserInput("", 50); // i set max 50 chars here as example but it can be way more!
+            API.AddTextEntry("FMMC_KEY_TIP8", "Insert text (Max 10 chars):");
+            string text = await Game.GetUserInput("", 10); // i set max 50 chars here as example but it can be way more!
             if (_item == noti3)
             {
                 Notifications.ShowHelpNotification(text, 5000);
             }
             else if (_item == noti4)
             {
-
                 _text = text;
                 _timer = Game.GameTime + 1;
                 Tick += FloatingHelpTimer;
             }
             else if (_item == noti5)
             {
-                Notifications.ShowStatNotification(75, 50, text, true, true);
+                await Notifications.ShowStatNotification(75, 50, text, true, true);
             }
             else if (_item == noti6)
             {
-                Notifications.ShowVSNotification(Game.PlayerPed, HudColor.HUD_COLOUR_BLUE, HudColor.HUD_COLOUR_RED);
+                await Notifications.ShowVSNotification(12, HudColor.HUD_COLOUR_BLUE, Game.PlayerPed, 3, HudColor.HUD_COLOUR_RED);
                 // you must specify 1 or 2 peds for this.. in this case i use the player ped twice for the sake of the example.
             }
             else if (_item == noti7)
@@ -987,6 +986,11 @@ public class MenuExample : BaseScript
         pauseMenu.HeaderPicture = new(txd, txd);
         */
         TextTab basicTab = new TextTab("TabTextItem", "This is the title!");
+
+        long bg_dui = API.CreateDui("https://giphy.com/embed/sxwk9hGlsULcYm6hDX", 1280, 720);
+        API.CreateRuntimeTextureFromDuiHandle(txd, "pausebigbg", API.GetDuiHandle(bg_dui));
+
+        basicTab.UpdateBackground("scaleformui", "pausebigbg");
         basicTab.AddItem(new BasicTabItem("~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
         basicTab.LabelsList[0].LabelFont = ScaleformFonts.HANDSTYLE_HEIST;
         basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
@@ -1009,6 +1013,20 @@ public class MenuExample : BaseScript
         TabLeftItem third = new TabLeftItem("3 - Statistics", LeftItemType.Statistics);
         TabLeftItem fourth = new TabLeftItem("4 - Settings", LeftItemType.Settings);
         TabLeftItem fifth = new TabLeftItem("5 - Keymaps", LeftItemType.Keymap);
+
+        long _bginfo = API.CreateDui("https://giphy.com/embed/bG1oRM2Qp2kN3MTZCO", 480, 480);
+        API.CreateRuntimeTextureFromDuiHandle(txd, "pauseinfobg", API.GetDuiHandle(_bginfo));
+
+        long _bgstats = API.CreateDui("https://giphy.com/embed/xT9IgsHTiYHILDGDM4", 480, 480);
+        API.CreateRuntimeTextureFromDuiHandle(txd, "pausestatsbg", API.GetDuiHandle(_bgstats));
+
+        long _bgsets = API.CreateDui("https://giphy.com/embed/xT9IgsHTiYHILDGDM4", 480, 480);
+        API.CreateRuntimeTextureFromDuiHandle(txd, "pausesetsbg", API.GetDuiHandle(_bgsets));
+
+        second.UpdateBackground("scaleformui", "pauseinfobg", LeftItemBGType.Full);
+        third.UpdateBackground("scaleformui", "pausestatsbg", LeftItemBGType.Masked);
+        fourth.UpdateBackground("scaleformui", "pausesetsbg", LeftItemBGType.Resized);
+
         multiItemTab.AddLeftItem(first);
         multiItemTab.AddLeftItem(second);
         multiItemTab.AddLeftItem(third);
@@ -1492,7 +1510,7 @@ public class MenuExample : BaseScript
 
             //If the player is in drawing range for the marker, the marker will draw automatically and the DrawText will show itself (true if the ped enters the marker)
             if (playerMarker.IsInRange)
-                Notifications.DrawText($"IsInMarker => {playerMarker.IsInMarker}");
+                Notifications.DrawText(text: $"IsInMarker => {playerMarker.IsInMarker}");
 
             if (Game.IsControlJustPressed(0, Control.SelectCharacterMichael) && !MenuHandler.IsAnyMenuOpen) // Our menu enabler (to exit menu simply press Back on the main menu)
                 ExampleMenu();
