@@ -167,7 +167,7 @@ end
 function Notifications:ShowNotification(msg, blink, showInBrief)
     AddTextEntry("ScaleformUINotification", msg)
     BeginTextCommandThefeedPost("ScaleformUINotification")
-    EndTextCommandThefeedPostTicker(blink, showInBrief)
+    self._handle = EndTextCommandThefeedPostTicker(blink, showInBrief)
 end
 
 ---Show a notification with a color
@@ -180,7 +180,7 @@ function Notifications:ShowNotificationWithColor(msg, color, blink, showInBrief)
     AddTextEntry("ScaleformUINotification", msg)
     BeginTextCommandThefeedPost("ScaleformUINotification")
     ThefeedSetNextPostBackgroundColor(color)
-    EndTextCommandThefeedPostTicker(blink, showInBrief)
+    self._handle = EndTextCommandThefeedPostTicker(blink, showInBrief)
 end
 
 ---Show a help notification
@@ -244,7 +244,7 @@ function Notifications:ShowAdvancedNotification(title, subtitle, text, character
         ThefeedSetAnimpostfxColor(flashColour.R, flashColour.G, flashColour.B, flashColour.A)
     end
     if (sound) then PlaySoundFrontend(-1, "DELETE", "HUD_DEATHMATCH_SOUNDSET", true); end
-    return EndTextCommandThefeedPostMessagetext(characterIcon, characterIcon, true, notificationType, title, subtitle)
+    self._handle = EndTextCommandThefeedPostMessagetext(characterIcon, characterIcon, true, notificationType, title, subtitle)
 end
 
 -- TODO: Investigate if newProgress should be a boolean or a number for EndTextCommandThefeedPostStats
@@ -266,29 +266,31 @@ function Notifications:ShowStatNotification(newProgress, oldProgress, title, bli
     AddTextComponentInteger(newProgress)
     ---@diagnostic disable-next-line: param-type-mismatch -- newProgress is a number but the native wants a boolean
     EndTextCommandThefeedPostStats("ScaleformUIStatsNotification", 2, newProgress, oldProgress, false, txd, txd)
-    EndTextCommandThefeedPostTicker(blink, showInBrief)
+    self._handle = EndTextCommandThefeedPostTicker(blink, showInBrief)
     UnregisterPedheadshot(handle)
 end
 
 ---Show a versuses notification (2 heads)
----@param ped1 number @The first ped
----@param ped2 number @The second ped
----@param color1 Colours @The color of the first ped
----@param color2 Colours @The color of the second ped
+---@param leftPed number @The first ped
+---@param leftScore number @The score of the first ped
+---@param leftColor Colours @The color of the first ped
+---@param rightPed number @The second ped
+---@param rightScore number @The score of the second ped
+---@param rightColor Colours @The color of the second ped
 ---@see Colours
 ---@return nil
-function Notifications:ShowVSNotification(ped1, ped2, color1, color2)
-    local handle_1 = RegisterPedheadshot(ped1)
+function Notifications:ShowVSNotification(leftPed, leftScore, leftColor, rightPed, rightScore, rightColor)
+    local handle_1 = RegisterPedheadshot(leftPed)
     while not IsPedheadshotReady(handle_1) or not IsPedheadshotValid(handle_1) do Citizen.Wait(0) end
     local txd_1 = GetPedheadshotTxdString(handle_1)
 
-    local handle_2 = RegisterPedheadshot(ped2)
+    local handle_2 = RegisterPedheadshot(rightPed)
     while not IsPedheadshotReady(handle_2) or not IsPedheadshotValid(handle_2) do Citizen.Wait(0) end
     local txd_2 = GetPedheadshotTxdString(handle_2)
 
     BeginTextCommandThefeedPost("")
     ---@diagnostic disable-next-line: redundant-parameter -- This is a bug in the linter
-    EndTextCommandThefeedPostVersusTu(txd_1, txd_1, 12, txd_2, txd_2, 1, color1, color2)
+    self._handle = EndTextCommandThefeedPostVersusTu(txd_1, txd_1, leftScore, txd_2, txd_2, rightScore, leftColor, rightColor)
 
     UnregisterPedheadshot(handle_1)
     UnregisterPedheadshot(handle_2)

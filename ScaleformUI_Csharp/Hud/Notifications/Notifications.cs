@@ -1,9 +1,7 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
-using System;
 using System.Drawing;
-using System.Threading.Tasks;
 using static CitizenFX.Core.Native.API;
 using Font = CitizenFX.Core.UI.Font;
 namespace ScaleformUI
@@ -170,60 +168,53 @@ namespace ScaleformUI
         /// <param name="title">Title of the notification</param>
         /// <param name="blink">Notification Blink</param>
         /// <param name="showBrief">Show or not in Pause Menu briefing page</param>
-        public static async void ShowStatNotification(int newProgress, int oldProgress, string title, bool blink = false, bool showBrief = true)
+        public static async Task<ScaleformUINotification> ShowStatNotification(int newProgress, int oldProgress, string title, bool blink = false, bool showBrief = true)
         {
             AddTextEntry("ScaleformUIStatsNotification", title);
             Tuple<int, string> mug = await GetPedMugshotAsync(Game.PlayerPed);
             BeginTextCommandThefeedPost("PS_UPDATE");
             AddTextComponentInteger(newProgress);
             Function.Call(Hash.END_TEXT_COMMAND_THEFEED_POST_STATS, "ScaleformUIStatsNotification", 2, newProgress, oldProgress, false, mug.Item2, mug.Item2);
-            EndTextCommandThefeedPostTicker(blink, showBrief);
+            int not = EndTextCommandThefeedPostTicker(blink, showBrief);
             UnregisterPedheadshot(mug.Item1);
+            return new ScaleformUINotification(not);
         }
 
         /// <summary>
-        /// Show a VS notification (like in GTA:O)
+        /// Show a VS notification (like in GTA:O) taking as left Ped the current PlayerPed
         /// </summary>
-        /// <param name="otherPed">The other Ped to show in notification</param>
-        /// <param name="color1">My color</param>
-        /// <param name="color2">Other ped color</param>
-        public static async void ShowVSNotification(Ped otherPed, HudColor color1, HudColor color2)
+        /// <param name="leftScore">Left ped score</param>
+        /// <param name="leftColor">Left ped color</param>
+        /// <param name="rightPed">The ped to show on the Right side of the notification</param>
+        /// <param name="rightScore">Left ped score</param>
+        /// <param name="rightColor">Left ped color</param>
+        public static async Task<ScaleformUINotification> ShowVSNotification(int leftScore, HudColor leftColor, Ped rightPed, int rightScore, HudColor rightColor)
         {
-            var mug = await GetPedMugshotAsync(Game.PlayerPed);
-            var otherMug = await GetPedMugshotAsync(otherPed);
-            BeginTextCommandThefeedPost("");
-            Function.Call(Hash.END_TEXT_COMMAND_THEFEED_POST_VERSUS_TU, mug.Item2, mug.Item2, 12, otherMug.Item2, otherMug.Item2, 1, color1, color2);
+            return await ShowVSNotification(Game.PlayerPed, leftScore, leftColor, rightPed, rightScore, rightColor);
         }
 
         /// <summary>
         /// Show a VS notification (like in GTA:O) between 2 peds
         /// </summary>
-        /// <param name="otherPed1">Ped on the left</param>
-        /// <param name="otherPed2">Ped on the right</param>
-        /// <param name="color1">Color for Ped on the left</param>
-        /// <param name="color2">Color for ped on the right</param>
-        public static async void ShowVSNotification(Ped otherPed1, Ped otherPed2, HudColor color1, HudColor color2)
+        /// <param name="leftPed">Ped on the left</param>
+        /// <param name="leftScore">Left ped score</param>
+        /// <param name="leftColor">Color for Ped on the left</param>
+        /// <param name="rightPed">Ped on the right</param>
+        /// <param name="rightScore">Left ped score</param>
+        /// <param name="rightColor">Color for ped on the right</param>
+        public static async Task<ScaleformUINotification> ShowVSNotification(Ped leftPed, int leftScore, HudColor leftColor, Ped rightPed, int rightScore, HudColor rightColor)
         {
-            var mug = await GetPedMugshotAsync(otherPed1);
-            var otherMug = await GetPedMugshotAsync(otherPed2);
+            Tuple<int, string> mug = await GetPedMugshotAsync(leftPed);
+            Tuple<int, string> otherMug = await GetPedMugshotAsync(rightPed);
             BeginTextCommandThefeedPost("");
-            Function.Call(Hash.END_TEXT_COMMAND_THEFEED_POST_VERSUS_TU, mug.Item2, mug.Item2, 12, otherMug.Item2, otherMug.Item2, 1, color1, color2);
+            return new(Function.Call<int>(Hash.END_TEXT_COMMAND_THEFEED_POST_VERSUS_TU, mug.Item2, mug.Item2, leftScore, otherMug.Item2, otherMug.Item2, rightScore, leftColor, rightColor));
         }
 
-        /// <summary>
-        /// Draws a 3D text on the screen at desired world coords relative to the <see cref="GameplayCamera"/>
-        /// </summary>
-        /// <param name="text">Main text</param>
-        /// <param name="coord">World coordinates</param>
-        /// <param name="color">Text color</param>
-        /// <param name="font">Set the desired <see cref="Font"/></param>
-        /// <param name="scale">Text scale (Default is 17.0f)</param>
-        public static void DrawText3D(string text, Vector3 coord, Color color, Font font = Font.ChaletComprimeCologne, float scale = 17f)
+        private static void _drawText3d(Vector3 campos, float camfov, string text, Vector3 coord, Color color, Font font = Font.ChaletComprimeCologne, float scale = 17f)
         {
-            Vector3 cam = GameplayCamera.Position;
-            float dist = Vector3.Distance(coord, cam);
+            float dist = Vector3.Distance(coord, campos);
             float scaleInternal = (1 / dist) * scale;
-            float fov = (1 / GameplayCamera.FieldOfView) * 100;
+            float fov = (1 / camfov) * 100;
             float _scale = scaleInternal * fov;
             SetTextScale(0.1f * _scale, 0.15f * _scale);
             SetTextFont((int)font);
@@ -239,6 +230,20 @@ namespace ScaleformUI
             AddTextComponentSubstringPlayerName(text);
             EndTextCommandDisplayText(0, 0);
             ClearDrawOrigin();
+        }
+
+        /// <summary>
+        /// Draws a 3D text on the screen at desired world coords relative to the <see cref="GameplayCamera"/>
+        /// </summary>
+        /// <param name="text">Main text</param>
+        /// <param name="coord">World coordinates</param>
+        /// <param name="color">Text color</param>
+        /// <param name="font">Set the desired <see cref="Font"/></param>
+        /// <param name="scale">Text scale (Default is 17.0f)</param>
+        public static void DrawText3D(string text, Vector3 coord, Color color, Font font = Font.ChaletComprimeCologne, float scale = 17f)
+        {
+            if (Game.IsPaused) return;
+            _drawText3d(GameplayCamera.Position, GameplayCamera.FieldOfView, text, coord, color, font, scale);
         }
 
         /// <summary>
@@ -252,158 +257,25 @@ namespace ScaleformUI
         /// <param name="scale">Text scale (Default is 17.0f)</param>
         public static void DrawText3D(Camera camera, string text, Vector3 coord, Color color, Font font = Font.ChaletComprimeCologne, float scale = 17f)
         {
-            Vector3 cam = camera.Position;
-            float dist = Vector3.Distance(coord, cam);
-            float scaleInternal = (1 / dist) * scale;
-            float fov = (1 / camera.FieldOfView) * 100;
-            float _scale = scaleInternal * fov;
-            SetTextScale(0.1f * _scale, 0.15f * _scale);
-            SetTextFont((int)font);
-            SetTextProportional(true);
-            SetTextColour(color.R, color.G, color.B, color.A);
-            SetTextDropshadow(5, 0, 0, 0, 255);
-            SetTextEdge(2, 0, 0, 0, 150);
-            SetTextDropShadow();
-            SetTextOutline();
-            SetTextCentre(true);
-            SetDrawOrigin(coord.X, coord.Y, coord.Z, 0);
-            BeginTextCommandDisplayText("STRING");
-            AddTextComponentSubstringPlayerName(text);
-            EndTextCommandDisplayText(0, 0);
-            ClearDrawOrigin();
+            if (Game.IsPaused) return;
+            _drawText3d(camera.Position, camera.FieldOfView, text, coord, color, font, scale);
+
         }
 
         /// <summary>
         /// Draws a 2D text on screen
         /// </summary>
+        /// <param name="x">X position on the screen (default centered)</param>
+        /// <param name="y">Y position on the screen (default 0.8f from top)</param>
         /// <param name="text">Text to draw</param>
-        public static void DrawText(string text)
+        /// <param name="color">Color of the text (Default white)</param>
+        /// <param name="font">Text font (default ChaletComprimeCologne)</param>
+        /// <param name="TextAlignment">Text alignment (default center)</param>
+        /// <param name="Outline">True to outline the text (default true)</param>
+        /// <param name="Wrap">Wrap the text at desired boundries (default 0)</param>
+        public static void DrawText(float x = 0.5f, float y = 0.8f, string text = "", Color color = default, Font font = Font.ChaletComprimeCologne, Alignment TextAlignment = Alignment.Center, bool Outline = true, float Wrap = 0)
         {
-            SetTextFont(4);
-            SetTextProportional(false);
-            SetTextScale(0.0f, 0.5f);
-            SetTextColour(255, 255, 255, 255);
-            SetTextDropshadow(0, 0, 0, 0, 255);
-            SetTextEdge(1, 0, 0, 0, 255);
-            SetTextDropShadow();
-            SetTextOutline();
-            SetTextCentre(true);
-            SetTextEntry("STRING");
-            AddTextComponentSubstringPlayerName(text);
-            EndTextCommandDisplayText(0.5f, 0.8f);
-        }
-
-        /// <summary>
-        /// Draws a 2D text on screen
-        /// </summary>
-        /// <param name="x">X position on the screen</param>
-        /// <param name="y">Y position on the screen</param>
-        /// <param name="text">Text to draw</param>
-        public static void DrawText(float x, float y, string text)
-        {
-            SetTextFont(4);
-            SetTextProportional(false);
-            SetTextScale(0.0f, 0.5f);
-            SetTextColour(255, 255, 255, 255);
-            SetTextDropshadow(0, 0, 0, 0, 255);
-            SetTextEdge(1, 0, 0, 0, 255);
-            SetTextDropShadow();
-            SetTextOutline();
-            SetTextCentre(false);
-            SetTextEntry("STRING");
-            AddTextComponentSubstringPlayerName(text);
-            EndTextCommandDisplayText(x, y);
-        }
-
-        /// <summary>
-        /// Draws a 2D text on screen
-        /// </summary>
-        /// <param name="x">X position on the screen</param>
-        /// <param name="y">Y position on the screen</param>
-        /// <param name="text">Text to draw</param>
-        /// <param name="color">Color of the text</param>
-        public static void DrawText(float x, float y, string text, Color color)
-        {
-            SetTextFont(4);
-            SetTextProportional(false);
-            SetTextScale(0.0f, 0.5f);
-            SetTextColour(color.R, color.G, color.B, color.A);
-            SetTextDropshadow(0, 0, 0, 0, 255);
-            SetTextEdge(1, 0, 0, 0, 255);
-            SetTextDropShadow();
-            SetTextOutline();
-            SetTextCentre(true);
-            SetTextEntry("STRING");
-            AddTextComponentSubstringPlayerName(text);
-            EndTextCommandDisplayText(x, y);
-        }
-
-        /// <summary>
-        /// Draws a 2D text on screen
-        /// </summary>
-        /// <param name="x">X position on the screen</param>
-        /// <param name="y">Y position on the screen</param>
-        /// <param name="text">Text to draw</param>
-        /// <param name="color">Color of the text</param>
-        /// <param name="font">Text font</param>
-        public static void DrawText(float x, float y, string text, Color color, Font font)
-        {
-            SetTextFont((int)font);
-            SetTextScale(0.0f, 0.5f);
-            SetTextColour(color.R, color.G, color.B, color.A);
-            SetTextDropShadow();
-            SetTextOutline();
-            SetTextCentre(true);
-            SetTextEntry("STRING");
-            AddTextComponentSubstringPlayerName(text);
-            EndTextCommandDisplayText(x, y);
-        }
-
-        /// <summary>
-        /// Draws a 2D text on screen
-        /// </summary>
-        /// <param name="x">X position on the screen</param>
-        /// <param name="y">Y position on the screen</param>
-        /// <param name="text">Text to draw</param>
-        /// <param name="color">Color of the text</param>
-        /// <param name="font">Text font</param>
-        /// <param name="TextAlignment">Text alignment</param>
-        public static void DrawText(float x, float y, string text, Color color, Font font, Alignment TextAlignment)
-        {
-            SetTextFont((int)font);
-            SetTextScale(0.0f, 0.5f);
-            SetTextColour(color.R, color.G, color.B, color.A);
-            SetTextDropShadow();
-            SetTextOutline();
-            switch (TextAlignment)
-            {
-                case Alignment.Center:
-                    SetTextCentre(true);
-                    break;
-                case Alignment.Right:
-                    SetTextRightJustify(true);
-                    SetTextWrap(0, x);
-                    break;
-            }
-            SetTextEntry("STRING");
-            AddTextComponentSubstringPlayerName(text);
-            EndTextCommandDisplayText(x, y);
-        }
-
-        /// <summary>
-        /// Draws a 2D text on screen
-        /// </summary>
-        /// <param name="x">X position on the screen</param>
-        /// <param name="y">Y position on the screen</param>
-        /// <param name="text">Text to draw</param>
-        /// <param name="color">Color of the text</param>
-        /// <param name="font">Text font</param>
-        /// <param name="TextAlignment">Text alignment</param>
-        /// <param name="Shadow">True to set a text shadow</param>
-        /// <param name="Outline">True to outline the text</param>
-        /// <param name="Wrap">Wrap the text at desired boundries</param>
-        public static void DrawText(float x, float y, string text, Color color, CitizenFX.Core.UI.Font font, Alignment TextAlignment, bool Shadow = false, bool Outline = false, float Wrap = 0)
-        {
+            if (Game.IsPaused || string.IsNullOrWhiteSpace(text)) return;
             int screenw = Screen.Resolution.Width;
             int screenh = Screen.Resolution.Height;
             const float height = 1080f;
@@ -412,9 +284,10 @@ namespace ScaleformUI
 
             SetTextFont((int)font);
             SetTextScale(0.0f, 0.5f);
-            SetTextColour(color.R, color.G, color.B, color.A);
-            if (Shadow)
-                SetTextDropShadow();
+            if (color.IsEmpty)
+                SetTextColour(255, 255, 255, 255);
+            else
+                SetTextColour(color.R, color.G, color.B, color.A);
             if (Outline)
                 SetTextOutline();
             if (Wrap != 0)
@@ -442,16 +315,15 @@ namespace ScaleformUI
         /// </summary>
         /// <param name="label"></param>
         /// <param name="busySpinner"></param>
-        public static void StartLoadingMessage(string label, BusySpinner busySpinner = BusySpinner.Save)
+        public static void StartLoadingMessage(string label, LoadingSpinnerType busySpinner = LoadingSpinnerType.SocialClubSaving, int savingTime = -1)
         {
             string textOutput = Game.GetGXTEntry(label);
-
             if (string.IsNullOrEmpty(textOutput))
                 textOutput = label;
-
-            SetLoadingPromptTextEntry("STRING");
-            AddTextComponentSubstringPlayerName(textOutput);
-            EndTextCommandBusyspinnerOn((int)busySpinner);
+            if (savingTime > 0)
+                ScaleformUI.InstructionalButtons.AddSavingText(busySpinner, textOutput, savingTime);
+            else
+                ScaleformUI.InstructionalButtons.AddSavingText(busySpinner, textOutput);
         }
 
         /// <summary>
@@ -459,15 +331,15 @@ namespace ScaleformUI
         /// </summary>
         public static void StopLoadingMessage()
         {
-            BusyspinnerOff();
+            ScaleformUI.InstructionalButtons.HideSavingText();
         }
 
         internal static async Task<Tuple<int, string>> GetPedMugshotAsync(Ped ped, bool transparent = false)
         {
-            var mugshot = RegisterPedheadshot(ped.Handle);
+            int mugshot = RegisterPedheadshot(ped.Handle);
             if (transparent) mugshot = RegisterPedheadshotTransparent(ped.Handle);
             while (!IsPedheadshotReady(mugshot)) await BaseScript.Delay(1);
-            var txd = GetPedheadshotTxdString(mugshot);
+            string txd = GetPedheadshotTxdString(mugshot);
 
             return new Tuple<int, string>(mugshot, txd);
         }
