@@ -642,6 +642,7 @@ function TabView:GoLeft()
             else
                 ClearPedInPauseMenu()
             end
+            self.OnPauseMenuTabChanged(self, tab, self.index)
         elseif self:FocusLevel() == 1 then
             local tab = self.Tabs[self.index]
             local _, subT = tab()
@@ -727,6 +728,7 @@ function TabView:GoRight()
             else
                 ClearPedInPauseMenu()
             end
+            self.OnPauseMenuTabChanged(self, tab, self.index)
         elseif self:FocusLevel() == 1 then
             local tab = self.Tabs[self.index]
             local _, subT = tab()
