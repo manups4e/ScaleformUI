@@ -31,7 +31,6 @@ public class MenuExample : BaseScript
         exampleMenu.BuildingAnimation = MenuBuildingAnimation.LEFT_RIGHT;
         exampleMenu.AnimationType = MenuAnimationType.BACK_INOUT;
         exampleMenu.ScrollingType = ScrollingType.CLASSIC;
-
         //exampleMenu.CounterColor = HudColor.HUD_COLOUR_PINK;
         // let's add the menu to the Pool
 
@@ -477,7 +476,8 @@ public class MenuExample : BaseScript
                     new InstructionalButton(Control.FrontendDown, "Accept only with Keyboard", PadCheck.Keyboard),
                     new InstructionalButton(Control.FrontendY, "Cancel only with GamePad", PadCheck.Controller),
                     new InstructionalButton(Control.FrontendX, Control.Detonate, "This will change button if you're using gamepad or keyboard"),
-                    new InstructionalButton(new List<Control> { Control.MoveUpOnly, Control.MoveLeftOnly , Control.MoveDownOnly , Control.MoveRightOnly }, "Woow multiple buttons at once??")
+                    new InstructionalButton(new List<Control> { Control.MoveUpOnly, Control.MoveLeftOnly , Control.MoveDownOnly , Control.MoveRightOnly }, "Woow multiple buttons at once??"),
+                    new InstructionalButton(InputGroup.INPUTGROUP_LOOK, "InputGroup example")
                 };
                 ScaleformUI.ScaleformUI.Warning.ShowWarningWithButtons("This is the title", "This is the subtitle", "This is the prompt, press any button", buttons, "This is the error message, ScaleformUI Ver. 3.0");
                 ScaleformUI.ScaleformUI.Warning.OnButtonPressed += (button) =>
@@ -501,10 +501,10 @@ public class MenuExample : BaseScript
         };
 
         customInstr.OnListSelected += (item, index) =>
-        {
-            if (ScaleformUI.ScaleformUI.InstructionalButtons.IsSaving) return;
-            ScaleformUI.ScaleformUI.InstructionalButtons.AddSavingText((LoadingSpinnerType)(index + 1), "I'm a saving text", 3000);
-        };
+            {
+                if (ScaleformUI.ScaleformUI.InstructionalButtons.IsSaving) return;
+                ScaleformUI.ScaleformUI.InstructionalButtons.AddSavingText((LoadingSpinnerType)(index + 1), "I'm a saving text", 3000);
+            };
 
         // ====================================================================
         // =------------------- [Notifications SubMenu] ----------------------=

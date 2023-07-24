@@ -24,6 +24,10 @@ function WarningInstance:IsShowing()
     return self._sc ~= nil
 end
 
+function WarningInstance:IsShowingWithButtons()
+    return self._disableControls
+end
+
 ---Loads the warning scaleform
 ---@return promise
 function WarningInstance:Load()
@@ -132,8 +136,18 @@ function WarningInstance:Update()
             then
                 self.OnButtonPressed(v)
                 self:Dispose()
+                
                 ScaleformUI.Scaleforms.InstructionalButtons:ClearButtonList()
                 ScaleformUI.Scaleforms.InstructionalButtons.UseMouseButtons = false
+                if MenuHandler._currentMenu ~= nil then
+                    if #MenuHandler._currentMenu.InstructionalButtons > 0 then
+                        ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(MenuHandler._currentMenu.InstructionalButtons)
+                    end
+                elseif MenuHandler._currentPauseMenu ~= nil then
+                    if #MenuHandler._currentPauseMenu.InstructionalButtons > 0 then
+                        ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(MenuHandler._currentPauseMenu.InstructionalButtons)
+                    end
+                end
             end
         end
     end

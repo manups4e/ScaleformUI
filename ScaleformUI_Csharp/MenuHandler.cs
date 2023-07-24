@@ -102,6 +102,7 @@ namespace ScaleformUI
         /// </summary>
         public static void Draw()
         {
+            if (ScaleformUI.Warning.IsShowing || ScaleformUI.Warning.IsShowingWithButtons) return;
             currentMenu?.Draw();
             currentBase?.Draw();
         }

@@ -43,11 +43,6 @@ namespace ScaleformUI.LobbyMenu
         public bool TemporarilyHidden { get; set; }
         public bool HideTabs { get; set; }
         public bool DisplayHeader = true;
-        public List<InstructionalButton> InstructionalButtons = new()
-        {
-            new InstructionalButton(Control.PhoneSelect, UIMenu._selectTextLocalized),
-            new InstructionalButton(Control.PhoneCancel, UIMenu._backTextLocalized),
-        };
 
         public MainView(string title) : this(title, "", "", "", "")
         {
@@ -65,6 +60,11 @@ namespace ScaleformUI.LobbyMenu
             SideStringBottom = sideBot;
             Index = 0;
             TemporarilyHidden = false;
+            InstructionalButtons = new()
+            {
+                new InstructionalButton(Control.PhoneSelect, UIMenu._selectTextLocalized),
+                new InstructionalButton(Control.PhoneCancel, UIMenu._backTextLocalized),
+            };
             _pause = ScaleformUI.PauseMenu;
         }
 

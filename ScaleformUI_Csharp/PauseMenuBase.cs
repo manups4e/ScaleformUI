@@ -19,6 +19,8 @@ namespace ScaleformUI
         public bool CanPlayerCloseMenu = true;
         private bool visible;
 
+        public List<InstructionalButton> InstructionalButtons { get; set; }
+
         public virtual void ProcessControls()
         {
 

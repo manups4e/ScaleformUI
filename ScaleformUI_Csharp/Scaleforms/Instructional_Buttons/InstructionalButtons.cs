@@ -395,6 +395,7 @@ namespace ScaleformUI
         /// </summary>
         public void Draw()
         {
+            API.SetScriptGfxDrawBehindPausemenu(true);
             _sc.Render2D();
         }
 
@@ -452,7 +453,7 @@ namespace ScaleformUI
         public static bool IsControlJustPressed(Control control, PadCheck keyboardOnly = PadCheck.Any) => Game.IsControlJustPressed(2, control) && (keyboardOnly == PadCheck.Keyboard ? API.IsUsingKeyboard(2) : keyboardOnly != PadCheck.Controller || !API.IsUsingKeyboard(2));
 
         /// <summary>
-        /// Updates the instructional button text.
+        /// Updates the instructional button.
         /// </summary>
         public void ForceUpdate() => _changed = true;
     }

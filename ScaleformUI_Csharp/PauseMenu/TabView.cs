@@ -68,14 +68,6 @@ namespace ScaleformUI.PauseMenu
         public bool HideTabs { get; set; }
         public bool DisplayHeader = true;
 
-        public List<InstructionalButton> InstructionalButtons = new()
-        {
-            new InstructionalButton(Control.PhoneSelect, UIMenu._selectTextLocalized),
-            new InstructionalButton(Control.PhoneCancel, UIMenu._backTextLocalized),
-            new InstructionalButton(InputGroup.INPUTGROUP_FRONTEND_BUMPERS, _browseTextLocalized),
-        };
-
-
         internal PauseMenuScaleform _pause;
         internal bool _loaded;
         internal readonly static string _browseTextLocalized = Game.GetGXTEntry("HUD_INPUT1C");
@@ -107,6 +99,12 @@ namespace ScaleformUI.PauseMenu
             index = 0;
             FocusLevel = 0;
             TemporarilyHidden = false;
+            InstructionalButtons = new()
+            {
+                new InstructionalButton(Control.PhoneSelect, UIMenu._selectTextLocalized),
+                new InstructionalButton(Control.PhoneCancel, UIMenu._backTextLocalized),
+                new InstructionalButton(InputGroup.INPUTGROUP_FRONTEND_BUMPERS, _browseTextLocalized),
+            };
             _pause = ScaleformUI.PauseMenu;
         }
 

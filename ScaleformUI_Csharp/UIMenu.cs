@@ -1168,46 +1168,6 @@ namespace ScaleformUI
 
         #endregion
 
-        #region Static Methods
-        /// <summary>
-        /// Toggles the availability of the controls.
-        /// It does not disable the basic movement and frontend controls.
-        /// </summary>
-        /// <param name="enable"></param>
-        /// <param name="toggle">If we want to enable or disable the controls.</param>
-        [Obsolete("Use Controls.Toggle instead.", true)]
-        public static void DisEnableControls(bool toggle) => Controls.Toggle(toggle);
-
-        /// <summary>
-        /// Returns the 1080pixels-based screen resolution while mantaining current aspect ratio.
-        /// </summary>
-        [Obsolete("Use ScreenTools.ResolutionMaintainRatio instead.", true)]
-        public static SizeF GetScreenResolutionMaintainRatio() => ScreenTools.ResolutionMaintainRatio;
-
-        /// <summary>
-        /// ScreenTools.ResolutionMaintainRatio for providing backwards compatibility.
-        /// </summary>
-        /// <returns></returns>
-        [Obsolete("Use ScreenTools.ResolutionMaintainRatio instead.", true)]
-        public static SizeF GetScreenResiolutionMantainRatio() => ScreenTools.ResolutionMaintainRatio;
-
-        /// <summary>
-        /// Chech whether the mouse is inside the specified rectangle.
-        /// </summary>
-        /// <param name="topLeft">Start point of the rectangle at the top left.</param>
-        /// <param name="boxSize">size of your rectangle.</param>
-        /// <returns>true if the mouse is inside of the specified bounds, false otherwise.</returns>
-        [Obsolete("Use ScreenTools.IsMouseInBounds instead.", true)]
-        public static bool IsMouseInBounds(Point topLeft, Size boxSize) => ScreenTools.IsMouseInBounds(topLeft, boxSize);
-
-        /// <summary>
-        /// Returns the safezone bounds in pixel, relative to the 1080pixel based system.
-        /// </summary>
-        [Obsolete("Use ScreenTools.SafezoneBounds instead.", true)]
-        public static Point GetSafezoneBounds() => ScreenTools.SafezoneBounds;
-
-        #endregion
-
         #region Public Methods
 
         public async Task FadeOutMenu()
@@ -1247,6 +1207,27 @@ namespace ScaleformUI
             } while (isFading);
         }
 
+        public void AddInstructionalButton(InstructionalButton button)
+        {
+            InstructionalButtons.Add(button);
+            if (Visible && !(ScaleformUI.Warning.IsShowing || ScaleformUI.Warning.IsShowingWithButtons))
+                ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
+        }
+
+        public void RemoveInstructionalButton(InstructionalButton button)
+        {
+            if (InstructionalButtons.Contains(button))
+                InstructionalButtons.Remove(button);
+            if (Visible && !(ScaleformUI.Warning.IsShowing || ScaleformUI.Warning.IsShowingWithButtons))
+                ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
+        }
+
+        public void RemoveInstructionalButton(int index)
+        {
+            if (index < 0 || index >= InstructionalButtons.Count)
+                throw new ArgumentOutOfRangeException("ScaleformUI: Cannot remove with an index less than 0 or more than the count of actual instructional buttons");
+            RemoveInstructionalButton(InstructionalButtons[index]);
+        }
         /// <summary>
         /// Change the menu's width. The width is calculated as DefaultWidth + WidthOffset, so a width offset of 10 would enlarge the menu by 10 pixels.
         /// </summary>
@@ -1781,25 +1762,26 @@ namespace ScaleformUI
 
         public async void GoBack(bool playSound = true)
         {
-            if (playSound)
-                Game.PlaySound(AUDIO_BACK, AUDIO_LIBRARY);
-            await FadeOutMenu();
-            if (BreadcrumbsHandler.CurrentDepth == 0)
+            if (CanPlayerCloseMenu)
             {
-                if (CanPlayerCloseMenu)
+                if (playSound)
+                    Game.PlaySound(AUDIO_BACK, AUDIO_LIBRARY);
+                await FadeOutMenu();
+                if (BreadcrumbsHandler.CurrentDepth == 0)
                 {
                     Visible = false;
                     BreadcrumbsHandler.Clear();
+                    ScaleformUI.InstructionalButtons.ClearButtonList();
                 }
-            }
-            else
-            {
-                BreadcrumbsHandler.SwitchInProgress = true;
-                UIMenu prevMenu = BreadcrumbsHandler.PreviousMenu;
-                BreadcrumbsHandler.Backwards();
-                Visible = false;
-                prevMenu.Visible = true;
-                BreadcrumbsHandler.SwitchInProgress = false;
+                else
+                {
+                    BreadcrumbsHandler.SwitchInProgress = true;
+                    UIMenu prevMenu = BreadcrumbsHandler.PreviousMenu;
+                    BreadcrumbsHandler.Backwards();
+                    Visible = false;
+                    prevMenu.Visible = true;
+                    BreadcrumbsHandler.SwitchInProgress = false;
+                }
             }
         }
 
@@ -2197,12 +2179,10 @@ namespace ScaleformUI
                 else
                 {
                     canBuild = false;
-                    FadeOutMenu();
                     MenuCloseEv(this);
                     MenuHandler.ableToDraw = false;
                     MenuHandler.currentMenu = null;
                     ScaleformUI._ui.CallFunction("CLEAR_ALL");
-                    ScaleformUI.InstructionalButtons.ClearButtonList();
                 }
                 if (!value) return;
                 if (!ResetCursorOnOpen) return;
@@ -2606,10 +2586,10 @@ namespace ScaleformUI
             }
         }
 
-        public bool CanPlayerCloseMenu 
-        { 
+        public bool CanPlayerCloseMenu
+        {
             get => canPlayerCloseMenu;
-            set 
+            set
             {
                 canPlayerCloseMenu = value;
                 if (value)
@@ -2631,7 +2611,7 @@ namespace ScaleformUI
                 {
                     ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
                 }
-            } 
+            }
         }
 
         #endregion

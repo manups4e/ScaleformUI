@@ -96,19 +96,29 @@ namespace ScaleformUI
             _disableControls = true;
             _buttonList = buttons;
             if (buttons == null || buttons.Count == 0) return;
-            ScaleformUI.InstructionalButtons.SetInstructionalButtons(_buttonList);
             ScaleformUI.InstructionalButtons.UseMouseButtons = true;
-            ScaleformUI.InstructionalButtons.ControlButtons.ForEach(x => x.OnControlSelected += X_OnControlSelected);
+            ScaleformUI.InstructionalButtons.SetInstructionalButtons(_buttonList);
+            ScaleformUI.InstructionalButtons.ControlButtons.ForEach(x => x.OnControlSelected += OnControlSelected);
             _sc.CallFunction("SHOW_POPUP_WARNING", 1000, title, subtitle, prompt, showBackground, (int)type, errorMsg);
         }
 
-        private void X_OnControlSelected(InstructionalButton control)
+        private void OnControlSelected(InstructionalButton control)
         {
             Dispose();
             OnButtonPressed?.Invoke(control);
             ScaleformUI.InstructionalButtons.ClearButtonList();
             ScaleformUI.InstructionalButtons.UseMouseButtons = false;
             OnButtonPressed = null;
+            if (MenuHandler.CurrentMenu != null)
+            {
+                if (MenuHandler.CurrentMenu.InstructionalButtons.Count > 0)
+                    ScaleformUI.InstructionalButtons.SetInstructionalButtons(MenuHandler.CurrentMenu.InstructionalButtons);
+            }
+            else if (MenuHandler.currentBase != null)
+            {
+                if (MenuHandler.currentBase.InstructionalButtons.Count > 0)
+                    ScaleformUI.InstructionalButtons.SetInstructionalButtons(MenuHandler.currentBase.InstructionalButtons);
+            }
         }
 
         internal void Update()

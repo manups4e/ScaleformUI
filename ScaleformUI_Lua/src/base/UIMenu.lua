@@ -1496,6 +1496,9 @@ end
 function UIMenu:AddInstructionButton(button)
     if type(button) == "table" then
         self.InstructionalButtons[#self.InstructionalButtons + 1] = button
+        if self:Visible() and not ScaleformUI.Scaleforms.Warning:IsShowing() then
+            ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
+        end
     end
 end
 
@@ -1515,6 +1518,9 @@ function UIMenu:RemoveInstructionButton(button)
                 table.remove(self.InstructionalButtons, tonumber(button))
             end
         end
+    end
+    if self:Visible() and not ScaleformUI.Scaleforms.Warning:IsShowing() then
+        ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
     end
 end
 
