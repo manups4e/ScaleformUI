@@ -95,7 +95,7 @@ end
 
 ---IsAnyMenuOpen
 function MenuHandler:IsAnyMenuOpen()
-    return (self._currentMenu ~= nil and self._currentMenu:Visible()) or BreadcrumbsHandler:Count() > 0
+    return BreadcrumbsHandler:Count() > 0
 end
 
 function MenuHandler:IsAnyPauseMenuOpen()

@@ -634,9 +634,6 @@ function UIMenu:Visible(bool)
             self:BuildUpMenuAsync()
             MenuHandler._currentMenu = self
             MenuHandler.ableToDraw = true
-            if BreadcrumbsHandler:Count() == 0 then
-                BreadcrumbsHandler:Forward(self)
-            end
         else
             self:FadeOutMenu()
             ScaleformUI.Scaleforms.InstructionalButtons:ClearButtonList()
@@ -741,6 +738,9 @@ function UIMenu:BuildUpMenuAsync()
         self:AnimationEnabled(enab)
         self:FadeInMenu()
         self._isBuilding = false
+        if BreadcrumbsHandler:Count() == 0 then
+            BreadcrumbsHandler:Forward(self)
+        end
     end)
 end
 
@@ -1240,8 +1240,8 @@ function UIMenu:GoBack(boolean)
             PlaySoundFrontend(-1, self.Settings.Audio.Back, self.Settings.Audio.Library, true)
         end
         if BreadcrumbsHandler:CurrentDepth() == 1 then
-            BreadcrumbsHandler:Clear()
             self:Visible(false)
+            BreadcrumbsHandler:Clear()
         else
             BreadcrumbsHandler.SwitchInProgress = true
             local prevMenu = BreadcrumbsHandler:PreviousMenu()
