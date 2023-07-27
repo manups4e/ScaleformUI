@@ -37,8 +37,8 @@ namespace ScaleformUI
             if (_sc != null) return;
             _sc = new ScaleformWideScreen("POPUP_WARNING");
             int timeout = 1000;
-            int start = ScaleformUI.GameTime;
-            while (!_sc.IsLoaded && ScaleformUI.GameTime - start < timeout) await BaseScript.Delay(0);
+            int start = Main.GameTime;
+            while (!_sc.IsLoaded && Main.GameTime - start < timeout) await BaseScript.Delay(0);
         }
 
         /// <summary>
@@ -96,9 +96,9 @@ namespace ScaleformUI
             _disableControls = true;
             _buttonList = buttons;
             if (buttons == null || buttons.Count == 0) return;
-            ScaleformUI.InstructionalButtons.UseMouseButtons = true;
-            ScaleformUI.InstructionalButtons.SetInstructionalButtons(_buttonList);
-            ScaleformUI.InstructionalButtons.ControlButtons.ForEach(x => x.OnControlSelected += OnControlSelected);
+            Main.InstructionalButtons.UseMouseButtons = true;
+            Main.InstructionalButtons.SetInstructionalButtons(_buttonList);
+            Main.InstructionalButtons.ControlButtons.ForEach(x => x.OnControlSelected += OnControlSelected);
             _sc.CallFunction("SHOW_POPUP_WARNING", 1000, title, subtitle, prompt, showBackground, (int)type, errorMsg);
         }
 
@@ -106,18 +106,18 @@ namespace ScaleformUI
         {
             Dispose();
             OnButtonPressed?.Invoke(control);
-            ScaleformUI.InstructionalButtons.ClearButtonList();
-            ScaleformUI.InstructionalButtons.UseMouseButtons = false;
+            Main.InstructionalButtons.ClearButtonList();
+            Main.InstructionalButtons.UseMouseButtons = false;
             OnButtonPressed = null;
             if (MenuHandler.CurrentMenu != null)
             {
                 if (MenuHandler.CurrentMenu.InstructionalButtons.Count > 0)
-                    ScaleformUI.InstructionalButtons.SetInstructionalButtons(MenuHandler.CurrentMenu.InstructionalButtons);
+                    Main.InstructionalButtons.SetInstructionalButtons(MenuHandler.CurrentMenu.InstructionalButtons);
             }
             else if (MenuHandler.currentBase != null)
             {
                 if (MenuHandler.currentBase.InstructionalButtons.Count > 0)
-                    ScaleformUI.InstructionalButtons.SetInstructionalButtons(MenuHandler.currentBase.InstructionalButtons);
+                    Main.InstructionalButtons.SetInstructionalButtons(MenuHandler.currentBase.InstructionalButtons);
             }
         }
 

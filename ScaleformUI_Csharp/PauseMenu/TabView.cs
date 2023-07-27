@@ -105,7 +105,7 @@ namespace ScaleformUI.PauseMenu
                 new InstructionalButton(Control.PhoneCancel, UIMenu._backTextLocalized),
                 new InstructionalButton(InputGroup.INPUTGROUP_FRONTEND_BUMPERS, _browseTextLocalized),
             };
-            _pause = ScaleformUI.PauseMenu;
+            _pause = Main.PauseMenu;
         }
 
         public override bool Visible
@@ -119,7 +119,7 @@ namespace ScaleformUI.PauseMenu
                     ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY_NO_BACKGROUND"), true, -1);
                     SendPauseMenuOpen();
                     AnimpostfxPlay("PauseMenuIn", 800, true);
-                    ScaleformUI.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
+                    Main.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
                     SetPlayerControl(Game.Player.Handle, false, 0);
                     BuildPauseMenu();
                     MenuHandler.currentBase = this;
@@ -132,7 +132,7 @@ namespace ScaleformUI.PauseMenu
                     SendPauseMenuClose();
                     SetPlayerControl(Game.Player.Handle, true, 0);
                     MenuHandler.currentBase = null;
-                    ScaleformUI.InstructionalButtons.ClearButtonList();
+                    Main.InstructionalButtons.ClearButtonList();
                     ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY_NO_BACKGROUND"), false, -1);
                 }
                 base.Visible = value;
@@ -941,7 +941,7 @@ namespace ScaleformUI.PauseMenu
             SetInputExclusive(2, 237);
             SetInputExclusive(2, 238);
 
-            bool successHeader = GetScaleformMovieCursorSelection(ScaleformUI.PauseMenu._header.Handle, ref eventType, ref context, ref itemId, ref unused);
+            bool successHeader = GetScaleformMovieCursorSelection(Main.PauseMenu._header.Handle, ref eventType, ref context, ref itemId, ref unused);
             if (successHeader)
             {
                 switch (eventType)
@@ -985,7 +985,7 @@ namespace ScaleformUI.PauseMenu
                 }
             }
 
-            bool successPause = GetScaleformMovieCursorSelection(ScaleformUI.PauseMenu._pause.Handle, ref eventType, ref context, ref itemId, ref unused);
+            bool successPause = GetScaleformMovieCursorSelection(Main.PauseMenu._pause.Handle, ref eventType, ref context, ref itemId, ref unused);
             if (successPause)
             {
                 switch (eventType)
@@ -1229,18 +1229,18 @@ namespace ScaleformUI.PauseMenu
 
             if (Game.IsControlPressed(2, Control.LookUpOnly) && !IsUsingKeyboard(2))
             {
-                if (ScaleformUI.GameTime - _timer > 175)
+                if (Main.GameTime - _timer > 175)
                 {
                     _pause.SendScrollEvent(-1);
-                    _timer = ScaleformUI.GameTime;
+                    _timer = Main.GameTime;
                 }
             }
             else if (Game.IsControlPressed(2, Control.LookDownOnly) && !IsUsingKeyboard(2))
             {
-                if (ScaleformUI.GameTime - _timer > 175)
+                if (Main.GameTime - _timer > 175)
                 {
                     _pause.SendScrollEvent(1);
-                    _timer = ScaleformUI.GameTime;
+                    _timer = Main.GameTime;
                 }
             }
         }

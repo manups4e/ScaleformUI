@@ -16,7 +16,7 @@ namespace ScaleformUI.LobbyMenu
                 title = value;
                 if (Parent != null && Parent.Visible)
                 {
-                    ScaleformUI.PauseMenu._lobby.CallFunction("SET_MISSION_PANEL_TITLE", title);
+                    Main.PauseMenu._lobby.CallFunction("SET_MISSION_PANEL_TITLE", title);
                 }
             }
         }
@@ -38,7 +38,7 @@ namespace ScaleformUI.LobbyMenu
             TextureName = txn;
             if (Parent != null && Parent.Visible)
             {
-                ScaleformUI.PauseMenu._lobby.CallFunction("ADD_MISSION_PANEL_PICTURE", TextureDict, TextureName);
+                Main.PauseMenu._lobby.CallFunction("ADD_MISSION_PANEL_PICTURE", TextureDict, TextureName);
             }
 
         }
@@ -52,7 +52,7 @@ namespace ScaleformUI.LobbyMenu
             Items.Add(item);
             if (Parent != null && Parent.Visible)
             {
-                ScaleformUI.PauseMenu._lobby.CallFunction("ADD_MISSION_PANEL_ITEM", item.Type, item.TextLeft, item.TextRight, (int)item.Icon, (int)item.IconColor, item.Tick);
+                Main.PauseMenu._lobby.CallFunction("ADD_MISSION_PANEL_ITEM", item.Type, item.TextLeft, item.TextRight, (int)item.Icon, (int)item.IconColor, item.Tick);
             }
         }
 
@@ -65,7 +65,7 @@ namespace ScaleformUI.LobbyMenu
             Items.RemoveAt(idx);
             if (Parent != null && Parent.Visible)
             {
-                ScaleformUI.PauseMenu._lobby.CallFunction("REMOVE_MISSION_PANEL_ITEM", idx);
+                Main.PauseMenu._lobby.CallFunction("REMOVE_MISSION_PANEL_ITEM", idx);
             }
         }
     }

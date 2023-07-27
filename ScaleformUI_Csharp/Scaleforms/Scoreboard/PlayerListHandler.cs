@@ -48,8 +48,8 @@ namespace ScaleformUI
             if (_sc is not null) return;
             _sc = new ScaleformWideScreen("MP_MM_CARD_FREEMODE");
             var timeout = 1000;
-            int start = ScaleformUI.GameTime;
-            while (!_sc.IsLoaded && ScaleformUI.GameTime - start < timeout) await BaseScript.Delay(0);
+            int start = Main.GameTime;
+            while (!_sc.IsLoaded && Main.GameTime - start < timeout) await BaseScript.Delay(0);
         }
         public void Dispose()
         {
@@ -128,7 +128,7 @@ namespace ScaleformUI
         internal void Update()
         {
             API.DrawScaleformMovie(_sc.Handle, 0.122f, 0.3f, 0.28f, 0.6f, 255, 255, 255, 255, 0);
-            if (_start != 0 && ScaleformUI.GameTime - _start > _timer)
+            if (_start != 0 && Main.GameTime - _start > _timer)
             {
                 CurrentPage = 0;
                 Enabled = false;
@@ -141,7 +141,7 @@ namespace ScaleformUI
         public void NextPage()
         {
             UpdateMaxPages();
-            _start = ScaleformUI.GameTime;
+            _start = Main.GameTime;
             _timer = 8000;
             BuildMenu();
             if (CurrentPage > MaxPages)

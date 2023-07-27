@@ -27,9 +27,9 @@ namespace ScaleformUI.Scaleforms.RankBar
         {
             var timeout = 1000;
 
-            int start = ScaleformUI.GameTime;
+            int start = Main.GameTime;
             API.RequestHudScaleform(HUD_COMPONENT_ID);
-            while (!API.HasHudScaleformLoaded(HUD_COMPONENT_ID) && ScaleformUI.GameTime - start < timeout)
+            while (!API.HasHudScaleformLoaded(HUD_COMPONENT_ID) && Main.GameTime - start < timeout)
             {
                 await BaseScript.Delay(0);
             }

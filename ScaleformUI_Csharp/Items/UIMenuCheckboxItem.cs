@@ -75,7 +75,7 @@
                 _checked = value;
                 if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    ScaleformUI._ui.CallFunction("SET_INPUT_EVENT", 16, Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), value);
+                    Main._ui.CallFunction("SET_INPUT_EVENT", 16, Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), value);
                 }
             }
         }

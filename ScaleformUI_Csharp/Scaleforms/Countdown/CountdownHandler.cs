@@ -62,8 +62,8 @@ namespace ScaleformUI.Scaleforms.Countdown
             API.RequestScriptAudioBank("HUD_321_GO", false);
             _sc = new ScaleformWideScreen(SCALEFORM_NAME);
             var timeout = 1000;
-            int start = ScaleformUI.GameTime;
-            while (!_sc.IsLoaded && ScaleformUI.GameTime - start < timeout) await BaseScript.Delay(0);
+            int start = Main.GameTime;
+            while (!_sc.IsLoaded && Main.GameTime - start < timeout) await BaseScript.Delay(0);
         }
 
         private async void Dispose()

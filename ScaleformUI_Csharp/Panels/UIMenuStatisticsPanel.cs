@@ -20,7 +20,7 @@
             Items.Add(item);
             int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(ParentItem));
             int van = ParentItem.Panels.IndexOf(this);
-            ScaleformUI._ui.CallFunction("ADD_STATISTIC_TO_PANEL", it, van, Name, _value);
+            Main._ui.CallFunction("ADD_STATISTIC_TO_PANEL", it, van, Name, _value);
         }
 
         public float GetPercentage(int ItemId)
@@ -37,7 +37,7 @@
                 Items[ItemId].Value = 0;
             int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(ParentItem));
             int van = ParentItem.Panels.IndexOf(this);
-            ScaleformUI._ui.CallFunction("SET_PANEL_STATS_ITEM_VALUE", it, van, ItemId, Items[ItemId].Value);
+            Main._ui.CallFunction("SET_PANEL_STATS_ITEM_VALUE", it, van, ItemId, Items[ItemId].Value);
         }
     }
 

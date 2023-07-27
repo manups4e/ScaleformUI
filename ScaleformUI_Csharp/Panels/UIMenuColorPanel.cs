@@ -72,7 +72,7 @@ namespace ScaleformUI
         {
             int it = this.ParentItem.Parent.Pagination.GetScaleformIndex(this.ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
             int van = this.ParentItem.Panels.IndexOf(this);
-            API.BeginScaleformMovieMethod(ScaleformUI._ui.Handle, "GET_VALUE_FROM_PANEL");
+            API.BeginScaleformMovieMethod(Main._ui.Handle, "GET_VALUE_FROM_PANEL");
             API.ScaleformMovieMethodAddParamInt(it);
             API.ScaleformMovieMethodAddParamInt(van);
             int ret = API.EndScaleformMovieMethodReturnValue();
@@ -85,7 +85,7 @@ namespace ScaleformUI
 
             int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
             int van = ParentItem.Panels.IndexOf(this);
-            ScaleformUI._ui.CallFunction("SET_COLOR_PANEL_VALUE", it, van, val);
+            Main._ui.CallFunction("SET_COLOR_PANEL_VALUE", it, van, val);
         }
     }
 }

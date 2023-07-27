@@ -234,8 +234,8 @@ namespace ScaleformUI
             if (_sc != null) return;
             _sc = new ScaleformWideScreen("INSTRUCTIONAL_BUTTONS");
             int timeout = 1000;
-            int start = ScaleformUI.GameTime;
-            while (!_sc.IsLoaded && ScaleformUI.GameTime - start < timeout) await BaseScript.Delay(0);
+            int start = Main.GameTime;
+            while (!_sc.IsLoaded && Main.GameTime - start < timeout) await BaseScript.Delay(0);
         }
 
         /// <summary>
@@ -315,9 +315,9 @@ namespace ScaleformUI
         {
             _isSaving = true;
             _changed = true;
-            savingTimer = ScaleformUI.GameTime;
+            savingTimer = Main.GameTime;
             Screen.LoadingPrompt.Show(text, spinnerType);
-            while (ScaleformUI.GameTime - savingTimer <= time) await BaseScript.Delay(100);
+            while (Main.GameTime - savingTimer <= time) await BaseScript.Delay(100);
             Screen.LoadingPrompt.Hide();
             _isSaving = false;
         }
@@ -331,7 +331,7 @@ namespace ScaleformUI
         {
             _isSaving = true;
             _changed = true;
-            savingTimer = ScaleformUI.GameTime;
+            savingTimer = Main.GameTime;
             Screen.LoadingPrompt.Show(text, spinnerType);
         }
 
@@ -363,7 +363,7 @@ namespace ScaleformUI
                 {
                     if (button.PadCheck == PadCheck.Keyboard) continue;
                     gamepadButtons.Add(button);
-                    if (ScaleformUI.Warning.IsShowing || ScaleformUI.Warning.IsShowingWithButtons)
+                    if (Main.Warning.IsShowing || Main.Warning.IsShowingWithButtons)
                         _sc.CallFunction("SET_DATA_SLOT", count, button.GetButtonId(), button.Text, 0, -1);
                     else
                         _sc.CallFunction("SET_DATA_SLOT", count, button.GetButtonId(), button.Text);
@@ -376,7 +376,7 @@ namespace ScaleformUI
                         _sc.CallFunction("SET_DATA_SLOT", count, button.GetButtonId(), button.Text, 1, (int)button.KeyboardButton);
                     else
                     {
-                        if (ScaleformUI.Warning.IsShowing || ScaleformUI.Warning.IsShowingWithButtons)
+                        if (Main.Warning.IsShowing || Main.Warning.IsShowingWithButtons)
                             _sc.CallFunction("SET_DATA_SLOT", count, button.GetButtonId(), button.Text, 0, -1);
                         else
                             _sc.CallFunction("SET_DATA_SLOT", count, button.GetButtonId(), button.Text);
@@ -432,7 +432,7 @@ namespace ScaleformUI
 
             UpdateButtons();
 
-            if (!ScaleformUI.Warning.IsShowing || ScaleformUI.Warning.IsShowingWithButtons) Draw();
+            if (!Main.Warning.IsShowing || Main.Warning.IsShowingWithButtons) Draw();
 
             foreach (InstructionalButton button in keyboardButtons)
             {

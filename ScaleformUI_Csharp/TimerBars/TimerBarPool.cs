@@ -26,7 +26,7 @@
 
         public void Draw()
         {
-            int off = (ScaleformUI.InstructionalButtons.ControlButtons != null && ScaleformUI.InstructionalButtons.ControlButtons.Count != 0) || ScaleformUI.InstructionalButtons.IsSaving ? 9 : 0;
+            int off = (Main.InstructionalButtons.ControlButtons != null && Main.InstructionalButtons.ControlButtons.Count != 0) || Main.InstructionalButtons.IsSaving ? 9 : 0;
             if (_bars.Count > 0)
             {
                 for (int i = 0; i < _bars.Count; i++)

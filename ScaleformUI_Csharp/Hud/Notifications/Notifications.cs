@@ -321,9 +321,9 @@ namespace ScaleformUI
             if (string.IsNullOrEmpty(textOutput))
                 textOutput = label;
             if (savingTime > 0)
-                ScaleformUI.InstructionalButtons.AddSavingText(busySpinner, textOutput, savingTime);
+                Main.InstructionalButtons.AddSavingText(busySpinner, textOutput, savingTime);
             else
-                ScaleformUI.InstructionalButtons.AddSavingText(busySpinner, textOutput);
+                Main.InstructionalButtons.AddSavingText(busySpinner, textOutput);
         }
 
         /// <summary>
@@ -331,7 +331,7 @@ namespace ScaleformUI
         /// </summary>
         public static void StopLoadingMessage()
         {
-            ScaleformUI.InstructionalButtons.HideSavingText();
+            Main.InstructionalButtons.HideSavingText();
         }
 
         internal static async Task<Tuple<int, string>> GetPedMugshotAsync(Ped ped, bool transparent = false)

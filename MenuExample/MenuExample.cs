@@ -73,7 +73,7 @@ public class MenuExample : BaseScript
             if (item == uiItemBigMessageDispose)
             {
                 if (uiCheckboxBigMessageManualDispose.Checked)
-                    ScaleformUI.ScaleformUI.BigMessageInstance.Dispose();
+                    ScaleformUI.Main.BigMessageInstance.Dispose();
             }
         };
 
@@ -84,13 +84,13 @@ public class MenuExample : BaseScript
                 switch (index)
                 {
                     case 0:
-                        ScaleformUI.ScaleformUI.BigMessageInstance.Transition = "TRANSITION_OUT";
+                        ScaleformUI.Main.BigMessageInstance.Transition = "TRANSITION_OUT";
                         break;
                     case 1:
-                        ScaleformUI.ScaleformUI.BigMessageInstance.Transition = "TRANSITION_UP";
+                        ScaleformUI.Main.BigMessageInstance.Transition = "TRANSITION_UP";
                         break;
                     case 2:
-                        ScaleformUI.ScaleformUI.BigMessageInstance.Transition = "TRANSITION_Down";
+                        ScaleformUI.Main.BigMessageInstance.Transition = "TRANSITION_Down";
                         break;
                 }
             }
@@ -99,31 +99,31 @@ public class MenuExample : BaseScript
                 switch (index)
                 {
                     case 0:
-                        ScaleformUI.ScaleformUI.BigMessageInstance.ShowMissionPassedMessage("Mission Passed", manualDispose: uiCheckboxBigMessageManualDispose.Checked);
+                        ScaleformUI.Main.BigMessageInstance.ShowMissionPassedMessage("Mission Passed", manualDispose: uiCheckboxBigMessageManualDispose.Checked);
                         break;
                     case 1:
-                        ScaleformUI.ScaleformUI.BigMessageInstance.ShowColoredShard("Coloured Shard", "Showing the coloured shared", HudColor.HUD_COLOUR_WHITE, HudColor.HUD_COLOUR_FREEMODE, manualDispose: uiCheckboxBigMessageManualDispose.Checked);
+                        ScaleformUI.Main.BigMessageInstance.ShowColoredShard("Coloured Shard", "Showing the coloured shared", HudColor.HUD_COLOUR_WHITE, HudColor.HUD_COLOUR_FREEMODE, manualDispose: uiCheckboxBigMessageManualDispose.Checked);
                         break;
                     case 2:
-                        ScaleformUI.ScaleformUI.BigMessageInstance.ShowOldMessage("Old Message", manualDispose: uiCheckboxBigMessageManualDispose.Checked);
+                        ScaleformUI.Main.BigMessageInstance.ShowOldMessage("Old Message", manualDispose: uiCheckboxBigMessageManualDispose.Checked);
                         break;
                     case 3:
-                        ScaleformUI.ScaleformUI.BigMessageInstance.ShowSimpleShard("Simple Shard", "Showing the simple shard", manualDispose: uiCheckboxBigMessageManualDispose.Checked);
+                        ScaleformUI.Main.BigMessageInstance.ShowSimpleShard("Simple Shard", "Showing the simple shard", manualDispose: uiCheckboxBigMessageManualDispose.Checked);
                         break;
                     case 4:
-                        ScaleformUI.ScaleformUI.BigMessageInstance.ShowRankupMessage("Rank Up", "Showing the rank up message", 10, manualDispose: uiCheckboxBigMessageManualDispose.Checked);
+                        ScaleformUI.Main.BigMessageInstance.ShowRankupMessage("Rank Up", "Showing the rank up message", 10, manualDispose: uiCheckboxBigMessageManualDispose.Checked);
                         break;
                     case 5:
-                        ScaleformUI.ScaleformUI.BigMessageInstance.ShowMpMessageLarge("MP Message Large", manualDispose: uiCheckboxBigMessageManualDispose.Checked);
+                        ScaleformUI.Main.BigMessageInstance.ShowMpMessageLarge("MP Message Large", manualDispose: uiCheckboxBigMessageManualDispose.Checked);
                         break;
                     case 6:
-                        ScaleformUI.ScaleformUI.BigMessageInstance.ShowMpWastedMessage("MP Wasted Message", "Wasted", manualDispose: uiCheckboxBigMessageManualDispose.Checked);
+                        ScaleformUI.Main.BigMessageInstance.ShowMpWastedMessage("MP Wasted Message", "Wasted", manualDispose: uiCheckboxBigMessageManualDispose.Checked);
                         break;
                     case 7:
                         const string CUSTOM_LABEL = "SCALEFORMUI_CUSTOM_LABEL";
                         API.AddTextEntry(CUSTOM_LABEL, "ScaleformUI is the best solution!");
                         ScaleformLabel scaleformLabel = CUSTOM_LABEL;
-                        ScaleformUI.ScaleformUI.BigMessageInstance.ShowMissionPassedMessage(scaleformLabel, manualDispose: uiCheckboxBigMessageManualDispose.Checked);
+                        ScaleformUI.Main.BigMessageInstance.ShowMissionPassedMessage(scaleformLabel, manualDispose: uiCheckboxBigMessageManualDispose.Checked);
                         break;
                 }
             }
@@ -460,14 +460,14 @@ public class MenuExample : BaseScript
         {
             if (item == showSimplePopup)
             {
-                ScaleformUI.ScaleformUI.Warning.ShowWarning("This is the title", "This is the subtitle", "This is the prompt.. you have 6 seconds left", "This is the error message, ScaleformUI Ver. 3.0");
+                ScaleformUI.Main.Warning.ShowWarning("This is the title", "This is the subtitle", "This is the prompt.. you have 6 seconds left", "This is the error message, ScaleformUI Ver. 3.0");
                 await Delay(1000);
                 for (int i = 5; i > -1; i--)
                 {
-                    ScaleformUI.ScaleformUI.Warning.UpdateWarning("This is the title", "This is the subtitle", $"This is the prompt.. you have {i} seconds left", "This is the error message, ScaleformUI Ver. 3.0");
+                    ScaleformUI.Main.Warning.UpdateWarning("This is the title", "This is the subtitle", $"This is the prompt.. you have {i} seconds left", "This is the error message, ScaleformUI Ver. 3.0");
                     await Delay(1000);
                 }
-                ScaleformUI.ScaleformUI.Warning.Dispose();
+                ScaleformUI.Main.Warning.Dispose();
             }
             else if (item == showPopupButtons)
             {
@@ -479,31 +479,31 @@ public class MenuExample : BaseScript
                     new InstructionalButton(new List<Control> { Control.MoveUpOnly, Control.MoveLeftOnly , Control.MoveDownOnly , Control.MoveRightOnly }, "Woow multiple buttons at once??"),
                     new InstructionalButton(InputGroup.INPUTGROUP_LOOK, "InputGroup example")
                 };
-                ScaleformUI.ScaleformUI.Warning.ShowWarningWithButtons("This is the title", "This is the subtitle", "This is the prompt, press any button", buttons, "This is the error message, ScaleformUI Ver. 3.0");
-                ScaleformUI.ScaleformUI.Warning.OnButtonPressed += (button) =>
+                ScaleformUI.Main.Warning.ShowWarningWithButtons("This is the title", "This is the subtitle", "This is the prompt, press any button", buttons, "This is the error message, ScaleformUI Ver. 3.0");
+                ScaleformUI.Main.Warning.OnButtonPressed += (button) =>
                 {
                     Debug.WriteLine($"You pressed a Button => {button.Text}");
                 };
             }
             else if (item == customInstr2)
             {
-                if (ScaleformUI.ScaleformUI.InstructionalButtons.ControlButtons.Count >= 6) return;
-                ScaleformUI.ScaleformUI.InstructionalButtons.AddInstructionalButton(new InstructionalButton((Control)new Random().Next(0, 250), "I'm a new button look at me!"));
+                if (ScaleformUI.Main.InstructionalButtons.ControlButtons.Count >= 6) return;
+                ScaleformUI.Main.InstructionalButtons.AddInstructionalButton(new InstructionalButton((Control)new Random().Next(0, 250), "I'm a new button look at me!"));
             }
             else if (item == bigMessage)
             {
-                ScaleformUI.ScaleformUI.BigMessageInstance.ShowSimpleShard("TITLE", "SUBTITLE");
+                ScaleformUI.Main.BigMessageInstance.ShowSimpleShard("TITLE", "SUBTITLE");
             }
             else if (item == midMessage)
             {
-                ScaleformUI.ScaleformUI.MedMessageInstance.ShowColoredShard("TITLE", "SUBTITLE", HudColor.HUD_COLOUR_FREEMODE);
+                ScaleformUI.Main.MedMessageInstance.ShowColoredShard("TITLE", "SUBTITLE", HudColor.HUD_COLOUR_FREEMODE);
             }
         };
 
         customInstr.OnListSelected += (item, index) =>
             {
-                if (ScaleformUI.ScaleformUI.InstructionalButtons.IsSaving) return;
-                ScaleformUI.ScaleformUI.InstructionalButtons.AddSavingText((LoadingSpinnerType)(index + 1), "I'm a saving text", 3000);
+                if (ScaleformUI.Main.InstructionalButtons.IsSaving) return;
+                ScaleformUI.Main.InstructionalButtons.AddSavingText((LoadingSpinnerType)(index + 1), "I'm a saving text", 3000);
             };
 
         // ====================================================================
@@ -1265,11 +1265,11 @@ public class MenuExample : BaseScript
 
                     };
 
-                    ScaleformUI.ScaleformUI.InstructionalButtons.SetInstructionalButtons(buttons);
+                    ScaleformUI.Main.InstructionalButtons.SetInstructionalButtons(buttons);
                 }
             }
             else if (focusLevel == 0)
-                ScaleformUI.ScaleformUI.InstructionalButtons.SetInstructionalButtons(menu.InstructionalButtons);
+                ScaleformUI.Main.InstructionalButtons.SetInstructionalButtons(menu.InstructionalButtons);
 
         };
 
@@ -1523,9 +1523,9 @@ public class MenuExample : BaseScript
 
             if (Game.IsControlJustPressed(0, (Control)170)) // F3
             {
-                if (ScaleformUI.ScaleformUI.JobMissionSelection.Enabled)
+                if (ScaleformUI.Main.JobMissionSelection.Enabled)
                 {
-                    ScaleformUI.ScaleformUI.JobMissionSelection.Enabled = false;
+                    ScaleformUI.Main.JobMissionSelection.Enabled = false;
                     return;
                 }
 
@@ -1533,10 +1533,10 @@ public class MenuExample : BaseScript
                 long _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
                 API.CreateRuntimeTextureFromDuiHandle(txd, "panelbackground", API.GetDuiHandle(_paneldui));
 
-                ScaleformUI.ScaleformUI.JobMissionSelection.SetTitle("MISSION SELECTOR");
-                ScaleformUI.ScaleformUI.JobMissionSelection.MaxVotes = 3;
-                ScaleformUI.ScaleformUI.JobMissionSelection.SetVotes(0, "VOTES");
-                ScaleformUI.ScaleformUI.JobMissionSelection.Cards = new List<JobSelectionCard>();
+                ScaleformUI.Main.JobMissionSelection.SetTitle("MISSION SELECTOR");
+                ScaleformUI.Main.JobMissionSelection.MaxVotes = 3;
+                ScaleformUI.Main.JobMissionSelection.SetVotes(0, "VOTES");
+                ScaleformUI.Main.JobMissionSelection.Cards = new List<JobSelectionCard>();
 
                 JobSelectionCard card = new JobSelectionCard("Test 1", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, HudColor.HUD_COLOUR_FREEMODE, 2, new List<MissionDetailsItem>()
                 {
@@ -1546,7 +1546,7 @@ public class MenuExample : BaseScript
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)3, HudColor.HUD_COLOUR_GREEN),
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)4, HudColor.HUD_COLOUR_WHITE, true),
                 });
-                ScaleformUI.ScaleformUI.JobMissionSelection.AddCard(card);
+                ScaleformUI.Main.JobMissionSelection.AddCard(card);
 
                 JobSelectionCard card1 = new JobSelectionCard("Test 2", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, HudColor.HUD_COLOUR_FREEMODE, 2, new List<MissionDetailsItem>()
                 {
@@ -1556,7 +1556,7 @@ public class MenuExample : BaseScript
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)8, HudColor.HUD_COLOUR_GREEN),
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)9, HudColor.HUD_COLOUR_WHITE, true),
                 });
-                ScaleformUI.ScaleformUI.JobMissionSelection.AddCard(card1);
+                ScaleformUI.Main.JobMissionSelection.AddCard(card1);
 
                 JobSelectionCard card2 = new JobSelectionCard("Test 3", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, HudColor.HUD_COLOUR_FREEMODE, 2, new List<MissionDetailsItem>()
                 {
@@ -1566,7 +1566,7 @@ public class MenuExample : BaseScript
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)13, HudColor.HUD_COLOUR_GREEN),
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)14, HudColor.HUD_COLOUR_WHITE, true),
                 });
-                ScaleformUI.ScaleformUI.JobMissionSelection.AddCard(card2);
+                ScaleformUI.Main.JobMissionSelection.AddCard(card2);
 
                 JobSelectionCard card3 = new JobSelectionCard("Test 4", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, HudColor.HUD_COLOUR_FREEMODE, 2, new List<MissionDetailsItem>()
                 {
@@ -1576,7 +1576,7 @@ public class MenuExample : BaseScript
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)18, HudColor.HUD_COLOUR_GREEN),
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)19, HudColor.HUD_COLOUR_WHITE, true),
                 });
-                ScaleformUI.ScaleformUI.JobMissionSelection.AddCard(card3);
+                ScaleformUI.Main.JobMissionSelection.AddCard(card3);
 
                 JobSelectionCard card4 = new JobSelectionCard("Test 5", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, HudColor.HUD_COLOUR_FREEMODE, 2, new List<MissionDetailsItem>()
                 {
@@ -1586,7 +1586,7 @@ public class MenuExample : BaseScript
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)23, HudColor.HUD_COLOUR_GREEN),
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)24, HudColor.HUD_COLOUR_WHITE, true),
                 });
-                ScaleformUI.ScaleformUI.JobMissionSelection.AddCard(card4);
+                ScaleformUI.Main.JobMissionSelection.AddCard(card4);
 
                 JobSelectionCard card5 = new JobSelectionCard("Test 6", "~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "test", "panelbackground", 12, 15, JobSelectionCardIcon.BASE_JUMPING, HudColor.HUD_COLOUR_FREEMODE, 2, new List<MissionDetailsItem>()
                 {
@@ -1596,9 +1596,9 @@ public class MenuExample : BaseScript
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)3, HudColor.HUD_COLOUR_GREEN),
                     new MissionDetailsItem("Left Label", "Right Label", (JobIcon)4, HudColor.HUD_COLOUR_WHITE, true),
                 });
-                ScaleformUI.ScaleformUI.JobMissionSelection.AddCard(card5);
+                ScaleformUI.Main.JobMissionSelection.AddCard(card5);
 
-                ScaleformUI.ScaleformUI.JobMissionSelection.Buttons = new List<JobSelectionButton>()
+                ScaleformUI.Main.JobMissionSelection.Buttons = new List<JobSelectionButton>()
                 {
                     new JobSelectionButton("Test1", "description test", new List<MissionDetailsItem>()) {Selectable = false },
 
@@ -1606,26 +1606,26 @@ public class MenuExample : BaseScript
 
                     new JobSelectionButton("Test3", "description test", new List<MissionDetailsItem>()) {Selectable = true },
                 };
-                ScaleformUI.ScaleformUI.JobMissionSelection.Buttons[0].OnButtonPressed += () =>
+                ScaleformUI.Main.JobMissionSelection.Buttons[0].OnButtonPressed += () =>
                 {
-                    Screen.ShowSubtitle($"Button Pressed => {ScaleformUI.ScaleformUI.JobMissionSelection.Buttons[0].Text}");
+                    Screen.ShowSubtitle($"Button Pressed => {ScaleformUI.Main.JobMissionSelection.Buttons[0].Text}");
                 };
 
-                ScaleformUI.ScaleformUI.JobMissionSelection.Enabled = true;
+                ScaleformUI.Main.JobMissionSelection.Enabled = true;
 
                 await Delay(1000);
-                ScaleformUI.ScaleformUI.JobMissionSelection.ShowPlayerVote(2, "PlayerName", HudColor.HUD_COLOUR_GREEN, true, true);
+                ScaleformUI.Main.JobMissionSelection.ShowPlayerVote(2, "PlayerName", HudColor.HUD_COLOUR_GREEN, true, true);
             }
 
             if (Game.IsControlJustPressed(0, Control.DropWeapon)) // F9
             {
                 feedOpen = !feedOpen;
-                ScaleformUI.ScaleformUI.BigFeed.Title = "Super Title!";
-                ScaleformUI.ScaleformUI.BigFeed.Subtitle = "Super Subtitle";
-                ScaleformUI.ScaleformUI.BigFeed.BodyText = "~input_context~ 🥳 ~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat";
-                ScaleformUI.ScaleformUI.BigFeed.UpdatePicture("", ""); // it doesn't support DUI runtime textures!
-                ScaleformUI.ScaleformUI.BigFeed.RightAligned = true; // false to center align it
-                ScaleformUI.ScaleformUI.BigFeed.Enabled = feedOpen;
+                ScaleformUI.Main.BigFeed.Title = "Super Title!";
+                ScaleformUI.Main.BigFeed.Subtitle = "Super Subtitle";
+                ScaleformUI.Main.BigFeed.BodyText = "~input_context~ 🥳 ~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat";
+                ScaleformUI.Main.BigFeed.UpdatePicture("", ""); // it doesn't support DUI runtime textures!
+                ScaleformUI.Main.BigFeed.RightAligned = true; // false to center align it
+                ScaleformUI.Main.BigFeed.Enabled = feedOpen;
             }
         };
     }

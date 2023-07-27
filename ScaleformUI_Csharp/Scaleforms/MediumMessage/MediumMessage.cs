@@ -18,8 +18,8 @@ namespace ScaleformUI
             _sc = new ScaleformWideScreen("MIDSIZED_MESSAGE");
 
             var timeout = 1000;
-            int start = ScaleformUI.GameTime;
-            while (!_sc.IsLoaded && ScaleformUI.GameTime - start < timeout) await BaseScript.Delay(0);
+            int start = Main.GameTime;
+            while (!_sc.IsLoaded && Main.GameTime - start < timeout) await BaseScript.Delay(0);
         }
 
         public void Dispose()
@@ -31,7 +31,7 @@ namespace ScaleformUI
         public async void ShowColoredShard(string msg, string desc, HudColor bgColor, bool useDarkerShard = false, bool useCondensedShard = false, int time = 5000)
         {
             await Load();
-            _start = ScaleformUI.GameTime;
+            _start = Main.GameTime;
             _sc.CallFunction("SHOW_SHARD_MIDSIZED_MESSAGE", msg, desc, (int)bgColor, useDarkerShard, useCondensedShard);
             _timer = time;
             _hasAnimatedOut = false;
@@ -40,7 +40,7 @@ namespace ScaleformUI
         internal async void Update()
         {
             _sc.Render2D();
-            if (_start != 0 && ScaleformUI.GameTime - _start > _timer)
+            if (_start != 0 && Main.GameTime - _start > _timer)
             {
                 if (!_hasAnimatedOut)
                 {

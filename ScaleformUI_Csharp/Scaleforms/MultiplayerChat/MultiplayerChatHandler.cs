@@ -18,8 +18,8 @@ namespace ScaleformUI.Scaleforms.MultiplayerChat
             if (_sc is not null) return;
             _sc = new ScaleformWideScreen(SCALEFORM_NAME);
             int timeout = 1000;
-            int start = ScaleformUI.GameTime;
-            while (!_sc.IsLoaded && ScaleformUI.GameTime - start < timeout) await BaseScript.Delay(0);
+            int start = Main.GameTime;
+            while (!_sc.IsLoaded && Main.GameTime - start < timeout) await BaseScript.Delay(0);
             if (!_sc.IsLoaded) return;
             _sc.CallFunction("RESET");
             _sc.CallFunction("SET_FOCUS", ChatVisibility.Hidden, ChatScope.All, "All", Game.Player.Name, HudColor.HUD_COLOUR_WHITE);
@@ -38,7 +38,7 @@ namespace ScaleformUI.Scaleforms.MultiplayerChat
             else if (visibility == ChatVisibility.Hidden)
                 _isTyping = false;
             else if (visibility == ChatVisibility.Default)
-                _start = ScaleformUI.GameTime;
+                _start = Main.GameTime;
 
             _sc.CallFunction("SET_FOCUS", visibility, scope, scopeText, playerName, color);
         }
@@ -73,7 +73,7 @@ namespace ScaleformUI.Scaleforms.MultiplayerChat
             if (_sc is null || !_sc.IsLoaded) return;
             _sc.Render2D();
 
-            if (!_isTyping && ScaleformUI.GameTime - _start > _duration)
+            if (!_isTyping && Main.GameTime - _start > _duration)
                 Close();
         }
     }

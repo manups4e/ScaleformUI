@@ -177,8 +177,8 @@ namespace ScaleformUI
             if (_sc != null) return;
             _sc = new("MP_NEXT_JOB_SELECTION");
             var timeout = 1000;
-            int start = ScaleformUI.GameTime;
-            while (!_sc.IsLoaded && ScaleformUI.GameTime - start < timeout) await BaseScript.Delay(0);
+            int start = Main.GameTime;
+            while (!_sc.IsLoaded && Main.GameTime - start < timeout) await BaseScript.Delay(0);
         }
 
         int eventType = 0;

@@ -6,7 +6,7 @@ using ScaleformUI.Scaleforms.RankBar;
 
 namespace ScaleformUI
 {
-    public class ScaleformUI : BaseScript
+    public class Main : BaseScript
     {
         /// <summary>
         /// Provides the current game time in milliseconds.
@@ -25,7 +25,7 @@ namespace ScaleformUI
         public static CountdownHandler CountdownInstance { get; set; }
 
         internal static ScaleformWideScreen _ui { get; set; }
-        public ScaleformUI()
+        public Main()
         {
             Warning = new();
             MedMessageInstance = new();
