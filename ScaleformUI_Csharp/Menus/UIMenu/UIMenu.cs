@@ -1,6 +1,7 @@
 using CitizenFX.Core;
 using CitizenFX.Core.UI;
 using ScaleformUI.Elements;
+using ScaleformUI.Menus;
 using ScaleformUI.Scaleforms;
 using System.Drawing;
 using static CitizenFX.Core.Native.API;
@@ -855,7 +856,7 @@ namespace ScaleformUI.Menu
     /// <summary>
     /// Base class for ScaleformUI. Calls the next events: OnIndexChange, OnListChanged, OnCheckboxChange, OnItemSelect, OnMenuOpen, OnMenuClose.
     /// </summary>
-    public class UIMenu
+    public class UIMenu : MenuBase
     {
         #region Private Fields
         private bool _visible;
@@ -1019,12 +1020,6 @@ namespace ScaleformUI.Menu
 
         public List<UIMenuWindow> Windows = new List<UIMenuWindow>();
 
-        public List<InstructionalButton> InstructionalButtons = new List<InstructionalButton>()
-        {
-            new InstructionalButton(Control.PhoneSelect, _selectTextLocalized),
-            new InstructionalButton(Control.PhoneCancel, _backTextLocalized)
-        };
-
         #endregion
 
         #region Events
@@ -1165,6 +1160,13 @@ namespace ScaleformUI.Menu
 
             SetKey(MenuControls.Back, Control.PhoneCancel);
             SetKey(MenuControls.Back, Control.FrontendPause);
+
+            InstructionalButtons = new List<InstructionalButton>()
+            {
+                new InstructionalButton(Control.PhoneSelect, _selectTextLocalized),
+                new InstructionalButton(Control.PhoneCancel, _backTextLocalized)
+            };
+
         }
 
         #endregion
@@ -1466,7 +1468,7 @@ namespace ScaleformUI.Menu
         /// <summary>
         /// Draw the menu and all of it's components.
         /// </summary>
-        public async void Draw()
+        public override async void Draw()
         {
             if (!Visible || Main.Warning.IsShowing) return;
             while (!Main._ui.IsLoaded) await BaseScript.Delay(0);
@@ -1520,7 +1522,7 @@ namespace ScaleformUI.Menu
         /// <summary>
         /// Process the mouse's position and check if it's hovering over any UI element. Call this in OnTick
         /// </summary>
-        public async void ProcessMouse()
+        public override async void ProcessMouse()
         {
             if (!Visible || _justOpened || MenuItems.Count == 0 || IsUsingController || !MouseControlsEnabled)
             {
@@ -2157,7 +2159,7 @@ namespace ScaleformUI.Menu
         /// <summary>
         /// Change whether this menu is visible to the user.
         /// </summary>
-        public bool Visible
+        public override bool Visible
         {
             get { return _visible; }
             set
