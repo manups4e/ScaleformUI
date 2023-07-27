@@ -1,10 +1,9 @@
 ﻿using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
-using System;
 using System.Drawing;
 using Font = CitizenFX.Core.UI.Font;
 
-namespace ScaleformUI
+namespace ScaleformUI.Elements
 {
     /// <summary>
     /// A Text object in the 1080 pixels height base system.
@@ -37,7 +36,7 @@ namespace ScaleformUI
         /// <param name="str"></param>
         public static void AddLongString(string str)
         {
-            var utf8ByteCount = System.Text.Encoding.UTF8.GetByteCount(str);
+            int utf8ByteCount = System.Text.Encoding.UTF8.GetByteCount(str);
 
             if (utf8ByteCount == str.Length)
             {
@@ -73,20 +72,20 @@ namespace ScaleformUI
                 return;
             }
 
-            var enc = System.Text.Encoding.UTF8;
+            System.Text.Encoding enc = System.Text.Encoding.UTF8;
 
-            var utf8ByteCount = enc.GetByteCount(input);
+            int utf8ByteCount = enc.GetByteCount(input);
             if (utf8ByteCount < maxByteLengthPerString)
             {
                 API.AddTextComponentString(input);
                 return;
             }
 
-            var startIndex = 0;
+            int startIndex = 0;
 
             for (int i = 0; i < input.Length; i++)
             {
-                var length = i - startIndex;
+                int length = i - startIndex;
                 if (enc.GetByteCount(input.Substring(startIndex, length)) > maxByteLengthPerString)
                 {
                     string substr = (input.Substring(startIndex, length - 1));
@@ -125,7 +124,7 @@ namespace ScaleformUI
             int screenh = Screen.Resolution.Height;
             const float height = 1080f;
             float ratio = (float)screenw / screenh;
-            var width = height * ratio;
+            float width = height * ratio;
 
             float x = (Position.X) / width;
             float y = (Position.Y) / height;

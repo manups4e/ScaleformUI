@@ -4,6 +4,7 @@ using CitizenFX.Core.UI;
 using ScaleformUI;
 using ScaleformUI.Elements;
 using ScaleformUI.LobbyMenu;
+using ScaleformUI.Menu;
 using ScaleformUI.PauseMenu;
 using System;
 using System.Collections.Generic;
@@ -933,7 +934,7 @@ public class MenuExample : BaseScript
                 sender.AnimationType = (MenuAnimationType)index;
         };
 
-        exampleMenu.OnMenuOpen += (menu) =>
+        exampleMenu.OnMenuOpen += (menu, data) =>
         {
             Screen.ShowSubtitle($"{menu.Title} just opened!", 3000);
             Debug.WriteLine($"{menu.Title} just opened!");

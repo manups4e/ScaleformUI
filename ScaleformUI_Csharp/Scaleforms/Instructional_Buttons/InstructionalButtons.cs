@@ -1,6 +1,7 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
+using ScaleformUI.Menu;
 using ScaleformUI.Scaleforms;
 using System.Drawing;
 
