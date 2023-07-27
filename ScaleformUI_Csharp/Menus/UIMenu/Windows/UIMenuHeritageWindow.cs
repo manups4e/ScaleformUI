@@ -23,13 +23,13 @@ namespace ScaleformUI.Menu
             if (mom < 0) Mom = 0;
             if (dad > 23) Dad = 23;
             if (dad < 0) Dad = 0;
-            var wid = ParentMenu.Windows.IndexOf(this);
+            int wid = ParentMenu.Windows.IndexOf(this);
             while (!API.HasStreamedTextureDictLoaded("char_creator_portraits"))
             {
                 await BaseScript.Delay(0);
                 API.RequestStreamedTextureDict("char_creator_portraits", true);
             }
-            Main._ui.CallFunction("UPDATE_HERITAGE_WINDOW", wid, Mom, Dad);
+            Main.scaleformUI.CallFunction("UPDATE_HERITAGE_WINDOW", wid, Mom, Dad);
             API.SetStreamedTextureDictAsNoLongerNeeded("char_creator_portraits");
         }
     }

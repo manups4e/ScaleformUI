@@ -24,7 +24,8 @@ namespace ScaleformUI
         public static RankBarHandler RankBarInstance { get; set; }
         public static CountdownHandler CountdownInstance { get; set; }
 
-        internal static ScaleformWideScreen _ui { get; set; }
+        internal static ScaleformWideScreen scaleformUI { get; set; }
+        internal static ScaleformWideScreen radialMenu { get; set; }
         public Main()
         {
             Warning = new();
@@ -34,7 +35,7 @@ namespace ScaleformUI
             JobMissionSelection = new();
             BigFeed = new();
             PauseMenu = new();
-            _ui = new("scaleformui");
+            scaleformUI = new("scaleformui");
             InstructionalButtons = new();
             InstructionalButtons.Load();
             RankBarInstance = new();
@@ -52,8 +53,8 @@ namespace ScaleformUI
                         API.AnimpostfxStop("PauseMenuIn");
                         API.AnimpostfxPlay("PauseMenuOut", 800, false);
                     }
-                    _ui.CallFunction("CLEAR_ALL");
-                    _ui.Dispose();
+                    scaleformUI.CallFunction("CLEAR_ALL");
+                    scaleformUI.Dispose();
                     PauseMenu.Dispose();
                 }
             });
@@ -78,7 +79,8 @@ namespace ScaleformUI
                 JobMissionSelection.Update();
             if (BigFeed._sc != null)
                 BigFeed.Update();
-            _ui ??= new("ScaleformUI");
+            scaleformUI ??= new("ScaleformUI");
+            radialMenu ??= new("RadialMenu");
             if (!PauseMenu.Loaded)
                 PauseMenu.Load();
             await Task.FromResult(0);

@@ -42,11 +42,11 @@ namespace ScaleformUI.Menu
             DetailLeft = leftDetail ?? new();
             if (ParentMenu is not null)
             {
-                var wid = ParentMenu.Windows.IndexOf(this);
+                int wid = ParentMenu.Windows.IndexOf(this);
                 if (!StatWheelEnabled)
-                    Main._ui.CallFunction("UPDATE_DETAILS_WINDOW_VALUES", wid, DetailBottom, DetailMid, DetailTop, DetailLeft.Txd, DetailLeft.Txn, DetailLeft.Pos.X, DetailLeft.Pos.Y, DetailLeft.Size.Width, DetailLeft.Size.Height);
+                    Main.scaleformUI.CallFunction("UPDATE_DETAILS_WINDOW_VALUES", wid, DetailBottom, DetailMid, DetailTop, DetailLeft.Txd, DetailLeft.Txn, DetailLeft.Pos.X, DetailLeft.Pos.Y, DetailLeft.Size.Width, DetailLeft.Size.Height);
                 else
-                    Main._ui.CallFunction("UPDATE_DETAILS_WINDOW_VALUES", wid, DetailBottom, DetailMid, DetailTop, "statWheel");
+                    Main.scaleformUI.CallFunction("UPDATE_DETAILS_WINDOW_VALUES", wid, DetailBottom, DetailMid, DetailTop, "statWheel");
             }
         }
 
@@ -57,10 +57,10 @@ namespace ScaleformUI.Menu
                 DetailStats = stats;
                 if (ParentMenu is not null)
                 {
-                    var wid = ParentMenu.Windows.IndexOf(this);
+                    int wid = ParentMenu.Windows.IndexOf(this);
                     foreach (UIDetailStat value in stats)
                     {
-                        Main._ui.CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", wid, value.Percentage, (int)value.HudColor);
+                        Main.scaleformUI.CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", wid, value.Percentage, (int)value.HudColor);
                     }
                 }
             }
@@ -73,8 +73,8 @@ namespace ScaleformUI.Menu
                 DetailStats.Add(stat);
                 if (ParentMenu is not null)
                 {
-                    var wid = ParentMenu.Windows.IndexOf(this);
-                    Main._ui.CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", wid, stat.Percentage, (int)stat.HudColor);
+                    int wid = ParentMenu.Windows.IndexOf(this);
+                    Main.scaleformUI.CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", wid, stat.Percentage, (int)stat.HudColor);
                 }
             }
         }
@@ -94,10 +94,10 @@ namespace ScaleformUI.Menu
                 DetailStats = stats;
                 if (ParentMenu is not null)
                 {
-                    var wid = ParentMenu.Windows.IndexOf(this);
+                    int wid = ParentMenu.Windows.IndexOf(this);
                     foreach (UIDetailStat value in DetailStats)
                     {
-                        Main._ui.CallFunction("UPDATE_STATS_DETAILS_WINDOW_STATWHEEL", wid, DetailStats.IndexOf(value), value.Percentage, (int)value.HudColor);
+                        Main.scaleformUI.CallFunction("UPDATE_STATS_DETAILS_WINDOW_STATWHEEL", wid, DetailStats.IndexOf(value), value.Percentage, (int)value.HudColor);
                     }
                 }
             }
@@ -116,8 +116,8 @@ namespace ScaleformUI.Menu
             DetailStats.RemoveAt(id);
             if (ParentMenu is not null)
             {
-                var wid = ParentMenu.Windows.IndexOf(this);
-                Main._ui.CallFunction("REMOVE_STATS_DETAILS_WINDOW_STATWHEEL", wid, id);
+                int wid = ParentMenu.Windows.IndexOf(this);
+                Main.scaleformUI.CallFunction("REMOVE_STATS_DETAILS_WINDOW_STATWHEEL", wid, id);
             }
         }
     }

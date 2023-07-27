@@ -221,7 +221,7 @@ namespace ScaleformUI.Menu
                 mainColor = value;
                 if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    Main._ui.CallFunction("UPDATE_COLORS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), (int)value, (int)highlightColor, (int)textColor, (int)highlightedTextColor);
+                    Main.scaleformUI.CallFunction("UPDATE_COLORS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), (int)value, (int)highlightColor, (int)textColor, (int)highlightedTextColor);
                 }
             }
         }
@@ -236,7 +236,7 @@ namespace ScaleformUI.Menu
                 highlightColor = value;
                 if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    Main._ui.CallFunction("UPDATE_COLORS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), (int)mainColor, (int)value, (int)textColor, (int)highlightedTextColor);
+                    Main.scaleformUI.CallFunction("UPDATE_COLORS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), (int)mainColor, (int)value, (int)textColor, (int)highlightedTextColor);
                 }
             }
         }
@@ -252,7 +252,7 @@ namespace ScaleformUI.Menu
                 textColor = value;
                 if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    Main._ui.CallFunction("UPDATE_COLORS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), (int)mainColor, (int)highlightColor, (int)value, (int)highlightedTextColor);
+                    Main.scaleformUI.CallFunction("UPDATE_COLORS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), (int)mainColor, (int)highlightColor, (int)value, (int)highlightedTextColor);
                 }
             }
         }
@@ -267,7 +267,7 @@ namespace ScaleformUI.Menu
                 highlightedTextColor = value;
                 if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    Main._ui.CallFunction("UPDATE_COLORS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), (int)mainColor, (int)highlightColor, (int)textColor, (int)value);
+                    Main.scaleformUI.CallFunction("UPDATE_COLORS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), (int)mainColor, (int)highlightColor, (int)textColor, (int)value);
                 }
             }
         }
@@ -280,7 +280,7 @@ namespace ScaleformUI.Menu
                 labelFont = value;
                 if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    Main._ui.CallFunction("SET_ITEM_LABEL_FONT", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), labelFont.FontName, labelFont.FontID);
+                    Main.scaleformUI.CallFunction("SET_ITEM_LABEL_FONT", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), labelFont.FontName, labelFont.FontID);
                 }
                 if (ParentColumn != null && ParentColumn.Parent.Visible)
                 {
@@ -300,7 +300,7 @@ namespace ScaleformUI.Menu
                 rightLabelFont = value;
                 if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    Main._ui.CallFunction("SET_ITEM_RIGHT_LABEL_FONT", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), rightLabelFont.FontName, rightLabelFont.FontID);
+                    Main.scaleformUI.CallFunction("SET_ITEM_RIGHT_LABEL_FONT", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), rightLabelFont.FontName, rightLabelFont.FontID);
                 }
                 if (ParentColumn != null && ParentColumn.Parent.Visible)
                 {
@@ -402,7 +402,7 @@ namespace ScaleformUI.Menu
                 blinkDescription = value;
                 if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    Main._ui.CallFunction("SET_BLINK_DESC", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), blinkDescription);
+                    Main.scaleformUI.CallFunction("SET_BLINK_DESC", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), blinkDescription);
                 }
                 if (ParentColumn != null && ParentColumn.Parent.Visible)
                 {
@@ -443,7 +443,7 @@ namespace ScaleformUI.Menu
                 }
                 if (Parent != null && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    Main._ui.CallFunction("SET_ITEM_LABELS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _formatLeftLabel, _formatRightLabel);
+                    Main.scaleformUI.CallFunction("SET_ITEM_LABELS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _formatLeftLabel, _formatRightLabel);
                 }
                 if (ParentColumn != null && ParentColumn.Parent != null && ParentColumn.Parent.Visible)
                 {
@@ -475,7 +475,7 @@ namespace ScaleformUI.Menu
                 if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
                     API.AddTextEntry($"menu_{BreadcrumbsHandler.CurrentDepth}_desc_{Parent.MenuItems.IndexOf(this)}", description);
-                    API.BeginScaleformMovieMethod(Main._ui.Handle, "UPDATE_ITEM_DESCRIPTION");
+                    API.BeginScaleformMovieMethod(Main.scaleformUI.Handle, "UPDATE_ITEM_DESCRIPTION");
                     API.ScaleformMovieMethodAddParamInt(Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)));
                     API.BeginTextCommandScaleformString($"menu_{BreadcrumbsHandler.CurrentDepth}_desc_{Parent.MenuItems.IndexOf(this)}");
                     API.EndTextCommandScaleformString_2();
@@ -518,7 +518,7 @@ namespace ScaleformUI.Menu
                     description = string.Empty;
                 if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    API.BeginScaleformMovieMethod(Main._ui.Handle, "UPDATE_ITEM_DESCRIPTION");
+                    API.BeginScaleformMovieMethod(Main.scaleformUI.Handle, "UPDATE_ITEM_DESCRIPTION");
                     API.ScaleformMovieMethodAddParamInt(Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)));
                     API.BeginTextCommandScaleformString("STRTNM1");
                     API.AddTextComponentSubstringTextLabelHashKey(descriptionHash);
@@ -566,8 +566,8 @@ namespace ScaleformUI.Menu
                     Label = _label;
                 if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    Main._ui.CallFunction("SET_ITEM_LABELS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _formatLeftLabel, _formatRightLabel);
-                    Main._ui.CallFunction("ENABLE_ITEM", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _enabled);
+                    Main.scaleformUI.CallFunction("SET_ITEM_LABELS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _formatLeftLabel, _formatRightLabel);
+                    Main.scaleformUI.CallFunction("ENABLE_ITEM", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _enabled);
                 }
                 if (ParentColumn != null && ParentColumn.Parent.Visible)
                 {
@@ -613,7 +613,7 @@ namespace ScaleformUI.Menu
                 }
                 if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    Main._ui.CallFunction("SET_LEFT_LABEL", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _formatLeftLabel);
+                    Main.scaleformUI.CallFunction("SET_LEFT_LABEL", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _formatLeftLabel);
                 }
                 if (ParentColumn != null && ParentColumn.Parent.Visible)
                 {
@@ -635,7 +635,7 @@ namespace ScaleformUI.Menu
             LeftBadge = badge;
             if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
             {
-                Main._ui.CallFunction("SET_LEFT_BADGE", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), (int)badge);
+                Main.scaleformUI.CallFunction("SET_LEFT_BADGE", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), (int)badge);
             }
             if (ParentColumn != null && ParentColumn.Parent.Visible)
             {
@@ -655,7 +655,7 @@ namespace ScaleformUI.Menu
             RightBadge = badge;
             if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
             {
-                Main._ui.CallFunction("SET_RIGHT_BADGE", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), (int)badge);
+                Main.scaleformUI.CallFunction("SET_RIGHT_BADGE", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), (int)badge);
             }
             if (ParentColumn != null && ParentColumn.Parent.Visible)
             {
@@ -697,7 +697,7 @@ namespace ScaleformUI.Menu
                 }
                 if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    Main._ui.CallFunction("SET_RIGHT_LABEL", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _formatRightLabel);
+                    Main.scaleformUI.CallFunction("SET_RIGHT_LABEL", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _formatRightLabel);
                 }
                 if (ParentColumn != null && ParentColumn.Parent.Visible)
                 {
@@ -733,7 +733,7 @@ namespace ScaleformUI.Menu
             Panels.RemoveAt(Index);
             if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
             {
-                Main._ui.CallFunction("REMOVE_PANEL", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), Index);
+                Main.scaleformUI.CallFunction("REMOVE_PANEL", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), Index);
             }
         }
 
@@ -751,9 +751,9 @@ namespace ScaleformUI.Menu
                 {
                     case UIMissionDetailsPanel:
                         UIMissionDetailsPanel mis = (UIMissionDetailsPanel)panel;
-                        Main._ui.CallFunction("ADD_SIDE_PANEL_TO_ITEM", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), 0, (int)mis.PanelSide, (int)mis._titleType, mis.Title, (int)mis.TitleColor, mis.TextureDict, mis.TextureName);
+                        Main.scaleformUI.CallFunction("ADD_SIDE_PANEL_TO_ITEM", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), 0, (int)mis.PanelSide, (int)mis._titleType, mis.Title, (int)mis.TitleColor, mis.TextureDict, mis.TextureName);
                         foreach (UIFreemodeDetailsItem _it in mis.Items)
-                            Main._ui.CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _it.Type, _it.TextLeft, _it.TextRight, (int)_it.Icon, (int)_it.IconColor, _it.Tick);
+                            Main.scaleformUI.CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _it.Type, _it.TextLeft, _it.TextRight, (int)_it.Icon, (int)_it.IconColor, _it.Tick);
                         break;
                 }
             }
@@ -767,7 +767,7 @@ namespace ScaleformUI.Menu
             SidePanel = null;
             if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
             {
-                Main._ui.CallFunction("REMOVE_SIDE_PANEL_TO_ITEM", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)));
+                Main.scaleformUI.CallFunction("REMOVE_SIDE_PANEL_TO_ITEM", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)));
             }
         }
 

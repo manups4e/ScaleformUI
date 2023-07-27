@@ -19,7 +19,7 @@
                 currentListItem = value;
                 if (Parent is not null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    Main._ui.CallFunction("UPDATE_LISTITEM_LIST", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), currentListItem, 0);
+                    Main.scaleformUI.CallFunction("UPDATE_LISTITEM_LIST", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), currentListItem, 0);
                 }
             }
         }

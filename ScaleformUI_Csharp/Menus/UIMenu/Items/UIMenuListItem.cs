@@ -31,7 +31,7 @@
                 else
                     _index = value;
                 if (Parent is not null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
-                    Main._ui.CallFunction("SET_ITEM_VALUE", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _index);
+                    Main.scaleformUI.CallFunction("SET_ITEM_VALUE", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _index);
             }
         }
 
@@ -134,7 +134,7 @@
             _items = list;
             _index = index;
             if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
-                Main._ui.CallFunction("UPDATE_LISTITEM_LIST", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), string.Join(",", _items), index);
+                Main.scaleformUI.CallFunction("UPDATE_LISTITEM_LIST", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), string.Join(",", _items), index);
         }
 
         public override void SetRightBadge(BadgeIcon badge)

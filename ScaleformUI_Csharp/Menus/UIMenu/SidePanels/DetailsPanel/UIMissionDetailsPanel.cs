@@ -14,7 +14,7 @@
                 title = value;
                 if (ParentItem is not null && ParentItem.Parent != null && ParentItem.Parent.Visible)
                 {
-                    Main._ui.CallFunction("UPDATE_SIDE_PANEL_TITLE", ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(this.ParentItem)), title);
+                    Main.scaleformUI.CallFunction("UPDATE_SIDE_PANEL_TITLE", ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(this.ParentItem)), title);
                 }
             }
         }
@@ -72,7 +72,7 @@
             if (ParentItem is not null)
             {
                 int wid = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
-                Main._ui.CallFunction("UPDATE_MISSION_DETAILS_PANEL_IMG", wid, TextureDict, TextureName);
+                Main.scaleformUI.CallFunction("UPDATE_MISSION_DETAILS_PANEL_IMG", wid, TextureDict, TextureName);
             }
 
         }
@@ -87,7 +87,7 @@
             if (ParentItem is not null && ParentItem.Parent != null && ParentItem.Parent.Visible)
             {
                 int wid = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
-                Main._ui.CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", wid, item.Type, item.TextLeft, item.TextRight, (int)item.Icon, (int)item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID);
+                Main.scaleformUI.CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", wid, item.Type, item.TextLeft, item.TextRight, (int)item.Icon, (int)item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID);
             }
         }
 
@@ -101,7 +101,7 @@
             if (ParentItem is not null && ParentItem.Parent != null && ParentItem.Parent.Visible)
             {
                 int wid = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
-                Main._ui.CallFunction("REMOVE_MISSION_DETAILS_DESC_ITEM", wid, TextureDict, TextureName);
+                Main.scaleformUI.CallFunction("REMOVE_MISSION_DETAILS_DESC_ITEM", wid, TextureDict, TextureName);
             }
         }
     }
