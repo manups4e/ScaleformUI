@@ -1,16 +1,18 @@
 ScaleformUI = {}
 ScaleformUI.Scaleforms = {}
-ScaleformUI.Notifications = nil
 ScaleformUI.Scaleforms._ui = nil --[[@type Scaleform]]                             -- scaleformui
 ScaleformUI.Scaleforms._pauseMenu = nil --[[@type PauseMenu]]                      -- pausemenu
-ScaleformUI.Scaleforms.MidMessageInstance = nil --[[@type MidMessageInstance]]     -- midmessage
-ScaleformUI.Scaleforms.PlayerListScoreboard = nil --[[@type PlayerListScoreboard]] -- playerlist
-ScaleformUI.Scaleforms.InstructionalButtons = nil --[[@type ButtonsHandler]]       -- buttons
-ScaleformUI.Scaleforms.BigMessageInstance = nil --[[@type BigMessageInstance]]     -- bigmessage
-ScaleformUI.Scaleforms.Warning = nil --[[@type WarningInstance]]                   -- warning
-ScaleformUI.Scaleforms.JobMissionSelector = nil --[[@type MissionSelectorHandler]] -- missionselector
-ScaleformUI.Scaleforms.RankbarHandler = nil --[[@type RankbarHandler]]             -- rankbar
-ScaleformUI.Scaleforms.CountdownHandler = nil --[[@type CountdownHandler]]         -- countdown
+ScaleformUI.Scaleforms.MidMessageInstance = MidMessageInstance --[[@type MidMessageInstance]]     -- midmessage
+ScaleformUI.Scaleforms.PlayerListScoreboard = PlayerListScoreboard.New() --[[@type PlayerListScoreboard]] -- playerlist
+ScaleformUI.Scaleforms.InstructionalButtons = ButtonsHandler --[[@type ButtonsHandler]]       -- buttons
+ScaleformUI.Scaleforms.BigMessageInstance = BigMessageInstance --[[@type BigMessageInstance]]     -- bigmessage
+ScaleformUI.Scaleforms.Warning = WarningInstance --[[@type WarningInstance]]                   -- warning
+ScaleformUI.Scaleforms.PlayerListScoreboard = PlayerListScoreboard.New()
+ScaleformUI.Scaleforms.JobMissionSelector = MissionSelectorHandler --[[@type MissionSelectorHandler]] -- missionselector
+ScaleformUI.Scaleforms.RankbarHandler = RankbarHandler --[[@type RankbarHandler]]             -- rankbar
+ScaleformUI.Scaleforms.CountdownHandler = CountdownHandler --[[@type CountdownHandler]]         -- countdown
+ScaleformUI.Notifications = Notifications
+ScaleformUI.Scaleforms.BigFeed = BigFeedInstance
 ScaleformUI.WaitTime = 850
 
 ScaleformUI.Scaleforms._pauseMenu = nil
@@ -33,18 +35,8 @@ end)
 
 Citizen.CreateThread(function()
     ScaleformUI.Scaleforms._ui = Scaleform.RequestWidescreen("scaleformui")
-    ScaleformUI.Scaleforms.BigMessageInstance = BigMessageInstance
-    ScaleformUI.Scaleforms.MidMessageInstance = MidMessageInstance
-    ScaleformUI.Scaleforms.Warning = WarningInstance
-    ScaleformUI.Scaleforms.PlayerListScoreboard = PlayerListScoreboard.New()
-    ScaleformUI.Scaleforms.JobMissionSelector = MissionSelectorHandler
-    ScaleformUI.Scaleforms.InstructionalButtons = ButtonsHandler
     ScaleformUI.Scaleforms._pauseMenu = PauseMenu.New()
     ScaleformUI.Scaleforms._pauseMenu:Load()
-    ScaleformUI.Scaleforms.RankbarHandler = RankbarHandler
-    ScaleformUI.Scaleforms.CountdownHandler = CountdownHandler
-    ScaleformUI.Scaleforms.BigFeed = BigFeedInstance
-    ScaleformUI.Notifications = Notifications
 
     while true do
         ScaleformUI.WaitTime = 850
