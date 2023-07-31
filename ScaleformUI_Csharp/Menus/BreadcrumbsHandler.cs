@@ -1,16 +1,16 @@
-﻿namespace ScaleformUI.Menu
+﻿namespace ScaleformUI.Menus
 {
     internal static class BreadcrumbsHandler
     {
-        private static readonly List<Tuple<UIMenu, dynamic>> breadcrumbs = new List<Tuple<UIMenu, dynamic>>();
+        private static readonly List<Tuple<MenuBase, dynamic>> breadcrumbs = new List<Tuple<MenuBase, dynamic>>();
         internal static int Count => breadcrumbs.Count;
         internal static int CurrentDepth => breadcrumbs.Count - 1;
-        internal static UIMenu PreviousMenu => breadcrumbs[CurrentDepth - 1].Item1;
+        internal static MenuBase PreviousMenu => breadcrumbs[CurrentDepth - 1].Item1;
         public static bool SwitchInProgress = false;
 
-        internal static void Forward(UIMenu menu, dynamic data)
+        internal static void Forward(MenuBase menu, dynamic data)
         {
-            breadcrumbs.Add(new Tuple<UIMenu, dynamic>(menu, data));
+            breadcrumbs.Add(new Tuple<MenuBase, dynamic>(menu, data));
         }
 
         internal static void Clear()

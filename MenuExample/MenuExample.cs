@@ -6,6 +6,7 @@ using ScaleformUI.Elements;
 using ScaleformUI.LobbyMenu;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenu;
+using ScaleformUI.Radial;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -20,6 +21,7 @@ public class MenuExample : BaseScript
     private long txd;
     private Random Random = new Random(API.GetGameTimer());
 
+    #region UIMenu
     public void ExampleMenu()
     {
         long _titledui = API.CreateDui("https://i.imgur.com/3yrFYbF.gif", 288, 130);
@@ -974,6 +976,60 @@ public class MenuExample : BaseScript
             Tick -= FloatingHelpTimer;
         await Task.FromResult(0);
     }
+    #endregion
+
+    public void CreateRadialMenu()
+    {
+        RadialMenu menu = new RadialMenu();
+
+        long imgdui = API.CreateDui("https://giphy.com/embed/ckT59CvStmUsU", 64, 64);
+        API.CreateRuntimeTextureFromDuiHandle(txd, "item1", API.GetDuiHandle(imgdui));
+
+        long imgdui1 = API.CreateDui("https://giphy.com/embed/10bTCLE8GtHHS8", 64, 96);
+        API.CreateRuntimeTextureFromDuiHandle(txd, "item2", API.GetDuiHandle(imgdui1));
+
+        long imgdui2 = API.CreateDui("https://giphy.com/embed/nHyZigjdO4hEodq9fv", 64, 64);
+        API.CreateRuntimeTextureFromDuiHandle(txd, "item3", API.GetDuiHandle(imgdui2));
+
+        SegmentItem item = new SegmentItem("This is the label!", "~BLIP_INFO_ICON~ This is the description.. it's multiline so it can be very long!", "scaleformui", "item1", 64, 64, HudColor.HUD_COLOUR_FREEMODE);
+        SegmentItem item1 = new SegmentItem("It's so long it scrolls automatically! Isn't this amazing?", "~BLIP_INFO_ICON~ This is the description.. it's multiline so it can be very long!", "scaleformui", "item2", 64, 96, HudColor.HUD_COLOUR_GREEN);
+        SegmentItem item2 = new SegmentItem("Label 3", "~BLIP_INFO_ICON~ This is the description.. it's multiline so it can be very long!", "scaleformui", "item3", 64, 64, HudColor.HUD_COLOUR_RED);
+
+        for (int i = 0; i < 8; i++)
+        {
+            menu.Segments[i].AddItem(item);
+            menu.Segments[i].AddItem(item1);
+            menu.Segments[i].AddItem(item2);
+        }
+
+        menu.OnMenuOpen += (menu, _) =>
+        {
+            Screen.ShowSubtitle("Radial Menu opened!");
+        };
+
+        menu.OnMenuClose += (menu) =>
+        {
+            Screen.ShowSubtitle("Radial Menu closed!");
+        };
+
+        menu.OnSegmentHighlighted += (segment) =>
+        {
+            Screen.ShowSubtitle($"Segment {segment.Index} highlighted!");
+        };
+
+        menu.OnSegmentIndexChanged += (segment, index) =>
+        {
+            Screen.ShowSubtitle($"Segment {segment.Index}, index changed to {index}!");
+        };
+
+        menu.OnSegmentSelected += (segment) =>
+        {
+            Screen.ShowSubtitle($"Segment {segment.Index} selected!");
+        };
+
+        menu.CurrentSegment = 1;
+        menu.Visible = true;
+    }
 
     public async void PauseMenuShowcase(UIMenu _menu)
     {
@@ -1486,8 +1542,6 @@ public class MenuExample : BaseScript
 
         pauseMenu.Visible = true;
         //API.UnregisterPedheadshot(mugshot);
-
-
     }
 
     bool feedOpen = false;
@@ -1515,6 +1569,11 @@ public class MenuExample : BaseScript
 
             if (Game.IsControlJustPressed(0, Control.SelectCharacterMichael) && !MenuHandler.IsAnyMenuOpen) // Our menu enabler (to exit menu simply press Back on the main menu)
                 ExampleMenu();
+
+            if (Game.IsControlJustPressed(0, Control.DropAmmo) && !MenuHandler.IsAnyMenuOpen)
+            {
+                CreateRadialMenu();
+            }
 
             // to open the pause menu without opening the normal menu.
             if (Game.IsControlJustPressed(0, Control.SelectCharacterFranklin) && !MenuHandler.IsAnyMenuOpen && !MenuHandler.IsAnyPauseMenuOpen)

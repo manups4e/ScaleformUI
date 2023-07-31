@@ -1,4 +1,6 @@
-﻿namespace ScaleformUI.Menus
+﻿using ScaleformUI.Menu;
+
+namespace ScaleformUI.Menus
 {
     public class MenuBase
     {
@@ -13,15 +15,15 @@
             }
         }
         public List<InstructionalButton> InstructionalButtons { get; set; }
-        public virtual void ProcessControls()
+        internal virtual void ProcessControl(Keys key = Keys.None)
         {
 
         }
-        public virtual void ProcessMouse()
+        internal virtual void ProcessMouse()
         {
 
         }
-        public virtual void Draw()
+        internal virtual void Draw()
         {
         }
     }

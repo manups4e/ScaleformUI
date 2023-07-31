@@ -44,8 +44,4 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Menus\RadialMenu\" />
-  </ItemGroup>
-
 </Project>

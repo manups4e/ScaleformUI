@@ -53,6 +53,8 @@ namespace ScaleformUI
                         API.AnimpostfxStop("PauseMenuIn");
                         API.AnimpostfxPlay("PauseMenuOut", 800, false);
                     }
+                    radialMenu.CallFunction("CLEAR_ALL");
+                    radialMenu.Dispose();
                     scaleformUI.CallFunction("CLEAR_ALL");
                     scaleformUI.Dispose();
                     PauseMenu.Dispose();

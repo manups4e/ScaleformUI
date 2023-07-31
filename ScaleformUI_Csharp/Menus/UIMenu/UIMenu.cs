@@ -1468,7 +1468,7 @@ namespace ScaleformUI.Menu
         /// <summary>
         /// Draw the menu and all of it's components.
         /// </summary>
-        public override async void Draw()
+        internal override async void Draw()
         {
             if (!Visible || Main.Warning.IsShowing) return;
             while (!Main.scaleformUI.IsLoaded) await BaseScript.Delay(0);
@@ -1522,7 +1522,7 @@ namespace ScaleformUI.Menu
         /// <summary>
         /// Process the mouse's position and check if it's hovering over any UI element. Call this in OnTick
         /// </summary>
-        public override async void ProcessMouse()
+        internal override async void ProcessMouse()
         {
             if (!Visible || _justOpened || MenuItems.Count == 0 || IsUsingController || !MouseControlsEnabled)
             {
@@ -1779,7 +1779,7 @@ namespace ScaleformUI.Menu
                 else
                 {
                     BreadcrumbsHandler.SwitchInProgress = true;
-                    UIMenu prevMenu = BreadcrumbsHandler.PreviousMenu;
+                    MenuBase prevMenu = BreadcrumbsHandler.PreviousMenu;
                     BreadcrumbsHandler.Backwards();
                     Visible = false;
                     prevMenu.Visible = true;
@@ -2030,7 +2030,7 @@ namespace ScaleformUI.Menu
         /// <summary>
         /// Process control-stroke. Call this in the OnTick event.
         /// </summary>
-        public override void ProcessControl(Keys key = Keys.None)
+        internal override void ProcessControl(Keys key = Keys.None)
         {
             if (!Main.scaleformUI.IsLoaded) return;
             if (!Visible || Main.Warning.IsShowing) return;
@@ -2174,7 +2174,7 @@ namespace ScaleformUI.Menu
                     MenuHandler.currentMenu = this;
                     MenuHandler.ableToDraw = true;
                     BuildUpMenuAsync();
-                    MenuOpenEv(this, BreadcrumbsHandler.Count != 0 ? BreadcrumbsHandler.PreviousMenu.MenuItems[BreadcrumbsHandler.PreviousMenu.CurrentSelection] : null);
+                    MenuOpenEv(this, null);
                     timeBeforeOverflow = Main.GameTime;
                     if (BreadcrumbsHandler.Count == 0)
                         BreadcrumbsHandler.Forward(this, null);

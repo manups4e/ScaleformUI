@@ -1,7 +1,9 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using ScaleformUI.Menu;
+using ScaleformUI.Menus;
 using ScaleformUI.PauseMenus;
+using ScaleformUI.Radial;
 
 namespace ScaleformUI
 {
@@ -12,7 +14,7 @@ namespace ScaleformUI
     /// </summary>
     public static class MenuHandler
     {
-        internal static UIMenu currentMenu;
+        internal static MenuBase currentMenu;
         internal static PauseMenuBase currentBase;
         internal static bool ableToDraw;
         private static Ped _ped;
@@ -31,7 +33,7 @@ namespace ScaleformUI
             }
         }
 
-        public static UIMenu CurrentMenu
+        public static MenuBase CurrentMenu
         {
             get => currentMenu;
             private set => currentMenu = value;
@@ -43,7 +45,7 @@ namespace ScaleformUI
             private set => currentBase = value;
         }
 
-        public static async Task SwitchTo(this UIMenu currentMenu, UIMenu newMenu, int newMenuCurrentSelection = 0, bool inheritOldMenuParams = false, dynamic data = null)
+        public static async Task SwitchTo(this MenuBase currentMenu, MenuBase newMenu, int newMenuCurrentSelection = 0, bool inheritOldMenuParams = false, dynamic data = null)
         {
             if (currentMenu == null)
                 throw new ArgumentNullException("The menu you're switching from cannot be null.");
@@ -57,24 +59,35 @@ namespace ScaleformUI
 
             BreadcrumbsHandler.SwitchInProgress = true;
 
-            if (inheritOldMenuParams)
+            if (newMenu is UIMenu newer)
             {
-                if (currentMenu._customTexture.Key != null && currentMenu._customTexture.Value != null)
-                    newMenu.SetBannerType(currentMenu._customTexture);
-                newMenu.Offset = currentMenu.Offset;
-                newMenu.MouseEdgeEnabled = currentMenu.MouseEdgeEnabled;
-                newMenu.MouseWheelControlEnabled = currentMenu.MouseWheelControlEnabled;
-                newMenu.MouseControlsEnabled = currentMenu.MouseControlsEnabled;
-                newMenu.MaxItemsOnScreen = currentMenu.MaxItemsOnScreen;
-                newMenu.AnimationType = currentMenu.AnimationType;
-                newMenu.BuildingAnimation = currentMenu.BuildingAnimation;
-                newMenu.ScrollingType = currentMenu.ScrollingType;
+                if (currentMenu is UIMenu old)
+                {
+                    if (inheritOldMenuParams)
+                    {
+                        if (old._customTexture.Key != null && old._customTexture.Value != null)
+                            newer.SetBannerType(old._customTexture);
+                        newer.Offset = old.Offset;
+                        newer.MouseEdgeEnabled = old.MouseEdgeEnabled;
+                        newer.MouseWheelControlEnabled = old.MouseWheelControlEnabled;
+                        newer.MouseControlsEnabled = old.MouseControlsEnabled;
+                        newer.MaxItemsOnScreen = old.MaxItemsOnScreen;
+                        newer.AnimationType = old.AnimationType;
+                        newer.BuildingAnimation = old.BuildingAnimation;
+                        newer.ScrollingType = old.ScrollingType;
+                    }
+                    newer.CurrentSelection = newMenuCurrentSelection != 0 ? newMenuCurrentSelection : 0;
+                }
+                else if (currentMenu is RadialMenu rad)
+                    rad.CurrentSegment = newMenuCurrentSelection != 0 ? newMenuCurrentSelection : 0;
             }
-            newMenu.CurrentSelection = newMenuCurrentSelection != 0 ? newMenuCurrentSelection : 0;
-            await currentMenu.FadeOutMenu();
+
+            if (currentMenu is UIMenu _old)
+                await _old.FadeOutMenu();
             currentMenu.Visible = false;
             newMenu.Visible = true;
-            await currentMenu.FadeInMenu();
+            if (newMenu is UIMenu _newer)
+                await _newer.FadeInMenu();
             BreadcrumbsHandler.Forward(newMenu, data);
             BreadcrumbsHandler.SwitchInProgress = false;
         }
