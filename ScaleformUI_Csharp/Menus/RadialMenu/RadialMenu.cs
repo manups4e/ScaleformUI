@@ -151,12 +151,6 @@ namespace ScaleformUI.Radial
                 }
             }
 
-            Notifications.DrawText(0.35f, 0.7f, $"X: {x}", Colors.White, CitizenFX.Core.UI.Font.ChaletComprimeCologne, TextAlignment: Alignment.Left);
-            Notifications.DrawText(0.35f, 0.725f, $"Y: {y}", Colors.White, CitizenFX.Core.UI.Font.ChaletComprimeCologne, TextAlignment: Alignment.Left);
-            Notifications.DrawText(0.35f, 0.75f, $"Atan2: {angle}", Colors.White, CitizenFX.Core.UI.Font.ChaletComprimeCologne, TextAlignment: Alignment.Left);
-            Notifications.DrawText(0.35f, 0.775f, $"normalized: {normalized_angle}", Colors.White, CitizenFX.Core.UI.Font.ChaletComprimeCologne, TextAlignment: Alignment.Left);
-            Notifications.DrawText(0.35f, 0.8f, $"denormalizedAngle: {finalizedWorkingAngle}", Colors.White, CitizenFX.Core.UI.Font.ChaletComprimeCologne, TextAlignment: Alignment.Left);
-
             if (Game.IsControlJustPressed(0, Control.WeaponWheelPrev))
             {
                 int sel = await Segments[currentSelection].CycleItems(-1);
