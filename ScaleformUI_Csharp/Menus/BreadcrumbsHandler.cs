@@ -1,6 +1,6 @@
 ﻿namespace ScaleformUI.Menus
 {
-    internal static class BreadcrumbsHandler
+    public static class BreadcrumbsHandler
     {
         private static readonly List<Tuple<MenuBase, dynamic>> breadcrumbs = new List<Tuple<MenuBase, dynamic>>();
         internal static int Count => breadcrumbs.Count;
