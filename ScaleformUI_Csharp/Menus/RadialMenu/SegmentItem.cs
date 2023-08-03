@@ -10,6 +10,8 @@
         private string textureName;
         private string textureDict;
         internal RadialSegment Parent;
+        internal int qtty = 0;
+        internal int max = 0;
 
         public string Label
         {
@@ -19,7 +21,7 @@
                 label = value;
                 if (Parent != null && Parent.Parent != null && Parent.Parent.Visible)
                 {
-                    Main.radialMenu.CallFunction("UPDATE_SUBITEM", Parent.index, Parent.Items.IndexOf(this), label, description, textureName, textureDict, textureHeight, textureWidth, color);
+                    Main.radialMenu.CallFunction("UPDATE_SUBITEM", Parent.index, Parent.Items.IndexOf(this), label, description, textureName, textureDict, textureHeight, textureWidth, color, qtty, max);
                 }
             }
         }
@@ -31,7 +33,7 @@
                 description = value;
                 if (Parent != null && Parent.Parent != null && Parent.Parent.Visible)
                 {
-                    Main.radialMenu.CallFunction("UPDATE_SUBITEM", Parent.index, Parent.Items.IndexOf(this), label, description, textureName, textureDict, textureHeight, textureWidth, color);
+                    Main.radialMenu.CallFunction("UPDATE_SUBITEM", Parent.index, Parent.Items.IndexOf(this), label, description, textureName, textureDict, textureHeight, textureWidth, color, qtty, max);
                 }
             }
         }
@@ -43,7 +45,7 @@
                 textureDict = value;
                 if (Parent != null && Parent.Parent != null && Parent.Parent.Visible)
                 {
-                    Main.radialMenu.CallFunction("UPDATE_SUBITEM", Parent.index, Parent.Items.IndexOf(this), label, description, textureName, textureDict, textureHeight, textureWidth, color);
+                    Main.radialMenu.CallFunction("UPDATE_SUBITEM", Parent.index, Parent.Items.IndexOf(this), label, description, textureName, textureDict, textureHeight, textureWidth, color, qtty, max);
                 }
             }
         }
@@ -55,7 +57,7 @@
                 textureName = value;
                 if (Parent != null && Parent.Parent != null && Parent.Parent.Visible)
                 {
-                    Main.radialMenu.CallFunction("UPDATE_SUBITEM", Parent.index, Parent.Items.IndexOf(this), label, description, textureName, textureDict, textureHeight, textureWidth, color);
+                    Main.radialMenu.CallFunction("UPDATE_SUBITEM", Parent.index, Parent.Items.IndexOf(this), label, description, textureName, textureDict, textureHeight, textureWidth, color, qtty, max);
                 }
             }
         }
@@ -67,7 +69,7 @@
                 textureWidth = value;
                 if (Parent != null && Parent.Parent != null && Parent.Parent.Visible)
                 {
-                    Main.radialMenu.CallFunction("UPDATE_SUBITEM", Parent.index, Parent.Items.IndexOf(this), label, description, textureName, textureDict, textureHeight, textureWidth, color);
+                    Main.radialMenu.CallFunction("UPDATE_SUBITEM", Parent.index, Parent.Items.IndexOf(this), label, description, textureName, textureDict, textureHeight, textureWidth, color, qtty, max);
                 }
             }
         }
@@ -79,7 +81,7 @@
                 textureHeight = value;
                 if (Parent != null && Parent.Parent != null && Parent.Parent.Visible)
                 {
-                    Main.radialMenu.CallFunction("UPDATE_SUBITEM", Parent.index, Parent.Items.IndexOf(this), label, description, textureName, textureDict, textureHeight, textureWidth, color);
+                    Main.radialMenu.CallFunction("UPDATE_SUBITEM", Parent.index, Parent.Items.IndexOf(this), label, description, textureName, textureDict, textureHeight, textureWidth, color, qtty, max);
                 }
             }
         }
@@ -91,8 +93,23 @@
                 color = value;
                 if (Parent != null && Parent.Parent != null && Parent.Parent.Visible)
                 {
-                    Main.radialMenu.CallFunction("UPDATE_SUBITEM", Parent.index, Parent.Items.IndexOf(this), label, description, textureName, textureDict, textureHeight, textureWidth, color);
+                    Main.radialMenu.CallFunction("UPDATE_SUBITEM", Parent.index, Parent.Items.IndexOf(this), label, description, textureName, textureDict, textureHeight, textureWidth, color, qtty, max);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Set the quantity of this item, if max == 0 then the quantity will be centered
+        /// </summary>
+        /// <param name="qtty"></param>
+        /// <param name="max"></param>
+        public void SetQuantity(int qtty, int max = 0)
+        {
+            this.qtty = qtty;
+            this.max = max;
+            if (Parent != null && Parent.Parent != null && Parent.Parent.Visible)
+            {
+                Main.radialMenu.CallFunction("UPDATE_SUBITEM", Parent.index, Parent.Items.IndexOf(this), label, description, textureName, textureDict, textureHeight, textureWidth, color, qtty, max);
             }
         }
 

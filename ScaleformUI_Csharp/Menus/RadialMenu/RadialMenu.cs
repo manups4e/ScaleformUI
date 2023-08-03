@@ -29,6 +29,20 @@ namespace ScaleformUI.Radial
         public SegmentChanged OnSegmentHighlighted;
         public IndexChanged OnSegmentIndexChanged;
         public SegmentSelected OnSegmentSelected;
+        private bool enable3D = true;
+
+        public bool Enable3D
+        {
+            get => enable3D;
+            set
+            {
+                enable3D = value;
+                if (Visible)
+                {
+                    Main.radialMenu.CallFunction("ENABLE_3D", value);
+                }
+            }
+        }
 
         public override bool Visible
         {
@@ -83,14 +97,14 @@ namespace ScaleformUI.Radial
         internal async void BuildMenu()
         {
             if (_offset.IsEmpty) _offset = new PointF(Screen.Width / 2, (Screen.Height / 2) - 60);
-            Main.radialMenu.CallFunction("CREATE_MENU", false, _offset.X, _offset.Y);
+            Main.radialMenu.CallFunction("CREATE_MENU", enable3D, _offset.X, _offset.Y);
             for (int i = 0; i < 8; i++)
             {
                 RadialSegment segment = Segments[i];
                 for (int j = 0; j < segment.Items.Count; j++)
                 {
                     SegmentItem item = segment.Items[j];
-                    Main.radialMenu.CallFunction("ADD_ITEM", i, item.Label, item.Description, item.TextureDict, item.TextureName, item.TextureWidth, item.TextureHeight, (int)item.Color);
+                    Main.radialMenu.CallFunction("ADD_ITEM", i, item.Label, item.Description, item.TextureDict, item.TextureName, item.TextureWidth, item.TextureHeight, (int)item.Color, item.qtty, item.max);
                 }
             }
             Main.radialMenu.CallFunction("LOAD_MENU", currentSelection, Segments[0].CurrentSelection, Segments[1].CurrentSelection, Segments[2].CurrentSelection, Segments[3].CurrentSelection, Segments[4].CurrentSelection, Segments[5].CurrentSelection, Segments[6].CurrentSelection, Segments[7].CurrentSelection);

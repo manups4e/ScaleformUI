@@ -985,15 +985,18 @@ public class MenuExample : BaseScript
         long imgdui = API.CreateDui("https://giphy.com/embed/ckT59CvStmUsU", 64, 64);
         API.CreateRuntimeTextureFromDuiHandle(txd, "item1", API.GetDuiHandle(imgdui));
 
-        long imgdui1 = API.CreateDui("https://giphy.com/embed/10bTCLE8GtHHS8", 64, 96);
+        long imgdui1 = API.CreateDui("https://giphy.com/embed/10bTCLE8GtHHS8", 96, 64);
         API.CreateRuntimeTextureFromDuiHandle(txd, "item2", API.GetDuiHandle(imgdui1));
 
         long imgdui2 = API.CreateDui("https://giphy.com/embed/nHyZigjdO4hEodq9fv", 64, 64);
         API.CreateRuntimeTextureFromDuiHandle(txd, "item3", API.GetDuiHandle(imgdui2));
 
         SegmentItem item = new SegmentItem("This is the label!", "~BLIP_INFO_ICON~ This is the description.. it's multiline so it can be very long!", "scaleformui", "item1", 64, 64, HudColor.HUD_COLOUR_FREEMODE);
-        SegmentItem item1 = new SegmentItem("It's so long it scrolls automatically! Isn't this amazing?", "~BLIP_INFO_ICON~ This is the description.. it's multiline so it can be very long!", "scaleformui", "item2", 64, 96, HudColor.HUD_COLOUR_GREEN);
+        SegmentItem item1 = new SegmentItem("It's so long it scrolls automatically! Isn't this amazing?", "~BLIP_INFO_ICON~ This is the description.. it's multiline so it can be very long!", "scaleformui", "item2", 96, 64, HudColor.HUD_COLOUR_GREEN);
         SegmentItem item2 = new SegmentItem("Label 3", "~BLIP_INFO_ICON~ This is the description.. it's multiline so it can be very long!", "scaleformui", "item3", 64, 64, HudColor.HUD_COLOUR_RED);
+        item.SetQuantity(8000, 9999);
+        item1.SetQuantity(50, 100);
+        item2.SetQuantity(5000, 0);
 
         for (int i = 0; i < 8; i++)
         {

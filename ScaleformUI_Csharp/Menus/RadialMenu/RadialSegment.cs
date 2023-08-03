@@ -23,7 +23,7 @@
             Items.Add(item);
             if (Parent != null && Parent.Visible)
             {
-                Main.radialMenu.CallFunction("ADD_ITEM", item.Label, item.Description, item.TextureDict, item.TextureName, item.TextureWidth, item.TextureHeight, item.Color);
+                Main.radialMenu.CallFunction("ADD_ITEM", item.Label, item.Description, item.TextureDict, item.TextureName, item.TextureWidth, item.TextureHeight, item.Color, item.qtty, item.max);
             }
         }
 
@@ -39,7 +39,7 @@
             }
         }
 
-        public async Task<int> CycleItems(int direction)
+        internal async Task<int> CycleItems(int direction)
         {
             currentSelection = await Main.radialMenu.CallFunctionReturnValueInt("SET_INPUT_EVENT", direction == -1 ? 10 : 11);
             OnIndexChanged?.Invoke(this, currentSelection);
