@@ -11,8 +11,9 @@
 
         public IndexChanged OnIndexChanged;
 
-        public RadialSegment(int idx)
+        public RadialSegment(int idx, RadialMenu parent)
         {
+            Parent = parent;
             index = idx;
             Items = new List<SegmentItem>();
         }

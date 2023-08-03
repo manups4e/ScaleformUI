@@ -77,14 +77,14 @@ namespace ScaleformUI.Radial
             _offset = offset;
             Segments = new RadialSegment[8]
             {
-                new RadialSegment(0),
-                new RadialSegment(1),
-                new RadialSegment(2),
-                new RadialSegment(3),
-                new RadialSegment(4),
-                new RadialSegment(5),
-                new RadialSegment(6),
-                new RadialSegment(7),
+                new RadialSegment(0, this),
+                new RadialSegment(1, this),
+                new RadialSegment(2, this),
+                new RadialSegment(3, this),
+                new RadialSegment(4, this),
+                new RadialSegment(5, this),
+                new RadialSegment(6, this),
+                new RadialSegment(7, this),
             };
             InstructionalButtons = new List<InstructionalButton>()
             {
@@ -111,8 +111,8 @@ namespace ScaleformUI.Radial
 
         internal override async void ProcessControl(Keys key = Keys.None)
         {
+            Controls.Toggle(false);
             // block camera movements
-            Controls.Toggle(!IsUsingKeyboard(2));
             Game.DisableControlThisFrame(0, Control.LookLeftRight);
             Game.DisableControlThisFrame(0, Control.LookUpDown);
 
@@ -125,7 +125,7 @@ namespace ScaleformUI.Radial
             if (x > 0 && y == 0) y = 1;
             float angle = 0;
             float normalized_angle = 0;
-            int finalizedWorkingAngle = 0;
+            int finalizedWorkingAngle = -1;
 
             if (x > 400 || y > 400 || x < -400 || y < -400)
             {
@@ -142,6 +142,7 @@ namespace ScaleformUI.Radial
                 {
                     if (!changed)
                     {
+                        Segments[currentSelection].Selected = false;
                         currentSelection = finalizedWorkingAngle;
                         oldAngle = normalized_angle;
                         changed = true;
@@ -150,6 +151,7 @@ namespace ScaleformUI.Radial
 
                 if (changed)
                 {
+                    Segments[currentSelection].Selected = true;
                     OnSegmentHighlight?.Invoke(Segments[currentSelection]);
                     Main.radialMenu.CallFunction("SET_POINTER", finalizedWorkingAngle, true);
                     changed = false;
