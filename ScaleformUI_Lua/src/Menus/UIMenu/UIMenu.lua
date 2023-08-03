@@ -1229,7 +1229,7 @@ function UIMenu:Draw()
 
     HideHudComponentThisFrame(19)
 
-    Controls:ToggleAll(self:DisableGameControls())
+    Controls:ToggleAll(not self:DisableGameControls())
 
     ScaleformUI.Scaleforms._ui:Render2D()
 
