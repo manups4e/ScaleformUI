@@ -138,7 +138,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         _Visible = false,
         Dirty = false,
         ReDraw = true,
-        disableNonMenuControls = true,
+        disableGameControls = true,
         InstructionalButtons = {
             InstructionalButton.New(GetLabelText("HUD_INPUT2"), -1, 176, 176, -1),
             InstructionalButton.New(GetLabelText("HUD_INPUT3"), -1, 177, 177, -1)
@@ -249,11 +249,11 @@ end
 
 ---DisableNonMenuControls
 ---@param bool boolean
-function UIMenu:DisableNonMenuControls(bool)
+function UIMenu:DisableGameControls(bool)
     if bool then
-        self.disableNonMenuControls = bool
+        self.disableGameControls = bool
     else
-        return self.disableNonMenuControls
+        return self.disableGameControls
     end
 end
 
@@ -1229,7 +1229,7 @@ function UIMenu:Draw()
 
     HideHudComponentThisFrame(19)
 
-    Controls:ToggleAll(not self:DisableNonMenuControls())
+    Controls:ToggleAll(not self:DisableGameControls())
 
     ScaleformUI.Scaleforms._ui:Render2D()
 
