@@ -223,6 +223,10 @@ namespace ScaleformUI.Radial
             set
             {
                 currentSelection = value;
+                if (Visible)
+                {
+                    Main.radialMenu.CallFunction("SET_POINTER", value, true);
+                }
             }
         }
 
