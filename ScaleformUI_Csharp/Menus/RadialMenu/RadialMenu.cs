@@ -21,7 +21,6 @@ namespace ScaleformUI.Radial
         private float oldAngle;
         private bool changed;
         public RadialSegment[] Segments { get; private set; }
-        public bool IS3D = false;
         private PointF _offset = new PointF(0, 0);
 
         public MenuOpenedEvent OnMenuOpen;
