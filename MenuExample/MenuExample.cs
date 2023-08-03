@@ -1015,17 +1015,17 @@ public class MenuExample : BaseScript
             Screen.ShowSubtitle("Radial Menu closed!");
         };
 
-        menu.OnSegmentHighlighted += (segment) =>
+        menu.OnSegmentHighlight += (segment) =>
         {
             Screen.ShowSubtitle($"Segment {segment.Index} highlighted!");
         };
 
-        menu.OnSegmentIndexChanged += (segment, index) =>
+        menu.OnSegmentIndexChange += (segment, index) =>
         {
             Screen.ShowSubtitle($"Segment {segment.Index}, index changed to {index}!");
         };
 
-        menu.OnSegmentSelected += (segment) =>
+        menu.OnSegmentSelect += (segment) =>
         {
             Screen.ShowSubtitle($"Segment {segment.Index} selected!");
         };

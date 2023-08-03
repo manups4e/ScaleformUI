@@ -26,9 +26,9 @@ namespace ScaleformUI.Radial
 
         public MenuOpenedEvent OnMenuOpen;
         public MenuClosedEvent OnMenuClose;
-        public SegmentChanged OnSegmentHighlighted;
-        public IndexChanged OnSegmentIndexChanged;
-        public SegmentSelected OnSegmentSelected;
+        public SegmentChanged OnSegmentHighlight;
+        public IndexChanged OnSegmentIndexChange;
+        public SegmentSelected OnSegmentSelect;
         private bool enable3D = true;
 
         public bool Enable3D
@@ -159,7 +159,7 @@ namespace ScaleformUI.Radial
 
                 if (changed)
                 {
-                    OnSegmentHighlighted?.Invoke(Segments[currentSelection]);
+                    OnSegmentHighlight?.Invoke(Segments[currentSelection]);
                     Main.radialMenu.CallFunction("SET_POINTER", finalizedWorkingAngle, true);
                     changed = false;
                 }
@@ -168,13 +168,13 @@ namespace ScaleformUI.Radial
             if (Game.IsControlJustPressed(0, Control.WeaponWheelPrev))
             {
                 int sel = await Segments[currentSelection].CycleItems(-1);
-                OnSegmentIndexChanged?.Invoke(Segments[currentSelection], sel);
+                OnSegmentIndexChange?.Invoke(Segments[currentSelection], sel);
             }
 
             if (Game.IsControlJustPressed(0, Control.WeaponWheelNext))
             {
                 int sel = await Segments[currentSelection].CycleItems(1);
-                OnSegmentIndexChanged?.Invoke(Segments[currentSelection], sel);
+                OnSegmentIndexChange?.Invoke(Segments[currentSelection], sel);
             }
 
             if (Game.IsControlJustPressed(0, Control.FrontendCancel))
@@ -209,7 +209,7 @@ namespace ScaleformUI.Radial
 
         internal void Select()
         {
-            OnSegmentSelected?.Invoke(Segments[currentSelection]);
+            OnSegmentSelect?.Invoke(Segments[currentSelection]);
         }
 
         internal override void Draw()
