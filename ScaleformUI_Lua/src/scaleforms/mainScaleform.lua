@@ -2,6 +2,7 @@ ScaleformUI = {}
 ScaleformUI.Scaleforms = {}
 ScaleformUI.Scaleforms._ui = nil --[[@type Scaleform]]                             -- scaleformui
 ScaleformUI.Scaleforms._pauseMenu = nil --[[@type PauseMenu]]                      -- pausemenu
+ScaleformUI.Scaleforms._radialMenu = nil --[[@type RadialMenu]]                   -- radialmenu 
 ScaleformUI.Scaleforms.MidMessageInstance = MidMessageInstance --[[@type MidMessageInstance]]     -- midmessage
 ScaleformUI.Scaleforms.PlayerListScoreboard = PlayerListScoreboard.New() --[[@type PlayerListScoreboard]] -- playerlist
 ScaleformUI.Scaleforms.InstructionalButtons = ButtonsHandler --[[@type ButtonsHandler]]       -- buttons
@@ -27,6 +28,8 @@ AddEventHandler("onResourceStop", function(resName)
         ScaleformUI.Scaleforms._pauseMenu:Dispose()
         ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
         ScaleformUI.Scaleforms._ui:Dispose()
+        ScaleformUI.Scaleforms._radialMenu:CallFunction("CLEAR_ALL", false)
+        ScaleformUI.Scaleforms._radialMenu:Dispose()
         if not IsPlayerControlOn(PlayerId()) then
             SetPlayerControl(PlayerId(), true, 0)
         end
@@ -35,6 +38,7 @@ end)
 
 Citizen.CreateThread(function()
     ScaleformUI.Scaleforms._ui = Scaleform.RequestWidescreen("scaleformui")
+    ScaleformUI.Scaleforms._radialMenu = Scaleform.RequestWidescreen("radialmenu")
     ScaleformUI.Scaleforms._pauseMenu = PauseMenu.New()
     ScaleformUI.Scaleforms._pauseMenu:Load()
 
@@ -54,6 +58,9 @@ Citizen.CreateThread(function()
         end
         if ScaleformUI.Scaleforms._ui == nil then
             ScaleformUI.Scaleforms._ui = Scaleform.RequestWidescreen("scaleformui")
+        end
+        if ScaleformUI.Scaleforms._radialMenu == nil then
+            ScaleformUI.Scaleforms._radialMenu = Scaleform.RequestWidescreen("radialmenu")
         end
         if not ScaleformUI.Scaleforms._pauseMenu.Loaded then
             ScaleformUI.Scaleforms._pauseMenu:Load()
