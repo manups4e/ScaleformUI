@@ -123,7 +123,7 @@ namespace ScaleformUI.Radial
             {
                 if (x == 0f && y == 0f)
                 {
-                    x = (float)Math.Floor(GetDisabledControlNormal(2, 13) * 1000);
+                    x = -(float)Math.Floor(GetDisabledControlNormal(2, 13) * 1000);
                     y = (float)Math.Floor(GetDisabledControlNormal(2, 12) * 1000);
                 }
             }
