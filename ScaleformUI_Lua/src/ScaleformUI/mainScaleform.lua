@@ -4,11 +4,10 @@ ScaleformUI.Scaleforms._ui = nil --[[@type Scaleform]]                          
 ScaleformUI.Scaleforms._pauseMenu = nil --[[@type PauseMenu]]                      -- pausemenu
 ScaleformUI.Scaleforms._radialMenu = nil --[[@type RadialMenu]]                   -- radialmenu 
 ScaleformUI.Scaleforms.MidMessageInstance = MidMessageInstance --[[@type MidMessageInstance]]     -- midmessage
-ScaleformUI.Scaleforms.PlayerListScoreboard = PlayerListScoreboard.New() --[[@type PlayerListScoreboard]] -- playerlist
+ScaleformUI.Scaleforms.PlayerListScoreboard = PlayerListScoreboard --[[@type PlayerListScoreboard]] -- playerlist
 ScaleformUI.Scaleforms.InstructionalButtons = ButtonsHandler --[[@type ButtonsHandler]]       -- buttons
 ScaleformUI.Scaleforms.BigMessageInstance = BigMessageInstance --[[@type BigMessageInstance]]     -- bigmessage
 ScaleformUI.Scaleforms.Warning = WarningInstance --[[@type WarningInstance]]                   -- warning
-ScaleformUI.Scaleforms.PlayerListScoreboard = PlayerListScoreboard.New()
 ScaleformUI.Scaleforms.JobMissionSelector = MissionSelectorHandler --[[@type MissionSelectorHandler]] -- missionselector
 ScaleformUI.Scaleforms.RankbarHandler = RankbarHandler --[[@type RankbarHandler]]             -- rankbar
 ScaleformUI.Scaleforms.CountdownHandler = CountdownHandler --[[@type CountdownHandler]]         -- countdown
@@ -44,18 +43,18 @@ Citizen.CreateThread(function()
 
     while true do
         ScaleformUI.WaitTime = 850
-        if not IsPauseMenuActive() then
-            ScaleformUI.Scaleforms.BigMessageInstance:Update()
-            ScaleformUI.Scaleforms.MidMessageInstance:Update()
-            ScaleformUI.Scaleforms.PlayerListScoreboard:Update()
-            ScaleformUI.Scaleforms.JobMissionSelector:Update()
-            ScaleformUI.Scaleforms.Warning:Update()
-            ScaleformUI.Scaleforms.BigFeed:Update()
-        end
         if MenuHandler.ableToDraw and not (IsWarningMessageActive() or ScaleformUI.Scaleforms.Warning:IsShowing()) then
             ScaleformUI.WaitTime = 0
             MenuHandler:ProcessMenus()
         end
+        ScaleformUI.Scaleforms.Warning:Update()
+        ScaleformUI.Scaleforms.InstructionalButtons:Update()
+        if IsPauseMenuActive() then return end
+        ScaleformUI.Scaleforms.BigMessageInstance:Update()
+        ScaleformUI.Scaleforms.MidMessageInstance:Update()
+        ScaleformUI.Scaleforms.PlayerListScoreboard:Update()
+        ScaleformUI.Scaleforms.JobMissionSelector:Update()
+        ScaleformUI.Scaleforms.BigFeed:Update()
         if ScaleformUI.Scaleforms._ui == nil then
             ScaleformUI.Scaleforms._ui = Scaleform.RequestWidescreen("scaleformui")
         end
@@ -65,7 +64,6 @@ Citizen.CreateThread(function()
         if not ScaleformUI.Scaleforms._pauseMenu.Loaded then
             ScaleformUI.Scaleforms._pauseMenu:Load()
         end
-        ScaleformUI.Scaleforms.InstructionalButtons:Update()
         Citizen.Wait(ScaleformUI.WaitTime)
     end
 end)
