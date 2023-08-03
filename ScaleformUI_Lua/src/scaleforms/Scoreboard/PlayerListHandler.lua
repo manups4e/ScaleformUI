@@ -1,4 +1,19 @@
-PlayerListScoreboard = setmetatable({}, PlayerListScoreboard)
+PlayerListScoreboard = setmetatable({
+    _uptime = 8000,
+    _start = 0,
+    _timer = 0,
+    _sc = nil,
+    Enabled = false,
+    Index = 0,
+    MaxPages = 1,
+    currentPage = 0,
+    PlayerRows = {},
+    TitleLeftText = "",
+    TitleRightText = "",
+    TitleIcon = 0,
+    X = 0.122,
+    Y = 0.3
+}, PlayerListScoreboard)
 PlayerListScoreboard.__index = PlayerListScoreboard
 PlayerListScoreboard.__call = function()
     return "PlayerListScoreboard"
@@ -28,28 +43,6 @@ end
 ---@field public Load fun(self:PlayerListScoreboard):nil
 ---@field public SetTitle fun(self:PlayerListScoreboard, title:string, label:string, icon:number):nil
 ---@field public SetPosition fun(self:PlayerListScoreboard, x:number, y:number):nil
-
----Creates a new PlayerListScoreboard instance
----@return PlayerListScoreboard
-function PlayerListScoreboard.New()
-    local data = {
-        _uptime = 8000,
-        _start = 0,
-        _timer = 0,
-        _sc = nil,
-        Enabled = false,
-        Index = 0,
-        MaxPages = 1,
-        currentPage = 0,
-        PlayerRows = {},
-        TitleLeftText = "",
-        TitleRightText = "",
-        TitleIcon = 0,
-        X = 0.122,
-        Y = 0.3
-    }
-    return setmetatable(data, PlayerListScoreboard)
-end
 
 ---Current page of the scoreboard
 ---@param _c number?
