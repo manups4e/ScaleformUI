@@ -59,9 +59,9 @@ namespace ScaleformUI
 
             BreadcrumbsHandler.SwitchInProgress = true;
 
-            if (newMenu is UIMenu newer)
+            if (currentMenu is UIMenu old)
             {
-                if (currentMenu is UIMenu old)
+                if (newMenu is UIMenu newer)
                 {
                     if (inheritOldMenuParams)
                     {
@@ -78,7 +78,7 @@ namespace ScaleformUI
                     }
                     newer.CurrentSelection = newMenuCurrentSelection != 0 ? newMenuCurrentSelection : 0;
                 }
-                else if (currentMenu is RadialMenu rad)
+                else if (newMenu is RadialMenu rad)
                     rad.CurrentSegment = newMenuCurrentSelection != 0 ? newMenuCurrentSelection : 0;
             }
 
