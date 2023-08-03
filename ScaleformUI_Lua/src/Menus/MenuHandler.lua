@@ -13,7 +13,7 @@ end
 ---@field _currentPauseMenu table
 ---@field ableToDraw boolean
 
-function MenuHandler:SwitchTo(currentMenu, newMenu, newMenuCurrentSelection, inheritOldMenuParams)
+function MenuHandler:SwitchTo(currentMenu, newMenu, newMenuCurrentSelection, inheritOldMenuParams, data)
     assert(currentMenu ~= nil, "The menu you're switching from cannot be null")
     assert(currentMenu == self._currentMenu, "The menu you're switching from must be opened")
     assert(newMenu ~= nil, "The menu you're switching to cannot be null")
@@ -21,37 +21,46 @@ function MenuHandler:SwitchTo(currentMenu, newMenu, newMenuCurrentSelection, inh
     if BreadcrumbsHandler.SwitchInProgress then return end
     BreadcrumbsHandler.SwitchInProgress = true
     
+    local current = currentMenu()
+    local new = newMenu()
+
     if newMenuCurrentSelection == nil then newMenuCurrentSelection = 1 end
-    if inheritOldMenuParams == nil then inheritOldMenuParams = false end
-    if inheritOldMenuParams then
-        if currentMenu.TxtDictionary ~= "" and currentMenu.TxtDictionary ~= nil and currentMenu.TxtName ~= "" and currentMenu.TxtName ~= nil then
-            newMenu.TxtDictionary = currentMenu.TxtDictionary
-            newMenu.TxtName = currentMenu.TxtName
-        end
-            newMenu.Position = currentMenu.Position
+    if current == "UIMenu" and new == "UIMenu" then
+        if inheritOldMenuParams == nil then inheritOldMenuParams = false end
+        if inheritOldMenuParams then
+            if currentMenu.TxtDictionary ~= "" and currentMenu.TxtDictionary ~= nil and currentMenu.TxtName ~= "" and currentMenu.TxtName ~= nil then
+                newMenu.TxtDictionary = currentMenu.TxtDictionary
+                newMenu.TxtName = currentMenu.TxtName
+            end
+                newMenu.Position = currentMenu.Position
 
-        if currentMenu.Logo ~= nil then
-            newMenu.Logo = currentMenu.Logo
-        else
-            newMenu.Logo = nil
-            newMenu.Banner = currentMenu.Banner
-        end
+            if currentMenu.Logo ~= nil then
+                newMenu.Logo = currentMenu.Logo
+            else
+                newMenu.Logo = nil
+                newMenu.Banner = currentMenu.Banner
+            end
 
-        newMenu.Glare = currentMenu.Glare
-        newMenu.Settings.MouseControlsEnabled = currentMenu.Settings.MouseControlsEnabled
-        newMenu.Settings.MouseEdgeEnabled = currentMenu.Settings.MouseEdgeEnabled
-        newMenu:MaxItemsOnScreen(currentMenu:MaxItemsOnScreen())
-        newMenu:AnimationEnabled(currentMenu:AnimationEnabled())
-        newMenu:AnimationType(currentMenu:AnimationType())
-        newMenu:BuildingAnimation(currentMenu:BuildingAnimation())
-        newMenu:ScrollingType(currentMenu:ScrollingType())
+            newMenu.Glare = currentMenu.Glare
+            newMenu.Settings.MouseControlsEnabled = currentMenu.Settings.MouseControlsEnabled
+            newMenu.Settings.MouseEdgeEnabled = currentMenu.Settings.MouseEdgeEnabled
+            newMenu:MaxItemsOnScreen(currentMenu:MaxItemsOnScreen())
+            newMenu:AnimationEnabled(currentMenu:AnimationEnabled())
+            newMenu:AnimationType(currentMenu:AnimationType())
+            newMenu:BuildingAnimation(currentMenu:BuildingAnimation())
+            newMenu:ScrollingType(currentMenu:ScrollingType())
+        end
     end
-    currentMenu:FadeOutMenu()
-    currentMenu:Visible(false)
     newMenu:CurrentSelection(newMenuCurrentSelection)
+    if(current == "UIMenu") then
+        currentMenu:FadeOutMenu()
+    end
+    currentMenu:Visible(false)
     newMenu:Visible(true)
-    currentMenu:FadeInMenu()
-    BreadcrumbsHandler:Forward(newMenu)
+    if(new == "UIMenu") then
+        newMenu:FadeInMenu()
+    end
+    BreadcrumbsHandler:Forward(newMenu, data)
     BreadcrumbsHandler.SwitchInProgress = false
 end
 

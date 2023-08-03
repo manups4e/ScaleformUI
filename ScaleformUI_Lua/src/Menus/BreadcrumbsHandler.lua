@@ -15,8 +15,8 @@ function BreadcrumbsHandler:PreviousMenu()
     return self.breadcrumbs[#self.breadcrumbs-1]
 end
 
-function BreadcrumbsHandler:Forward(menu)
-    table.insert(self.breadcrumbs, menu)
+function BreadcrumbsHandler:Forward(menu, data)
+    table.insert(self.breadcrumbs, {menu=menu, data=data})
 end
 
 function BreadcrumbsHandler:Clear()

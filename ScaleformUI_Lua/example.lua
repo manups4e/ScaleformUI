@@ -361,6 +361,57 @@ function CreateMenu()
     exampleMenu:Visible(true)
 end
 
+function CreateRadialMenu()
+	local radialMenu = RadialMenu.New()
+    local txd = CreateRuntimeTxd("scaleformui")
+
+	local imgdui = CreateDui("https://giphy.com/embed/ckT59CvStmUsU", 64, 64)
+	CreateRuntimeTextureFromDuiHandle(txd, "item1", GetDuiHandle(imgdui))
+
+	local imgdui1 = CreateDui("https://giphy.com/embed/10bTCLE8GtHHS8", 96, 64)
+	CreateRuntimeTextureFromDuiHandle(txd, "item2", GetDuiHandle(imgdui1))
+
+	local imgdui2 = CreateDui("https://giphy.com/embed/nHyZigjdO4hEodq9fv", 64, 64)
+	CreateRuntimeTextureFromDuiHandle(txd, "item3", GetDuiHandle(imgdui2))
+
+	local item1 = SegmentItem.New("This is the label!", "~BLIP_INFO_ICON~ This is the description.. it's multiline so it can be very long!", "scaleformui", "item1", 64, 64, Colours.HUD_COLOUR_FREEMODE)
+	local item2 = SegmentItem.New("It's so long it scrolls automatically! Isn't this amazing?", "~BLIP_INFO_ICON~ This is the description.. it's multiline so it can be very long!", "scaleformui", "item2", 96, 64, Colours.HUD_COLOUR_GREEN)
+	local item3 = SegmentItem.New("Label 3", "~BLIP_INFO_ICON~ This is the description.. it's multiline so it can be very long!", "scaleformui", "item3", 64, 64, Colours.HUD_COLOUR_RED)
+
+	item1:SetQuantity(8000, 9999)
+	item2:SetQuantity(50, 100)
+	item3:SetQuantity(5000)
+
+	for i=1, 8 do
+		radialMenu.Segments[i]:AddItem(item1)
+		radialMenu.Segments[i]:AddItem(item2)
+		radialMenu.Segments[i]:AddItem(item3)
+	end
+
+	radialMenu.OnMenuOpen = function(menu, _)
+		ScaleformUI.Notifications:ShowSubtitle("Radial Menu opened!");
+	end
+
+	radialMenu.OnMenuClose = function(menu)
+		ScaleformUI.Notifications:ShowSubtitle("Radial Menu closed!");
+	end
+
+	radialMenu.OnSegmentHighlight = function(segment)
+		ScaleformUI.Notifications:ShowSubtitle("Segment ".. segment.Index .. " highlighted!");
+	end
+
+	radialMenu.OnSegmentIndexChange = function(segment, index)
+		ScaleformUI.Notifications:ShowSubtitle("Segment ".. segment.Index .. ", index changed to " .. index .. "!");
+	end
+
+	radialMenu.OnSegmentSelect = function(segment)
+		ScaleformUI.Notifications:ShowSubtitle("Segment ".. segment.Index .. " selected!");
+	end
+
+	radialMenu:Visible(true)
+
+end
+
 function CreatePauseMenu()
     local pauseMenuExample = TabView.New("ScaleformUI LUA", "THE LUA API", GetPlayerName(PlayerId()), "String middle",
         "String bottom")
@@ -1103,6 +1154,9 @@ CreateThread(function()
         if IsControlJustPressed(0, 166) and not MenuHandler:IsAnyMenuOpen() then -- F5
             CreateMenu()
         end
+		if IsControlJustPressed(0, 57) and not MenuHandler:IsAnyMenuOpen() then -- F10
+			CreateRadialMenu()
+		end
         if IsControlJustPressed(0, 167) and not MenuHandler:IsAnyMenuOpen() then -- F6
             CreatePauseMenu()
         end

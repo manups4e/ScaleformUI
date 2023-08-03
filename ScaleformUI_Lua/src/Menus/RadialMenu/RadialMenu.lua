@@ -121,7 +121,6 @@ function RadialMenu:Visible(bool)
             ScaleformUI.Scaleforms.InstructionalButtons:ClearButtonList()
             self.OnMenuClose(self)
             ScaleformUI.Scaleforms._radialMenu:CallFunction("CLEAR_ALL", false)
-            MenuHandler._currentMenu = nil
             MenuHandler.ableToDraw = false
         end
     else
@@ -215,6 +214,11 @@ function RadialMenu:ProcessControl()
     end
 end
 
+function RadialMenu:SwitchTo(newMenu, newMenuCurrentSelection, inheritOldMenuParams)
+    MenuHandler:SwitchTo(self, newMenu, newMenuCurrentSelection, inheritOldMenuParams)
+end
+
+
 function RadialMenu:GoBack()
     if BreadcrumbsHandler:CurrentDepth() == 1 then
         self:Visible(false)
@@ -224,7 +228,7 @@ function RadialMenu:GoBack()
         local prevMenu = BreadcrumbsHandler:PreviousMenu()
         BreadcrumbsHandler:Backwards()
         self:Visible(false)
-        prevMenu:Visible(true)
+        prevMenu.menu:Visible(true)
         BreadcrumbsHandler.SwitchInProgress = false
     end
 end

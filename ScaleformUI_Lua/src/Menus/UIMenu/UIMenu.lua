@@ -1185,7 +1185,7 @@ function UIMenu:GoBack(boolean)
             local prevMenu = BreadcrumbsHandler:PreviousMenu()
             BreadcrumbsHandler:Backwards()
             self:Visible(false)
-            prevMenu:Visible(true)
+            prevMenu.menu:Visible(true)
             BreadcrumbsHandler.SwitchInProgress = false
         end
     end
