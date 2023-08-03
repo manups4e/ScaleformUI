@@ -119,14 +119,6 @@ namespace ScaleformUI.Radial
             // take mouse/gamepad LStick
             float x = (float)Math.Floor(GetDisabledControlNormal(2, 13) * 1000);
             float y = (float)Math.Floor(GetDisabledControlNormal(2, 12) * 1000);
-            if (IsLookInverted())
-            {
-                if (x == 0f && y == 0f)
-                {
-                    x = -(float)Math.Floor(GetDisabledControlNormal(2, 13) * 1000);
-                    y = (float)Math.Floor(GetDisabledControlNormal(2, 12) * 1000);
-                }
-            }
 
             // math.atan2 returns 0 when mouse/gamepad LStick move right, because y=0 and x is not negative..
             // as a workaround.. i set y = 1, this way left is checked correctly
