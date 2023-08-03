@@ -138,6 +138,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         _Visible = false,
         Dirty = false,
         ReDraw = true,
+        disableNonMenuControls = true,
         InstructionalButtons = {
             InstructionalButton.New(GetLabelText("HUD_INPUT2"), -1, 176, 176, -1),
             InstructionalButton.New(GetLabelText("HUD_INPUT3"), -1, 177, 177, -1)
@@ -187,53 +188,6 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
                 Select = "SELECT",
                 Back = "BACK",
                 Error = "ERROR",
-            },
-            EnabledControls = {
-                Controller = {
-                    { 0, 2 },  -- Look Up and Down
-                    { 0, 1 },  -- Look Left and Right
-                    { 0, 25 }, -- Aim
-                    { 0, 24 }, -- Attack
-                    { 0, 71 }, -- Accelerate Vehicle
-                    { 0, 72 }, -- Vehicle Brake
-                    { 0, 30 }, -- Move Left and Right
-                    { 0, 31 }, -- Move Up and Down
-                    { 0, 59 }, -- Move Vehicle Left and Right
-                    { 0, 75 }, -- Exit Vehicle
-                },
-                Keyboard = {
-                    { 0, 2 },   -- Look Up and Down
-                    { 0, 1 },   -- Look Left and Right
-                    { 0, 201 }, -- Select
-                    { 0, 195 }, -- X axis
-                    { 0, 196 }, -- Y axis
-                    { 0, 187 }, -- Down
-                    { 0, 188 }, -- Up
-                    { 0, 189 }, -- Left
-                    { 0, 190 }, -- Right
-                    { 0, 202 }, -- Back
-                    { 0, 217 }, -- Select
-                    { 0, 242 }, -- Scroll down
-                    { 0, 241 }, -- Scroll up
-                    { 0, 239 }, -- Cursor X
-                    { 0, 240 }, -- Cursor Y
-                    { 0, 237 },
-                    { 0, 238 },
-                    { 0, 31 }, -- Move Up and Down
-                    { 0, 30 }, -- Move Left and Right
-                    { 0, 21 }, -- Sprint
-                    { 0, 22 }, -- Jump
-                    { 0, 23 }, -- Enter
-                    { 0, 75 }, -- Exit Vehicle
-                    { 0, 71 }, -- Accelerate Vehicle
-                    { 0, 72 }, -- Vehicle Brake
-                    { 0, 59 }, -- Move Vehicle Left and Right
-                    { 0, 89 }, -- Fly Yaw Left
-                    { 0, 9 },  -- Fly Left and Right
-                    { 0, 8 },  -- Fly Up and Down
-                    { 0, 90 }, -- Fly Yaw Right
-                    { 0, 76 }, -- Vehicle Handbrake
-                },
             },
         }
     }
@@ -293,29 +247,13 @@ function UIMenu:CounterColor(color)
     end
 end
 
----DisEnableControls
+---DisableNonMenuControls
 ---@param bool boolean
-function UIMenu:DisEnableControls(bool)
+function UIMenu:DisableNonMenuControls(bool)
     if bool then
-        EnableAllControlActions(2)
+        self.disableNonMenuControls = bool
     else
-        DisableAllControlActions(2)
-    end
-
-    if bool then
-        return
-    else
-        if not IsUsingKeyboard(2) then
-            for Index = 1, #self.Settings.EnabledControls.Controller do
-                EnableControlAction(self.Settings.EnabledControls.Controller[Index][1],
-                    self.Settings.EnabledControls.Controller[Index][2], true)
-            end
-        else
-            for Index = 1, #self.Settings.EnabledControls.Keyboard do
-                EnableControlAction(self.Settings.EnabledControls.Keyboard[Index][1],
-                    self.Settings.EnabledControls.Keyboard[Index][2], true)
-            end
-        end
+        return self.disableNonMenuControls
     end
 end
 
@@ -1291,9 +1229,7 @@ function UIMenu:Draw()
 
     HideHudComponentThisFrame(19)
 
-    if self.Settings.ControlDisablingEnabled then
-        self:DisEnableControls(false)
-    end
+    Controls:ToggleAll(not self:DisableNonMenuControls())
 
     ScaleformUI.Scaleforms._ui:Render2D()
 
