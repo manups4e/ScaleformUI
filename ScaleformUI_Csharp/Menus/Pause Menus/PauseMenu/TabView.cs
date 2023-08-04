@@ -205,7 +205,8 @@ namespace ScaleformUI.PauseMenu
                                 _pause.AddRightTitle(tabIndex, 0, simpleTab.TextTitle);
                             foreach (BasicTabItem it in simpleTab.LabelsList)
                                 _pause.AddRightListLabel(tabIndex, 0, it.Label, it.LabelFont.FontName, it.LabelFont.FontID);
-                            _pause._pause.CallFunction("UPDATE_BASE_TAB_BACKGROUND", tabIndex, simpleTab.TextureDict, simpleTab.TextureName);
+                            if (!(string.IsNullOrWhiteSpace(simpleTab.TextureDict) && string.IsNullOrWhiteSpace(simpleTab.TextureName)))
+                                _pause._pause.CallFunction("UPDATE_BASE_TAB_BACKGROUND", tabIndex, simpleTab.TextureDict, simpleTab.TextureName);
                         }
                         break;
                     case SubmenuTab:
@@ -300,7 +301,8 @@ namespace ScaleformUI.PauseMenu
 
                                 if (item.ItemType == LeftItemType.Info || item.ItemType == LeftItemType.Statistics || item.ItemType == LeftItemType.Settings)
                                 {
-                                    _pause._pause.CallFunction("UPDATE_LEFT_ITEM_RIGHT_BACKGROUND", tabIndex, itemIndex, item.TextureDict, item.TextureName, (int)item.LeftItemBGType);
+                                    if (!(string.IsNullOrWhiteSpace(item.TextureDict) && string.IsNullOrWhiteSpace(item.TextureName)))
+                                        _pause._pause.CallFunction("UPDATE_LEFT_ITEM_RIGHT_BACKGROUND", tabIndex, itemIndex, item.TextureDict, item.TextureName, (int)item.LeftItemBGType);
                                 }
 
                             }
