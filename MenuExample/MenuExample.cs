@@ -7,6 +7,7 @@ using ScaleformUI.LobbyMenu;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenu;
 using ScaleformUI.Radial;
+using ScaleformUI.Scaleforms;
 using System;
 using System.Collections.Generic;
 using System.Drawing;

@@ -1,9 +1,11 @@
 ﻿using ScaleformUI.LobbyMenu;
+using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI.PauseMenu
 {
     public class PlayerListTab : BaseTab
     {
+        private const int V = 2;
         private bool _focused;
         private int focus = 0;
 
@@ -31,7 +33,7 @@ namespace ScaleformUI.PauseMenu
         public PlayerListColumn PlayersColumn { get; private set; }
         public PlayerListTab(string name) : base(name)
         {
-            _type = 2;
+            _type = V;
             SettingsColumn = new("", HudColor.NONE);
             PlayersColumn = new("", HudColor.NONE);
         }
