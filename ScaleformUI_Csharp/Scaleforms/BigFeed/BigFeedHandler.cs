@@ -1,8 +1,7 @@
 ﻿using CitizenFX.Core;
-using ScaleformUI.Scaleforms;
 using static CitizenFX.Core.Native.API;
 
-namespace ScaleformUI
+namespace ScaleformUI.Scaleforms
 {
     public class BigFeedHandler
     {

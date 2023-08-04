@@ -1,4 +1,6 @@
-﻿namespace ScaleformUI.Radial
+﻿using ScaleformUI.Scaleforms;
+
+namespace ScaleformUI.Radial
 {
     public class SegmentItem
     {

@@ -1,6 +1,7 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
+using ScaleformUI.Scaleforms;
 using System.Drawing;
 using static CitizenFX.Core.Native.API;
 using Font = CitizenFX.Core.UI.Font;

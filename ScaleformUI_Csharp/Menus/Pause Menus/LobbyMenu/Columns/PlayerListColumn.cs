@@ -1,5 +1,5 @@
 ﻿using ScaleformUI.PauseMenu;
-using System.Collections.Generic;
+using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI.LobbyMenu
 {
@@ -23,7 +23,7 @@ namespace ScaleformUI.LobbyMenu
                 switch (item)
                 {
                     case FriendItem:
-                        var fi = (FriendItem)item;
+                        FriendItem fi = (FriendItem)item;
                         if (Parent is MainView lobby)
                             lobby._pause._lobby.CallFunction("ADD_PLAYER_ITEM", 1, 1, fi.Label, (int)fi.ItemColor, fi.ColoredTag, fi.iconL, fi.boolL, fi.iconR, fi.boolR, fi.Status, (int)fi.StatusColor, fi.Rank, fi.CrewTag);
                         else if (Parent is TabView pause)

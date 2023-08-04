@@ -1,5 +1,6 @@
 ﻿using ScaleformUI.Elements;
 using ScaleformUI.Menu;
+using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI.PauseMenu
 {

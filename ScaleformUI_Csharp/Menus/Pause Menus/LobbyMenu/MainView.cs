@@ -1,6 +1,7 @@
 ﻿using CitizenFX.Core;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenus;
+using ScaleformUI.Scaleforms;
 using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI.LobbyMenu

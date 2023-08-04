@@ -1,4 +1,6 @@
-﻿namespace ScaleformUI.Menu
+﻿using ScaleformUI.Scaleforms;
+
+namespace ScaleformUI.Menu
 {
     public delegate void StatChanged(int value);
     public class UIMenuStatsItem : UIMenuItem

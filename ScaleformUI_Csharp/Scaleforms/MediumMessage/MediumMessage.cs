@@ -1,7 +1,6 @@
 ﻿using CitizenFX.Core;
-using ScaleformUI.Scaleforms;
 
-namespace ScaleformUI
+namespace ScaleformUI.Scaleforms
 {
     public class MediumMessageHandler
     {
@@ -17,7 +16,7 @@ namespace ScaleformUI
             if (_sc != null) return;
             _sc = new ScaleformWideScreen("MIDSIZED_MESSAGE");
 
-            var timeout = 1000;
+            int timeout = 1000;
             int start = Main.GameTime;
             while (!_sc.IsLoaded && Main.GameTime - start < timeout) await BaseScript.Delay(0);
         }

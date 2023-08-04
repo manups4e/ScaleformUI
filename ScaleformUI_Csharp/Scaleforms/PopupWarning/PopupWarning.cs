@@ -1,7 +1,6 @@
 ﻿using CitizenFX.Core;
-using ScaleformUI.Scaleforms;
 
-namespace ScaleformUI
+namespace ScaleformUI.Scaleforms
 {
 
     public enum WarningPopupType

@@ -1,8 +1,6 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using ScaleformUI.Scaleforms;
-using ScaleformUI.Scaleforms.Countdown;
-using ScaleformUI.Scaleforms.RankBar;
 
 namespace ScaleformUI
 {

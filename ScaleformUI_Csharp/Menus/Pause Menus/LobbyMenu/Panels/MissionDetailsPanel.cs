@@ -1,4 +1,5 @@
 ﻿using ScaleformUI.Menu;
+using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI.LobbyMenu
 {
@@ -7,7 +8,7 @@ namespace ScaleformUI.LobbyMenu
         private string title = "";
         public string TextureDict = "";
         public string TextureName = "";
-        public MainView Parent { get; internal set; }
+        public new MainView Parent { get; internal set; }
         public string Title
         {
             get => title;

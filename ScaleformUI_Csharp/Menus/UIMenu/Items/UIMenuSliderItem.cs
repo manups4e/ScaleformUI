@@ -1,4 +1,6 @@
-﻿namespace ScaleformUI.Menu
+﻿using ScaleformUI.Scaleforms;
+
+namespace ScaleformUI.Menu
 {
     public class UIMenuSliderItem : UIMenuItem
     {

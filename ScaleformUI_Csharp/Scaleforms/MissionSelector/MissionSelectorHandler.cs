@@ -1,8 +1,7 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using ScaleformUI.Scaleforms;
 
-namespace ScaleformUI
+namespace ScaleformUI.Scaleforms
 {
     public enum JobSelectionCardIcon
     {
@@ -99,7 +98,7 @@ namespace ScaleformUI
         {
             await Load();
             SetTitle(JobTitle.Title, JobTitle.Votes);
-            foreach (var card in Cards)
+            foreach (JobSelectionCard card in Cards)
             {
                 if (!string.IsNullOrWhiteSpace(card.Txd))
                 {
@@ -113,15 +112,15 @@ namespace ScaleformUI
                 API.SetStreamedTextureDictAsNoLongerNeeded(card.Txd);
             }
 
-            foreach (var button in Buttons)
+            foreach (JobSelectionButton button in Buttons)
             {
                 SetButtonItem(Buttons.IndexOf(button) + 6, button.Text);
             }
             SetSelection(0, Cards[0].Title, Cards[0].Description);
 
-            foreach (var detail in Cards[0].Details)
+            foreach (MissionDetailsItem detail in Cards[0].Details)
             {
-                SetDetailsItem(Cards[0].Details.IndexOf(detail), 0, Cards[0].Details.IndexOf(detail), (int)detail.Type, 0, 0, detail.TextLeft, detail.TextRight, detail.Icon, detail.IconColor, detail.Tick);
+                SetDetailsItem(Cards[0].Details.IndexOf(detail), 0, Cards[0].Details.IndexOf(detail), detail.Type, 0, 0, detail.TextLeft, detail.TextRight, detail.Icon, detail.IconColor, detail.Tick);
             }
         }
 
@@ -130,17 +129,17 @@ namespace ScaleformUI
             if (idx < 6)
             {
                 SetSelection(idx, Cards[idx].Title, Cards[idx].Description);
-                foreach (var detail in Cards[idx].Details)
+                foreach (MissionDetailsItem detail in Cards[idx].Details)
                 {
-                    SetDetailsItem(Cards[idx].Details.IndexOf(detail), idx, Cards[idx].Details.IndexOf(detail), (int)detail.Type, 0, 0, detail.TextLeft, detail.TextRight, detail.Icon, detail.IconColor, detail.Tick);
+                    SetDetailsItem(Cards[idx].Details.IndexOf(detail), idx, Cards[idx].Details.IndexOf(detail), detail.Type, 0, 0, detail.TextLeft, detail.TextRight, detail.Icon, detail.IconColor, detail.Tick);
                 }
             }
             else
             {
                 SetSelection(idx, Buttons[idx - 6].Text, Buttons[idx - 6].Description);
-                foreach (var detail in Buttons[idx - 6].Details)
+                foreach (MissionDetailsItem detail in Buttons[idx - 6].Details)
                 {
-                    SetDetailsItem(Buttons[idx - 6].Details.IndexOf(detail), idx, Buttons[idx - 6].Details.IndexOf(detail), (int)detail.Type, 0, 0, detail.TextLeft, detail.TextRight, detail.Icon, detail.IconColor, detail.Tick);
+                    SetDetailsItem(Buttons[idx - 6].Details.IndexOf(detail), idx, Buttons[idx - 6].Details.IndexOf(detail), detail.Type, 0, 0, detail.TextLeft, detail.TextRight, detail.Icon, detail.IconColor, detail.Tick);
                 }
             }
         }
@@ -176,7 +175,7 @@ namespace ScaleformUI
         {
             if (_sc != null) return;
             _sc = new("MP_NEXT_JOB_SELECTION");
-            var timeout = 1000;
+            int timeout = 1000;
             int start = Main.GameTime;
             while (!_sc.IsLoaded && Main.GameTime - start < timeout) await BaseScript.Delay(0);
         }
@@ -199,7 +198,7 @@ namespace ScaleformUI
                 API.SetInputExclusive(2, 237);
                 API.SetInputExclusive(2, 238);
 
-                var success = API.GetScaleformMovieCursorSelection(_sc.Handle, ref eventType, ref context, ref itemId, ref unused);
+                bool success = API.GetScaleformMovieCursorSelection(_sc.Handle, ref eventType, ref context, ref itemId, ref unused);
                 if (success)
                 {
                     switch (eventType)
@@ -216,7 +215,7 @@ namespace ScaleformUI
                                 {
                                     if (alreadyVoted)
                                     {
-                                        var old = VotedFor;
+                                        int old = VotedFor;
                                         Votes[VotedFor] -= 1;
                                         if (old != SelectedCard)
                                         {
@@ -235,13 +234,13 @@ namespace ScaleformUI
                                 }
                                 else
                                 {
-                                    var btn = Buttons[SelectedCard - 6];
+                                    JobSelectionButton btn = Buttons[SelectedCard - 6];
 
                                     if (btn.Selectable)
                                     {
                                         if (alreadyVoted)
                                         {
-                                            var old = VotedFor;
+                                            int old = VotedFor;
                                             Votes[VotedFor] -= 1;
                                             if (old != SelectedCard)
                                             {
@@ -304,7 +303,7 @@ namespace ScaleformUI
                 {
                     if (alreadyVoted)
                     {
-                        var old = VotedFor;
+                        int old = VotedFor;
                         Votes[VotedFor] -= 1;
                         if (old != SelectedCard)
                         {
@@ -323,13 +322,13 @@ namespace ScaleformUI
                 }
                 else
                 {
-                    var btn = Buttons[SelectedCard - 6];
+                    JobSelectionButton btn = Buttons[SelectedCard - 6];
 
                     if (btn.Selectable)
                     {
                         if (alreadyVoted)
                         {
-                            var old = VotedFor;
+                            int old = VotedFor;
                             Votes[VotedFor] -= 1;
                             if (old != SelectedCard)
                             {
@@ -472,7 +471,7 @@ namespace ScaleformUI
 
     public class MissionDetailsItem
     {
-        public new JobIcon Icon;
+        public JobIcon Icon;
         public string TextLeft;
         public string TextRight;
         public HudColor IconColor;

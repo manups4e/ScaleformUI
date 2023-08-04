@@ -1,4 +1,6 @@
-﻿namespace ScaleformUI.PauseMenu
+﻿using ScaleformUI.Scaleforms;
+
+namespace ScaleformUI.PauseMenu
 {
     public delegate void SettingsSliderEvent(SettingsSliderItem item, int value);
     public class SettingsSliderItem : SettingsItem

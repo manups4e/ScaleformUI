@@ -1,8 +1,7 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using ScaleformUI.Scaleforms;
 
-namespace ScaleformUI
+namespace ScaleformUI.Scaleforms
 {
     public class PlayerListHandler
     {
@@ -47,7 +46,7 @@ namespace ScaleformUI
         {
             if (_sc is not null) return;
             _sc = new ScaleformWideScreen("MP_MM_CARD_FREEMODE");
-            var timeout = 1000;
+            int timeout = 1000;
             int start = Main.GameTime;
             while (!_sc.IsLoaded && Main.GameTime - start < timeout) await BaseScript.Delay(0);
         }
@@ -82,7 +81,7 @@ namespace ScaleformUI
 
         public void RemoveRow(PlayerRow row)
         {
-            var r = PlayerRows.FirstOrDefault(x => x.ServerId == row.ServerId);
+            PlayerRow r = PlayerRows.FirstOrDefault(x => x.ServerId == row.ServerId);
             if (r != null)
             {
                 PlayerRows.Remove(r);
@@ -93,7 +92,7 @@ namespace ScaleformUI
 
         public void RemoveRow(int serverId)
         {
-            var r = PlayerRows.FirstOrDefault(x => x.ServerId == serverId);
+            PlayerRow r = PlayerRows.FirstOrDefault(x => x.ServerId == serverId);
             if (r != null)
             {
                 PlayerRows.Remove(r);
@@ -165,7 +164,7 @@ namespace ScaleformUI
         }
         public void UpdateSlot(PlayerRow row)
         {
-            var r = PlayerRows.FirstOrDefault(x => Convert.ToInt32(x.RightText) == Convert.ToInt32(row.RightText));
+            PlayerRow r = PlayerRows.FirstOrDefault(x => Convert.ToInt32(x.RightText) == Convert.ToInt32(row.RightText));
             //var r = PlayerRows.FirstOrDefault(x => x.ServerId == row.ServerId);
             if (r != null)
             {
@@ -179,7 +178,7 @@ namespace ScaleformUI
 
         public void SetIcon(int index, ScoreRightIconType icon, string txt)
         {
-            var row = PlayerRows[index];
+            PlayerRow row = PlayerRows[index];
             if (row != null)
             {
                 _sc.CallFunction("SET_ICON", index, (int)icon, txt);
@@ -193,7 +192,7 @@ namespace ScaleformUI
             _sc.CallFunction("SET_DATA_SLOT_EMPTY");
             _sc.CallFunction("SET_TITLE", TitleLeftText, TitleRightText, TitleIcon);
             Index = 0;
-            foreach (var row in PlayerRows)
+            foreach (PlayerRow row in PlayerRows)
             {
                 if (IsRowSupposedToShow(Index))
                     rows.Add(row);
@@ -201,7 +200,7 @@ namespace ScaleformUI
             }
 
             Index = 0;
-            foreach (var row in rows)
+            foreach (PlayerRow row in rows)
             {
                 if (string.IsNullOrWhiteSpace(row.CrewLabelText))
                     _sc.CallFunction("SET_DATA_SLOT", Index, row.RightText, row.Name, row.Color, (int)row.RightIcon, row.IconOverlayText, row.JobPointsText, "", (int)row.JobPointsDisplayType, row.TextureString, row.TextureString, row.FriendType);

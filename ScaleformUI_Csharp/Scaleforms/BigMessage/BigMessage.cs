@@ -1,8 +1,7 @@
 ﻿using CitizenFX.Core;
 using ScaleformUI.Elements;
-using ScaleformUI.Scaleforms;
 
-namespace ScaleformUI
+namespace ScaleformUI.Scaleforms
 {
     public class BigMessageHandler
     {
@@ -30,8 +29,8 @@ namespace ScaleformUI
         {
             if (_sc != null) return;
             _sc = new ScaleformWideScreen("MP_BIG_MESSAGE_FREEMODE");
-            var timeout = 1000;
-            var start = Main.GameTime;
+            int timeout = 1000;
+            int start = Main.GameTime;
             while (!_sc.IsLoaded && Main.GameTime - start < timeout) await BaseScript.Delay(0);
         }
 

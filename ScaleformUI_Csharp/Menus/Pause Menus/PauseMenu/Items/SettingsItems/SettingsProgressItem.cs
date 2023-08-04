@@ -1,4 +1,6 @@
-﻿namespace ScaleformUI.PauseMenu
+﻿using ScaleformUI.Scaleforms;
+
+namespace ScaleformUI.PauseMenu
 {
     public delegate void SettingsProgressEvent(SettingsProgressItem item, int value);
     public class SettingsProgressItem : SettingsItem
