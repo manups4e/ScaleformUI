@@ -100,6 +100,7 @@ function MenuHandler:CloseAndClearHistory()
         self._currentPauseMenu:Visible(false)
     end
     BreadcrumbsHandler:Clear()
+    ScaleformUI.Scaleforms.InstructionalButtons:ClearButtonList()
 end
 
 ---IsAnyMenuOpen
