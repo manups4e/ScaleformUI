@@ -151,6 +151,7 @@ namespace ScaleformUI
             if (currentBase != null)
                 currentBase.Visible = false;
             BreadcrumbsHandler.Clear();
+            Main.InstructionalButtons.ClearButtonList();
         }
     }
 }
