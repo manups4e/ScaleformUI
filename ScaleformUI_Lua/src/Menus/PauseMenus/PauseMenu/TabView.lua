@@ -202,7 +202,9 @@ function TabView:BuildPauseMenu()
             for j, item in pairs(tab.LabelsList) do
                 ScaleformUI.Scaleforms._pauseMenu:AddRightListLabel(tabIndex, 0, item.Label, item.LabelFont.FontName, item.LabelFont.FontID)
             end
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_BASE_TAB_BACKGROUND", false, tabIndex, tab.TextureDict, tab.TextureName);
+            if not (tab.TexturDict:IsNullOrEmpty() and tab.TextureName:IsNullOrEmpty()) then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_BASE_TAB_BACKGROUND", false, tabIndex, tab.TextureDict, tab.TextureName);
+            end
         elseif subtype == "SubmenuTab" then
             ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 1, tab.Base.Type)
             for j, item in pairs(tab.LeftItemList) do
@@ -264,7 +266,9 @@ function TabView:BuildPauseMenu()
                     end
                 end
                 if item.ItemType == LeftItemType.Info or item.ItemType == LeftItemType.Statistics or item.ItemType == LeftItemType.Settings then
-                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_LEFT_ITEM_RIGHT_BACKGROUND", false, tabIndex, itemIndex, item.TextureDict, item.TextureName, item.LeftItemBGType);
+                    if not (item.TexturDict:IsNullOrEmpty() and item.TextureName:IsNullOrEmpty()) then
+                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_LEFT_ITEM_RIGHT_BACKGROUND", false, tabIndex, itemIndex, item.TextureDict, item.TextureName, item.LeftItemBGType);
+                    end
                 end
             end
         elseif subtype == "PlayerListTab" then
