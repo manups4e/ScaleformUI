@@ -246,9 +246,9 @@ namespace ScaleformUI.Scaleforms
 
         public void Dispose()
         {
-            _pause.CallFunction("CLEAR_ALL");
-            _lobby.CallFunction("CLEAR_ALL");
-            _header.CallFunction("CLEAR_ALL");
+            _pause?.CallFunction("CLEAR_ALL");
+            _lobby?.CallFunction("CLEAR_ALL");
+            _header?.CallFunction("CLEAR_ALL");
             _visible = false;
         }
 

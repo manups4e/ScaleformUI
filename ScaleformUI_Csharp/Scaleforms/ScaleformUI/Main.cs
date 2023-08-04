@@ -34,6 +34,7 @@ namespace ScaleformUI
             BigFeed = new();
             PauseMenu = new();
             scaleformUI = new("scaleformui");
+            radialMenu = new("radialmenu");
             InstructionalButtons = new();
             InstructionalButtons.Load();
             RankBarInstance = new();
@@ -51,11 +52,11 @@ namespace ScaleformUI
                         API.AnimpostfxStop("PauseMenuIn");
                         API.AnimpostfxPlay("PauseMenuOut", 800, false);
                     }
-                    radialMenu.CallFunction("CLEAR_ALL");
-                    radialMenu.Dispose();
-                    scaleformUI.CallFunction("CLEAR_ALL");
-                    scaleformUI.Dispose();
-                    PauseMenu.Dispose();
+                    radialMenu?.CallFunction("CLEAR_ALL");
+                    radialMenu?.Dispose();
+                    scaleformUI?.CallFunction("CLEAR_ALL");
+                    scaleformUI?.Dispose();
+                    PauseMenu?.Dispose();
                 }
             });
         }
