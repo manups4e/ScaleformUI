@@ -1585,6 +1585,19 @@ public class MenuExample : BaseScript
             if (Game.IsControlJustPressed(0, Control.SelectCharacterTrevor) && !MenuHandler.IsAnyMenuOpen && !MenuHandler.IsAnyPauseMenuOpen)
                 LobbyPauseMenuShowcase(null);
 
+            if (Game.IsControlJustPressed(0, Control.Detonate))
+            {
+
+                long _wallp = API.CreateDui("https://images8.alphacoders.com/131/1318148.png", 1952, 1120);
+                API.CreateRuntimeTextureFromDuiHandle(txd, "wallp", API.GetDuiHandle(_wallp));
+
+                int overlay1 = await MinimapOverlays.AddOverlayToMinimap("scaleformui", "bannerbackground", 365, -422);
+                World.CreateBlip(new Vector3(365, -422, 45));
+
+                int overlay2 = await MinimapOverlays.AddOverlayToMinimap("scaleformui", "wallp", 2000, 1000);
+            }
+
+
             if (Game.IsControlJustPressed(0, (Control)170)) // F3
             {
                 if (ScaleformUI.Main.JobMissionSelection.Enabled)
@@ -1680,7 +1693,6 @@ public class MenuExample : BaseScript
                 await Delay(1000);
                 ScaleformUI.Main.JobMissionSelection.ShowPlayerVote(2, "PlayerName", HudColor.HUD_COLOUR_GREEN, true, true);
             }
-
             if (Game.IsControlJustPressed(0, Control.DropWeapon)) // F9
             {
                 feedOpen = !feedOpen;

@@ -13,6 +13,7 @@ ScaleformUI.Scaleforms.RankbarHandler = RankbarHandler --[[@type RankbarHandler]
 ScaleformUI.Scaleforms.CountdownHandler = CountdownHandler --[[@type CountdownHandler]]         -- countdown
 ScaleformUI.Notifications = Notifications
 ScaleformUI.Scaleforms.BigFeed = BigFeedInstance
+ScaleformUI.Scaleforms.MinimapOverlays = MinimapOverlays
 ScaleformUI.WaitTime = 850
 
 ScaleformUI.Scaleforms._pauseMenu = nil
