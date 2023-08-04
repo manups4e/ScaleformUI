@@ -146,8 +146,10 @@ namespace ScaleformUI
         /// </summary>
         public static void CloseAndClearHistory()
         {
-            currentMenu!.Visible = false;
-            currentBase!.Visible = false;
+            if (currentMenu != null)
+                currentMenu.Visible = false;
+            if (currentBase != null)
+                currentBase.Visible = false;
             BreadcrumbsHandler.Clear();
         }
     }
