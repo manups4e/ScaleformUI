@@ -1039,12 +1039,12 @@ public class MenuExample : BaseScript
         UIMenu mainMenu = _menu;
         // tabview is the main menu.. the container of all the tabs.
         TabView pauseMenu = new TabView("PauseMenu example", "Look there's a subtitle too!", "Detail 1", "Detail 2", "Detail 3");
-        /*
-        var mugshot = API.RegisterPedheadshot(Game.PlayerPed.Handle);
+
+        int mugshot = API.RegisterPedheadshot(Game.PlayerPed.Handle);
         while (!API.IsPedheadshotReady(mugshot)) await BaseScript.Delay(1);
-        var txd = API.GetPedheadshotTxdString(mugshot);
-        pauseMenu.HeaderPicture = new(txd, txd);
-        */
+        string mugtxd = API.GetPedheadshotTxdString(mugshot);
+        pauseMenu.HeaderPicture = new(mugtxd, mugtxd);
+
         TextTab basicTab = new TextTab("TabTextItem", "This is the title!");
 
         long bg_dui = API.CreateDui("https://giphy.com/embed/sxwk9hGlsULcYm6hDX", 1280, 720);
