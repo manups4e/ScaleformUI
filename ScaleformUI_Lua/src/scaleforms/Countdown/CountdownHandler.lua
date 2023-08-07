@@ -9,6 +9,7 @@ CountdownHandler.__call = function()
     return "CountdownHandler"
 end
 
+---@type boolean
 local renderCountdown = false
 
 ---@class CountdownHandler
@@ -55,12 +56,13 @@ function CountdownHandler:Dispose()
     self._sc = nil
 end
 
----Update is called every frame to render the COUNTDOWN scaleform to the screen by mainScaleform.lua
+---Update must be called every frame to render the COUNTDOWN scaleform
 function CountdownHandler:Update()
     if self._sc == nil or self._sc == 0 then return end
     self._sc:Render2D()
 end
 
+---Starts rendering the COUNTDOWN scaleform
 local function StartRenderingCountdown()
     renderCountdown = true
     Citizen.CreateThread(function()
@@ -78,7 +80,7 @@ function CountdownHandler:ShowMessage(message)
     self._sc:CallFunction("FADE_MP", false, message, self._colour.r, self._colour.g, self._colour.b);
 end
 
----Starts the countdown
+---Starts the countdown and will return a promise when the countdown is finished
 ---@param number number? - The number to start the countdown from
 ---@param hudColour number? - The hud colour to use for the countdown
 ---@param countdownAudioName string? - The audio name to play for each number
@@ -117,9 +119,11 @@ function CountdownHandler:Start(number, hudColour, countdownAudioName, countdown
         self:ShowMessage("CNTDWN_GO")
         p:resolve()
 
-        if GlobalGameTimer - gameTime > 1000 then
-            self:Dispose()
+        while GlobalGameTimer - gameTime < 1000 do
+            Wait(0)
         end
+
+        self:Dispose()
     end, function()
         error("Failed to load countdown scaleform")
         p:reject()
