@@ -9,6 +9,8 @@ CountdownHandler.__call = function()
     return "CountdownHandler"
 end
 
+local renderCountdown = false
+
 ---@class CountdownHandler
 ---@field public _sc Scaleform
 ---@field private _start number
@@ -59,6 +61,16 @@ function CountdownHandler:Update()
     self._sc:Render2D()
 end
 
+local function StartRenderingCountdown()
+    renderCountdown = true
+    Citizen.CreateThread(function()
+        while renderCountdown do
+            Wait(0)
+            CountdownHandler:Update()
+        end
+    end)
+end
+
 ---Show a message on the COUNTDOWN scaleform
 ---@param message string
 function CountdownHandler:ShowMessage(message)
@@ -85,6 +97,7 @@ function CountdownHandler:Start(number, hudColour, countdownAudioName, countdown
     if goAudioRef == nil then goAudioRef = "Car_Club_Races_Pursuit_Series_Sounds" end
 
     self:Load():next(function()
+        StartRenderingCountdown();
         self._colour.r, self._colour.g, self._colour.b, self._colour.a = GetHudColour(hudColour)
 
         local gameTime = GlobalGameTimer
@@ -111,6 +124,8 @@ function CountdownHandler:Start(number, hudColour, countdownAudioName, countdown
         error("Failed to load countdown scaleform")
         p:reject()
     end)
+
+    renderCountdown = false
 
     return p
 end
