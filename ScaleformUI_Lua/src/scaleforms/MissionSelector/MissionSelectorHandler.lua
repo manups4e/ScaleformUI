@@ -221,6 +221,7 @@ function MissionSelectorHandler:Update()
                     return
                 else
                     if self.SelectedCard <= 6 then
+                        local card = self.Cards[self.SelectedCard]
                         if self.alreadyVoted then
                             local old = self.VotedFor
                             self.Votes[self.VotedFor] = self.Votes[self.VotedFor] - 1
@@ -235,6 +236,7 @@ function MissionSelectorHandler:Update()
                             self.Votes[self.VotedFor] = self.Votes[self.VotedFor] + 1
                             self:UpdateOwnVote(self.VotedFor, -1)
                         end
+                        card.OnCardPressed()
                     else
                         local btn = self.Buttons[self.SelectedCard - 6]
                         if btn.Selectable then
@@ -282,6 +284,7 @@ function MissionSelectorHandler:Update()
         end
     elseif IsDisabledControlJustPressed(2, 201) then
         if self.SelectedCard <= 6 then
+            local card = self.Cards[self.SelectedCard]
             if self.alreadyVoted then
                 local old = self.VotedFor
                 self.Votes[self.VotedFor] = self.Votes[self.VotedFor] - 1
@@ -296,6 +299,7 @@ function MissionSelectorHandler:Update()
                 self.Votes[self.VotedFor] = self.Votes[self.VotedFor] + 1
                 self:UpdateOwnVote(self.VotedFor, -1)
             end
+            card.OnCardPressed()
         else
             local btn = self.Buttons[self.SelectedCard - 6]
             if btn.Selectable then
