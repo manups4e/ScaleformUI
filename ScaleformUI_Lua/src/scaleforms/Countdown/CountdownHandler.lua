@@ -52,6 +52,14 @@ end
 
 ---Dispose the COUNTDOWN scaleform
 function CountdownHandler:Dispose()
+    -- Wait 1 second before disposing the scaleform
+    -- This is to prevent the scaleform from being disposed too early
+    -- and to allow promise to be resolved before disposing
+    local gameTime = GlobalGameTimer
+    while GlobalGameTimer - gameTime < 1000 do
+        Wait(0)
+    end
+
     self._sc:Dispose()
     self._sc = nil
 end
@@ -118,10 +126,6 @@ function CountdownHandler:Start(number, hudColour, countdownAudioName, countdown
         PlaySoundFrontend(-1, goAudioName, goAudioRef, true);
         self:ShowMessage("CNTDWN_GO")
         p:resolve()
-
-        while GlobalGameTimer - gameTime < 1000 do
-            Wait(0)
-        end
 
         self:Dispose()
     end, function()
