@@ -223,6 +223,7 @@ namespace ScaleformUI.Scaleforms
                                             Votes[VotedFor] += 1;
                                         }
                                         UpdateOwnVote(VotedFor, old);
+                                        Cards[SelectedCard].CardSelected();
                                     }
                                     else
                                     {
@@ -230,6 +231,7 @@ namespace ScaleformUI.Scaleforms
                                         VotedFor = SelectedCard;
                                         Votes[VotedFor] += 1;
                                         UpdateOwnVote(VotedFor, -1);
+                                        Cards[SelectedCard].CardSelected();
                                     }
                                 }
                                 else
@@ -311,6 +313,7 @@ namespace ScaleformUI.Scaleforms
                             Votes[VotedFor] += 1;
                         }
                         UpdateOwnVote(VotedFor, old);
+                        Cards[SelectedCard].CardSelected();
                     }
                     else
                     {
@@ -318,6 +321,7 @@ namespace ScaleformUI.Scaleforms
                         VotedFor = SelectedCard;
                         Votes[VotedFor] += 1;
                         UpdateOwnVote(VotedFor, -1);
+                        Cards[SelectedCard].CardSelected();
                     }
                 }
                 else
@@ -401,6 +405,7 @@ namespace ScaleformUI.Scaleforms
         }
     }
 
+    public delegate void OnCardSelected(JobSelectionCard card);
     public class JobSelectionCard
     {
         public string Title { get; set; }
@@ -413,6 +418,8 @@ namespace ScaleformUI.Scaleforms
         public HudColor IconColor { get; set; }
         public int ApMultiplier { get; set; }
         public List<MissionDetailsItem> Details { get; set; } // NON PIU DI 4
+        public OnCardSelected OnCardSelected;
+
 
         public JobSelectionCard(string title, string description, string txd, string txn, int rpMult, int cashMult, JobSelectionCardIcon icon, HudColor iconColor, int apMultiplier, List<MissionDetailsItem> details)
         {
@@ -426,6 +433,10 @@ namespace ScaleformUI.Scaleforms
             IconColor = iconColor;
             ApMultiplier = apMultiplier;
             Details = details;
+        }
+        internal void CardSelected()
+        {
+            OnCardSelected?.Invoke(this);
         }
     }
 
