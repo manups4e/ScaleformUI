@@ -112,6 +112,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         _timeBeforeOverflow = 0,
         _canHe = true,
         _scaledWidth = (720 * GetAspectRatio(false)),
+        enabled3DAnimations = true,
         isFading = false,
         fadingTime = fadeTime or 0.1,
         Controls = {
@@ -356,6 +357,17 @@ function UIMenu:AnimationEnabled(enable)
         end
     end
     return self.enableAnimation
+end
+
+function UIMenu:Enabled3DAnimations(enable)
+    if enable ~= nil then
+        self.enabled3DAnimations = enable
+        if self:Visible() then
+            ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_3D_ANIMATIONS", false, enable)
+        end
+    else
+        return self.enabled3DAnimations
+    end
 end
 
 --- Sets the menu's scrolling animationType while the menu is visible.
@@ -673,6 +685,7 @@ function UIMenu:BuildUpMenuAsync()
             end
         end
         ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_MOUSE", false, self.Settings.MouseControlsEnabled)
+        ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_3D_ANIMATIONS", false, self.enabled3DAnimations)
         self:AnimationEnabled(enab)
         self:FadeInMenu()
         self._isBuilding = false
