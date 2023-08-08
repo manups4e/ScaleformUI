@@ -21,26 +21,29 @@ function MinimapOverlays:AddSizedOverlayToMap(textureDict, textureName, x, y, ro
     if alpha == nil then alpha = 100 end
     if centered == nil then centered = false end
 
-    if not HasStreamedTextureDictLoaded(textureDict) then
-        RequestStreamedTextureDict(textureDict, false)
-        while not HasStreamedTextureDictLoaded(textureDict) do Citizen.Wait(0) end
-    end
+    Citizen.CreateThread(function()
+    
+        if not HasStreamedTextureDictLoaded(textureDict) then
+            RequestStreamedTextureDict(textureDict, false)
+            while not HasStreamedTextureDictLoaded(textureDict) do Citizen.Wait(0) end
+        end
 
-    CallMinimapScaleformFunction(self.overlay, "ADD_SIZED_OVERLAY")
-    ScaleformMovieMethodAddParamTextureNameString(textureDict)
-    ScaleformMovieMethodAddParamTextureNameString(textureName)
-    ScaleformMovieMethodAddParamFloat(x)
-    ScaleformMovieMethodAddParamFloat(y)
-    ScaleformMovieMethodAddParamFloat(math.round(rotation, 2))
-    ScaleformMovieMethodAddParamFloat(math.round(width, 2))
-    ScaleformMovieMethodAddParamFloat(math.round(height, 2))
-    ScaleformMovieMethodAddParamInt(alpha)
-    ScaleformMovieMethodAddParamBool(centered)
-    EndScaleformMovieMethod()
+        CallMinimapScaleformFunction(self.overlay, "ADD_SIZED_OVERLAY")
+        ScaleformMovieMethodAddParamTextureNameString(textureDict)
+        ScaleformMovieMethodAddParamTextureNameString(textureName)
+        ScaleformMovieMethodAddParamFloat(x)
+        ScaleformMovieMethodAddParamFloat(y)
+        ScaleformMovieMethodAddParamFloat(math.round(rotation, 2))
+        ScaleformMovieMethodAddParamFloat(math.round(width, 2))
+        ScaleformMovieMethodAddParamFloat(math.round(height, 2))
+        ScaleformMovieMethodAddParamInt(alpha)
+        ScaleformMovieMethodAddParamBool(centered)
+        EndScaleformMovieMethod()
 
-    SetStreamedTextureDictAsNoLongerNeeded(textureDict)
-    table.insert(self.minimaps, {id = #self.minimaps + 1, txd = textureDict, txn = textureName})
-    return #self.minimaps
+        SetStreamedTextureDictAsNoLongerNeeded(textureDict)
+        table.insert(self.minimaps, {id = #self.minimaps + 1, txd = textureDict, txn = textureName})
+        return #self.minimaps
+    end)
 end
 
 function MinimapOverlays:AddScaledOverlayToMap(textureDict, textureName, x, y, rotation, xScale, yScale, alpha, centered)
@@ -51,22 +54,31 @@ function MinimapOverlays:AddScaledOverlayToMap(textureDict, textureName, x, y, r
     if alpha == nil then alpha = 100 end
     if centered == nil then centered = false end
 
-    CallMinimapScaleformFunction(self.overlay, "ADD_SCALED_OVERLAY")
-    ScaleformMovieMethodAddParamTextureNameString(textureDict)
-    ScaleformMovieMethodAddParamTextureNameString(textureName)
-    ScaleformMovieMethodAddParamFloat(x)
-    ScaleformMovieMethodAddParamFloat(y)
-    ScaleformMovieMethodAddParamFloat(math.round(rotation, 2))
-    ScaleformMovieMethodAddParamFloat(math.round(xScale, 2))
-    ScaleformMovieMethodAddParamFloat(math.round(yScale, 2))
-    ScaleformMovieMethodAddParamInt(alpha)
-    ScaleformMovieMethodAddParamBool(centered)
-    EndScaleformMovieMethod()
+    Citizen.CreateThread(function()
+   
+        if not HasStreamedTextureDictLoaded(textureDict) then
+            RequestStreamedTextureDict(textureDict, false)
+            while not HasStreamedTextureDictLoaded(textureDict) do Citizen.Wait(0) end
+        end
 
-    SetStreamedTextureDictAsNoLongerNeeded(textureDict)
 
-    table.insert(self.minimaps, {id = #self.minimaps + 1, txd = textureDict, txn = textureName})
-    return #self.minimaps
+        CallMinimapScaleformFunction(self.overlay, "ADD_SCALED_OVERLAY")
+        ScaleformMovieMethodAddParamTextureNameString(textureDict)
+        ScaleformMovieMethodAddParamTextureNameString(textureName)
+        ScaleformMovieMethodAddParamFloat(x)
+        ScaleformMovieMethodAddParamFloat(y)
+        ScaleformMovieMethodAddParamFloat(math.round(rotation, 2))
+        ScaleformMovieMethodAddParamFloat(math.round(xScale, 2))
+        ScaleformMovieMethodAddParamFloat(math.round(yScale, 2))
+        ScaleformMovieMethodAddParamInt(alpha)
+        ScaleformMovieMethodAddParamBool(centered)
+        EndScaleformMovieMethod()
+
+        SetStreamedTextureDictAsNoLongerNeeded(textureDict)
+
+        table.insert(self.minimaps, {id = #self.minimaps + 1, txd = textureDict, txn = textureName})
+        return #self.minimaps
+    end)
 end
 
 function MinimapOverlays:RemoveOverlayFromMinimap(overlayId)
