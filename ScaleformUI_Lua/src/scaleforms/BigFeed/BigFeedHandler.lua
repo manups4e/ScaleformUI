@@ -34,13 +34,6 @@ end
 ---@field public Load fun(self:BigFeedInstance):nil
 ---@field public Dispose fun(self:BigFeedInstance):nil
 
----Create a new BigFeedInstance
----@return BigFeedInstance
-function BigFeedInstance.New()
-    local data = {
-    }
-    return setmetatable(data, BigFeedInstance)
-end
 
 ---Sets the title of the BigFeedInstance, if no title is provided it will return the current title
 ---@param title? string
