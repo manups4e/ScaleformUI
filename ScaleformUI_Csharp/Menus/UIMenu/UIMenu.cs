@@ -1795,10 +1795,23 @@ namespace ScaleformUI.Menu
                 else
                 {
                     BreadcrumbsHandler.SwitchInProgress = true;
-                    MenuBase prevMenu = BreadcrumbsHandler.PreviousMenu;
-                    BreadcrumbsHandler.Backwards();
+                    MenuBase prevMenu = null;
+                    if (BreadcrumbsHandler.CurrentDepth > 0)
+                    {
+                        prevMenu = BreadcrumbsHandler.PreviousMenu;
+                        if (prevMenu is UIMenu uimenu)
+                        {
+                            if (uimenu.MenuItems.Count == 0)
+                            {
+                                MenuHandler.CloseAndClearHistory();
+                                throw new Exception($"UIMenu {this.Title} previous menu is empty... Closing and clearing history.");
+                            }
+                        }
+                        BreadcrumbsHandler.Backwards();
+                    }
                     Visible = false;
-                    prevMenu.Visible = true;
+                    if (prevMenu is not null)
+                        prevMenu.Visible = true;
                     BreadcrumbsHandler.SwitchInProgress = false;
                 }
             }
