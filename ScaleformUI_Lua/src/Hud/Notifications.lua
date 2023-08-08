@@ -1,15 +1,5 @@
 Notifications = setmetatable({
     _handle = 0,
-    Type = {
-        Default = 0,
-        Bubble = 1,
-        Mail = 2,
-        FriendRequest = 3,
-        Default2 = 4,
-        Reply = 7,
-        ReputationPoints = 8,
-        Money = 9
-    },
     Color = {
         Red = 27,
         Yellow = 50,
@@ -22,12 +12,14 @@ Notifications = setmetatable({
         Rose = 45
     },
     NotificationIcon = {
-        ChatBox = 1,
-        Email = 2,
-        AdDFriendRequest = 3,
-        RightJumpingArrow = 7,
-        RPIcon = 8,
-        DollarIcon = 9
+        Default = 0,
+        Bubble = 1,
+        Mail = 2,
+        FriendRequest = 3,
+        Default2 = 4,
+        Reply = 7,
+        ReputationPoints = 8,
+        Money = 9
     },
     IconChars = {
         Abigail = "CHAR_ABIGAIL",
@@ -215,7 +207,6 @@ end
 ---@param subtitle string @The subtitle
 ---@param text string @The body of the nofitication
 ---@param characterIcon string @The character to be displayed in the notification, use the NotificationCharacters
----@param notificationIcon NotificationIcon @The icon
 ---@param backgroundColour Colours @The background color
 ---@param flashColour {R:number, G:number, B:number, A:number} @The flash color (RGBA)
 ---@param blink boolean @Should the notification blink?
@@ -226,12 +217,11 @@ end
 ---@see Colours
 ---@see NotificationType
 ---@return nil
-function Notifications:ShowAdvancedNotification(title, subtitle, text, characterIcon, notificationIcon, backgroundColour,
+function Notifications:ShowAdvancedNotification(title, subtitle, text, characterIcon, backgroundColour,
                                                 flashColour, blink, notificationType,
                                                 sound)
     if (notificationType == nil) then notificationType = self.Type.Default end
     if (characterIcon == nil) then characterIcon = self.IconChars.Default end
-    if (notificationIcon == nil) then notificationIcon = self.NotificationIcon.Default end
     if (backgroundColour == nil) then backgroundColour = -1 end
     if (blink == nil) then blink = false end
     AddTextEntry("ScaleformUIAdvancedNotification", text)
