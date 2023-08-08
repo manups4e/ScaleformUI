@@ -9,6 +9,9 @@ CountdownHandler.__call = function()
     return "CountdownHandler"
 end
 
+---@type boolean
+local renderCountdown = false
+
 ---@class CountdownHandler
 ---@field public _sc Scaleform
 ---@field private _start number
@@ -49,14 +52,33 @@ end
 
 ---Dispose the COUNTDOWN scaleform
 function CountdownHandler:Dispose()
+    -- Wait 1 second before disposing the scaleform
+    -- This is to prevent the scaleform from being disposed too early
+    -- and to allow promise to be resolved before disposing
+    local gameTime = GlobalGameTimer
+    while GlobalGameTimer - gameTime < 1000 do
+        Wait(0)
+    end
+
     self._sc:Dispose()
     self._sc = nil
 end
 
----Update is called every frame to render the COUNTDOWN scaleform to the screen by mainScaleform.lua
+---Update must be called every frame to render the COUNTDOWN scaleform
 function CountdownHandler:Update()
     if self._sc == nil or self._sc == 0 then return end
     self._sc:Render2D()
+end
+
+---Starts rendering the COUNTDOWN scaleform
+local function StartRenderingCountdown()
+    renderCountdown = true
+    Citizen.CreateThread(function()
+        while renderCountdown do
+            Wait(0)
+            CountdownHandler:Update()
+        end
+    end)
 end
 
 ---Show a message on the COUNTDOWN scaleform
@@ -66,7 +88,7 @@ function CountdownHandler:ShowMessage(message)
     self._sc:CallFunction("FADE_MP", false, message, self._colour.r, self._colour.g, self._colour.b);
 end
 
----Starts the countdown
+---Starts the countdown and will return a promise when the countdown is finished
 ---@param number number? - The number to start the countdown from
 ---@param hudColour number? - The hud colour to use for the countdown
 ---@param countdownAudioName string? - The audio name to play for each number
@@ -85,6 +107,7 @@ function CountdownHandler:Start(number, hudColour, countdownAudioName, countdown
     if goAudioRef == nil then goAudioRef = "Car_Club_Races_Pursuit_Series_Sounds" end
 
     self:Load():next(function()
+        StartRenderingCountdown();
         self._colour.r, self._colour.g, self._colour.b, self._colour.a = GetHudColour(hudColour)
 
         local gameTime = GlobalGameTimer
@@ -104,13 +127,13 @@ function CountdownHandler:Start(number, hudColour, countdownAudioName, countdown
         self:ShowMessage("CNTDWN_GO")
         p:resolve()
 
-        if GlobalGameTimer - gameTime > 1000 then
-            self:Dispose()
-        end
+        self:Dispose()
     end, function()
         error("Failed to load countdown scaleform")
         p:reject()
     end)
+
+    renderCountdown = false
 
     return p
 end

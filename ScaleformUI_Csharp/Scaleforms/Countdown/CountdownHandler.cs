@@ -36,7 +36,7 @@ namespace ScaleformUI.Scaleforms
             int r = 255, g = 255, b = 255, a = 255;
             API.GetHudColour((int)hudColor, ref r, ref g, ref b, ref a);
 
-            int gameTime = API.GetGameTimer();
+            int gameTime = Main.GameTime;
 
             while (number >= 0)
             {
@@ -44,7 +44,7 @@ namespace ScaleformUI.Scaleforms
                 if ((API.GetGameTimer() - gameTime) > 1000)
                 {
                     API.PlaySoundFrontend(-1, countdownAudioName, countdownAudioRef, true);
-                    gameTime = API.GetGameTimer();
+                    gameTime = Main.GameTime;
                     ShowMessage(number, r, g, b);
                     number--;
                 }
@@ -52,6 +52,7 @@ namespace ScaleformUI.Scaleforms
 
             API.PlaySoundFrontend(-1, goAudioName, goAudioRef, true);
             ShowMessage("CNTDWN_GO", r, g, b);
+
             Dispose();
         }
 
@@ -70,7 +71,8 @@ namespace ScaleformUI.Scaleforms
         {
             // Delay the dispose to allow the scaleform to finish playing
             // this allows the player to act on the last message
-            await BaseScript.Delay(1000);
+            int gameTime = Main.GameTime;
+            while (Main.GameTime - gameTime < 1000) await BaseScript.Delay(0);
             _sc.Dispose();
             _sc = null;
         }
