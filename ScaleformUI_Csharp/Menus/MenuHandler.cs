@@ -95,7 +95,7 @@ namespace ScaleformUI
         /// <summary>
         /// Processes all of your visible menus' controls.
         /// </summary>
-        public static void ProcessControl()
+        internal static void ProcessControl()
         {
             currentMenu?.ProcessControl();
             currentBase?.ProcessControls();
@@ -105,7 +105,7 @@ namespace ScaleformUI
         /// <summary>
         /// Processes all of your visible menus' mouses.
         /// </summary>
-        public static void ProcessMouse()
+        internal static void ProcessMouse()
         {
             currentMenu?.ProcessMouse();
             currentBase?.ProcessMouse();
@@ -115,7 +115,7 @@ namespace ScaleformUI
         /// <summary>
         /// Draws all visible menus.
         /// </summary>
-        public static void Draw()
+        internal static void Draw()
         {
             if (Main.Warning.IsShowing || Main.Warning.IsShowingWithButtons) return;
             currentMenu?.Draw();

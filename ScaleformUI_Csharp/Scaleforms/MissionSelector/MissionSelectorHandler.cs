@@ -87,14 +87,14 @@ namespace ScaleformUI.Scaleforms
 
         public bool AlreadyVoted => alreadyVoted;
 
-        public void Dispose()
+        internal void Dispose()
         {
             Votes = new int[9];
             _sc.Dispose();
             _sc = null;
         }
 
-        public async void BuildMenu()
+        internal async void BuildMenu()
         {
             await Load();
             SetTitle(JobTitle.Title, JobTitle.Votes);
@@ -144,7 +144,7 @@ namespace ScaleformUI.Scaleforms
             }
         }
 
-        public void UpdateOwnVote(int idx, int oldidx, bool showCheckMark = false, bool flashBG = false)
+        internal void UpdateOwnVote(int idx, int oldidx, bool showCheckMark = false, bool flashBG = false)
         {
             if (idx == oldidx) return;
 
@@ -171,7 +171,7 @@ namespace ScaleformUI.Scaleforms
         }
 
 
-        public async Task Load()
+        internal async Task Load()
         {
             if (_sc != null) return;
             _sc = new("MP_NEXT_JOB_SELECTION");
@@ -184,7 +184,7 @@ namespace ScaleformUI.Scaleforms
         int itemId = 0;
         int context = 0;
         int unused = 0;
-        public void Update()
+        internal void Update()
         {
             _sc.Render2D();
             Game.DisableAllControlsThisFrame(0);
