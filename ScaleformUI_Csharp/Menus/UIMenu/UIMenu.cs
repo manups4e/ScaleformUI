@@ -1810,7 +1810,7 @@ namespace ScaleformUI.Menu
                         BreadcrumbsHandler.Backwards();
                     }
                     Visible = false;
-                    if (prevMenu is not null)
+                    if (prevMenu != null)
                         prevMenu.Visible = true;
                     BreadcrumbsHandler.SwitchInProgress = false;
                 }
@@ -2198,6 +2198,12 @@ namespace ScaleformUI.Menu
                 _itemsDirty = value;
                 if (value)
                 {
+                    if (this.MenuItems.Count == 0)
+                    {
+                        MenuHandler.CloseAndClearHistory();
+                        throw new Exception($"UIMenu {this.Title} menu is empty... Closing and clearing history.");
+                    }
+
                     Main.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
                     canBuild = true;
                     MenuHandler.currentMenu = this;
