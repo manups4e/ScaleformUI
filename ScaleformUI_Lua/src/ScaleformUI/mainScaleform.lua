@@ -40,6 +40,7 @@ Citizen.CreateThread(function()
     ScaleformUI.Scaleforms._radialMenu = Scaleform.RequestWidescreen("radialmenu")
     ScaleformUI.Scaleforms._pauseMenu = PauseMenu.New()
     ScaleformUI.Scaleforms._pauseMenu:Load()
+    ScaleformUI.Scaleforms.MinimapOverlays:Load()
 
     while true do
         ScaleformUI.WaitTime = 850
