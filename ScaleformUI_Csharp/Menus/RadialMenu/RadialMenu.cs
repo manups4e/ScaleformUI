@@ -94,6 +94,28 @@ namespace ScaleformUI.Radial
             };
         }
 
+        public void AddInstructionalButton(InstructionalButton button)
+        {
+            InstructionalButtons.Add(button);
+            if (Visible && !(Main.Warning.IsShowing || Main.Warning.IsShowingWithButtons))
+                Main.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
+        }
+
+        public void RemoveInstructionalButton(InstructionalButton button)
+        {
+            if (InstructionalButtons.Contains(button))
+                InstructionalButtons.Remove(button);
+            if (Visible && !(Main.Warning.IsShowing || Main.Warning.IsShowingWithButtons))
+                Main.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
+        }
+
+        public void RemoveInstructionalButton(int index)
+        {
+            if (index < 0 || index >= InstructionalButtons.Count)
+                throw new ArgumentOutOfRangeException("ScaleformUI: Cannot remove with an index less than 0 or more than the count of actual instructional buttons");
+            RemoveInstructionalButton(InstructionalButtons[index]);
+        }
+
         internal async void BuildMenu()
         {
             if (_offset.IsEmpty) _offset = new PointF(Screen.Width / 2, (Screen.Height / 2) - 60);
