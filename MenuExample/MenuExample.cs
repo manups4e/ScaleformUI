@@ -1585,18 +1585,19 @@ public class MenuExample : BaseScript
             if (Game.IsControlJustPressed(0, Control.SelectCharacterTrevor) && !MenuHandler.IsAnyMenuOpen && !MenuHandler.IsAnyPauseMenuOpen)
                 LobbyPauseMenuShowcase(null);
 
-            if (Game.IsControlJustPressed(0, Control.Detonate))
+            /*
+            if (Game.IsControlJustPressed(0, Control.Detonate) || Game.IsDisabledControlJustPressed(0, Control.Detonate))
             {
 
-                long _wallp = API.CreateDui("https://images8.alphacoders.com/131/1318148.png", 1952, 1120);
+                long _wallp = API.CreateDui("https://images8.alphacoders.com/132/1322626.png", 2560, 1440);
                 API.CreateRuntimeTextureFromDuiHandle(txd, "wallp", API.GetDuiHandle(_wallp));
 
-                int overlay1 = await MinimapOverlays.AddOverlayToMinimap("scaleformui", "bannerbackground", 365, -422);
+                int overlay1 = await MinimapOverlays.AddSizedOverlayToMap("scaleformui", "bannerbackground", 365, -422, centered: true);
                 World.CreateBlip(new Vector3(365, -422, 45));
 
-                int overlay2 = await MinimapOverlays.AddOverlayToMinimap("scaleformui", "wallp", 2000, 1000);
+                int overlay2 = await MinimapOverlays.AddSizedOverlayToMap("scaleformui", "wallp", 2000, 1000, centered: true);
             }
-
+            */
 
             if (Game.IsControlJustPressed(0, (Control)170)) // F3
             {

@@ -41,7 +41,7 @@ namespace ScaleformUI
             CountdownInstance = new();
             Tick += ScaleformUIThread_Tick;
             Tick += OnUpdateGlobalGameTimerAsync;
-
+            MinimapOverlays.Load();
             EventHandlers["onResourceStop"] += new Action<string>((resName) =>
             {
                 if (resName == API.GetCurrentResourceName())
