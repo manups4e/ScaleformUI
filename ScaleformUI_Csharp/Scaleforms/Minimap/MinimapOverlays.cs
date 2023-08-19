@@ -88,9 +88,9 @@ namespace ScaleformUI.Scaleforms
         {
             if (overlay == 0) await Load();
             CallMinimapScaleformFunction(overlay, "REM_OVERLAY");
-            ScaleformMovieMethodAddParamInt(overlayId);
+            ScaleformMovieMethodAddParamInt(overlayId - 1);
             EndScaleformMovieMethod();
-            minimaps.Remove(minimaps.Keys.ToList()[overlayId]);
+            minimaps.Remove(overlayId);
         }
     }
 }
