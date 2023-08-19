@@ -35,6 +35,7 @@ public class MenuExample : BaseScript
         exampleMenu.BuildingAnimation = MenuBuildingAnimation.LEFT_RIGHT;
         exampleMenu.AnimationType = MenuAnimationType.BACK_INOUT;
         exampleMenu.ScrollingType = ScrollingType.CLASSIC;
+        exampleMenu.Enabled3DAnimations = false;
         //exampleMenu.CounterColor = HudColor.HUD_COLOUR_PINK;
         // let's add the menu to the Pool
 
