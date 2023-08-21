@@ -1165,6 +1165,7 @@ namespace ScaleformUI.Menu
             AlternativeTitle = alternativeTitle;
             MouseWheelControlEnabled = true;
             Pagination = new PaginationHandler();
+            Pagination.ItemsPerPage = 7;
             this.fadingTime = fadingTime;
 
             SetKey(MenuControls.Up, Control.PhoneUp);
