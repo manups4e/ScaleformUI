@@ -1334,6 +1334,7 @@ namespace ScaleformUI.Menu
         /// </summary>
         public void Clear()
         {
+            Pagination.CurrentMenuIndex = value;
             MenuItems.Clear();
             Pagination.TotalItems = 0;
         }
