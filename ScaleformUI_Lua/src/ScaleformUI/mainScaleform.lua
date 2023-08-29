@@ -50,20 +50,21 @@ Citizen.CreateThread(function()
         end
         ScaleformUI.Scaleforms.Warning:Update()
         ScaleformUI.Scaleforms.InstructionalButtons:Update()
-        if IsPauseMenuActive() then return end
-        ScaleformUI.Scaleforms.BigMessageInstance:Update()
-        ScaleformUI.Scaleforms.MidMessageInstance:Update()
-        ScaleformUI.Scaleforms.PlayerListScoreboard:Update()
-        ScaleformUI.Scaleforms.JobMissionSelector:Update()
-        ScaleformUI.Scaleforms.BigFeed:Update()
-        if ScaleformUI.Scaleforms._ui == nil then
-            ScaleformUI.Scaleforms._ui = Scaleform.RequestWidescreen("scaleformui")
-        end
-        if ScaleformUI.Scaleforms._radialMenu == nil then
-            ScaleformUI.Scaleforms._radialMenu = Scaleform.RequestWidescreen("radialmenu")
-        end
-        if not ScaleformUI.Scaleforms._pauseMenu.Loaded then
-            ScaleformUI.Scaleforms._pauseMenu:Load()
+        if not IsPauseMenuActive() then
+            ScaleformUI.Scaleforms.BigMessageInstance:Update()
+            ScaleformUI.Scaleforms.MidMessageInstance:Update()
+            ScaleformUI.Scaleforms.PlayerListScoreboard:Update()
+            ScaleformUI.Scaleforms.JobMissionSelector:Update()
+            ScaleformUI.Scaleforms.BigFeed:Update()
+            if ScaleformUI.Scaleforms._ui == nil then
+                ScaleformUI.Scaleforms._ui = Scaleform.RequestWidescreen("scaleformui")
+            end
+            if ScaleformUI.Scaleforms._radialMenu == nil then
+                ScaleformUI.Scaleforms._radialMenu = Scaleform.RequestWidescreen("radialmenu")
+            end
+            if not ScaleformUI.Scaleforms._pauseMenu.Loaded then
+                ScaleformUI.Scaleforms._pauseMenu:Load()
+            end
         end
         Citizen.Wait(ScaleformUI.WaitTime)
     end
