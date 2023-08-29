@@ -938,8 +938,8 @@ function UIMenu:ProcessControl()
         end
     end
 
-    if self.Controls.Select.Enabled and ((IsDisabledControlJustPressed(0, 201) or IsDisabledControlJustPressed(1, 201) or IsDisabledControlJustPressed(2, 201)) or
-            (IsDisabledControlJustPressed(0, 24) or IsDisabledControlJustPressed(1, 24) or IsDisabledControlJustPressed(2, 24)) and not self.Settings.MouseControlsEnabled) then
+    if self.Controls.Select.Enabled and (IsDisabledControlJustPressed(0, 201) or IsDisabledControlJustPressed(1, 201) or IsDisabledControlJustPressed(2, 201)) or
+            ((IsDisabledControlJustPressed(0, 24) or IsDisabledControlJustPressed(1, 24) or IsDisabledControlJustPressed(2, 24)) and self.Settings.MouseControlsEnabled) then
         Citizen.CreateThread(function()
             self:SelectItem()
             Citizen.Wait(125)
