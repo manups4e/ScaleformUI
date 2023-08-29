@@ -550,6 +550,7 @@ end
 
 ---Clear
 function UIMenu:Clear()
+    self.Pagination:CurrentMenuIndex(1)
     self.Items = {}
     self.Pagination:TotalItems(0)
     if self:Visible() then
