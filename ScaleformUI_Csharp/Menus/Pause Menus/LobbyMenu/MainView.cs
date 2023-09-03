@@ -262,7 +262,7 @@ namespace ScaleformUI.LobbyMenu
                             PushScaleformMovieFunctionParameterInt((int)item.TextColor);
                             PushScaleformMovieFunctionParameterInt((int)item.HighlightedTextColor);
                             EndScaleformMovieMethod();
-                            _pause._lobby.CallFunction("UPDATE_SETTINGS_ITEM_LABEL_RIGHT", index, item._formatLeftLabel);
+                            _pause._lobby.CallFunction("UPDATE_SETTINGS_ITEM_LABEL_RIGHT", index, item._formatRightLabel);
                             if (item.RightBadge != BadgeIcon.NONE)
                             {
                                 _pause._lobby.CallFunction("SET_SETTINGS_ITEM_RIGHT_BADGE", index, (int)item.RightBadge);
