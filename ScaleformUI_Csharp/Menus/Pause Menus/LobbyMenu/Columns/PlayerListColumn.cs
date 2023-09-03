@@ -35,6 +35,13 @@ namespace ScaleformUI.LobbyMenu
             }
         }
 
+        public void Clear()
+        {
+            if (Parent is MainView lobby)
+                lobby._pause._lobby.CallFunction("CLEAR_PLAYERS_COLUMN");
+            else if (Parent is TabView pause)
+                pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_PLAYERS_COLUMN", ParentTab);
+        }
 
         public void RemovePlayer(int id)
         {

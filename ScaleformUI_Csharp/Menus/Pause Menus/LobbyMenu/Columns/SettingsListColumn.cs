@@ -121,5 +121,14 @@ namespace ScaleformUI.LobbyMenu
                     pause._pause._pause.CallFunction("ENABLE_PLAYERS_TAB_SETTINGS_ITEM", ParentTab, index, enable);
             }
         }
+
+        public void Clear()
+        {
+            if (Parent is MainView lobby)
+                lobby._pause._lobby.CallFunction("CLEAR_SETTINGS_COLUMN");
+            else if (Parent is TabView pause)
+                pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN", ParentTab);
+        }
+
     }
 }
