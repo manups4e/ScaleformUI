@@ -129,3 +129,14 @@ function PlayerListColumn:RemovePlayer(item)
     end
     table.remove(self.Items, id)
 end
+
+function PlayerListColumn:Clear()
+    if self.Parent ~= nil and self.Parent:Visible() then
+        local pSubT = self.Parent()
+        if pSubT == "LobbyMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CLEAR_PLAYERS_COLUMN", false)
+        elseif pSubT == "PauseMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_PLAYERS_COLUMN", false, self.ParentTab)
+        end
+    end
+end
