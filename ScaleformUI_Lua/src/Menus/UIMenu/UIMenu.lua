@@ -1439,6 +1439,15 @@ function UIMenu:ProcessMouse()
             ReleaseSoundId(menuSound)
         end
     end
+    if IsMouseInBounds(0, 0, 30, 1080) and self.Settings.MouseEdgeEnabled then
+        SetGameplayCamRelativeHeading(GetGameplayCamRelativeHeading() + 5)
+        SetCursorSprite(6)
+    elseif IsMouseInBounds(1920 - 30, 0, 30, 1080) and self.Settings.MouseEdgeEnabled then
+        SetGameplayCamRelativeHeading(GetGameplayCamRelativeHeading() - 5)
+        SetCursorSprite(7)
+    elseif self.Settings.MouseEdgeEnabled then
+        SetCursorSprite(1)
+    end
 end
 
 ---AddInstructionButton

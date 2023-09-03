@@ -165,3 +165,10 @@ function AllFalse(t)
     return false
 end
 
+function IsMouseInBounds(X, Y, Width, Height)
+	local MX, MY = math.round(GetControlNormal(0, 239) * 1920), math.round(GetControlNormal(0, 240) * 1080)
+    MX, MY = FormatXWYH(MX, MY)
+    X, Y = FormatXWYH(X, Y)
+    Width, Height = FormatXWYH(Width, Height)
+	return (MX >= X and MX <= X + Width) and (MY > Y and MY < Y + Height)
+end
