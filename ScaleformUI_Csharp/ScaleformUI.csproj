@@ -22,7 +22,7 @@
     <Nullable>annotations</Nullable>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Version>4.2.3</Version>
+    <Version>4.2.5</Version>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
