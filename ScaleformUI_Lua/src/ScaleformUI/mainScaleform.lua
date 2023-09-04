@@ -3,6 +3,7 @@ ScaleformUI.Scaleforms = {}
 ScaleformUI.Scaleforms._ui = nil --[[@type Scaleform]]                                                -- scaleformui
 ScaleformUI.Scaleforms._pauseMenu = nil --[[@type PauseMenu]]                                         -- pausemenu
 ScaleformUI.Scaleforms._radialMenu = nil --[[@type RadialMenu]]                                       -- radialmenu
+ScaleformUI.Scaleforms._radioMenu = nil --[[@type UIRadioMenu]]                                       -- radiomenu
 ScaleformUI.Scaleforms.MidMessageInstance = MidMessageInstance --[[@type MidMessageInstance]]         -- midmessage
 ScaleformUI.Scaleforms.PlayerListScoreboard = PlayerListScoreboard --[[@type PlayerListScoreboard]]   -- playerlist
 ScaleformUI.Scaleforms.InstructionalButtons = ButtonsHandler --[[@type ButtonsHandler]]               -- buttons
@@ -29,6 +30,8 @@ AddEventHandler("onResourceStop", function(resName)
         ScaleformUI.Scaleforms._ui:Dispose()
         ScaleformUI.Scaleforms._radialMenu:CallFunction("CLEAR_ALL", false)
         ScaleformUI.Scaleforms._radialMenu:Dispose()
+        ScaleformUI.Scaleforms._radioMenu:CallFunction("CLEAR_ALL", false)
+        ScaleformUI.Scaleforms._radioMenu:Dispose()
         if not IsPlayerControlOn(PlayerId()) then
             SetPlayerControl(PlayerId(), true, 0)
         end
@@ -38,6 +41,7 @@ end)
 Citizen.CreateThread(function()
     ScaleformUI.Scaleforms._ui = Scaleform.RequestWidescreen("scaleformui")
     ScaleformUI.Scaleforms._radialMenu = Scaleform.RequestWidescreen("radialmenu")
+    ScaleformUI.Scaleforms._radioMenu = Scaleform.RequestWidescreen("radiomenu")
     ScaleformUI.Scaleforms._pauseMenu = PauseMenu.New()
     ScaleformUI.Scaleforms._pauseMenu:Load()
     ScaleformUI.Scaleforms.MinimapOverlays:Load()
@@ -61,6 +65,9 @@ Citizen.CreateThread(function()
             end
             if ScaleformUI.Scaleforms._radialMenu == nil then
                 ScaleformUI.Scaleforms._radialMenu = Scaleform.RequestWidescreen("radialmenu")
+            end
+            if ScaleformUI.Scaleforms._radioMenu == nil then
+                ScaleformUI.Scaleforms._radioMenu = Scaleform.RequestWidescreen("radiomenu")
             end
             if not ScaleformUI.Scaleforms._pauseMenu.Loaded then
                 ScaleformUI.Scaleforms._pauseMenu:Load()
