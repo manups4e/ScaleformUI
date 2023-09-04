@@ -24,6 +24,7 @@ namespace ScaleformUI
 
         internal static ScaleformWideScreen scaleformUI { get; set; }
         internal static ScaleformWideScreen radialMenu { get; set; }
+        internal static ScaleformWideScreen radioMenu { get; set; }
         public Main()
         {
             Warning = new();
@@ -35,6 +36,7 @@ namespace ScaleformUI
             PauseMenu = new();
             scaleformUI = new("scaleformui");
             radialMenu = new("radialmenu");
+            radioMenu = new("radiomenu");
             InstructionalButtons = new();
             InstructionalButtons.Load();
             RankBarInstance = new();
@@ -54,6 +56,8 @@ namespace ScaleformUI
                     }
                     radialMenu?.CallFunction("CLEAR_ALL");
                     radialMenu?.Dispose();
+                    radioMenu?.CallFunction("CLEAR_ALL");
+                    radioMenu?.Dispose();
                     scaleformUI?.CallFunction("CLEAR_ALL");
                     scaleformUI?.Dispose();
                     PauseMenu?.Dispose();

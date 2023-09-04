@@ -7,6 +7,7 @@ using ScaleformUI.LobbyMenu;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenu;
 using ScaleformUI.Radial;
+using ScaleformUI.Radio;
 using ScaleformUI.Scaleforms;
 using System;
 using System.Collections.Generic;
@@ -1036,6 +1037,43 @@ public class MenuExample : BaseScript
         menu.Visible = true;
     }
 
+    public void CreateRadioMenu()
+    {
+        long imgdui1 = API.CreateDui("https://giphy.com/embed/10bTCLE8GtHHS8", 96, 64);
+        API.CreateRuntimeTextureFromDuiHandle(txd, "item2", API.GetDuiHandle(imgdui1));
+
+        UIRadioMenu menu = new UIRadioMenu();
+        menu.AnimationDuration = 1f;
+        menu.AnimDirection = AnimationDirection.ZoomOut;
+        for (int i = 0; i < 25; i++)
+        {
+            RadioItem station = new RadioItem("Station " + (i + 1), "Artist " + (i + 1), "Track " + +(i + 1), "scaleformui", "item2");
+            menu.AddStation(station);
+        }
+
+        menu.OnMenuOpen += (_menu, _) =>
+        {
+            Screen.ShowSubtitle("Radio Menu opened!");
+        };
+
+        menu.OnMenuClose += (_menu) =>
+        {
+            Screen.ShowSubtitle("Radio Menu closed!");
+        };
+
+        menu.OnIndexChange += (index) =>
+        {
+            Screen.ShowSubtitle($"Index {index} highlighted!");
+        };
+
+        menu.OnStationSelect += (station, index) =>
+        {
+            Screen.ShowSubtitle($"Selected station with index {index}!");
+        };
+
+        menu.Visible = true;
+    }
+
     public async void PauseMenuShowcase(UIMenu _menu)
     {
         UIMenu mainMenu = _menu;
@@ -1575,10 +1613,10 @@ public class MenuExample : BaseScript
             if (Game.IsControlJustPressed(0, Control.SelectCharacterMichael) && !MenuHandler.IsAnyMenuOpen) // Our menu enabler (to exit menu simply press Back on the main menu)
                 ExampleMenu();
 
-            if (Game.IsControlJustPressed(0, Control.DropAmmo) && !MenuHandler.IsAnyMenuOpen)
-            {
+            if (Game.IsControlJustPressed(0, Control.DropAmmo) && !Game.IsControlPressed(0, Control.Sprint) && !MenuHandler.IsAnyMenuOpen)
                 CreateRadialMenu();
-            }
+            if (Game.IsControlJustPressed(0, Control.DropAmmo) && Game.IsControlPressed(0, Control.Sprint) && !MenuHandler.IsAnyMenuOpen)
+                CreateRadioMenu();
 
             // to open the pause menu without opening the normal menu.
             if (Game.IsControlJustPressed(0, Control.SelectCharacterFranklin) && !MenuHandler.IsAnyMenuOpen && !MenuHandler.IsAnyPauseMenuOpen)
