@@ -4,6 +4,7 @@ using ScaleformUI.Menu;
 using ScaleformUI.Menus;
 using ScaleformUI.PauseMenus;
 using ScaleformUI.Radial;
+using ScaleformUI.Radio;
 
 namespace ScaleformUI
 {
@@ -80,6 +81,8 @@ namespace ScaleformUI
                 }
                 else if (newMenu is RadialMenu rad)
                     rad.CurrentSegment = newMenuCurrentSelection != 0 ? newMenuCurrentSelection : 0;
+                else if (newMenu is UIRadioMenu radio)
+                    radio.CurrentStation = newMenuCurrentSelection != 0 ? newMenuCurrentSelection : 0;
             }
 
             if (currentMenu is UIMenu _old)
