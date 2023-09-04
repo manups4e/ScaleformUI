@@ -220,7 +220,7 @@ end
 function Notifications:ShowAdvancedNotification(title, subtitle, text, characterIcon, backgroundColour,
                                                 flashColour, blink, notificationType,
                                                 sound)
-    if (notificationType == nil) then notificationType = self.Type.Default end
+    if (notificationType == nil) then notificationType = self.NotificationIcon.Default end
     if (characterIcon == nil) then characterIcon = self.IconChars.Default end
     if (backgroundColour == nil) then backgroundColour = -1 end
     if (blink == nil) then blink = false end
