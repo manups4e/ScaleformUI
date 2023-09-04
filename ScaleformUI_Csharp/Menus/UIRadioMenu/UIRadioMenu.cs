@@ -5,7 +5,6 @@ using ScaleformUI.Elements;
 using ScaleformUI.Menu;
 using ScaleformUI.Menus;
 using ScaleformUI.Scaleforms;
-using System.Drawing;
 
 namespace ScaleformUI.Radio
 {
@@ -25,7 +24,6 @@ namespace ScaleformUI.Radio
         private int currentSelection;
         private float oldAngle;
         private bool changed;
-        internal PointF _offset;
         public event MenuOpenedEvent OnMenuOpen;
         public event MenuClosedEvent OnMenuClose;
         public event IndexChanged OnIndexChange;
