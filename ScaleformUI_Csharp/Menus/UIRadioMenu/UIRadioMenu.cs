@@ -68,7 +68,7 @@ namespace ScaleformUI.Radio
             }
         }
 
-        public int CurrentStation
+        public int CurrentSelection
         {
             get => currentSelection;
             set
