@@ -594,8 +594,7 @@ function UIMenu:Visible(bool)
             MenuHandler.ableToDraw = false
         end
         if self.Settings.ResetCursorOnOpen then
-            local W, H = GetScreenResolution()
-            SetCursorLocation(W / 2, H / 2)
+            SetCursorLocation(0.5, 0.5)
         end
     else
         return self._Visible
