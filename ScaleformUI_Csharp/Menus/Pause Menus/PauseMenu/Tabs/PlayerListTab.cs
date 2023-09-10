@@ -23,39 +23,7 @@ namespace ScaleformUI.PauseMenu
             get => focus;
             set
             {
-                switch (listCol[Focus].Type)
-                {
-                    case "players":
-                        PlayersColumn.Items[PlayersColumn.CurrentSelection].Selected = false;
-                        break;
-                    case "settings":
-                        SettingsColumn.Items[SettingsColumn.CurrentSelection].Selected = false;
-                        break;
-                    case "missions":
-                        MissionsColumn.Items[MissionsColumn.CurrentSelection].Selected = false;
-                        break;
-                }
-                focus = value;
-                if (focus < 0)
-                    focus = 2;
-                else if (focus > 2)
-                    focus = 0;
-                if (Parent != null && Parent.Visible)
-                {
-                    Parent._pause._pause.CallFunction("SET_PLAYERS_TAB_FOCUS", Parent.Tabs.IndexOf(this), focus);
-                }
-                switch (listCol[Focus].Type)
-                {
-                    case "players":
-                        PlayersColumn.Items[PlayersColumn.CurrentSelection].Selected = true;
-                        break;
-                    case "settings":
-                        SettingsColumn.Items[SettingsColumn.CurrentSelection].Selected = true;
-                        break;
-                    case "missions":
-                        MissionsColumn.Items[MissionsColumn.CurrentSelection].Selected = true;
-                        break;
-                }
+                updateFocus(value);
             }
         }
         public SettingsListColumn SettingsColumn { get; private set; }
@@ -67,6 +35,32 @@ namespace ScaleformUI.PauseMenu
             _type = V;
             SettingsColumn = new("", HudColor.NONE);
             PlayersColumn = new("", HudColor.NONE);
+        }
+
+        private async void updateFocus(int value)
+        {
+            focus = value;
+            if (focus < 0)
+                focus = 2;
+            else if (focus > 2)
+                focus = 0;
+            if (Parent != null && Parent.Visible)
+            {
+                int idx = await Parent._pause._pause.CallFunctionReturnValueInt("SET_PLAYERS_TAB_FOCUS", Parent.Tabs.IndexOf(this), focus);
+                CitizenFX.Core.Debug.WriteLine("idx: " + idx);
+                switch (listCol[Focus].Type)
+                {
+                    case "players":
+                        PlayersColumn.CurrentSelection = idx;
+                        break;
+                    case "settings":
+                        SettingsColumn.CurrentSelection = idx;
+                        break;
+                    case "missions":
+                        MissionsColumn.CurrentSelection = idx;
+                        break;
+                }
+            }
         }
 
         public void SetUpColumns(List<Column> columns)
