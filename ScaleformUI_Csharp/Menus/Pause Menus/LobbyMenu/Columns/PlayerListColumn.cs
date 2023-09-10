@@ -1,4 +1,5 @@
-﻿using ScaleformUI.PauseMenu;
+﻿using CitizenFX.Core.Native;
+using ScaleformUI.PauseMenu;
 using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI.LobbyMenu
@@ -30,8 +31,7 @@ namespace ScaleformUI.LobbyMenu
                             pause._pause._pause.CallFunction("ADD_PLAYERS_TAB_PLAYER_ITEM", ParentTab, 1, 1, fi.Label, (int)fi.ItemColor, fi.ColoredTag, fi.iconL, fi.boolL, fi.iconR, fi.boolR, fi.Status, (int)fi.StatusColor, fi.Rank, fi.CrewTag);
                         break;
                 }
-                if (item.Panel != null)
-                    item.Panel.UpdatePanel(true);
+                item.Panel?.UpdatePanel(true);
             }
         }
 
@@ -60,10 +60,10 @@ namespace ScaleformUI.LobbyMenu
             get { return Items.Count == 0 ? 0 : currentSelection % Items.Count; }
             set
             {
+                API.ClearPedInPauseMenu();
                 if (Items.Count == 0) currentSelection = 0;
                 Items[CurrentSelection].Selected = false;
                 currentSelection = value < 0 ? 0 : value >= Items.Count ? Items.Count - 1 : 1000000 - (1000000 % Items.Count) + value;
-                Items[CurrentSelection].Selected = true;
                 if (Parent != null && Parent.Visible)
                 {
                     if (Parent is MainView lobby)
@@ -71,6 +71,9 @@ namespace ScaleformUI.LobbyMenu
                     else if (Parent is TabView pause)
                         pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYERS_SELECTION", ParentTab, CurrentSelection);
                 }
+                Items[CurrentSelection].Selected = true;
+                if (Items[CurrentSelection].ClonePed != null)
+                    Items[CurrentSelection].CreateClonedPed();
             }
         }
 

@@ -38,9 +38,7 @@ namespace ScaleformUI.LobbyMenu
             get => focusLevel;
             set
             {
-                focusLevel = value;
-                if (_pause is not null)
-                    _pause._lobby.CallFunction("SET_FOCUS", value);
+                updateFocus(value);
             }
         }
 
@@ -109,6 +107,34 @@ namespace ScaleformUI.LobbyMenu
         public int Index;
         private bool _visible;
         private int focusLevel;
+
+        private async void updateFocus(int value)
+        {
+            focusLevel = value;
+            if (_pause is not null)
+            {
+                if (focusLevel < 0)
+                    focusLevel = 2;
+                else if (focusLevel > 2)
+                    focusLevel = 0;
+                if (Visible)
+                {
+                    int idx = await _pause._lobby.CallFunctionReturnValueInt("SET_FOCUS", focusLevel);
+                    switch (listCol[FocusLevel].Type)
+                    {
+                        case "players":
+                            PlayersColumn.CurrentSelection = idx;
+                            break;
+                        case "settings":
+                            SettingsColumn.CurrentSelection = idx;
+                            break;
+                        case "missions":
+                            MissionsColumn.CurrentSelection = idx;
+                            break;
+                    }
+                }
+            }
+        }
 
         public void SetUpColumns(List<Column> columns)
         {
@@ -436,11 +462,7 @@ namespace ScaleformUI.LobbyMenu
                                     col.CurrentSelection = itemId;
                                     if (col.Items[itemId].ClonePed != null)
                                     {
-                                        int ped = ClonePed(col.Items[itemId].ClonePed.Handle, 0, true, true);
-                                        await BaseScript.Delay(1);
-                                        GivePedToPauseMenu(ped, 2);
-                                        SetPauseMenuPedSleepState(true);
-                                        SetPauseMenuPedLighting(true);
+                                        col.Items[itemId].CreateClonedPed();
                                     }
                                     else ClearPedInPauseMenu();
                                 }
@@ -598,15 +620,6 @@ namespace ScaleformUI.LobbyMenu
             else if (listCol[FocusLevel] is PlayerListColumn)
             {
                 PlayersColumn.CurrentSelection = split[1];
-                if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
-                {
-                    int ped = ClonePed(PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed.Handle, 0, true, true);
-                    await BaseScript.Delay(1);
-                    GivePedToPauseMenu(ped, 2);
-                    SetPauseMenuPedSleepState(true);
-                    SetPauseMenuPedLighting(true);
-                }
-                else ClearPedInPauseMenu();
                 PlayersColumn.IndexChangedEvent();
             }
         }
@@ -634,15 +647,6 @@ namespace ScaleformUI.LobbyMenu
             else if (listCol[FocusLevel] is PlayerListColumn)
             {
                 PlayersColumn.CurrentSelection = split[1];
-                if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
-                {
-                    Ped ped = new Ped(ClonePed(PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed.Handle, 0, true, true));
-                    await BaseScript.Delay(0);
-                    GivePedToPauseMenu(ped.Handle, 2);
-                    SetPauseMenuPedSleepState(true);
-                    SetPauseMenuPedLighting(true);
-                }
-                else ClearPedInPauseMenu();
                 PlayersColumn.IndexChangedEvent();
             }
         }
@@ -681,15 +685,6 @@ namespace ScaleformUI.LobbyMenu
                     SettingsColumn.Items[SettingsColumn.CurrentSelection].Selected = false;
                     MissionsColumn.Items[MissionsColumn.CurrentSelection].Selected = false;
                     PlayersColumn.CurrentSelection = split[1];
-                    if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
-                    {
-                        Ped ped = new Ped(ClonePed(PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed.Handle, 0, true, true));
-                        await BaseScript.Delay(0);
-                        GivePedToPauseMenu(ped.Handle, 2);
-                        SetPauseMenuPedSleepState(true);
-                        SetPauseMenuPedLighting(true);
-                    }
-                    else ClearPedInPauseMenu();
                     PlayersColumn.IndexChangedEvent();
                 }
             }
@@ -763,15 +758,6 @@ namespace ScaleformUI.LobbyMenu
                     SettingsColumn.Items[SettingsColumn.CurrentSelection].Selected = false;
                     MissionsColumn.Items[MissionsColumn.CurrentSelection].Selected = false;
                     PlayersColumn.CurrentSelection = split[1];
-                    if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
-                    {
-                        Ped ped = new Ped(ClonePed(PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed.Handle, 0, true, true));
-                        await BaseScript.Delay(0);
-                        GivePedToPauseMenu(ped.Handle, 2);
-                        SetPauseMenuPedSleepState(true);
-                        SetPauseMenuPedLighting(true);
-                    }
-                    else ClearPedInPauseMenu();
                     PlayersColumn.IndexChangedEvent();
                 }
             }
