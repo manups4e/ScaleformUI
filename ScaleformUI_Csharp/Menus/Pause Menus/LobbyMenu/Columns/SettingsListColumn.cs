@@ -207,7 +207,6 @@ namespace ScaleformUI.LobbyMenu
                 if (Items.Count == 0) currentSelection = 0;
                 Items[CurrentSelection].Selected = false;
                 currentSelection = 1000000 - (1000000 % Items.Count) + value;
-                CitizenFX.Core.Debug.WriteLine("Parent != null && Parent.Visible: " + (Parent != null && Parent.Visible));
                 if (Parent != null && Parent.Visible)
                 {
                     if (Parent is MainView lobby)

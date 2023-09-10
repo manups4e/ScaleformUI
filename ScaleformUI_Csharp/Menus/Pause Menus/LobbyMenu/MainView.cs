@@ -357,7 +357,6 @@ namespace ScaleformUI.LobbyMenu
                 while (i < MissionsColumn.Items.Count)
                 {
                     MissionItem item = MissionsColumn.Items[i];
-                    Debug.WriteLine(item.Label);
                     _pause._lobby.CallFunction("ADD_MISSIONS_ITEM", 0, item.Label, (int)item.MainColor, (int)item.HighlightColor, (int)item.LeftIcon, (int)item.LeftIconColor, (int)item.RightIcon, (int)item.RightIconColor, item.RightIconChecked, item.Enabled);
                     i++;
                 }
