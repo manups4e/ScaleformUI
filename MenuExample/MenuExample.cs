@@ -1190,6 +1190,14 @@ public class MenuExample : BaseScript
         fifth.AddItem(key2);
 
         PlayerListTab playersTab = new("PLAYERLIST");
+        List<Column> columns = new List<Column>()
+        {
+            new SettingsListColumn("COLUMN SETTINGS", HudColor.HUD_COLOUR_RED), // color will be ignored for PauseMenu
+            //new PlayerListColumn("COLUMN PLAYERS", HudColor.HUD_COLOUR_ORANGE), // color will be ignored for PauseMenu
+            new MissionsListColumn("COLUMN MISSIONS", HudColor.HUD_COLOUR_ORANGE), // color will be ignored for PauseMenu
+            new MissionDetailsPanel("COLUMN INFO PANEL", HudColor.HUD_COLOUR_GREEN), // color will be ignored for PauseMenu
+        };
+        playersTab.SetUpColumns(columns);
         pauseMenu.AddTab(playersTab);
 
         UIMenuItem n1 = new("Base Item", "Basic Description");
@@ -1203,6 +1211,44 @@ public class MenuExample : BaseScript
         playersTab.SettingsColumn.AddSettings(n4);
         playersTab.SettingsColumn.AddSettings(n5);
 
+        MissionItem mission1 = new MissionItem("Mission 1");
+        MissionItem mission2 = new MissionItem("Mission 2");
+        MissionItem mission3 = new MissionItem("Mission 3");
+        MissionItem mission4 = new MissionItem("Mission 4");
+        MissionItem mission5 = new MissionItem("Mission 5");
+
+        mission1.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
+        mission1.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
+        mission2.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
+        mission2.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
+        mission3.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
+        mission3.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
+        mission4.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
+        mission4.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
+        mission5.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
+        mission5.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223), true);
+
+        playersTab.MissionsColumn.AddMissionItem(mission1);
+        playersTab.MissionsColumn.AddMissionItem(mission2);
+        playersTab.MissionsColumn.AddMissionItem(mission3);
+        playersTab.MissionsColumn.AddMissionItem(mission4);
+        playersTab.MissionsColumn.AddMissionItem(mission5);
+
+        long _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
+        API.CreateRuntimeTextureFromDuiHandle(txd, "lobby_panelbackground", API.GetDuiHandle(_paneldui));
+
+        playersTab.MissionPanel.UpdatePanelPicture("scaleformui", "lobby_panelbackground");
+        playersTab.MissionPanel.Title = "ScaleformUI - Title";
+        UIFreemodeDetailsItem missionItem1 = new("Hellooooo", "I'm here too!", false, ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST);
+        UIFreemodeDetailsItem missionItem2 = new("Hellooooo", "I'm here too!", ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST, BadgeIcon.COUNTRY_ITALY, HudColor.HUD_COLOUR_PURE_WHITE, true);
+        UIFreemodeDetailsItem missionItem3 = new("Hellooooo", "I'm here too!", true, ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST);
+        //UIFreemodeDetailsItem missionItem4 = new("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "", false);
+        playersTab.MissionPanel.AddItem(missionItem1);
+        playersTab.MissionPanel.AddItem(missionItem2);
+        playersTab.MissionPanel.AddItem(missionItem3);
+
+
+        /*
         FriendItem friend = new FriendItem(Game.Player.Name + " #1", HudColor.HUD_COLOUR_GREEN, true, API.GetRandomIntInRange(15, 55), "Online", "CrewTag");
         FriendItem friend2 = new FriendItem(Game.Player.Name + " #2", HudColor.HUD_COLOUR_PINK, true, API.GetRandomIntInRange(15, 55), "Offline", "CrewTag");
         FriendItem friend3 = new FriendItem(Game.Player.Name + " #3", HudColor.HUD_COLOUR_BLUE, true, API.GetRandomIntInRange(15, 55), "Online", "CrewTag");
@@ -1312,6 +1358,7 @@ public class MenuExample : BaseScript
         panel5.AddStat(new PlayerStatsPanelStatItem("Statistic 4", "Description 4", API.GetRandomIntInRange(30, 150)));
         panel5.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
         friend5.AddPanel(panel5);
+        */
 
         pauseMenu.OnPauseMenuOpen += (menu) =>
         {
