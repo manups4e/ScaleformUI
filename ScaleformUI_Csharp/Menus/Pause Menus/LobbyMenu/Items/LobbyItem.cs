@@ -90,10 +90,7 @@ namespace ScaleformUI
 
             if (ParentColumn != null && ParentColumn.Parent != null && ParentColumn.Parent.Visible)
             {
-                if (Panel != null)
-                {
-                    Panel.UpdatePanel();
-                }
+                Panel?.UpdatePanel();
                 if (ParentColumn.Parent is MainView lobby)
                 {
                     if (lobby.PlayersColumn.Items[lobby.PlayersColumn.CurrentSelection] == this)
@@ -121,7 +118,7 @@ namespace ScaleformUI
             ped.IsCollisionEnabled = false;
             ped.IsPositionFrozen = true;
             ped.IsPersistent = true;
-            ped.Position = ped.Position + new Vector3(0, 0, -10f);
+            ped.Position = ped.Position + new Vector3(0, 0, -50f);
         }
 
         private async void UpdateClone()
@@ -133,13 +130,12 @@ namespace ScaleformUI
             }
 
             // clone the ped we cached away for the pause menu
-            _clonePed = _clonePedForPauseMenu.Clone();
-
+            _clonePed = new Ped(API.ClonePed(ClonePed.Handle, 0, true, true));
+            await BaseScript.Delay(1);
+            HidePed(_clonePed);
             API.GivePedToPauseMenu(_clonePed.Handle, 2);
             API.SetPauseMenuPedSleepState(!_clonePedAsleep);
             API.SetPauseMenuPedLighting(_clonePedLighting);
-
-            HidePed(_clonePed);
         }
 
         public void Dispose()
