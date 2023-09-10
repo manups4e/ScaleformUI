@@ -30,6 +30,7 @@ namespace ScaleformUI.LobbyMenu
         public Tuple<string, string> HeaderPicture { internal get; set; }
         public Tuple<string, string> CrewPicture { internal get; set; }
         public SettingsListColumn SettingsColumn { get; private set; }
+        public MissionsListColumn MissionsColumn { get; private set; }
         public PlayerListColumn PlayersColumn { get; private set; }
         public MissionDetailsPanel MissionPanel { get; private set; }
         public int FocusLevel
@@ -112,7 +113,9 @@ namespace ScaleformUI.LobbyMenu
         public void SetUpColumns(List<Column> columns)
         {
             if (columns.Count != 3)
-                throw new Exception("you must have 3 columns!");
+                throw new Exception("You must have 3 columns!");
+            if (columns[2] is PlayerListColumn)
+                throw new Exception("For panel designs reasons, you can't have Players list in 3rd column!");
 
             listCol = columns;
             foreach (Column col in columns)
@@ -129,6 +132,11 @@ namespace ScaleformUI.LobbyMenu
                         PlayersColumn.Parent = this;
                         PlayersColumn.Order = columns.IndexOf(col);
                         break;
+                    case MissionsListColumn:
+                        MissionsColumn = col as MissionsListColumn;
+                        MissionsColumn.Parent = this;
+                        MissionsColumn.Order = columns.IndexOf(col);
+                        break;
                     case MissionDetailsPanel:
                         MissionPanel = col as MissionDetailsPanel;
                         MissionPanel.Parent = this;
@@ -137,6 +145,7 @@ namespace ScaleformUI.LobbyMenu
                 }
             }
         }
+
         public void ShowHeader()
         {
             if (String.IsNullOrEmpty(SubTitle) || String.IsNullOrWhiteSpace(SubTitle))
@@ -163,23 +172,32 @@ namespace ScaleformUI.LobbyMenu
         public void BuildPauseMenu()
         {
             ShowHeader();
-            _pause._lobby.CallFunction("CREATE_MENU", SettingsColumn.Order, PlayersColumn.Order, MissionPanel.Order);
-            buildSettings();
-            //await BaseScript.Delay(50);
-            buildPlayers();
+            _pause._lobby.CallFunction("CREATE_MENU", listCol[0].Type, listCol[1].Type, listCol[2].Type);
 
-            _pause._lobby.CallFunction("ADD_MISSION_PANEL_PICTURE", MissionPanel.TextureDict, MissionPanel.TextureName);
-            _pause._lobby.CallFunction("SET_MISSION_PANEL_TITLE", MissionPanel.Title);
-            if (MissionPanel.Items.Count > 0)
+            if (listCol.Any(x => x is SettingsListColumn))
+                buildSettings();
+
+            if (listCol.Any(x => x is PlayerListColumn))
+                buildPlayers();
+
+            if (listCol.Any(x => x is MissionsListColumn))
+                buildMissions();
+
+            if (listCol.Any(x => x is MissionDetailsPanel))
             {
-                foreach (UIFreemodeDetailsItem item in MissionPanel.Items)
+                _pause._lobby.CallFunction("ADD_MISSION_PANEL_PICTURE", MissionPanel.TextureDict, MissionPanel.TextureName);
+                _pause._lobby.CallFunction("SET_MISSION_PANEL_TITLE", MissionPanel.Title);
+                if (MissionPanel.Items.Count > 0)
                 {
-                    _pause._lobby.CallFunction("ADD_MISSION_PANEL_ITEM", item.Type, item.TextLeft, item.TextRight, (int)item.Icon, (int)item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID);
+                    foreach (UIFreemodeDetailsItem item in MissionPanel.Items)
+                    {
+                        _pause._lobby.CallFunction("ADD_MISSION_PANEL_ITEM", item.Type, item.TextLeft, item.TextRight, (int)item.Icon, (int)item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID);
+                    }
                 }
             }
         }
 
-        public async void buildSettings()
+        private async void buildSettings()
         {
             if (SettingsColumn.Items.Count > 0)
             {
@@ -279,7 +297,7 @@ namespace ScaleformUI.LobbyMenu
             }
         }
 
-        public async void buildPlayers()
+        private async void buildPlayers()
         {
             if (PlayersColumn.Items.Count > 0)
             {
@@ -303,6 +321,23 @@ namespace ScaleformUI.LobbyMenu
                 }
                 PlayersColumn.CurrentSelection = 0;
             }
+        }
+
+        private async void buildMissions()
+        {
+            if (MissionsColumn.Items.Count > 0)
+            {
+                int i = 0;
+                while (i < MissionsColumn.Items.Count)
+                {
+                    MissionItem item = MissionsColumn.Items[i];
+                    Debug.WriteLine(item.Label);
+                    _pause._lobby.CallFunction("ADD_MISSIONS_ITEM", 0, item.Label, (int)item.MainColor, (int)item.HighlightColor, (int)item.LeftIcon, (int)item.LeftIconColor, (int)item.RightIcon, (int)item.RightIconColor, item.RightIconChecked, item.Enabled);
+                    i++;
+                }
+                MissionsColumn.CurrentSelection = 0;
+            }
+
         }
 
         private bool controller = false;
@@ -349,7 +384,11 @@ namespace ScaleformUI.LobbyMenu
                                 {
                                     ClearPedInPauseMenu();
                                     SettingsListColumn col = listCol[context] as SettingsListColumn;
-                                    foreach (LobbyItem p in PlayersColumn.Items) p.Selected = false;
+                                    if (PlayersColumn != null && PlayersColumn.Items.Count > 0)
+                                        foreach (LobbyItem p in PlayersColumn.Items) p.Selected = false;
+                                    if (MissionsColumn != null && MissionsColumn.Items.Count > 0)
+                                        foreach (MissionItem p in MissionsColumn.Items) p.Selected = false;
+
                                     if (!col.Items[col.CurrentSelection].Enabled)
                                     {
                                         Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
@@ -380,7 +419,10 @@ namespace ScaleformUI.LobbyMenu
                             case PlayerListColumn:
                                 {
                                     PlayerListColumn col = listCol[context] as PlayerListColumn;
-                                    foreach (UIMenuItem p in SettingsColumn.Items) p.Selected = false;
+                                    if (MissionsColumn != null && MissionsColumn.Items.Count > 0)
+                                        foreach (MissionItem p in MissionsColumn.Items) p.Selected = false;
+                                    if (SettingsColumn != null && SettingsColumn.Items.Count > 0)
+                                        foreach (UIMenuItem p in SettingsColumn.Items) p.Selected = false;
                                     if (!col.Items[col.CurrentSelection].Enabled)
                                     {
                                         Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
@@ -401,6 +443,25 @@ namespace ScaleformUI.LobbyMenu
                                         SetPauseMenuPedLighting(true);
                                     }
                                     else ClearPedInPauseMenu();
+                                }
+                                break;
+                            case MissionsListColumn:
+                                {
+                                    ClearPedInPauseMenu();
+                                    MissionsListColumn col = listCol[context] as MissionsListColumn;
+                                    if (PlayersColumn != null && PlayersColumn.Items.Count > 0)
+                                        foreach (LobbyItem p in PlayersColumn.Items) p.Selected = false;
+                                    if (!col.Items[col.CurrentSelection].Enabled)
+                                    {
+                                        Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
+                                        return;
+                                    }
+                                    if (col.Items[itemId].Selected)
+                                    {
+                                        // code here
+                                        return;
+                                    }
+                                    col.CurrentSelection = itemId;
                                 }
                                 break;
                         }
@@ -524,12 +585,17 @@ namespace ScaleformUI.LobbyMenu
 
             int[] split = result.Split(',').Select(int.Parse).ToArray();
             FocusLevel = split[0];
-            if (FocusLevel == SettingsColumn.Order)
+            if (listCol[FocusLevel] is SettingsListColumn)
             {
                 SettingsColumn.CurrentSelection = split[1];
                 SettingsColumn.IndexChangedEvent();
             }
-            else if (FocusLevel == PlayersColumn.Order)
+            else if (listCol[FocusLevel] is MissionsListColumn)
+            {
+                MissionsColumn.CurrentSelection = split[1];
+                MissionsColumn.IndexChangedEvent();
+            }
+            else if (listCol[FocusLevel] is PlayerListColumn)
             {
                 PlayersColumn.CurrentSelection = split[1];
                 if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
@@ -555,12 +621,17 @@ namespace ScaleformUI.LobbyMenu
 
             int[] split = result.Split(',').Select(int.Parse).ToArray();
             FocusLevel = split[0];
-            if (FocusLevel == SettingsColumn.Order)
+            if (listCol[FocusLevel] is SettingsListColumn)
             {
                 SettingsColumn.CurrentSelection = split[1];
                 SettingsColumn.IndexChangedEvent();
             }
-            else if (FocusLevel == PlayersColumn.Order)
+            else if (listCol[FocusLevel] is MissionsListColumn)
+            {
+                MissionsColumn.CurrentSelection = split[1];
+                MissionsColumn.IndexChangedEvent();
+            }
+            else if (listCol[FocusLevel] is PlayerListColumn)
             {
                 PlayersColumn.CurrentSelection = split[1];
                 if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
@@ -589,15 +660,26 @@ namespace ScaleformUI.LobbyMenu
             if (split[2] == -1)
             {
                 FocusLevel = split[0];
-                if (FocusLevel == SettingsColumn.Order)
+                if (listCol[FocusLevel] is not PlayerListColumn)
                 {
                     ClearPedInPauseMenu();
-                    SettingsColumn.CurrentSelection = split[1];
-                    SettingsColumn.IndexChangedEvent();
+                    if (listCol[FocusLevel] is SettingsListColumn)
+                    {
+                        MissionsColumn.Items[MissionsColumn.CurrentSelection].Selected = false;
+                        SettingsColumn.CurrentSelection = split[1];
+                        SettingsColumn.IndexChangedEvent();
+                    }
+                    else if (listCol[FocusLevel] is MissionsListColumn)
+                    {
+                        SettingsColumn.Items[SettingsColumn.CurrentSelection].Selected = false;
+                        MissionsColumn.CurrentSelection = split[1];
+                        MissionsColumn.IndexChangedEvent();
+                    }
                 }
-                else if (FocusLevel == PlayersColumn.Order)
+                else if (listCol[FocusLevel] is PlayerListColumn)
                 {
                     SettingsColumn.Items[SettingsColumn.CurrentSelection].Selected = false;
+                    MissionsColumn.Items[MissionsColumn.CurrentSelection].Selected = false;
                     PlayersColumn.CurrentSelection = split[1];
                     if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
                     {
@@ -660,15 +742,26 @@ namespace ScaleformUI.LobbyMenu
             if (split[2] == -1)
             {
                 FocusLevel = split[0];
-                if (FocusLevel == SettingsColumn.Order)
+                if (listCol[FocusLevel] is not PlayerListColumn)
                 {
                     ClearPedInPauseMenu();
-                    SettingsColumn.CurrentSelection = split[1];
-                    SettingsColumn.IndexChangedEvent();
+                    if (listCol[FocusLevel] is SettingsListColumn)
+                    {
+                        MissionsColumn.Items[MissionsColumn.CurrentSelection].Selected = false;
+                        SettingsColumn.CurrentSelection = split[1];
+                        SettingsColumn.IndexChangedEvent();
+                    }
+                    else if (listCol[FocusLevel] is MissionsListColumn)
+                    {
+                        SettingsColumn.Items[SettingsColumn.CurrentSelection].Selected = false;
+                        MissionsColumn.CurrentSelection = split[1];
+                        MissionsColumn.IndexChangedEvent();
+                    }
                 }
-                else if (FocusLevel == PlayersColumn.Order)
+                else if (listCol[FocusLevel] is PlayerListColumn)
                 {
                     SettingsColumn.Items[SettingsColumn.CurrentSelection].Selected = false;
+                    MissionsColumn.Items[MissionsColumn.CurrentSelection].Selected = false;
                     PlayersColumn.CurrentSelection = split[1];
                     if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
                     {

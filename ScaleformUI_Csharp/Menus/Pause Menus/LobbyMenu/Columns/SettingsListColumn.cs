@@ -9,12 +9,12 @@ namespace ScaleformUI.LobbyMenu
     {
         private int currentSelection;
 
-        public int ParentTab { get; internal set; }
         public event IndexChanged OnIndexChanged;
         public List<UIMenuItem> Items { get; internal set; }
         public SettingsListColumn(string label, HudColor color) : base(label, color)
         {
             Items = new List<UIMenuItem>();
+            Type = "settings";
         }
         public void AddSettings(UIMenuItem item)
         {
@@ -207,6 +207,7 @@ namespace ScaleformUI.LobbyMenu
                 if (Items.Count == 0) currentSelection = 0;
                 Items[CurrentSelection].Selected = false;
                 currentSelection = 1000000 - (1000000 % Items.Count) + value;
+                CitizenFX.Core.Debug.WriteLine("Parent != null && Parent.Visible: " + (Parent != null && Parent.Visible));
                 if (Parent != null && Parent.Visible)
                 {
                     if (Parent is MainView lobby)

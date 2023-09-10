@@ -7,11 +7,11 @@ namespace ScaleformUI.LobbyMenu
     {
         private int currentSelection;
         public event IndexChanged OnIndexChanged;
-        public int ParentTab { get; internal set; }
         public List<LobbyItem> Items { get; private set; }
         public PlayerListColumn(string label, HudColor color) : base(label, color)
         {
             Items = new List<LobbyItem>();
+            Type = "players";
         }
 
         public void AddPlayer(LobbyItem item)

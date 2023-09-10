@@ -1,4 +1,6 @@
 ﻿using ScaleformUI.Menu;
+using ScaleformUI.PauseMenu;
+using ScaleformUI.PauseMenus;
 using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI.LobbyMenu
@@ -8,7 +10,7 @@ namespace ScaleformUI.LobbyMenu
         private string title = "";
         public string TextureDict = "";
         public string TextureName = "";
-        public new MainView Parent { get; internal set; }
+        public new PauseMenuBase Parent { get; internal set; }
         public string Title
         {
             get => title;
@@ -17,7 +19,10 @@ namespace ScaleformUI.LobbyMenu
                 title = value;
                 if (Parent != null && Parent.Visible)
                 {
-                    Main.PauseMenu._lobby.CallFunction("SET_MISSION_PANEL_TITLE", title);
+                    if (Parent is MainView lobby)
+                        lobby._pause._lobby.CallFunction("SET_MISSION_PANEL_TITLE", title);
+                    else if (Parent is TabView pause)
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_PANEL_TITLE", ParentTab, title);
                 }
             }
         }
@@ -26,6 +31,7 @@ namespace ScaleformUI.LobbyMenu
         public MissionDetailsPanel(string label, HudColor color) : base(label, color)
         {
             Items = new List<UIFreemodeDetailsItem>();
+            Type = "panel";
         }
 
         /// <summary>
@@ -40,6 +46,10 @@ namespace ScaleformUI.LobbyMenu
             if (Parent != null && Parent.Visible)
             {
                 Main.PauseMenu._lobby.CallFunction("ADD_MISSION_PANEL_PICTURE", TextureDict, TextureName);
+                if (Parent is MainView lobby)
+                    lobby._pause._lobby.CallFunction("ADD_MISSION_PANEL_PICTURE", TextureDict, TextureName);
+                else if (Parent is TabView pause)
+                    pause._pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_PICTURE", ParentTab, TextureDict, TextureName);
             }
 
         }
@@ -53,7 +63,10 @@ namespace ScaleformUI.LobbyMenu
             Items.Add(item);
             if (Parent != null && Parent.Visible)
             {
-                Main.PauseMenu._lobby.CallFunction("ADD_MISSION_PANEL_ITEM", item.Type, item.TextLeft, item.TextRight, (int)item.Icon, (int)item.IconColor, item.Tick);
+                if (Parent is MainView lobby)
+                    lobby._pause._lobby.CallFunction("ADD_MISSION_PANEL_ITEM", item.Type, item.TextLeft, item.TextRight, (int)item.Icon, (int)item.IconColor, item.Tick);
+                else if (Parent is TabView pause)
+                    pause._pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_ITEM", ParentTab, item.Type, item.TextLeft, item.TextRight, (int)item.Icon, (int)item.IconColor, item.Tick);
             }
         }
 
@@ -66,7 +79,10 @@ namespace ScaleformUI.LobbyMenu
             Items.RemoveAt(idx);
             if (Parent != null && Parent.Visible)
             {
-                Main.PauseMenu._lobby.CallFunction("REMOVE_MISSION_PANEL_ITEM", idx);
+                if (Parent is MainView lobby)
+                    lobby._pause._lobby.CallFunction("REMOVE_MISSION_PANEL_ITEM", idx);
+                else if (Parent is TabView pause)
+                    pause._pause._pause.CallFunction("REMOVE_PLAYERS_TAB_MISSION_PANEL_ITEM", ParentTab, idx);
             }
         }
     }
