@@ -723,11 +723,7 @@ namespace ScaleformUI.PauseMenu
 
         public async void GoUp()
         {
-            BeginScaleformMovieMethod(_pause._pause.Handle, "SET_INPUT_EVENT");
-            ScaleformMovieMethodAddParamInt(8);
-            int ret = EndScaleformMovieMethodReturnValue();
-            while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            int retVal = GetScaleformMovieFunctionReturnInt(ret);
+            int retVal = await _pause._pause.CallFunctionReturnValueInt("SET_INPUT_EVENT", 8);
             if (retVal != -1)
             {
                 if (FocusLevel == 1)
@@ -759,11 +755,7 @@ namespace ScaleformUI.PauseMenu
 
         public async void GoDown()
         {
-            BeginScaleformMovieMethod(_pause._pause.Handle, "SET_INPUT_EVENT");
-            ScaleformMovieMethodAddParamInt(9);
-            int ret = EndScaleformMovieMethodReturnValue();
-            while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            int retVal = GetScaleformMovieFunctionReturnInt(ret);
+            int retVal = await _pause._pause.CallFunctionReturnValueInt("SET_INPUT_EVENT", 9);
             if (retVal != -1)
             {
                 if (FocusLevel == 1)
@@ -795,14 +787,11 @@ namespace ScaleformUI.PauseMenu
 
         public async void GoLeft()
         {
-            BeginScaleformMovieMethod(_pause._pause.Handle, "SET_INPUT_EVENT");
-            ScaleformMovieMethodAddParamInt(10);
-            int ret = EndScaleformMovieMethodReturnValue();
-            while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            int retVal = GetScaleformMovieFunctionReturnInt(ret);
+            int retVal = await _pause._pause.CallFunctionReturnValueInt("SET_INPUT_EVENT", 10);
             switch (FocusLevel)
             {
                 case 0:
+                    ClearPedInPauseMenu();
                     _pause.HeaderGoLeft();
                     if (Tabs[Index] is SubmenuTab)
                     {
@@ -826,10 +815,6 @@ namespace ScaleformUI.PauseMenu
                                 _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].CreateClonedPed();
                             else ClearPedInPauseMenu();
                         }
-                    }
-                    else
-                    {
-                        ClearPedInPauseMenu();
                     }
                     break;
                 case 1:
@@ -928,16 +913,12 @@ namespace ScaleformUI.PauseMenu
 
         public async void GoRight()
         {
-            BeginScaleformMovieMethod(_pause._pause.Handle, "SET_INPUT_EVENT");
-            ScaleformMovieMethodAddParamInt(11);
-            int ret = EndScaleformMovieMethodReturnValue();
-            while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            int _retVal = GetScaleformMovieFunctionReturnInt(ret);
-            int retVal = _retVal != -1 ? _retVal : 0;
+            int retVal = await _pause._pause.CallFunctionReturnValueInt("SET_INPUT_EVENT", 11);
 
             switch (FocusLevel)
             {
                 case 0:
+                    ClearPedInPauseMenu();
                     _pause.HeaderGoRight();
                     if (Tabs[Index] is SubmenuTab)
                     {
@@ -961,10 +942,6 @@ namespace ScaleformUI.PauseMenu
                                 _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].CreateClonedPed();
                             else ClearPedInPauseMenu();
                         }
-                    }
-                    else
-                    {
-                        ClearPedInPauseMenu();
                     }
                     break;
                 case 1:
@@ -1357,12 +1334,12 @@ namespace ScaleformUI.PauseMenu
                 GoRight();
             else if (Game.IsControlJustPressed(2, Control.FrontendLb) || (Game.IsControlJustPressed(2, (Control)192) && Game.IsControlPressed(2, Control.Sprint) && IsUsingKeyboard(2)))
             {
-                if (FocusLevel != 0) FocusLevel = 0;
+                if (FocusLevel > 0) GoBack();
                 GoLeft();
             }
             else if (Game.IsControlJustPressed(2, Control.FrontendRb) || (Game.IsControlJustPressed(2, (Control)192) && IsUsingKeyboard(2)))
             {
-                if (FocusLevel != 0) FocusLevel = 0;
+                if (FocusLevel > 0) GoBack();
                 GoRight();
             }
             else if (Game.IsControlJustPressed(2, Control.FrontendAccept))
