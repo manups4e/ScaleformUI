@@ -15,6 +15,7 @@ namespace ScaleformUI
         private Ped _clonePedForPauseMenu;
         private bool _clonePedAsleep = true;
         private bool _clonePedLighting = false;
+        private bool keepPanelVisible;
 
         /// <summary>
         /// Whether this item is currently selected.
@@ -25,6 +26,40 @@ namespace ScaleformUI
             set
             {
                 _selected = value;
+            }
+        }
+
+        /// <summary>
+        /// Keeps this item Stats panel visible if there's one.
+        /// </summary>
+        public bool KeepPanelVisible
+        {
+            get =>
+                keepPanelVisible;
+            set
+            {
+                keepPanelVisible = value;
+                if (ParentColumn != null && ParentColumn.Parent != null && ParentColumn.Parent.Visible)
+                {
+                    Panel?.UpdatePanel();
+                    if (ParentColumn.Parent is MainView lobby)
+                    {
+                        if (lobby.PlayersColumn.Items[lobby.PlayersColumn.CurrentSelection] == this)
+                        {
+                            lobby._pause._lobby.CallFunction("SET_PLAYERS_STAT_PANEL_PERMANENT", ParentColumn.Items.IndexOf(this), keepPanelVisible);
+                        }
+                    }
+                    else if (ParentColumn.Parent is TabView pause)
+                    {
+                        if (pause.Tabs[pause.Index] is PlayerListTab tab)
+                        {
+                            if (tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection] == this)
+                            {
+                                pause._pause._lobby.CallFunction("SET_PLAYERS_TAB_PLAYERS_STAT_PANEL_PERMANENT", ParentColumn.ParentTab, ParentColumn.Items.IndexOf(this), keepPanelVisible);
+                            }
+                        }
+                    }
+                }
             }
         }
 

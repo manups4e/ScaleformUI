@@ -1,4 +1,5 @@
-﻿using ScaleformUI.LobbyMenu;
+﻿using CitizenFX.Core.Native;
+using ScaleformUI.LobbyMenu;
 using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI.PauseMenu
@@ -39,6 +40,11 @@ namespace ScaleformUI.PauseMenu
 
         private async void updateFocus(int value)
         {
+            if (listCol[focus].Type == "players")
+            {
+                if (!PlayersColumn.Items[PlayersColumn.CurrentSelection].KeepPanelVisible)
+                    API.ClearPedInPauseMenu();
+            }
             focus = value;
             if (focus < 0)
                 focus = listCol.Count - 1;
