@@ -41,13 +41,12 @@ namespace ScaleformUI.PauseMenu
         {
             focus = value;
             if (focus < 0)
-                focus = 2;
-            else if (focus > 2)
+                focus = listCol.Count - 1;
+            else if (focus > listCol.Count - 1)
                 focus = 0;
             if (Parent != null && Parent.Visible)
             {
                 int idx = await Parent._pause._pause.CallFunctionReturnValueInt("SET_PLAYERS_TAB_FOCUS", Parent.Tabs.IndexOf(this), focus);
-                CitizenFX.Core.Debug.WriteLine("idx: " + idx);
                 switch (listCol[Focus].Type)
                 {
                     case "players":
@@ -65,9 +64,9 @@ namespace ScaleformUI.PauseMenu
 
         public void SetUpColumns(List<Column> columns)
         {
-            if (columns.Count != 3)
+            if (columns.Count > 3)
                 throw new Exception("You must have 3 columns!");
-            if (columns[2] is PlayerListColumn)
+            if (columns.Count == 3 && columns[2] is PlayerListColumn)
                 throw new Exception("For panel designs reasons, you can't have Players list in 3rd column!");
 
             listCol = columns;

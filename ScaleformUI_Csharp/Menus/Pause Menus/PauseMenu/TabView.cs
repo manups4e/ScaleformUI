@@ -312,8 +312,20 @@ namespace ScaleformUI.PauseMenu
                     case PlayerListTab pl:
                         {
                             _pause.AddPauseMenuTab(tab.Title, 1, tab._type);
-                            _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, pl.listCol[0].Type, pl.listCol[1].Type, pl.listCol[2].Type);
-                            Debug.WriteLine($"{pl.listCol[0].Type},{pl.listCol[1].Type}, {pl.listCol[2].Type}");
+                            switch (pl.listCol.Count)
+                            {
+                                case 1:
+                                    _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, pl.listCol[0].Type);
+                                    break;
+                                case 2:
+                                    _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, pl.listCol[0].Type, pl.listCol[1].Type);
+                                    break;
+                                case 3:
+                                    _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, pl.listCol[0].Type, pl.listCol[1].Type, pl.listCol[2].Type);
+                                    break;
+                            }
+                            //_pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, pl.listCol[0].Type, pl.listCol[1].Type, pl.listCol[2].Type);
+                            //Debug.WriteLine($"{pl.listCol[0].Type},{pl.listCol[1].Type}, {pl.listCol[2].Type}");
                             if (pl.listCol.Any(x => x.Type == "settings"))
                                 buildSettings(pl);
                             if (pl.listCol.Any(x => x.Type == "players"))
