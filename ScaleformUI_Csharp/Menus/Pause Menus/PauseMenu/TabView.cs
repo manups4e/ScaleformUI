@@ -1161,7 +1161,7 @@ namespace ScaleformUI.PauseMenu
                                         case "settings":
                                             _tab.SettingsColumn.Items[_tab.SettingsColumn.CurrentSelection].Selected = true;
                                             break;
-                                        case "tabayers":
+                                        case "players":
                                             _tab.PlayersColumn.Items[_tab.PlayersColumn.CurrentSelection].Selected = true;
                                             if (_tab.PlayersColumn.Items[_tab.PlayersColumn.CurrentSelection].KeepPanelVisible)
                                                 _tab.PlayersColumn.Items[_tab.PlayersColumn.CurrentSelection].CreateClonedPed();
