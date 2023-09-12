@@ -157,14 +157,6 @@ namespace ScaleformUI.PauseMenu
         public void AddTab(BaseTab item)
         {
             item.Parent = this;
-            if (item is PlayerListTab plt)
-            {
-                foreach (Column col in plt.listCol)
-                {
-                    col.ParentTab = Tabs.Count;
-                    col.Parent = this;
-                }
-            }
             Tabs.Add(item);
         }
 
@@ -311,6 +303,7 @@ namespace ScaleformUI.PauseMenu
                         break;
                     case PlayerListTab pl:
                         {
+
                             _pause.AddPauseMenuTab(tab.Title, 1, tab._type);
                             switch (pl.listCol.Count)
                             {
@@ -325,13 +318,27 @@ namespace ScaleformUI.PauseMenu
                                     break;
                             }
                             if (pl.listCol.Any(x => x.Type == "settings"))
+                            {
+                                pl.SettingsColumn.Parent = this;
+                                pl.SettingsColumn.ParentTab = Tabs.IndexOf(pl);
                                 buildSettings(pl);
+                            }
                             if (pl.listCol.Any(x => x.Type == "players"))
+                            {
+                                pl.PlayersColumn.Parent = this;
+                                pl.PlayersColumn.ParentTab = Tabs.IndexOf(pl);
                                 buildPlayers(pl);
+                            }
                             if (pl.listCol.Any(x => x.Type == "missions"))
+                            {
+                                pl.MissionsColumn.Parent = this;
+                                pl.MissionsColumn.ParentTab = Tabs.IndexOf(pl);
                                 buildMissions(pl);
+                            }
                             if (pl.listCol.Any(x => x.Type == "panel"))
                             {
+                                pl.MissionPanel.Parent = this;
+                                pl.MissionPanel.ParentTab = Tabs.IndexOf(pl);
                                 _pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_PICTURE", tabIndex, pl.MissionPanel.TextureDict, pl.MissionPanel.TextureName);
                                 _pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_PANEL_TITLE", tabIndex, pl.MissionPanel.Title);
                                 if (pl.MissionPanel.Items.Count > 0)

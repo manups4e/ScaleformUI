@@ -251,7 +251,6 @@ namespace ScaleformUI.LobbyMenu
             }
 
             _pause._lobby.CallFunction("LOAD_MENU");
-
             await BaseScript.Delay(500);
             if (listCol[0].Type == "players" || (listCol.Any(x => x.Type == "players") && PlayersColumn.Items.Count > 0 && PlayersColumn.Items[0].KeepPanelVisible))
             {

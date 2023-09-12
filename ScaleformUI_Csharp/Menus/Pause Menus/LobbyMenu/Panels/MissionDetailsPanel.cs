@@ -1,6 +1,5 @@
 ﻿using ScaleformUI.Menu;
 using ScaleformUI.PauseMenu;
-using ScaleformUI.PauseMenus;
 using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI.LobbyMenu
@@ -10,7 +9,6 @@ namespace ScaleformUI.LobbyMenu
         private string title = "";
         public string TextureDict = "";
         public string TextureName = "";
-        public new PauseMenuBase Parent { get; internal set; }
         public string Title
         {
             get => title;

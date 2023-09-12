@@ -12,7 +12,7 @@
         public virtual bool Focused { get; set; }
         public string Title { get; set; }
         public bool Active { get; set; }
-        public TabView Parent { get; set; }
+        public TabView Parent { get; internal set; }
 
         public List<TabLeftItem> LeftItemList = new List<TabLeftItem>();
 

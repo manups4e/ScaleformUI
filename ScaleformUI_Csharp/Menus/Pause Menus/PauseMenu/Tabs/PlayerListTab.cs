@@ -89,26 +89,28 @@ namespace ScaleformUI.PauseMenu
             listCol = columns;
             foreach (Column col in columns)
             {
+                if (this.Parent != null)
+                {
+                    col.Parent = this.Parent;
+                    col.ParentTab = Parent.Tabs.IndexOf(this);
+                }
+
                 switch (col)
                 {
                     case SettingsListColumn:
                         SettingsColumn = col as SettingsListColumn;
-                        SettingsColumn.Parent = this.Parent;
                         SettingsColumn.Order = columns.IndexOf(col);
                         break;
                     case PlayerListColumn:
                         PlayersColumn = col as PlayerListColumn;
-                        PlayersColumn.Parent = this.Parent;
                         PlayersColumn.Order = columns.IndexOf(col);
                         break;
                     case MissionsListColumn:
                         MissionsColumn = col as MissionsListColumn;
-                        MissionsColumn.Parent = this.Parent;
                         MissionsColumn.Order = columns.IndexOf(col);
                         break;
                     case MissionDetailsPanel:
                         MissionPanel = col as MissionDetailsPanel;
-                        MissionPanel.Parent = this.Parent;
                         MissionPanel.Order = columns.IndexOf(col);
                         break;
                 }
