@@ -324,8 +324,6 @@ namespace ScaleformUI.PauseMenu
                                     _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, pl.listCol[0].Type, pl.listCol[1].Type, pl.listCol[2].Type);
                                     break;
                             }
-                            //_pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, pl.listCol[0].Type, pl.listCol[1].Type, pl.listCol[2].Type);
-                            //Debug.WriteLine($"{pl.listCol[0].Type},{pl.listCol[1].Type}, {pl.listCol[2].Type}");
                             if (pl.listCol.Any(x => x.Type == "settings"))
                                 buildSettings(pl);
                             if (pl.listCol.Any(x => x.Type == "players"))
@@ -344,19 +342,7 @@ namespace ScaleformUI.PauseMenu
                                     }
                                 }
                             }
-                            int _idx = await _pause._pause.CallFunctionReturnValueInt("SET_PLAYERS_TAB_FOCUS", tabIndex, 0);
-                            switch (pl.listCol[0].Type)
-                            {
-                                case "settings":
-                                    pl.SettingsColumn.CurrentSelection = _idx;
-                                    break;
-                                case "players":
-                                    pl.PlayersColumn.CurrentSelection = _idx;
-                                    break;
-                                case "missions":
-                                    pl.MissionsColumn.CurrentSelection = _idx;
-                                    break;
-                            }
+                            pl.Focus = 0;
                         }
                         break;
                 }
@@ -571,6 +557,8 @@ namespace ScaleformUI.PauseMenu
                                 break;
                             case "players":
                                 pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].Selected = true;
+                                if (pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].KeepPanelVisible)
+                                    pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].CreateClonedPed();
                                 break;
                             case "missions":
                                 pl.MissionsColumn.Items[pl.MissionsColumn.CurrentSelection].Selected = true;
@@ -811,20 +799,16 @@ namespace ScaleformUI.PauseMenu
                         if (_plTab.listCol.Any(x => x.Type == "players"))
                         {
                             _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].Selected = false;
-                            if (_plTab.listCol[0].Type == "players")
+                            if (_plTab.listCol[0].Type == "players" || _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].KeepPanelVisible)
                             {
                                 if (_plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].ClonePed != null)
                                     _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].CreateClonedPed();
                                 else
-                                {
-                                    if (!_plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].KeepPanelVisible)
-                                        ClearPedInPauseMenu();
-                                }
+                                    ClearPedInPauseMenu();
                             }
                             else
                             {
-                                if (!_plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].KeepPanelVisible)
-                                    ClearPedInPauseMenu();
+                                ClearPedInPauseMenu();
                             }
                         }
                         else ClearPedInPauseMenu();
@@ -948,21 +932,15 @@ namespace ScaleformUI.PauseMenu
                         if (_plTab.listCol.Any(x => x.Type == "players"))
                         {
                             _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].Selected = false;
-                            if (_plTab.listCol[0].Type == "players")
+                            if (_plTab.listCol[0].Type == "players" || _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].KeepPanelVisible)
                             {
                                 if (_plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].ClonePed != null)
                                     _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].CreateClonedPed();
                                 else
-                                {
-                                    if (!_plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].KeepPanelVisible)
-                                        ClearPedInPauseMenu();
-                                }
-                            }
-                            else
-                            {
-                                if (!_plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].KeepPanelVisible)
                                     ClearPedInPauseMenu();
                             }
+                            else
+                                ClearPedInPauseMenu();
                         }
                         else ClearPedInPauseMenu();
                     }

@@ -46,6 +46,7 @@ namespace ScaleformUI
                     {
                         if (lobby.PlayersColumn.Items[lobby.PlayersColumn.CurrentSelection] == this)
                         {
+                            UpdateClone();
                             lobby._pause._lobby.CallFunction("SET_PLAYERS_STAT_PANEL_PERMANENT", ParentColumn.Items.IndexOf(this), keepPanelVisible);
                         }
                     }
@@ -55,6 +56,7 @@ namespace ScaleformUI
                         {
                             if (tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection] == this)
                             {
+                                UpdateClone();
                                 pause._pause._lobby.CallFunction("SET_PLAYERS_TAB_PLAYERS_STAT_PANEL_PERMANENT", ParentColumn.ParentTab, ParentColumn.Items.IndexOf(this), keepPanelVisible);
                             }
                         }
@@ -170,7 +172,17 @@ namespace ScaleformUI
             HidePed(_clonePed);
             API.GivePedToPauseMenu(_clonePed.Handle, 2);
             API.SetPauseMenuPedSleepState(!_clonePedAsleep);
-            API.SetPauseMenuPedLighting(_clonePedLighting);
+            if (ParentColumn != null && ParentColumn.Parent != null && ParentColumn.Parent.Visible)
+            {
+                if (ParentColumn.Parent is MainView lobby)
+                {
+                    API.SetPauseMenuPedLighting(_clonePedLighting);
+                }
+                else if (ParentColumn.Parent is TabView pause)
+                {
+                    API.SetPauseMenuPedLighting(_clonePedLighting && pause.FocusLevel > 0);
+                }
+            }
         }
 
         public void Dispose()
