@@ -22,10 +22,6 @@ namespace ScaleformUI.PauseMenu
         public int Focus
         {
             get => focus;
-            set
-            {
-                updateFocus(value);
-            }
         }
         public SettingsListColumn SettingsColumn { get; private set; }
         public PlayerListColumn PlayersColumn { get; private set; }
@@ -38,9 +34,9 @@ namespace ScaleformUI.PauseMenu
             PlayersColumn = new("", HudColor.NONE);
         }
 
-        private async void updateFocus(int value)
+        internal async void UpdateFocus(int value, bool isMouse = false)
         {
-            if (listCol[focus].Type == "players")
+            if (listCol[focus].Type != "players")
             {
                 if (!PlayersColumn.Items[PlayersColumn.CurrentSelection].KeepPanelVisible)
                     API.ClearPedInPauseMenu();
@@ -53,17 +49,20 @@ namespace ScaleformUI.PauseMenu
             if (Parent != null && Parent.Visible)
             {
                 int idx = await Parent._pause._pause.CallFunctionReturnValueInt("SET_PLAYERS_TAB_FOCUS", Parent.Tabs.IndexOf(this), focus);
-                switch (listCol[Focus].Type)
+                if (!isMouse)
                 {
-                    case "players":
-                        PlayersColumn.CurrentSelection = idx;
-                        break;
-                    case "settings":
-                        SettingsColumn.CurrentSelection = idx;
-                        break;
-                    case "missions":
-                        MissionsColumn.CurrentSelection = idx;
-                        break;
+                    switch (listCol[Focus].Type)
+                    {
+                        case "players":
+                            PlayersColumn.CurrentSelection = idx;
+                            break;
+                        case "settings":
+                            SettingsColumn.CurrentSelection = idx;
+                            break;
+                        case "missions":
+                            MissionsColumn.CurrentSelection = idx;
+                            break;
+                    }
                 }
             }
         }
