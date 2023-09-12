@@ -827,8 +827,6 @@ namespace ScaleformUI.PauseMenu
                                         {
                                             plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection].Selected = false;
                                             plTab.UpdateFocus(plTab.Focus - 1);
-                                            if (plTab.listCol[plTab.Focus].Type == "panel")
-                                                plTab.UpdateFocus(plTab.Focus - 1);
                                             return;
                                         }
 
@@ -854,27 +852,19 @@ namespace ScaleformUI.PauseMenu
                                         {
                                             plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection].Selected = false;
                                             plTab.UpdateFocus(plTab.Focus - 1);
-                                            if (plTab.listCol[plTab.Focus].Type == "panel")
-                                                plTab.UpdateFocus(plTab.Focus - 1);
                                         }
                                     }
                                     break;
                                 case "missions":
                                     plTab.MissionsColumn.Items[plTab.MissionsColumn.CurrentSelection].Selected = false;
                                     plTab.UpdateFocus(plTab.Focus - 1);
-                                    if (plTab.listCol[plTab.Focus].Type == "panel")
-                                        plTab.UpdateFocus(plTab.Focus - 1);
                                     break;
                                 case "panel":
                                     plTab.UpdateFocus(plTab.Focus - 1);
-                                    if (plTab.listCol[plTab.Focus].Type == "panel")
-                                        plTab.UpdateFocus(plTab.Focus - 1);
                                     break;
                                 case "players":
                                     plTab.PlayersColumn.Items[plTab.PlayersColumn.CurrentSelection].Selected = false;
                                     plTab.UpdateFocus(plTab.Focus - 1);
-                                    if (plTab.listCol[plTab.Focus].Type == "panel")
-                                        plTab.UpdateFocus(plTab.Focus - 1);
                                     break;
                             }
                         }
@@ -958,8 +948,6 @@ namespace ScaleformUI.PauseMenu
                                         {
                                             plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection].Selected = false;
                                             plTab.UpdateFocus(plTab.Focus + 1);
-                                            if (plTab.listCol[plTab.Focus].Type == "panel")
-                                                plTab.UpdateFocus(plTab.Focus + 1);
                                             return;
                                         }
 
@@ -985,27 +973,19 @@ namespace ScaleformUI.PauseMenu
                                         {
                                             plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection].Selected = false;
                                             plTab.UpdateFocus(plTab.Focus + 1);
-                                            if (plTab.listCol[plTab.Focus].Type == "panel")
-                                                plTab.UpdateFocus(plTab.Focus + 1);
                                         }
                                     }
                                     break;
                                 case "missions":
                                     plTab.MissionsColumn.Items[plTab.MissionsColumn.CurrentSelection].Selected = false;
                                     plTab.UpdateFocus(plTab.Focus + 1);
-                                    if (plTab.listCol[plTab.Focus].Type == "panel")
-                                        plTab.UpdateFocus(plTab.Focus + 1);
                                     break;
                                 case "panel":
                                     plTab.UpdateFocus(plTab.Focus + 1);
-                                    if (plTab.listCol[plTab.Focus].Type == "panel")
-                                        plTab.UpdateFocus(plTab.Focus + 1);
                                     break;
                                 case "players":
                                     plTab.PlayersColumn.Items[plTab.PlayersColumn.CurrentSelection].Selected = false;
                                     plTab.UpdateFocus(plTab.Focus + 1);
-                                    if (plTab.listCol[plTab.Focus].Type == "panel")
-                                        plTab.UpdateFocus(plTab.Focus + 1);
                                     break;
                             }
                         }
@@ -1108,9 +1088,6 @@ namespace ScaleformUI.PauseMenu
             bool successPause = GetScaleformMovieCursorSelection(Main.PauseMenu._pause.Handle, ref eventType, ref context, ref itemId, ref unused);
             if (successPause)
             {
-
-                Debug.WriteLine($"eventType: {eventType}, context: {context}, itemId: {itemId}, unused: {unused}");
-
                 switch (eventType)
                 {
                     case 5: // on click pressed

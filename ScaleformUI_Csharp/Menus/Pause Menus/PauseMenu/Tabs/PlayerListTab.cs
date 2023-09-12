@@ -36,6 +36,7 @@ namespace ScaleformUI.PauseMenu
 
         internal async void UpdateFocus(int value, bool isMouse = false)
         {
+            bool goingLeft = value < focus;
             if (listCol[focus].Type != "players")
             {
                 if (!PlayersColumn.Items[PlayersColumn.CurrentSelection].KeepPanelVisible)
@@ -46,6 +47,14 @@ namespace ScaleformUI.PauseMenu
                 focus = listCol.Count - 1;
             else if (focus > listCol.Count - 1)
                 focus = 0;
+            if (listCol[Focus].Type == "panel")
+            {
+                if (goingLeft)
+                    UpdateFocus(focus - 1, isMouse);
+                else
+                    UpdateFocus(focus + 1, isMouse);
+                return;
+            }
             if (Parent != null && Parent.Visible)
             {
                 int idx = await Parent._pause._pause.CallFunctionReturnValueInt("SET_PLAYERS_TAB_FOCUS", Parent.Tabs.IndexOf(this), focus);
