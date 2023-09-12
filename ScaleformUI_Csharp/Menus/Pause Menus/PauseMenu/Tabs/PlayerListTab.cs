@@ -39,7 +39,7 @@ namespace ScaleformUI.PauseMenu
             bool goingLeft = value < focus;
             if (listCol[focus].Type != "players")
             {
-                if (!PlayersColumn.Items[PlayersColumn.CurrentSelection].KeepPanelVisible)
+                if (PlayersColumn != null && PlayersColumn.Items.Count > 0 && !PlayersColumn.Items[PlayersColumn.CurrentSelection].KeepPanelVisible)
                     API.ClearPedInPauseMenu();
             }
             focus = value;
