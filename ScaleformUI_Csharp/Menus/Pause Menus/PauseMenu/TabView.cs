@@ -803,9 +803,9 @@ namespace ScaleformUI.PauseMenu
                     Tabs[Index].Visible = true;
                     if (Tabs[Index] is PlayerListTab _plTab)
                     {
-                        if (_plTab.listCol.Any(x => x.Type == "settings"))
+                        if (_plTab.listCol.Any(x => x.Type == "settings") && _plTab.SettingsColumn != null && _plTab.SettingsColumn.Items.Count > 0)
                             _plTab.SettingsColumn.Items[_plTab.SettingsColumn.CurrentSelection].Selected = false;
-                        if (_plTab.listCol.Any(x => x.Type == "missions"))
+                        if (_plTab.listCol.Any(x => x.Type == "missions") && _plTab.MissionsColumn != null && _plTab.MissionsColumn.Items.Count > 0)
                             _plTab.MissionsColumn.Items[_plTab.MissionsColumn.CurrentSelection].Selected = false;
                         if (_plTab.listCol.Any(x => x.Type == "players"))
                         {
@@ -924,9 +924,9 @@ namespace ScaleformUI.PauseMenu
                     Tabs[Index].Visible = true;
                     if (Tabs[Index] is PlayerListTab _plTab)
                     {
-                        if (_plTab.listCol.Any(x => x.Type == "settings"))
+                        if (_plTab.listCol.Any(x => x.Type == "settings") && _plTab.SettingsColumn != null && _plTab.SettingsColumn.Items.Count > 0)
                             _plTab.SettingsColumn.Items[_plTab.SettingsColumn.CurrentSelection].Selected = false;
-                        if (_plTab.listCol.Any(x => x.Type == "missions"))
+                        if (_plTab.listCol.Any(x => x.Type == "missions") && _plTab.MissionsColumn != null && _plTab.MissionsColumn.Items.Count > 0)
                             _plTab.MissionsColumn.Items[_plTab.MissionsColumn.CurrentSelection].Selected = false;
                         if (_plTab.listCol.Any(x => x.Type == "players"))
                         {
