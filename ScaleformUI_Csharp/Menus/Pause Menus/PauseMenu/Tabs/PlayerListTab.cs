@@ -64,12 +64,15 @@ namespace ScaleformUI.PauseMenu
                     {
                         case "players":
                             PlayersColumn.CurrentSelection = idx;
+                            PlayersColumn.IndexChangedEvent();
                             break;
                         case "settings":
                             SettingsColumn.CurrentSelection = idx;
+                            SettingsColumn.IndexChangedEvent();
                             break;
                         case "missions":
                             MissionsColumn.CurrentSelection = idx;
+                            MissionsColumn.IndexChangedEvent();
                             break;
                     }
                 }
