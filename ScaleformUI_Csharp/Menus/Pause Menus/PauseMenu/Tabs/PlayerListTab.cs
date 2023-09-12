@@ -37,7 +37,7 @@ namespace ScaleformUI.PauseMenu
         internal async void UpdateFocus(int value, bool isMouse = false)
         {
             bool goingLeft = value < focus;
-            if (listCol[focus].Type != "players")
+            if (listCol[value].Type != "players")
             {
                 if (PlayersColumn != null && PlayersColumn.Items.Count > 0 && !PlayersColumn.Items[PlayersColumn.CurrentSelection].KeepPanelVisible)
                     API.ClearPedInPauseMenu();
