@@ -722,12 +722,15 @@ namespace ScaleformUI.PauseMenu
                         {
                             case "players":
                                 plTab.PlayersColumn.CurrentSelection = retVal;
+                                plTab.PlayersColumn.IndexChangedEvent();
                                 break;
                             case "settings":
                                 plTab.SettingsColumn.CurrentSelection = retVal;
+                                plTab.SettingsColumn.IndexChangedEvent();
                                 break;
                             case "missions":
                                 plTab.MissionsColumn.CurrentSelection = retVal;
+                                plTab.MissionsColumn.IndexChangedEvent();
                                 break;
                         }
                         return;
@@ -754,12 +757,15 @@ namespace ScaleformUI.PauseMenu
                         {
                             case "players":
                                 plTab.PlayersColumn.CurrentSelection = retVal;
+                                plTab.PlayersColumn.IndexChangedEvent();
                                 break;
                             case "settings":
                                 plTab.SettingsColumn.CurrentSelection = retVal;
+                                plTab.SettingsColumn.IndexChangedEvent();
                                 break;
                             case "missions":
                                 plTab.MissionsColumn.CurrentSelection = retVal;
+                                plTab.MissionsColumn.IndexChangedEvent();
                                 break;
                         }
                         return;
