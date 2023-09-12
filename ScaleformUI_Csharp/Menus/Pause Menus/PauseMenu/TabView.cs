@@ -1163,7 +1163,7 @@ namespace ScaleformUI.PauseMenu
                                             break;
                                         case "players":
                                             _tab.PlayersColumn.Items[_tab.PlayersColumn.CurrentSelection].Selected = true;
-                                            if (_tab.PlayersColumn.Items[_tab.PlayersColumn.CurrentSelection].KeepPanelVisible)
+                                            if (_tab.PlayersColumn.Items[_tab.PlayersColumn.CurrentSelection].ClonePed != null)
                                                 _tab.PlayersColumn.Items[_tab.PlayersColumn.CurrentSelection].CreateClonedPed();
                                             break;
                                         case "missions":
