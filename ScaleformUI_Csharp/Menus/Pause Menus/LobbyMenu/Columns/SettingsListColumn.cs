@@ -18,6 +18,7 @@ namespace ScaleformUI.LobbyMenu
         }
         public void AddSettings(UIMenuItem item)
         {
+            int oldidx = CurrentSelection;
             item.ParentColumn = this;
             Items.Add(item);
             if (Parent != null && Parent.Visible)
@@ -196,6 +197,7 @@ namespace ScaleformUI.LobbyMenu
                     if (item.LeftBadge != BadgeIcon.NONE)
                         pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", ParentTab, Items.IndexOf(item), (int)item.LeftBadge);
                 }
+                CurrentSelection = oldidx;
             }
         }
 
