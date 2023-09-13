@@ -10,6 +10,8 @@ namespace ScaleformUI.PauseMenu
         private int focus = 0;
         internal List<Column> listCol;
 
+        public bool ForceFirstSelectionOnFocus { get; set; }
+
         public override bool Focused
         {
             get { return _focused; }
@@ -60,15 +62,15 @@ namespace ScaleformUI.PauseMenu
                     switch (listCol[Focus].Type)
                     {
                         case "players":
-                            PlayersColumn.CurrentSelection = idx;
+                            PlayersColumn.CurrentSelection = ForceFirstSelectionOnFocus ? 0 : idx;
                             PlayersColumn.IndexChangedEvent();
                             break;
                         case "settings":
-                            SettingsColumn.CurrentSelection = idx;
+                            SettingsColumn.CurrentSelection = ForceFirstSelectionOnFocus ? 0 : idx;
                             SettingsColumn.IndexChangedEvent();
                             break;
                         case "missions":
-                            MissionsColumn.CurrentSelection = idx;
+                            MissionsColumn.CurrentSelection = ForceFirstSelectionOnFocus ? 0 : idx;
                             MissionsColumn.IndexChangedEvent();
                             break;
                     }
