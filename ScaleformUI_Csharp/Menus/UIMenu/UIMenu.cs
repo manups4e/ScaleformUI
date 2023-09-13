@@ -2532,7 +2532,7 @@ namespace ScaleformUI.Menu
                 }
                 else if (value >= MenuItems.Count)
                 {
-                    Pagination.CurrentMenuIndex = MenuItems.Count;
+                    Pagination.CurrentMenuIndex = MenuItems.Count - 1;
                 }
                 MenuItems[CurrentSelection].Selected = false;
 
