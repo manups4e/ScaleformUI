@@ -33,6 +33,7 @@ namespace ScaleformUI.LobbyMenu
                 lobby._pause._lobby.CallFunction("CLEAR_MISSIONS_COLUMN");
             else if (Parent is TabView pause)
                 pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_MISSIONS_COLUMN", ParentTab);
+            Items.Clear();
         }
 
         public void RemoveItem(int id)

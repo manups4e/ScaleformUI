@@ -89,6 +89,7 @@ namespace ScaleformUI.LobbyMenu
                 lobby._pause._lobby.CallFunction("CLEAR_MISSION_PANEL_ITEMS");
             else if (Parent is TabView pause)
                 pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_MISSION_PANEL_ITEMS", ParentTab);
+            Items.Clear();
         }
     }
 }
