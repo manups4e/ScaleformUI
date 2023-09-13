@@ -16,6 +16,7 @@ namespace ScaleformUI.LobbyMenu
 
         public void AddMissionItem(MissionItem item)
         {
+            int idx = CurrentSelection;
             item.ParentColumn = this;
             Items.Add(item);
             if (Parent != null && Parent.Visible)
@@ -25,6 +26,7 @@ namespace ScaleformUI.LobbyMenu
                 else if (Parent is TabView pause)
                     pause._pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSIONS_ITEM", ParentTab, 0, item.Label, (int)item.MainColor, (int)item.HighlightColor, (int)item.LeftIcon, (int)item.LeftIconColor, (int)item.RightIcon, (int)item.RightIconColor, item.RightIconChecked, item.Enabled);
             }
+            CurrentSelection = idx;
         }
 
         public void Clear()
