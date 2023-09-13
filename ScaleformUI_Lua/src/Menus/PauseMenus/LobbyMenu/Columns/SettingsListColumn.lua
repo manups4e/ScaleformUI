@@ -18,6 +18,7 @@ end
 
 function SettingsListColumn.New(label, color)
     local _data = {
+        Type = "settings",
         _label = label or "",
         _color = color or 116,
         _currentSelection = 0,
@@ -283,4 +284,5 @@ function SettingsListColumn:Clear()
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN", false, self.ParentTab)
         end
     end
+    self.Items = {}
 end

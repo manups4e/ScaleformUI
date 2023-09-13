@@ -21,6 +21,7 @@ end
 ---@return table
 function PlayerListColumn.New(label, color)
     local _data = {
+        Type = "players",
         _label = label or "",
         _color = color or 116,
         _currentSelection = 0,
@@ -49,6 +50,7 @@ function PlayerListColumn:CurrentSelection(idx)
             end
         end
     else
+        ClearPedInPauseMenu()
         if #self.Items == 0 then
             self._currentSelection = 0
         end
@@ -60,7 +62,6 @@ function PlayerListColumn:CurrentSelection(idx)
         else
             self._currentSelection = 1000000 - (1000000 % #self.Items) + tonumber(idx)
         end
-        self.Items[self:CurrentSelection()]:Selected(true)
         if self.Parent ~= nil and self.Parent:Visible() then
             local pSubT = self.Parent()
             if pSubT == "LobbyMenu" then
@@ -70,6 +71,10 @@ function PlayerListColumn:CurrentSelection(idx)
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_SELECTION", false,
                     self.ParentTab, self:CurrentSelection() - 1)
             end
+        end
+        self.Items[self:CurrentSelection()]:Selected(true)
+        if self.Items[self:CurrentSelection()].ClonePed ~= nil and self.Items[self:CurrentSelection()].ClonePed ~= 0 and self.Parent.listCol[self.Parent._focus].Type == self.Type then
+            self.Items[self:CurrentSelection()]:AddPedToPauseMenu()
         end
     end
     return self:CurrentSelection() - 1;
@@ -89,11 +94,11 @@ function PlayerListColumn:AddPlayer(item)
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_PLAYER_ITEM", false, 1, 1, item:Label(),
                     item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL, item._iconR, item._boolR,
                     item:Status(),
-                    item:StatusColor(), item:Rank(), item:CrewTag())
+                    item:StatusColor(), item:Rank(), item:CrewTag(), item:KeepPanelVisible())
             elseif pSubT == "PauseMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_PLAYER_ITEM", false,
                     self.ParentTab, 1, 1, item:Label(), item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL,
-                    item._iconR, item._boolR, item:Status(), item:StatusColor(), item:Rank(), item:CrewTag())
+                    item._iconR, item._boolR, item:Status(), item:StatusColor(), item:Rank(), item:CrewTag(), item:KeepPanelVisible())
             end
         end
         if item.Panel ~= nil then
@@ -139,4 +144,5 @@ function PlayerListColumn:Clear()
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_PLAYERS_COLUMN", false, self.ParentTab)
         end
     end
+    self.Items = {}
 end

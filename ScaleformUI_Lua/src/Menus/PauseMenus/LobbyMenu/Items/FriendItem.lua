@@ -38,6 +38,7 @@ function FriendItem.New(label, itemColor, coloredTag, rank, status, crewTag)
     if itemColor == -1 then itemColor = 9 end
     local _data = {
         _type = 1,
+        keepPanelVisible = false,
         _Enabled = true,
         _Selected = false,
         _Hovered = false,
@@ -80,48 +81,79 @@ function FriendItem:Label(label)
     return self._label
 end
 
----Adds a ped to the pause menu or returns the current ped.
----@param ped number? If the ped parameter is 0 it will clear the ped.
----@return number -- If the ped parameter is 0 it will return -1.
-function FriendItem:AddPedToPauseMenu(ped)
-    if ped ~= nil then
-        self.ClonePed = ped
-        if ped == 0 then
-            ClearPedInPauseMenu()
-            return -1
+function FriendItem:KeepPanelVisible(bool)
+    if bool ~= nil then
+        self.keepPanelVisible = bool
+        if self.Panel ~= nil then
+            self.Panel:UpdatePanel()
         end
-        if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
-            if self.Panel ~= nil then
-                self.Panel:UpdatePanel()
-            end
-            local pSubT = self.ParentColumn.Parent()
-            Citizen.CreateThread(function()
-                Wait(100)
+        if self.ParentColumn.CurrentSelection() == IndexOf(self.ParentColumn.Items, self) then
+            if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
+                local idx = IndexOf(self.ParentColumn.Items, self) - 1
+                local pSubT = self.ParentColumn.Parent()
                 if pSubT == "LobbyMenu" then
+                    self:AddPedToPauseMenu()
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_STAT_PANEL_PERMANENT", false, idx, self.keepPanelVisible)
+                elseif pSubT == "PauseMenu" then
+                    self:AddPedToPauseMenu()
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_STAT_PANEL_PERMANENT", false,
+                        self.ParentColumn.ParentTab, idx, self.keepPanelVisible)
+                end
+            end
+        end
+    else
+        return self.keepPanelVisible
+    end
+end
+
+---Adds a ped to the pause menu or returns the current ped.
+function FriendItem:HidePed(ped)
+    SetEntityVisible(ped, false, false)
+    SetEntityInvincible(ped, true)
+    SetEntityCollision(ped, false, false)
+    FreezeEntityPosition(ped, true)
+    local cc = GetEntityCoords(PlayerPedId());
+    local coords = cc + vector3(0, 0, -50)
+    SetEntityCoords(ped, coords.x, coords.y, coords.z, false, false, false, true);
+end
+
+function FriendItem:AddPedToPauseMenu()
+    if self.ClonePed == 0 then
+        ClearPedInPauseMenu()
+        return -1
+    end
+    if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
+        if self.Panel ~= nil then
+            self.Panel:UpdatePanel()
+        end
+        local pSubT = self.ParentColumn.Parent()
+        Citizen.CreateThread(function()
+            Wait(100)
+            if pSubT == "LobbyMenu" then
+                if self.ParentColumn.Items[self.ParentColumn:CurrentSelection()] == self then
+                    local ped = ClonePed(self.ClonePed, false, false, true)
+                    self:HidePed(ped)
+                    FinalizeHeadBlend(ped)
+                    GivePedToPauseMenu(ped, 2);
+                    SetPauseMenuPedSleepState(true)
+                    SetPauseMenuPedLighting(true)
+                end
+            elseif pSubT == "PauseMenu" then
+                local tab = self.ParentColumn.Parent.Tabs[self.ParentColumn.Parent.index]
+                local _, subT = tab()
+                if subT == "PlayerListTab" then
                     if self.ParentColumn.Items[self.ParentColumn:CurrentSelection()] == self then
                         local ped = ClonePed(self.ClonePed, false, false, true)
+                        self:HidePed(ped)
                         FinalizeHeadBlend(ped)
                         GivePedToPauseMenu(ped, 2);
                         SetPauseMenuPedSleepState(true)
-                        SetPauseMenuPedLighting(true)
-                    end
-                elseif pSubT == "PauseMenu" then
-                    local tab = self.ParentColumn.Parent.Tabs[self.ParentColumn.Parent.index]
-                    local _, subT = tab()
-                    if subT == "PlayerListTab" then
-                        if self.ParentColumn.Items[self.ParentColumn:CurrentSelection()] == self then
-                            local ped = ClonePed(self.ClonePed, false, false, true)
-                            FinalizeHeadBlend(ped)
-                            GivePedToPauseMenu(ped, 2);
-                            SetPauseMenuPedSleepState(true)
-                            SetPauseMenuPedLighting(self.ParentColumn.Parent:FocusLevel() ~= 0);
-                        end
+                        SetPauseMenuPedLighting(self.ParentColumn.Parent:FocusLevel() ~= 0);
                     end
                 end
-            end)
-        end
+            end
+        end)
     end
-    return self.ClonePed
 end
 
 ---Sets the item color of the item if supplied else it will return the current item color.

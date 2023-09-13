@@ -937,6 +937,7 @@ function UIMenu:ProcessControl()
         end
     end
 
+    --[[ TO BE TESTED
     if self.Controls.Select.Enabled and (IsDisabledControlJustPressed(0, 201) or IsDisabledControlJustPressed(1, 201) or IsDisabledControlJustPressed(2, 201)) or
             ((IsDisabledControlJustPressed(0, 24) or IsDisabledControlJustPressed(1, 24) or IsDisabledControlJustPressed(2, 24)) and self.Settings.MouseControlsEnabled) then
         Citizen.CreateThread(function()
@@ -945,6 +946,7 @@ function UIMenu:ProcessControl()
             return
         end)
     end
+    ]]
 
     if (IsDisabledControlJustReleased(0, 172) or IsDisabledControlJustReleased(1, 172) or IsDisabledControlJustReleased(2, 172) or IsDisabledControlJustReleased(0, 241) or IsDisabledControlJustReleased(1, 241) or IsDisabledControlJustReleased(2, 241) or IsDisabledControlJustReleased(2, 241)) or
         (IsDisabledControlJustReleased(0, 173) or IsDisabledControlJustReleased(1, 173) or IsDisabledControlJustReleased(2, 173) or IsDisabledControlJustReleased(0, 242) or IsDisabledControlJustReleased(1, 242) or IsDisabledControlJustReleased(2, 242)) or

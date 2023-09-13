@@ -2,7 +2,8 @@
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
     "Lua.diagnostics.disable": [
-        "redundant-value"
+        "redundant-value",
+        "undefined-global"
     ],
     "Lua.diagnostics.globals": [
         "Citizen",
