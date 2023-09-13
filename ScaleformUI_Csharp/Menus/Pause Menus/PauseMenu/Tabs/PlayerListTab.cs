@@ -1,6 +1,5 @@
 ﻿using CitizenFX.Core.Native;
 using ScaleformUI.LobbyMenu;
-using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI.PauseMenu
 {
@@ -30,8 +29,6 @@ namespace ScaleformUI.PauseMenu
         public PlayerListTab(string name) : base(name)
         {
             _type = V;
-            SettingsColumn = new("", HudColor.NONE);
-            PlayersColumn = new("", HudColor.NONE);
         }
 
         internal async void UpdateFocus(int value, bool isMouse = false)
