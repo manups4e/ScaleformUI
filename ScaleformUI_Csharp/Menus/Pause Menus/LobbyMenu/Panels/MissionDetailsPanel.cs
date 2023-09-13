@@ -61,9 +61,9 @@ namespace ScaleformUI.LobbyMenu
             if (Parent != null && Parent.Visible)
             {
                 if (Parent is MainView lobby)
-                    lobby._pause._lobby.CallFunction("ADD_MISSION_PANEL_ITEM", item.Type, item.TextLeft, item.TextRight, (int)item.Icon, (int)item.IconColor, item.Tick);
+                    lobby._pause._lobby.CallFunction("ADD_MISSION_PANEL_ITEM", item.Type, item.TextLeft, item.TextRight, (int)item.Icon, (int)item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID);
                 else if (Parent is TabView pause)
-                    pause._pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_ITEM", ParentTab, item.Type, item.TextLeft, item.TextRight, (int)item.Icon, (int)item.IconColor, item.Tick);
+                    pause._pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_ITEM", ParentTab, item.Type, item.TextLeft, item.TextRight, (int)item.Icon, (int)item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID);
             }
         }
 
