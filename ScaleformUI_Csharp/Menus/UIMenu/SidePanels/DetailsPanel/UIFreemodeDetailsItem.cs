@@ -6,9 +6,9 @@ namespace ScaleformUI.Menu
     public class UIFreemodeDetailsItem
     {
         public string TextLeft;
-        public string TextRight;
-        public BadgeIcon Icon;
-        public HudColor IconColor;
+        public string TextRight = "";
+        public BadgeIcon Icon = BadgeIcon.NONE;
+        public HudColor IconColor = HudColor.NONE;
         public int Type;
         public bool Tick;
         internal ItemFont _labelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
