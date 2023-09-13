@@ -43,7 +43,6 @@ namespace ScaleformUI.LobbyMenu
             TextureName = txn;
             if (Parent != null && Parent.Visible)
             {
-                Main.PauseMenu._lobby.CallFunction("ADD_MISSION_PANEL_PICTURE", TextureDict, TextureName);
                 if (Parent is MainView lobby)
                     lobby._pause._lobby.CallFunction("ADD_MISSION_PANEL_PICTURE", TextureDict, TextureName);
                 else if (Parent is TabView pause)
