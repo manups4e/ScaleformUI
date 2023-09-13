@@ -17,6 +17,7 @@ namespace ScaleformUI.LobbyMenu
 
         public void AddPlayer(LobbyItem item)
         {
+            int cur = currentSelection;
             item.ParentColumn = this;
             Items.Add(item);
             if (Parent != null && Parent.Visible)
@@ -33,6 +34,7 @@ namespace ScaleformUI.LobbyMenu
                 }
                 item.Panel?.UpdatePanel(true);
             }
+            currentSelection = cur;
         }
 
         public void Clear()
