@@ -54,7 +54,7 @@
 
         internal int GetMenuIndexFromScaleformIndex(int scaleformIndex)
         {
-            int diff = itemsPerPage - 1 - scaleformIndex;
+            int diff = (totalItems >= itemsPerPage ? itemsPerPage : totalItems) - 1 - scaleformIndex;
             int result = MaxItem - diff;
             if (result < 0)
                 result = totalItems + result;
