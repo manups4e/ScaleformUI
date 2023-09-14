@@ -644,6 +644,11 @@ namespace ScaleformUI.PauseMenu
                                     }
                                     _pause._pause.CallFunction("SET_INPUT_EVENT", 16);
                                     break;
+                                case "missions":
+                                    MissionItem mitem = plTab.MissionsColumn.Items[plTab.MissionsColumn.CurrentSelection];
+                                    mitem.ActivateMission(plTab);
+                                    break;
+
                             }
                         }
                     }

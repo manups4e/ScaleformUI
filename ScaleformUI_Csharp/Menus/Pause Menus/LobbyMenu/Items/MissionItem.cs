@@ -5,6 +5,7 @@ using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI
 {
+    public delegate void MissionActivated(PlayerListTab tab, MissionsListColumn column, MissionItem item);
     public class MissionItem
     {
         private bool enabled = true;
@@ -36,6 +37,12 @@ namespace ScaleformUI
                     }
                 }
             }
+        }
+
+        public event MissionActivated MissionActivated;
+        public void ActivateMission(PlayerListTab tab)
+        {
+            MissionActivated?.Invoke(tab, ParentColumn, this);
         }
 
         public MissionItem(string label) : this(label, HudColor.HUD_COLOUR_PAUSE_BG, HudColor.HUD_COLOUR_WHITE) { }
