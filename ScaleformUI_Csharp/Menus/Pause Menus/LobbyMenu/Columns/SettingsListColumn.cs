@@ -9,6 +9,7 @@ namespace ScaleformUI.LobbyMenu
     public class SettingsListColumn : Column
     {
         internal bool isBuilding = false;
+        private bool cleared = false;
         public event IndexChanged OnIndexChanged;
         public List<UIMenuItem> Items { get; internal set; }
         public ScrollingType ScrollingType { get => Pagination.scrollType; set => Pagination.scrollType = value; }
@@ -27,7 +28,7 @@ namespace ScaleformUI.LobbyMenu
             item.ParentColumn = this;
             Items.Add(item);
             Pagination.TotalItems = Items.Count;
-            if (Pagination.TotalItems == 0)
+            if (cleared)
             {
                 if (Parent != null && Parent.Visible)
                 {
@@ -47,6 +48,7 @@ namespace ScaleformUI.LobbyMenu
                     }
                     CurrentSelection = sel;
                 }
+                cleared = false;
             }
         }
 
@@ -495,6 +497,7 @@ namespace ScaleformUI.LobbyMenu
                 pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN", ParentTab);
             Items.Clear();
             Pagination.TotalItems = Items.Count;
+            cleared = true;
         }
     }
 }

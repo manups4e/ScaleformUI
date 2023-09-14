@@ -9,6 +9,7 @@ namespace ScaleformUI.LobbyMenu
     public class PlayerListColumn : Column
     {
         internal bool isBuilding = false;
+        private bool cleared = false;
         public event IndexChanged OnIndexChanged;
         public List<LobbyItem> Items { get; private set; }
 
@@ -30,7 +31,7 @@ namespace ScaleformUI.LobbyMenu
             item.ParentColumn = this;
             Items.Add(item);
             Pagination.TotalItems = Items.Count;
-            if (Pagination.TotalItems == 0)
+            if (cleared)
             {
                 if (Parent != null && Parent.Visible)
                 {
@@ -50,6 +51,7 @@ namespace ScaleformUI.LobbyMenu
                     }
                     CurrentSelection = sel;
                 }
+                cleared = false;
             }
         }
 
@@ -102,6 +104,7 @@ namespace ScaleformUI.LobbyMenu
                 pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_PLAYERS_COLUMN", ParentTab);
             Items.Clear();
             Pagination.TotalItems = 0;
+            cleared = true;
         }
 
         public void RemovePlayer(int id)
