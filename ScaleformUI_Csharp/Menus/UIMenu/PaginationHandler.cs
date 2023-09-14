@@ -54,17 +54,25 @@
 
         internal int GetMenuIndexFromScaleformIndex(int scaleformIndex)
         {
-            int id = 0;
-            if (minItem <= scaleformIndex)
-            {
-                id = scaleformIndex + minItem;
-            }
-            else if (minItem > scaleformIndex && maxItem >= scaleformIndex)
-            {
-                id = GetMenuIndexFromPageIndex(0, (TotalItems - minItem) - scaleformIndex);
-            }
-            return id;
+            int diff = itemsPerPage - 1 - scaleformIndex;
+            int result = MaxItem - diff;
+            if (result < 0)
+                result = totalItems + result;
+            return result;
         }
+
+        internal int GetPageIndexFromScaleformIndex(int scaleformIndex)
+        {
+            int menuIndex = MinItem + scaleformIndex;
+            return GetPageIndexFromMenuIndex(menuIndex);
+        }
+
+        internal int GetPageFromScaleformIndex(int scaleformIndex)
+        {
+            int menuIndex = MinItem + scaleformIndex;
+            return GetPage(menuIndex);
+        }
+
 
         internal int GetPageIndexFromMenuIndex(int menuIndex)
         {
@@ -199,6 +207,22 @@
             }
             CurrentPage = GetPage(CurrentMenuIndex);
             return false;
+        }
+
+        public override string ToString()
+        {
+            string str = "";
+            str += "_currentMenuIndex: " + _currentMenuIndex + ", ";
+            str += "_currentPageIndex: " + _currentPageIndex + ", ";
+            str += "currentPage: " + currentPage + ", ";
+            str += "CurrentPageStartIndex: " + CurrentPageStartIndex + ", ";
+            str += "CurrentPageEndIndex: " + CurrentPageEndIndex + ", ";
+            str += "itemsPerPage: " + itemsPerPage + ", ";
+            str += "minItem: " + minItem + ", ";
+            str += "maxItem: " + maxItem + ", ";
+            str += "totalItems: " + totalItems + ", ";
+            str += "scaleformIndex: " + scaleformIndex;
+            return str;
         }
     }
 }
