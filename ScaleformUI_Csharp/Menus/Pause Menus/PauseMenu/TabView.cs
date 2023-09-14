@@ -1239,7 +1239,18 @@ namespace ScaleformUI.PauseMenu
                                 if (Tabs[Index] is PlayerListTab plTab)
                                 {
                                     int index = plTab.listCol[plTab.Focus].Pagination.GetMenuIndexFromScaleformIndex(itemId);
-                                    plTab.SettingsColumn.Items[index].Hovered = false;
+                                    switch (plTab.listCol[plTab.Focus].Type)
+                                    {
+                                        case "settings":
+                                            plTab.SettingsColumn.Items[index].Hovered = false;
+                                            break;
+                                        case "players":
+                                            plTab.PlayersColumn.Items[index].Hovered = false;
+                                            break;
+                                        case "missions":
+                                            plTab.MissionsColumn.Items[index].Hovered = false;
+                                            break;
+                                    }
                                 }
                                 else
                                     Tabs[Index].LeftItemList[itemId].Hovered = false;
@@ -1260,7 +1271,18 @@ namespace ScaleformUI.PauseMenu
                                 if (Tabs[Index] is PlayerListTab plTab)
                                 {
                                     int index = plTab.listCol[plTab.Focus].Pagination.GetMenuIndexFromScaleformIndex(itemId);
-                                    plTab.SettingsColumn.Items[index].Hovered = true;
+                                    switch (plTab.listCol[plTab.Focus].Type)
+                                    {
+                                        case "settings":
+                                            plTab.SettingsColumn.Items[index].Hovered = true;
+                                            break;
+                                        case "players":
+                                            plTab.PlayersColumn.Items[index].Hovered = true;
+                                            break;
+                                        case "missions":
+                                            plTab.MissionsColumn.Items[index].Hovered = true;
+                                            break;
+                                    }
                                 }
                                 else
                                 {

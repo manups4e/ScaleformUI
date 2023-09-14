@@ -20,6 +20,7 @@ namespace ScaleformUI
         public HudColor RightIconColor { get; private set; } = HudColor.HUD_COLOUR_WHITE;
         public bool RightIconChecked { get; private set; }
         public bool Selected { get; internal set; }
+        public bool Hovered { get; internal set; }
         public bool Enabled
         {
             get => enabled; set
