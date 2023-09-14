@@ -167,7 +167,6 @@ namespace ScaleformUI.LobbyMenu
                 if (Items[CurrentSelection].ClonePed != null)
                     Items[CurrentSelection].CreateClonedPed();
                 IndexChangedEvent();
-                Debug.WriteLine("Pagination: " + Pagination.ToString());
                 Pagination.GetPageIndexFromScaleformIndex(Pagination.ScaleformIndex);
             }
             catch (Exception e)
@@ -225,7 +224,6 @@ namespace ScaleformUI.LobbyMenu
                 if (Items[CurrentSelection].ClonePed != null)
                     Items[CurrentSelection].CreateClonedPed();
                 IndexChangedEvent();
-                Debug.WriteLine("Pagination: " + Pagination.ToString());
                 Pagination.GetPageIndexFromScaleformIndex(Pagination.ScaleformIndex);
             }
             catch (Exception e)

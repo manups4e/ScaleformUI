@@ -130,7 +130,6 @@ namespace ScaleformUI.LobbyMenu
                 if (Visible)
                 {
                     int idx = await _pause._lobby.CallFunctionReturnValueInt("SET_FOCUS", focusLevel);
-                    Debug.WriteLine($"idx: {idx}");
                     if (!isMouse)
                     {
                         switch (listCol[focusLevel].Type)
