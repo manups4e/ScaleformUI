@@ -98,9 +98,9 @@ namespace ScaleformUI.LobbyMenu
 
         public void UpdatePanel(bool _override = false)
         {
-            if ((ParentItem != null && ParentItem.ParentColumn != null && ParentItem.ParentColumn.Parent != null && ParentItem.ParentColumn.Parent.Visible) || _override)
+            if ((ParentItem != null && ParentItem.ParentColumn != null && ParentItem.ParentColumn.Parent != null && ParentItem.ParentColumn.Parent.Visible && ParentItem.ParentColumn.Pagination.IsItemVisible(ParentItem.ParentColumn.Items.IndexOf(ParentItem))) || _override)
             {
-                int idx = ParentItem.ParentColumn.Items.IndexOf(ParentItem);
+                int idx = ParentItem.ParentColumn.Pagination.GetScaleformIndex(ParentItem.ParentColumn.Items.IndexOf(ParentItem));
                 if (ParentItem.ParentColumn.Parent is MainView lobby)
                 {
                     lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_PANEL", idx, 0, ParentItem.ClonePed != null, Title, Description, (int)TitleColor, RankInfo.RankLevel, HasPlane, HasHeli, HasBoat, HasVehicle, 0, RankInfo.LowLabel, 0, 0, RankInfo.MidLabel, 0, 0, RankInfo.UpLabel, 0, 0);

@@ -39,9 +39,9 @@ namespace ScaleformUI.LobbyMenu
             set
             {
                 label = value;
-                if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
+                if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
                 {
-                    int idx = ParentColumn.Items.IndexOf(this);
+                    int idx = ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this));
                     if (ParentColumn.Parent is MainView lobby)
                         lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_LABEL", idx, label);
                     else if (ParentColumn.Parent is TabView pause)
@@ -55,9 +55,9 @@ namespace ScaleformUI.LobbyMenu
             set
             {
                 itemColor = value;
-                if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
+                if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
                 {
-                    int idx = ParentColumn.Items.IndexOf(this);
+                    int idx = ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this));
                     if (ParentColumn.Parent is MainView lobby)
                         lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_COLOUR", idx, itemColor, coloredTag);
                     else if (ParentColumn.Parent is TabView pause)
@@ -71,9 +71,9 @@ namespace ScaleformUI.LobbyMenu
             set
             {
                 coloredTag = value;
-                if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
+                if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
                 {
-                    int idx = ParentColumn.Items.IndexOf(this);
+                    int idx = ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this));
                     if (ParentColumn.Parent is MainView lobby)
                         lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_COLOUR", idx, itemColor, coloredTag);
                     else if (ParentColumn.Parent is TabView pause)
@@ -87,9 +87,9 @@ namespace ScaleformUI.LobbyMenu
             set
             {
                 rank = value;
-                if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
+                if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
                 {
-                    int idx = ParentColumn.Items.IndexOf(this);
+                    int idx = ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this));
                     if (ParentColumn.Parent is MainView lobby)
                         lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_RANK", idx, rank);
                     else if (ParentColumn.Parent is TabView pause)
@@ -103,9 +103,9 @@ namespace ScaleformUI.LobbyMenu
             set
             {
                 status = value;
-                if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
+                if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
                 {
-                    int idx = ParentColumn.Items.IndexOf(this);
+                    int idx = ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this));
                     if (ParentColumn.Parent is MainView lobby)
                         lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_STATUS", idx, status, (int)statusColor);
                     else if (ParentColumn.Parent is TabView pause)
@@ -119,9 +119,9 @@ namespace ScaleformUI.LobbyMenu
             set
             {
                 statusColor = value;
-                if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
+                if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
                 {
-                    int idx = ParentColumn.Items.IndexOf(this);
+                    int idx = ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this));
                     if (ParentColumn.Parent is MainView lobby)
                         lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_STATUS", idx, status, (int)statusColor);
                     else if (ParentColumn.Parent is TabView pause)
@@ -135,9 +135,9 @@ namespace ScaleformUI.LobbyMenu
             set
             {
                 crewTag = value;
-                if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
+                if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
                 {
-                    int idx = ParentColumn.Items.IndexOf(this);
+                    int idx = ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this));
                     if (ParentColumn.Parent is MainView lobby)
                         lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_CREW", idx, crewTag);
                     else if (ParentColumn.Parent is TabView pause)
@@ -167,9 +167,9 @@ namespace ScaleformUI.LobbyMenu
         {
             iconL = (int)icon;
             boolL = false;
-            if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
+            if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
             {
-                int idx = ParentColumn.Items.IndexOf(this);
+                int idx = ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this));
                 if (ParentColumn.Parent is MainView lobby)
                     lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_LEFT", idx, iconL, boolL);
                 else if (ParentColumn.Parent is TabView pause)
@@ -180,9 +180,9 @@ namespace ScaleformUI.LobbyMenu
         {
             iconL = (int)icon;
             boolL = true;
-            if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
+            if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
             {
-                int idx = ParentColumn.Items.IndexOf(this);
+                int idx = ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this));
                 if (ParentColumn.Parent is MainView lobby)
                     lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_LEFT", idx, iconL, boolL);
                 else if (ParentColumn.Parent is TabView pause)
@@ -194,9 +194,9 @@ namespace ScaleformUI.LobbyMenu
         {
             iconR = (int)icon;
             boolR = false;
-            if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
+            if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
             {
-                int idx = ParentColumn.Items.IndexOf(this);
+                int idx = ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this));
                 if (ParentColumn.Parent is MainView lobby)
                     lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_RIGHT", idx, iconR, boolR);
                 else if (ParentColumn.Parent is TabView pause)
@@ -207,9 +207,9 @@ namespace ScaleformUI.LobbyMenu
         {
             iconR = (int)icon;
             boolR = true;
-            if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible)
+            if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
             {
-                int idx = ParentColumn.Items.IndexOf(this);
+                int idx = ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this));
                 if (ParentColumn.Parent is MainView lobby)
                     lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_RIGHT", idx, iconR, boolR);
                 else if (ParentColumn.Parent is TabView pause)

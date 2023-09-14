@@ -36,19 +36,19 @@ namespace ScaleformUI.PauseMenu
 
         internal async void UpdateFocus(int value, bool isMouse = false)
         {
-            Debug.WriteLine("UpdateFocus - value: " + value);
             bool goingLeft = value < focus;
-            focus = value;
-            if (focus < 0)
-                focus = listCol.Count - 1;
-            else if (focus > listCol.Count - 1)
-                focus = 0;
-            if (listCol[value].Type != "players")
+            int f = value;
+            if (f < 0)
+                f = listCol.Count - 1;
+            else if (f > listCol.Count - 1)
+                f = 0;
+            if (listCol[f].Type != "players")
             {
                 if (PlayersColumn != null && PlayersColumn.Items.Count > 0 && !PlayersColumn.Items[PlayersColumn.CurrentSelection].KeepPanelVisible)
                     API.ClearPedInPauseMenu();
             }
-            if (listCol[Focus].Type == "panel")
+            focus = f;
+            if (listCol[focus].Type == "panel")
             {
                 if (goingLeft)
                     UpdateFocus(focus - 1, isMouse);
@@ -61,18 +61,19 @@ namespace ScaleformUI.PauseMenu
                 int idx = await Parent._pause._pause.CallFunctionReturnValueInt("SET_PLAYERS_TAB_FOCUS", Parent.Tabs.IndexOf(this), focus);
                 if (!isMouse)
                 {
+                    Debug.WriteLine("Focus IDX: " + idx);
                     switch (listCol[Focus].Type)
                     {
                         case "players":
-                            PlayersColumn.CurrentSelection = ForceFirstSelectionOnFocus ? 0 : idx;
+                            PlayersColumn.CurrentSelection = PlayersColumn.Pagination.GetMenuIndexFromScaleformIndex(ForceFirstSelectionOnFocus ? 0 : idx);
                             PlayersColumn.IndexChangedEvent();
                             break;
                         case "settings":
-                            SettingsColumn.CurrentSelection = ForceFirstSelectionOnFocus ? 0 : idx;
+                            SettingsColumn.CurrentSelection = SettingsColumn.Pagination.GetMenuIndexFromScaleformIndex(ForceFirstSelectionOnFocus ? 0 : idx);
                             SettingsColumn.IndexChangedEvent();
                             break;
                         case "missions":
-                            MissionsColumn.CurrentSelection = ForceFirstSelectionOnFocus ? 0 : idx;
+                            MissionsColumn.CurrentSelection = MissionsColumn.Pagination.GetMenuIndexFromScaleformIndex(ForceFirstSelectionOnFocus ? 0 : idx);
                             MissionsColumn.IndexChangedEvent();
                             break;
                     }
