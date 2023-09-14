@@ -359,7 +359,7 @@ namespace ScaleformUI.PauseMenu
         }
 
         bool canBuild = true;
-        public async void buildSettings(PlayerListTab tab)
+        internal async void buildSettings(PlayerListTab tab)
         {
             int i = 0;
             int tab_id = Tabs.IndexOf(tab);
@@ -1238,7 +1238,8 @@ namespace ScaleformUI.PauseMenu
                             case 1: // left item in subitem tab pressed
                                 if (Tabs[Index] is PlayerListTab plTab)
                                 {
-                                    plTab.SettingsColumn.Items[itemId].Hovered = false;
+                                    int index = plTab.listCol[plTab.Focus].Pagination.GetMenuIndexFromScaleformIndex(itemId);
+                                    plTab.SettingsColumn.Items[index].Hovered = false;
                                 }
                                 else
                                     Tabs[Index].LeftItemList[itemId].Hovered = false;
@@ -1258,7 +1259,8 @@ namespace ScaleformUI.PauseMenu
                             case 1: // left item in subitem tab pressed
                                 if (Tabs[Index] is PlayerListTab plTab)
                                 {
-                                    plTab.SettingsColumn.Items[itemId].Hovered = true;
+                                    int index = plTab.listCol[plTab.Focus].Pagination.GetMenuIndexFromScaleformIndex(itemId);
+                                    plTab.SettingsColumn.Items[index].Hovered = true;
                                 }
                                 else
                                 {
