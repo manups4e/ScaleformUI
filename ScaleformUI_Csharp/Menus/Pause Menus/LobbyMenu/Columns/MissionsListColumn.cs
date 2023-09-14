@@ -28,9 +28,9 @@ namespace ScaleformUI.LobbyMenu
             item.ParentColumn = this;
             Items.Add(item);
             Pagination.TotalItems = Items.Count;
-            if (cleared)
+            if (Parent != null && Parent.Visible)
             {
-                if (Parent != null && Parent.Visible)
+                if (Pagination.TotalItems < Pagination.ItemsPerPage)
                 {
                     int sel = CurrentSelection;
                     if (Parent is MainView lobby) { }
@@ -48,7 +48,6 @@ namespace ScaleformUI.LobbyMenu
                     }
                     CurrentSelection = sel;
                 }
-                cleared = false;
             }
         }
 
