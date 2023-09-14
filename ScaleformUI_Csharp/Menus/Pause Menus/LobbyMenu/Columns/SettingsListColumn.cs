@@ -22,11 +22,29 @@ namespace ScaleformUI.LobbyMenu
                 scrollType = scrollType
             };
         }
-        public void AddSettings(UIMenuItem item)
+        public async void AddSettings(UIMenuItem item)
         {
             item.ParentColumn = this;
             Items.Add(item);
             Pagination.TotalItems = Items.Count;
+            if (Parent != null && Parent.Visible)
+            {
+                int sel = CurrentSelection;
+                if (Parent is MainView lobby) { }
+                else if (Parent is TabView pause)
+                {
+                    int i = 0;
+                    int max = Pagination.TotalItems >= Pagination.ItemsPerPage ? Pagination.ItemsPerPage : Pagination.TotalItems;
+                    while (i < max)
+                    {
+                        await BaseScript.Delay(0);
+                        if (!Parent.Visible) return;
+                        _itemCreation(Pagination.CurrentPage, i, false);
+                        i++;
+                    }
+                }
+                CurrentSelection = sel;
+            }
         }
 
         internal void _itemCreation(int page, int pageIndex, bool before, bool isOverflow = false)
@@ -473,8 +491,7 @@ namespace ScaleformUI.LobbyMenu
             else if (Parent is TabView pause)
                 pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN", ParentTab);
             Items.Clear();
-            Pagination.TotalItems = 0;
+            Pagination.TotalItems = Items.Count;
         }
-
     }
 }

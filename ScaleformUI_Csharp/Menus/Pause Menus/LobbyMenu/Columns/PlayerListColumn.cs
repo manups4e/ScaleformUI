@@ -25,11 +25,29 @@ namespace ScaleformUI.LobbyMenu
             };
         }
 
-        public void AddPlayer(LobbyItem item)
+        public async void AddPlayer(LobbyItem item)
         {
             item.ParentColumn = this;
             Items.Add(item);
             Pagination.TotalItems = Items.Count;
+            if (Parent != null && Parent.Visible)
+            {
+                int sel = CurrentSelection;
+                if (Parent is MainView lobby) { }
+                else if (Parent is TabView pause)
+                {
+                    int i = 0;
+                    int max = Pagination.TotalItems >= Pagination.ItemsPerPage ? Pagination.ItemsPerPage : Pagination.TotalItems;
+                    while (i < max)
+                    {
+                        await BaseScript.Delay(0);
+                        if (!Parent.Visible) return;
+                        _itemCreation(Pagination.CurrentPage, i, false);
+                        i++;
+                    }
+                }
+                CurrentSelection = sel;
+            }
         }
 
         internal void _itemCreation(int page, int pageIndex, bool before, bool isOverflow = false)
