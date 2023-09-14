@@ -30,23 +30,26 @@ namespace ScaleformUI.LobbyMenu
             item.ParentColumn = this;
             Items.Add(item);
             Pagination.TotalItems = Items.Count;
-            if (Parent != null && Parent.Visible)
+            if (Pagination.TotalItems == 0)
             {
-                int sel = CurrentSelection;
-                if (Parent is MainView lobby) { }
-                else if (Parent is TabView pause)
+                if (Parent != null && Parent.Visible)
                 {
-                    int i = 0;
-                    int max = Pagination.TotalItems >= Pagination.ItemsPerPage ? Pagination.ItemsPerPage : Pagination.TotalItems;
-                    while (i < max)
+                    int sel = CurrentSelection;
+                    if (Parent is MainView lobby) { }
+                    else if (Parent is TabView pause)
                     {
-                        await BaseScript.Delay(0);
-                        if (!Parent.Visible) return;
-                        _itemCreation(Pagination.CurrentPage, i, false);
-                        i++;
+                        int i = 0;
+                        int max = Pagination.TotalItems >= Pagination.ItemsPerPage ? Pagination.ItemsPerPage : Pagination.TotalItems;
+                        while (i < max)
+                        {
+                            await BaseScript.Delay(0);
+                            if (!Parent.Visible) return;
+                            _itemCreation(Pagination.CurrentPage, i, false);
+                            i++;
+                        }
                     }
+                    CurrentSelection = sel;
                 }
-                CurrentSelection = sel;
             }
         }
 
