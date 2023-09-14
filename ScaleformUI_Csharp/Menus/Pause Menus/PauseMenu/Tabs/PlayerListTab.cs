@@ -1,4 +1,5 @@
-﻿using CitizenFX.Core.Native;
+﻿using CitizenFX.Core;
+using CitizenFX.Core.Native;
 using ScaleformUI.LobbyMenu;
 
 namespace ScaleformUI.PauseMenu
@@ -35,17 +36,18 @@ namespace ScaleformUI.PauseMenu
 
         internal async void UpdateFocus(int value, bool isMouse = false)
         {
+            Debug.WriteLine("UpdateFocus - value: " + value);
             bool goingLeft = value < focus;
-            if (listCol[value].Type != "players")
-            {
-                if (PlayersColumn != null && PlayersColumn.Items.Count > 0 && !PlayersColumn.Items[PlayersColumn.CurrentSelection].KeepPanelVisible)
-                    API.ClearPedInPauseMenu();
-            }
             focus = value;
             if (focus < 0)
                 focus = listCol.Count - 1;
             else if (focus > listCol.Count - 1)
                 focus = 0;
+            if (listCol[value].Type != "players")
+            {
+                if (PlayersColumn != null && PlayersColumn.Items.Count > 0 && !PlayersColumn.Items[PlayersColumn.CurrentSelection].KeepPanelVisible)
+                    API.ClearPedInPauseMenu();
+            }
             if (listCol[Focus].Type == "panel")
             {
                 if (goingLeft)
