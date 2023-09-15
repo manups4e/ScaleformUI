@@ -37,6 +37,6 @@ function TextTab:UpdateBackground(txd, txn)
     self.TextureName = txn
     if self.Parent ~= nil and self.Base.Parent ~= nil and self.Base.Parent:Visible() then
         local tab = IndexOf(self.Base.Parent.Tabs, self.Parent) - 1
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_LEFT_ITEM_RIGHT_BACKGROUND", false, tab, txd, txn)
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_BASE_TAB_BACKGROUND", false, tab, txd, txn)
     end
 end
