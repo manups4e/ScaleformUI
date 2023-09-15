@@ -1233,13 +1233,13 @@ namespace ScaleformUI.PauseMenu
                         break;
                     case 0: // dragged outside
                     case 8: // on not hover
-                        switch (context)
                         {
-                            case 1: // left item in subitem tab pressed
-                                if (Tabs[Index] is PlayerListTab plTab)
+                            if (Tabs[Index] is PlayerListTab plTab)
+                            {
+                                if (FocusLevel == 1)
                                 {
-                                    int index = plTab.listCol[plTab.Focus].Pagination.GetMenuIndexFromScaleformIndex(itemId);
-                                    switch (plTab.listCol[plTab.Focus].Type)
+                                    int index = plTab.listCol[context].Pagination.GetMenuIndexFromScaleformIndex(itemId);
+                                    switch (plTab.listCol[context].Type)
                                     {
                                         case "settings":
                                             plTab.SettingsColumn.Items[index].Hovered = false;
@@ -1251,55 +1251,65 @@ namespace ScaleformUI.PauseMenu
                                             plTab.MissionsColumn.Items[index].Hovered = false;
                                             break;
                                     }
+                                    return;
                                 }
-                                else
+                            }
+
+                            switch (context)
+                            {
+                                case 1: // left item in subitem tab pressed
                                     Tabs[Index].LeftItemList[itemId].Hovered = false;
-                                break;
-                            case 2:// right settings item in subitem tab pressed
-                                BasicTabItem curIt = Tabs[Index].LeftItemList[LeftItemIndex].ItemList[itemId];
-                                if (curIt is SettingsItem)
-                                {
-                                    (curIt as SettingsItem).Hovered = false;
-                                }
-                                break;
+                                    break;
+                                case 2:// right settings item in subitem tab pressed
+                                    BasicTabItem curIt = Tabs[Index].LeftItemList[LeftItemIndex].ItemList[itemId];
+                                    if (curIt is SettingsItem)
+                                    {
+                                        (curIt as SettingsItem).Hovered = false;
+                                    }
+                                    break;
+                            }
                         }
                         break;
                     case 9: // on hovered
-                        switch (context)
                         {
-                            case 1: // left item in subitem tab pressed
-                                if (Tabs[Index] is PlayerListTab plTab)
+                            if (Tabs[Index] is PlayerListTab plTab)
+                            {
+                                if (FocusLevel == 1)
                                 {
-                                    int index = plTab.listCol[plTab.Focus].Pagination.GetMenuIndexFromScaleformIndex(itemId);
-                                    switch (plTab.listCol[plTab.Focus].Type)
+                                    int index = plTab.listCol[context].Pagination.GetMenuIndexFromScaleformIndex(itemId);
+                                    switch (plTab.listCol[context].Type)
                                     {
                                         case "settings":
-                                            plTab.SettingsColumn.Items[index].Hovered = true;
+                                            plTab.SettingsColumn.Items[index].Hovered = false;
                                             break;
                                         case "players":
-                                            plTab.PlayersColumn.Items[index].Hovered = true;
+                                            plTab.PlayersColumn.Items[index].Hovered = false;
                                             break;
                                         case "missions":
-                                            plTab.MissionsColumn.Items[index].Hovered = true;
+                                            plTab.MissionsColumn.Items[index].Hovered = false;
                                             break;
                                     }
+                                    return;
                                 }
-                                else
-                                {
+                            }
+
+                            switch (context)
+                            {
+                                case 1: // left item in subitem tab pressed
                                     foreach (TabLeftItem item in Tabs[Index].LeftItemList)
                                         item.Hovered = Tabs[Index].LeftItemList.IndexOf(item) == itemId && item.Enabled;
-                                }
-                                break;
-                            case 2:// right settings item in subitem tab pressed
-                                foreach (BasicTabItem curIt in Tabs[Index].LeftItemList[LeftItemIndex].ItemList)
-                                {
-                                    int idx = Tabs[Index].LeftItemList[LeftItemIndex].ItemList.IndexOf(curIt);
-                                    if (curIt is SettingsItem)
+                                    break;
+                                case 2:// right settings item in subitem tab pressed
+                                    foreach (BasicTabItem curIt in Tabs[Index].LeftItemList[LeftItemIndex].ItemList)
                                     {
-                                        (curIt as SettingsItem).Hovered = itemId == idx && (curIt as SettingsItem).Enabled;
+                                        int idx = Tabs[Index].LeftItemList[LeftItemIndex].ItemList.IndexOf(curIt);
+                                        if (curIt is SettingsItem)
+                                        {
+                                            (curIt as SettingsItem).Hovered = itemId == idx && (curIt as SettingsItem).Enabled;
+                                        }
                                     }
-                                }
-                                break;
+                                    break;
+                            }
                         }
                         break;
                     case 1: // dragged inside
