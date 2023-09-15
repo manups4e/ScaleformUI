@@ -17,9 +17,18 @@ function MissionItem.New(label, mainColor, highlightColor)
         RightIcon = BadgeStyle.NONE,
         RightIconColor = Colours.HUD_COLOUR_WHITE,
         RightIconChecked = false,
-        Selected = false
+        _Selected = false,
+        hovered = false
     }
     return setmetatable(_data, MissionItem)
+end
+
+function MissionItem:Hovered(val)
+    if val == nil then
+        return self.hovered
+    else
+        self.hovered = val
+    end
 end
 
 function MissionItem:Enabled(bool)
@@ -28,7 +37,7 @@ function MissionItem:Enabled(bool)
     else
         self.enabled = bool
         if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
-            local idx = IndexOf(self.ParentColumn.Items, self) - 1
+            local idx = self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self))
             local pSubT = self.ParentColumn.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSION_ITEM_ENABLED", false, idx, bool)
@@ -43,7 +52,7 @@ function MissionItem:SetLeftIcon(icon, color)
     self.LeftIcon = icon
     self.LeftIconColor = color
     if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
-        local idx = IndexOf(self.ParentColumn.Items, self) - 1
+        local idx = self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self))
         local pSubT = self.ParentColumn.Parent()
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSION_ITEM_LEFT_ICON", false, idx, icon, color)
@@ -54,15 +63,24 @@ function MissionItem:SetLeftIcon(icon, color)
 end
 
 function MissionItem:SetRightIcon(icon, color, checked)
-    self.LeftIcon = icon
-    self.LeftIconColor = color
+    self.RightIcon = icon
+    self.RightIconColor = color
+    self.RightIconChecked = checked or false
     if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
-        local idx = IndexOf(self.ParentColumn.Items, self) - 1
+        local idx = self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self))
         local pSubT = self.ParentColumn.Parent()
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSION_ITEM_RIGHT_ICON", false, idx, icon, checked, color)
         elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_MISSION_ITEM_RIGHT_ICON", false, self.ParentColumn.ParentTab, idx, icon, checked, color)
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_MISSION_ITEM_RIGHT_ICON", false, self.ParentColumn.ParentTab, idx, icon, checked or false, color)
         end
+    end
+end
+
+function MissionItem:Selected(bool)
+    if bool == nil then
+        return self._Selected
+    else
+        self._Selected = bool
     end
 end

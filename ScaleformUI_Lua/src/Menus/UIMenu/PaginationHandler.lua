@@ -113,14 +113,29 @@ function PaginationHandler:GetScaleformIndex(menuIndex)
     return id
 end
 
+
 function PaginationHandler:GetMenuIndexFromScaleformIndex(scaleformIndex)
-    local id = 0
-    if self.minItem <= scaleformIndex then
-        id = scaleformIndex - self.minItem +1
-    elseif self.minItem > scaleformIndex and self.maxItem >= scaleformIndex then
-        id = self:GetMenuIndexFromPageIndex(1, (self.totalItems - self.minItem) - scaleformIndex)
+    local diff = 0
+    if self.totalItems >= self.itemsPerPage then
+        diff = self.itemsPerPage - (scaleformIndex + 1)
+    else
+        diff = self.totalItems - (scaleformIndex + 1)
     end
-    return id
+    local result = self:MaxItem() - diff
+    if result < 1 then
+        result = self.totalItems + result
+    end
+    return result
+end
+
+function PaginationHandler:GetPageIndexFromScaleformIndex(scaleformIndex)
+    local menuIdx = self:MinItem() + (scaleformIndex + 1)
+    return self:GetPageIndexFromMenuIndex(menuIdx)
+end
+
+function PaginationHandler:GetPageFromScaleformIndex(scaleformIndex)
+    local menuIdx = self:MinItem() + (scaleformIndex + 1)
+    return self:GetPage(menuIdx)
 end
 
 function PaginationHandler:GetPageIndexFromMenuIndex(menuIndex)
@@ -238,4 +253,29 @@ function PaginationHandler:GoDown()
     end
     self:CurrentPage(self:GetPage(self._currentMenuIndex))
     return false
+end
+
+function PaginationHandler:Reset()
+    self._currentPageIndex = 1
+    self._currentMenuIndex = 1
+    self.currentPage = 1
+    self.itemsPerPage = 0
+    self.minItem = 1
+    self.maxItem = 1
+    self.totalItems = 0
+    self.scaleformIndex = 0
+end
+
+function PaginationHandler:ToString()
+    local str = ""
+    str = str .. "self._currentMenuIndex: " .. self._currentMenuIndex .. ", "
+    str = str .. "self._currentPageIndex: " .. self._currentPageIndex .. ", "
+    str = str .. "CurrentPageStartIndex: " + self:CurrentPageStartIndex() + ", ";
+    str = str .. "CurrentPageEndIndex: " + self:CurrentPageEndIndex() + ", ";
+    str = str .. "self.currentPage: " .. self.currentPage .. ", "
+    str = str .. "self.itemsPerPage: " .. self.itemsPerPage .. ", "
+    str = str .. "self.minItem: " .. self.minItem .. ", "
+    str = str .. "self.maxItem: " .. self.maxItem .. ", "
+    str = str .. "self.totalItems: " .. self.totalItems .. ", "
+    str = str .. "self.scaleformIndex: " .. self.scaleformIndex .. ", "
 end

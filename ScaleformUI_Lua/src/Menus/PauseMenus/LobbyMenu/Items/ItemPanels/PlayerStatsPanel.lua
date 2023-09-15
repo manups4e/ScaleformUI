@@ -138,7 +138,7 @@ end
 function PlayerStatsPanel:UpdatePanel(override)
     if override == nil then override = false end
     if ((self.ParentItem ~= nil and self.ParentItem.ParentColumn ~= nil and self.ParentItem.ParentColumn.Parent ~= nil and self.ParentItem.ParentColumn.Parent:Visible()) or override) then
-        local idx = IndexOf(self.ParentItem.ParentColumn.Items, self.ParentItem) - 1
+        local idx = self.ParentItem.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentItem.ParentColumn.Items, self.ParentItem))
         local pSubT = self.ParentItem.ParentColumn.Parent()
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_PANEL", false, idx, 0,

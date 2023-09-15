@@ -65,22 +65,21 @@ end
 function PlayerListTab:UpdateFocus(_f, isMouse)
     if isMouse == nil then isMouse = false end
     local goingLeft = _f < self._focus
+    local val = _f
 
-    for k,v in pairs(self.listCol) do
-        if v.Type == "players" then
-            if (self.PlayersColumn ~= nil and #self.PlayersColumn.Items > 0) and not self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()]:KeepPanelVisible() then
-                ClearPedInPauseMenu()
-            end
+    if val > #self.listCol then
+        val  = 1
+    elseif val  < 1 then
+        val = #self.listCol
+    end
+
+    if self.listCol[val].Type ~= "players" then
+        if (self.PlayersColumn ~= nil and #self.PlayersColumn.Items > 0) and not self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()]:KeepPanelVisible() then
+            ClearPedInPauseMenu()
         end
     end
 
-    self._focus = _f
-    if self._focus > #self.listCol then
-        self._focus = 1
-    elseif self._focus < 1 then
-        self._focus = #self.listCol
-    end
-
+    self._focus = val
     if self.listCol[self._focus].Type == "panel" then
         if goingLeft then
             self:UpdateFocus(self._focus - 1)
@@ -97,16 +96,9 @@ function PlayerListTab:UpdateFocus(_f, isMouse)
         end
         local idx = GetScaleformMovieMethodReturnValueInt(__idx)
         if not isMouse then
-            if self.listCol[self._focus].Type == "settings" then
-                self.SettingsColumn:CurrentSelection(idx)
-                self.SettingsColumn.OnIndexChanged(idx+1)
-            elseif self.listCol[self._focus].Type == "players" then
-                self.PlayersColumn:CurrentSelection(idx)
-                self.PlayersColumn.OnIndexChanged(idx+1)
-            elseif self.listCol[self._focus].Type == "missions" then
-                self.MissionsColumn:CurrentSelection(idx)
-                self.MissionsColumn.OnIndexChanged(idx+1)
-            end
+            local _id = self.listCol[self._focus].Pagination:GetMenuIndexFromScaleformIndex(idx)
+            self.listCol[self._focus]:CurrentSelection(_id)
+            self.listCol[self._focus].OnIndexChanged(_id)
         end
     end
 end

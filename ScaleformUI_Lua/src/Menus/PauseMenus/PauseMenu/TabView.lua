@@ -295,106 +295,133 @@ function TabView:BuildPauseMenu()
                     end
                 end
             end
-            tab:UpdateFocus(0)
+            while tab.SettingsColumn ~= nil and tab.SettingsColumn._isBuilding or tab.PlayerColumn ~= nil and tab.PlayerColumn._isBuilding or tab.MissionsColumn ~= nil and tab.MissionsColumn._isBuilding do
+                Citizen.Wait(0)
+            end
+            tab:UpdateFocus(1)
         end
     end
 end
 
 function TabView:buildSettings(tab, tabIndex)
     Citizen.CreateThread(function()
-        local items = tab.SettingsColumn.Items
-        local it = 1
-        while it <= #items do
-            Citizen.Wait(0)
-            local item = items[it]
-            local Type, SubType = item()
-            local descLabel = "menu_pause_playerTab_{".. tabIndex .."}_{" .. it .. "}"
-            AddTextEntry(descLabel, item:Description())
-            if SubType == "UIMenuListItem" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_SETTINGS_ITEM", false,
-                    tabIndex, 1, item.Base._formatLeftLabel, descLabel, item:Enabled(),
-                    item:BlinkDescription(), table.concat(item.Items, ","), item:Index() - 1,
-                    item.Base._mainColor,
-                    item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor)
-            elseif SubType == "UIMenuCheckboxItem" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_SETTINGS_ITEM", false,
-                    tabIndex, 2, item.Base._formatLeftLabel, descLabel, item:Enabled(),
-                    item:BlinkDescription(), item.CheckBoxStyle, item._Checked, item.Base._mainColor,
-                    item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor)
-            elseif SubType == "UIMenuSliderItem" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_SETTINGS_ITEM", false,
-                    tabIndex, 3, item.Base._formatLeftLabel, descLabel, item:Enabled(),
-                    item:BlinkDescription(), item._Max, item._Multiplier, item:Index(), item.Base._mainColor,
-                    item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor,
-                    item.SliderColor, item._heritage)
-            elseif SubType == "UIMenuProgressItem" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_SETTINGS_ITEM", false,
-                    tabIndex, 4, item.Base._formatLeftLabel, descLabel, item:Enabled(),
-                    item:BlinkDescription(), item._Max, item._Multiplier, item:Index(), item.Base._mainColor,
-                    item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor,
-                    item.SliderColor)
-            else
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_SETTINGS_ITEM", false,
-                    tabIndex, 0, item._formatLeftLabel, descLabel, item:Enabled(),
-                    item:BlinkDescription(), item._mainColor, item._highlightColor, item._textColor,
-                    item._highlightedTextColor)
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL_RIGHT", false, tabIndex, it - 1, item._formatRightLabel)
-                if item._rightBadge ~= BadgeStyle.NONE then
-                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_BADGE", false, tabIndex, it - 1, item._rightBadge)
-                end
-            end
-            if (SubType == "UIMenuItem" and item._leftBadge ~= BadgeStyle.NONE) or (SubType ~= "UIMenuItem" and item.Base._leftBadge ~= BadgeStyle.NONE) then
-                if SubType ~= "UIMenuItem" then
-                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", false, tabIndex, it - 1, item.Base._leftBadge)
-                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LABEL_FONT", false, tabIndex, it - 1, item.Base._labelFont.FontName, item.Base._labelFont.FontID)
-                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_LABEL_FONT", false, tabIndex, it - 1, item.Base._labelFont.FontName, item.Base._labelFont.FontID)
-                else
-                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", false, tabIndex, it - 1, item._leftBadge)
-                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LABEL_FONT", false, tabIndex, it - 1, item._labelFont.FontName, item._labelFont.FontID)
-                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_LABEL_FONT", false, tabIndex, it - 1, item._labelFont.FontName, item._labelFont.FontID)
-                end
-            end
-            it = it + 1
+        tab.SettingsColumn._isBuilding = true
+        local i = 1
+        local max = tab.SettingsColumn.Pagination:ItemsPerPage()
+        if #tab.SettingsColumn.Items < max then
+            max = #tab.SettingsColumn.Items
         end
-        tab.SettingsColumn:CurrentSelection(0)
+        tab.SettingsColumn.Pagination:MinItem(tab.SettingsColumn.Pagination:CurrentPageStartIndex())
+
+        if tab.SettingsColumn.scrollingType == MenuScrollingType.CLASSIC and tab.SettingsColumn.Pagination:TotalPages() > 1 then
+            local missingItems = tab.SettingsColumn.Pagination:GetMissingItems()
+            if missingItems > 0 then
+                tab.SettingsColumn.Pagination:ScaleformIndex(tab.SettingsColumn.Pagination:GetPageIndexFromMenuIndex(tab.SettingsColumn.Pagination:CurrentPageEndIndex()) + missingItems - 1)
+                tab.SettingsColumn.Pagination.minItem = tab.SettingsColumn.Pagination:CurrentPageStartIndex() - missingItems
+            end
+        end
+
+        tab.SettingsColumn.Pagination:MaxItem(tab.SettingsColumn.Pagination:CurrentPageEndIndex())
+
+        while i <= max do
+            Citizen.Wait(0)
+            if not self:Visible() then return end
+            tab.SettingsColumn:_itemCreation(tab.SettingsColumn.Pagination:CurrentPage(), i, false, true)
+            i = i + 1
+        end
+
+        tab.SettingsColumn:CurrentSelection(1)
+        tab.SettingsColumn.Pagination:ScaleformIndex(tab.SettingsColumn.Pagination:GetScaleformIndex(tab.SettingsColumn:CurrentSelection()))
         tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]:Selected(false)
+
+        ScaleformUI.Scaleforms._ui:CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", false, tab.SettingsColumn.Pagination:GetScaleformIndex(tab.SettingsColumn.Pagination:CurrentMenuIndex()))
+        ScaleformUI.Scaleforms._ui:CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", false, tab.SettingsColumn:CurrentSelection(), #tab.SettingsColumn.Items)
+
+        local Item = tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]
+        local _, subtype = Item()
+        if subtype == "UIMenuSeparatorItem" then
+            if (tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()].Jumpable) then
+                tab.SettingsColumn:GoDown()
+            end
+        end
+
+        tab.SettingsColumn._isBuilding = false
     end)
 end
 
 function TabView:buildPlayers(tab, tabIndex)
     Citizen.CreateThread(function()
-        local items = tab.PlayersColumn.Items
-        local it = 1
-        while it <= #items do
-            Citizen.Wait(0)
-            local item = items[it]
-            local Type, SubType = item()
-            if SubType == "FriendItem" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_PLAYER_ITEM", false,
-                    tabIndex, 1, 1, item:Label(), item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL,
-                    item._iconR, item._boolR, item:Status(), item:StatusColor(), item:Rank(), item:CrewTag(), item:KeepPanelVisible())
-            end
-            if item.Panel ~= nil then
-                item.Panel:UpdatePanel(true)
-            end
-            it = it + 1
+        tab.PlayersColumn._isBuilding = true
+        local i = 1
+        local max = tab.PlayersColumn.Pagination:ItemsPerPage()
+        if #tab.PlayersColumn.Items < max then
+            max = #tab.PlayersColumn.Items
         end
-        tab.PlayersColumn:CurrentSelection(0)
+        tab.PlayersColumn.Pagination:MinItem(tab.PlayersColumn.Pagination:CurrentPageStartIndex())
+
+        if tab.PlayersColumn.scrollingType == MenuScrollingType.CLASSIC and tab.PlayersColumn.Pagination:TotalPages() > 1 then
+            local missingItems = tab.PlayersColumn.Pagination:GetMissingItems()
+            if missingItems > 0 then
+                tab.PlayersColumn.Pagination:ScaleformIndex(tab.PlayersColumn.Pagination:GetPageIndexFromMenuIndex(tab.PlayersColumn.Pagination:CurrentPageEndIndex()) + missingItems - 1)
+                tab.PlayersColumn.Pagination.minItem = tab.PlayersColumn.Pagination:CurrentPageStartIndex() - missingItems
+            end
+        end
+
+        tab.PlayersColumn.Pagination:MaxItem(tab.PlayersColumn.Pagination:CurrentPageEndIndex())
+
+        while i <= max do
+            Citizen.Wait(0)
+            if not self:Visible() then return end
+            tab.PlayersColumn:_itemCreation(tab.PlayersColumn.Pagination:CurrentPage(), i, false, true)
+            i = i + 1
+        end
+
+        tab.PlayersColumn:CurrentSelection(1)
+        tab.PlayersColumn.Pagination:ScaleformIndex(tab.PlayersColumn.Pagination:GetScaleformIndex(tab.PlayersColumn:CurrentSelection()))
+        tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:Selected(false)
+
+        ScaleformUI.Scaleforms._ui:CallFunction("SET_PLAYERS_TAB_PLAYERS_SELECTION", false, tab.PlayersColumn.Pagination:GetScaleformIndex(tab.PlayersColumn.Pagination:CurrentMenuIndex()))
+        ScaleformUI.Scaleforms._ui:CallFunction("SET_PLAYERS_TAB_PLAYERS_QTTY", false, tab.PlayersColumn:CurrentSelection(), #tab.PlayersColumn.Items)
+
+        tab.PlayersColumn._isBuilding = false
     end)
 end
 
 function TabView:buildMissions(tab, tabIndex)
     Citizen.CreateThread(function()
-        local items = tab.MissionsColumn.Items
-        local it = 1
-        while it <= #items do
-            Citizen.Wait(0)
-            local item = items[it]
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_MISSIONS_ITEM", false,
-                tabIndex, 0, item.Label, item.MainColor, item.HighlightColor, item.LeftIcon, item.LeftIconColor, item.RightIcon, item.RightIconColor, item.RightIconChecked, item.enabled)
-            it = it + 1
+        tab.MissionsColumn._isBuilding = true
+        local i = 1
+        local max = tab.MissionsColumn.Pagination:ItemsPerPage()
+        if #tab.MissionsColumn.Items < max then
+            max = #tab.MissionsColumn.Items
         end
-        tab.MissionsColumn:CurrentSelection(0)
+        tab.MissionsColumn.Pagination:MinItem(tab.MissionsColumn.Pagination:CurrentPageStartIndex())
+
+        if tab.MissionsColumn.scrollingType == MenuScrollingType.CLASSIC and tab.MissionsColumn.Pagination:TotalPages() > 1 then
+            local missingItems = tab.MissionsColumn.Pagination:GetMissingItems()
+            if missingItems > 0 then
+                tab.MissionsColumn.Pagination:ScaleformIndex(tab.MissionsColumn.Pagination:GetPageIndexFromMenuIndex(tab.MissionsColumn.Pagination:CurrentPageEndIndex()) + missingItems - 1)
+                tab.MissionsColumn.Pagination.minItem = tab.MissionsColumn.Pagination:CurrentPageStartIndex() - missingItems
+            end
+        end
+
+        tab.MissionsColumn.Pagination:MaxItem(tab.MissionsColumn.Pagination:CurrentPageEndIndex())
+
+        while i <= max do
+            Citizen.Wait(0)
+            if not self:Visible() then return end
+            tab.MissionsColumn:_itemCreation(tab.MissionsColumn.Pagination:CurrentPage(), i, false, true)
+            i = i + 1
+        end
+
+        tab.MissionsColumn:CurrentSelection(1)
+        tab.MissionsColumn.Pagination:ScaleformIndex(tab.MissionsColumn.Pagination:GetScaleformIndex(tab.MissionsColumn:CurrentSelection()))
+        tab.MissionsColumn.Items[tab.MissionsColumn:CurrentSelection()]:Selected(false)
+
+        ScaleformUI.Scaleforms._ui:CallFunction("SET_PLAYERS_TAB_MISSIONS_SELECTION", false, tab.MissionsColumn.Pagination:GetScaleformIndex(tab.MissionsColumn.Pagination:CurrentMenuIndex()))
+        ScaleformUI.Scaleforms._ui:CallFunction("SET_PLAYERS_TAB_MISSIONS_QTTY", false, tab.MissionsColumn:CurrentSelection(), #tab.MissionsColumn.Items)
+
+        tab.MissionsColumn._isBuilding = false
     end)
 end
 
@@ -605,6 +632,19 @@ function TabView:GoBack()
 end
 
 function TabView:GoUp()
+    local tab = self.Tabs[self.index]
+    local _, subT = tab()
+    if subT == "PlayerListTab" then
+        if tab.listCol[tab:Focus()].Type == "players" then
+            tab.PlayersColumn:GoUp()
+        elseif tab.listCol[tab:Focus()].Type == "settings" then
+            tab.SettingsColumn:GoUp()
+        elseif tab.listCol[tab:Focus()].Type == "missions" then
+            tab.MissionsColumn:GoUp()
+        end
+        return
+    end
+    
     local return_value = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", true, 8) --[[@as number]]
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
@@ -612,21 +652,6 @@ function TabView:GoUp()
     local retVal = GetScaleformMovieMethodReturnValueInt(return_value)
     if retVal ~= -1 then
         if self:FocusLevel() == 1 then
-            local tab = self.Tabs[self.index]
-            local _, subT = tab()
-            if subT == "PlayerListTab" then
-                if tab.listCol[tab:Focus()].Type == "players" then
-                    tab.PlayersColumn:CurrentSelection(retVal)
-                    tab.PlayersColumn.OnIndexChanged(retVal)
-                elseif tab.listCol[tab:Focus()].Type == "settings" then
-                    tab.SettingsColumn:CurrentSelection(retVal)
-                    tab.SettingsColumn.OnIndexChanged(retVal)
-                elseif tab.listCol[tab:Focus()].Type == "missions" then
-                    tab.MissionsColumn:CurrentSelection(retVal)
-                    tab.MissionsColumn.OnIndexChanged(retVal)
-                end
-                return
-            end
             self:LeftItemIndex(retVal + 1)
         elseif self:FocusLevel() == 2 then
             self:RightItemIndex(retVal + 1)
@@ -635,6 +660,18 @@ function TabView:GoUp()
 end
 
 function TabView:GoDown()
+    local tab = self.Tabs[self.index]
+    local _, subT = tab()
+    if subT == "PlayerListTab" then
+        if tab.listCol[tab:Focus()].Type == "players" then
+            tab.PlayersColumn:GoDown()
+        elseif tab.listCol[tab:Focus()].Type == "settings" then
+            tab.SettingsColumn:GoDown()
+        elseif tab.listCol[tab:Focus()].Type == "missions" then
+            tab.MissionsColumn:GoDown()
+        end
+        return
+    end
     local return_value = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", true, 9) --[[@as number]]
     while not IsScaleformMovieMethodReturnValueReady(return_value) do
         Citizen.Wait(0)
@@ -642,21 +679,6 @@ function TabView:GoDown()
     local retVal = GetScaleformMovieMethodReturnValueInt(return_value)
     if retVal ~= -1 then
         if self:FocusLevel() == 1 then
-            local tab = self.Tabs[self.index]
-            local _, subT = tab()
-            if subT == "PlayerListTab" then
-                if tab.listCol[tab:Focus()].Type == "players" then
-                    tab.PlayersColumn:CurrentSelection(retVal)
-                    tab.PlayersColumn.OnIndexChanged(retVal)
-                elseif tab.listCol[tab:Focus()].Type == "settings" then
-                    tab.SettingsColumn:CurrentSelection(retVal)
-                    tab.SettingsColumn.OnIndexChanged(retVal)
-                elseif tab.listCol[tab:Focus()].Type == "missions" then
-                    tab.MissionsColumn:CurrentSelection(retVal)
-                    tab.MissionsColumn.OnIndexChanged(retVal)
-                end
-                return
-            end
             self:LeftItemIndex(retVal + 1)
         elseif self:FocusLevel() == 2 then
             self:RightItemIndex(retVal + 1)
@@ -930,13 +952,13 @@ function TabView:ProcessMouse()
                     if context+1 ~= foc then
                         tab.listCol[foc].Items[tab.listCol[foc]:CurrentSelection()]:Selected(false)
                         tab:UpdateFocus(context+1, true)
-                        tab.listCol[context+1]:CurrentSelection(item_id)
+                        tab.listCol[context+1]:CurrentSelection(tab.listCol[context+1].Pagination:GetMenuIndexFromScaleformIndex(item_id-1))
                         tab.listCol[context+1].OnIndexChanged(tab.listCol[context+1]:CurrentSelection())
                         if curSel ~= tab.listCol[context+1]:CurrentSelection() then
                             PlaySoundFrontend(-1, "NAV_UP_DOWN", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
                         end
                     else
-                        tab.listCol[foc]:CurrentSelection(item_id)
+                        tab.listCol[foc]:CurrentSelection(tab.listCol[context+1].Pagination:GetMenuIndexFromScaleformIndex(item_id-1))
                     end
                     if foc == tab:Focus() and curSel == tab.listCol[context+1]:CurrentSelection() then
                         self:Select()
@@ -1025,7 +1047,8 @@ function TabView:ProcessMouse()
                 end
             elseif event_type == 9 then
                 if subT == "PlayerListTab" then
-                    --tab.listCol[context+1].Items[item_id+1]:Hovered(true)
+                    local idx = tab.listCol[context+1].Pagination:GetMenuIndexFromScaleformIndex(item_id-1)
+                    tab.listCol[context+1].Items[idx]:Hovered(true)
                 else
                     if context == 1 then
                         for i, item in ipairs(tab.LeftItemList) do
@@ -1039,7 +1062,8 @@ function TabView:ProcessMouse()
                 end
             elseif event_type == 8 or event_type == 0 then
                 if subT == "PlayerListTab" then
-                    --tab.listCol[context+1].Items[item_id + 1]:Hovered(true)
+                    local idx = tab.listCol[context+1].Pagination:GetMenuIndexFromScaleformIndex(item_id-1)
+                    tab.listCol[context+1].Items[idx]:Hovered(false)
                 end
             end
         end

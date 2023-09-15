@@ -61,6 +61,8 @@ function FriendItem.New(label, itemColor, coloredTag, rank, status, crewTag)
     return setmetatable(_data, FriendItem)
 end
 
+--
+
 ---Sets the label of the item if supplied else it will return the current label.
 ---@param label string?
 ---@return string
@@ -68,7 +70,7 @@ function FriendItem:Label(label)
     if label ~= nil then
         self._label = label
         if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
-            local idx = IndexOf(self.ParentColumn.Items, self) - 1
+            local idx = self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self))
             local pSubT = self.ParentColumn.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_LABEL", false, idx, self._label)
@@ -89,7 +91,7 @@ function FriendItem:KeepPanelVisible(bool)
         end
         if self.ParentColumn.CurrentSelection() == IndexOf(self.ParentColumn.Items, self) then
             if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
-                local idx = IndexOf(self.ParentColumn.Items, self) - 1
+                local idx = self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self))
                 local pSubT = self.ParentColumn.Parent()
                 if pSubT == "LobbyMenu" then
                     self:AddPedToPauseMenu()
@@ -161,7 +163,7 @@ function FriendItem:ItemColor(color)
     if color ~= nil then
         self._itemColor = color
         if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
-            local idx = IndexOf(self.ParentColumn.Items, self) - 1
+            local idx = self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self))
             local pSubT = self.ParentColumn.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_COLOUR", false, idx,
@@ -182,7 +184,7 @@ function FriendItem:ColoredTag(enableColorTag)
     if enableColorTag ~= nil then
         self._coloredTag = enableColorTag
         if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
-            local idx = IndexOf(self.ParentColumn.Items, self) - 1
+            local idx = self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self))
             local pSubT = self.ParentColumn.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_COLOUR", false, idx,
@@ -203,7 +205,7 @@ function FriendItem:Rank(rank)
     if rank ~= nil then
         self._rank = rank
         if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
-            local idx = IndexOf(self.ParentColumn.Items, self) - 1
+            local idx = self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self))
             local pSubT = self.ParentColumn.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_RANK", false, idx, self._rank)
@@ -223,7 +225,7 @@ function FriendItem:Status(status)
     if status ~= nil then
         self._status = status
         if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
-            local idx = IndexOf(self.ParentColumn.Items, self) - 1
+            local idx = self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self))
             local pSubT = self.ParentColumn.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_STATUS", false, idx, self._status,
@@ -244,7 +246,7 @@ function FriendItem:StatusColor(color)
     if color ~= nil then
         self._statusColor = color
         if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
-            local idx = IndexOf(self.ParentColumn.Items, self) - 1
+            local idx = self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self))
             local pSubT = self.ParentColumn.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_STATUS", false, idx, self._status,
@@ -265,7 +267,7 @@ function FriendItem:CrewTag(tag)
     if tag ~= nil then
         self._crewTag = tag
         if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
-            local idx = IndexOf(self.ParentColumn.Items, self) - 1
+            local idx = self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self))
             local pSubT = self.ParentColumn.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_CREW", false, idx, self._crewTag)
@@ -285,7 +287,7 @@ function FriendItem:SetLeftIcon(icon, isBadge)
     self._iconL = icon;
     self._boolL = isBadge or false;
     if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
-        local idx = IndexOf(self.ParentColumn.Items, self) - 1
+        local idx = self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self))
         local pSubT = self.ParentColumn.Parent()
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_ICON_LEFT", false, idx, self._iconL,
@@ -304,7 +306,7 @@ function FriendItem:SetRightIcon(icon, isBadge)
     self._iconR = icon;
     self._boolR = isBadge or false;
     if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
-        local idx = IndexOf(self.ParentColumn.Items, self) - 1
+        local idx = self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self))
         local pSubT = self.ParentColumn.Parent()
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_ICON_RIGHT", false, idx, self._iconR,
