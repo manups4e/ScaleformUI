@@ -209,6 +209,17 @@
             return false;
         }
 
+        internal void Reset()
+        {
+            _currentPageIndex = 0;
+            _currentMenuIndex = 0;
+            currentPage = 0;
+            minItem = 0;
+            maxItem = 0;
+            totalItems = 0;
+            scaleformIndex = 0;
+        }
+
         public override string ToString()
         {
             string str = "";

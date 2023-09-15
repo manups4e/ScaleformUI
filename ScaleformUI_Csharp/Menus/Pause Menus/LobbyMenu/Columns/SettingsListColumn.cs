@@ -9,7 +9,6 @@ namespace ScaleformUI.LobbyMenu
     public class SettingsListColumn : Column
     {
         internal bool isBuilding = false;
-        private bool cleared = false;
         public event IndexChanged OnIndexChanged;
         public List<UIMenuItem> Items { get; internal set; }
         public ScrollingType ScrollingType { get => Pagination.scrollType; set => Pagination.scrollType = value; }
@@ -23,7 +22,7 @@ namespace ScaleformUI.LobbyMenu
                 scrollType = scrollType
             };
         }
-        public async void AddSettings(UIMenuItem item)
+        public void AddSettings(UIMenuItem item)
         {
             item.ParentColumn = this;
             Items.Add(item);
@@ -33,20 +32,12 @@ namespace ScaleformUI.LobbyMenu
                 if (Pagination.TotalItems < Pagination.ItemsPerPage)
                 {
                     int sel = CurrentSelection;
-                    if (Parent is MainView lobby) { }
-                    else if (Parent is TabView pause)
+                    _itemCreation(0, Items.Count - 1, false);
+                    if (Parent is TabView pause)
                     {
-                        int i = 0;
-                        int max = Pagination.TotalItems >= Pagination.ItemsPerPage ? Pagination.ItemsPerPage : Pagination.TotalItems;
-                        while (i < max)
-                        {
-                            await BaseScript.Delay(0);
-                            if (!Parent.Visible) return;
-                            _itemCreation(Pagination.CurrentPage, i, false);
-                            i++;
-                        }
+                        if ((pause.Tabs[ParentTab] as PlayerListTab).listCol[(pause.Tabs[ParentTab] as PlayerListTab).Focus] == this)
+                            CurrentSelection = sel;
                     }
-                    CurrentSelection = sel;
                 }
             }
         }
@@ -381,27 +372,30 @@ namespace ScaleformUI.LobbyMenu
                 {
                     Pagination.CurrentMenuIndex = Items.Count - 1;
                 }
-                Items[CurrentSelection].Selected = false;
-
-                Pagination.CurrentMenuIndex = value;
-                Pagination.CurrentPage = Pagination.GetPage(Pagination.CurrentMenuIndex);
-                Pagination.CurrentPageIndex = value;
-                Pagination.ScaleformIndex = Pagination.GetScaleformIndex(value);
-
-                if (Parent != null && Parent.Visible)
+                if (Pagination.TotalItems > 0)
                 {
-                    if (Parent is MainView lobby)
+                    Items[CurrentSelection].Selected = false;
+
+                    Pagination.CurrentMenuIndex = value;
+                    Pagination.CurrentPage = Pagination.GetPage(Pagination.CurrentMenuIndex);
+                    Pagination.CurrentPageIndex = value;
+                    Pagination.ScaleformIndex = Pagination.GetScaleformIndex(value);
+
+                    if (Parent != null && Parent.Visible)
                     {
-                        lobby._pause._lobby.CallFunction("SET_SETTINGS_SELECTION", Pagination.GetScaleformIndex(Pagination.CurrentMenuIndex));
-                        lobby._pause._lobby.CallFunction("SET_SETTINGS_QTTY", CurrentSelection + 1, Items.Count);
+                        if (Parent is MainView lobby)
+                        {
+                            lobby._pause._lobby.CallFunction("SET_SETTINGS_SELECTION", Pagination.GetScaleformIndex(Pagination.CurrentMenuIndex));
+                            lobby._pause._lobby.CallFunction("SET_SETTINGS_QTTY", CurrentSelection + 1, Items.Count);
+                        }
+                        else if (Parent is TabView pause)
+                        {
+                            pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", ParentTab, Pagination.GetScaleformIndex(Pagination.CurrentMenuIndex));
+                            pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", ParentTab, CurrentSelection + 1, Items.Count);
+                        }
                     }
-                    else if (Parent is TabView pause)
-                    {
-                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", ParentTab, Pagination.GetScaleformIndex(Pagination.CurrentMenuIndex));
-                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", ParentTab, CurrentSelection + 1, Items.Count);
-                    }
+                    Items[CurrentSelection].Selected = true;
                 }
-                Items[CurrentSelection].Selected = true;
             }
         }
 
@@ -489,14 +483,12 @@ namespace ScaleformUI.LobbyMenu
 
         public void Clear()
         {
-            Pagination.CurrentMenuIndex = 0;
             if (Parent is MainView lobby)
                 lobby._pause._lobby.CallFunction("CLEAR_SETTINGS_COLUMN");
             else if (Parent is TabView pause)
                 pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN", ParentTab);
             Items.Clear();
-            Pagination.TotalItems = Items.Count;
-            cleared = true;
+            Pagination.Reset();
         }
     }
 }
