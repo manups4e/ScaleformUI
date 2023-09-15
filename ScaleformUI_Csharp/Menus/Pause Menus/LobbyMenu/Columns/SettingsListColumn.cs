@@ -255,34 +255,39 @@ namespace ScaleformUI.LobbyMenu
             try
             {
                 Items[CurrentSelection].Selected = false;
-                bool overflow = CurrentSelection == 0 && Pagination.TotalPages > 1;
-                if (Pagination.GoUp())
+                do
                 {
-                    if (Pagination.scrollType == ScrollingType.ENDLESS || (Pagination.scrollType == ScrollingType.CLASSIC && !overflow))
+                    await BaseScript.Delay(0);
+                    bool overflow = CurrentSelection == 0 && Pagination.TotalPages > 1;
+                    if (Pagination.GoUp())
                     {
-                        _itemCreation(Pagination.GetPage(CurrentSelection), Pagination.CurrentPageIndex, true);
-                        if (Parent is MainView lobby)
-                            await lobby._pause._lobby.CallFunctionReturnValueInt("SET_INPUT_EVENT", 8, 100);
-                        else if (Parent is TabView pause)
-                            await pause._pause._pause.CallFunctionReturnValueInt("SET_INPUT_EVENT", 8, 100);
-                    }
-                    else if (Pagination.scrollType == ScrollingType.PAGINATED || (Pagination.scrollType == ScrollingType.CLASSIC && overflow))
-                    {
-                        if (Parent is MainView lobby)
-                            lobby._pause._lobby.CallFunction("CLEAR_SETTINGS_COLUMN");
-                        else if (Parent is TabView pause)
-                            pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN", ParentTab);
-                        int i = 0;
-                        int max = Pagination.ItemsPerPage;
-                        while (i < max)
+                        if (Pagination.scrollType == ScrollingType.ENDLESS || (Pagination.scrollType == ScrollingType.CLASSIC && !overflow))
                         {
-                            await BaseScript.Delay(0);
-                            if (!Parent.Visible) return;
-                            _itemCreation(Pagination.CurrentPage, i, false, true);
-                            i++;
+                            _itemCreation(Pagination.GetPage(CurrentSelection), Pagination.CurrentPageIndex, true);
+                            if (Parent is MainView lobby)
+                                await lobby._pause._lobby.CallFunctionReturnValueInt("SET_INPUT_EVENT", 8, 100);
+                            else if (Parent is TabView pause)
+                                await pause._pause._pause.CallFunctionReturnValueInt("SET_INPUT_EVENT", 8, 100);
+                        }
+                        else if (Pagination.scrollType == ScrollingType.PAGINATED || (Pagination.scrollType == ScrollingType.CLASSIC && overflow))
+                        {
+                            if (Parent is MainView lobby)
+                                lobby._pause._lobby.CallFunction("CLEAR_SETTINGS_COLUMN");
+                            else if (Parent is TabView pause)
+                                pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN", ParentTab);
+                            int i = 0;
+                            int max = Pagination.ItemsPerPage;
+                            while (i < max)
+                            {
+                                await BaseScript.Delay(0);
+                                if (!Parent.Visible) return;
+                                _itemCreation(Pagination.CurrentPage, i, false, true);
+                                i++;
+                            }
                         }
                     }
                 }
+                while (Items[CurrentSelection] is UIMenuSeparatorItem sp && sp.Jumpable);
 
                 if (Parent is MainView _lobby)
                 {
@@ -309,35 +314,39 @@ namespace ScaleformUI.LobbyMenu
             try
             {
                 Items[CurrentSelection].Selected = false;
-                bool overflow = CurrentSelection == Items.Count - 1 && Pagination.TotalPages > 1;
-                if (Pagination.GoDown())
+                do
                 {
-                    if (Pagination.scrollType == ScrollingType.ENDLESS || (Pagination.scrollType == ScrollingType.CLASSIC && !overflow))
+                    bool overflow = CurrentSelection == Items.Count - 1 && Pagination.TotalPages > 1;
+                    if (Pagination.GoDown())
                     {
-                        _itemCreation(Pagination.GetPage(CurrentSelection), Pagination.CurrentPageIndex, false);
-
-                        if (Parent is MainView lobby)
-                            lobby._pause._lobby.CallFunction("SET_INPUT_EVENT", 9, 100);
-                        else if (Parent is TabView pause)
-                            await pause._pause._pause.CallFunctionReturnValueInt("SET_INPUT_EVENT", 9, 100);
-                    }
-                    else if (Pagination.scrollType == ScrollingType.PAGINATED || (Pagination.scrollType == ScrollingType.CLASSIC && overflow))
-                    {
-                        if (Parent is MainView lobby)
-                            lobby._pause._lobby.CallFunction("CLEAR_SETTINGS_COLUMN");
-                        else if (Parent is TabView pause)
-                            pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN", ParentTab);
-                        int i = 0;
-                        int max = Pagination.ItemsPerPage;
-                        while (i < max)
+                        if (Pagination.scrollType == ScrollingType.ENDLESS || (Pagination.scrollType == ScrollingType.CLASSIC && !overflow))
                         {
-                            await BaseScript.Delay(0);
-                            if (!Parent.Visible) return;
-                            _itemCreation(Pagination.CurrentPage, i, false);
-                            i++;
+                            _itemCreation(Pagination.GetPage(CurrentSelection), Pagination.CurrentPageIndex, false);
+
+                            if (Parent is MainView lobby)
+                                lobby._pause._lobby.CallFunction("SET_INPUT_EVENT", 9, 100);
+                            else if (Parent is TabView pause)
+                                await pause._pause._pause.CallFunctionReturnValueInt("SET_INPUT_EVENT", 9, 100);
+                        }
+                        else if (Pagination.scrollType == ScrollingType.PAGINATED || (Pagination.scrollType == ScrollingType.CLASSIC && overflow))
+                        {
+                            if (Parent is MainView lobby)
+                                lobby._pause._lobby.CallFunction("CLEAR_SETTINGS_COLUMN");
+                            else if (Parent is TabView pause)
+                                pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN", ParentTab);
+                            int i = 0;
+                            int max = Pagination.ItemsPerPage;
+                            while (i < max)
+                            {
+                                await BaseScript.Delay(0);
+                                if (!Parent.Visible) return;
+                                _itemCreation(Pagination.CurrentPage, i, false);
+                                i++;
+                            }
                         }
                     }
                 }
+                while (Items[CurrentSelection] is UIMenuSeparatorItem sp && sp.Jumpable);
 
                 if (Parent is MainView _lobby)
                 {
