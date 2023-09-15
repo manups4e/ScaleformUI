@@ -404,6 +404,16 @@ namespace ScaleformUI.LobbyMenu
                         }
                     }
                     Items[CurrentSelection].Selected = true;
+                    if (Items[CurrentSelection] is UIMenuSeparatorItem jp)
+                    {
+                        if (jp.Jumpable)
+                            GoDown();
+                        else
+                        {
+                            if (Pagination.TotalItems == 1)
+                                Items[CurrentSelection].Selected = false;
+                        }
+                    }
                 }
             }
         }
