@@ -464,13 +464,13 @@ namespace ScaleformUI.LobbyMenu
                             switch (listCol[context].Type)
                             {
                                 case "settings":
-                                    SettingsColumn.Items[index].Hovered = false;
+                                    SettingsColumn.Items[itemId].Hovered = false;
                                     break;
                                 case "players":
-                                    PlayersColumn.Items[index].Hovered = false;
+                                    PlayersColumn.Items[itemId].Hovered = false;
                                     break;
                                 case "missions":
-                                    MissionsColumn.Items[index].Hovered = false;
+                                    MissionsColumn.Items[itemId].Hovered = false;
                                     break;
                             }
                         }
@@ -481,13 +481,13 @@ namespace ScaleformUI.LobbyMenu
                             switch (listCol[context].Type)
                             {
                                 case "settings":
-                                    SettingsColumn.Items[index].Hovered = true;
+                                    SettingsColumn.Items[itemId].Hovered = true;
                                     break;
                                 case "players":
-                                    PlayersColumn.Items[index].Hovered = true;
+                                    PlayersColumn.Items[itemId].Hovered = true;
                                     break;
                                 case "missions":
-                                    MissionsColumn.Items[index].Hovered = true;
+                                    MissionsColumn.Items[itemId].Hovered = true;
                                     break;
                             }
                         }
