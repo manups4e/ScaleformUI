@@ -8,6 +8,8 @@ namespace ScaleformUI.Scaleforms
         private int _start;
         private int _timer;
         private bool _hasAnimatedOut;
+        private HudColor outColor = HudColor.HUD_COLOUR_FREEMODE;
+        private float _animOutTime = 0.33f;
 
         public MediumMessageHandler() { }
 
@@ -27,12 +29,14 @@ namespace ScaleformUI.Scaleforms
             _sc = null;
         }
 
-        public async void ShowColoredShard(string msg, string desc, HudColor bgColor, bool useDarkerShard = false, bool useCondensedShard = false, int time = 5000)
+        public async void ShowColoredShard(string msg, string desc, HudColor bgColor, HudColor outColor = HudColor.HUD_COLOUR_FREEMODE, bool useDarkerShard = false, bool useCondensedShard = false, int time = 5000, float animTime = 0.33f)
         {
             await Load();
             _start = Main.GameTime;
             _sc.CallFunction("SHOW_SHARD_MIDSIZED_MESSAGE", msg, desc, (int)bgColor, useDarkerShard, useCondensedShard);
             _timer = time;
+            this.outColor = outColor;
+            _animOutTime = animTime;
             _hasAnimatedOut = false;
         }
 
@@ -43,11 +47,14 @@ namespace ScaleformUI.Scaleforms
             {
                 if (!_hasAnimatedOut)
                 {
-                    _sc.CallFunction("SHARD_ANIM_OUT", (int)HudColor.HUD_COLOUR_PURPLE, 750);
+                    _sc.CallFunction("SHARD_ANIM_OUT", (int)outColor, _animOutTime);
                     _hasAnimatedOut = true;
-                    _timer += 750;
+                    _timer += 2000;
                 }
-                else
+            }
+            else
+            {
+                if (_hasAnimatedOut && Main.GameTime - _start > (_timer + 2000))
                 {
                     Audio.PlaySoundFrontend("Shard_Disappear", "GTAO_FM_Events_Soundset");
                     _start = 0;
