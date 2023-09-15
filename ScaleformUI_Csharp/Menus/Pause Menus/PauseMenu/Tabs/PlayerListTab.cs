@@ -1,5 +1,4 @@
-﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
+﻿using CitizenFX.Core.Native;
 using ScaleformUI.LobbyMenu;
 
 namespace ScaleformUI.PauseMenu
@@ -61,7 +60,6 @@ namespace ScaleformUI.PauseMenu
                 int idx = await Parent._pause._pause.CallFunctionReturnValueInt("SET_PLAYERS_TAB_FOCUS", Parent.Tabs.IndexOf(this), focus);
                 if (!isMouse)
                 {
-                    Debug.WriteLine("Focus IDX: " + idx);
                     switch (listCol[Focus].Type)
                     {
                         case "players":
