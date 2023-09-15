@@ -388,7 +388,7 @@ namespace ScaleformUI.PauseMenu
             }
             tab.SettingsColumn.CurrentSelection = 0;
             tab.SettingsColumn.Pagination.ScaleformIndex = tab.SettingsColumn.Pagination.GetScaleformIndex(tab.SettingsColumn.CurrentSelection);
-            tab.SettingsColumn.Items[0].Selected = true;
+            tab.SettingsColumn.Items[0].Selected = false;
             _pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", tab_id, tab.SettingsColumn.Pagination.ScaleformIndex);
             _pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", tab_id, tab.SettingsColumn.CurrentSelection + 1, tab.SettingsColumn.Items.Count);
             tab.SettingsColumn.isBuilding = false;
@@ -423,7 +423,7 @@ namespace ScaleformUI.PauseMenu
             }
             tab.PlayersColumn.CurrentSelection = 0;
             tab.PlayersColumn.Pagination.ScaleformIndex = tab.PlayersColumn.Pagination.GetScaleformIndex(tab.PlayersColumn.CurrentSelection);
-            tab.PlayersColumn.Items[0].Selected = true;
+            tab.PlayersColumn.Items[0].Selected = false;
             _pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYERS_SELECTION", tab_id, tab.PlayersColumn.Pagination.ScaleformIndex);
             _pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYERS_QTTY", tab_id, tab.PlayersColumn.CurrentSelection + 1, tab.PlayersColumn.Items.Count);
             tab.PlayersColumn.isBuilding = false;
@@ -458,7 +458,7 @@ namespace ScaleformUI.PauseMenu
             }
             tab.MissionsColumn.CurrentSelection = 0;
             tab.MissionsColumn.Pagination.ScaleformIndex = tab.MissionsColumn.Pagination.GetScaleformIndex(tab.MissionsColumn.CurrentSelection);
-            tab.MissionsColumn.Items[0].Selected = true;
+            tab.MissionsColumn.Items[0].Selected = false;
             _pause._pause.CallFunction("SET_PLAYERS_TAB_MISSIONS_SELECTION", tab_id, tab.MissionsColumn.Pagination.ScaleformIndex);
             _pause._pause.CallFunction("SET_PLAYERS_TAB_MISSIONS_QTTY", tab_id, tab.MissionsColumn.CurrentSelection + 1, tab.MissionsColumn.Items.Count);
             tab.MissionsColumn.isBuilding = false;
