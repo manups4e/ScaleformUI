@@ -189,9 +189,8 @@ namespace ScaleformUI.PauseMenu
                 int tabIndex = Tabs.IndexOf(tab);
                 switch (tab)
                 {
-                    case TextTab:
+                    case TextTab simpleTab:
                         {
-                            TextTab simpleTab = tab as TextTab;
                             _pause.AddPauseMenuTab(tab.Title, 0, tab._type);
                             if (!string.IsNullOrWhiteSpace(simpleTab.TextTitle))
                                 _pause.AddRightTitle(tabIndex, 0, simpleTab.TextTitle);
