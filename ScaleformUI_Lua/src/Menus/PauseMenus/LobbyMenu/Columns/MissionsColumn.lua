@@ -123,7 +123,6 @@ function MissionListColumn:_itemCreation(page, pageIndex, before, overflow)
 
     local item = self.Items[menuIndex]
     local pSubT = self.Parent()
-    print(item.Label, item.MainColor, item.HighlightColor, item.LeftIcon, item.LeftIconColor, item.RightIcon, item.RightIconColor, item.RightIconChecked, item.enabled)
     if pSubT == "LobbyMenu" then
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_MISSIONS_ITEM", false, before, menuIndex, 0, item.Label, item.MainColor, item.HighlightColor, item.LeftIcon, item.LeftIconColor, item.RightIcon, item.RightIconColor, item.RightIconChecked, item.enabled)
     elseif pSubT == "PauseMenu" then
