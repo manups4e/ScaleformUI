@@ -620,7 +620,6 @@ namespace ScaleformUI.PauseMenu
                                     MissionItem mitem = plTab.MissionsColumn.Items[plTab.MissionsColumn.CurrentSelection];
                                     mitem.ActivateMission(plTab);
                                     break;
-
                             }
                         }
                     }
@@ -1280,13 +1279,13 @@ namespace ScaleformUI.PauseMenu
                                     switch (plTab.listCol[context].Type)
                                     {
                                         case "settings":
-                                            plTab.SettingsColumn.Items[index].Hovered = false;
+                                            plTab.SettingsColumn.Items[index].Hovered = true;
                                             break;
                                         case "players":
-                                            plTab.PlayersColumn.Items[index].Hovered = false;
+                                            plTab.PlayersColumn.Items[index].Hovered = true;
                                             break;
                                         case "missions":
-                                            plTab.MissionsColumn.Items[index].Hovered = false;
+                                            plTab.MissionsColumn.Items[index].Hovered = true;
                                             break;
                                     }
                                     return;
