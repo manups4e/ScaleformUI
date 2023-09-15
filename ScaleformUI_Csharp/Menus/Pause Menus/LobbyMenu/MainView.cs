@@ -1,4 +1,5 @@
 ﻿using CitizenFX.Core;
+using CitizenFX.Core.Native;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenus;
 using ScaleformUI.Scaleforms;
@@ -12,6 +13,14 @@ namespace ScaleformUI.LobbyMenu
     public class MainView : PauseMenuBase
     {
         // Button delay
+        public string AUDIO_LIBRARY = "HUD_FRONTEND_DEFAULT_SOUNDSET";
+
+        public string AUDIO_UPDOWN = "NAV_UP_DOWN";
+        public string AUDIO_LEFTRIGHT = "NAV_LEFT_RIGHT";
+        public string AUDIO_SELECT = "SELECT";
+        public string AUDIO_BACK = "BACK";
+        public string AUDIO_ERROR = "ERROR";
+        public bool ForceFirstSelectionOnFocus { get; set; }
         private int time;
         private bool _firstDrawTick = true;
         private int times;
@@ -107,46 +116,44 @@ namespace ScaleformUI.LobbyMenu
         private async void updateFocus(int value, bool isMouse = false)
         {
             bool goingLeft = value < focusLevel;
-            if (listCol[value].Type != "players")
+            int f = value;
+            if (f < 0)
+                f = listCol.Count - 1;
+            else if (f > listCol.Count - 1)
+                f = 0;
+            if (listCol[f].Type != "players")
             {
                 if (PlayersColumn != null && PlayersColumn.Items.Count > 0 && !PlayersColumn.Items[PlayersColumn.CurrentSelection].KeepPanelVisible)
-                    ClearPedInPauseMenu();
+                    API.ClearPedInPauseMenu();
             }
-            focusLevel = value;
-            if (_pause is not null)
+            focusLevel = f;
+            if (listCol[focusLevel].Type == "panel")
             {
-                if (focusLevel < 0)
-                    focusLevel = listCol.Count - 1;
-                else if (focusLevel > listCol.Count - 1)
-                    focusLevel = 0;
-                if (listCol[focusLevel].Type == "panel")
+                if (goingLeft)
+                    updateFocus(focusLevel - 1, isMouse);
+                else
+                    updateFocus(focusLevel + 1, isMouse);
+                return;
+            }
+            if (Visible)
+            {
+                int idx = await _pause._lobby.CallFunctionReturnValueInt("SET_FOCUS", focusLevel);
+                if (!isMouse)
                 {
-                    if (goingLeft)
-                        updateFocus(focusLevel - 1, isMouse);
-                    else
-                        updateFocus(focusLevel + 1, isMouse);
-                    return;
-                }
-                if (Visible)
-                {
-                    int idx = await _pause._lobby.CallFunctionReturnValueInt("SET_FOCUS", focusLevel);
-                    if (!isMouse)
+                    switch (listCol[FocusLevel].Type)
                     {
-                        switch (listCol[focusLevel].Type)
-                        {
-                            case "players":
-                                PlayersColumn.CurrentSelection = idx;
-                                PlayersColumn.IndexChangedEvent();
-                                break;
-                            case "settings":
-                                SettingsColumn.CurrentSelection = idx;
-                                SettingsColumn.IndexChangedEvent();
-                                break;
-                            case "missions":
-                                MissionsColumn.CurrentSelection = idx;
-                                MissionsColumn.IndexChangedEvent();
-                                break;
-                        }
+                        case "players":
+                            PlayersColumn.CurrentSelection = PlayersColumn.Pagination.GetMenuIndexFromScaleformIndex(ForceFirstSelectionOnFocus ? 0 : idx);
+                            PlayersColumn.IndexChangedEvent();
+                            break;
+                        case "settings":
+                            SettingsColumn.CurrentSelection = SettingsColumn.Pagination.GetMenuIndexFromScaleformIndex(ForceFirstSelectionOnFocus ? 0 : idx);
+                            SettingsColumn.IndexChangedEvent();
+                            break;
+                        case "missions":
+                            MissionsColumn.CurrentSelection = MissionsColumn.Pagination.GetMenuIndexFromScaleformIndex(ForceFirstSelectionOnFocus ? 0 : idx);
+                            MissionsColumn.IndexChangedEvent();
+                            break;
                     }
                 }
             }
@@ -249,6 +256,8 @@ namespace ScaleformUI.LobbyMenu
                 }
             }
 
+            while ((SettingsColumn != null && SettingsColumn.isBuilding) || (PlayersColumn != null && PlayersColumn.isBuilding) || (MissionsColumn != null && MissionsColumn.isBuilding)) await BaseScript.Delay(0);
+
             _pause._lobby.CallFunction("LOAD_MENU");
             await BaseScript.Delay(500);
             if (listCol[0].Type == "players" || (listCol.Any(x => x.Type == "players") && PlayersColumn.Items.Count > 0 && PlayersColumn.Items[0].KeepPanelVisible))
@@ -263,122 +272,76 @@ namespace ScaleformUI.LobbyMenu
         {
             if (SettingsColumn.Items.Count > 0)
             {
+                SettingsColumn.isBuilding = true;
                 int i = 0;
-                while (i < SettingsColumn.Items.Count)
+                int max = SettingsColumn.Pagination.ItemsPerPage;
+                if (SettingsColumn.Items.Count < max)
+                    max = SettingsColumn.Items.Count;
+
+                SettingsColumn.Pagination.MinItem = SettingsColumn.Pagination.CurrentPageStartIndex;
+                if (SettingsColumn.Pagination.scrollType == ScrollingType.CLASSIC && SettingsColumn.Pagination.TotalPages > 1)
                 {
-                    await BaseScript.Delay(1);
-                    if (!canBuild) break;
-                    UIMenuItem item = SettingsColumn.Items[i];
-                    int index = SettingsColumn.Items.IndexOf(item);
-                    AddTextEntry($"menu_lobby_desc_{index}", item.Description);
-                    BeginScaleformMovieMethod(_pause._lobby.Handle, "ADD_LEFT_ITEM");
-                    PushScaleformMovieFunctionParameterInt(item._itemId);
-                    PushScaleformMovieMethodParameterString(item._formatLeftLabel);
-                    if (item.DescriptionHash != 0 && string.IsNullOrWhiteSpace(item.Description))
+                    int missingItems = SettingsColumn.Pagination.GetMissingItems();
+                    if (missingItems > 0)
                     {
-                        BeginTextCommandScaleformString("STRTNM1");
-                        AddTextComponentSubstringTextLabelHashKey(item.DescriptionHash);
-                        EndTextCommandScaleformString_2();
+                        SettingsColumn.Pagination.ScaleformIndex = SettingsColumn.Pagination.GetPageIndexFromMenuIndex(SettingsColumn.Pagination.CurrentPageEndIndex) + missingItems;
+                        SettingsColumn.Pagination.MinItem = SettingsColumn.Pagination.CurrentPageStartIndex - missingItems;
                     }
-                    else
-                    {
-                        BeginTextCommandScaleformString($"menu_lobby_desc_{index}");
-                        EndTextCommandScaleformString_2();
-                    }
-                    PushScaleformMovieFunctionParameterBool(item.Enabled);
-                    PushScaleformMovieFunctionParameterBool(item.BlinkDescription);
-                    switch (item)
-                    {
-                        case UIMenuListItem:
-                            UIMenuListItem it = (UIMenuListItem)item;
-                            AddTextEntry($"listitem_lobby_{index}_list", string.Join(",", it.Items));
-                            BeginTextCommandScaleformString($"listitem_lobby_{index}_list");
-                            EndTextCommandScaleformString();
-                            PushScaleformMovieFunctionParameterInt(it.Index);
-                            PushScaleformMovieFunctionParameterInt((int)it.MainColor);
-                            PushScaleformMovieFunctionParameterInt((int)it.HighlightColor);
-                            PushScaleformMovieFunctionParameterInt((int)it.TextColor);
-                            PushScaleformMovieFunctionParameterInt((int)it.HighlightedTextColor);
-                            EndScaleformMovieMethod();
-                            break;
-                        case UIMenuCheckboxItem:
-                            UIMenuCheckboxItem check = (UIMenuCheckboxItem)item;
-                            PushScaleformMovieFunctionParameterInt((int)check.Style);
-                            PushScaleformMovieMethodParameterBool(check.Checked);
-                            PushScaleformMovieFunctionParameterInt((int)check.MainColor);
-                            PushScaleformMovieFunctionParameterInt((int)check.HighlightColor);
-                            PushScaleformMovieFunctionParameterInt((int)check.TextColor);
-                            PushScaleformMovieFunctionParameterInt((int)check.HighlightedTextColor);
-                            EndScaleformMovieMethod();
-                            break;
-                        case UIMenuSliderItem:
-                            UIMenuSliderItem prItem = (UIMenuSliderItem)item;
-                            PushScaleformMovieFunctionParameterInt(prItem._max);
-                            PushScaleformMovieFunctionParameterInt(prItem._multiplier);
-                            PushScaleformMovieFunctionParameterInt(prItem.Value);
-                            PushScaleformMovieFunctionParameterInt((int)prItem.MainColor);
-                            PushScaleformMovieFunctionParameterInt((int)prItem.HighlightColor);
-                            PushScaleformMovieFunctionParameterInt((int)prItem.TextColor);
-                            PushScaleformMovieFunctionParameterInt((int)prItem.HighlightedTextColor);
-                            PushScaleformMovieFunctionParameterInt((int)prItem.SliderColor);
-                            PushScaleformMovieFunctionParameterBool(prItem._heritage);
-                            EndScaleformMovieMethod();
-                            break;
-                        case UIMenuProgressItem:
-                            UIMenuProgressItem slItem = (UIMenuProgressItem)item;
-                            PushScaleformMovieFunctionParameterInt(slItem._max);
-                            PushScaleformMovieFunctionParameterInt(slItem._multiplier);
-                            PushScaleformMovieFunctionParameterInt(slItem.Value);
-                            PushScaleformMovieFunctionParameterInt((int)slItem.MainColor);
-                            PushScaleformMovieFunctionParameterInt((int)slItem.HighlightColor);
-                            PushScaleformMovieFunctionParameterInt((int)slItem.TextColor);
-                            PushScaleformMovieFunctionParameterInt((int)slItem.HighlightedTextColor);
-                            PushScaleformMovieFunctionParameterInt((int)slItem.SliderColor);
-                            EndScaleformMovieMethod();
-                            break;
-                        default:
-                            PushScaleformMovieFunctionParameterInt((int)item.MainColor);
-                            PushScaleformMovieFunctionParameterInt((int)item.HighlightColor);
-                            PushScaleformMovieFunctionParameterInt((int)item.TextColor);
-                            PushScaleformMovieFunctionParameterInt((int)item.HighlightedTextColor);
-                            EndScaleformMovieMethod();
-                            _pause._lobby.CallFunction("UPDATE_SETTINGS_ITEM_LABEL_RIGHT", index, item._formatRightLabel);
-                            if (item.RightBadge != BadgeIcon.NONE)
-                            {
-                                _pause._lobby.CallFunction("SET_SETTINGS_ITEM_RIGHT_BADGE", index, (int)item.RightBadge);
-                            }
-                            break;
-                    }
-                    _pause._lobby.CallFunction("SET_SETTINGS_ITEM_LABEL_FONT", index, item.labelFont.FontName, item.labelFont.FontID);
-                    _pause._lobby.CallFunction("SET_SETTINGS_ITEM_RIGHT_LABEL_FONT", index, item.rightLabelFont.FontName, item.rightLabelFont.FontID);
-                    if (item.LeftBadge != BadgeIcon.NONE)
-                        _pause._lobby.CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", index, (int)item.LeftBadge);
+                }
+                SettingsColumn.Pagination.MaxItem = SettingsColumn.Pagination.CurrentPageEndIndex;
+
+                while (i < max)
+                {
+                    await BaseScript.Delay(0);
+                    if (!Visible) return;
+                    SettingsColumn._itemCreation(SettingsColumn.Pagination.CurrentPage, i, false, true);
                     i++;
                 }
                 SettingsColumn.CurrentSelection = 0;
+                SettingsColumn.Pagination.ScaleformIndex = SettingsColumn.Pagination.GetScaleformIndex(SettingsColumn.CurrentSelection);
+                SettingsColumn.Items[0].Selected = true;
+                _pause._pause.CallFunction("SET_SETTINGS_SELECTION", SettingsColumn.Pagination.ScaleformIndex);
+                _pause._pause.CallFunction("SET_SETTINGS_QTTY", SettingsColumn.CurrentSelection + 1, SettingsColumn.Items.Count);
+                SettingsColumn.isBuilding = false;
             }
+
         }
 
         private async void buildPlayers()
         {
             if (PlayersColumn.Items.Count > 0)
             {
+                PlayersColumn.isBuilding = true;
                 int i = 0;
-                while (i < PlayersColumn.Items.Count)
+                int max = PlayersColumn.Pagination.ItemsPerPage;
+                if (PlayersColumn.Items.Count < max)
+                    max = PlayersColumn.Items.Count;
+
+                PlayersColumn.Pagination.MinItem = PlayersColumn.Pagination.CurrentPageStartIndex;
+                if (PlayersColumn.Pagination.scrollType == ScrollingType.CLASSIC && PlayersColumn.Pagination.TotalPages > 1)
                 {
-                    LobbyItem item = PlayersColumn.Items[i];
-                    int index = PlayersColumn.Items.IndexOf(item);
-                    switch (item)
+                    int missingItems = PlayersColumn.Pagination.GetMissingItems();
+                    if (missingItems > 0)
                     {
-                        case FriendItem:
-                            FriendItem fi = (FriendItem)item;
-                            _pause._lobby.CallFunction("ADD_PLAYER_ITEM", 1, 1, fi.Label, (int)fi.ItemColor, fi.ColoredTag, fi.iconL, fi.boolL, fi.iconR, fi.boolR, fi.Status, (int)fi.StatusColor, fi.Rank, fi.CrewTag, fi.KeepPanelVisible);
-                            break;
+                        PlayersColumn.Pagination.ScaleformIndex = PlayersColumn.Pagination.GetPageIndexFromMenuIndex(PlayersColumn.Pagination.CurrentPageEndIndex) + missingItems;
+                        PlayersColumn.Pagination.MinItem = PlayersColumn.Pagination.CurrentPageStartIndex - missingItems;
                     }
-                    item.Panel?.UpdatePanel(true);
+                }
+                PlayersColumn.Pagination.MaxItem = PlayersColumn.Pagination.CurrentPageEndIndex;
+
+                while (i < max)
+                {
+                    await BaseScript.Delay(0);
+                    if (!Visible) return;
+                    PlayersColumn._itemCreation(PlayersColumn.Pagination.CurrentPage, i, false, true);
                     i++;
                 }
                 PlayersColumn.CurrentSelection = 0;
+                PlayersColumn.Pagination.ScaleformIndex = PlayersColumn.Pagination.GetScaleformIndex(PlayersColumn.CurrentSelection);
+                PlayersColumn.Items[0].Selected = true;
+                _pause._pause.CallFunction("SET_PLAYERS_SELECTION", PlayersColumn.Pagination.ScaleformIndex);
+                _pause._pause.CallFunction("SET_PLAYERS_QTTY", PlayersColumn.CurrentSelection + 1, PlayersColumn.Items.Count);
+                PlayersColumn.isBuilding = false;
             }
         }
 
@@ -386,14 +349,37 @@ namespace ScaleformUI.LobbyMenu
         {
             if (MissionsColumn.Items.Count > 0)
             {
+                MissionsColumn.isBuilding = true;
                 int i = 0;
-                while (i < MissionsColumn.Items.Count)
+                int max = MissionsColumn.Pagination.ItemsPerPage;
+                if (MissionsColumn.Items.Count < max)
+                    max = MissionsColumn.Items.Count;
+
+                MissionsColumn.Pagination.MinItem = MissionsColumn.Pagination.CurrentPageStartIndex;
+                if (MissionsColumn.Pagination.scrollType == ScrollingType.CLASSIC && MissionsColumn.Pagination.TotalPages > 1)
                 {
-                    MissionItem item = MissionsColumn.Items[i];
-                    _pause._lobby.CallFunction("ADD_MISSIONS_ITEM", 0, item.Label, (int)item.MainColor, (int)item.HighlightColor, (int)item.LeftIcon, (int)item.LeftIconColor, (int)item.RightIcon, (int)item.RightIconColor, item.RightIconChecked, item.Enabled);
+                    int missingItems = MissionsColumn.Pagination.GetMissingItems();
+                    if (missingItems > 0)
+                    {
+                        MissionsColumn.Pagination.ScaleformIndex = MissionsColumn.Pagination.GetPageIndexFromMenuIndex(MissionsColumn.Pagination.CurrentPageEndIndex) + missingItems;
+                        MissionsColumn.Pagination.MinItem = MissionsColumn.Pagination.CurrentPageStartIndex - missingItems;
+                    }
+                }
+                MissionsColumn.Pagination.MaxItem = MissionsColumn.Pagination.CurrentPageEndIndex;
+
+                while (i < max)
+                {
+                    await BaseScript.Delay(0);
+                    if (!Visible) return;
+                    MissionsColumn._itemCreation(MissionsColumn.Pagination.CurrentPage, i, false, true);
                     i++;
                 }
                 MissionsColumn.CurrentSelection = 0;
+                MissionsColumn.Pagination.ScaleformIndex = MissionsColumn.Pagination.GetScaleformIndex(MissionsColumn.CurrentSelection);
+                MissionsColumn.Items[0].Selected = true;
+                _pause._pause.CallFunction("SET_MISSIONS_SELECTION", MissionsColumn.Pagination.ScaleformIndex);
+                _pause._pause.CallFunction("SET_MISSIONS_QTTY", MissionsColumn.CurrentSelection + 1, MissionsColumn.Items.Count);
+                MissionsColumn.isBuilding = false;
             }
 
         }
@@ -434,90 +420,76 @@ namespace ScaleformUI.LobbyMenu
                 switch (eventType)
                 {
                     case 5:
-                        if (FocusLevel != context) { }
-                        updateFocus(context, true);
-                        switch (listCol[context])
                         {
-                            case SettingsListColumn:
-                                {
-                                    ClearPedInPauseMenu();
-                                    SettingsListColumn col = listCol[context] as SettingsListColumn;
-                                    if (PlayersColumn != null && PlayersColumn.Items.Count > 0)
-                                        foreach (LobbyItem p in PlayersColumn.Items) p.Selected = false;
-                                    if (MissionsColumn != null && MissionsColumn.Items.Count > 0)
-                                        foreach (MissionItem p in MissionsColumn.Items) p.Selected = false;
+                            int foc = FocusLevel;
+                            int curSel = 0;
+                            switch (listCol[foc].Type)
+                            {
+                                case "settings":
+                                    curSel = SettingsColumn.CurrentSelection;
+                                    SettingsColumn.Items[SettingsColumn.CurrentSelection].Selected = false;
+                                    break;
+                                case "players":
+                                    curSel = PlayersColumn.CurrentSelection;
+                                    PlayersColumn.Items[PlayersColumn.CurrentSelection].Selected = false;
+                                    break;
+                                case "missions":
+                                    curSel = MissionsColumn.CurrentSelection;
+                                    MissionsColumn.Items[MissionsColumn.CurrentSelection].Selected = false;
+                                    break;
+                            }
+                            updateFocus(context, true);
+                            int index = listCol[FocusLevel].Pagination.GetMenuIndexFromScaleformIndex(itemId);
+                            switch (listCol[FocusLevel].Type)
+                            {
+                                case "settings":
+                                    SettingsColumn.CurrentSelection = index;
+                                    break;
+                                case "players":
+                                    PlayersColumn.CurrentSelection = index;
+                                    break;
+                                case "missions":
+                                    MissionsColumn.CurrentSelection = index;
+                                    break;
+                            }
+                            if (curSel != index) Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
 
-                                    if (!col.Items[col.CurrentSelection].Enabled)
-                                    {
-                                        Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
-                                        return;
-                                    }
-                                    if (col.Items[itemId].Selected)
-                                    {
-                                        BeginScaleformMovieMethod(_pause._lobby.Handle, "SET_INPUT_EVENT");
-                                        ScaleformMovieMethodAddParamInt(16);
-                                        EndScaleformMovieMethod();
-                                        UIMenuItem item = col.Items[itemId];
-                                        switch (item)
-                                        {
-                                            case UIMenuCheckboxItem:
-                                                UIMenuCheckboxItem cbIt = item as UIMenuCheckboxItem;
-                                                cbIt.Checked = !cbIt.Checked;
-                                                cbIt.CheckboxEventTrigger();
-                                                break;
-                                            default:
-                                                item.ItemActivate(null);
-                                                break;
-                                        }
-                                        return;
-                                    }
-                                    col.CurrentSelection = itemId;
-                                }
-                                break;
-                            case PlayerListColumn:
-                                {
-                                    PlayerListColumn col = listCol[context] as PlayerListColumn;
-                                    if (MissionsColumn != null && MissionsColumn.Items.Count > 0)
-                                        foreach (MissionItem p in MissionsColumn.Items) p.Selected = false;
-                                    if (SettingsColumn != null && SettingsColumn.Items.Count > 0)
-                                        foreach (UIMenuItem p in SettingsColumn.Items) p.Selected = false;
-                                    if (!col.Items[col.CurrentSelection].Enabled)
-                                    {
-                                        Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
-                                        return;
-                                    }
-                                    if (col.Items[itemId].Selected)
-                                    {
-                                        // code here
-                                        return;
-                                    }
-                                    col.CurrentSelection = itemId;
-                                    if (col.Items[itemId].ClonePed != null)
-                                    {
-                                        col.Items[itemId].CreateClonedPed();
-                                    }
-                                    else ClearPedInPauseMenu();
-                                }
-                                break;
-                            case MissionsListColumn:
-                                {
-                                    ClearPedInPauseMenu();
-                                    MissionsListColumn col = listCol[context] as MissionsListColumn;
-                                    if (PlayersColumn != null && PlayersColumn.Items.Count > 0)
-                                        foreach (LobbyItem p in PlayersColumn.Items) p.Selected = false;
-                                    if (!col.Items[col.CurrentSelection].Enabled)
-                                    {
-                                        Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
-                                        return;
-                                    }
-                                    if (col.Items[itemId].Selected)
-                                    {
-                                        // code here
-                                        return;
-                                    }
-                                    col.CurrentSelection = itemId;
-                                }
-                                break;
+                            if (foc == FocusLevel && curSel == index)
+                                Select();
+                        }
+                        break;
+                    case 8:
+                        {
+                            int index = listCol[context].Pagination.GetMenuIndexFromScaleformIndex(itemId);
+                            switch (listCol[context].Type)
+                            {
+                                case "settings":
+                                    SettingsColumn.Items[index].Hovered = false;
+                                    break;
+                                case "players":
+                                    PlayersColumn.Items[index].Hovered = false;
+                                    break;
+                                case "missions":
+                                    MissionsColumn.Items[index].Hovered = false;
+                                    break;
+                            }
+                        }
+                        break;
+                    case 9:
+                        {
+                            int index = listCol[context].Pagination.GetMenuIndexFromScaleformIndex(itemId);
+                            switch (listCol[context].Type)
+                            {
+                                case "settings":
+                                    SettingsColumn.Items[index].Hovered = true;
+                                    break;
+                                case "players":
+                                    PlayersColumn.Items[index].Hovered = true;
+                                    break;
+                                case "missions":
+                                    MissionsColumn.Items[index].Hovered = true;
+                                    break;
+                            }
                         }
                         break;
                 }
@@ -623,9 +595,10 @@ namespace ScaleformUI.LobbyMenu
                         break;
                 }
             }
-            else if (FocusLevel == PlayersColumn.Order)
+            else if (FocusLevel == MissionsColumn.Order)
             {
-
+                MissionItem item = MissionsColumn.Items[MissionsColumn.CurrentSelection];
+                item.ActivateMission(null);
             }
         }
 
@@ -637,49 +610,22 @@ namespace ScaleformUI.LobbyMenu
 
         public async void GoUp()
         {
-            string result = await _pause._lobby.CallFunctionReturnValueString("SET_INPUT_EVENT", 8);
-
-            int[] split = result.Split(',').Select(int.Parse).ToArray();
-            Debug.WriteLine(string.Join(", ", split));
-            //updateFocus(split[0]);
-            if (listCol[FocusLevel] is SettingsListColumn)
-            {
-                SettingsColumn.CurrentSelection = split[1];
-                SettingsColumn.IndexChangedEvent();
-            }
-            else if (listCol[FocusLevel] is MissionsListColumn)
-            {
-                MissionsColumn.CurrentSelection = split[1];
-                MissionsColumn.IndexChangedEvent();
-            }
-            else if (listCol[FocusLevel] is PlayerListColumn)
-            {
-                PlayersColumn.CurrentSelection = split[1];
-                PlayersColumn.IndexChangedEvent();
-            }
+            if (listCol[FocusLevel].Type == "settings")
+                SettingsColumn.GoUp();
+            else if (listCol[FocusLevel].Type == "missions")
+                MissionsColumn.GoUp();
+            else if (listCol[FocusLevel].Type == "players")
+                PlayersColumn.GoUp();
         }
 
         public async void GoDown()
         {
-            string result = await _pause._lobby.CallFunctionReturnValueString("SET_INPUT_EVENT", 9);
-
-            int[] split = result.Split(',').Select(int.Parse).ToArray();
-            //updateFocus(split[0]);
-            if (listCol[FocusLevel] is SettingsListColumn)
-            {
-                SettingsColumn.CurrentSelection = split[1];
-                SettingsColumn.IndexChangedEvent();
-            }
-            else if (listCol[FocusLevel] is MissionsListColumn)
-            {
-                MissionsColumn.CurrentSelection = split[1];
-                MissionsColumn.IndexChangedEvent();
-            }
-            else if (listCol[FocusLevel] is PlayerListColumn)
-            {
-                PlayersColumn.CurrentSelection = split[1];
-                PlayersColumn.IndexChangedEvent();
-            }
+            if (listCol[FocusLevel].Type == "settings")
+                SettingsColumn.GoDown();
+            else if (listCol[FocusLevel].Type == "missions")
+                MissionsColumn.GoDown();
+            else if (listCol[FocusLevel].Type == "players")
+                PlayersColumn.GoDown();
         }
 
         public async void GoLeft()
