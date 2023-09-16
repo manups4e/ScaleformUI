@@ -1,5 +1,6 @@
 ﻿using ScaleformUI.Menu;
 using ScaleformUI.PauseMenu;
+using ScaleformUI.PauseMenus;
 using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI.LobbyMenu
@@ -26,7 +27,7 @@ namespace ScaleformUI.LobbyMenu
         private int rank;
         private string status;
         private HudColor statusColor = HudColor.NONE;
-        private string crewTag;
+        private CrewTag crewTag;
         internal int iconL;
         internal int iconR;
         internal bool boolL;
@@ -129,24 +130,26 @@ namespace ScaleformUI.LobbyMenu
                 }
             }
         }
-        public string CrewTag
+        public CrewTag CrewTag
         {
             get => crewTag;
             set
             {
                 crewTag = value;
+                if (crewTag == null)
+                    crewTag = new CrewTag();
                 if (ParentColumn is not null && ParentColumn.Parent is not null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
                 {
                     int idx = ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this));
                     if (ParentColumn.Parent is MainView lobby)
-                        lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_CREW", idx, crewTag);
+                        lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_CREW", idx, crewTag.TAG);
                     else if (ParentColumn.Parent is TabView pause)
-                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_CREW", ParentColumn.ParentTab, idx, crewTag);
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_CREW", ParentColumn.ParentTab, idx, crewTag.TAG);
                 }
             }
         }
 
-        public FriendItem(string label, HudColor itemColor, bool coloredTag, int rank, string status = "", string crewTag = "")
+        public FriendItem(string label, HudColor itemColor, bool coloredTag, int rank, string status = "", CrewTag crewTag = default)
         {
             _type = 1;
             this.label = label;
@@ -224,6 +227,5 @@ namespace ScaleformUI.LobbyMenu
             this.Panel = panel;
             Panel.UpdatePanel();
         }
-
     }
 }

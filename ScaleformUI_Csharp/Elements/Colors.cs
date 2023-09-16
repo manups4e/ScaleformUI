@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using CitizenFX.Core.Native;
+using ScaleformUI.Scaleforms;
+using System.Drawing;
 
 namespace ScaleformUI.Elements
 {
@@ -412,6 +414,20 @@ namespace ScaleformUI.Elements
             "~PAD_RSTICK_LEFTRIGHT",
             "~PAD_RSTICK_ROTATE"
         };
+
+        public static Color HudColorToColor(this HudColor color)
+        {
+            int r = 0, g = 0, b = 0, a = 0;
+            API.GetHudColour((int)color, ref r, ref g, ref b, ref a);
+            return Color.FromArgb(a, r, g, b);
+        }
+
+        public static string HudColorToHex(this HudColor color)
+        {
+            int r = 0, g = 0, b = 0, a = 0;
+            API.GetHudColour((int)color, ref r, ref g, ref b, ref a);
+            return $"#{r:X2}{g:X2}{b:X2}";
+        }
 
         public static string ReplaceRstarColorsWith(this string label, string color)
         {

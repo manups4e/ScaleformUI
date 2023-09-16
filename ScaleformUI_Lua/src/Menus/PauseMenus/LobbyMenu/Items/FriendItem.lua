@@ -11,7 +11,7 @@ end
 ---@field public Rank number
 ---@field public Status string
 ---@field public StatusColor number
----@field public CrewTag string
+---@field public CrewTag CrewTag
 ---@field public _iconL number
 ---@field public _iconR number
 ---@field public _boolL boolean
@@ -47,7 +47,7 @@ function FriendItem.New(label, itemColor, coloredTag, rank, status, crewTag)
         _rank = rank or 0,
         _status = status or "",
         _statusColor = itemColor,
-        _crewTag = crewTag or "",
+        _crewTag = crewTag or CrewTag.New(),
         _iconL = 0,
         _iconR = 65,
         _boolL = false,
@@ -261,7 +261,7 @@ function FriendItem:StatusColor(color)
 end
 
 ---Sets the crew tag of the item if supplied else it will return the current crew tag.
----@param tag string?
+---@param tag CrewTag?
 ---@return string
 function FriendItem:CrewTag(tag)
     if tag ~= nil then
@@ -270,10 +270,10 @@ function FriendItem:CrewTag(tag)
             local idx = self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self))
             local pSubT = self.ParentColumn.Parent()
             if pSubT == "LobbyMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_CREW", false, idx, self._crewTag)
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_CREW", false, idx, self._crewTag.TAG)
             elseif pSubT == "PauseMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_CREW", false,
-                    self.ParentColumn.ParentTab, idx, self._crewTag)
+                    self.ParentColumn.ParentTab, idx, self._crewTag.TAG)
             end
         end
     end

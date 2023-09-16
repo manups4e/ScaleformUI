@@ -6,6 +6,7 @@ using ScaleformUI.Elements;
 using ScaleformUI.LobbyMenu;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenu;
+using ScaleformUI.PauseMenus;
 using ScaleformUI.Radial;
 using ScaleformUI.Radio;
 using ScaleformUI.Scaleforms;
@@ -1193,8 +1194,8 @@ public class MenuExample : BaseScript
         List<Column> columns = new List<Column>()
         {
             new SettingsListColumn("COLUMN SETTINGS", HudColor.HUD_COLOUR_RED), // color will be ignored for PauseMenu
-            //new PlayerListColumn("COLUMN PLAYERS", HudColor.HUD_COLOUR_ORANGE), // color will be ignored for PauseMenu
-            new MissionsListColumn("COLUMN MISSIONS", HudColor.HUD_COLOUR_ORANGE), // color will be ignored for PauseMenu
+            new PlayerListColumn("COLUMN PLAYERS", HudColor.HUD_COLOUR_ORANGE), // color will be ignored for PauseMenu
+            //new MissionsListColumn("COLUMN MISSIONS", HudColor.HUD_COLOUR_ORANGE), // color will be ignored for PauseMenu
             new MissionDetailsPanel("COLUMN INFO PANEL", HudColor.HUD_COLOUR_GREEN), // color will be ignored for PauseMenu
         };
         playersTab.SetUpColumns(columns);
@@ -1247,13 +1248,20 @@ public class MenuExample : BaseScript
         playersTab.MissionPanel.AddItem(missionItem2);
         playersTab.MissionPanel.AddItem(missionItem3);
 
-
         /*
-        FriendItem friend = new FriendItem(Game.Player.Name + " #1", HudColor.HUD_COLOUR_GREEN, true, API.GetRandomIntInRange(15, 55), "Online", "CrewTag");
-        FriendItem friend2 = new FriendItem(Game.Player.Name + " #2", HudColor.HUD_COLOUR_PINK, true, API.GetRandomIntInRange(15, 55), "Offline", "CrewTag");
-        FriendItem friend3 = new FriendItem(Game.Player.Name + " #3", HudColor.HUD_COLOUR_BLUE, true, API.GetRandomIntInRange(15, 55), "Online", "CrewTag");
-        FriendItem friend4 = new FriendItem(Game.Player.Name + " #4", HudColor.HUD_COLOUR_ORANGE, true, API.GetRandomIntInRange(15, 55), "Offline", "CrewTag");
-        FriendItem friend5 = new FriendItem(Game.Player.Name + " #5", HudColor.HUD_COLOUR_RED, true, API.GetRandomIntInRange(15, 55), "Busy", "CrewTag");
+
+
+        CrewTag crew1 = new CrewTag("hello", false, false, CrewHierarchy.Leader, HudColor.HUD_COLOUR_GREEN);
+        CrewTag crew2 = new CrewTag("evry1", false, false, CrewHierarchy.Commissioner, HudColor.HUD_COLOUR_PINK);
+        CrewTag crew3 = new CrewTag("look", false, false, CrewHierarchy.Liutenant, HudColor.HUD_COLOUR_BLUE);
+        CrewTag crew4 = new CrewTag("at", false, false, CrewHierarchy.Representative, HudColor.HUD_COLOUR_ORANGE);
+        CrewTag crew5 = new CrewTag("this", false, false, CrewHierarchy.Muscle, HudColor.HUD_COLOUR_RED);
+
+        FriendItem friend = new FriendItem(Game.Player.Name + " #1", HudColor.HUD_COLOUR_GREEN, true, API.GetRandomIntInRange(15, 55), "Online", crew1);
+        FriendItem friend2 = new FriendItem(Game.Player.Name + " #2", HudColor.HUD_COLOUR_PINK, true, API.GetRandomIntInRange(15, 55), "Offline", crew2);
+        FriendItem friend3 = new FriendItem(Game.Player.Name + " #3", HudColor.HUD_COLOUR_BLUE, true, API.GetRandomIntInRange(15, 55), "Online", crew3);
+        FriendItem friend4 = new FriendItem(Game.Player.Name + " #4", HudColor.HUD_COLOUR_ORANGE, true, API.GetRandomIntInRange(15, 55), "Offline", crew4);
+        FriendItem friend5 = new FriendItem(Game.Player.Name + " #5", HudColor.HUD_COLOUR_RED, true, API.GetRandomIntInRange(15, 55), "Busy", crew5);
 
         friend.ClonePed = Game.PlayerPed;
         friend2.ClonePed = Game.PlayerPed;
@@ -1359,7 +1367,6 @@ public class MenuExample : BaseScript
         panel5.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
         friend5.AddPanel(panel5);
         */
-
         pauseMenu.OnPauseMenuOpen += (menu) =>
         {
             Screen.ShowSubtitle(menu.Title + " Opened!");
@@ -1489,11 +1496,17 @@ public class MenuExample : BaseScript
             Screen.ShowSubtitle($"~y~ {item.Label} ~s~~w~ has been selected!");
         };
 
-        FriendItem friend = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_GREEN, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
-        FriendItem friend2 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_PINK, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
-        FriendItem friend3 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_BLUE, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
-        FriendItem friend4 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_ORANGE, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
-        FriendItem friend5 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_RED, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+        CrewTag crew1 = new CrewTag("hello", false, false, CrewHierarchy.Leader, HudColor.HUD_COLOUR_GREEN);
+        CrewTag crew2 = new CrewTag("evry1", false, false, CrewHierarchy.Commissioner, HudColor.HUD_COLOUR_PINK);
+        CrewTag crew3 = new CrewTag("look", false, false, CrewHierarchy.Liutenant, HudColor.HUD_COLOUR_BLUE);
+        CrewTag crew4 = new CrewTag("at", false, false, CrewHierarchy.Representative, HudColor.HUD_COLOUR_ORANGE);
+        CrewTag crew5 = new CrewTag("this", false, false, CrewHierarchy.Muscle, HudColor.HUD_COLOUR_RED);
+
+        FriendItem friend = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_GREEN, true, API.GetRandomIntInRange(15, 55), "Status", crew1);
+        FriendItem friend2 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_PINK, true, API.GetRandomIntInRange(15, 55), "Status", crew2);
+        FriendItem friend3 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_BLUE, true, API.GetRandomIntInRange(15, 55), "Status", crew3);
+        FriendItem friend4 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_ORANGE, true, API.GetRandomIntInRange(15, 55), "Status", crew4);
+        FriendItem friend5 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_RED, true, API.GetRandomIntInRange(15, 55), "Status", crew5);
 
         friend.SetLeftIcon(LobbyBadgeIcon.IS_CONSOLE_PLAYER);
         friend2.SetLeftIcon(LobbyBadgeIcon.SPECTATOR);
