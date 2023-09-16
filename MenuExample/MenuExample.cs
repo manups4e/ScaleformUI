@@ -1194,8 +1194,8 @@ public class MenuExample : BaseScript
         List<Column> columns = new List<Column>()
         {
             new SettingsListColumn("COLUMN SETTINGS", HudColor.HUD_COLOUR_RED), // color will be ignored for PauseMenu
-            new PlayerListColumn("COLUMN PLAYERS", HudColor.HUD_COLOUR_ORANGE), // color will be ignored for PauseMenu
-            //new MissionsListColumn("COLUMN MISSIONS", HudColor.HUD_COLOUR_ORANGE), // color will be ignored for PauseMenu
+            //new PlayerListColumn("COLUMN PLAYERS", HudColor.HUD_COLOUR_ORANGE), // color will be ignored for PauseMenu
+            new MissionsListColumn("COLUMN MISSIONS", HudColor.HUD_COLOUR_ORANGE), // color will be ignored for PauseMenu
             new MissionDetailsPanel("COLUMN INFO PANEL", HudColor.HUD_COLOUR_GREEN), // color will be ignored for PauseMenu
         };
         playersTab.SetUpColumns(columns);
@@ -1249,8 +1249,6 @@ public class MenuExample : BaseScript
         playersTab.MissionPanel.AddItem(missionItem3);
 
         /*
-
-
         CrewTag crew1 = new CrewTag("hello", false, false, CrewHierarchy.Leader, HudColor.HUD_COLOUR_GREEN);
         CrewTag crew2 = new CrewTag("evry1", false, false, CrewHierarchy.Commissioner, HudColor.HUD_COLOUR_PINK);
         CrewTag crew3 = new CrewTag("look", false, false, CrewHierarchy.Liutenant, HudColor.HUD_COLOUR_BLUE);
