@@ -78,6 +78,7 @@ namespace ScaleformUI.LobbyMenu
                 UpdatePanel();
             }
         }
+        public bool HardwareVisible { get; set; } = true;
         public List<PlayerStatsPanelStatItem> Items { get; private set; }
         public PlayerStatsPanel(string title, HudColor titleColor)
         {
@@ -103,7 +104,7 @@ namespace ScaleformUI.LobbyMenu
                 int idx = ParentItem.ParentColumn.Pagination.GetScaleformIndex(ParentItem.ParentColumn.Items.IndexOf(ParentItem));
                 if (ParentItem.ParentColumn.Parent is MainView lobby)
                 {
-                    lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_PANEL", idx, 0, ParentItem.ClonePed != null, Title, Description, (int)TitleColor, RankInfo.RankLevel, HasPlane, HasHeli, HasBoat, HasVehicle, 0, RankInfo.LowLabel, 0, 0, RankInfo.MidLabel, 0, 0, RankInfo.UpLabel, 0, 0);
+                    lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_PANEL", idx, 0, ParentItem.ClonePed != null, Title, Description, (int)TitleColor, RankInfo.RankLevel, HasPlane, HasHeli, HasBoat, HasVehicle, 0, RankInfo.LowLabel, 0, 0, RankInfo.MidLabel, 0, 0, RankInfo.UpLabel, 0, 0, HardwareVisible);
                     if (!string.IsNullOrWhiteSpace(Description))
                         lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_PANEL_DESCRIPTION", idx, Description, 0, "", ParentItem.ClonePed != null);
                     foreach (PlayerStatsPanelStatItem stat in Items)
@@ -111,7 +112,7 @@ namespace ScaleformUI.LobbyMenu
                 }
                 else if (ParentItem.ParentColumn.Parent is TabView pause)
                 {
-                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL", ParentItem.ParentColumn.ParentTab, idx, 0, ParentItem.ClonePed != null, Title, Description, (int)TitleColor, RankInfo.RankLevel, HasPlane, HasHeli, HasBoat, HasVehicle, 0, RankInfo.LowLabel, 0, 0, RankInfo.MidLabel, 0, 0, RankInfo.UpLabel, 0, 0);
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL", ParentItem.ParentColumn.ParentTab, idx, 0, ParentItem.ClonePed != null, Title, Description, (int)TitleColor, RankInfo.RankLevel, HasPlane, HasHeli, HasBoat, HasVehicle, 0, RankInfo.LowLabel, 0, 0, RankInfo.MidLabel, 0, 0, RankInfo.UpLabel, 0, 0, HardwareVisible);
                     if (!string.IsNullOrWhiteSpace(Description))
                         pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_DESCRIPTION", ParentItem.ParentColumn.ParentTab, idx, Description, 0, "", ParentItem.ClonePed != null);
                     foreach (PlayerStatsPanelStatItem stat in Items)
