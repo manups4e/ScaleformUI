@@ -18,7 +18,9 @@ function MissionItem.New(label, mainColor, highlightColor)
         RightIconColor = Colours.HUD_COLOUR_WHITE,
         RightIconChecked = false,
         _Selected = false,
-        hovered = false
+        hovered = false,
+        Activated = function(item)
+        end
     }
     return setmetatable(_data, MissionItem)
 end
