@@ -314,6 +314,7 @@ namespace ScaleformUI.PauseMenu
                                     _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, pl.listCol[0].Type, pl.listCol[1].Type, pl.listCol[2].Type);
                                     break;
                             }
+                            _pause._pause.CallFunction("SET_PLAYERS_TAB_NEWSTYLE", tabIndex, pl._newStyle);
                             if (pl.listCol.Any(x => x.Type == "settings"))
                             {
                                 pl.SettingsColumn.Parent = this;
@@ -350,7 +351,7 @@ namespace ScaleformUI.PauseMenu
                                 }
                             }
                             while ((pl.SettingsColumn != null && pl.SettingsColumn.isBuilding) || (pl.PlayersColumn != null && pl.PlayersColumn.isBuilding) || (pl.MissionsColumn != null && pl.MissionsColumn.isBuilding)) await BaseScript.Delay(0);
-                            pl.UpdateFocus(0);
+                            pl.updateFocus(0);
                         }
                         break;
                 }
@@ -528,7 +529,8 @@ namespace ScaleformUI.PauseMenu
                     FocusLevel++;
                     if (Tabs[Index] is PlayerListTab pl)
                     {
-                        switch (pl.listCol[pl.Focus].Type)
+                        int selection = pl._newStyle ? pl.Focus : 0;
+                        switch (pl.listCol[selection].Type)
                         {
                             case "settings":
                                 pl.SettingsColumn.Items[pl.SettingsColumn.CurrentSelection].Selected = true;
@@ -582,7 +584,6 @@ namespace ScaleformUI.PauseMenu
                         }
                         else if (Tabs[Index] is PlayerListTab plTab)
                         {
-
                             switch (plTab.listCol[plTab.Focus].Type)
                             {
                                 case "settings":
@@ -664,25 +665,56 @@ namespace ScaleformUI.PauseMenu
             }
             if (playSound) Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
         }
+
         public void GoBack()
         {
             Game.PlaySound(AUDIO_BACK, AUDIO_LIBRARY);
             if (FocusLevel > 0)
             {
-                FocusLevel--;
                 if (Tabs[Index] is SubmenuTab)
                 {
+                    FocusLevel--;
                     Tabs[Index].LeftItemList[LeftItemIndex].Selected = focusLevel == 1;
                 }
                 else if (Tabs[Index] is PlayerListTab pl)
                 {
-                    SetPauseMenuPedLighting(FocusLevel != 0);
-                    if (pl.listCol.Any(x => x.Type == "settings"))
-                        pl.SettingsColumn.Items[pl.SettingsColumn.CurrentSelection].Selected = false;
-                    if (pl.listCol.Any(x => x.Type == "players"))
-                        pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].Selected = false;
-                    if (pl.listCol.Any(x => x.Type == "missions"))
-                        pl.MissionsColumn.Items[pl.MissionsColumn.CurrentSelection].Selected = false;
+                    if (pl._newStyle)
+                    {
+                        FocusLevel--;
+                        SetPauseMenuPedLighting(FocusLevel != 0);
+                        if (pl.listCol.Any(x => x.Type == "settings"))
+                            pl.SettingsColumn.Items[pl.SettingsColumn.CurrentSelection].Selected = false;
+                        if (pl.listCol.Any(x => x.Type == "players"))
+                            pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].Selected = false;
+                        if (pl.listCol.Any(x => x.Type == "missions"))
+                            pl.MissionsColumn.Items[pl.MissionsColumn.CurrentSelection].Selected = false;
+                    }
+                    else
+                    {
+                        if (FocusLevel == 1)
+                        {
+                            if (pl.Focus == 0)
+                            {
+                                FocusLevel--;
+                                return;
+                            }
+                            switch (pl.listCol[pl.Focus].Type)
+                            {
+                                case "settings":
+                                    pl.SettingsColumn.Items[pl.SettingsColumn.CurrentSelection].Selected = false;
+                                    break;
+                                case "players":
+                                    pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].Selected = false;
+                                    ClearPedInPauseMenu();
+                                    break;
+                                case "missions":
+                                    pl.MissionsColumn.Items[pl.MissionsColumn.CurrentSelection].Selected = false;
+                                    break;
+                            }
+                            pl.updateFocus(pl.Focus - 1);
+                            return;
+                        }
+                    }
                 }
             }
             else
@@ -808,8 +840,15 @@ namespace ScaleformUI.PauseMenu
                                         UIMenuItem item = plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection];
                                         if (!item.Enabled)
                                         {
-                                            plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection].Selected = false;
-                                            plTab.UpdateFocus(plTab.Focus - 1);
+                                            if (plTab._newStyle)
+                                            {
+                                                plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection].Selected = false;
+                                                plTab.updateFocus(plTab.Focus - 1);
+                                            }
+                                            else
+                                            {
+                                                Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
+                                            }
                                             return;
                                         }
 
@@ -833,21 +872,35 @@ namespace ScaleformUI.PauseMenu
                                         }
                                         else
                                         {
-                                            plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection].Selected = false;
-                                            plTab.UpdateFocus(plTab.Focus - 1);
+                                            if (plTab._newStyle)
+                                            {
+                                                plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection].Selected = false;
+                                                plTab.updateFocus(plTab.Focus - 1);
+                                            }
                                         }
                                     }
                                     break;
                                 case "missions":
-                                    plTab.MissionsColumn.Items[plTab.MissionsColumn.CurrentSelection].Selected = false;
-                                    plTab.UpdateFocus(plTab.Focus - 1);
+                                    if (plTab._newStyle)
+                                    {
+                                        plTab.MissionsColumn.Items[plTab.MissionsColumn.CurrentSelection].Selected = false;
+                                        plTab.updateFocus(plTab.Focus - 1);
+                                    }
                                     break;
                                 case "panel":
-                                    plTab.UpdateFocus(plTab.Focus - 1);
+                                    plTab.updateFocus(plTab.Focus - 1);
                                     break;
                                 case "players":
-                                    plTab.PlayersColumn.Items[plTab.PlayersColumn.CurrentSelection].Selected = false;
-                                    plTab.UpdateFocus(plTab.Focus - 1);
+                                    if (plTab._newStyle)
+                                    {
+                                        plTab.PlayersColumn.Items[plTab.PlayersColumn.CurrentSelection].Selected = false;
+                                        plTab.updateFocus(plTab.Focus - 1);
+                                    }
+                                    else
+                                    {
+                                        if (plTab.PlayersColumn.Items[plTab.PlayersColumn.CurrentSelection].ClonePed != null)
+                                            plTab.PlayersColumn.Items[plTab.PlayersColumn.CurrentSelection].CreateClonedPed();
+                                    }
                                     break;
                             }
                         }
@@ -927,8 +980,15 @@ namespace ScaleformUI.PauseMenu
                                         UIMenuItem item = plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection];
                                         if (!item.Enabled)
                                         {
-                                            plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection].Selected = false;
-                                            plTab.UpdateFocus(plTab.Focus + 1);
+                                            if (plTab._newStyle)
+                                            {
+                                                plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection].Selected = false;
+                                                plTab.updateFocus(plTab.Focus + 1);
+                                            }
+                                            else
+                                            {
+                                                Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
+                                            }
                                             return;
                                         }
 
@@ -952,21 +1012,30 @@ namespace ScaleformUI.PauseMenu
                                         }
                                         else
                                         {
-                                            plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection].Selected = false;
-                                            plTab.UpdateFocus(plTab.Focus + 1);
+                                            if (plTab._newStyle)
+                                            {
+                                                plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection].Selected = false;
+                                                plTab.updateFocus(plTab.Focus + 1);
+                                            }
                                         }
                                     }
                                     break;
                                 case "missions":
-                                    plTab.MissionsColumn.Items[plTab.MissionsColumn.CurrentSelection].Selected = false;
-                                    plTab.UpdateFocus(plTab.Focus + 1);
+                                    if (plTab._newStyle)
+                                    {
+                                        plTab.MissionsColumn.Items[plTab.MissionsColumn.CurrentSelection].Selected = false;
+                                        plTab.updateFocus(plTab.Focus + 1);
+                                    }
                                     break;
                                 case "panel":
-                                    plTab.UpdateFocus(plTab.Focus + 1);
+                                    plTab.updateFocus(plTab.Focus + 1);
                                     break;
                                 case "players":
-                                    plTab.PlayersColumn.Items[plTab.PlayersColumn.CurrentSelection].Selected = false;
-                                    plTab.UpdateFocus(plTab.Focus + 1);
+                                    if (plTab._newStyle)
+                                    {
+                                        plTab.PlayersColumn.Items[plTab.PlayersColumn.CurrentSelection].Selected = false;
+                                        plTab.updateFocus(plTab.Focus + 1);
+                                    }
                                     break;
                             }
                         }
@@ -1076,22 +1145,25 @@ namespace ScaleformUI.PauseMenu
                         {
                             int foc = tab.Focus;
                             int curSel = 0;
-                            switch (tab.listCol[foc].Type)
+                            if (tab._newStyle)
                             {
-                                case "settings":
-                                    curSel = tab.SettingsColumn.CurrentSelection;
-                                    tab.SettingsColumn.Items[tab.SettingsColumn.CurrentSelection].Selected = false;
-                                    break;
-                                case "players":
-                                    curSel = tab.PlayersColumn.CurrentSelection;
-                                    tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].Selected = false;
-                                    break;
-                                case "missions":
-                                    curSel = tab.MissionsColumn.CurrentSelection;
-                                    tab.MissionsColumn.Items[tab.MissionsColumn.CurrentSelection].Selected = false;
-                                    break;
+                                switch (tab.listCol[foc].Type)
+                                {
+                                    case "settings":
+                                        curSel = tab.SettingsColumn.CurrentSelection;
+                                        tab.SettingsColumn.Items[tab.SettingsColumn.CurrentSelection].Selected = false;
+                                        break;
+                                    case "players":
+                                        curSel = tab.PlayersColumn.CurrentSelection;
+                                        tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].Selected = false;
+                                        break;
+                                    case "missions":
+                                        curSel = tab.MissionsColumn.CurrentSelection;
+                                        tab.MissionsColumn.Items[tab.MissionsColumn.CurrentSelection].Selected = false;
+                                        break;
+                                }
                             }
-                            tab.UpdateFocus(context, true);
+                            tab.updateFocus(context, true);
                             int index = tab.listCol[tab.Focus].Pagination.GetMenuIndexFromScaleformIndex(itemId);
                             switch (tab.listCol[tab.Focus].Type)
                             {
