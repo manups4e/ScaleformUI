@@ -151,6 +151,7 @@ namespace ScaleformUI.PauseMenu
                 Tabs[Index].Visible = false;
                 index = value;
                 Tabs[Index].Visible = true;
+                SendPauseMenuTabChange();
             }
         }
 
