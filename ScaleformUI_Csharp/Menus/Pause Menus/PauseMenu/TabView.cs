@@ -702,11 +702,6 @@ namespace ScaleformUI.PauseMenu
                     {
                         if (FocusLevel == 1)
                         {
-                            if (pl.Focus == 0)
-                            {
-                                FocusLevel--;
-                                return;
-                            }
                             switch (pl.listCol[pl.Focus].Type)
                             {
                                 case "settings":
@@ -719,6 +714,11 @@ namespace ScaleformUI.PauseMenu
                                 case "missions":
                                     pl.MissionsColumn.Items[pl.MissionsColumn.CurrentSelection].Selected = false;
                                     break;
+                            }
+                            if (pl.Focus == 0)
+                            {
+                                FocusLevel--;
+                                return;
                             }
                             pl.updateFocus(pl.Focus - 1);
                             return;
