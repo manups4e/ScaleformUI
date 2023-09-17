@@ -25,7 +25,7 @@ namespace ScaleformUI.PauseMenu
         public string AUDIO_SELECT = "SELECT";
         public string AUDIO_BACK = "BACK";
         public string AUDIO_ERROR = "ERROR";
-
+        private bool isBuilding = false;
         public string Title { get; set; }
         public string SubTitle { get; set; }
         public string SideStringTop { get; set; }
@@ -123,6 +123,7 @@ namespace ScaleformUI.PauseMenu
                     AnimpostfxPlay("PauseMenuIn", 800, true);
                     Main.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
                     SetPlayerControl(Game.Player.Handle, false, 0);
+                    isBuilding = true;
                     BuildPauseMenu();
                     MenuHandler.currentBase = this;
                 }
@@ -356,6 +357,7 @@ namespace ScaleformUI.PauseMenu
                         break;
                 }
             }
+            isBuilding = false;
         }
 
         bool canBuild = true;
@@ -467,7 +469,7 @@ namespace ScaleformUI.PauseMenu
         private bool controller = false;
         public override async void Draw()
         {
-            if (!Visible || TemporarilyHidden) return;
+            if (!Visible || TemporarilyHidden || isBuilding) return;
             base.Draw();
             _pause.Draw();
             UpdateKeymapItems();
@@ -600,6 +602,7 @@ namespace ScaleformUI.PauseMenu
                                                 UIMenuCheckboxItem it = item as UIMenuCheckboxItem;
                                                 it.Checked = !it.Checked;
                                                 it.CheckboxEventTrigger();
+                                                plTab.SettingsColumn.SelectItem();
                                                 break;
                                             }
 
@@ -607,11 +610,13 @@ namespace ScaleformUI.PauseMenu
                                             {
                                                 UIMenuListItem it = item as UIMenuListItem;
                                                 it.ListSelectedTrigger(it.Index);
+                                                plTab.SettingsColumn.SelectItem();
                                                 break;
                                             }
 
                                         default:
                                             item.ItemActivate(null);
+                                            plTab.SettingsColumn.SelectItem();
                                             break;
                                     }
                                     _pause._pause.CallFunction("SET_INPUT_EVENT", 16);
@@ -619,6 +624,10 @@ namespace ScaleformUI.PauseMenu
                                 case "missions":
                                     MissionItem mitem = plTab.MissionsColumn.Items[plTab.MissionsColumn.CurrentSelection];
                                     mitem.ActivateMission(plTab);
+                                    plTab.MissionsColumn.SelectItem();
+                                    break;
+                                case "players":
+                                    plTab.PlayersColumn.SelectItem();
                                     break;
                             }
                         }

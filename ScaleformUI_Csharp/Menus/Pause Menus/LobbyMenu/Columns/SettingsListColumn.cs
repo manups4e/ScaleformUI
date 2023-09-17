@@ -6,11 +6,13 @@ using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI.LobbyMenu
 {
+    public delegate void SettingItemSelected(UIMenuItem item, int index);
     public class SettingsListColumn : Column
     {
         internal bool isBuilding = false;
         public event IndexChanged OnIndexChanged;
         public List<UIMenuItem> Items { get; internal set; }
+        public event SettingItemSelected OnSettingItemActivated;
         public ScrollingType ScrollingType { get => Pagination.scrollType; set => Pagination.scrollType = value; }
         public SettingsListColumn(string label, HudColor color, ScrollingType scrollType = ScrollingType.CLASSIC) : base(label, color)
         {
@@ -407,14 +409,16 @@ namespace ScaleformUI.LobbyMenu
                         {
                             lobby._pause._lobby.CallFunction("SET_SETTINGS_SELECTION", Pagination.GetScaleformIndex(Pagination.CurrentMenuIndex));
                             lobby._pause._lobby.CallFunction("SET_SETTINGS_QTTY", CurrentSelection + 1, Items.Count);
+                            Items[CurrentSelection].Selected = true;
                         }
                         else if (Parent is TabView pause)
                         {
                             pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", ParentTab, Pagination.GetScaleformIndex(Pagination.CurrentMenuIndex));
                             pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", ParentTab, CurrentSelection + 1, Items.Count);
+                            if (pause.Index == pause.Tabs.IndexOf(pause.Tabs[ParentTab]) && pause.FocusLevel == 1)
+                                Items[CurrentSelection].Selected = true;
                         }
                     }
-                    Items[CurrentSelection].Selected = true;
                     if (Items[CurrentSelection] is UIMenuSeparatorItem jp)
                     {
                         if (jp.Jumpable)
@@ -427,11 +431,6 @@ namespace ScaleformUI.LobbyMenu
                     }
                 }
             }
-        }
-
-        public void IndexChangedEvent()
-        {
-            OnIndexChanged?.Invoke(CurrentSelection);
         }
 
         public void UpdateItemLabels(int index, string leftLabel, string rightLabel)
@@ -519,6 +518,14 @@ namespace ScaleformUI.LobbyMenu
                 pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN", ParentTab);
             Items.Clear();
             Pagination.Reset();
+        }
+        public void SelectItem()
+        {
+            OnSettingItemActivated?.Invoke(Items[CurrentSelection], CurrentSelection);
+        }
+        public void IndexChangedEvent()
+        {
+            OnIndexChanged?.Invoke(CurrentSelection);
         }
     }
 }

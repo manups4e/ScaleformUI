@@ -5,12 +5,14 @@ using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI.LobbyMenu
 {
+    public delegate void MissionItemSelected(MissionItem item, int index);
     public class MissionsListColumn : Column
     {
         internal bool isBuilding = false;
         public event IndexChanged OnIndexChanged;
         public List<MissionItem> Items { get; private set; }
         public ScrollingType ScrollingType { get => Pagination.scrollType; set => Pagination.scrollType = value; }
+        public event MissionItemSelected OnMissionItemActivated;
         public MissionsListColumn(string label, HudColor color, ScrollingType scrollType = ScrollingType.CLASSIC) : base(label, color)
         {
             Items = new List<MissionItem>();
@@ -245,18 +247,24 @@ namespace ScaleformUI.LobbyMenu
                         {
                             lobby._pause._lobby.CallFunction("SET_MISSIONS_SELECTION", Pagination.GetScaleformIndex(Pagination.CurrentMenuIndex));
                             lobby._pause._lobby.CallFunction("SET_MISSIONS_QTTY", CurrentSelection + 1, Items.Count);
+                            Items[CurrentSelection].Selected = true;
                         }
                         else if (Parent is TabView pause)
                         {
                             pause._pause._pause.CallFunction("SET_PLAYERS_TAB_MISSIONS_SELECTION", ParentTab, Pagination.GetScaleformIndex(Pagination.CurrentMenuIndex));
                             pause._pause._pause.CallFunction("SET_PLAYERS_TAB_MISSIONS_QTTY", ParentTab, CurrentSelection + 1, Items.Count);
+                            if (pause.Index == pause.Tabs.IndexOf(pause.Tabs[ParentTab]) && pause.FocusLevel == 1)
+                                Items[CurrentSelection].Selected = true;
                         }
                     }
-                    Items[CurrentSelection].Selected = true;
                 }
             }
         }
 
+        public void SelectItem()
+        {
+            OnMissionItemActivated?.Invoke(Items[CurrentSelection], CurrentSelection);
+        }
         public void IndexChangedEvent()
         {
             OnIndexChanged?.Invoke(CurrentSelection);

@@ -6,11 +6,13 @@ using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI.LobbyMenu
 {
+    public delegate void PlayerItemSelected(LobbyItem item, int index);
     public class PlayerListColumn : Column
     {
         internal bool isBuilding = false;
         public event IndexChanged OnIndexChanged;
         public List<LobbyItem> Items { get; private set; }
+        public event PlayerItemSelected OnPlayerItemActivated;
 
         public ScrollingType ScrollingType { get => Pagination.scrollType; set => Pagination.scrollType = value; }
 
@@ -261,18 +263,29 @@ namespace ScaleformUI.LobbyMenu
                         {
                             lobby._pause._lobby.CallFunction("SET_PLAYERS_SELECTION", Pagination.GetScaleformIndex(Pagination.CurrentMenuIndex));
                             lobby._pause._lobby.CallFunction("SET_PLAYERS_QTTY", CurrentSelection + 1, Items.Count);
+                            Items[CurrentSelection].Selected = true;
+                            if (Items[CurrentSelection].ClonePed != null)
+                                Items[CurrentSelection].CreateClonedPed();
                         }
                         else if (Parent is TabView pause)
                         {
                             pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYERS_SELECTION", ParentTab, Pagination.GetScaleformIndex(Pagination.CurrentMenuIndex));
                             pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYERS_QTTY", ParentTab, CurrentSelection + 1, Items.Count);
+                            if (pause.Index == pause.Tabs.IndexOf(pause.Tabs[ParentTab]) && pause.FocusLevel == 1)
+                            {
+                                Items[CurrentSelection].Selected = true;
+                                if (Items[CurrentSelection].ClonePed != null)
+                                    Items[CurrentSelection].CreateClonedPed();
+                            }
                         }
                     }
-                    Items[CurrentSelection].Selected = true;
-                    if (Items[CurrentSelection].ClonePed != null)
-                        Items[CurrentSelection].CreateClonedPed();
                 }
             }
+        }
+
+        public void SelectItem()
+        {
+            OnPlayerItemActivated?.Invoke(Items[CurrentSelection], CurrentSelection);
         }
 
         public void IndexChangedEvent()
