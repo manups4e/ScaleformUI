@@ -89,6 +89,17 @@ function SettingsListColumn:AddSettings(item)
     if self.Parent ~= nil and self.Parent:Visible() then
         if self.Pagination:TotalItems() < self.Pagination:ItemsPerPage() then
             local sel = self:CurrentSelection()
+            self.Pagination:MinItem(self.Pagination:CurrentPageStartIndex())
+
+            if self.scrollingType == MenuScrollingType.CLASSIC and self.Pagination:TotalPages() > 1 then
+                local missingItems = self.Pagination:GetMissingItems()
+                if missingItems > 0 then
+                    self.Pagination:ScaleformIndex(self.Pagination:GetPageIndexFromMenuIndex(self.Pagination:CurrentPageEndIndex()) + missingItems - 1)
+                    self.Pagination.minItem = self.Pagination:CurrentPageStartIndex() - missingItems
+                end
+            end
+    
+            self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
             self:_itemCreation(0, #self.Items, false)
             local pSubT = self.Parent()
             if pSubT == "PauseMenu" then

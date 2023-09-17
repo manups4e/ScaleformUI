@@ -25,7 +25,7 @@ namespace ScaleformUI.LobbyMenu
             };
         }
 
-        public async void AddPlayer(LobbyItem item)
+        public void AddPlayer(LobbyItem item)
         {
             item.ParentColumn = this;
             Items.Add(item);
@@ -35,6 +35,17 @@ namespace ScaleformUI.LobbyMenu
                 if (Pagination.TotalItems < Pagination.ItemsPerPage)
                 {
                     int sel = CurrentSelection;
+                    Pagination.MinItem = Pagination.CurrentPageStartIndex;
+                    if (Pagination.scrollType == ScrollingType.CLASSIC && Pagination.TotalPages > 1)
+                    {
+                        int missingItems = Pagination.GetMissingItems();
+                        if (missingItems > 0)
+                        {
+                            Pagination.ScaleformIndex = Pagination.GetPageIndexFromMenuIndex(Pagination.CurrentPageEndIndex) + missingItems;
+                            Pagination.MinItem = Pagination.CurrentPageStartIndex - missingItems;
+                        }
+                    }
+                    Pagination.MaxItem = Pagination.CurrentPageEndIndex;
                     _itemCreation(Pagination.CurrentPage, Items.Count - 1, false);
                     if (Parent is TabView pause)
                     {

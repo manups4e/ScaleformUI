@@ -32,6 +32,17 @@ namespace ScaleformUI.LobbyMenu
                 if (Pagination.TotalItems < Pagination.ItemsPerPage)
                 {
                     int sel = CurrentSelection;
+                    Pagination.MinItem = Pagination.CurrentPageStartIndex;
+                    if (Pagination.scrollType == ScrollingType.CLASSIC && Pagination.TotalPages > 1)
+                    {
+                        int missingItems = Pagination.GetMissingItems();
+                        if (missingItems > 0)
+                        {
+                            Pagination.ScaleformIndex = Pagination.GetPageIndexFromMenuIndex(Pagination.CurrentPageEndIndex) + missingItems;
+                            Pagination.MinItem = Pagination.CurrentPageStartIndex - missingItems;
+                        }
+                    }
+                    Pagination.MaxItem = Pagination.CurrentPageEndIndex;
                     _itemCreation(0, Items.Count - 1, false);
                     if (Parent is TabView pause)
                     {
