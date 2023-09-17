@@ -1190,7 +1190,7 @@ public class MenuExample : BaseScript
         fifth.AddItem(key1);
         fifth.AddItem(key2);
 
-        PlayerListTab playersTab = new("PLAYERLIST");
+        PlayerListTab playersTab = new("PLAYERLIST", false);
         List<Column> columns = new List<Column>()
         {
             new SettingsListColumn("COLUMN SETTINGS", HudColor.HUD_COLOUR_RED), // color will be ignored for PauseMenu
@@ -1211,6 +1211,11 @@ public class MenuExample : BaseScript
         playersTab.SettingsColumn.AddSettings(n3);
         playersTab.SettingsColumn.AddSettings(n4);
         playersTab.SettingsColumn.AddSettings(n5);
+
+        n1.Activated += (sender, args) =>
+        {
+            playersTab.SelectColumn(playersTab.MissionsColumn);
+        };
 
         MissionItem mission1 = new MissionItem("Mission 1");
         MissionItem mission2 = new MissionItem("Mission 2");
@@ -1234,6 +1239,38 @@ public class MenuExample : BaseScript
         playersTab.MissionsColumn.AddMissionItem(mission3);
         playersTab.MissionsColumn.AddMissionItem(mission4);
         playersTab.MissionsColumn.AddMissionItem(mission5);
+
+        playersTab.SettingsColumn.OnIndexChanged += (i) =>
+        {
+            if (playersTab.MissionsColumn.Items.Count > 0)
+            {
+                playersTab.MissionsColumn.Clear();
+            }
+
+            MissionItem mission1 = new MissionItem("Mission 1");
+            MissionItem mission2 = new MissionItem("Mission 2");
+            MissionItem mission3 = new MissionItem("Mission 3");
+            MissionItem mission4 = new MissionItem("Mission 4");
+            MissionItem mission5 = new MissionItem("Mission 5");
+
+            mission1.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
+            mission1.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
+            mission2.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
+            mission2.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
+            mission3.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
+            mission3.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
+            mission4.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
+            mission4.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
+            mission5.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
+            mission5.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223), true);
+
+            playersTab.MissionsColumn.AddMissionItem(mission1);
+            playersTab.MissionsColumn.AddMissionItem(mission2);
+            playersTab.MissionsColumn.AddMissionItem(mission3);
+            playersTab.MissionsColumn.AddMissionItem(mission4);
+            playersTab.MissionsColumn.AddMissionItem(mission5);
+        };
+
 
         long _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
         API.CreateRuntimeTextureFromDuiHandle(txd, "lobby_panelbackground", API.GetDuiHandle(_paneldui));
@@ -1385,7 +1422,8 @@ public class MenuExample : BaseScript
                 if (tab is PlayerListTab)
                 {
                     PlayerListTab t = tab as PlayerListTab;
-                    t.PlayersColumn.Items.ForEach(item => item.Dispose());
+                    if (t.PlayersColumn != null)
+                        t.PlayersColumn.Items.ForEach(item => item.Dispose());
                 }
             }
 
