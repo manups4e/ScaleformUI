@@ -17,13 +17,15 @@ end
 ---Creates a new PlayerListTab.
 ---@param name string
 ---@return PlayerListTab
-function PlayerListTab.New(name)
+function PlayerListTab.New(name, newStyle)
+    if newStyle == nil then newStyle = true end
     local data = {
         Base = BaseTab.New(name or "", 2),
         LeftItemList = {},
         Label = name or "",
         TextTitle = "",
         listCol = {},
+        _newStyle = newStyle,
         SettingsColumn = nil,
         PlayersColumn = nil,
         MissionsColumn = nil,
@@ -62,7 +64,23 @@ function PlayerListTab:SetUpColumns(columns)
     end
 end
 
-function PlayerListTab:UpdateFocus(_f, isMouse)
+function PlayerListTab:SelectColumn(column)
+    local val = 0
+    if type(column) == "table" then
+        val = column.Order
+    elseif type(column) == "number" then
+        val = column
+    end
+    if val > #self.listCol then
+        val  = 1
+    elseif val  < 1 then
+        val = #self.listCol
+    end
+    self:updateFocus(val)
+end
+
+
+function PlayerListTab:updateFocus(_f, isMouse)
     if isMouse == nil then isMouse = false end
     local goingLeft = _f < self._focus
     local val = _f
@@ -82,9 +100,9 @@ function PlayerListTab:UpdateFocus(_f, isMouse)
     self._focus = val
     if self.listCol[self._focus].Type == "panel" then
         if goingLeft then
-            self:UpdateFocus(self._focus - 1)
+            self:updateFocus(self._focus - 1)
         else
-            self:UpdateFocus(self._focus + 1)
+            self:updateFocus(self._focus + 1)
         end
         return
     end
@@ -98,7 +116,9 @@ function PlayerListTab:UpdateFocus(_f, isMouse)
         if not isMouse then
             local _id = self.listCol[self._focus].Pagination:GetMenuIndexFromScaleformIndex(idx)
             self.listCol[self._focus]:CurrentSelection(_id)
-            self.listCol[self._focus].OnIndexChanged(_id)
+            if not goingLeft or self._newStyle then
+                self.listCol[self._focus].OnIndexChanged(_id)
+            end
         end
     end
 end
