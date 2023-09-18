@@ -681,7 +681,7 @@ namespace ScaleformUI.PauseMenu
             Game.PlaySound(AUDIO_BACK, AUDIO_LIBRARY);
             if (FocusLevel > 0)
             {
-                if (Tabs[Index] is SubmenuTab)
+                if (Tabs[Index] is not PlayerListTab)
                 {
                     FocusLevel--;
                     Tabs[Index].LeftItemList[LeftItemIndex].Selected = focusLevel == 1;
