@@ -43,296 +43,296 @@ namespace ScaleformUI.Elements
 
         public bool IsEmpty => state == 0;
 
-        public static readonly SColor Empty = new SColor();
+        public static readonly SColor Empty = new();
 
         #region static list of "web" colors
-        public static SColor Transparent => new SColor(KnownColor.Transparent);
+        public static SColor Transparent => new(KnownColor.Transparent);
 
-        public static SColor AliceBlue => new SColor(KnownColor.AliceBlue);
+        public static SColor AliceBlue => new(KnownColor.AliceBlue);
 
-        public static SColor AntiqueWhite => new SColor(KnownColor.AntiqueWhite);
+        public static SColor AntiqueWhite => new(KnownColor.AntiqueWhite);
 
-        public static SColor Aqua => new SColor(KnownColor.Aqua);
+        public static SColor Aqua => new(KnownColor.Aqua);
 
-        public static SColor Aquamarine => new SColor(KnownColor.Aquamarine);
+        public static SColor Aquamarine => new(KnownColor.Aquamarine);
 
-        public static SColor Azure => new SColor(KnownColor.Azure);
+        public static SColor Azure => new(KnownColor.Azure);
 
-        public static SColor Beige => new SColor(KnownColor.Beige);
+        public static SColor Beige => new(KnownColor.Beige);
 
-        public static SColor Bisque => new SColor(KnownColor.Bisque);
+        public static SColor Bisque => new(KnownColor.Bisque);
 
-        public static SColor Black => new SColor(KnownColor.Black);
+        public static SColor Black => new(KnownColor.Black);
 
-        public static SColor BlanchedAlmond => new SColor(KnownColor.BlanchedAlmond);
+        public static SColor BlanchedAlmond => new(KnownColor.BlanchedAlmond);
 
-        public static SColor Blue => new SColor(KnownColor.Blue);
+        public static SColor Blue => new(KnownColor.Blue);
 
-        public static SColor BlueViolet => new SColor(KnownColor.BlueViolet);
+        public static SColor BlueViolet => new(KnownColor.BlueViolet);
 
-        public static SColor Brown => new SColor(KnownColor.Brown);
+        public static SColor Brown => new(KnownColor.Brown);
 
-        public static SColor BurlyWood => new SColor(KnownColor.BurlyWood);
+        public static SColor BurlyWood => new(KnownColor.BurlyWood);
 
-        public static SColor CadetBlue => new SColor(KnownColor.CadetBlue);
+        public static SColor CadetBlue => new(KnownColor.CadetBlue);
 
-        public static SColor Chartreuse => new SColor(KnownColor.Chartreuse);
+        public static SColor Chartreuse => new(KnownColor.Chartreuse);
 
-        public static SColor Chocolate => new SColor(KnownColor.Chocolate);
+        public static SColor Chocolate => new(KnownColor.Chocolate);
 
-        public static SColor Coral => new SColor(KnownColor.Coral);
+        public static SColor Coral => new(KnownColor.Coral);
 
-        public static SColor CornflowerBlue => new SColor(KnownColor.CornflowerBlue);
+        public static SColor CornflowerBlue => new(KnownColor.CornflowerBlue);
 
-        public static SColor Cornsilk => new SColor(KnownColor.Cornsilk);
+        public static SColor Cornsilk => new(KnownColor.Cornsilk);
 
-        public static SColor Crimson => new SColor(KnownColor.Crimson);
+        public static SColor Crimson => new(KnownColor.Crimson);
 
-        public static SColor Cyan => new SColor(KnownColor.Cyan);
+        public static SColor Cyan => new(KnownColor.Cyan);
 
-        public static SColor DarkBlue => new SColor(KnownColor.DarkBlue);
+        public static SColor DarkBlue => new(KnownColor.DarkBlue);
 
-        public static SColor DarkCyan => new SColor(KnownColor.DarkCyan);
+        public static SColor DarkCyan => new(KnownColor.DarkCyan);
 
-        public static SColor DarkGoldenrod => new SColor(KnownColor.DarkGoldenrod);
+        public static SColor DarkGoldenrod => new(KnownColor.DarkGoldenrod);
 
-        public static SColor DarkGray => new SColor(KnownColor.DarkGray);
+        public static SColor DarkGray => new(KnownColor.DarkGray);
 
-        public static SColor DarkGreen => new SColor(KnownColor.DarkGreen);
+        public static SColor DarkGreen => new(KnownColor.DarkGreen);
 
-        public static SColor DarkKhaki => new SColor(KnownColor.DarkKhaki);
+        public static SColor DarkKhaki => new(KnownColor.DarkKhaki);
 
-        public static SColor DarkMagenta => new SColor(KnownColor.DarkMagenta);
+        public static SColor DarkMagenta => new(KnownColor.DarkMagenta);
 
-        public static SColor DarkOliveGreen => new SColor(KnownColor.DarkOliveGreen);
+        public static SColor DarkOliveGreen => new(KnownColor.DarkOliveGreen);
 
-        public static SColor DarkOrange => new SColor(KnownColor.DarkOrange);
+        public static SColor DarkOrange => new(KnownColor.DarkOrange);
 
-        public static SColor DarkOrchid => new SColor(KnownColor.DarkOrchid);
+        public static SColor DarkOrchid => new(KnownColor.DarkOrchid);
 
-        public static SColor DarkRed => new SColor(KnownColor.DarkRed);
+        public static SColor DarkRed => new(KnownColor.DarkRed);
 
-        public static SColor DarkSalmon => new SColor(KnownColor.DarkSalmon);
+        public static SColor DarkSalmon => new(KnownColor.DarkSalmon);
 
-        public static SColor DarkSeaGreen => new SColor(KnownColor.DarkSeaGreen);
+        public static SColor DarkSeaGreen => new(KnownColor.DarkSeaGreen);
 
-        public static SColor DarkSlateBlue => new SColor(KnownColor.DarkSlateBlue);
+        public static SColor DarkSlateBlue => new(KnownColor.DarkSlateBlue);
 
-        public static SColor DarkSlateGray => new SColor(KnownColor.DarkSlateGray);
+        public static SColor DarkSlateGray => new(KnownColor.DarkSlateGray);
 
-        public static SColor DarkTurquoise => new SColor(KnownColor.DarkTurquoise);
+        public static SColor DarkTurquoise => new(KnownColor.DarkTurquoise);
 
-        public static SColor DarkViolet => new SColor(KnownColor.DarkViolet);
+        public static SColor DarkViolet => new(KnownColor.DarkViolet);
 
-        public static SColor DeepPink => new SColor(KnownColor.DeepPink);
+        public static SColor DeepPink => new(KnownColor.DeepPink);
 
-        public static SColor DeepSkyBlue => new SColor(KnownColor.DeepSkyBlue);
+        public static SColor DeepSkyBlue => new(KnownColor.DeepSkyBlue);
 
-        public static SColor DimGray => new SColor(KnownColor.DimGray);
+        public static SColor DimGray => new(KnownColor.DimGray);
 
-        public static SColor DodgerBlue => new SColor(KnownColor.DodgerBlue);
+        public static SColor DodgerBlue => new(KnownColor.DodgerBlue);
 
-        public static SColor Firebrick => new SColor(KnownColor.Firebrick);
+        public static SColor Firebrick => new(KnownColor.Firebrick);
 
-        public static SColor FloralWhite => new SColor(KnownColor.FloralWhite);
+        public static SColor FloralWhite => new(KnownColor.FloralWhite);
 
-        public static SColor ForestGreen => new SColor(KnownColor.ForestGreen);
+        public static SColor ForestGreen => new(KnownColor.ForestGreen);
 
-        public static SColor Fuchsia => new SColor(KnownColor.Fuchsia);
+        public static SColor Fuchsia => new(KnownColor.Fuchsia);
 
-        public static SColor Gainsboro => new SColor(KnownColor.Gainsboro);
+        public static SColor Gainsboro => new(KnownColor.Gainsboro);
 
-        public static SColor GhostWhite => new SColor(KnownColor.GhostWhite);
+        public static SColor GhostWhite => new(KnownColor.GhostWhite);
 
-        public static SColor Gold => new SColor(KnownColor.Gold);
+        public static SColor Gold => new(KnownColor.Gold);
 
-        public static SColor Goldenrod => new SColor(KnownColor.Goldenrod);
+        public static SColor Goldenrod => new(KnownColor.Goldenrod);
 
-        public static SColor Gray => new SColor(KnownColor.Gray);
+        public static SColor Gray => new(KnownColor.Gray);
 
-        public static SColor Green => new SColor(KnownColor.Green);
+        public static SColor Green => new(KnownColor.Green);
 
-        public static SColor GreenYellow => new SColor(KnownColor.GreenYellow);
+        public static SColor GreenYellow => new(KnownColor.GreenYellow);
 
-        public static SColor Honeydew => new SColor(KnownColor.Honeydew);
+        public static SColor Honeydew => new(KnownColor.Honeydew);
 
-        public static SColor HotPink => new SColor(KnownColor.HotPink);
+        public static SColor HotPink => new(KnownColor.HotPink);
 
-        public static SColor IndianRed => new SColor(KnownColor.IndianRed);
+        public static SColor IndianRed => new(KnownColor.IndianRed);
 
-        public static SColor Indigo => new SColor(KnownColor.Indigo);
+        public static SColor Indigo => new(KnownColor.Indigo);
 
-        public static SColor Ivory => new SColor(KnownColor.Ivory);
+        public static SColor Ivory => new(KnownColor.Ivory);
 
-        public static SColor Khaki => new SColor(KnownColor.Khaki);
+        public static SColor Khaki => new(KnownColor.Khaki);
 
-        public static SColor Lavender => new SColor(KnownColor.Lavender);
+        public static SColor Lavender => new(KnownColor.Lavender);
 
-        public static SColor LavenderBlush => new SColor(KnownColor.LavenderBlush);
+        public static SColor LavenderBlush => new(KnownColor.LavenderBlush);
 
-        public static SColor LawnGreen => new SColor(KnownColor.LawnGreen);
+        public static SColor LawnGreen => new(KnownColor.LawnGreen);
 
-        public static SColor LemonChiffon => new SColor(KnownColor.LemonChiffon);
+        public static SColor LemonChiffon => new(KnownColor.LemonChiffon);
 
-        public static SColor LightBlue => new SColor(KnownColor.LightBlue);
+        public static SColor LightBlue => new(KnownColor.LightBlue);
 
-        public static SColor LightCoral => new SColor(KnownColor.LightCoral);
+        public static SColor LightCoral => new(KnownColor.LightCoral);
 
-        public static SColor LightCyan => new SColor(KnownColor.LightCyan);
+        public static SColor LightCyan => new(KnownColor.LightCyan);
 
-        public static SColor LightGoldenrodYellow => new SColor(KnownColor.LightGoldenrodYellow);
+        public static SColor LightGoldenrodYellow => new(KnownColor.LightGoldenrodYellow);
 
-        public static SColor LightGreen => new SColor(KnownColor.LightGreen);
+        public static SColor LightGreen => new(KnownColor.LightGreen);
 
-        public static SColor LightGray => new SColor(KnownColor.LightGray);
+        public static SColor LightGray => new(KnownColor.LightGray);
 
-        public static SColor LightPink => new SColor(KnownColor.LightPink);
+        public static SColor LightPink => new(KnownColor.LightPink);
 
-        public static SColor LightSalmon => new SColor(KnownColor.LightSalmon);
+        public static SColor LightSalmon => new(KnownColor.LightSalmon);
 
-        public static SColor LightSeaGreen => new SColor(KnownColor.LightSeaGreen);
+        public static SColor LightSeaGreen => new(KnownColor.LightSeaGreen);
 
-        public static SColor LightSkyBlue => new SColor(KnownColor.LightSkyBlue);
+        public static SColor LightSkyBlue => new(KnownColor.LightSkyBlue);
 
-        public static SColor LightSlateGray => new SColor(KnownColor.LightSlateGray);
+        public static SColor LightSlateGray => new(KnownColor.LightSlateGray);
 
-        public static SColor LightSteelBlue => new SColor(KnownColor.LightSteelBlue);
+        public static SColor LightSteelBlue => new(KnownColor.LightSteelBlue);
 
-        public static SColor LightYellow => new SColor(KnownColor.LightYellow);
+        public static SColor LightYellow => new(KnownColor.LightYellow);
 
-        public static SColor Lime => new SColor(KnownColor.Lime);
+        public static SColor Lime => new(KnownColor.Lime);
 
-        public static SColor LimeGreen => new SColor(KnownColor.LimeGreen);
+        public static SColor LimeGreen => new(KnownColor.LimeGreen);
 
-        public static SColor Linen => new SColor(KnownColor.Linen);
+        public static SColor Linen => new(KnownColor.Linen);
 
-        public static SColor Magenta => new SColor(KnownColor.Magenta);
+        public static SColor Magenta => new(KnownColor.Magenta);
 
-        public static SColor Maroon => new SColor(KnownColor.Maroon);
+        public static SColor Maroon => new(KnownColor.Maroon);
 
-        public static SColor MediumAquamarine => new SColor(KnownColor.MediumAquamarine);
+        public static SColor MediumAquamarine => new(KnownColor.MediumAquamarine);
 
-        public static SColor MediumBlue => new SColor(KnownColor.MediumBlue);
+        public static SColor MediumBlue => new(KnownColor.MediumBlue);
 
-        public static SColor MediumOrchid => new SColor(KnownColor.MediumOrchid);
+        public static SColor MediumOrchid => new(KnownColor.MediumOrchid);
 
-        public static SColor MediumPurple => new SColor(KnownColor.MediumPurple);
+        public static SColor MediumPurple => new(KnownColor.MediumPurple);
 
-        public static SColor MediumSeaGreen => new SColor(KnownColor.MediumSeaGreen);
+        public static SColor MediumSeaGreen => new(KnownColor.MediumSeaGreen);
 
-        public static SColor MediumSlateBlue => new SColor(KnownColor.MediumSlateBlue);
+        public static SColor MediumSlateBlue => new(KnownColor.MediumSlateBlue);
 
-        public static SColor MediumSpringGreen => new SColor(KnownColor.MediumSpringGreen);
+        public static SColor MediumSpringGreen => new(KnownColor.MediumSpringGreen);
 
-        public static SColor MediumTurquoise => new SColor(KnownColor.MediumTurquoise);
+        public static SColor MediumTurquoise => new(KnownColor.MediumTurquoise);
 
-        public static SColor MediumVioletRed => new SColor(KnownColor.MediumVioletRed);
+        public static SColor MediumVioletRed => new(KnownColor.MediumVioletRed);
 
-        public static SColor MidnightBlue => new SColor(KnownColor.MidnightBlue);
+        public static SColor MidnightBlue => new(KnownColor.MidnightBlue);
 
-        public static SColor MintCream => new SColor(KnownColor.MintCream);
+        public static SColor MintCream => new(KnownColor.MintCream);
 
-        public static SColor MistyRose => new SColor(KnownColor.MistyRose);
+        public static SColor MistyRose => new(KnownColor.MistyRose);
 
-        public static SColor Moccasin => new SColor(KnownColor.Moccasin);
+        public static SColor Moccasin => new(KnownColor.Moccasin);
 
-        public static SColor NavajoWhite => new SColor(KnownColor.NavajoWhite);
+        public static SColor NavajoWhite => new(KnownColor.NavajoWhite);
 
-        public static SColor Navy => new SColor(KnownColor.Navy);
+        public static SColor Navy => new(KnownColor.Navy);
 
-        public static SColor OldLace => new SColor(KnownColor.OldLace);
+        public static SColor OldLace => new(KnownColor.OldLace);
 
-        public static SColor Olive => new SColor(KnownColor.Olive);
+        public static SColor Olive => new(KnownColor.Olive);
 
-        public static SColor OliveDrab => new SColor(KnownColor.OliveDrab);
+        public static SColor OliveDrab => new(KnownColor.OliveDrab);
 
-        public static SColor Orange => new SColor(KnownColor.Orange);
+        public static SColor Orange => new(KnownColor.Orange);
 
-        public static SColor OrangeRed => new SColor(KnownColor.OrangeRed);
+        public static SColor OrangeRed => new(KnownColor.OrangeRed);
 
-        public static SColor Orchid => new SColor(KnownColor.Orchid);
+        public static SColor Orchid => new(KnownColor.Orchid);
 
-        public static SColor PaleGoldenrod => new SColor(KnownColor.PaleGoldenrod);
+        public static SColor PaleGoldenrod => new(KnownColor.PaleGoldenrod);
 
-        public static SColor PaleGreen => new SColor(KnownColor.PaleGreen);
+        public static SColor PaleGreen => new(KnownColor.PaleGreen);
 
-        public static SColor PaleTurquoise => new SColor(KnownColor.PaleTurquoise);
+        public static SColor PaleTurquoise => new(KnownColor.PaleTurquoise);
 
-        public static SColor PaleVioletRed => new SColor(KnownColor.PaleVioletRed);
+        public static SColor PaleVioletRed => new(KnownColor.PaleVioletRed);
 
-        public static SColor PapayaWhip => new SColor(KnownColor.PapayaWhip);
+        public static SColor PapayaWhip => new(KnownColor.PapayaWhip);
 
-        public static SColor PeachPuff => new SColor(KnownColor.PeachPuff);
+        public static SColor PeachPuff => new(KnownColor.PeachPuff);
 
-        public static SColor Peru => new SColor(KnownColor.Peru);
+        public static SColor Peru => new(KnownColor.Peru);
 
-        public static SColor Pink => new SColor(KnownColor.Pink);
+        public static SColor Pink => new(KnownColor.Pink);
 
-        public static SColor Plum => new SColor(KnownColor.Plum);
+        public static SColor Plum => new(KnownColor.Plum);
 
-        public static SColor PowderBlue => new SColor(KnownColor.PowderBlue);
+        public static SColor PowderBlue => new(KnownColor.PowderBlue);
 
-        public static SColor Purple => new SColor(KnownColor.Purple);
+        public static SColor Purple => new(KnownColor.Purple);
 
         /// <summary>
         /// Gets a system-defined color that has an ARGB value of <c>#663399</c>.
         /// </summary>
         /// <value>A system-defined color.</value>
-        public static SColor RebeccaPurple => new SColor("#663399");
+        public static SColor RebeccaPurple => new("#663399");
 
-        public static SColor Red => new SColor(KnownColor.Red);
+        public static SColor Red => new(KnownColor.Red);
 
-        public static SColor RosyBrown => new SColor(KnownColor.RosyBrown);
+        public static SColor RosyBrown => new(KnownColor.RosyBrown);
 
-        public static SColor RoyalBlue => new SColor(KnownColor.RoyalBlue);
+        public static SColor RoyalBlue => new(KnownColor.RoyalBlue);
 
-        public static SColor SaddleBrown => new SColor(KnownColor.SaddleBrown);
+        public static SColor SaddleBrown => new(KnownColor.SaddleBrown);
 
-        public static SColor Salmon => new SColor(KnownColor.Salmon);
+        public static SColor Salmon => new(KnownColor.Salmon);
 
-        public static SColor SandyBrown => new SColor(KnownColor.SandyBrown);
+        public static SColor SandyBrown => new(KnownColor.SandyBrown);
 
-        public static SColor SeaGreen => new SColor(KnownColor.SeaGreen);
+        public static SColor SeaGreen => new(KnownColor.SeaGreen);
 
-        public static SColor SeaShell => new SColor(KnownColor.SeaShell);
+        public static SColor SeaShell => new(KnownColor.SeaShell);
 
-        public static SColor Sienna => new SColor(KnownColor.Sienna);
+        public static SColor Sienna => new(KnownColor.Sienna);
 
-        public static SColor Silver => new SColor(KnownColor.Silver);
+        public static SColor Silver => new(KnownColor.Silver);
 
-        public static SColor SkyBlue => new SColor(KnownColor.SkyBlue);
+        public static SColor SkyBlue => new(KnownColor.SkyBlue);
 
-        public static SColor SlateBlue => new SColor(KnownColor.SlateBlue);
+        public static SColor SlateBlue => new(KnownColor.SlateBlue);
 
-        public static SColor SlateGray => new SColor(KnownColor.SlateGray);
+        public static SColor SlateGray => new(KnownColor.SlateGray);
 
-        public static SColor Snow => new SColor(KnownColor.Snow);
+        public static SColor Snow => new(KnownColor.Snow);
 
-        public static SColor SpringGreen => new SColor(KnownColor.SpringGreen);
+        public static SColor SpringGreen => new(KnownColor.SpringGreen);
 
-        public static SColor SteelBlue => new SColor(KnownColor.SteelBlue);
+        public static SColor SteelBlue => new(KnownColor.SteelBlue);
 
-        public static SColor Tan => new SColor(KnownColor.Tan);
+        public static SColor Tan => new(KnownColor.Tan);
 
-        public static SColor Teal => new SColor(KnownColor.Teal);
+        public static SColor Teal => new(KnownColor.Teal);
 
-        public static SColor Thistle => new SColor(KnownColor.Thistle);
+        public static SColor Thistle => new(KnownColor.Thistle);
 
-        public static SColor Tomato => new SColor(KnownColor.Tomato);
+        public static SColor Tomato => new(KnownColor.Tomato);
 
-        public static SColor Turquoise => new SColor(KnownColor.Turquoise);
+        public static SColor Turquoise => new(KnownColor.Turquoise);
 
-        public static SColor Violet => new SColor(KnownColor.Violet);
+        public static SColor Violet => new(KnownColor.Violet);
 
-        public static SColor Wheat => new SColor(KnownColor.Wheat);
+        public static SColor Wheat => new(KnownColor.Wheat);
 
-        public static SColor White => new SColor(KnownColor.White);
+        public static SColor White => new(KnownColor.White);
 
-        public static SColor WhiteSmoke => new SColor(KnownColor.WhiteSmoke);
+        public static SColor WhiteSmoke => new(KnownColor.WhiteSmoke);
 
-        public static SColor Yellow => new SColor(KnownColor.Yellow);
+        public static SColor Yellow => new(KnownColor.Yellow);
 
-        public static SColor YellowGreen => new SColor(KnownColor.YellowGreen);
+        public static SColor YellowGreen => new(KnownColor.YellowGreen);
         #endregion
 
         internal SColor(KnownColor knownColor)
@@ -395,17 +395,18 @@ namespace ScaleformUI.Elements
             return FromArgb(a, r, g, b);
         }
 
-        public static SColor FromArgb(int argb) => new SColor(Color.FromArgb(argb));
+        public static SColor FromArgb(int argb) => new(Color.FromArgb(argb));
 
-        public static SColor FromArgb(int alpha, int red, int green, int blue) => new SColor(Color.FromArgb(alpha, red, green, blue));
+        public static SColor FromArgb(int alpha, int red, int green, int blue) => new(Color.FromArgb(alpha, red, green, blue));
 
-        public static SColor FromArgb(int alpha, Color baseColor) => new SColor(Color.FromArgb(alpha, baseColor));
+        public static SColor FromArgb(int alpha, Color baseColor) => new(Color.FromArgb(alpha, baseColor));
 
         public static SColor FromArgb(int red, int green, int blue) => FromArgb(byte.MaxValue, red, green, blue);
 
-        public static SColor FromKnownColor(KnownColor color) => new SColor(Color.FromKnownColor(color));
+        public static SColor FromKnownColor(KnownColor color) => new(Color.FromKnownColor(color));
 
-        public static SColor FromName(string name) => new SColor(Color.FromName(name));
+        public static SColor FromName(string name) => new(Color.FromName(name));
+        public static SColor FromColor(Color color) => new(color);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void GetRgbValues(out int r, out int g, out int b)
