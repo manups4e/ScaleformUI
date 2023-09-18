@@ -426,8 +426,24 @@ namespace ScaleformUI.Elements
         {
             int r = 0, g = 0, b = 0, a = 0;
             API.GetHudColour((int)color, ref r, ref g, ref b, ref a);
-            return $"#{r:X2}{g:X2}{b:X2}";
+            return $"#{a:X2}{r:X2}{g:X2}{b:X2}";
         }
+
+        public static string ColorToHex(this Color color)
+        {
+            return $"#{color.A:X2}{color.R:X2}{color.G:X2}{color.B:X2}";
+        }
+
+        public static uint HudColorToUInt(this HudColor color)
+        {
+            return Convert.ToUInt32(HudColorToHex(color).Substring(1), 16);
+        }
+        public static int ColorToInt(this Color color)
+        {
+            return Convert.ToInt32(ColorToHex(color).Substring(1), 16);
+        }
+
+
 
         public static string ReplaceRstarColorsWith(this string label, string color)
         {
