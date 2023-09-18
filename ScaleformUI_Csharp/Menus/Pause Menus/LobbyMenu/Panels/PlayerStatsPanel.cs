@@ -1,4 +1,5 @@
-﻿using ScaleformUI.PauseMenu;
+﻿using ScaleformUI.Menu;
+using ScaleformUI.PauseMenu;
 using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI.LobbyMenu
@@ -80,6 +81,7 @@ namespace ScaleformUI.LobbyMenu
         }
         public bool HardwareVisible { get; set; } = true;
         public List<PlayerStatsPanelStatItem> Items { get; private set; }
+        public List<UIFreemodeDetailsItem> DetailsItems { get; private set; }
         public PlayerStatsPanel(string title, HudColor titleColor)
         {
             this.title = title;
@@ -87,6 +89,7 @@ namespace ScaleformUI.LobbyMenu
             this.description = string.Empty;
             RankInfo = new(this);
             Items = new();
+            DetailsItems = new();
         }
 
         public void AddStat(PlayerStatsPanelStatItem item)
@@ -94,6 +97,12 @@ namespace ScaleformUI.LobbyMenu
             item.Parent = this;
             item.idx = Items.Count;
             Items.Add(item);
+            UpdatePanel();
+        }
+
+        public void AddDescriptionStatItem(UIFreemodeDetailsItem item)
+        {
+            DetailsItems.Add(item);
             UpdatePanel();
         }
 
@@ -105,18 +114,25 @@ namespace ScaleformUI.LobbyMenu
                 if (ParentItem.ParentColumn.Parent is MainView lobby)
                 {
                     lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_PANEL", idx, 0, ParentItem.ClonePed != null, Title, Description, (int)TitleColor, RankInfo.RankLevel, HasPlane, HasHeli, HasBoat, HasVehicle, 0, RankInfo.LowLabel, 0, 0, RankInfo.MidLabel, 0, 0, RankInfo.UpLabel, 0, 0, HardwareVisible);
-                    if (!string.IsNullOrWhiteSpace(Description))
-                        lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_PANEL_DESCRIPTION", idx, Description, 0, "", ParentItem.ClonePed != null);
                     foreach (PlayerStatsPanelStatItem stat in Items)
                         lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_PANEL_STAT", idx, stat.idx, 0, stat.Label, stat.Description, stat.Value);
+                    if (!string.IsNullOrWhiteSpace(Description))
+                        lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_PANEL_DESCRIPTION", idx, Description, 0, "", ParentItem.ClonePed != null);
                 }
                 else if (ParentItem.ParentColumn.Parent is TabView pause)
                 {
                     pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL", ParentItem.ParentColumn.ParentTab, idx, 0, ParentItem.ClonePed != null, Title, Description, (int)TitleColor, RankInfo.RankLevel, HasPlane, HasHeli, HasBoat, HasVehicle, 0, RankInfo.LowLabel, 0, 0, RankInfo.MidLabel, 0, 0, RankInfo.UpLabel, 0, 0, HardwareVisible);
-                    if (!string.IsNullOrWhiteSpace(Description))
-                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_DESCRIPTION", ParentItem.ParentColumn.ParentTab, idx, Description, 0, "", ParentItem.ClonePed != null);
                     foreach (PlayerStatsPanelStatItem stat in Items)
                         pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_STAT", ParentItem.ParentColumn.ParentTab, idx, stat.idx, 0, stat.Label, stat.Description, stat.Value);
+                    if (!string.IsNullOrWhiteSpace(Description))
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_DESCRIPTION", ParentItem.ParentColumn.ParentTab, idx, Description, 0, "", ParentItem.ClonePed != null);
+                    else if (DetailsItems.Count > 0)
+                    {
+                        foreach (UIFreemodeDetailsItem item in DetailsItems)
+                        {
+                            pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_DETAIL", ParentItem.ParentColumn.ParentTab, idx, item.Type, item.TextLeft, item.TextRight, (int)item.Icon, (int)item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID);
+                        }
+                    }
                 }
             }
         }
