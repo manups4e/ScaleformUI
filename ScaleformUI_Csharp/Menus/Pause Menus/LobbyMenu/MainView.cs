@@ -13,8 +13,9 @@ namespace ScaleformUI.LobbyMenu
     public class MainView : PauseMenuBase
     {
         // Button delay
-        public string AUDIO_LIBRARY = "HUD_FRONTEND_DEFAULT_SOUNDSET";
 
+        public string AUDIO_LIBRARY = "HUD_FRONTEND_DEFAULT_SOUNDSET";
+        private bool isBuilding = false;
         public string AUDIO_UPDOWN = "NAV_UP_DOWN";
         public string AUDIO_LEFTRIGHT = "NAV_LEFT_RIGHT";
         public string AUDIO_SELECT = "SELECT";
@@ -240,6 +241,7 @@ namespace ScaleformUI.LobbyMenu
         private bool canBuild = true;
         public async void BuildPauseMenu()
         {
+            isBuilding = true;
             ShowHeader();
             switch (listCol.Count)
             {
@@ -276,16 +278,10 @@ namespace ScaleformUI.LobbyMenu
                 }
             }
 
+            _pause._lobby.CallFunction("LOAD_MENU");
             while ((SettingsColumn != null && SettingsColumn.isBuilding) || (PlayersColumn != null && PlayersColumn.isBuilding) || (MissionsColumn != null && MissionsColumn.isBuilding)) await BaseScript.Delay(0);
 
-            _pause._lobby.CallFunction("LOAD_MENU");
-            await BaseScript.Delay(500);
-            if (listCol[0].Type == "players" || (listCol.Any(x => x.Type == "players") && PlayersColumn.Items.Count > 0 && PlayersColumn.Items[0].KeepPanelVisible))
-            {
-                if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
-                    PlayersColumn.Items[PlayersColumn.CurrentSelection].CreateClonedPed();
-            }
-
+            isBuilding = false;
         }
 
         private async void buildSettings()
@@ -407,7 +403,7 @@ namespace ScaleformUI.LobbyMenu
         private bool controller = false;
         public override async void Draw()
         {
-            if (!Visible || TemporarilyHidden) return;
+            if (!Visible || TemporarilyHidden || isBuilding) return;
             base.Draw();
             _pause.Draw(true);
             if (_firstDrawTick)
@@ -693,25 +689,28 @@ namespace ScaleformUI.LobbyMenu
 
             int[] split = result.Split(',').Select(int.Parse).ToArray();
 
-            if (listCol.Any(x => x.Type == "settings"))
-                SettingsColumn.Items[SettingsColumn.CurrentSelection].Selected = false;
-            if (listCol.Any(x => x.Type == "missions"))
-                MissionsColumn.Items[MissionsColumn.CurrentSelection].Selected = false;
-            if (listCol.Any(x => x.Type == "players"))
+            if (_newStyle)
             {
-                PlayersColumn.Items[PlayersColumn.CurrentSelection].Selected = false;
-                if (listCol[0].Type == "players" || PlayersColumn.Items[PlayersColumn.CurrentSelection].KeepPanelVisible)
+                if (listCol.Any(x => x.Type == "settings"))
+                    SettingsColumn.Items[SettingsColumn.CurrentSelection].Selected = false;
+                if (listCol.Any(x => x.Type == "missions"))
+                    MissionsColumn.Items[MissionsColumn.CurrentSelection].Selected = false;
+                if (listCol.Any(x => x.Type == "players"))
                 {
-                    if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
-                        PlayersColumn.Items[PlayersColumn.CurrentSelection].CreateClonedPed();
+                    PlayersColumn.Items[PlayersColumn.CurrentSelection].Selected = false;
+                    if (listCol[0].Type == "players" || PlayersColumn.Items[PlayersColumn.CurrentSelection].KeepPanelVisible)
+                    {
+                        if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
+                            PlayersColumn.Items[PlayersColumn.CurrentSelection].CreateClonedPed();
+                        else
+                            ClearPedInPauseMenu();
+                    }
                     else
                         ClearPedInPauseMenu();
                 }
                 else
                     ClearPedInPauseMenu();
             }
-            else
-                ClearPedInPauseMenu();
 
             switch (listCol[focusLevel].Type)
             {
@@ -792,26 +791,28 @@ namespace ScaleformUI.LobbyMenu
 
             int[] split = result.Split(',').Select(int.Parse).ToArray();
 
-            if (listCol.Any(x => x.Type == "settings"))
-                SettingsColumn.Items[SettingsColumn.CurrentSelection].Selected = false;
-            if (listCol.Any(x => x.Type == "missions"))
-                MissionsColumn.Items[MissionsColumn.CurrentSelection].Selected = false;
-            if (listCol.Any(x => x.Type == "players"))
+            if (_newStyle)
             {
-                PlayersColumn.Items[PlayersColumn.CurrentSelection].Selected = false;
-                if (listCol[0].Type == "players" || PlayersColumn.Items[PlayersColumn.CurrentSelection].KeepPanelVisible)
+                if (listCol.Any(x => x.Type == "settings"))
+                    SettingsColumn.Items[SettingsColumn.CurrentSelection].Selected = false;
+                if (listCol.Any(x => x.Type == "missions"))
+                    MissionsColumn.Items[MissionsColumn.CurrentSelection].Selected = false;
+                if (listCol.Any(x => x.Type == "players"))
                 {
-                    if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
-                        PlayersColumn.Items[PlayersColumn.CurrentSelection].CreateClonedPed();
+                    PlayersColumn.Items[PlayersColumn.CurrentSelection].Selected = false;
+                    if (listCol[0].Type == "players" || PlayersColumn.Items[PlayersColumn.CurrentSelection].KeepPanelVisible)
+                    {
+                        if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
+                            PlayersColumn.Items[PlayersColumn.CurrentSelection].CreateClonedPed();
+                        else
+                            ClearPedInPauseMenu();
+                    }
                     else
                         ClearPedInPauseMenu();
                 }
                 else
                     ClearPedInPauseMenu();
             }
-            else
-                ClearPedInPauseMenu();
-
             switch (listCol[focusLevel].Type)
             {
                 case "settings":
@@ -851,8 +852,11 @@ namespace ScaleformUI.LobbyMenu
                         }
                         else
                         {
-                            SettingsColumn.Items[SettingsColumn.CurrentSelection].Selected = false;
-                            updateFocus(focusLevel + 1);
+                            if (_newStyle)
+                            {
+                                SettingsColumn.Items[SettingsColumn.CurrentSelection].Selected = false;
+                                updateFocus(focusLevel + 1);
+                            }
                         }
                     }
                     break;

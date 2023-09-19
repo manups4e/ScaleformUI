@@ -264,8 +264,11 @@ namespace ScaleformUI.LobbyMenu
                             lobby._pause._lobby.CallFunction("SET_PLAYERS_SELECTION", Pagination.GetScaleformIndex(Pagination.CurrentMenuIndex));
                             lobby._pause._lobby.CallFunction("SET_PLAYERS_QTTY", CurrentSelection + 1, Items.Count);
                             Items[CurrentSelection].Selected = true;
+                            if (lobby.listCol[0].Type == "players" || (lobby.listCol.Any(x => x.Type == "players") && Items.Count > 0 && Items[0].KeepPanelVisible))
+                            {
                             if (Items[CurrentSelection].ClonePed != null)
                                 Items[CurrentSelection].CreateClonedPed();
+                        }
                         }
                         else if (Parent is TabView pause)
                         {
