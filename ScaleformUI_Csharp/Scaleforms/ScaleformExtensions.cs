@@ -91,6 +91,12 @@ namespace ScaleformUI.Scaleforms
                     case ScaleformLiteralString argLiteral:
                         API.ScaleformMovieMethodAddParamTextureNameString_2(argLiteral.LiteralString);
                         break;
+                    case SColor color:
+                        if (color == default)
+                            API.PushScaleformMovieMethodParameterInt(SColor.HUD_None.ArgbValue);
+                        else
+                            API.PushScaleformMovieMethodParameterInt(color.ArgbValue);
+                        break;
                     default:
                         throw new ArgumentException(string.Format("Unknown argument type '{0}' passed to scaleform with handle {1}...", argument.GetType().Name, Handle), "arguments");
                 }

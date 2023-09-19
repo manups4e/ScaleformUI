@@ -193,7 +193,7 @@ namespace ScaleformUI.PauseMenu
                 {
                     case TextTab simpleTab:
                         {
-                            _pause.AddPauseMenuTab(tab.Title, 0, tab._type);
+                            _pause.AddPauseMenuTab(simpleTab.Title, 0, simpleTab._type, simpleTab.TabColor);
                             if (!string.IsNullOrWhiteSpace(simpleTab.TextTitle))
                                 _pause.AddRightTitle(tabIndex, 0, simpleTab.TextTitle);
                             foreach (BasicTabItem it in simpleTab.LabelsList)
@@ -202,10 +202,10 @@ namespace ScaleformUI.PauseMenu
                                 _pause._pause.CallFunction("UPDATE_BASE_TAB_BACKGROUND", tabIndex, simpleTab.TextureDict, simpleTab.TextureName);
                         }
                         break;
-                    case SubmenuTab:
+                    case SubmenuTab submenu:
                         {
-                            _pause.AddPauseMenuTab(tab.Title, 1, tab._type);
-                            foreach (TabLeftItem item in tab.LeftItemList)
+                            _pause.AddPauseMenuTab(submenu.Title, 1, submenu._type, submenu.TabColor);
+                            foreach (TabLeftItem item in submenu.LeftItemList)
                             {
                                 int itemIndex = tab.LeftItemList.IndexOf(item);
                                 _pause.AddLeftItem(tabIndex, (int)item.ItemType, item._formatLeftLabel, item.MainColor, item.HighlightColor, item.Enabled);
@@ -301,59 +301,59 @@ namespace ScaleformUI.PauseMenu
                             }
                         }
                         break;
-                    case PlayerListTab pl:
+                    case PlayerListTab plTab:
                         {
-                            _pause.AddPauseMenuTab(tab.Title, 1, tab._type);
-                            switch (pl.listCol.Count)
+                            _pause.AddPauseMenuTab(plTab.Title, 1, plTab._type, plTab.TabColor);
+                            switch (plTab.listCol.Count)
                             {
                                 case 1:
-                                    _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, pl.listCol[0].Type);
+                                    _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, plTab.listCol[0].Type);
                                     break;
                                 case 2:
-                                    _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, pl.listCol[0].Type, pl.listCol[1].Type);
+                                    _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, plTab.listCol[0].Type, plTab.listCol[1].Type);
                                     break;
                                 case 3:
-                                    _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, pl.listCol[0].Type, pl.listCol[1].Type, pl.listCol[2].Type);
+                                    _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, plTab.listCol[0].Type, plTab.listCol[1].Type, plTab.listCol[2].Type);
                                     break;
                             }
-                            _pause._pause.CallFunction("SET_PLAYERS_TAB_NEWSTYLE", tabIndex, pl._newStyle);
-                            if (pl.listCol.Any(x => x.Type == "settings"))
+                            _pause._pause.CallFunction("SET_PLAYERS_TAB_NEWSTYLE", tabIndex, plTab._newStyle);
+                            if (plTab.listCol.Any(x => x.Type == "settings"))
                             {
-                                pl.SettingsColumn.Parent = this;
-                                pl.SettingsColumn.ParentTab = Tabs.IndexOf(pl);
-                                pl.SettingsColumn.isBuilding = true;
-                                buildSettings(pl);
+                                plTab.SettingsColumn.Parent = this;
+                                plTab.SettingsColumn.ParentTab = Tabs.IndexOf(plTab);
+                                plTab.SettingsColumn.isBuilding = true;
+                                buildSettings(plTab);
                             }
-                            if (pl.listCol.Any(x => x.Type == "players"))
+                            if (plTab.listCol.Any(x => x.Type == "players"))
                             {
-                                pl.PlayersColumn.Parent = this;
-                                pl.PlayersColumn.ParentTab = Tabs.IndexOf(pl);
-                                pl.PlayersColumn.isBuilding = true;
-                                buildPlayers(pl);
+                                plTab.PlayersColumn.Parent = this;
+                                plTab.PlayersColumn.ParentTab = Tabs.IndexOf(plTab);
+                                plTab.PlayersColumn.isBuilding = true;
+                                buildPlayers(plTab);
                             }
-                            if (pl.listCol.Any(x => x.Type == "missions"))
+                            if (plTab.listCol.Any(x => x.Type == "missions"))
                             {
-                                pl.MissionsColumn.isBuilding = true;
-                                pl.MissionsColumn.Parent = this;
-                                pl.MissionsColumn.ParentTab = Tabs.IndexOf(pl);
-                                buildMissions(pl);
+                                plTab.MissionsColumn.isBuilding = true;
+                                plTab.MissionsColumn.Parent = this;
+                                plTab.MissionsColumn.ParentTab = Tabs.IndexOf(plTab);
+                                buildMissions(plTab);
                             }
-                            if (pl.listCol.Any(x => x.Type == "panel"))
+                            if (plTab.listCol.Any(x => x.Type == "panel"))
                             {
-                                pl.MissionPanel.Parent = this;
-                                pl.MissionPanel.ParentTab = Tabs.IndexOf(pl);
-                                _pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_PICTURE", tabIndex, pl.MissionPanel.TextureDict, pl.MissionPanel.TextureName);
-                                _pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_PANEL_TITLE", tabIndex, pl.MissionPanel.Title);
-                                if (pl.MissionPanel.Items.Count > 0)
+                                plTab.MissionPanel.Parent = this;
+                                plTab.MissionPanel.ParentTab = Tabs.IndexOf(plTab);
+                                _pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_PICTURE", tabIndex, plTab.MissionPanel.TextureDict, plTab.MissionPanel.TextureName);
+                                _pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_PANEL_TITLE", tabIndex, plTab.MissionPanel.Title);
+                                if (plTab.MissionPanel.Items.Count > 0)
                                 {
-                                    foreach (UIFreemodeDetailsItem item in pl.MissionPanel.Items)
+                                    foreach (UIFreemodeDetailsItem item in plTab.MissionPanel.Items)
                                     {
-                                        _pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_ITEM", tabIndex, item.Type, item.TextLeft, item.TextRight, (int)item.Icon, (int)item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID);
+                                        _pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_ITEM", tabIndex, item.Type, item.TextLeft, item.TextRight, (int)item.Icon, item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID);
                                     }
                                 }
                             }
-                            while ((pl.SettingsColumn != null && pl.SettingsColumn.isBuilding) || (pl.PlayersColumn != null && pl.PlayersColumn.isBuilding) || (pl.MissionsColumn != null && pl.MissionsColumn.isBuilding)) await BaseScript.Delay(0);
-                            pl.updateFocus(0);
+                            while ((plTab.SettingsColumn != null && plTab.SettingsColumn.isBuilding) || (plTab.PlayersColumn != null && plTab.PlayersColumn.isBuilding) || (plTab.MissionsColumn != null && plTab.MissionsColumn.isBuilding)) await BaseScript.Delay(0);
+                            plTab.updateFocus(0);
                         }
                         break;
                 }

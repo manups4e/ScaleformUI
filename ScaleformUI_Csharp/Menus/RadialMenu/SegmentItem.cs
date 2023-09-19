@@ -1,4 +1,4 @@
-﻿using ScaleformUI.Scaleforms;
+﻿using ScaleformUI.Elements;
 
 namespace ScaleformUI.Radial
 {
@@ -6,7 +6,7 @@ namespace ScaleformUI.Radial
     {
         private string label;
         private string description;
-        private HudColor color;
+        private SColor color;
         private int textureHeight;
         private int textureWidth;
         private string textureName;
@@ -87,7 +87,7 @@ namespace ScaleformUI.Radial
                 }
             }
         }
-        public HudColor Color
+        public SColor Color
         {
             get => color;
             set
@@ -115,7 +115,7 @@ namespace ScaleformUI.Radial
             }
         }
 
-        public SegmentItem(string label, string desc, string txd, string txn, int txwidth, int txheight, HudColor color)
+        public SegmentItem(string label, string desc, string txd, string txn, int txwidth, int txheight, SColor color)
         {
             Label = label;
             Description = desc;

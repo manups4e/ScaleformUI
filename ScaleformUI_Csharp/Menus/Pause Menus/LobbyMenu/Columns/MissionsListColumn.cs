@@ -1,7 +1,7 @@
 ﻿using CitizenFX.Core;
+using ScaleformUI.Elements;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenu;
-using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI.LobbyMenu
 {
@@ -13,7 +13,7 @@ namespace ScaleformUI.LobbyMenu
         public List<MissionItem> Items { get; private set; }
         public ScrollingType ScrollingType { get => Pagination.scrollType; set => Pagination.scrollType = value; }
         public event MissionItemSelected OnMissionItemActivated;
-        public MissionsListColumn(string label, HudColor color, ScrollingType scrollType = ScrollingType.CLASSIC) : base(label, color)
+        public MissionsListColumn(string label, SColor color, ScrollingType scrollType = ScrollingType.CLASSIC) : base(label, color)
         {
             Items = new List<MissionItem>();
             Type = "missions";
@@ -83,9 +83,9 @@ namespace ScaleformUI.LobbyMenu
             MissionItem item = Items[menuIndex];
 
             if (Parent is MainView lobby)
-                lobby._pause._lobby.CallFunction("ADD_MISSIONS_ITEM", before, menuIndex, 0, item.Label, (int)item.MainColor, (int)item.HighlightColor, (int)item.LeftIcon, (int)item.LeftIconColor, (int)item.RightIcon, (int)item.RightIconColor, item.RightIconChecked, item.Enabled);
+                lobby._pause._lobby.CallFunction("ADD_MISSIONS_ITEM", before, menuIndex, 0, item.Label, item.MainColor, item.HighlightColor, (int)item.LeftIcon, item.LeftIconColor, (int)item.RightIcon, item.RightIconColor, item.RightIconChecked, item.Enabled);
             else if (Parent is TabView pause)
-                pause._pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSIONS_ITEM", ParentTab, before, menuIndex, 0, item.Label, (int)item.MainColor, (int)item.HighlightColor, (int)item.LeftIcon, (int)item.LeftIconColor, (int)item.RightIcon, (int)item.RightIconColor, item.RightIconChecked, item.Enabled);
+                pause._pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSIONS_ITEM", ParentTab, before, menuIndex, 0, item.Label, item.MainColor, item.HighlightColor, (int)item.LeftIcon, item.LeftIconColor, (int)item.RightIcon, item.RightIconColor, item.RightIconChecked, item.Enabled);
         }
 
 

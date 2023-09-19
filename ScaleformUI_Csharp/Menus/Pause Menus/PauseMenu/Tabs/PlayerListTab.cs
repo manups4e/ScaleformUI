@@ -1,5 +1,5 @@
-﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
+﻿using CitizenFX.Core.Native;
+using ScaleformUI.Elements;
 using ScaleformUI.LobbyMenu;
 
 namespace ScaleformUI.PauseMenu
@@ -32,7 +32,7 @@ namespace ScaleformUI.PauseMenu
         public PlayerListColumn PlayersColumn { get; private set; }
         public MissionsListColumn MissionsColumn { get; private set; }
         public MissionDetailsPanel MissionPanel { get; private set; }
-        public PlayerListTab(string name, bool newStyle = true) : base(name)
+        public PlayerListTab(string name, SColor color, bool newStyle = true) : base(name, color)
         {
             _type = V;
             _newStyle = newStyle;
@@ -78,7 +78,6 @@ namespace ScaleformUI.PauseMenu
             if (Parent != null && Parent.Visible)
             {
                 int idx = await Parent._pause._pause.CallFunctionReturnValueInt("SET_PLAYERS_TAB_FOCUS", Parent.Tabs.IndexOf(this), focus);
-                Debug.WriteLine("IDX = " + idx);
                 if (!isMouse)
                 {
                     switch (listCol[Focus].Type)

@@ -1,4 +1,4 @@
-﻿using ScaleformUI.Scaleforms;
+﻿using ScaleformUI.Elements;
 
 namespace ScaleformUI.Menu
 {
@@ -34,7 +34,7 @@ namespace ScaleformUI.Menu
         /// <param name="text">Item label.</param>
         /// <param name="check">Boolean value whether the checkbox is checked.</param>
         /// <param name="description">Description for this item.</param>
-        public UIMenuCheckboxItem(string text, bool check, string description) : this(text, UIMenuCheckboxStyle.Tick, check, description, HudColor.HUD_COLOUR_PAUSE_BG, HudColor.HUD_COLOUR_WHITE)
+        public UIMenuCheckboxItem(string text, bool check, string description) : this(text, UIMenuCheckboxStyle.Tick, check, description, SColor.HUD_Pause_bg, SColor.HUD_White)
         {
         }
 
@@ -45,7 +45,7 @@ namespace ScaleformUI.Menu
         /// <param name="style">CheckBox style (Tick or Cross).</param>
         /// <param name="check">Boolean value whether the checkbox is checked.</param>
         /// <param name="description">Description for this item.</param>
-        public UIMenuCheckboxItem(string text, UIMenuCheckboxStyle style, bool check, string description) : this(text, style, check, description, HudColor.HUD_COLOUR_PAUSE_BG, HudColor.HUD_COLOUR_WHITE)
+        public UIMenuCheckboxItem(string text, UIMenuCheckboxStyle style, bool check, string description) : this(text, style, check, description, SColor.HUD_Pause_bg, SColor.HUD_White)
         {
         }
 
@@ -58,7 +58,7 @@ namespace ScaleformUI.Menu
         /// <param name="description">Description for this item.</param>
         /// <param name="mainColor">Main item color.</param>
         /// <param name="highlightColor">Highlight item color.</param>
-        public UIMenuCheckboxItem(string text, UIMenuCheckboxStyle style, bool check, string description, HudColor mainColor, HudColor highlightColor) : base(text, description, mainColor, highlightColor, HudColor.HUD_COLOUR_WHITE, HudColor.HUD_COLOUR_BLACK)
+        public UIMenuCheckboxItem(string text, UIMenuCheckboxStyle style, bool check, string description, SColor mainColor, SColor highlightColor) : base(text, description, mainColor, highlightColor, SColor.HUD_White, SColor.HUD_Black)
         {
             Style = style;
             _checked = check;

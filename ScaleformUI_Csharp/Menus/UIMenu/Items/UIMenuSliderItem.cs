@@ -1,4 +1,4 @@
-﻿using ScaleformUI.Scaleforms;
+﻿using ScaleformUI.Elements;
 
 namespace ScaleformUI.Menu
 {
@@ -7,7 +7,7 @@ namespace ScaleformUI.Menu
         protected internal int _value = 0;
         protected internal int _max = 100;
         protected internal int _multiplier = 5;
-        public HudColor SliderColor
+        public SColor SliderColor
         {
             get => sliderColor;
             set
@@ -15,7 +15,7 @@ namespace ScaleformUI.Menu
                 sliderColor = value;
                 if (Parent is not null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    Main.scaleformUI.CallFunction("UPDATE_COLORS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), (int)MainColor, (int)HighlightColor, (int)TextColor, (int)HighlightedTextColor, (int)value);
+                    Main.scaleformUI.CallFunction("UPDATE_COLORS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), MainColor, HighlightColor, TextColor, HighlightedTextColor, value);
                 }
             }
         }
@@ -26,7 +26,7 @@ namespace ScaleformUI.Menu
         /// </summary>
         public event ItemSliderEvent OnSliderChanged;
         public bool Divider;
-        private HudColor sliderColor;
+        private SColor sliderColor;
 
         /// <summary>
         /// The maximum value of the slider.
@@ -90,7 +90,7 @@ namespace ScaleformUI.Menu
         /// <param name="text">Item label.</param>
         /// <param name="items">List that contains your items.</param>
         /// <param name="index">Index in the list. If unsure user 0.</param>
-        public UIMenuSliderItem(string text) : this(text, "", 100, 5, 0, HudColor.HUD_COLOUR_FREEMODE, false)
+        public UIMenuSliderItem(string text) : this(text, "", 100, 5, 0, SColor.HUD_Freemode, false)
         {
         }
 
@@ -101,14 +101,14 @@ namespace ScaleformUI.Menu
         /// <param name="items">List that contains your items.</param>
         /// <param name="index">Index in the list. If unsure user 0.</param>
         /// <param name="description">Description for this item.</param>
-        public UIMenuSliderItem(string text, string description) : this(text, description, 100, 5, 0, HudColor.HUD_COLOUR_FREEMODE, false)
+        public UIMenuSliderItem(string text, string description) : this(text, description, 100, 5, 0, SColor.HUD_Freemode, false)
         {
         }
-        public UIMenuSliderItem(string text, string description, bool heritage) : this(text, description, 100, 5, 0, HudColor.HUD_COLOUR_FREEMODE, heritage)
+        public UIMenuSliderItem(string text, string description, bool heritage) : this(text, description, 100, 5, 0, SColor.HUD_Freemode, heritage)
         {
         }
 
-        public UIMenuSliderItem(string text, string description, int max, int mult, int startVal, bool heritage) : this(text, description, max, mult, startVal, HudColor.HUD_COLOUR_FREEMODE, heritage)
+        public UIMenuSliderItem(string text, string description, int max, int mult, int startVal, bool heritage) : this(text, description, max, mult, startVal, SColor.HUD_Freemode, heritage)
         {
         }
         /// <summary>
@@ -119,7 +119,7 @@ namespace ScaleformUI.Menu
         /// <param name="index">Index in the list. If unsure user 0.</param>
         /// <param name="description">Description for this item.</param>
         /// /// <param name="divider">Put a divider in the center of the slider</param>
-        public UIMenuSliderItem(string text, string description, int max, int mult, int startVal, HudColor sliderColor, bool heritage = false) : base(text, description)
+        public UIMenuSliderItem(string text, string description, int max, int mult, int startVal, SColor sliderColor, bool heritage = false) : base(text, description)
         {
             SliderColor = sliderColor;
             _itemId = 3;

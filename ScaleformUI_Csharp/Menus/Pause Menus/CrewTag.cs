@@ -1,6 +1,5 @@
 ﻿using CitizenFX.Core;
 using ScaleformUI.Elements;
-using ScaleformUI.Scaleforms;
 using System.Drawing;
 
 namespace ScaleformUI.PauseMenus
@@ -39,7 +38,7 @@ namespace ScaleformUI.PauseMenus
                 Debug.WriteLine(e.ToString());
             }
         }
-        public CrewTag(string tag, bool crewTypeIsPrivate, bool crewTagContainsRockstar, CrewHierarchy level, HudColor crewColor)
+        public CrewTag(string tag, bool crewTypeIsPrivate, bool crewTagContainsRockstar, CrewHierarchy level, SColor crewColor)
         {
             try
             {
@@ -48,7 +47,7 @@ namespace ScaleformUI.PauseMenus
                 result += crewTagContainsRockstar ? "*" : " ";
                 result += ((int)level).ToString();
                 result += tag.ToUpper();
-                result += crewColor.HudColorToHex();
+                result += crewColor.HexValue;
                 TAG = result;
             }
             catch (Exception e)

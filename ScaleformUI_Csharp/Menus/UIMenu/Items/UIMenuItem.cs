@@ -3,7 +3,6 @@ using ScaleformUI.Elements;
 using ScaleformUI.LobbyMenu;
 using ScaleformUI.Menus;
 using ScaleformUI.PauseMenu;
-using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI.Menu
 {
@@ -203,10 +202,10 @@ namespace ScaleformUI.Menu
         private string _rightLabel = "";
         private bool _enabled;
         private bool blinkDescription;
-        private HudColor mainColor;
-        private HudColor highlightColor;
-        private HudColor textColor = HudColor.HUD_COLOUR_WHITE;
-        private HudColor highlightedTextColor = HudColor.HUD_COLOUR_BLACK;
+        private SColor mainColor;
+        private SColor highlightColor;
+        private SColor textColor = SColor.HUD_White;
+        private SColor highlightedTextColor = SColor.HUD_Black;
         private string description;
         private uint descriptionHash;
         internal ItemFont labelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
@@ -215,7 +214,7 @@ namespace ScaleformUI.Menu
         /// <summary>
         /// The item color when not highlighted
         /// </summary>
-        public HudColor MainColor
+        public SColor MainColor
         {
             get => mainColor;
             set
@@ -223,14 +222,14 @@ namespace ScaleformUI.Menu
                 mainColor = value;
                 if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    Main.scaleformUI.CallFunction("UPDATE_COLORS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), (int)value, (int)highlightColor, (int)textColor, (int)highlightedTextColor);
+                    Main.scaleformUI.CallFunction("UPDATE_COLORS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), value, highlightColor, textColor, highlightedTextColor);
                 }
             }
         }
         /// <summary>
         /// The item color when highlighted
         /// </summary>
-        public HudColor HighlightColor
+        public SColor HighlightColor
         {
             get => highlightColor;
             set
@@ -238,7 +237,7 @@ namespace ScaleformUI.Menu
                 highlightColor = value;
                 if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    Main.scaleformUI.CallFunction("UPDATE_COLORS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), (int)mainColor, (int)value, (int)textColor, (int)highlightedTextColor);
+                    Main.scaleformUI.CallFunction("UPDATE_COLORS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), mainColor, value, textColor, highlightedTextColor);
                 }
             }
         }
@@ -246,7 +245,7 @@ namespace ScaleformUI.Menu
         /// The item text color when not highlighted
         /// </summary>
 
-        public HudColor TextColor
+        public SColor TextColor
         {
             get => textColor;
             set
@@ -254,14 +253,14 @@ namespace ScaleformUI.Menu
                 textColor = value;
                 if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    Main.scaleformUI.CallFunction("UPDATE_COLORS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), (int)mainColor, (int)highlightColor, (int)value, (int)highlightedTextColor);
+                    Main.scaleformUI.CallFunction("UPDATE_COLORS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), mainColor, highlightColor, value, highlightedTextColor);
                 }
             }
         }
         /// <summary>
         /// The item text color when highlighted
         /// </summary>
-        public HudColor HighlightedTextColor
+        public SColor HighlightedTextColor
         {
             get => highlightedTextColor;
             set
@@ -269,7 +268,7 @@ namespace ScaleformUI.Menu
                 highlightedTextColor = value;
                 if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    Main.scaleformUI.CallFunction("UPDATE_COLORS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), (int)mainColor, (int)highlightColor, (int)textColor, (int)value);
+                    Main.scaleformUI.CallFunction("UPDATE_COLORS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), mainColor, highlightColor, textColor, value);
                 }
             }
         }
@@ -340,17 +339,17 @@ namespace ScaleformUI.Menu
         /// </summary>
         /// <param name="text">Button label.</param>
         /// <param name="description">Description.</param>
-        public UIMenuItem(string text, string description) : this(text, description, HudColor.HUD_COLOUR_PAUSE_BG, HudColor.HUD_COLOUR_WHITE, HudColor.HUD_COLOUR_WHITE, HudColor.HUD_COLOUR_BLACK) { }
+        public UIMenuItem(string text, string description) : this(text, description, SColor.HUD_Pause_bg, SColor.HUD_White, SColor.HUD_White, SColor.HUD_Black) { }
 
         /// <summary>
         /// Basic menu button with description.
         /// </summary>
         /// <param name="text">Button label.</param>
         /// <param name="descriptionHash">Description label hash.</param>
-        public UIMenuItem(string text, uint descriptionHash) : this(text, descriptionHash, HudColor.HUD_COLOUR_PAUSE_BG, HudColor.HUD_COLOUR_WHITE, HudColor.HUD_COLOUR_WHITE, HudColor.HUD_COLOUR_BLACK) { }
+        public UIMenuItem(string text, uint descriptionHash) : this(text, descriptionHash, SColor.HUD_Pause_bg, SColor.HUD_White, SColor.HUD_White, SColor.HUD_Black) { }
 
-        public UIMenuItem(string text, string description, HudColor mainColor, HudColor highlightColor) : this(text, description, mainColor, highlightColor, HudColor.HUD_COLOUR_WHITE, HudColor.HUD_COLOUR_BLACK) { }
-        public UIMenuItem(string text, uint descriptionHash, HudColor mainColor, HudColor highlightColor) : this(text, descriptionHash, mainColor, highlightColor, HudColor.HUD_COLOUR_WHITE, HudColor.HUD_COLOUR_BLACK) { }
+        public UIMenuItem(string text, string description, SColor mainColor, SColor highlightColor) : this(text, description, mainColor, highlightColor, SColor.HUD_White, SColor.HUD_Black) { }
+        public UIMenuItem(string text, uint descriptionHash, SColor mainColor, SColor highlightColor) : this(text, descriptionHash, mainColor, highlightColor, SColor.HUD_White, SColor.HUD_Black) { }
 
         /// <summary>
         /// Basic menu item with description and colors.
@@ -361,7 +360,7 @@ namespace ScaleformUI.Menu
         /// <param name="highlightColor">Highlighted Color</param>
         /// <param name="textColor">Text's main color</param>
         /// <param name="highlightedTextColor">Highlighted text color</param>
-        public UIMenuItem(string text, string description, HudColor color, HudColor highlightColor, HudColor textColor, HudColor highlightedTextColor)
+        public UIMenuItem(string text, string description, SColor color, SColor highlightColor, SColor textColor, SColor highlightedTextColor)
         {
             _enabled = true;
             MainColor = color;
@@ -381,7 +380,7 @@ namespace ScaleformUI.Menu
         /// <param name="highlightColor">Highlighted Color</param>
         /// <param name="textColor">Text's main color</param>
         /// <param name="highlightedTextColor">Highlighted text color</param>
-        public UIMenuItem(string text, uint descriptionHash, HudColor color, HudColor highlightColor, HudColor textColor, HudColor highlightedTextColor)
+        public UIMenuItem(string text, uint descriptionHash, SColor color, SColor highlightColor, SColor textColor, SColor highlightedTextColor)
         {
             _enabled = true;
             MainColor = color;
@@ -753,9 +752,9 @@ namespace ScaleformUI.Menu
                 {
                     case UIMissionDetailsPanel:
                         UIMissionDetailsPanel mis = (UIMissionDetailsPanel)panel;
-                        Main.scaleformUI.CallFunction("ADD_SIDE_PANEL_TO_ITEM", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), 0, (int)mis.PanelSide, (int)mis._titleType, mis.Title, (int)mis.TitleColor, mis.TextureDict, mis.TextureName);
+                        Main.scaleformUI.CallFunction("ADD_SIDE_PANEL_TO_ITEM", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), 0, (int)mis.PanelSide, (int)mis._titleType, mis.Title, mis.TitleColor, mis.TextureDict, mis.TextureName);
                         foreach (UIFreemodeDetailsItem _it in mis.Items)
-                            Main.scaleformUI.CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _it.Type, _it.TextLeft, _it.TextRight, (int)_it.Icon, (int)_it.IconColor, _it.Tick);
+                            Main.scaleformUI.CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _it.Type, _it.TextLeft, _it.TextRight, (int)_it.Icon, _it.IconColor, _it.Tick);
                         break;
                 }
             }

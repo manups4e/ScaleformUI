@@ -1,4 +1,4 @@
-﻿using ScaleformUI.Scaleforms;
+﻿using ScaleformUI.Elements;
 
 namespace ScaleformUI.Menu
 {
@@ -67,15 +67,15 @@ namespace ScaleformUI.Menu
         /// <param name="items">List that contains your items.</param>
         /// <param name="index">Index in the list. If unsure user 0.</param>
         /// <param name="description">Description for this item.</param>
-        public UIMenuListItem(string text, List<dynamic> items, int index, string description) : this(text, items, index, description, HudColor.HUD_COLOUR_PAUSE_BG, HudColor.HUD_COLOUR_WHITE)
+        public UIMenuListItem(string text, List<dynamic> items, int index, string description) : this(text, items, index, description, SColor.HUD_Pause_bg, SColor.White)
         {
         }
 
-        public UIMenuListItem(string text, List<dynamic> items, int index, string description, HudColor mainColor, HudColor higlightColor) : this(text, items, index, description, mainColor, higlightColor, HudColor.HUD_COLOUR_WHITE, HudColor.HUD_COLOUR_BLACK)
+        public UIMenuListItem(string text, List<dynamic> items, int index, string description, SColor mainColor, SColor higlightColor) : this(text, items, index, description, mainColor, higlightColor, SColor.White, SColor.Black)
         {
         }
 
-        public UIMenuListItem(string text, List<dynamic> items, int index, string description, HudColor mainColor, HudColor higlightColor, HudColor textColor, HudColor highlightTextColor) : base(text, description, mainColor, higlightColor, textColor, highlightTextColor)
+        public UIMenuListItem(string text, List<dynamic> items, int index, string description, SColor mainColor, SColor higlightColor, SColor textColor, SColor highlightTextColor) : base(text, description, mainColor, higlightColor, textColor, highlightTextColor)
         {
             _items = items;
             Index = index;

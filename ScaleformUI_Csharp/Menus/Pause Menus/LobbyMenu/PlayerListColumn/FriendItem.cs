@@ -1,4 +1,5 @@
-﻿using ScaleformUI.Menu;
+﻿using ScaleformUI.Elements;
+using ScaleformUI.Menu;
 using ScaleformUI.PauseMenu;
 using ScaleformUI.PauseMenus;
 using ScaleformUI.Scaleforms;
@@ -23,10 +24,10 @@ namespace ScaleformUI.LobbyMenu
     public class FriendItem : LobbyItem
     {
         private string label;
-        private HudColor itemColor;
+        private SColor itemColor;
         private int rank;
         private string status;
-        private HudColor statusColor = HudColor.NONE;
+        private SColor statusColor = SColor.FromHudColor(HudColor.NONE);
         private CrewTag crewTag;
         internal int iconL;
         internal int iconR;
@@ -50,7 +51,7 @@ namespace ScaleformUI.LobbyMenu
                 }
             }
         }
-        public HudColor ItemColor
+        public SColor ItemColor
         {
             get => itemColor;
             set
@@ -108,13 +109,13 @@ namespace ScaleformUI.LobbyMenu
                 {
                     int idx = ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this));
                     if (ParentColumn.Parent is MainView lobby)
-                        lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_STATUS", idx, status, (int)statusColor);
+                        lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_STATUS", idx, status, statusColor);
                     else if (ParentColumn.Parent is TabView pause)
-                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_STATUS", ParentColumn.ParentTab, idx, status, (int)statusColor);
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_STATUS", ParentColumn.ParentTab, idx, status, statusColor);
                 }
             }
         }
-        public HudColor StatusColor
+        public SColor StatusColor
         {
             get => statusColor;
             set
@@ -124,9 +125,9 @@ namespace ScaleformUI.LobbyMenu
                 {
                     int idx = ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this));
                     if (ParentColumn.Parent is MainView lobby)
-                        lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_STATUS", idx, status, (int)statusColor);
+                        lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_STATUS", idx, status, statusColor);
                     else if (ParentColumn.Parent is TabView pause)
-                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_STATUS", ParentColumn.ParentTab, idx, status, (int)statusColor);
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_STATUS", ParentColumn.ParentTab, idx, status, statusColor);
                 }
             }
         }
@@ -149,7 +150,7 @@ namespace ScaleformUI.LobbyMenu
             }
         }
 
-        public FriendItem(string label, HudColor itemColor, bool coloredTag, int rank, string status = "", CrewTag crewTag = default)
+        public FriendItem(string label, SColor itemColor, bool coloredTag, int rank, string status = "", CrewTag crewTag = default)
         {
             _type = 1;
             this.label = label;
@@ -158,9 +159,9 @@ namespace ScaleformUI.LobbyMenu
             this.rank = rank;
             this.status = status;
             this.crewTag = crewTag;
-            if (this.itemColor == HudColor.NONE)
-                this.itemColor = HudColor.HUD_COLOUR_BLUE;
-            if (this.statusColor == HudColor.NONE)
+            if (this.itemColor == SColor.FromHudColor(HudColor.NONE))
+                this.itemColor = SColor.FromHudColor(HudColor.HUD_COLOUR_BLUE);
+            if (this.statusColor == SColor.FromHudColor(HudColor.NONE))
                 this.statusColor = this.itemColor;
             this.iconL = 0;
             this.iconR = 65;

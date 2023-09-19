@@ -1,4 +1,6 @@
-﻿namespace ScaleformUI.PauseMenu
+﻿using ScaleformUI.Elements;
+
+namespace ScaleformUI.PauseMenu
 {
     public class TextTab : BaseTab
     {
@@ -7,7 +9,7 @@
         public List<BasicTabItem> LabelsList = new List<BasicTabItem>();
         public string TextureDict { get; private set; }
         public string TextureName { get; private set; }
-        public TextTab(string name, string title) : base(name)
+        public TextTab(string name, string title, SColor color) : base(name, color)
         {
             TextTitle = title;
             _type = 0;

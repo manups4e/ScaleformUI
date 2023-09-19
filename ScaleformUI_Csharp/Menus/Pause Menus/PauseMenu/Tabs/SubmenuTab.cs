@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using ScaleformUI.Elements;
 
 namespace ScaleformUI.PauseMenu
 {
     public class SubmenuTab : BaseTab
     {
         private bool _focused;
-        public SubmenuTab(string name) : base(name)
+        public SubmenuTab(string name, SColor color) : base(name, color)
         {
             _type = 1;
         }

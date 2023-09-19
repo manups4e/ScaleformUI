@@ -1,4 +1,4 @@
-﻿using ScaleformUI.Scaleforms;
+﻿using ScaleformUI.Elements;
 
 namespace ScaleformUI.Menu
 {
@@ -17,8 +17,8 @@ namespace ScaleformUI.Menu
             }
         }
         public int Type { get; private set; }
-        private HudColor sliderColor;
-        public HudColor Color
+        private SColor sliderColor;
+        public SColor Color
         {
             get => sliderColor;
             set
@@ -26,18 +26,18 @@ namespace ScaleformUI.Menu
                 sliderColor = value;
                 if (Parent is not null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    Main.scaleformUI.CallFunction("UPDATE_COLORS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), (int)MainColor, (int)HighlightColor, (int)TextColor, (int)HighlightedTextColor, (int)value);
+                    Main.scaleformUI.CallFunction("UPDATE_COLORS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), MainColor, HighlightColor, TextColor, HighlightedTextColor, value);
                 }
             }
         }
 
         public event StatChanged OnStatChanged;
 
-        public UIMenuStatsItem(string text) : this(text, "", 0, HudColor.HUD_COLOUR_FREEMODE)
+        public UIMenuStatsItem(string text) : this(text, "", 0, SColor.HUD_Freemode)
         {
         }
 
-        public UIMenuStatsItem(string text, string subtitle, int value, HudColor color) : base(text, subtitle)
+        public UIMenuStatsItem(string text, string subtitle, int value, SColor color) : base(text, subtitle)
         {
             _itemId = 5;
             Type = 0;

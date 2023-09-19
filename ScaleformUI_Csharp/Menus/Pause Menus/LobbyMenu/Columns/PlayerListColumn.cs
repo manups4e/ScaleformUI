@@ -1,8 +1,8 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
+using ScaleformUI.Elements;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenu;
-using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI.LobbyMenu
 {
@@ -16,7 +16,7 @@ namespace ScaleformUI.LobbyMenu
 
         public ScrollingType ScrollingType { get => Pagination.scrollType; set => Pagination.scrollType = value; }
 
-        public PlayerListColumn(string label, HudColor color, ScrollingType scrollType = ScrollingType.CLASSIC) : base(label, color)
+        public PlayerListColumn(string label, SColor color, ScrollingType scrollType = ScrollingType.CLASSIC) : base(label, color)
         {
             Items = new List<LobbyItem>();
             Type = "players";
@@ -89,9 +89,9 @@ namespace ScaleformUI.LobbyMenu
                 case FriendItem:
                     FriendItem fi = (FriendItem)item;
                     if (Parent is MainView lobby)
-                        lobby._pause._lobby.CallFunction("ADD_PLAYER_ITEM", before, menuIndex, 1, 1, fi.Label, (int)fi.ItemColor, fi.ColoredTag, fi.iconL, fi.boolL, fi.iconR, fi.boolR, fi.Status, (int)fi.StatusColor, fi.Rank, fi.CrewTag.TAG, fi.KeepPanelVisible);
+                        lobby._pause._lobby.CallFunction("ADD_PLAYER_ITEM", before, menuIndex, 1, 1, fi.Label, fi.ItemColor, fi.ColoredTag, fi.iconL, fi.boolL, fi.iconR, fi.boolR, fi.Status, fi.StatusColor, fi.Rank, fi.CrewTag.TAG, fi.KeepPanelVisible);
                     else if (Parent is TabView pause)
-                        pause._pause._pause.CallFunction("ADD_PLAYERS_TAB_PLAYER_ITEM", ParentTab, before, menuIndex, 1, 1, fi.Label, (int)fi.ItemColor, fi.ColoredTag, fi.iconL, fi.boolL, fi.iconR, fi.boolR, fi.Status, (int)fi.StatusColor, fi.Rank, fi.CrewTag.TAG, fi.KeepPanelVisible);
+                        pause._pause._pause.CallFunction("ADD_PLAYERS_TAB_PLAYER_ITEM", ParentTab, before, menuIndex, 1, 1, fi.Label, fi.ItemColor, fi.ColoredTag, fi.iconL, fi.boolL, fi.iconR, fi.boolR, fi.Status, fi.StatusColor, fi.Rank, fi.CrewTag.TAG, fi.KeepPanelVisible);
                     break;
             }
             item.Panel?.UpdatePanel(true);
@@ -266,9 +266,9 @@ namespace ScaleformUI.LobbyMenu
                             Items[CurrentSelection].Selected = true;
                             if (lobby.listCol[0].Type == "players" || (lobby.listCol.Any(x => x.Type == "players") && Items.Count > 0 && Items[0].KeepPanelVisible))
                             {
-                            if (Items[CurrentSelection].ClonePed != null)
-                                Items[CurrentSelection].CreateClonedPed();
-                        }
+                                if (Items[CurrentSelection].ClonePed != null)
+                                    Items[CurrentSelection].CreateClonedPed();
+                            }
                         }
                         else if (Parent is TabView pause)
                         {

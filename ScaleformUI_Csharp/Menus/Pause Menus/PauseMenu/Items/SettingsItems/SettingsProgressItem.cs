@@ -1,4 +1,4 @@
-﻿using ScaleformUI.Scaleforms;
+﻿using ScaleformUI.Elements;
 
 namespace ScaleformUI.PauseMenu
 {
@@ -6,7 +6,7 @@ namespace ScaleformUI.PauseMenu
     public class SettingsProgressItem : SettingsItem
     {
         private int _value;
-        private HudColor coloredBarColor;
+        private SColor coloredBarColor = SColor.HUD_Freemode;
         public event SettingsProgressEvent OnBarChanged;
         public event SettingsProgressEvent OnProgressSelected;
         public int MaxValue { get; set; } = 100;
@@ -26,7 +26,7 @@ namespace ScaleformUI.PauseMenu
                 ProgressChanged();
             }
         }
-        public HudColor ColoredBarColor
+        public SColor ColoredBarColor
         {
             get => coloredBarColor;
             set
@@ -41,7 +41,7 @@ namespace ScaleformUI.PauseMenu
                 }
             }
         }
-        public SettingsProgressItem(string label, int max, int startIndex, bool masked, HudColor barColor = HudColor.HUD_COLOUR_FREEMODE) : base(label, "")
+        public SettingsProgressItem(string label, int max, int startIndex, bool masked, SColor barColor) : base(label, "")
         {
             if (masked)
                 ItemType = SettingsItemType.MaskedProgressBar;

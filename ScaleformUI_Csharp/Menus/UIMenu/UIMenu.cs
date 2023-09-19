@@ -896,7 +896,7 @@ namespace ScaleformUI.Menu
         private MenuBuildingAnimation buildingAnimation = MenuBuildingAnimation.LEFT;
         private string title;
         private string subtitle;
-        private HudColor counterColor = HudColor.HUD_COLOUR_FREEMODE;
+        private SColor counterColor = SColor.HUD_Freemode;
 
         public bool Glare { get; set; }
 
@@ -2237,7 +2237,7 @@ namespace ScaleformUI.Menu
             bool _animEnabled = EnableAnimation;
             EnableAnimation = false;
             while (!Main.scaleformUI.IsLoaded) await BaseScript.Delay(0);
-            Main.scaleformUI.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, EnableAnimation, (int)AnimationType, (int)buildingAnimation, (int)counterColor, descriptionFont.FontName, descriptionFont.FontID, fadingTime);
+            Main.scaleformUI.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, EnableAnimation, (int)AnimationType, (int)buildingAnimation, counterColor, descriptionFont.FontName, descriptionFont.FontID, fadingTime);
             if (Windows.Count > 0)
             {
                 foreach (UIMenuWindow wind in Windows)
@@ -2254,7 +2254,7 @@ namespace ScaleformUI.Menu
                             if (det.StatWheelEnabled)
                             {
                                 foreach (UIDetailStat stat in det.DetailStats)
-                                    Main.scaleformUI.CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", Windows.IndexOf(det), stat.Percentage, (int)stat.HudColor);
+                                    Main.scaleformUI.CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", Windows.IndexOf(det), stat.Percentage, stat.HudColor);
                             }
                             break;
                     }
@@ -2376,10 +2376,10 @@ namespace ScaleformUI.Menu
                     UIMenuDynamicListItem dit = (UIMenuDynamicListItem)item;
                     PushScaleformMovieMethodParameterString(dit.CurrentListItem);
                     PushScaleformMovieFunctionParameterInt(0);
-                    PushScaleformMovieFunctionParameterInt((int)dit.MainColor);
-                    PushScaleformMovieFunctionParameterInt((int)dit.HighlightColor);
-                    PushScaleformMovieFunctionParameterInt((int)dit.TextColor);
-                    PushScaleformMovieFunctionParameterInt((int)dit.HighlightedTextColor);
+                    PushScaleformMovieFunctionParameterInt(dit.MainColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(dit.HighlightColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(dit.TextColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(dit.HighlightedTextColor.ArgbValue);
                     EndScaleformMovieMethod();
                     break;
                 case UIMenuListItem:
@@ -2388,20 +2388,20 @@ namespace ScaleformUI.Menu
                     BeginTextCommandScaleformString($"listitem_{menuIndex}_list");
                     EndTextCommandScaleformString();
                     PushScaleformMovieFunctionParameterInt(it.Index);
-                    PushScaleformMovieFunctionParameterInt((int)it.MainColor);
-                    PushScaleformMovieFunctionParameterInt((int)it.HighlightColor);
-                    PushScaleformMovieFunctionParameterInt((int)it.TextColor);
-                    PushScaleformMovieFunctionParameterInt((int)it.HighlightedTextColor);
+                    PushScaleformMovieFunctionParameterInt(it.MainColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(it.HighlightColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(it.TextColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(it.HighlightedTextColor.ArgbValue);
                     EndScaleformMovieMethod();
                     break;
                 case UIMenuCheckboxItem:
                     UIMenuCheckboxItem check = (UIMenuCheckboxItem)item;
                     PushScaleformMovieFunctionParameterInt((int)check.Style);
                     PushScaleformMovieMethodParameterBool(check.Checked);
-                    PushScaleformMovieFunctionParameterInt((int)check.MainColor);
-                    PushScaleformMovieFunctionParameterInt((int)check.HighlightColor);
-                    PushScaleformMovieFunctionParameterInt((int)check.TextColor);
-                    PushScaleformMovieFunctionParameterInt((int)check.HighlightedTextColor);
+                    PushScaleformMovieFunctionParameterInt(check.MainColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(check.HighlightColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(check.TextColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(check.HighlightedTextColor.ArgbValue);
                     EndScaleformMovieMethod();
                     break;
                 case UIMenuSliderItem:
@@ -2409,11 +2409,11 @@ namespace ScaleformUI.Menu
                     PushScaleformMovieFunctionParameterInt(prItem._max);
                     PushScaleformMovieFunctionParameterInt(prItem._multiplier);
                     PushScaleformMovieFunctionParameterInt(prItem.Value);
-                    PushScaleformMovieFunctionParameterInt((int)prItem.MainColor);
-                    PushScaleformMovieFunctionParameterInt((int)prItem.HighlightColor);
-                    PushScaleformMovieFunctionParameterInt((int)prItem.TextColor);
-                    PushScaleformMovieFunctionParameterInt((int)prItem.HighlightedTextColor);
-                    PushScaleformMovieFunctionParameterInt((int)prItem.SliderColor);
+                    PushScaleformMovieFunctionParameterInt(prItem.MainColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(prItem.HighlightColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(prItem.TextColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(prItem.HighlightedTextColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(prItem.SliderColor.ArgbValue);
                     PushScaleformMovieFunctionParameterBool(prItem._heritage);
                     EndScaleformMovieMethod();
                     break;
@@ -2422,38 +2422,38 @@ namespace ScaleformUI.Menu
                     PushScaleformMovieFunctionParameterInt(slItem._max);
                     PushScaleformMovieFunctionParameterInt(slItem._multiplier);
                     PushScaleformMovieFunctionParameterInt(slItem.Value);
-                    PushScaleformMovieFunctionParameterInt((int)slItem.MainColor);
-                    PushScaleformMovieFunctionParameterInt((int)slItem.HighlightColor);
-                    PushScaleformMovieFunctionParameterInt((int)slItem.TextColor);
-                    PushScaleformMovieFunctionParameterInt((int)slItem.HighlightedTextColor);
-                    PushScaleformMovieFunctionParameterInt((int)slItem.SliderColor);
+                    PushScaleformMovieFunctionParameterInt(slItem.MainColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(slItem.HighlightColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(slItem.TextColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(slItem.HighlightedTextColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(slItem.SliderColor.ArgbValue);
                     EndScaleformMovieMethod();
                     break;
                 case UIMenuStatsItem:
                     UIMenuStatsItem statsItem = (UIMenuStatsItem)item;
                     PushScaleformMovieFunctionParameterInt(statsItem.Value);
                     PushScaleformMovieFunctionParameterInt(statsItem.Type);
-                    PushScaleformMovieFunctionParameterInt((int)statsItem.Color);
-                    PushScaleformMovieFunctionParameterInt((int)statsItem.MainColor);
-                    PushScaleformMovieFunctionParameterInt((int)statsItem.HighlightColor);
-                    PushScaleformMovieFunctionParameterInt((int)statsItem.TextColor);
-                    PushScaleformMovieFunctionParameterInt((int)statsItem.HighlightedTextColor);
+                    PushScaleformMovieFunctionParameterInt(statsItem.Color.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(statsItem.MainColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(statsItem.HighlightColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(statsItem.TextColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(statsItem.HighlightedTextColor.ArgbValue);
                     EndScaleformMovieMethod();
                     break;
                 case UIMenuSeparatorItem:
                     UIMenuSeparatorItem separatorItem = (UIMenuSeparatorItem)item;
                     PushScaleformMovieFunctionParameterBool(separatorItem.Jumpable);
-                    PushScaleformMovieFunctionParameterInt((int)item.MainColor);
-                    PushScaleformMovieFunctionParameterInt((int)item.HighlightColor);
-                    PushScaleformMovieFunctionParameterInt((int)item.TextColor);
-                    PushScaleformMovieFunctionParameterInt((int)item.HighlightedTextColor);
+                    PushScaleformMovieFunctionParameterInt(item.MainColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(item.HighlightColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(item.TextColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(item.HighlightedTextColor.ArgbValue);
                     EndScaleformMovieMethod();
                     break;
                 default:
-                    PushScaleformMovieFunctionParameterInt((int)item.MainColor);
-                    PushScaleformMovieFunctionParameterInt((int)item.HighlightColor);
-                    PushScaleformMovieFunctionParameterInt((int)item.TextColor);
-                    PushScaleformMovieFunctionParameterInt((int)item.HighlightedTextColor);
+                    PushScaleformMovieFunctionParameterInt(item.MainColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(item.HighlightColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(item.TextColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(item.HighlightedTextColor.ArgbValue);
                     EndScaleformMovieMethod();
                     Main.scaleformUI.CallFunction("SET_RIGHT_LABEL", scaleformIndex, item._formatRightLabel);
                     if (item.RightBadge != BadgeIcon.NONE)
@@ -2470,15 +2470,15 @@ namespace ScaleformUI.Menu
                 {
                     case UIMissionDetailsPanel:
                         UIMissionDetailsPanel mis = (UIMissionDetailsPanel)item.SidePanel;
-                        Main.scaleformUI.CallFunction("ADD_SIDE_PANEL_TO_ITEM", scaleformIndex, 0, (int)mis.PanelSide, (int)mis._titleType, mis.Title, (int)mis.TitleColor, mis.TextureDict, mis.TextureName);
+                        Main.scaleformUI.CallFunction("ADD_SIDE_PANEL_TO_ITEM", scaleformIndex, 0, (int)mis.PanelSide, (int)mis._titleType, mis.Title, mis.TitleColor, mis.TextureDict, mis.TextureName);
                         foreach (UIFreemodeDetailsItem _it in mis.Items)
                         {
-                            Main.scaleformUI.CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", scaleformIndex, _it.Type, _it.TextLeft, _it.TextRight, (int)_it.Icon, (int)_it.IconColor, _it.Tick, _it._labelFont.FontName, _it._labelFont.FontID, _it._rightLabelFont.FontName, _it._rightLabelFont.FontID);
+                            Main.scaleformUI.CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", scaleformIndex, _it.Type, _it.TextLeft, _it.TextRight, (int)_it.Icon, _it.IconColor, _it.Tick, _it._labelFont.FontName, _it._labelFont.FontID, _it._rightLabelFont.FontName, _it._rightLabelFont.FontID);
                         }
                         break;
                     case UIVehicleColourPickerPanel:
                         UIVehicleColourPickerPanel cp = (UIVehicleColourPickerPanel)item.SidePanel;
-                        Main.scaleformUI.CallFunction("ADD_SIDE_PANEL_TO_ITEM", scaleformIndex, 1, (int)cp.PanelSide, (int)cp._titleType, cp.Title, (int)cp.TitleColor);
+                        Main.scaleformUI.CallFunction("ADD_SIDE_PANEL_TO_ITEM", scaleformIndex, 1, (int)cp.PanelSide, (int)cp._titleType, cp.Title, cp.TitleColor);
                         break;
                 }
             }
@@ -2491,7 +2491,7 @@ namespace ScaleformUI.Menu
                 {
                     case UIMenuColorPanel:
                         UIMenuColorPanel cp = (UIMenuColorPanel)panel;
-                        Main.scaleformUI.CallFunction("ADD_PANEL", scaleformIndex, 0, cp.Title, (int)cp.ColorPanelColorType, cp.CurrentSelection, cp.CustomColors is not null ? string.Join(",", cp.CustomColors) : "");
+                        Main.scaleformUI.CallFunction("ADD_PANEL", scaleformIndex, 0, cp.Title, (int)cp.ColorPanelColorType, cp.CurrentSelection, cp.CustomColors is not null ? string.Join(",", cp.CustomColors.Select(x => x.ArgbValue)) : "");
                         break;
                     case UIMenuPercentagePanel:
                         UIMenuPercentagePanel pp = (UIMenuPercentagePanel)panel;
@@ -2597,7 +2597,7 @@ namespace ScaleformUI.Menu
         /// <summary>
         /// Set the CounterText color.
         /// </summary>
-        public HudColor CounterColor
+        public SColor CounterColor
         {
             get => counterColor;
             set
@@ -2605,7 +2605,7 @@ namespace ScaleformUI.Menu
                 counterColor = value;
                 if (Visible)
                 {
-                    Main.scaleformUI.CallFunction("SET_COUNTER_COLOR", (int)counterColor);
+                    Main.scaleformUI.CallFunction("SET_COUNTER_COLOR", counterColor);
                 }
             }
         }
