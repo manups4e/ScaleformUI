@@ -149,7 +149,8 @@ namespace ScaleformUI.Scaleforms
 
         internal async void Update()
         {
-            _sc.Render2D();
+            if (enabled)
+                _sc.Render2D();
         }
     }
 }
