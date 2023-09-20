@@ -4,16 +4,16 @@ CrewTag.__call = function()
     return "Tag", "CrewTag"
 end
 
+---@param tag string
+---@param crewTypeIsPrivate boolean
+---@param crewTagContainsRockstar boolean
+---@param level number|CrewHierarchy
+---@param crewColor SColor
+---@return table
 function CrewTag.New(tag, crewTypeIsPrivate, crewTagContainsRockstar, level, crewColor)
     local r, g, b, a
     local hexColor
-    if type(crewColor) == "number" then
-        r, g, b, a = GetHudColour(crewColor);
-    elseif type(crewColor) == "table" then
-        r, g, b, a = crewColor.R, crewColor.G, crewColor.B, crewColor.A
-    end
-    hexColor = string.format("#%02X%02X%02X%02X", a, r, g, b)
-    print(hexColor)
+    hexColor = crewColor:ToHex()
 
     local result = "";
     if tag ~= nil and tag ~= "" then
@@ -22,7 +22,6 @@ function CrewTag.New(tag, crewTypeIsPrivate, crewTagContainsRockstar, level, cre
         result = result .. level
         result = result .. string.upper(tag)
         result = result .. hexColor
-        print(result)
     end
     local data = {
         TAG = result

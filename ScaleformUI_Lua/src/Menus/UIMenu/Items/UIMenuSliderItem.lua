@@ -12,23 +12,21 @@ UIMenuSliderItem.__call = function() return "UIMenuItem", "UIMenuSliderItem" end
 ---@param Index number|0
 ---@param Heritage boolean|false
 ---@param Description string
----@param sliderColor number|116
----@param color number|117
----@param highlightColor number|1
----@param textColor number|1
----@param highlightedTextColor number|2
-function UIMenuSliderItem.New(Text, Max, Multiplier, Index, Heritage, Description, sliderColor, color, highlightColor,
-                              textColor, highlightedTextColor)
+---@param sliderColor SColor
+---@param color SColor
+---@param highlightColor SColor
+---@param textColor SColor
+---@param highlightedTextColor SColor
+function UIMenuSliderItem.New(Text, Max, Multiplier, Index, Heritage, Description, sliderColor, color, highlightColor, textColor, highlightedTextColor)
     local _UIMenuSliderItem = {
-        Base = UIMenuItem.New(Text or "", Description or "", color or 117, highlightColor or 1, textColor or 1,
-            highlightedTextColor or 2),
+        Base = UIMenuItem.New(Text or "", Description or "", color or SColor.HUD_Pause_bg, highlightColor or SColor.HUD_White, textColor or SColor.HUD_White, highlightedTextColor or SColor.HUD_Black),
         _Index = tonumber(Index) or 0,
         _Max = tonumber(Max) or 100,
         _Multiplier = Multiplier or 5,
         _heritage = Heritage or false,
         Panels = {},
         SidePanel = nil,
-        SliderColor = sliderColor or 116,
+        SliderColor = sliderColor or SColor.HUD_Freemode,
         ItemId = 3,
         OnSliderChanged = function(menu, item, newindex)
         end,

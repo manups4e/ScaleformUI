@@ -11,7 +11,7 @@ end
 ---@field public Direction vector3
 ---@field public Rotation vector3
 ---@field public Distance number
----@field public Color table<number, number, number, number> -- {Red, Green, Blue, Alpha}
+---@field public Color SColor -- {Red, Green, Blue, Alpha}
 ---@field public PlaceOnGround boolean
 ---@field public BobUpDown boolean
 ---@field public Rotate boolean
@@ -27,7 +27,7 @@ end
 ---@param position vector3
 ---@param scale vector3
 ---@param distance number
----@param color table<number, number, number, number> -- {R: Red, G: Green, B: Blue, A: Alpha}
+---@param color SColor -- {R: Red, G: Green, B: Blue, A: Alpha}
 ---@param placeOnGround boolean
 ---@param bobUpDown boolean
 ---@param rotate boolean
@@ -100,6 +100,6 @@ function Marker:IsInRange()
 end
 
 ---Sets the marker color
-function Marker:SetColor(r, g, b, a)
-    self.Color = { R = r, G = g, B = b, A = a }
+function Marker:SetColor(color)
+    self.Color = color
 end

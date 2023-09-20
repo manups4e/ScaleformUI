@@ -4,10 +4,10 @@ UIVehicleColorPickerPanel.__call = function() return "UIVehicleColorPickerPanel"
 
 function UIVehicleColorPickerPanel.New(side, title, color)
     local _titleColor
-    if color ~= -1 then
+    if color ~= SColor.HUD_None then
         _titleColor = color
     else
-        _titleColor = Colours.NONE
+        _titleColor = SColor.HUD_None
     end
 
     _UIVehicleColorPickerPanel = {

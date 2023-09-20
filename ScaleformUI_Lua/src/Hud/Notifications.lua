@@ -135,14 +135,14 @@ end
 ---@field public IconChars table<string, string>
 ---@field public Hide fun(self:Notifications):nil
 ---@field public ShowNotification fun(self:Notifications, msg:string, blink:boolean, showInBrief:boolean):nil
----@field public ShowNotificationWithColor fun(self:Notifications, msg:string, color:Colours, blink:boolean, showInBrief:boolean):nil
+---@field public ShowNotificationWithColor fun(self:Notifications, msg:string, color:HudColours, blink:boolean, showInBrief:boolean):nil
 ---@field public ShowHelpNotification fun(self:Notifications, helpText:string, duration:number):nil
 ---@field public ShowFloatingHelpNotification fun(self:Notifications, helpText:string, coords:vector3):nil
----@field public ShowAdvancedNotification fun(self:Notifications, title:string, subtitle:string, body:string, character:NotificationCharacters, icon:NotificationIcon, backgroundColor:Colours, flashColoir:table<number, number, number>, blink:boolean, type:NotificationType, sound:string):nil
+---@field public ShowAdvancedNotification fun(self:Notifications, title:string, subtitle:string, body:string, character:NotificationCharacters, icon:NotificationIcon, backgroundColor:HudColours, flashColoir:table<number, number, number>, blink:boolean, type:NotificationType, sound:string):nil
 ---@field public ShowStatNotification fun(self:Notifications, newProgress:number, oldProgress:number, title:string, blink:boolean, showInBrief:boolean):nil
----@field public ShowVSNotification fun(self:Notifications, ped1:number, ped2:number, colour1:Colours, colour2:Colours):nil
----@field public DrawText3D fun(self:Notifications, coords:vector3, colour:Colours, text:string, font:Font, size:number):nil
----@field public DrawText fun(self:Notifications, x:number, y:number, text:string, colour:Colours, font:Font, textAlignment:number, shadow:boolean, outline:boolean, wordWrap:number):nil
+---@field public ShowVSNotification fun(self:Notifications, ped1:number, ped2:number, colour1:HudColours, colour2:HudColours):nil
+---@field public DrawText3D fun(self:Notifications, coords:vector3, colour:HudColours, text:string, font:Font, size:number):nil
+---@field public DrawText fun(self:Notifications, x:number, y:number, text:string, colour:HudColours, font:Font, textAlignment:number, shadow:boolean, outline:boolean, wordWrap:number):nil
 ---@field public ShowSubtitle fun(self:Notifications, text:string, duration:number):nil
 
 ---Hide the notification
@@ -164,7 +164,7 @@ end
 
 ---Show a notification with a color
 ---@param msg string @The message
----@param color Colours @The color
+---@param color HudColours @The color
 ---@param blink boolean @Should the notification blink?
 ---@param showInBrief boolean @Should the notification be saved in the brief?
 ---@return nil
@@ -207,19 +207,17 @@ end
 ---@param subtitle string @The subtitle
 ---@param text string @The body of the nofitication
 ---@param characterIcon string @The character to be displayed in the notification, use the NotificationCharacters
----@param backgroundColour Colours @The background color
----@param flashColour {R:number, G:number, B:number, A:number} @The flash color (RGBA)
+---@param backgroundColour HudColours @The background color
+---@param flashColour SColor @The flash color (RGBA)
 ---@param blink boolean @Should the notification blink?
 ---@param notificationType NotificationType @The type of notification
 ---@param sound boolean @Should the notification play a sound?
 ---@see NotificationCharacters
 ---@see NotificationIcon
----@see Colours
+---@see HudColours
 ---@see NotificationType
 ---@return nil
-function Notifications:ShowAdvancedNotification(title, subtitle, text, characterIcon, backgroundColour,
-                                                flashColour, blink, notificationType,
-                                                sound)
+function Notifications:ShowAdvancedNotification(title, subtitle, text, characterIcon, backgroundColour, flashColour, blink, notificationType, sound)
     if (notificationType == nil) then notificationType = self.NotificationIcon.Default end
     if (characterIcon == nil) then characterIcon = self.IconChars.Default end
     if (backgroundColour == nil) then backgroundColour = -1 end
@@ -263,11 +261,11 @@ end
 ---Show a versuses notification (2 heads)
 ---@param leftPed number @The first ped
 ---@param leftScore number @The score of the first ped
----@param leftColor Colours @The color of the first ped
+---@param leftColor HudColours @The color of the first ped
 ---@param rightPed number @The second ped
 ---@param rightScore number @The score of the second ped
----@param rightColor Colours @The color of the second ped
----@see Colours
+---@param rightColor HudColours @The color of the second ped
+---@see HudColours
 ---@return nil
 function Notifications:ShowVSNotification(leftPed, leftScore, leftColor, rightPed, rightScore, rightColor)
     local handle_1 = RegisterPedheadshot(leftPed)
@@ -288,7 +286,7 @@ end
 
 ---Put floating text in the world
 ---@param coords vector3 @The coordinates of the text
----@param color {R:number, G:number, B:number, A:number} @The color of the text (RGBA)
+---@param color SColor @The color of the text (RGBA)
 ---@param text string @The text
 ---@param font Font @The font
 ---@param size number @The size
@@ -320,7 +318,7 @@ end
 ---@param x number @The x position of the text (0-1)
 ---@param y number @The y position of the text (0-1)
 ---@param text string @The text
----@param color {R:number, G:number, B:number, A:number} @The color of the text (RGBA)
+---@param color SColor @The color of the text (RGBA)
 ---@param font Font @The font
 ---@param textAlignment number @The text alignment
 ---@param shadow boolean @Should the text have a shadow?

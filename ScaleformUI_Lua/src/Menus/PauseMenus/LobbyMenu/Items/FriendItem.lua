@@ -6,11 +6,11 @@ end
 
 ---@class FriendItem
 ---@field public Label string
----@field public ItemColor number
+---@field public ItemColor SColor
 ---@field public ColoredTag boolean
 ---@field public Rank number
 ---@field public Status string
----@field public StatusColor number
+---@field public StatusColor SColor
 ---@field public CrewTag CrewTag
 ---@field public _iconL number
 ---@field public _iconR number
@@ -28,14 +28,14 @@ end
 
 ---Creates a new FriendItem.
 ---@param label string
----@param itemColor number
+---@param itemColor SColor
 ---@param coloredTag boolean
 ---@param rank number
 ---@param status string
 ---@param crewTag string
 ---@return FriendItem
 function FriendItem.New(label, itemColor, coloredTag, rank, status, crewTag)
-    if itemColor == -1 then itemColor = 9 end
+    if itemColor == nil then itemColor = SColor.HUD_Freemode end
     local _data = {
         _type = 1,
         keepPanelVisible = false,
@@ -43,10 +43,10 @@ function FriendItem.New(label, itemColor, coloredTag, rank, status, crewTag)
         _Selected = false,
         _Hovered = false,
         _label = label or "",
-        _itemColor = itemColor or 9,
+        _itemColor = itemColor or SColor.HUD_Freemode,
         _rank = rank or 0,
         _status = status or "",
-        _statusColor = itemColor,
+        _statusColor = itemColor or SColor.HUD_Freemode,
         _crewTag = crewTag or CrewTag.New(),
         _iconL = 0,
         _iconR = 65,
@@ -240,8 +240,8 @@ function FriendItem:Status(status)
 end
 
 ---Sets the status color of the item if supplied else it will return the current status color.
----@param color number
----@return number
+---@param color SColor
+---@return SColor
 function FriendItem:StatusColor(color)
     if color ~= nil then
         self._statusColor = color

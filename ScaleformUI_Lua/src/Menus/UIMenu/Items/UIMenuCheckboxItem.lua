@@ -12,8 +12,7 @@ UIMenuCheckboxItem.__call = function() return "UIMenuItem", "UIMenuCheckboxItem"
 function UIMenuCheckboxItem.New(Text, Check, checkStyle, Description, color, highlightColor, textColor,
                                 highlightedTextColor)
     local _UIMenuCheckboxItem = {
-        Base = UIMenuItem.New(Text or "", Description or "", color or 117, highlightColor or 1, textColor or 1,
-            highlightedTextColor or 2),
+        Base = UIMenuItem.New(Text or "", Description or "", color or SColor.HUD_Pause_bg, highlightColor or SColor.HUD_White, textColor or SColor.HUD_White, highlightedTextColor or SColor.HUD_Black),
         _Checked = ToBool(Check),
         Panels = {},
         SidePanel = nil,

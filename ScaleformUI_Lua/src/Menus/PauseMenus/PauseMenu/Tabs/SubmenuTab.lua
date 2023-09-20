@@ -6,9 +6,9 @@ end
 
 ---@class SubmenuTab
 
-function SubmenuTab.New(name)
+function SubmenuTab.New(name, color)
     local data = {
-        Base = BaseTab.New(name or "", 1),
+        Base = BaseTab.New(name or "", 1, color),
         Label = name or "",
         TextTitle = "",
         LeftItemList = {},

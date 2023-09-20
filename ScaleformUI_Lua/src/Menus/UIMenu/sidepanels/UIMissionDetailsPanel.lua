@@ -12,10 +12,10 @@ function UIMissionDetailsPanel.New(side, title, color, inside, txd, txn)
         _titleType = 0
     end
 
-    if color ~= -1 then
+    if color ~= SColor.HUD_None then
         _titleColor = color
     else
-        _titleColor = Colours.NONE
+        _titleColor = SColor.HUD_None
     end
 
     _UIMissionDetailsPanel = {

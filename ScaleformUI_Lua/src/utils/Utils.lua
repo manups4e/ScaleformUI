@@ -172,3 +172,15 @@ function IsMouseInBounds(X, Y, Width, Height)
     Width, Height = FormatXWYH(Width, Height)
 	return (MX >= X and MX <= X + Width) and (MY > Y and MY < Y + Height)
 end
+
+function TableHasKey(table, key)
+    local lowercaseKey = string.lower(key)
+    
+    for k, _ in pairs(table) do
+        if string.lower(k) == lowercaseKey then
+            return true
+        end
+    end
+    
+    return false
+end

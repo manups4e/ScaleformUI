@@ -7,7 +7,7 @@ end
 ---@class MissionDetailsPanel
 ---@field private _title string
 ---@field private _label string
----@field private _color number
+---@field private _color SColor
 ---@field public Parent MissionDetailsPanel
 ---@field public Items table<MissionDetailsItem>
 ---@field public TextureDict string
@@ -23,7 +23,7 @@ function MissionDetailsPanel.New(label, color)
         ParentTab = nil,
         _title = "",
         _label = label or "",
-        _color = color or 116,
+        _color = color or SColor.HUD_Freemode,
         Parent = nil,
         Items = {} --[[@type table<MissionDetailsItem>]],
         TextureDict = "",

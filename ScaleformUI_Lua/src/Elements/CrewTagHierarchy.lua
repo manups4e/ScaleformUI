@@ -1,3 +1,4 @@
+---@enum CrewHierarchy
 CrewHierarchy = {
     Leader = 0,
     Commissioner = 1,

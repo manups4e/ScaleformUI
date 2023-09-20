@@ -8,7 +8,7 @@ MissionSelectorHandler = setmetatable({
     VotedFor = -1,
     MaxVotes = 0,
     SelectedCard = 1,
-    VotesColor = Colours.HUD_COLOUR_BLUE,
+    VotesColor = HudColours.HUD_COLOUR_BLUE,
     JobTitle = {
         Title = "",
         Label = "",
@@ -46,7 +46,7 @@ end
 ---@field public Dispose fun(self:MissionSelectorHandler):nil
 ---@field public SelectCard fun(self:MissionSelectorHandler, card:number):nil
 ---@field public UpdateOwnVote fun(self:MissionSelectorHandler, card:number, oldCard:number, showCheckmark:boolean, flashBackground:boolean):nil
----@field public ShowPlayerVote fun(self:MissionSelectorHandler, card:number, playerName:string, colour:Colours, showCheckmark:boolean, flashBackground:boolean):nil
+---@field public ShowPlayerVote fun(self:MissionSelectorHandler, card:number, playerName:string, colour:HudColours, showCheckmark:boolean, flashBackground:boolean):nil
 ---@field public Load fun(self:MissionSelectorHandler):nil
 ---@field public Update fun(self:MissionSelectorHandler):nil
 
@@ -347,7 +347,7 @@ end
 
 function MissionSelectorHandler:SetDetailsItem(id, menu_id, unique_id, type, initial_index, is_selectable, lText, rText,
                                                icon, iconColor, tick)
-    if iconColor == nil then iconColor = Colours.HUD_COLOUR_WHITE end
+    if iconColor == nil then iconColor = HudColours.HUD_COLOUR_WHITE end
     if tick == nil then tick = false end
     self._sc:CallFunction("SET_DETAILS_ITEM", false, id, menu_id, unique_id, type, initial_index, is_selectable, lText,
         rText, icon, iconColor, tick)

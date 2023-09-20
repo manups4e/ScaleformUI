@@ -24,10 +24,10 @@ end
 ---@field _formatRightLabel string
 ---@field _rightBadge number
 ---@field _leftBadge number
----@field _mainColor number
----@field _highlightColor number
----@field _textColor number
----@field _highlightedTextColor number
+---@field _mainColor SColor
+---@field _highlightColor SColor
+---@field _textColor SColor
+---@field _highlightedTextColor SColor
 ---@field _itemData table
 ---@field ParentMenu UIMenu
 ---@field Panels table<UIMenuGridPanel|UIMenuPercentagePanel|UIMenuStatisticsPanel|UIMenuColorPanel>
@@ -39,10 +39,10 @@ end
 ---New
 ---@param text string
 ---@param description string
----@param color number|117
----@param highlightColor number|1
----@param textColor number|1
----@param highlightedTextColor number|2
+---@param color SColor
+---@param highlightColor SColor
+---@param textColor SColor
+---@param highlightedTextColor SColor
 function UIMenuItem.New(text, description, color, highlightColor, textColor, highlightedTextColor)
     local __formatLeftLabel = (tostring(text))
     if not __formatLeftLabel:StartsWith("~") then
@@ -50,7 +50,30 @@ function UIMenuItem.New(text, description, color, highlightColor, textColor, hig
     end
 
     _UIMenuItem = {
-        _label = tostring(text) or "", _Description = tostring(description) or "", _labelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY, _rightLabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY, _Selected = false, _Hovered = false, _Enabled = true, blinkDescription = false, _formatLeftLabel = __formatLeftLabel or "", _rightLabel = "", _formatRightLabel = "", _rightBadge = 0, _leftBadge = 0, _mainColor = color or 117, _highlightColor = highlightColor or 1, _textColor = textColor or 1, _highlightedTextColor = highlightedTextColor or 2, _itemData = {}, ParentMenu = nil, ParentColumn = nil, Panels = {}, SidePanel = nil, ItemId = 0, Activated = function(menu, item)
+        _label = tostring(text) or "",
+        _Description = tostring(description) or "",
+        _labelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY,
+        _rightLabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY,
+        _Selected = false,
+        _Hovered = false,
+        _Enabled = true,
+        blinkDescription = false,
+        _formatLeftLabel = __formatLeftLabel or "",
+        _rightLabel = "",
+        _formatRightLabel = "",
+        _rightBadge = 0,
+        _leftBadge = 0,
+        _mainColor = color or SColor.HUD_Pause_bg,
+        _highlightColor = highlightColor or SColor.HUD_White,
+        _textColor = textColor or SColor.HUD_White,
+        _highlightedTextColor = highlightedTextColor or SColor.HUD_Black,
+        _itemData = {},
+        ParentMenu = nil,
+        ParentColumn = nil,
+        Panels = {},
+        SidePanel = nil,
+        ItemId = 0,
+        Activated = function(menu, item)
         end
     }
     return setmetatable(_UIMenuItem, UIMenuItem)

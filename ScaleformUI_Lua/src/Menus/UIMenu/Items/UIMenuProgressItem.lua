@@ -10,24 +10,22 @@ UIMenuProgressItem.__call = function() return "UIMenuItem", "UIMenuProgressItem"
 ---@param Max number
 ---@param Index number
 ---@param Description string
----@param sliderColor number
----@param color number
----@param highlightColor number
----@param textColor number
----@param highlightedTextColor number
----@param backgroundSliderColor number
-function UIMenuProgressItem.New(Text, Max, Index, Description, sliderColor, color, highlightColor, textColor,
-                                highlightedTextColor, backgroundSliderColor)
+---@param sliderColor SColor
+---@param color SColor
+---@param highlightColor SColor
+---@param textColor SColor
+---@param highlightedTextColor SColor
+---@param backgroundSliderColor SColor
+function UIMenuProgressItem.New(Text, Max, Index, Description, sliderColor, color, highlightColor, textColor, highlightedTextColor, backgroundSliderColor)
     local _UIMenuProgressItem = {
-        Base = UIMenuItem.New(Text or "", Description or "", color or 117, highlightColor or 1, textColor or 1,
-            highlightedTextColor or 2),
+        Base = UIMenuItem.New(Text or "", Description or "", color or SColor.HUD_Pause_bg, highlightColor or SColor.HUD_White, textColor or SColor.HUD_White, highlightedTextColor or SColor.HUD_Black),
         _Max = Max or 100,
         _Multiplier = 5,
         _Index = Index or 0,
         Panels = {},
         SidePanel = nil,
-        SliderColor = sliderColor or 116,
-        BackgroundSliderColor = backgroundSliderColor or 117,
+        SliderColor = sliderColor or SColor.HUD_Freemode,
+        BackgroundSliderColor = backgroundSliderColor or SColor.HUD_Pause_bg,
         ItemId = 4,
         OnProgressChanged = function(menu, item, newindex)
         end,

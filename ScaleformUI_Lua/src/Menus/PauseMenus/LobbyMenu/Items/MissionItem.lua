@@ -4,18 +4,22 @@ MissionItem.__call = function()
     return "LobbyItem", "MissionItem"
 end
 
+---@param label string
+---@param mainColor SColor
+---@param highlightColor SColor
+---@return table
 function MissionItem.New(label, mainColor, highlightColor)
     local _data = {
         Label = label,
         Handle = nil,
         ParentColumn = nil,
         enabled = true,
-        MainColor = mainColor or Colours.HUD_COLOUR_PAUSE_BG,
-        HighlightColor = highlightColor or Colours.HUD_COLOUR_WHITE,
+        MainColor = mainColor or SColor.HUD_Pause_bg,
+        HighlightColor = highlightColor or SColor.HUD_White,
         LeftIcon = BadgeStyle.NONE,
-        LeftIconColor = Colours.HUD_COLOUR_WHITE,
+        LeftIconColor = SColor.HUD_White,
         RightIcon = BadgeStyle.NONE,
-        RightIconColor = Colours.HUD_COLOUR_WHITE,
+        RightIconColor = SColor.HUD_White,
         RightIconChecked = false,
         _Selected = false,
         hovered = false,

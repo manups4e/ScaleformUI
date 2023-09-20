@@ -21,7 +21,7 @@ MainView.SoundId = GetSoundId()
 ---@field public controller boolean
 ---@field public _focus number
 
-function MainView.New(title, subtitle, sideTop, sideMid, sideBot)
+function MainView.New(title, subtitle, sideTop, sideMid, sideBot, newStyle)
     local _data = {
         Title = title or "",
         Subtitle = subtitle or "",
@@ -30,6 +30,7 @@ function MainView.New(title, subtitle, sideTop, sideMid, sideBot)
         SideBot = sideBot or "",
         ParentPool = nil,
         _headerPicture = {},
+        _newStyle = newStyle or true,
         _crewPicture = {},
         _visible = false,
         SettingsColumn = nil --[[@type SettingsListColumn]],
@@ -47,6 +48,7 @@ function MainView.New(title, subtitle, sideTop, sideMid, sideBot)
         listCol = {},
         _firstTick = true,
         _canHe = true,
+        _isBuilding = false,
         InstructionalButtons = {
             InstructionalButton.New(GetLabelText("HUD_INPUT2"), -1, 176, 176, -1),
             InstructionalButton.New(GetLabelText("HUD_INPUT3"), -1, 177, 177, -1),
@@ -135,7 +137,22 @@ function MainView:CrewPicture(Txd, Txn)
     end
 end
 
-function MainView:UpdateFocus(value, isMouse)
+function MainView:SelectColumn(column)
+    local val = 0
+    if type(column) == "table" then
+        val = column.Order
+    elseif type(column) == "number" then
+        val = column
+    end
+    if val > #self.listCol then
+        val  = 1
+    elseif val  < 1 then
+        val = #self.listCol
+    end
+    self:updateFocus(val)
+end
+
+function MainView:updateFocus(value, isMouse)
     if isMouse == nil then isMouse = false end
     local goingLeft = value < self._focus
 
@@ -156,9 +173,9 @@ function MainView:UpdateFocus(value, isMouse)
 
     if self.listCol[self._focus].Type == "panel" then
         if goingLeft then
-            self:UpdateFocus(self._focus - 1)
+            self:updateFocus(self._focus - 1)
         else
-            self:UpdateFocus(self._focus + 1)
+            self:updateFocus(self._focus + 1)
         end
         return
     end
@@ -171,8 +188,10 @@ function MainView:UpdateFocus(value, isMouse)
         local idx = GetScaleformMovieMethodReturnValueInt(__idx)
         if not isMouse then
             local _id = self.listCol[self._focus].Pagination:GetMenuIndexFromScaleformIndex(idx)
-            self.listCol[self._focus]:CurrentSelection(_id)
-            self.listCol[self._focus].OnIndexChanged(_id)
+            if not goingLeft or self._newStyle then
+                self.listCol[self._focus]:CurrentSelection(_id)
+                self.listCol[self._focus].OnIndexChanged(_id)
+            end
         end
     end
 end
@@ -218,14 +237,15 @@ function MainView:ShowHeader()
         ScaleformUI.Scaleforms._pauseMenu:SetHeaderSecondaryImg(self:CrewPicture().txd, self:CrewPicture().txn, true)
     end
     ScaleformUI.Scaleforms._pauseMenu:SetHeaderDetails(self.SideTop, self.SideMid, self.SideBot)
-    ScaleformUI.Scaleforms._pauseMenu:AddLobbyMenuTab(self.listCol[1]._label, 2, 0, self.listCol[1]._color)
-    ScaleformUI.Scaleforms._pauseMenu:AddLobbyMenuTab(self.listCol[2]._label, 2, 0, self.listCol[2]._color)
-    ScaleformUI.Scaleforms._pauseMenu:AddLobbyMenuTab(self.listCol[3]._label, 2, 0, self.listCol[3]._color)
+    ScaleformUI.Scaleforms._pauseMenu:AddLobbyMenuTab(self.listCol[1]._label, 2, self.listCol[1]._color)
+    ScaleformUI.Scaleforms._pauseMenu:AddLobbyMenuTab(self.listCol[2]._label, 2, self.listCol[2]._color)
+    ScaleformUI.Scaleforms._pauseMenu:AddLobbyMenuTab(self.listCol[3]._label, 2, self.listCol[3]._color)
     ScaleformUI.Scaleforms._pauseMenu._header:CallFunction("SET_ALL_HIGHLIGHTS", false, true, 117);
     self._loaded = true
 end
 
 function MainView:BuildPauseMenu()
+    self._isBuilding = true
     self:ShowHeader()
     if #self.listCol == 1 then
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CREATE_MENU", false, self.listCol[1].Type)
@@ -234,6 +254,7 @@ function MainView:BuildPauseMenu()
     elseif #self.listCol == 3 then
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CREATE_MENU", false, self.listCol[1].Type, self.listCol[2].Type, self.listCol[3].Type)
     end
+    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_NEWSTYLE", false, self._newStyle)
 
     for i,col in pairs(self.listCol) do
         col.Parent = self
@@ -249,7 +270,7 @@ function MainView:BuildPauseMenu()
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSION_PANEL_TITLE", false, self.MissionPanel:Title());
             for k, item in pairs(self.MissionPanel.Items) do
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_MISSION_PANEL_ITEM", false, item.Type, item.TextLeft,
-                    item.TextRight, item.Icon or 0, item.IconColor or 0, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID)
+                    item.TextRight, item.Icon or 0, item.IconColor or SColor.HUD_Pure_white, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID)
             end
         end
     end
@@ -260,7 +281,7 @@ function MainView:BuildPauseMenu()
 
     ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("LOAD_MENU", false)
     Citizen.Wait(250)
-    self:UpdateFocus(1)
+    self:updateFocus(1)
     local containsPlayers = false
 
     for i,col in pairs(self.listCol) do
@@ -274,6 +295,7 @@ function MainView:BuildPauseMenu()
             self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu()
         end
     end
+    self._isBuilding = false
 end
 
 function MainView:buildSettings(tab, tabIndex)
@@ -399,7 +421,7 @@ function MainView:buildMissions(tab, tabIndex)
 end
 
 function MainView:Draw()
-    if not self:Visible() or self.TemporarilyHidden then
+    if not self:Visible() or self.TemporarilyHidden or self._isBuilding then
         return
     end
     DisableControlAction(0, 199, true)
@@ -433,6 +455,9 @@ function MainView:ProcessMouse()
         if event_type == 5 then
             local foc = self:Focus()
             local curSel = 1
+            if tab._newStyle then
+                curSel = tab.listCol[foc]:CurrentSelection()
+            end
             for k,v in pairs(self.listCol) do
                 if v.Type == "settings" then
                     curSel = self.SettingsColumn:CurrentSelection()
@@ -444,7 +469,7 @@ function MainView:ProcessMouse()
             end
             if context+1 ~= foc then
                 self.listCol[foc].Items[self.listCol[foc]:CurrentSelection()]:Selected(false)
-                self:UpdateFocus(context+1, true)
+                self:updateFocus(context+1, true)
                 self.listCol[context+1]:CurrentSelection(self.listCol[context+1].Pagination:GetMenuIndexFromScaleformIndex(item_id-1))
                 self.listCol[context+1].OnIndexChanged(self.listCol[context+1]:CurrentSelection())
                 if curSel ~= self.listCol[context+1]:CurrentSelection() then
@@ -557,8 +582,12 @@ function MainView:Select()
     end
     local retVal = GetScaleformMovieMethodReturnValueString(return_value)
 
+    local selection = self._focus
+    if tab._newStyle then
+        selection = 1
+    end
     local splitted = Split(retVal, ",")
-    if self.listCol[self._focus].Type == "settings" then
+    if self.listCol[selection].Type == "settings" then
         local item = self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]
         local type, subtype = item()
         if not item:Enabled() then
@@ -570,20 +599,38 @@ function MainView:Select()
             item.OnCheckboxChanged(nil, item, item:Checked())
         elseif subtype == "UIMenuListItem" then
             item.OnListSelected(nil, item, item._Index)
+            self.SettingsColumn.OnSettingItemActivated(self.SettingsColumn:CurrentSelection())
         elseif subtype == "UIMenuSliderItem" then
             item.OnSliderSelected(nil, item, item._Index)
+            self.SettingsColumn.OnSettingItemActivated(self.SettingsColumn:CurrentSelection())
         elseif subtype == "UIMenuProgressItem" then
             item.OnProgressSelected(nil, item, item._Index)
+            self.SettingsColumn.OnSettingItemActivated(self.SettingsColumn:CurrentSelection())
         else
             item.Activated(nil, item)
+            self.SettingsColumn.OnSettingItemActivated(self.SettingsColumn:CurrentSelection())
         end
-    elseif self.listCol[self._focus].Type == "players" then
+    elseif self.listCol[selection].Type == "players" then
+        self.PlayersColumn.OnPlayerItemActivated(self.PlayersColumn:CurrentSelection())
+    elseif self.listCol[selection].Type == "missions" then
+        self.MissionsColumn.OnMissionItemActivated(self.MissionsColumn:CurrentSelection())
     end
 end
 
 function MainView:GoBack()
-    if self:CanPlayerCloseMenu() then
-        self:Visible(false)
+    if self._newStyle then
+        if self:CanPlayerCloseMenu() then
+            self:Visible(false)
+        end
+    else
+        self.listCol[self._focus].Items[self.listCol[self._focus]:CurrentSelection()]:Selected(false)
+        if self._focus > 1 then
+            if self:CanPlayerCloseMenu() then
+                self:Visible(false)
+            end
+            return
+        end
+        self:updateFocus(self._focus - 1)
     end
 end
 
@@ -604,24 +651,26 @@ function MainView:GoLeft()
 
     local splitted = Split(retVal, ",")
 
-    for k,v in pairs(self.listCol) do
-        if v.Type == "settings" then
-            self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]:Selected(false)
-        elseif v.Type == "missions" then
-            self.MissionsColumn.Items[self.MissionsColumn:CurrentSelection()]:Selected(false)
-        elseif v.Type == "players" then
-            self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()]:Selected(false)
-            if k == 1 or self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()]:KeepPanelVisible() then
-                if self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= nil and self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
-                    self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu()
+    if self._newStyle then
+        for k,v in pairs(self.listCol) do
+            if v.Type == "settings" then
+                self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]:Selected(false)
+            elseif v.Type == "missions" then
+                self.MissionsColumn.Items[self.MissionsColumn:CurrentSelection()]:Selected(false)
+            elseif v.Type == "players" then
+                self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()]:Selected(false)
+                if k == 1 or self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()]:KeepPanelVisible() then
+                    if self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= nil and self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
+                        self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu()
+                    else
+                        ClearPedInPauseMenu()
+                    end
                 else
                     ClearPedInPauseMenu()
                 end
             else
                 ClearPedInPauseMenu()
             end
-        else
-            ClearPedInPauseMenu()
         end
     end
 
@@ -629,8 +678,12 @@ function MainView:GoLeft()
         ClearPedInPauseMenu();
         local item = self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()];
         if not item:Enabled() then
-            item:Selected(false)
-            self:UpdateFocus(self._focus - 1)
+            if self._newStyle then
+                item:Selected(false)
+                self:updateFocus(self._focus - 1)
+            else
+                PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
+            end
             return
         end
         local type, subtype = item()
@@ -644,17 +697,27 @@ function MainView:GoLeft()
             item:Index(tonumber(splitted[3]))
             item.OnProgressChanged(self, item, item:Index())
         else
-            item:Selected(false)
-            self:UpdateFocus(self._focus - 1)
+            if self._newStyle then
+                item:Selected(false)
+                self:updateFocus(self._focus - 1)
+            end
         end
     elseif self.listCol[self._focus].Type == "players" then
-        self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]:Selected(false)
-        self:UpdateFocus(self._focus - 1)
+        if self._newStyle then
+            self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]:Selected(false)
+            self:updateFocus(self._focus - 1)
+        else
+            if self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= nil and self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
+                self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu()
+            end
+        end
     elseif self.listCol[self._focus].Type == "missions" then
-        self.MissionsColumn.Items[self.MissionsColumn:CurrentSelection()]:Selected(false)
-        self:UpdateFocus(self._focus - 1)
+        if self._newStyle then
+            self.MissionsColumn.Items[self.MissionsColumn:CurrentSelection()]:Selected(false)
+            self:updateFocus(self._focus - 1)
+        end
     elseif self.listCol[self._focus].Type == "panel" then
-        self:UpdateFocus(self._focus - 1)
+        self:updateFocus(self._focus - 1)
     end
 end
 
@@ -667,24 +730,26 @@ function MainView:GoRight()
 
     local splitted = Split(retVal, ",")
 
-    for k,v in pairs(self.listCol) do
-        if v.Type == "settings" then
-            self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]:Selected(false)
-        elseif v.Type == "missions" then
-            self.MissionsColumn.Items[self.MissionsColumn:CurrentSelection()]:Selected(false)
-        elseif v.Type == "players" then
-            self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()]:Selected(false)
-            if k == 1 or self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()]:KeepPanelVisible() then
-                if self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= nil and self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
-                    self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu()
+    if self._newStyle then
+        for k,v in pairs(self.listCol) do
+            if v.Type == "settings" then
+                self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]:Selected(false)
+            elseif v.Type == "missions" then
+                self.MissionsColumn.Items[self.MissionsColumn:CurrentSelection()]:Selected(false)
+            elseif v.Type == "players" then
+                self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()]:Selected(false)
+                if k == 1 or self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()]:KeepPanelVisible() then
+                    if self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= nil and self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
+                        self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu()
+                    else
+                        ClearPedInPauseMenu()
+                    end
                 else
                     ClearPedInPauseMenu()
                 end
             else
                 ClearPedInPauseMenu()
             end
-        else
-            ClearPedInPauseMenu()
         end
     end
 
@@ -692,9 +757,13 @@ function MainView:GoRight()
         ClearPedInPauseMenu();
         local item = self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()];
         if not item:Enabled() then
-            item:Selected(false)
-            self:UpdateFocus(self._focus + 1)
-            return
+            if self._newStyle then
+                item:Selected(false)
+                self:updateFocus(self._focus + 1)
+            else
+                PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
+            end
+           return
         end
         local type, subtype = item()
         if subtype == "UIMenuListItem" then
@@ -707,16 +776,26 @@ function MainView:GoRight()
             item:Index(tonumber(splitted[3]))
             item.OnProgressChanged(self, item, item:Index())
         else
-            item:Selected(false)
-            self:UpdateFocus(self._focus + 1)
+            if self._newStyle then
+                item:Selected(false)
+                self:updateFocus(self._focus + 1)
+            end
         end
     elseif self.listCol[self._focus].Type == "players" then
-        self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]:Selected(false)
-        self:UpdateFocus(self._focus + 1)
+        if self._newStyle then
+            self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]:Selected(false)
+            self:updateFocus(self._focus + 1)
+        else
+            if self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= nil and self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
+                self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu()
+            end
+        end
     elseif self.listCol[self._focus].Type == "missions" then
-        self.MissionsColumn.Items[self.MissionsColumn:CurrentSelection()]:Selected(false)
-        self:UpdateFocus(self._focus + 1)
+        if self._newStyle then
+            self.MissionsColumn.Items[self.MissionsColumn:CurrentSelection()]:Selected(false)
+            self:updateFocus(self._focus + 1)
+        end
     elseif self.listCol[self._focus].Type == "panel" then
-        self:UpdateFocus(self._focus + 1)
+        self:updateFocus(self._focus + 1)
     end
 end

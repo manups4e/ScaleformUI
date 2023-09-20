@@ -37,7 +37,7 @@ end
 ---Shows a message on the screen
 ---@param msg string
 ---@param desc string
----@param bgColor Colours
+---@param bgColor HudColours
 ---@param useDarkerShard boolean
 ---@param useCondensedShard boolean
 ---@param time number? - The time in milliseconds the message should be shown for (default: 5000)

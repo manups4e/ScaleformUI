@@ -16,11 +16,13 @@ end
 
 ---Creates a new PlayerListTab.
 ---@param name string
+---@param color SColor
+---@param newStyle boolean
 ---@return PlayerListTab
-function PlayerListTab.New(name, newStyle)
+function PlayerListTab.New(name, color, newStyle)
     if newStyle == nil then newStyle = true end
     local data = {
-        Base = BaseTab.New(name or "", 2),
+        Base = BaseTab.New(name or "", 2, color),
         LeftItemList = {},
         Label = name or "",
         TextTitle = "",
@@ -33,6 +35,8 @@ function PlayerListTab.New(name, newStyle)
         Index = 0,
         Focused = false,
         _focus = 0,
+        OnFocusChanged = function(focus)
+        end
     }
     return setmetatable(data, PlayerListTab)
 end
@@ -121,6 +125,7 @@ function PlayerListTab:updateFocus(_f, isMouse)
             end
         end
     end
+    self.OnFocusChanged(self:Focus())
 end
 
 ---returns the focus of the tab.

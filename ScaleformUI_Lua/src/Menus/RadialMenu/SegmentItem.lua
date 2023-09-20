@@ -12,7 +12,7 @@ function SegmentItem.New(_label, _desc, _txd, _txn, _txwidth, _txheight, _color)
         textureName = _txn or "",
         textureWidth = _txwidth or 0,
         textureHeight = _txheight or 0,
-        color = _color or Colours.HUD_COLOUR_FREEMODE,
+        color = _color or SColor.HUD_Freemode,
         qtty = 0,
         max = 0,
         Parent = nil

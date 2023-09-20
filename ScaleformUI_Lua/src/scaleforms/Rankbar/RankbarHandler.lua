@@ -65,7 +65,7 @@ function RankbarHandler:SetScores(limitStart, limitEnd, previousValue, currentVa
 end
 
 ---Set the colour of the rankbar
----@param rankBarColor Colours
+---@param rankBarColor HudColours
 function RankbarHandler:SetColour(rankBarColor)
     _rankBarColor = rankBarColor
 end

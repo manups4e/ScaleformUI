@@ -26,6 +26,7 @@ function TabView.New(title, subtitle, sideTop, sideMiddle, sideBottom)
         index = 1,
         ParentPool = nil,
         _visible = false,
+        _isBuilding = false,
         focusLevel = 0,
         rightItemIndex = 1,
         leftItemIndex = 1,
@@ -95,6 +96,7 @@ function TabView:Index(idx)
         self.Tabs[self.index].Visible = false
         self.index = idx
         self.Tabs[self.index].Visible = true
+        self.OnPauseMenuTabChanged(self, self.Tabs[self.index], self.index)
     else
         return self.index
     end
@@ -183,12 +185,13 @@ function TabView:ShowHeader()
 end
 
 function TabView:BuildPauseMenu()
+    self._isBuilding = true
     self:ShowHeader()
     for k, tab in pairs(self.Tabs) do
         local tabIndex = k - 1
         local type, subtype = tab()
         if subtype == "TextTab" then
-            ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 1, tab.Base.Type)
+            ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 1, tab.Base.Type, tab.Base._color)
             if not tostring(tab.TextTitle):IsNullOrEmpty() then
                 ScaleformUI.Scaleforms._pauseMenu:AddRightTitle(tabIndex, 0, tab.TextTitle)
             end
@@ -199,7 +202,7 @@ function TabView:BuildPauseMenu()
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_BASE_TAB_BACKGROUND", false, tabIndex, tab.TextureDict, tab.TextureName)
             end
         elseif subtype == "SubmenuTab" then
-            ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 1, tab.Base.Type)
+            ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 1, tab.Base.Type, tab.Base._color)
             for j, item in pairs(tab.LeftItemList) do
                 local itemIndex = j - 1
                 ScaleformUI.Scaleforms._pauseMenu:AddLeftItem(tabIndex, item.ItemType, item._formatLeftLabel, item.MainColor,
@@ -265,7 +268,7 @@ function TabView:BuildPauseMenu()
                 end
             end
         elseif subtype == "PlayerListTab" then
-            ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 1, tab.Base.Type)
+            ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 1, tab.Base.Type, tab.Base._color)
             local count = #tab.listCol
             if count == 1 then
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CREATE_PLAYERS_TAB_COLUMNS", false, tabIndex, tab.listCol[1].Type)
@@ -301,6 +304,7 @@ function TabView:BuildPauseMenu()
             tab:updateFocus(1)
         end
     end
+    self._isBuilding = false
 end
 
 function TabView:buildSettings(tab, tabIndex)
@@ -468,7 +472,7 @@ function TabView:UpdateKeymapItems()
 end
 
 function TabView:Draw()
-    if not self:Visible() or self.TemporarilyHidden then
+    if not self:Visible() or self.TemporarilyHidden or self._isBuilding then
         return
     end
     DisableControlAction(0, 199, true)
@@ -617,7 +621,7 @@ function TabView:GoBack()
     if self:FocusLevel() > 0 then
         local tab = self.Tabs[self.index]
         local _, subT = tab()
-        if subT == "SubmenuTab" then
+        if subT ~= "PlayerListTab" then
             self:FocusLevel(self:FocusLevel() - 1)
             tab.LeftItemList[self.leftItemIndex]:Selected(self:FocusLevel() == 1)
         elseif subT == "PlayerListTab" then
@@ -627,11 +631,11 @@ function TabView:GoBack()
                 tab.listCol[tab:Focus()].Items[tab.listCol[tab:Focus()]:CurrentSelection()]:Selected(false)
             else
                 if self:FocusLevel() == 1 then
+                    tab.listCol[tab:Focus()].Items[tab.listCol[tab:Focus()]:CurrentSelection()]:Selected(false)
                     if tab:Focus() == 1 then
                         self:FocusLevel(self:FocusLevel() - 1)
                         return
                     end
-                    tab.listCol[tab:Focus()].Items[tab.listCol[tab:Focus()]:CurrentSelection()]:Selected(false)
                     tab:updateFocus(tab:Focus() - 1)
                 end
             end

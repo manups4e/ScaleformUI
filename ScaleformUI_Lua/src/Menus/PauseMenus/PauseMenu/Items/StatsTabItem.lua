@@ -31,7 +31,7 @@ end
 ---Adds a new bar to the StatsTabItem.
 ---@param label string
 ---@param value number?
----@param color number?
+---@param color SColor?
 ---@return table
 function StatsTabItem.NewBar(label, value, color)
     local data = {
@@ -39,7 +39,7 @@ function StatsTabItem.NewBar(label, value, color)
         Type = StatItemType.ColoredBar,
         Label = label or "",
         _value = value,
-        _coloredBarColor = color or Colours.HUD_COLOUR_FREEMODE,
+        _coloredBarColor = color or SColor.HUD_Freemode,
         LabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY
     }
     return setmetatable(data, StatsTabItem)
@@ -98,8 +98,8 @@ function StatsTabItem:Value(value)
 end
 
 ---Sets the color of the item.
----@param color number
----@return number
+---@param color SColor
+---@return SColor
 function StatsTabItem:ColoredBarColor(color)
     if self.Type == StatItemType.ColoredBar then
         if color ~= nil then

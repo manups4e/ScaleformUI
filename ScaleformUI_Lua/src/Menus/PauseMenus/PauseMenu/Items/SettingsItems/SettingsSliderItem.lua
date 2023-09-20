@@ -17,7 +17,7 @@ end
 ---@param label string
 ---@param max number
 ---@param startIndex number
----@param barColor number
+---@param barColor SColor
 ---@return table
 function SettingsSliderItem.New(label, max, startIndex, barColor)
     local data = {
@@ -26,7 +26,7 @@ function SettingsSliderItem.New(label, max, startIndex, barColor)
         Label = label or "",
         MaxValue = max,
         _value = startIndex,
-        _coloredBarColor = barColor or Colours.HUD_COLOUR_FREEMODE,
+        _coloredBarColor = barColor or SColor.HUD_Freemode,
         Parent = nil,
         _enabled = true,
         _hovered = false,
@@ -94,8 +94,8 @@ function SettingsSliderItem:Value(value)
 end
 
 ---Set the color of the colored bar.
----@param color number
----@return number
+---@param color SColor
+---@return SColor
 function SettingsSliderItem:ColoredBarColor(color)
     if color ~= nil then
         self._coloredBarColor = color

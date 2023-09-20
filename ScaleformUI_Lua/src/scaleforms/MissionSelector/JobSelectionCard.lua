@@ -12,7 +12,7 @@ end
 ---@field public RpMultiplier number
 ---@field public CashMultiplier number
 ---@field public Icon JobSelectionCardIcon
----@field public IconColor Colours
+---@field public IconColor HudColours
 ---@field public ApMultiplier number
 ---@field public Details table<MissionDetailsItem>
 
@@ -24,7 +24,7 @@ end
 ---@param rpMult number
 ---@param cashMult number
 ---@param icon JobSelectionCardIcon
----@param iconColor Colours
+---@param iconColor HudColours
 ---@param apMultiplier number
 ---@param details table<MissionDetailsItem>
 ---@return JobSelectionCard

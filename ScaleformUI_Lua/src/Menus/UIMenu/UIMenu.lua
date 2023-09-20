@@ -39,7 +39,7 @@ end
 ---@field public AnimationType fun(self: UIMenu, type: MenuAnimationType?):MenuAnimationType -- Animation type for the menu (default: MenuAnimationType.LINEAR)
 ---@field public BuildingAnimation fun(self: UIMenu, type: MenuBuildingAnimation?):MenuBuildingAnimation -- Build animation type for the menu (default: MenuBuildingAnimation.LEFT)
 ---@field public Visible fun(self: UIMenu, visible: boolean?):boolean -- If the menu is visible or not (default: false)
----@field private counterColor Colours -- Set the counter color (default: Colours.HUD_COLOUR_FREEMODE)
+---@field private counterColor SColor -- Set the counter color (default: SColor.HUD_Freemode)
 ---@field private enableAnimation boolean -- Enable or disable the menu animation (default: true)
 ---@field private animationType MenuAnimationType -- Sets the menu animation type (default: MenuAnimationType.LINEAR)
 ---@field private buildingAnimation MenuBuildingAnimation -- Sets the menu building animation type (default: MenuBuildingAnimation.NONE)
@@ -83,7 +83,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         _Title = title,
         _Subtitle = subTitle,
         AlternativeTitle = alternativeTitleStyle,
-        counterColor = Colours.HUD_COLOUR_FREEMODE,
+        counterColor = SColor.HUD_Freemode,
         Position = { x = X, y = Y },
         Pagination = PaginationHandler.New(),
         enableAnimation = true,
@@ -724,46 +724,46 @@ function UIMenu:_itemCreation(page, pageIndex, before, overflow)
         ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, before, 1, menuIndex, item.Base._formatLeftLabel,
             textEntry,
             item:Enabled(), item:BlinkDescription(), table.concat(item.Items, ","), item:Index() - 1,
-            item.Base._mainColor, item.Base._highlightColor, item.Base._textColor,
-            item.Base._highlightedTextColor)
+            item.Base._mainColor:ToArgb(), item.Base._highlightColor:ToArgb(), item.Base._textColor:ToArgb(),
+            item.Base._highlightedTextColor:ToArgb())
     elseif SubType == "UIMenuDynamicListItem" then -- dynamic list item are handled like list items in the scaleform.. so the type remains 1
         ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, before, 1, menuIndex, item.Base._formatLeftLabel,
             textEntry,
-            item:Enabled(), item:BlinkDescription(), item:CurrentListItem(), 0, item.Base._mainColor,
-            item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor)
+            item:Enabled(), item:BlinkDescription(), item:CurrentListItem(), 0, item.Base._mainColor:ToArgb(),
+            item.Base._highlightColor:ToArgb(), item.Base._textColor:ToArgb(), item.Base._highlightedTextColor:ToArgb())
     elseif SubType == "UIMenuCheckboxItem" then
         ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, before, 2, menuIndex, item.Base._formatLeftLabel,
             textEntry,
-            item:Enabled(), item:BlinkDescription(), item.CheckBoxStyle, item._Checked, item.Base._mainColor,
-            item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor)
+            item:Enabled(), item:BlinkDescription(), item.CheckBoxStyle, item._Checked, item.Base._mainColor:ToArgb(),
+            item.Base._highlightColor:ToArgb(), item.Base._textColor:ToArgb(), item.Base._highlightedTextColor:ToArgb())
     elseif SubType == "UIMenuSliderItem" then
         ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, before, 3, menuIndex, item.Base._formatLeftLabel,
             textEntry,
             item:Enabled(), item:BlinkDescription(), item._Max, item._Multiplier, item:Index(),
-            item.Base._mainColor,
-            item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor, item.SliderColor,
+            item.Base._mainColor:ToArgb(),
+            item.Base._highlightColor:ToArgb(), item.Base._textColor:ToArgb(), item.Base._highlightedTextColor:ToArgb(), item.SliderColor:ToArgb(),
             item._heritage)
     elseif SubType == "UIMenuProgressItem" then
         ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, before, 4, menuIndex, item.Base._formatLeftLabel,
             textEntry,
             item:Enabled(), item:BlinkDescription(), item._Max, item._Multiplier, item:Index(),
-            item.Base._mainColor,
-            item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor, item.SliderColor)
+            item.Base._mainColor:ToArgb(),
+            item.Base._highlightColor:ToArgb(), item.Base._textColor:ToArgb(), item.Base._highlightedTextColor:ToArgb(), item.SliderColor:ToArgb())
     elseif SubType == "UIMenuStatsItem" then
         ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, before, 5, menuIndex, item.Base._formatLeftLabel,
             textEntry,
-            item:Enabled(), item:BlinkDescription(), item:Index(), item._Type, item._Color, item.Base._mainColor,
-            item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor)
+            item:Enabled(), item:BlinkDescription(), item:Index(), item._Type, item._Color, item.Base._mainColor:ToArgb(),
+            item.Base._highlightColor:ToArgb(), item.Base._textColor:ToArgb(), item.Base._highlightedTextColor:ToArgb())
     elseif SubType == "UIMenuSeparatorItem" then
         ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, before, 6, menuIndex, item.Base._formatLeftLabel,
             textEntry,
-            item:Enabled(), item:BlinkDescription(), item.Jumpable, item.Base._mainColor,
-            item.Base._highlightColor,
-            item.Base._textColor, item.Base._highlightedTextColor)
+            item:Enabled(), item:BlinkDescription(), item.Jumpable, item.Base._mainColor:ToArgb(),
+            item.Base._highlightColor:ToArgb(),
+            item.Base._textColor:ToArgb(), item.Base._highlightedTextColor:ToArgb())
     else
         ScaleformUI.Scaleforms._ui:CallFunction("ADD_ITEM", false, before, 0, menuIndex, item._formatLeftLabel, textEntry,
-            item:Enabled(), item:BlinkDescription(), item._mainColor, item._highlightColor, item._textColor,
-            item._highlightedTextColor)
+            item:Enabled(), item:BlinkDescription(), item._mainColor:ToArgb(), item._highlightColor:ToArgb(), item._textColor:ToArgb(),
+            item._highlightedTextColor:ToArgb())
         ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_LABEL", false, scaleformIndex, item._formatRightLabel)
         if item._rightBadge ~= BadgeStyle.NONE then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_BADGE", false, scaleformIndex, item._rightBadge)
@@ -810,8 +810,12 @@ function UIMenu:_itemCreation(page, pageIndex, before, overflow)
             local pType, pSubType = panel()
             if pSubType == "UIMenuColorPanel" then
                 if panel.CustomColors ~= nil then
+                    local colors = {}
+                    for l,m in pairs(panel.CustomColors) do
+                        table.insert(colors, m:ToArgb())
+                    end
                     ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, scaleformIndex, 0, panel.Title,
-                        panel.ColorPanelColorType, panel.value, table.concat(panel.CustomColors, ","))
+                        panel.ColorPanelColorType, panel.value, table.concat(colors, ","))
                 else
                     ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", false, scaleformIndex, 0, panel.Title,
                         panel.ColorPanelColorType, panel.value)
