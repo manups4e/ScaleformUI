@@ -1,8 +1,8 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
+using ScaleformUI.Elements;
 using ScaleformUI.Scaleforms;
-using System.Drawing;
 using static CitizenFX.Core.Native.API;
 using Font = CitizenFX.Core.UI.Font;
 namespace ScaleformUI
@@ -142,12 +142,12 @@ namespace ScaleformUI
         /// <param name="iconSet">The texture dictionary for the icon (see <see cref="NotificationChar"/>for a list of default icons)</param>
         /// <param name="icon">The texture name for the icon</param>
         /// <param name="bgColor">The background color for the notification, defaults to NONE</param>
-        /// <param name="flashColor">Set a <see cref="Color"/> to flash the notification to, if blink is <see langword="true"/> this is ignored</param>
+        /// <param name="flashColor">Set a <see cref="SColor"/> to flash the notification to, if blink is <see langword="true"/> this is ignored</param>
         /// <param name="blink">Wether to blink or not the notification</param>
         /// <param name="type">The <see cref="NotificationType"/></param>
         /// <param name="showInBrief">True to show it in Briefing page in Pause Menu</param>
         /// <param name="sound">If true a sound will be played on notification appearing</param>
-        public static ScaleformUINotification ShowAdvancedNotification(string title, string subtitle, string text, string iconSet = "Default", string icon = "Default", HudColor bgColor = HudColor.NONE, Color flashColor = new Color(), bool blink = false, NotificationType type = NotificationType.Default, bool showInBrief = true, bool sound = true)
+        public static ScaleformUINotification ShowAdvancedNotification(string title, string subtitle, string text, string iconSet = "Default", string icon = "Default", HudColor bgColor = HudColor.NONE, SColor flashColor = default, bool blink = false, NotificationType type = NotificationType.Default, bool showInBrief = true, bool sound = true)
         {
             AddTextEntry("ScaleformUIAdvancedNotification", text);
             BeginTextCommandThefeedPost("ScaleformUIAdvancedNotification");
@@ -211,7 +211,7 @@ namespace ScaleformUI
             return new(Function.Call<int>(Hash.END_TEXT_COMMAND_THEFEED_POST_VERSUS_TU, mug.Item2, mug.Item2, leftScore, otherMug.Item2, otherMug.Item2, rightScore, leftColor, rightColor));
         }
 
-        private static void _drawText3d(Vector3 campos, float camfov, string text, Vector3 coord, Color color, Font font = Font.ChaletComprimeCologne, float scale = 17f)
+        private static void _drawText3d(Vector3 campos, float camfov, string text, Vector3 coord, SColor color, Font font = Font.ChaletComprimeCologne, float scale = 17f)
         {
             float dist = Vector3.Distance(coord, campos);
             float scaleInternal = (1 / dist) * scale;
@@ -241,7 +241,7 @@ namespace ScaleformUI
         /// <param name="color">Text color</param>
         /// <param name="font">Set the desired <see cref="Font"/></param>
         /// <param name="scale">Text scale (Default is 17.0f)</param>
-        public static void DrawText3D(string text, Vector3 coord, Color color, Font font = Font.ChaletComprimeCologne, float scale = 17f)
+        public static void DrawText3D(string text, Vector3 coord, SColor color, Font font = Font.ChaletComprimeCologne, float scale = 17f)
         {
             if (Game.IsPaused) return;
             _drawText3d(GameplayCamera.Position, GameplayCamera.FieldOfView, text, coord, color, font, scale);
@@ -256,7 +256,7 @@ namespace ScaleformUI
         /// <param name="color">Text color</param>
         /// <param name="font">Set the desired <see cref="Font"/></param>
         /// <param name="scale">Text scale (Default is 17.0f)</param>
-        public static void DrawText3D(Camera camera, string text, Vector3 coord, Color color, Font font = Font.ChaletComprimeCologne, float scale = 17f)
+        public static void DrawText3D(Camera camera, string text, Vector3 coord, SColor color, Font font = Font.ChaletComprimeCologne, float scale = 17f)
         {
             if (Game.IsPaused) return;
             _drawText3d(camera.Position, camera.FieldOfView, text, coord, color, font, scale);
@@ -274,7 +274,7 @@ namespace ScaleformUI
         /// <param name="TextAlignment">Text alignment (default center)</param>
         /// <param name="Outline">True to outline the text (default true)</param>
         /// <param name="Wrap">Wrap the text at desired boundries (default 0)</param>
-        public static void DrawText(float x = 0.5f, float y = 0.8f, string text = "", Color color = default, Font font = Font.ChaletComprimeCologne, Alignment TextAlignment = Alignment.Center, bool Outline = true, float Wrap = 0)
+        public static void DrawText(float x = 0.5f, float y = 0.8f, string text = "", SColor color = default, Font font = Font.ChaletComprimeCologne, Alignment TextAlignment = Alignment.Center, bool Outline = true, float Wrap = 0)
         {
             if (Game.IsPaused || string.IsNullOrWhiteSpace(text)) return;
             int screenw = Screen.Resolution.Width;
