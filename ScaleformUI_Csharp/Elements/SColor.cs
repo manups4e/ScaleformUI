@@ -8,6 +8,11 @@ namespace ScaleformUI.Elements
     {
         private readonly Color mainColor;
         private static Random rnd = new();
+        public readonly bool IsEmpty => mainColor.IsEmpty;
+        public readonly byte A => mainColor.A;
+        public readonly byte B => mainColor.B;
+        public readonly byte G => mainColor.G;
+        public readonly byte R => mainColor.R;
         #region System Colors
         public static readonly SColor Transparent = FromArgb(16777215);
         public static readonly SColor AliceBlue = FromArgb(-984833);
