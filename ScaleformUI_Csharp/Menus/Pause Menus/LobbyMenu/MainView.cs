@@ -659,7 +659,6 @@ namespace ScaleformUI.LobbyMenu
                     return;
                 }
                 updateFocus(FocusLevel - 1);
-                return;
             }
         }
 
