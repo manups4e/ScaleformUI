@@ -1125,8 +1125,6 @@ Citizen.CreateThread(function()
 	timerBarPool:AddBar(textBar)
 	timerBarPool:AddBar(progrBar)
 -- Usage example
-	local color = SColor.HUD_Platform_blue
-	print(color)  
 	print("Brighness: " .. color:GetBrightness())  
 	print("Hue: " .. color:GetHue())  
 	print("Saturation: " .. color:GetSaturation())  
