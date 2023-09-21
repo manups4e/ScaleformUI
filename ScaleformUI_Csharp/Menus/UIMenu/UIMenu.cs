@@ -1335,6 +1335,7 @@ namespace ScaleformUI.Menu
         public void Clear()
         {
             Pagination.CurrentMenuIndex = 0;
+            Main.scaleformUI.CallFunction("CLEAR_ITEMS");
             MenuItems.Clear();
             Pagination.TotalItems = 0;
         }
