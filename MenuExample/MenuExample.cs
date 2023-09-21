@@ -862,7 +862,7 @@ public class MenuExample : BaseScript
                 }
                 #endregion
                 if (notification != null) notification.Hide();
-                notification = Notifications.ShowAdvancedNotification("This is the title!!", "This is the subtitle!", "This is the main text!!", selectedChar, selectedChar, HudColor.NONE, SColor.AliceBlue.ToColor(), true, NotificationType.Default, true, true);
+                notification = Notifications.ShowAdvancedNotification("This is the title!!", "This is the subtitle!", "This is the main text!!", selectedChar, selectedChar, HudColor.NONE, SColor.AliceBlue, true, NotificationType.Default, true, true);
             }
         };
 
@@ -959,7 +959,7 @@ public class MenuExample : BaseScript
     private string _text = string.Empty;
     public async Task Text3DTimer()
     {
-        Notifications.DrawText3D(_text, Game.PlayerPed.Bones[Bone.SKEL_Head].Position + new Vector3(0, 0, 0.5f), SColor.WhiteSmoke.ToColor());
+        Notifications.DrawText3D(_text, Game.PlayerPed.Bones[Bone.SKEL_Head].Position + new Vector3(0, 0, 0.5f), SColor.WhiteSmoke);
         if (Game.GameTime - _timer > 5000) // this is a tricky yet simple way to count time without using Delay and pausing the Thread ;)
             Tick -= Text3DTimer;
         await Task.FromResult(0);
@@ -1718,7 +1718,7 @@ public class MenuExample : BaseScript
         txd = API.CreateRuntimeTxd("scaleformui");
 
         // We create a marker on the peds position, adds it to the MarkerHandler
-        Marker playerMarker = new Marker(MarkerType.VerticalCylinder, Game.PlayerPed.Position, new Vector3(1.5f), 5f, SColor.Cyan.ToColor(), true);
+        Marker playerMarker = new Marker(MarkerType.VerticalCylinder, Game.PlayerPed.Position, new Vector3(1.5f), 5f, SColor.Cyan, true);
         MarkersHandler.AddMarker(playerMarker);
 
         Tick += async () =>
