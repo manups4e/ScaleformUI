@@ -76,6 +76,9 @@ namespace ScaleformUI
                         newer.AnimationType = old.AnimationType;
                         newer.BuildingAnimation = old.BuildingAnimation;
                         newer.ScrollingType = old.ScrollingType;
+                        newer.Glare = old.Glare;
+                        newer.EnableAnimation = old.EnableAnimation;
+                        newer.Enabled3DAnimations = old.Enabled3DAnimations;
                     }
                     newer.CurrentSelection = newMenuCurrentSelection != 0 ? newMenuCurrentSelection : 0;
                 }
