@@ -922,19 +922,8 @@ namespace ScaleformUI.Menu
         public string AUDIO_BACK = "BACK";
         public string AUDIO_ERROR = "ERROR";
 
-        public List<UIMenuItem> MenuItems
-        {
-            get => menuItems;
-            set
-            {
-                if (menuItems.Count > 0) Clear();
-                menuItems = value;
-                if (Visible)
-                {
-                    BuildUpMenuAsync(true);
-                }
-            }
-        }
+        public List<UIMenuItem> MenuItems = new List<UIMenuItem>();
+        public List<UIMenuItem> _unfilteredMenuItems = new List<UIMenuItem>();
 
         public bool MouseEdgeEnabled = true;
         public bool ControlDisablingEnabled = true;
@@ -1346,9 +1335,9 @@ namespace ScaleformUI.Menu
         /// </summary>
         public void Clear()
         {
-            Pagination.CurrentMenuIndex = 0;
             Main.scaleformUI.CallFunction("CLEAR_ITEMS");
             MenuItems.Clear();
+            Pagination.Reset();
             Pagination.TotalItems = 0;
         }
 
@@ -1549,7 +1538,6 @@ namespace ScaleformUI.Menu
         bool cursorPressed;
         private ItemFont descriptionFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
         private ScrollingType scrollingType = ScrollingType.CLASSIC;
-        private List<UIMenuItem> menuItems = new List<UIMenuItem>();
 
         /// <summary>
         /// Process the mouse's position and check if it's hovering over any UI element. Call this in OnTick
@@ -2236,6 +2224,7 @@ namespace ScaleformUI.Menu
                     MenuCloseEv(this);
                     MenuHandler.ableToDraw = false;
                     MenuHandler.currentMenu = null;
+                    _unfilteredMenuItems.Clear();
                     Main.scaleformUI.CallFunction("CLEAR_ALL");
                 }
                 if (!value) return;
@@ -2291,7 +2280,6 @@ namespace ScaleformUI.Menu
                         }
                     }
                 }
-
             }
 
             int i = 0;
@@ -2339,6 +2327,31 @@ namespace ScaleformUI.Menu
             FadeInMenu();
             isBuilding = false;
         }
+
+        public void SortMenuItems(Comparison<UIMenuItem> compare)
+        {
+            List<UIMenuItem> list = MenuItems.ToList();
+            Clear();
+            list.Sort(compare);
+            MenuItems = list;
+            BuildUpMenuAsync(true);
+        }
+
+        public void FilterMenuItems(Func<UIMenuItem, bool> predicate)
+        {
+            _unfilteredMenuItems = MenuItems.ToList();
+            Clear();
+            MenuItems = _unfilteredMenuItems.Where(predicate.Invoke).ToList();
+            BuildUpMenuAsync(true);
+        }
+
+        public void ResetFilter()
+        {
+            Clear();
+            MenuItems = _unfilteredMenuItems.ToList();
+            BuildUpMenuAsync(true);
+        }
+
 
         private void _itemCreation(int page, int pageIndex, bool before, bool isOverflow = false)
         {
