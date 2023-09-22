@@ -2249,7 +2249,7 @@ namespace ScaleformUI.Menu
         {
             isBuilding = true;
             bool _animEnabled = EnableAnimation;
-            if (itemsOnly)
+            if (!itemsOnly)
             {
                 EnableAnimation = false;
                 while (!Main.scaleformUI.IsLoaded) await BaseScript.Delay(0);
