@@ -922,7 +922,19 @@ namespace ScaleformUI.Menu
         public string AUDIO_BACK = "BACK";
         public string AUDIO_ERROR = "ERROR";
 
-        public List<UIMenuItem> MenuItems = new List<UIMenuItem>();
+        public List<UIMenuItem> MenuItems
+        {
+            get => menuItems;
+            set
+            {
+                if (menuItems.Count > 0) Clear();
+                menuItems = value;
+                if (Visible)
+                {
+                    BuildUpMenuAsync(true);
+                }
+            }
+        }
 
         public bool MouseEdgeEnabled = true;
         public bool ControlDisablingEnabled = true;
@@ -1537,6 +1549,7 @@ namespace ScaleformUI.Menu
         bool cursorPressed;
         private ItemFont descriptionFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
         private ScrollingType scrollingType = ScrollingType.CLASSIC;
+        private List<UIMenuItem> menuItems = new List<UIMenuItem>();
 
         /// <summary>
         /// Process the mouse's position and check if it's hovering over any UI element. Call this in OnTick
@@ -2232,49 +2245,53 @@ namespace ScaleformUI.Menu
             }
         }
 
-        internal async void BuildUpMenuAsync()
+        internal async void BuildUpMenuAsync(bool itemsOnly = false)
         {
             isBuilding = true;
             bool _animEnabled = EnableAnimation;
-            EnableAnimation = false;
-            while (!Main.scaleformUI.IsLoaded) await BaseScript.Delay(0);
-            Main.scaleformUI.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, EnableAnimation, (int)AnimationType, (int)buildingAnimation, counterColor, descriptionFont.FontName, descriptionFont.FontID, fadingTime);
-            if (Windows.Count > 0)
+            if (itemsOnly)
             {
-                foreach (UIMenuWindow wind in Windows)
+                EnableAnimation = false;
+                while (!Main.scaleformUI.IsLoaded) await BaseScript.Delay(0);
+                Main.scaleformUI.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, EnableAnimation, (int)AnimationType, (int)buildingAnimation, counterColor, descriptionFont.FontName, descriptionFont.FontID, fadingTime);
+                if (Windows.Count > 0)
                 {
-                    switch (wind)
+                    foreach (UIMenuWindow wind in Windows)
                     {
-                        case UIMenuHeritageWindow:
-                            UIMenuHeritageWindow her = (UIMenuHeritageWindow)wind;
-                            Main.scaleformUI.CallFunction("ADD_WINDOW", her.id, her.Mom, her.Dad);
-                            break;
-                        case UIMenuDetailsWindow:
-                            UIMenuDetailsWindow det = (UIMenuDetailsWindow)wind;
-                            Main.scaleformUI.CallFunction("ADD_WINDOW", det.id, det.DetailBottom, det.DetailMid, det.DetailTop, det.DetailLeft.Txd, det.DetailLeft.Txn, det.DetailLeft.Pos.X, det.DetailLeft.Pos.Y, det.DetailLeft.Size.Width, det.DetailLeft.Size.Height);
-                            if (det.StatWheelEnabled)
-                            {
-                                foreach (UIDetailStat stat in det.DetailStats)
-                                    Main.scaleformUI.CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", Windows.IndexOf(det), stat.Percentage, stat.HudColor);
-                            }
-                            break;
-                    }
+                        switch (wind)
+                        {
+                            case UIMenuHeritageWindow:
+                                UIMenuHeritageWindow her = (UIMenuHeritageWindow)wind;
+                                Main.scaleformUI.CallFunction("ADD_WINDOW", her.id, her.Mom, her.Dad);
+                                break;
+                            case UIMenuDetailsWindow:
+                                UIMenuDetailsWindow det = (UIMenuDetailsWindow)wind;
+                                Main.scaleformUI.CallFunction("ADD_WINDOW", det.id, det.DetailBottom, det.DetailMid, det.DetailTop, det.DetailLeft.Txd, det.DetailLeft.Txn, det.DetailLeft.Pos.X, det.DetailLeft.Pos.Y, det.DetailLeft.Size.Width, det.DetailLeft.Size.Height);
+                                if (det.StatWheelEnabled)
+                                {
+                                    foreach (UIDetailStat stat in det.DetailStats)
+                                        Main.scaleformUI.CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", Windows.IndexOf(det), stat.Percentage, stat.HudColor);
+                                }
+                                break;
+                        }
 
-                }
-            }
-            int timer = Main.GameTime;
-
-            if (MenuItems.Count == 0)
-            {
-                while (MenuItems.Count == 0)
-                {
-                    await BaseScript.Delay(0);
-                    if (Main.GameTime - timer > 150)
-                    {
-                        Main.scaleformUI.CallFunction("SET_CURRENT_ITEM", Pagination.GetPageIndexFromMenuIndex(CurrentSelection));
-                        return;
                     }
                 }
+                int timer = Main.GameTime;
+
+                if (MenuItems.Count == 0)
+                {
+                    while (MenuItems.Count == 0)
+                    {
+                        await BaseScript.Delay(0);
+                        if (Main.GameTime - timer > 150)
+                        {
+                            Main.scaleformUI.CallFunction("SET_CURRENT_ITEM", Pagination.GetPageIndexFromMenuIndex(CurrentSelection));
+                            return;
+                        }
+                    }
+                }
+
             }
 
             int i = 0;
