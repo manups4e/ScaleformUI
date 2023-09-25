@@ -15,9 +15,9 @@ local function CreateLobbyMenu()
     if not LobbyMenu then
         LobbyMenu = MainView.New("name", "dec", "", "", "")
         local columns = {
-            SettingsListColumn.New("COLUMN SETTINGS", Colours.HUD_COLOUR_RED),
-            PlayerListColumn.New("COLUMN PLAYERS", Colours.HUD_COLOUR_ORANGE),
-            MissionDetailsPanel.New("COLUMN INFO PANEL", Colours.HUD_COLOUR_GREEN),
+            SettingsListColumn.New("COLUMN SETTINGS", HudColours.HUD_COLOUR_RED),
+            PlayerListColumn.New("COLUMN PLAYERS", HudColours.HUD_COLOUR_ORANGE),
+            MissionDetailsPanel.New("COLUMN INFO PANEL", HudColours.HUD_COLOUR_GREEN),
         }
         LobbyMenu:SetupColumns(columns)
 
@@ -44,10 +44,10 @@ local function CreateLobbyMenu()
         LobbyMenu.MissionPanel:Title("ScaleformUI - Title")
 
         local detailItem = UIMenuFreemodeDetailsItem.New("Left Label", "Right Label", false, BadgeStyle.BRIEFCASE,
-            Colours.HUD_COLOUR_FREEMODE)
+            HudColours.HUD_COLOUR_FREEMODE)
         LobbyMenu.MissionPanel:AddItem(detailItem)
 
-        local friend = FriendItem.New("", Colours.HUD_COLOUR_FREEMODE, false, 0, "", "")
+        local friend = FriendItem.New("", HudColours.HUD_COLOUR_FREEMODE, false, 0, "", "")
         LobbyMenu.PlayersColumn:AddPlayer(friend)
 
         LobbyMenu.SettingsColumn.OnIndexChanged = function(idx)
@@ -204,10 +204,10 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:SetPlayerList", function(data)
         local playerCoords = GetEntityCoords(playerPed)
         for k, v in pairs(data) do
             local Status = v.Status
-            local Colours = v.Colours
+            local HudColours = v.HudColours
             if HostSource == v.source then
                 Status = "HOST"
-                Colours = 116
+                HudColours = 116
             end
 
             if GetPlayerFromServerId(v.source) ~= -1 then
@@ -246,7 +246,7 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:SetPlayerList", function(data)
                 end
             end
 
-            local friend = FriendItem.New(v.name, Colours, v.rowColor, v.lev, Status, v.CrewTag)
+            local friend = FriendItem.New(v.name, HudColours, v.rowColor, v.lev, Status, v.CrewTag)
             if v.ped then
                 friend:SetLeftIcon(LobbyBadge, false)
                 friend:AddPedToPauseMenu((v.ped or PlayerPedId())) -- defaulted to 0 if you set it to nil / 0 the ped will be removed from the pause menu
@@ -324,7 +324,7 @@ AddEventHandler("ScaleformUI_Lua:lobbymenu:SetInfo", function(data)
         end
 
         for k, v in pairs(data) do
-            local detailItem = UIMenuFreemodeDetailsItem.New(v.LeftLabel, v.RightLabel, false, v.BadgeStyle, v.Colours)
+            local detailItem = UIMenuFreemodeDetailsItem.New(v.LeftLabel, v.RightLabel, false, v.BadgeStyle, v.HudColours)
             LobbyMenu.MissionPanel:AddItem(detailItem)
         end
 
@@ -651,19 +651,19 @@ RegisterCommand('ScaleformUILua_SetInfo', function(source, args) -- Use command 
             LeftLabel = "Map",
             RightLabel = "Stunt - 45°",
             BadgeStyle = 179,
-            Colours = false,
+            HudColours = false,
         },
         {
             LeftLabel = "Min Player",
             RightLabel = 1,
             BadgeStyle = 179,
-            Colours = false,
+            HudColours = false,
         },
         {
             LeftLabel = "Time Left",
             RightLabel = "60 Minute",
             BadgeStyle = 179,
-            Colours = false,
+            HudColours = false,
         },
     }
     TriggerEvent("ScaleformUI_Lua:lobbymenu:SetInfo", infoList)
@@ -676,7 +676,7 @@ RegisterCommand('ScaleformUILua_SetPlayerList1', function(source, args) -- Can u
             source = GetPlayerServerId(PlayerId()),
             name = "Player " .. i,
             rowColor = 116,
-            Colours = 15,
+            HudColours = 15,
             Status = "WAITING",
             CrewTag = "",
             lev = GetRandomIntInRange(1, 999),
@@ -694,7 +694,7 @@ RegisterCommand('ScaleformUILua_SetPlayerList2', function(source, args) -- Can u
             source = GetPlayerServerId(PlayerId()),
             name = "Player " .. i,
             rowColor = 116,
-            Colours = 18,
+            HudColours = 18,
             Status = "PLAYING",
             CrewTag = "",
             lev = GetRandomIntInRange(1, 999),

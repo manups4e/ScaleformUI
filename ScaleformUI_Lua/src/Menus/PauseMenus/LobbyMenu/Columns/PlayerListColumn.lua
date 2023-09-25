@@ -6,7 +6,8 @@ end
 
 ---@class PlayerListColumn
 ---@field private _label string
----@field private _color number
+---@field private _color SColor
+---@field private _isBuilding boolean
 ---@field private _currentSelection number
 ---@field public Order number
 ---@field public Parent function
@@ -17,7 +18,7 @@ end
 
 ---Creates a new PlayerListColumn.
 ---@param label string
----@param color number|116
+---@param color number|SColor.HUD_Freemode
 ---@return table
 function PlayerListColumn.New(label, color, scrollType)
     local handler = PaginationHandler.New()
@@ -27,7 +28,7 @@ function PlayerListColumn.New(label, color, scrollType)
         _isBuilding = false,
         Type = "players",
         _label = label or "",
-        _color = color or 116,
+        _color = color or SColor.HUD_Freemode,
         _currentSelection = 0,
         scrollingType = scrollType or MenuScrollingType.CLASSIC,
         Pagination = handler,
@@ -36,6 +37,8 @@ function PlayerListColumn.New(label, color, scrollType)
         ParentTab = 0,
         Items = {} --[[@type table<number, FriendItem>]],
         OnIndexChanged = function(index)
+        end,
+        OnPlayerItemActivated = function(index)
         end
     }
     return setmetatable(_data, PlayerListColumn)
@@ -67,20 +70,25 @@ function PlayerListColumn:CurrentSelection(value)
         self.Pagination:CurrentPage(self.Pagination:GetPage(self.Pagination:CurrentMenuIndex()));
         self.Pagination:CurrentPageIndex(value);
         self.Pagination:ScaleformIndex(self.Pagination:GetScaleformIndex(self.Pagination:CurrentMenuIndex()));
-        self.Items[self:CurrentSelection()]:Selected(true)
         if self.Parent ~= nil and self.Parent:Visible() then
             local pSubT = self.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_SELECTION", false, self.Pagination:ScaleformIndex()) --[[@as number]]
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_QTTY", false, self:CurrentSelection(), #self.Items) --[[@as number]]
+                self.Items[self:CurrentSelection()]:Selected(true)
+                if self.Items[self:CurrentSelection()].ClonePed ~= nil and self.Items[self:CurrentSelection()].ClonePed ~= 0 then
+                    self.Items[self:CurrentSelection()]:AddPedToPauseMenu()
+                end
             elseif pSubT == "PauseMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_SELECTION", false, self.ParentTab, self.Pagination:ScaleformIndex()) --[[@as number]]
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_QTTY", false, self.ParentTab, self:CurrentSelection(), #self.Items) --[[@as number]]
+                if self.Parent:Index() == self.ParentTab+1 and self.Parent:FocusLevel() == 1 then
+                    self.Items[self:CurrentSelection()]:Selected(true)
+                    if self.Items[self:CurrentSelection()].ClonePed ~= nil and self.Items[self:CurrentSelection()].ClonePed ~= 0 then
+                        self.Items[self:CurrentSelection()]:AddPedToPauseMenu()
+                    end
+                end
             end
-        end
-        self.Items[self:CurrentSelection()]:Selected(true)
-        if self.Items[self:CurrentSelection()].ClonePed ~= nil and self.Items[self:CurrentSelection()].ClonePed ~= 0 then
-            self.Items[self:CurrentSelection()]:AddPedToPauseMenu()
         end
     end
 end
@@ -98,6 +106,17 @@ function PlayerListColumn:AddPlayer(item)
         if self.Parent ~= nil and self.Parent:Visible() then
             if self.Pagination:TotalItems() < self.Pagination:ItemsPerPage() then
                 local sel = self:CurrentSelection()
+                self.Pagination:MinItem(self.Pagination:CurrentPageStartIndex())
+
+                if self.scrollingType == MenuScrollingType.CLASSIC and self.Pagination:TotalPages() > 1 then
+                    local missingItems = self.Pagination:GetMissingItems()
+                    if missingItems > 0 then
+                        self.Pagination:ScaleformIndex(self.Pagination:GetPageIndexFromMenuIndex(self.Pagination:CurrentPageEndIndex()) + missingItems - 1)
+                        self.Pagination.minItem = self.Pagination:CurrentPageStartIndex() - missingItems
+                    end
+                end
+        
+                self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
                 self:_itemCreation(0, #self.Items, false)
                 local pSubT = self.Parent()
                 if pSubT == "PauseMenu" then
@@ -134,9 +153,9 @@ function PlayerListColumn:_itemCreation(page, pageIndex, before, overflow)
     if SubType == "FriendItem" then
         local pSubT = self.Parent()
         if pSubT == "LobbyMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_PLAYER_ITEM", false, before, menuIndex, 1, 1, item:Label(), item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL, item._iconR, item._boolR, item:Status(), item:StatusColor(), item:Rank(), item:CrewTag(), item:KeepPanelVisible())
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_PLAYER_ITEM", false, before, menuIndex, 1, 1, item:Label(), item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL, item._iconR, item._boolR, item:Status(), item:StatusColor(), item:Rank(), item:CrewTag().TAG, item:KeepPanelVisible())
         elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_PLAYER_ITEM", false, self.ParentTab, before, menuIndex, 1, 1, item:Label(), item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL, item._iconR, item._boolR, item:Status(), item:StatusColor(), item:Rank(), item:CrewTag(), item:KeepPanelVisible())
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_PLAYER_ITEM", false, self.ParentTab, before, menuIndex, 1, 1, item:Label(), item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL, item._iconR, item._boolR, item:Status(), item:StatusColor(), item:Rank(), item:CrewTag().TAG, item:KeepPanelVisible())
         end
     end
     if item.Panel ~= nil then

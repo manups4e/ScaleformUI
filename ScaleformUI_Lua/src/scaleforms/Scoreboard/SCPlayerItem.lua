@@ -6,7 +6,7 @@ end
 
 ---@class SCPlayerItem
 ---@field public Name string
----@field public Color Colours
+---@field public Color HudColours
 ---@field public RightIcon number
 ---@field public RightText number
 ---@field public FriendType string
@@ -19,7 +19,7 @@ end
 
 ---Creates a new SCPlayerItem instance
 ---@param label string
----@param color Colours
+---@param color HudColours
 ---@param rightIcon number
 ---@param rightText number
 ---@param friendType string

@@ -1,4 +1,5 @@
-﻿using ScaleformUI.LobbyMenu;
+﻿using ScaleformUI.Elements;
+using ScaleformUI.LobbyMenu;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenu;
 using ScaleformUI.Scaleforms;
@@ -12,12 +13,12 @@ namespace ScaleformUI
 
         public MissionsListColumn ParentColumn { get; internal set; }
         public string Label { get; private set; }
-        public HudColor MainColor { get; private set; } = HudColor.HUD_COLOUR_PAUSE_BG;
-        public HudColor HighlightColor { get; private set; } = HudColor.HUD_COLOUR_WHITE;
+        public SColor MainColor { get; private set; } = SColor.FromHudColor(HudColor.HUD_COLOUR_PAUSE_BG);
+        public SColor HighlightColor { get; private set; } = SColor.FromHudColor(HudColor.HUD_COLOUR_WHITE);
         public BadgeIcon LeftIcon { get; private set; } = BadgeIcon.NONE;
-        public HudColor LeftIconColor { get; private set; } = HudColor.HUD_COLOUR_WHITE;
+        public SColor LeftIconColor { get; private set; } = SColor.FromHudColor(HudColor.HUD_COLOUR_WHITE);
         public BadgeIcon RightIcon { get; private set; } = BadgeIcon.NONE;
-        public HudColor RightIconColor { get; private set; } = HudColor.HUD_COLOUR_WHITE;
+        public SColor RightIconColor { get; private set; } = SColor.FromHudColor(HudColor.HUD_COLOUR_WHITE);
         public bool RightIconChecked { get; private set; }
         public bool Selected { get; internal set; }
         public bool Hovered { get; internal set; }
@@ -46,16 +47,16 @@ namespace ScaleformUI
             MissionActivated?.Invoke(tab, ParentColumn, this);
         }
 
-        public MissionItem(string label) : this(label, HudColor.HUD_COLOUR_PAUSE_BG, HudColor.HUD_COLOUR_WHITE) { }
+        public MissionItem(string label) : this(label, SColor.FromHudColor(HudColor.HUD_COLOUR_PAUSE_BG), SColor.FromHudColor(HudColor.HUD_COLOUR_WHITE)) { }
 
-        public MissionItem(string label, HudColor mainColor, HudColor highlightColor)
+        public MissionItem(string label, SColor mainColor, SColor highlightColor)
         {
             Label = label;
             MainColor = mainColor;
             HighlightColor = highlightColor;
         }
 
-        public void SetLeftIcon(BadgeIcon icon, HudColor color)
+        public void SetLeftIcon(BadgeIcon icon, SColor color)
         {
             LeftIcon = icon;
             LeftIconColor = color;
@@ -71,7 +72,7 @@ namespace ScaleformUI
                 }
             }
         }
-        public void SetRightIcon(BadgeIcon icon, HudColor color, bool @checked = false)
+        public void SetRightIcon(BadgeIcon icon, SColor color, bool @checked = false)
         {
             RightIcon = icon;
             RightIconColor = color;

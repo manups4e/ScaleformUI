@@ -6,6 +6,7 @@ using ScaleformUI.Elements;
 using ScaleformUI.LobbyMenu;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenu;
+using ScaleformUI.PauseMenus;
 using ScaleformUI.Radial;
 using ScaleformUI.Radio;
 using ScaleformUI.Scaleforms;
@@ -22,7 +23,6 @@ public class MenuExample : BaseScript
     private TimerBarPool _timerBarPool;
     private long txd;
     private Random Random = new Random(API.GetGameTimer());
-
     #region UIMenu
     public void ExampleMenu()
     {
@@ -36,7 +36,7 @@ public class MenuExample : BaseScript
         exampleMenu.BuildingAnimation = MenuBuildingAnimation.LEFT_RIGHT;
         exampleMenu.AnimationType = MenuAnimationType.BACK_INOUT;
         exampleMenu.ScrollingType = ScrollingType.CLASSIC;
-        exampleMenu.Enabled3DAnimations = false;
+        exampleMenu.Enabled3DAnimations = true;
         //exampleMenu.CounterColor = HudColor.HUD_COLOUR_PINK;
         // let's add the menu to the Pool
 
@@ -146,11 +146,11 @@ public class MenuExample : BaseScript
         long _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
         API.CreateRuntimeTextureFromDuiHandle(txd, "panelbackground", API.GetDuiHandle(_paneldui));
         UIMissionDetailsPanel sidePanel = new UIMissionDetailsPanel(PanelSide.Right, "Side Panel", true, "scaleformui", "panelbackground");
-        UIFreemodeDetailsItem detailItem1 = new UIFreemodeDetailsItem("Left Label", "RIGHT LABEL", ScaleformFonts.SIGNPAINTER_HOUSESCRIPT, ScaleformFonts.GTAV_TAXI_DIGITAL, BadgeIcon.BRIEFCASE, HudColor.HUD_COLOUR_FREEMODE);
-        UIFreemodeDetailsItem detailItem2 = new UIFreemodeDetailsItem("Left Label", "RIGHT LABEL", ScaleformFonts.SIGNPAINTER_HOUSESCRIPT, ScaleformFonts.GTAV_TAXI_DIGITAL, BadgeIcon.STAR, HudColor.HUD_COLOUR_GOLD);
-        UIFreemodeDetailsItem detailItem3 = new UIFreemodeDetailsItem("Left Label", "RIGHT LABEL", ScaleformFonts.SIGNPAINTER_HOUSESCRIPT, ScaleformFonts.GTAV_TAXI_DIGITAL, BadgeIcon.ARMOR, HudColor.HUD_COLOUR_PURPLE);
-        UIFreemodeDetailsItem detailItem4 = new UIFreemodeDetailsItem("Left Label", "RIGHT LABEL", ScaleformFonts.SIGNPAINTER_HOUSESCRIPT, ScaleformFonts.GTAV_TAXI_DIGITAL, BadgeIcon.BRAND_DILETTANTE, HudColor.HUD_COLOUR_GREEN);
-        UIFreemodeDetailsItem detailItem5 = new UIFreemodeDetailsItem("Left Label", "RIGHT LABEL", ScaleformFonts.SIGNPAINTER_HOUSESCRIPT, ScaleformFonts.GTAV_TAXI_DIGITAL, BadgeIcon.COUNTRY_ITALY, HudColor.HUD_COLOUR_WHITE, true);
+        UIFreemodeDetailsItem detailItem1 = new UIFreemodeDetailsItem("Left Label", "RIGHT LABEL", ScaleformFonts.SIGNPAINTER_HOUSESCRIPT, ScaleformFonts.GTAV_TAXI_DIGITAL, BadgeIcon.BRIEFCASE, SColor.FromRandomValues());
+        UIFreemodeDetailsItem detailItem2 = new UIFreemodeDetailsItem("Left Label", "RIGHT LABEL", ScaleformFonts.SIGNPAINTER_HOUSESCRIPT, ScaleformFonts.GTAV_TAXI_DIGITAL, BadgeIcon.MISSION_STAR, SColor.FromRandomValues());
+        UIFreemodeDetailsItem detailItem3 = new UIFreemodeDetailsItem("Left Label", "RIGHT LABEL", ScaleformFonts.SIGNPAINTER_HOUSESCRIPT, ScaleformFonts.GTAV_TAXI_DIGITAL, BadgeIcon.ARMOR, SColor.FromRandomValues());
+        UIFreemodeDetailsItem detailItem4 = new UIFreemodeDetailsItem("Left Label", "RIGHT LABEL", ScaleformFonts.SIGNPAINTER_HOUSESCRIPT, ScaleformFonts.GTAV_TAXI_DIGITAL, BadgeIcon.BRAND_DILETTANTE, SColor.FromRandomValues());
+        UIFreemodeDetailsItem detailItem5 = new UIFreemodeDetailsItem("Left Label", "RIGHT LABEL", ScaleformFonts.SIGNPAINTER_HOUSESCRIPT, ScaleformFonts.GTAV_TAXI_DIGITAL, BadgeIcon.COUNTRY_ITALY, SColor.White);
         sidePanel.AddItem(detailItem1);
         sidePanel.AddItem(detailItem2);
         sidePanel.AddItem(detailItem3);
@@ -182,7 +182,7 @@ public class MenuExample : BaseScript
             exampleMenu.ScrollingType = (ScrollingType)index;
         };
 
-        UIMenuItem colorItem = new UIMenuItem("UIMenuItem with Colors", "~b~Look!!~r~I can be colored ~y~too!!~w~~n~Every item now supports custom colors!", HudColor.HUD_COLOUR_PURPLE, HudColor.HUD_COLOUR_PINK);
+        UIMenuItem colorItem = new UIMenuItem("UIMenuItem with Colors", "~b~Look!!~r~I can be colored ~y~too!!~w~~n~Every item now supports custom colors!", SColor.HUD_Purple, SColor.HUD_Pink);
         exampleMenu.AddItem(colorItem);
 
         float dynamicvalue = 0f;
@@ -223,7 +223,7 @@ public class MenuExample : BaseScript
         exampleMenu.AddItem(BlankItem);
         exampleMenu.AddItem(BlankItem_2);
 
-        UIMenuListItem colorListItem = new UIMenuListItem("Choose the scrolling animation", foodsList, (int)exampleMenu.AnimationType, "~BLIP_BARBER~ ~BLIP_INFO_ICON~ ~BLIP_TANK~ ~BLIP_OFFICE~ ~BLIP_CRIM_DRUGS~ ~BLIP_WAYPOINT~ ~INPUTGROUP_MOVE~~n~You can use Blips and Inputs in description as you prefer!~n~⚠ 🐌 ❤️ 🥺 💪🏻 You can use Emojis too!", HudColor.HUD_COLOUR_FREEMODE_DARK, HudColor.HUD_COLOUR_FREEMODE);
+        UIMenuListItem colorListItem = new UIMenuListItem("Choose the scrolling animation", foodsList, (int)exampleMenu.AnimationType, "~BLIP_BARBER~ ~BLIP_INFO_ICON~ ~BLIP_TANK~ ~BLIP_OFFICE~ ~BLIP_CRIM_DRUGS~ ~BLIP_WAYPOINT~ ~INPUTGROUP_MOVE~~n~You can use Blips and Inputs in description as you prefer!~n~⚠ 🐌 ❤️ 🥺 💪🏻 You can use Emojis too!", SColor.HUD_Freemode_dark, SColor.HUD_Freemode);
         colorListItem.BlinkDescription = true;
         exampleMenu.AddItem(colorListItem);
 
@@ -239,7 +239,7 @@ public class MenuExample : BaseScript
         listPanelItem0.AddPanel(ColorPanel);
 
         UIMenuItem listPanelItem1 = new UIMenuItem("Custom palette panel");
-        UIMenuColorPanel ColorPanelCustom = new UIMenuColorPanel("Custom Palette Example", new List<HudColor> { HudColor.HUD_COLOUR_GREEN, HudColor.HUD_COLOUR_RED, HudColor.HUD_COLOUR_FREEMODE, HudColor.HUD_COLOUR_PURPLE, HudColor.HUD_COLOUR_TREVOR }, 0);
+        UIMenuColorPanel ColorPanelCustom = new UIMenuColorPanel("Custom Palette Example", new List<SColor> { SColor.FromRandomValues(), SColor.FromRandomValues(), SColor.FromRandomValues(), SColor.FromRandomValues(), SColor.FromRandomValues() }, 0);
         exampleMenu.AddItem(listPanelItem1);
         listPanelItem1.AddPanel(ColorPanelCustom);
 
@@ -293,8 +293,8 @@ public class MenuExample : BaseScript
         statsWindow.DetailBottom = "Mom: " + (100 - newItem.Value) + "%";
         statsWindow.DetailStats = new List<UIDetailStat>()
         {
-            new UIDetailStat(100-newItem.Value, HudColor.HUD_COLOUR_PINK),
-            new UIDetailStat(newItem.Value, HudColor.HUD_COLOUR_FREEMODE),
+            new UIDetailStat(100-newItem.Value, SColor.HUD_Pink),
+            new UIDetailStat(newItem.Value, SColor.HUD_Freemode),
         };
 
         windowsItem.Activated += (sender, e) =>
@@ -451,9 +451,9 @@ public class MenuExample : BaseScript
         windowSubmenu.OnSliderChange += (sender, item, value) =>
         {
             statsWindow.DetailStats[0].Percentage = 100 - value;
-            statsWindow.DetailStats[0].HudColor = HudColor.HUD_COLOUR_PINK;
+            statsWindow.DetailStats[0].HudColor = SColor.HUD_Pink;
             statsWindow.DetailStats[1].Percentage = value;
-            statsWindow.DetailStats[1].HudColor = HudColor.HUD_COLOUR_FREEMODE;
+            statsWindow.DetailStats[1].HudColor = SColor.HUD_Freemode;
             statsWindow.UpdateStatsToWheel();
             statsWindow.UpdateLabels("Parents resemblance", "Dad: " + value + "%", "Mom: " + (100 - value) + "%");
         };
@@ -862,7 +862,7 @@ public class MenuExample : BaseScript
                 }
                 #endregion
                 if (notification != null) notification.Hide();
-                notification = Notifications.ShowAdvancedNotification("This is the title!!", "This is the subtitle!", "This is the main text!!", selectedChar, selectedChar, HudColor.NONE, Colors.AliceBlue, true, NotificationType.Default, true, true);
+                notification = Notifications.ShowAdvancedNotification("This is the title!!", "This is the subtitle!", "This is the main text!!", selectedChar, selectedChar, HudColor.NONE, SColor.AliceBlue, true, NotificationType.Default, true, true);
             }
         };
 
@@ -959,7 +959,7 @@ public class MenuExample : BaseScript
     private string _text = string.Empty;
     public async Task Text3DTimer()
     {
-        Notifications.DrawText3D(_text, Game.PlayerPed.Bones[Bone.SKEL_Head].Position + new Vector3(0, 0, 0.5f), Colors.WhiteSmoke);
+        Notifications.DrawText3D(_text, Game.PlayerPed.Bones[Bone.SKEL_Head].Position + new Vector3(0, 0, 0.5f), SColor.WhiteSmoke);
         if (Game.GameTime - _timer > 5000) // this is a tricky yet simple way to count time without using Delay and pausing the Thread ;)
             Tick -= Text3DTimer;
         await Task.FromResult(0);
@@ -994,9 +994,9 @@ public class MenuExample : BaseScript
         long imgdui2 = API.CreateDui("https://giphy.com/embed/nHyZigjdO4hEodq9fv", 64, 64);
         API.CreateRuntimeTextureFromDuiHandle(txd, "item3", API.GetDuiHandle(imgdui2));
 
-        SegmentItem item = new SegmentItem("This is the label!", "~BLIP_INFO_ICON~ This is the description.. it's multiline so it can be very long!", "scaleformui", "item1", 64, 64, HudColor.HUD_COLOUR_FREEMODE);
-        SegmentItem item1 = new SegmentItem("It's so long it scrolls automatically! Isn't this amazing?", "~BLIP_INFO_ICON~ This is the description.. it's multiline so it can be very long!", "scaleformui", "item2", 96, 64, HudColor.HUD_COLOUR_GREEN);
-        SegmentItem item2 = new SegmentItem("Label 3", "~BLIP_INFO_ICON~ This is the description.. it's multiline so it can be very long!", "scaleformui", "item3", 64, 64, HudColor.HUD_COLOUR_RED);
+        SegmentItem item = new SegmentItem("This is the label!", "~BLIP_INFO_ICON~ This is the description.. it's multiline so it can be very long!", "scaleformui", "item1", 64, 64, SColor.HUD_Freemode);
+        SegmentItem item1 = new SegmentItem("It's so long it scrolls automatically! Isn't this amazing?", "~BLIP_INFO_ICON~ This is the description.. it's multiline so it can be very long!", "scaleformui", "item2", 96, 64, SColor.HUD_Green);
+        SegmentItem item2 = new SegmentItem("Label 3", "~BLIP_INFO_ICON~ This is the description.. it's multiline so it can be very long!", "scaleformui", "item3", 64, 64, SColor.HUD_Red);
         item.SetQuantity(8000, 9999);
         item1.SetQuantity(50, 100);
         item2.SetQuantity(5000, 0);
@@ -1085,7 +1085,7 @@ public class MenuExample : BaseScript
         string mugtxd = API.GetPedheadshotTxdString(mugshot);
         pauseMenu.HeaderPicture = new(mugtxd, mugtxd);
 
-        TextTab basicTab = new TextTab("TabTextItem", "This is the title!");
+        TextTab basicTab = new TextTab("TabTextItem", "This is the title!", SColor.HUD_Freemode);
 
         long bg_dui = API.CreateDui("https://giphy.com/embed/sxwk9hGlsULcYm6hDX", 1280, 720);
         API.CreateRuntimeTextureFromDuiHandle(txd, "pausebigbg", API.GetDuiHandle(bg_dui));
@@ -1106,7 +1106,7 @@ public class MenuExample : BaseScript
         basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
         pauseMenu.AddTab(basicTab);
 
-        SubmenuTab multiItemTab = new SubmenuTab("TabSubMenu");
+        SubmenuTab multiItemTab = new SubmenuTab("TabSubMenu", SColor.HUD_Freemode);
         pauseMenu.AddTab(multiItemTab);
         TabLeftItem first = new TabLeftItem("1 - Empty", LeftItemType.Empty);
         TabLeftItem second = new TabLeftItem("2 - Info", LeftItemType.Info);
@@ -1148,11 +1148,11 @@ public class MenuExample : BaseScript
         second.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
 
         StatsTabItem _labelStatItem = new StatsTabItem("Item's Label", "Item's right label");
-        StatsTabItem _coloredBarStatItem0 = new StatsTabItem("Item's Label", 0, HudColor.HUD_COLOUR_ORANGE);
-        StatsTabItem _coloredBarStatItem1 = new StatsTabItem("Item's Label", 25, HudColor.HUD_COLOUR_RED);
-        StatsTabItem _coloredBarStatItem2 = new StatsTabItem("Item's Label", 50, HudColor.HUD_COLOUR_BLUE);
-        StatsTabItem _coloredBarStatItem3 = new StatsTabItem("Item's Label", 75, HudColor.HUD_COLOUR_GREEN);
-        StatsTabItem _coloredBarStatItem4 = new StatsTabItem("Item's Label", 100, HudColor.HUD_COLOUR_PURPLE);
+        StatsTabItem _coloredBarStatItem0 = new StatsTabItem("Item's Label", 0, SColor.HUD_Orange);
+        StatsTabItem _coloredBarStatItem1 = new StatsTabItem("Item's Label", 25, SColor.HUD_Red);
+        StatsTabItem _coloredBarStatItem2 = new StatsTabItem("Item's Label", 50, SColor.HUD_Blue);
+        StatsTabItem _coloredBarStatItem3 = new StatsTabItem("Item's Label", 75, SColor.HUD_Green);
+        StatsTabItem _coloredBarStatItem4 = new StatsTabItem("Item's Label", 100, SColor.HUD_Purple);
 
         third.AddItem(_labelStatItem);
         third.AddItem(_coloredBarStatItem0);
@@ -1164,10 +1164,10 @@ public class MenuExample : BaseScript
         List<dynamic> itemList = new List<dynamic>() { "This", "Is", "The", "List", "Super", "Power", "Wooow" };
         SettingsItem _settings1 = new SettingsItem("Item's Label", "Item's right Label");
         SettingsItem _settings2 = new SettingsListItem("Item's Label", itemList, 0);
-        SettingsItem _settings3 = new SettingsProgressItem("Item's Label", 100, 25, false, HudColor.HUD_COLOUR_FREEMODE);
-        SettingsItem _settings4 = new SettingsProgressItem("Item's Label", 100, 75, true, HudColor.HUD_COLOUR_PINK);
+        SettingsItem _settings3 = new SettingsProgressItem("Item's Label", 100, 25, false, SColor.HUD_Freemode);
+        SettingsItem _settings4 = new SettingsProgressItem("Item's Label", 100, 75, true, SColor.HUD_Pink);
         SettingsItem _settings5 = new SettingsCheckboxItem("Item's Label", UIMenuCheckboxStyle.Tick, true);
-        SettingsItem _settings6 = new SettingsSliderItem("Item's Label", 100, 50, HudColor.HUD_COLOUR_RED);
+        SettingsItem _settings6 = new SettingsSliderItem("Item's Label", 100, 50, SColor.HUD_Red);
         fourth.AddItem(_settings1);
         fourth.AddItem(_settings2);
         fourth.AddItem(_settings3);
@@ -1189,13 +1189,13 @@ public class MenuExample : BaseScript
         fifth.AddItem(key1);
         fifth.AddItem(key2);
 
-        PlayerListTab playersTab = new("PLAYERLIST");
+        PlayerListTab playersTab = new("PLAYERLIST", SColor.HUD_Freemode, false);
         List<Column> columns = new List<Column>()
         {
-            new SettingsListColumn("COLUMN SETTINGS", HudColor.HUD_COLOUR_RED), // color will be ignored for PauseMenu
-            //new PlayerListColumn("COLUMN PLAYERS", HudColor.HUD_COLOUR_ORANGE), // color will be ignored for PauseMenu
-            new MissionsListColumn("COLUMN MISSIONS", HudColor.HUD_COLOUR_ORANGE), // color will be ignored for PauseMenu
-            new MissionDetailsPanel("COLUMN INFO PANEL", HudColor.HUD_COLOUR_GREEN), // color will be ignored for PauseMenu
+            new SettingsListColumn("COLUMN SETTINGS", SColor.HUD_Red), // color will be ignored for PauseMenu
+            //new PlayerListColumn("COLUMN PLAYERS", SColor.HUD_Orange), // color will be ignored for PauseMenu
+            new MissionsListColumn("COLUMN MISSIONS", SColor.HUD_Orange), // color will be ignored for PauseMenu
+            new MissionDetailsPanel("COLUMN INFO PANEL", SColor.HUD_Green), // color will be ignored for PauseMenu
         };
         playersTab.SetUpColumns(columns);
         pauseMenu.AddTab(playersTab);
@@ -1211,22 +1211,28 @@ public class MenuExample : BaseScript
         playersTab.SettingsColumn.AddSettings(n4);
         playersTab.SettingsColumn.AddSettings(n5);
 
+        n1.Activated += (sender, args) =>
+        {
+            playersTab.SelectColumn(1);
+        };
+
+
         MissionItem mission1 = new MissionItem("Mission 1");
         MissionItem mission2 = new MissionItem("Mission 2");
         MissionItem mission3 = new MissionItem("Mission 3");
         MissionItem mission4 = new MissionItem("Mission 4");
         MissionItem mission5 = new MissionItem("Mission 5");
 
-        mission1.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
-        mission1.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
-        mission2.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
-        mission2.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
-        mission3.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
-        mission3.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
-        mission4.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
-        mission4.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
-        mission5.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223));
-        mission5.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), (HudColor)API.GetRandomIntInRange(1, 223), true);
+        mission1.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+        mission1.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+        mission2.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+        mission2.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+        mission3.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+        mission3.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+        mission4.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+        mission4.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+        mission5.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+        mission5.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues(), true);
 
         playersTab.MissionsColumn.AddMissionItem(mission1);
         playersTab.MissionsColumn.AddMissionItem(mission2);
@@ -1234,32 +1240,71 @@ public class MenuExample : BaseScript
         playersTab.MissionsColumn.AddMissionItem(mission4);
         playersTab.MissionsColumn.AddMissionItem(mission5);
 
+        playersTab.SettingsColumn.OnIndexChanged += (i) =>
+        {
+            if (playersTab.MissionsColumn.Items.Count > 0)
+            {
+                playersTab.MissionsColumn.Clear();
+            }
+
+            MissionItem mission1 = new MissionItem("Mission 1");
+            MissionItem mission2 = new MissionItem("Mission 2");
+            MissionItem mission3 = new MissionItem("Mission 3");
+            MissionItem mission4 = new MissionItem("Mission 4");
+            MissionItem mission5 = new MissionItem("Mission 5");
+
+            mission1.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+            mission1.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+            mission2.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+            mission2.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+            mission3.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+            mission3.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+            mission4.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+            mission4.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+            mission5.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+            mission5.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues(), true);
+
+            playersTab.MissionsColumn.AddMissionItem(mission1);
+            playersTab.MissionsColumn.AddMissionItem(mission2);
+            playersTab.MissionsColumn.AddMissionItem(mission3);
+            playersTab.MissionsColumn.AddMissionItem(mission4);
+            playersTab.MissionsColumn.AddMissionItem(mission5);
+        };
+
         long _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
         API.CreateRuntimeTextureFromDuiHandle(txd, "lobby_panelbackground", API.GetDuiHandle(_paneldui));
 
         playersTab.MissionPanel.UpdatePanelPicture("scaleformui", "lobby_panelbackground");
         playersTab.MissionPanel.Title = "ScaleformUI - Title";
         UIFreemodeDetailsItem missionItem1 = new("Hellooooo", "I'm here too!", false, ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST);
-        UIFreemodeDetailsItem missionItem2 = new("Hellooooo", "I'm here too!", ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST, BadgeIcon.COUNTRY_ITALY, HudColor.HUD_COLOUR_PURE_WHITE, true);
+        UIFreemodeDetailsItem missionItem2 = new("Hellooooo", "I'm here too!", ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST, BadgeIcon.COUNTRY_ITALY, SColor.HUD_Pure_white, true);
         UIFreemodeDetailsItem missionItem3 = new("Hellooooo", "I'm here too!", true, ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST);
-        //UIFreemodeDetailsItem missionItem4 = new("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "", false);
+        UIFreemodeDetailsItem missionItem4 = new("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat");
         playersTab.MissionPanel.AddItem(missionItem1);
         playersTab.MissionPanel.AddItem(missionItem2);
         playersTab.MissionPanel.AddItem(missionItem3);
+        playersTab.MissionPanel.AddItem(missionItem4);
 
 
         /*
-        FriendItem friend = new FriendItem(Game.Player.Name + " #1", HudColor.HUD_COLOUR_GREEN, true, API.GetRandomIntInRange(15, 55), "Online", "CrewTag");
-        FriendItem friend2 = new FriendItem(Game.Player.Name + " #2", HudColor.HUD_COLOUR_PINK, true, API.GetRandomIntInRange(15, 55), "Offline", "CrewTag");
-        FriendItem friend3 = new FriendItem(Game.Player.Name + " #3", HudColor.HUD_COLOUR_BLUE, true, API.GetRandomIntInRange(15, 55), "Online", "CrewTag");
-        FriendItem friend4 = new FriendItem(Game.Player.Name + " #4", HudColor.HUD_COLOUR_ORANGE, true, API.GetRandomIntInRange(15, 55), "Offline", "CrewTag");
-        FriendItem friend5 = new FriendItem(Game.Player.Name + " #5", HudColor.HUD_COLOUR_RED, true, API.GetRandomIntInRange(15, 55), "Busy", "CrewTag");
 
-        friend.ClonePed = Game.PlayerPed;
-        friend2.ClonePed = Game.PlayerPed;
-        friend3.ClonePed = Game.PlayerPed;
-        friend4.ClonePed = Game.PlayerPed;
-        friend5.ClonePed = Game.PlayerPed;
+        CrewTag crew1 = new CrewTag("hello", false, false, CrewHierarchy.Leader, SColor.HUD_Green);
+        CrewTag crew2 = new CrewTag("evry1", false, false, CrewHierarchy.Commissioner, SColor.HUD_Pink);
+        CrewTag crew3 = new CrewTag("look", false, false, CrewHierarchy.Liutenant, SColor.HUD_Blue);
+        CrewTag crew4 = new CrewTag("at", false, false, CrewHierarchy.Representative, SColor.HUD_Orange);
+        CrewTag crew5 = new CrewTag("this", false, false, CrewHierarchy.Muscle, SColor.HUD_Red);
+
+        FriendItem friend = new FriendItem(Game.Player.Name + " #1", SColor.HUD_Green, true, API.GetRandomIntInRange(15, 55), "Online", crew1);
+        FriendItem friend2 = new FriendItem(Game.Player.Name + " #2", SColor.HUD_Pink, true, API.GetRandomIntInRange(15, 55), "Offline", crew2);
+        FriendItem friend3 = new FriendItem(Game.Player.Name + " #3", SColor.HUD_Blue, true, API.GetRandomIntInRange(15, 55), "Online", crew3);
+        FriendItem friend4 = new FriendItem(Game.Player.Name + " #4", SColor.HUD_Orange, true, API.GetRandomIntInRange(15, 55), "Offline", crew4);
+        FriendItem friend5 = new FriendItem(Game.Player.Name + " #5", SColor.HUD_Red, true, API.GetRandomIntInRange(15, 55), "Busy", crew5);
+
+        //friend.ClonePed = Game.PlayerPed;
+        //friend2.ClonePed = Game.PlayerPed;
+        //friend3.ClonePed = Game.PlayerPed;
+        //friend4.ClonePed = Game.PlayerPed;
+        //friend5.ClonePed = Game.PlayerPed;
 
         friend.SetOnline();
         friend3.SetOnline();
@@ -1272,9 +1317,9 @@ public class MenuExample : BaseScript
         playersTab.PlayersColumn.AddPlayer(friend5);
 
 
-        PlayerStatsPanel panel = new PlayerStatsPanel("Player 1", HudColor.HUD_COLOUR_GREEN)
+        PlayerStatsPanel panel = new PlayerStatsPanel("Player 1", SColor.HUD_Green)
         {
-            Description = "This is the description for Player 1!!",
+            Description = "",
             HasPlane = true,
             HasHeli = true,
         };
@@ -1282,14 +1327,34 @@ public class MenuExample : BaseScript
         panel.RankInfo.LowLabel = "This is the low label";
         panel.RankInfo.MidLabel = "This is the middle label";
         panel.RankInfo.UpLabel = "This is the upper label";
-        panel.AddStat(new PlayerStatsPanelStatItem("Statistic 1", "Description 1", API.GetRandomIntInRange(30, 150)));
-        panel.AddStat(new PlayerStatsPanelStatItem("Statistic 2", "Description 2", API.GetRandomIntInRange(30, 150)));
+        panel.HardwareVisible = false;
+        panel.AddStat(new PlayerStatsPanelStatItem("Statistic 1", "Description 1", 50));
+        panel.AddStat(new PlayerStatsPanelStatItem("Statistic 2", "Description 2", 100));
         panel.AddStat(new PlayerStatsPanelStatItem("Statistic 3", "Description 3", API.GetRandomIntInRange(30, 150)));
         panel.AddStat(new PlayerStatsPanelStatItem("Statistic 4", "Description 4", API.GetRandomIntInRange(30, 150)));
         panel.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
+        panel.AddStat(new PlayerStatsPanelStatItem("Statistic 6", "Description 6", API.GetRandomIntInRange(30, 150)));
+        UIFreemodeDetailsItem descriptionStatItem1 = new("Hellooooo", "I'm here too!", false, ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST);
+        UIFreemodeDetailsItem descriptionStatItem2 = new("Hellooooo", "I'm here too!", ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST, BadgeIcon.COUNTRY_ITALY, SColor.HUD_Pure_white, true);
+        UIFreemodeDetailsItem descriptionStatItem3 = new("Hellooooo", "I'm here too!", true, ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST);
+        UIFreemodeDetailsItem descriptionStatItem4 = new("Hellooooo", "I'm here too!", false, ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST);
+        UIFreemodeDetailsItem descriptionStatItem5 = new("Hellooooo", "I'm here too!", ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST, BadgeIcon.COUNTRY_ITALY, SColor.HUD_Pure_white, true);
+        UIFreemodeDetailsItem descriptionStatItem6 = new("Hellooooo", "I'm here too!", true, ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST);
+        UIFreemodeDetailsItem descriptionStatItem7 = new("Hellooooo", "I'm here too!", false, ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST);
+        UIFreemodeDetailsItem descriptionStatItem8 = new("Hellooooo", "I'm here too!", ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST, BadgeIcon.COUNTRY_ITALY, SColor.HUD_Pure_white, true);
+        UIFreemodeDetailsItem descriptionStatItem9 = new("Hellooooo", "I'm here too!", true, ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST);
+        panel.AddDescriptionStatItem(descriptionStatItem1);
+        panel.AddDescriptionStatItem(descriptionStatItem2);
+        panel.AddDescriptionStatItem(descriptionStatItem3);
+        panel.AddDescriptionStatItem(descriptionStatItem4);
+        panel.AddDescriptionStatItem(descriptionStatItem5);
+        panel.AddDescriptionStatItem(descriptionStatItem6);
+        panel.AddDescriptionStatItem(descriptionStatItem7);
+        //panel.AddDescriptionStatItem(descriptionStatItem8);
+        //panel.AddDescriptionStatItem(descriptionStatItem9);
         friend.AddPanel(panel);
 
-        PlayerStatsPanel panel2 = new PlayerStatsPanel("Player 2", HudColor.HUD_COLOUR_PINK)
+        PlayerStatsPanel panel2 = new PlayerStatsPanel("Player 2", SColor.HUD_Pink)
         {
             Description = "This is the description for Player 2!!",
             HasPlane = true,
@@ -1307,7 +1372,7 @@ public class MenuExample : BaseScript
         panel2.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
         friend2.AddPanel(panel2);
 
-        PlayerStatsPanel panel3 = new PlayerStatsPanel("Player 3", HudColor.HUD_COLOUR_FREEMODE)
+        PlayerStatsPanel panel3 = new PlayerStatsPanel("Player 3", SColor.HUD_Freemode)
         {
             Description = "This is the description for Player 3!!",
             HasPlane = true,
@@ -1325,7 +1390,7 @@ public class MenuExample : BaseScript
         panel3.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
         friend3.AddPanel(panel3);
 
-        PlayerStatsPanel panel4 = new PlayerStatsPanel("Player 4", HudColor.HUD_COLOUR_ORANGE)
+        PlayerStatsPanel panel4 = new PlayerStatsPanel("Player 4", SColor.HUD_Orange)
         {
             Description = "This is the description for Player 4!!",
             HasPlane = true,
@@ -1342,7 +1407,7 @@ public class MenuExample : BaseScript
         panel4.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
         friend4.AddPanel(panel4);
 
-        PlayerStatsPanel panel5 = new PlayerStatsPanel("Player 5", HudColor.HUD_COLOUR_RED)
+        PlayerStatsPanel panel5 = new PlayerStatsPanel("Player 5", SColor.HUD_Red)
         {
             Description = "This is the description for Player 5!!",
             HasPlane = true,
@@ -1359,7 +1424,6 @@ public class MenuExample : BaseScript
         panel5.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
         friend5.AddPanel(panel5);
         */
-
         pauseMenu.OnPauseMenuOpen += (menu) =>
         {
             Screen.ShowSubtitle(menu.Title + " Opened!");
@@ -1380,7 +1444,8 @@ public class MenuExample : BaseScript
                 if (tab is PlayerListTab)
                 {
                     PlayerListTab t = tab as PlayerListTab;
-                    t.PlayersColumn.Items.ForEach(item => item.Dispose());
+                    if (t.PlayersColumn != null)
+                        t.PlayersColumn.Items.ForEach(item => item.Dispose());
                 }
             }
 
@@ -1451,14 +1516,14 @@ public class MenuExample : BaseScript
     {
         UIMenu mainMenu = _menu;
         // tabview is the main menu.. the container of all the tabs.
-        MainView pauseMenu = new("Lobby Menu", "ScaleformUI for you by Manups4e!", "Detail 1", "Detail 2", "Detail 3");
+        MainView pauseMenu = new("Lobby Menu", "ScaleformUI for you by Manups4e!", "Detail 1", "Detail 2", "Detail 3", false);
         pauseMenu.CanPlayerCloseMenu = true;
         // this is a showcase... CanPlayerCloseMenu is always defaulted to true.. if false players won't be able to close the menu!
         List<Column> columns = new List<Column>()
         {
-            new SettingsListColumn("COLUMN SETTINGS", HudColor.HUD_COLOUR_RED),
-            new PlayerListColumn("COLUMN PLAYERS", HudColor.HUD_COLOUR_ORANGE),
-            new MissionDetailsPanel("COLUMN INFO PANEL", HudColor.HUD_COLOUR_GREEN),
+            new SettingsListColumn("COLUMN SETTINGS", SColor.HUD_Red),
+            new PlayerListColumn("COLUMN PLAYERS", SColor.HUD_Orange),
+            new MissionDetailsPanel("COLUMN INFO PANEL", SColor.HUD_Green),
         };
         pauseMenu.SetUpColumns(columns);
         int mugshot = API.RegisterPedheadshot(Game.PlayerPed.Handle);
@@ -1489,11 +1554,17 @@ public class MenuExample : BaseScript
             Screen.ShowSubtitle($"~y~ {item.Label} ~s~~w~ has been selected!");
         };
 
-        FriendItem friend = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_GREEN, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
-        FriendItem friend2 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_PINK, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
-        FriendItem friend3 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_BLUE, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
-        FriendItem friend4 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_ORANGE, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
-        FriendItem friend5 = new FriendItem(Game.Player.Name, HudColor.HUD_COLOUR_RED, true, API.GetRandomIntInRange(15, 55), "Status", "CrewTag");
+        CrewTag crew1 = new CrewTag("hello", false, false, CrewHierarchy.Leader, SColor.HUD_Green);
+        CrewTag crew2 = new CrewTag("evry1", false, false, CrewHierarchy.Commissioner, SColor.HUD_Pink);
+        CrewTag crew3 = new CrewTag("look", false, false, CrewHierarchy.Liutenant, SColor.HUD_Blue);
+        CrewTag crew4 = new CrewTag("at", false, false, CrewHierarchy.Representative, SColor.HUD_Orange);
+        CrewTag crew5 = new CrewTag("this", false, false, CrewHierarchy.Muscle, SColor.HUD_Red);
+
+        FriendItem friend = new FriendItem(Game.Player.Name, SColor.HUD_Green, true, API.GetRandomIntInRange(15, 55), "Status", crew1);
+        FriendItem friend2 = new FriendItem(Game.Player.Name, SColor.HUD_Pink, true, API.GetRandomIntInRange(15, 55), "Status", crew2);
+        FriendItem friend3 = new FriendItem(Game.Player.Name, SColor.HUD_Blue, true, API.GetRandomIntInRange(15, 55), "Status", crew3);
+        FriendItem friend4 = new FriendItem(Game.Player.Name, SColor.HUD_Orange, true, API.GetRandomIntInRange(15, 55), "Status", crew4);
+        FriendItem friend5 = new FriendItem(Game.Player.Name, SColor.HUD_Red, true, API.GetRandomIntInRange(15, 55), "Status", crew5);
 
         friend.SetLeftIcon(LobbyBadgeIcon.IS_CONSOLE_PLAYER);
         friend2.SetLeftIcon(LobbyBadgeIcon.SPECTATOR);
@@ -1507,7 +1578,7 @@ public class MenuExample : BaseScript
         friend4.ClonePed = Game.PlayerPed;
         friend5.ClonePed = Game.PlayerPed;
 
-        PlayerStatsPanel panel = new PlayerStatsPanel("Player 1", HudColor.HUD_COLOUR_GREEN)
+        PlayerStatsPanel panel = new PlayerStatsPanel("Player 1", SColor.HUD_Green)
         {
             Description = "This is the description for Player 1!!",
             HasPlane = true,
@@ -1524,7 +1595,7 @@ public class MenuExample : BaseScript
         panel.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
         friend.AddPanel(panel);
 
-        PlayerStatsPanel panel2 = new PlayerStatsPanel("Player 2", HudColor.HUD_COLOUR_MENU_YELLOW)
+        PlayerStatsPanel panel2 = new PlayerStatsPanel("Player 2", SColor.HUD_Menu_yellow)
         {
             Description = "This is the description for Player 2!!",
             HasPlane = true,
@@ -1541,7 +1612,7 @@ public class MenuExample : BaseScript
         panel2.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
         friend2.AddPanel(panel2);
 
-        PlayerStatsPanel panel3 = new PlayerStatsPanel("Player 3", HudColor.HUD_COLOUR_PINK)
+        PlayerStatsPanel panel3 = new PlayerStatsPanel("Player 3", SColor.HUD_Pink)
         {
             Description = "This is the description for Player 3!!",
             HasPlane = true,
@@ -1559,7 +1630,7 @@ public class MenuExample : BaseScript
         panel3.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
         friend3.AddPanel(panel3);
 
-        PlayerStatsPanel panel4 = new PlayerStatsPanel("Player 4", HudColor.HUD_COLOUR_FREEMODE)
+        PlayerStatsPanel panel4 = new PlayerStatsPanel("Player 4", SColor.HUD_Freemode)
         {
             Description = "This is the description for Player 4!!",
             HasPlane = true,
@@ -1577,7 +1648,7 @@ public class MenuExample : BaseScript
         panel4.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
         friend4.AddPanel(panel4);
 
-        PlayerStatsPanel panel5 = new PlayerStatsPanel("Player 5", HudColor.HUD_COLOUR_ORANGE)
+        PlayerStatsPanel panel5 = new PlayerStatsPanel("Player 5", SColor.HUD_Orange)
         {
             Description = "This is the description for Player 5!!",
             HasPlane = true,
@@ -1594,7 +1665,7 @@ public class MenuExample : BaseScript
         panel5.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
         friend5.AddPanel(panel5);
 
-        PlayerStatsPanel panel6 = new PlayerStatsPanel("Player 6", HudColor.HUD_COLOUR_RED)
+        PlayerStatsPanel panel6 = new PlayerStatsPanel("Player 6", SColor.HUD_Red)
         {
             Description = "This is the description for Player 6!!",
             HasPlane = true,
@@ -1623,7 +1694,7 @@ public class MenuExample : BaseScript
         pauseMenu.MissionPanel.UpdatePanelPicture("scaleformui", "lobby_panelbackground");
         pauseMenu.MissionPanel.Title = "ScaleformUI - Title";
         UIFreemodeDetailsItem missionItem1 = new("Hellooooo", "I'm here too!", false, ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST);
-        UIFreemodeDetailsItem missionItem2 = new("Hellooooo", "I'm here too!", ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST, BadgeIcon.COUNTRY_ITALY, HudColor.HUD_COLOUR_PURE_WHITE, true);
+        UIFreemodeDetailsItem missionItem2 = new("Hellooooo", "I'm here too!", ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST, BadgeIcon.COUNTRY_ITALY, SColor.HUD_Pure_white, true);
         UIFreemodeDetailsItem missionItem3 = new("Hellooooo", "I'm here too!", true, ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST);
         //UIFreemodeDetailsItem missionItem4 = new("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "", false);
         pauseMenu.MissionPanel.AddItem(missionItem1);
@@ -1635,6 +1706,7 @@ public class MenuExample : BaseScript
     }
 
     bool feedOpen = false;
+    Random r = new Random();
     public MenuExample()
     {
         _timerBarPool = new TimerBarPool();
@@ -1646,7 +1718,7 @@ public class MenuExample : BaseScript
         txd = API.CreateRuntimeTxd("scaleformui");
 
         // We create a marker on the peds position, adds it to the MarkerHandler
-        Marker playerMarker = new Marker(MarkerType.VerticalCylinder, Game.PlayerPed.Position, new Vector3(1.5f), 5f, Colors.Cyan, true);
+        Marker playerMarker = new Marker(MarkerType.VerticalCylinder, Game.PlayerPed.Position, new Vector3(1.5f), 5f, SColor.Cyan, true);
         MarkersHandler.AddMarker(playerMarker);
 
         Tick += async () =>

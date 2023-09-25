@@ -1,5 +1,4 @@
 ﻿using ScaleformUI.Elements;
-using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI.PauseMenu
 {
@@ -11,7 +10,7 @@ namespace ScaleformUI.PauseMenu
     public class StatsTabItem : BasicTabItem
     {
         private string rightLabel;
-        private HudColor coloredBarColor;
+        private SColor coloredBarColor = SColor.HUD_Freemode;
         private int _value;
         internal ItemFont labelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
         internal ItemFont rightLabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
@@ -33,7 +32,7 @@ namespace ScaleformUI.PauseMenu
                 }
             }
         }
-        public HudColor ColoredBarColor
+        public SColor ColoredBarColor
         {
             get => coloredBarColor;
             set
@@ -53,9 +52,9 @@ namespace ScaleformUI.PauseMenu
             get => _value;
             set
             {
+                _value = value;
                 if (Parent != null)
                 {
-                    _value = value;
                     int tab = Parent.Parent.Parent.Tabs.IndexOf(Parent.Parent);
                     int leftItem = Parent.Parent.LeftItemList.IndexOf(Parent);
                     int rightIndex = Parent.ItemList.IndexOf(this);
@@ -71,7 +70,7 @@ namespace ScaleformUI.PauseMenu
             RightLabel = rightLabel;
         }
 
-        public StatsTabItem(string label, int value, HudColor color = HudColor.HUD_COLOUR_FREEMODE) : base(label)
+        public StatsTabItem(string label, int value, SColor color) : base(label)
         {
             Type = StatItemType.ColoredBar;
             Label = label;

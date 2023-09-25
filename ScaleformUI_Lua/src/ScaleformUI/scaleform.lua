@@ -69,8 +69,10 @@ function Scaleform:CallFunction(theFunction, returndata, ...)
                 elseif type == "literal" then
                     local label = arg[i].data
                     ScaleformMovieMethodAddParamTextureNameString_2(label) -- SCALEFORM_MOVIE_METHOD_ADD_PARAM_LITERAL_STRING
+                elseif arg[i]() == "SColor" then
+                        ScaleformMovieMethodAddParamInt(arg[i]:ToArgb())
                 else
-                    assert(false, "^1ScaleformUI [ERROR]: ^7Unknown type ^1" .. type .. "^7.")
+                        assert(false, "^1ScaleformUI [ERROR]: ^7Unknown type ^1" .. type .. "^7.")
                 end
             elseif sType == "string" then
                 if arg[i]:find("^menu_") or arg[i]:find("^menu_lobby_desc_{") or arg[i]:find("^PauseMenu_") or arg[i]:find("^menu_pause_playerTab{") then

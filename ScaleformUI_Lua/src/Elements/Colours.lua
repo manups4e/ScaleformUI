@@ -1,5 +1,5 @@
----@enum Colours
-Colours = {
+---@enum HudColours
+HudColours = {
     NONE = -1,
     HUD_COLOUR_PURE_WHITE = 0,
     HUD_COLOUR_WHITE = 1,

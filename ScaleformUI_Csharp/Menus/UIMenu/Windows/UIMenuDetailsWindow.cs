@@ -1,4 +1,4 @@
-﻿using ScaleformUI.Scaleforms;
+﻿using ScaleformUI.Elements;
 using System.Drawing;
 
 namespace ScaleformUI.Menu
@@ -61,7 +61,7 @@ namespace ScaleformUI.Menu
                     int wid = ParentMenu.Windows.IndexOf(this);
                     foreach (UIDetailStat value in stats)
                     {
-                        Main.scaleformUI.CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", wid, value.Percentage, (int)value.HudColor);
+                        Main.scaleformUI.CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", wid, value.Percentage, value.HudColor);
                     }
                 }
             }
@@ -75,7 +75,7 @@ namespace ScaleformUI.Menu
                 if (ParentMenu is not null)
                 {
                     int wid = ParentMenu.Windows.IndexOf(this);
-                    Main.scaleformUI.CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", wid, stat.Percentage, (int)stat.HudColor);
+                    Main.scaleformUI.CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", wid, stat.Percentage, stat.HudColor);
                 }
             }
         }
@@ -98,7 +98,7 @@ namespace ScaleformUI.Menu
                     int wid = ParentMenu.Windows.IndexOf(this);
                     foreach (UIDetailStat value in DetailStats)
                     {
-                        Main.scaleformUI.CallFunction("UPDATE_STATS_DETAILS_WINDOW_STATWHEEL", wid, DetailStats.IndexOf(value), value.Percentage, (int)value.HudColor);
+                        Main.scaleformUI.CallFunction("UPDATE_STATS_DETAILS_WINDOW_STATWHEEL", wid, DetailStats.IndexOf(value), value.Percentage, value.HudColor);
                     }
                 }
             }
@@ -149,8 +149,8 @@ namespace ScaleformUI.Menu
     public class UIDetailStat
     {
         public int Percentage;
-        public HudColor HudColor;
-        public UIDetailStat(int percentage, HudColor color)
+        public SColor HudColor;
+        public UIDetailStat(int percentage, SColor color)
         {
             Percentage = percentage;
             HudColor = color;

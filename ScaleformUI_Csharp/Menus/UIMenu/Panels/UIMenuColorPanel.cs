@@ -1,6 +1,6 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using ScaleformUI.Scaleforms;
+using ScaleformUI.Elements;
 
 namespace ScaleformUI.Menu
 {
@@ -9,7 +9,7 @@ namespace ScaleformUI.Menu
     {
         public string Title { get; set; }
         public ColorPanelType ColorPanelColorType { get; set; }
-        public List<HudColor> CustomColors { get; private set; }
+        public List<SColor> CustomColors { get; private set; }
         internal int _value { get; set; }
         public event ColorPanelChangedEvent OnColorPanelChange;
         public int CurrentSelection
@@ -46,7 +46,7 @@ namespace ScaleformUI.Menu
             _value = startIndex;
         }
 
-        public UIMenuColorPanel(string title, List<HudColor> colors, int startIndex = 0)
+        public UIMenuColorPanel(string title, List<SColor> colors, int startIndex = 0)
         {
             Title = title ?? "Color Panel";
             ColorPanelColorType = (ColorPanelType)2;

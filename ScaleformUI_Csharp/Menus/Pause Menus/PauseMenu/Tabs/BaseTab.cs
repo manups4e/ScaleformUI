@@ -1,11 +1,15 @@
-﻿namespace ScaleformUI.PauseMenu
+﻿using ScaleformUI.Elements;
+
+namespace ScaleformUI.PauseMenu
 {
     public class BaseTab
     {
         internal int _type;
-        public BaseTab(string name)
+        internal SColor TabColor;
+        public BaseTab(string name, SColor color)
         {
             Title = name;
+            TabColor = color;
         }
 
         public bool Visible { get; set; }

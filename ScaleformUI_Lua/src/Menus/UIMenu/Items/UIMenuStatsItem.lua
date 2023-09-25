@@ -9,21 +9,19 @@ UIMenuStatsItem.__call = function() return "UIMenuItem", "UIMenuStatsItem" end
 ---@param Text string
 ---@param Description string
 ---@param Index number|0
----@param barColor number|116
+---@param barColor SColor
 ---@param type number|0
----@param mainColor number|117
----@param highlightColor number|1
----@param textColor number|1
----@param highlightedTextColor number|2
-function UIMenuStatsItem.New(Text, Description, Index, barColor, type, mainColor, highlightColor, textColor,
-                             highlightedTextColor)
+---@param mainColor SColor
+---@param highlightColor SColor
+---@param textColor SColor
+---@param highlightedTextColor SColor
+function UIMenuStatsItem.New(Text, Description, Index, barColor, type, mainColor, highlightColor, textColor, highlightedTextColor)
     local _UIMenuStatsItem = {
-        Base = UIMenuItem.New(Text or "", Description or "", mainColor or 117, highlightColor or 1, textColor or 1,
-            highlightedTextColor or 2),
+        Base = UIMenuItem.New(Text or "", Description or "", color or SColor.HUD_Pause_bg, highlightColor or SColor.HUD_White, textColor or SColor.HUD_White, highlightedTextColor or SColor.HUD_Black),
         _Index = Index or 0,
         Panels = {},
         SidePanel = nil,
-        _Color = barColor or 116,
+        _Color = barColor or SColor.HUD_Freemode,
         _Type = type or 0,
         ItemId = 5,
         OnStatsChanged = function(menu, item, newindex)

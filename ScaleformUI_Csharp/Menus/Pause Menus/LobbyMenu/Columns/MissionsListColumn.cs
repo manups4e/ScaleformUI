@@ -1,17 +1,19 @@
 ﻿using CitizenFX.Core;
+using ScaleformUI.Elements;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenu;
-using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI.LobbyMenu
 {
+    public delegate void MissionItemSelected(MissionItem item, int index);
     public class MissionsListColumn : Column
     {
         internal bool isBuilding = false;
         public event IndexChanged OnIndexChanged;
         public List<MissionItem> Items { get; private set; }
         public ScrollingType ScrollingType { get => Pagination.scrollType; set => Pagination.scrollType = value; }
-        public MissionsListColumn(string label, HudColor color, ScrollingType scrollType = ScrollingType.CLASSIC) : base(label, color)
+        public event MissionItemSelected OnMissionItemActivated;
+        public MissionsListColumn(string label, SColor color, ScrollingType scrollType = ScrollingType.CLASSIC) : base(label, color)
         {
             Items = new List<MissionItem>();
             Type = "missions";
@@ -22,7 +24,7 @@ namespace ScaleformUI.LobbyMenu
             };
         }
 
-        public async void AddMissionItem(MissionItem item)
+        public void AddMissionItem(MissionItem item)
         {
             item.ParentColumn = this;
             Items.Add(item);
@@ -32,6 +34,17 @@ namespace ScaleformUI.LobbyMenu
                 if (Pagination.TotalItems < Pagination.ItemsPerPage)
                 {
                     int sel = CurrentSelection;
+                    Pagination.MinItem = Pagination.CurrentPageStartIndex;
+                    if (Pagination.scrollType == ScrollingType.CLASSIC && Pagination.TotalPages > 1)
+                    {
+                        int missingItems = Pagination.GetMissingItems();
+                        if (missingItems > 0)
+                        {
+                            Pagination.ScaleformIndex = Pagination.GetPageIndexFromMenuIndex(Pagination.CurrentPageEndIndex) + missingItems;
+                            Pagination.MinItem = Pagination.CurrentPageStartIndex - missingItems;
+                        }
+                    }
+                    Pagination.MaxItem = Pagination.CurrentPageEndIndex;
                     _itemCreation(Pagination.CurrentPage, Items.Count - 1, false);
                     if (Parent is TabView pause)
                     {
@@ -70,9 +83,9 @@ namespace ScaleformUI.LobbyMenu
             MissionItem item = Items[menuIndex];
 
             if (Parent is MainView lobby)
-                lobby._pause._lobby.CallFunction("ADD_MISSIONS_ITEM", before, menuIndex, 0, item.Label, (int)item.MainColor, (int)item.HighlightColor, (int)item.LeftIcon, (int)item.LeftIconColor, (int)item.RightIcon, (int)item.RightIconColor, item.RightIconChecked, item.Enabled);
+                lobby._pause._lobby.CallFunction("ADD_MISSIONS_ITEM", before, menuIndex, 0, item.Label, item.MainColor, item.HighlightColor, (int)item.LeftIcon, item.LeftIconColor, (int)item.RightIcon, item.RightIconColor, item.RightIconChecked, item.Enabled);
             else if (Parent is TabView pause)
-                pause._pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSIONS_ITEM", ParentTab, before, menuIndex, 0, item.Label, (int)item.MainColor, (int)item.HighlightColor, (int)item.LeftIcon, (int)item.LeftIconColor, (int)item.RightIcon, (int)item.RightIconColor, item.RightIconChecked, item.Enabled);
+                pause._pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSIONS_ITEM", ParentTab, before, menuIndex, 0, item.Label, item.MainColor, item.HighlightColor, (int)item.LeftIcon, item.LeftIconColor, (int)item.RightIcon, item.RightIconColor, item.RightIconChecked, item.Enabled);
         }
 
 
@@ -234,18 +247,24 @@ namespace ScaleformUI.LobbyMenu
                         {
                             lobby._pause._lobby.CallFunction("SET_MISSIONS_SELECTION", Pagination.GetScaleformIndex(Pagination.CurrentMenuIndex));
                             lobby._pause._lobby.CallFunction("SET_MISSIONS_QTTY", CurrentSelection + 1, Items.Count);
+                            Items[CurrentSelection].Selected = true;
                         }
                         else if (Parent is TabView pause)
                         {
                             pause._pause._pause.CallFunction("SET_PLAYERS_TAB_MISSIONS_SELECTION", ParentTab, Pagination.GetScaleformIndex(Pagination.CurrentMenuIndex));
                             pause._pause._pause.CallFunction("SET_PLAYERS_TAB_MISSIONS_QTTY", ParentTab, CurrentSelection + 1, Items.Count);
+                            if (pause.Index == pause.Tabs.IndexOf(pause.Tabs[ParentTab]) && pause.FocusLevel == 1)
+                                Items[CurrentSelection].Selected = true;
                         }
                     }
-                    Items[CurrentSelection].Selected = true;
                 }
             }
         }
 
+        public void SelectItem()
+        {
+            OnMissionItemActivated?.Invoke(Items[CurrentSelection], CurrentSelection);
+        }
         public void IndexChangedEvent()
         {
             OnIndexChanged?.Invoke(CurrentSelection);

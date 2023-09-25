@@ -1,4 +1,4 @@
-﻿using ScaleformUI.Scaleforms;
+﻿using ScaleformUI.Elements;
 
 namespace ScaleformUI.Menu
 {
@@ -18,7 +18,7 @@ namespace ScaleformUI.Menu
                 }
             }
         }
-        public HudColor TitleColor;
+        public SColor TitleColor;
         internal SidePanelsTitleType _titleType;
         internal int _value;
 
@@ -38,7 +38,7 @@ namespace ScaleformUI.Menu
             PanelSide = side;
             _titleType = SidePanelsTitleType.Big;
             Title = title;
-            TitleColor = HudColor.NONE;
+            TitleColor = SColor.HUD_None;
         }
 
         /// <summary>
@@ -47,12 +47,12 @@ namespace ScaleformUI.Menu
         /// <param name="side">Left or Right?</param>
         /// <param name="title">Panel's title</param>
         /// <param name="color">Background color for the panel title</param>
-        public UIVehicleColourPickerPanel(PanelSide side, string title, HudColor color)
+        public UIVehicleColourPickerPanel(PanelSide side, string title, SColor titleColor)
         {
             PanelSide = side;
             _titleType = SidePanelsTitleType.Small;
             Title = title;
-            TitleColor = color;
+            TitleColor = titleColor;
         }
 
         internal void PickerSelect()

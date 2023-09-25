@@ -1,20 +1,22 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
+using ScaleformUI.Elements;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenu;
-using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI.LobbyMenu
 {
+    public delegate void PlayerItemSelected(LobbyItem item, int index);
     public class PlayerListColumn : Column
     {
         internal bool isBuilding = false;
         public event IndexChanged OnIndexChanged;
         public List<LobbyItem> Items { get; private set; }
+        public event PlayerItemSelected OnPlayerItemActivated;
 
         public ScrollingType ScrollingType { get => Pagination.scrollType; set => Pagination.scrollType = value; }
 
-        public PlayerListColumn(string label, HudColor color, ScrollingType scrollType = ScrollingType.CLASSIC) : base(label, color)
+        public PlayerListColumn(string label, SColor color, ScrollingType scrollType = ScrollingType.CLASSIC) : base(label, color)
         {
             Items = new List<LobbyItem>();
             Type = "players";
@@ -25,7 +27,7 @@ namespace ScaleformUI.LobbyMenu
             };
         }
 
-        public async void AddPlayer(LobbyItem item)
+        public void AddPlayer(LobbyItem item)
         {
             item.ParentColumn = this;
             Items.Add(item);
@@ -35,6 +37,17 @@ namespace ScaleformUI.LobbyMenu
                 if (Pagination.TotalItems < Pagination.ItemsPerPage)
                 {
                     int sel = CurrentSelection;
+                    Pagination.MinItem = Pagination.CurrentPageStartIndex;
+                    if (Pagination.scrollType == ScrollingType.CLASSIC && Pagination.TotalPages > 1)
+                    {
+                        int missingItems = Pagination.GetMissingItems();
+                        if (missingItems > 0)
+                        {
+                            Pagination.ScaleformIndex = Pagination.GetPageIndexFromMenuIndex(Pagination.CurrentPageEndIndex) + missingItems;
+                            Pagination.MinItem = Pagination.CurrentPageStartIndex - missingItems;
+                        }
+                    }
+                    Pagination.MaxItem = Pagination.CurrentPageEndIndex;
                     _itemCreation(Pagination.CurrentPage, Items.Count - 1, false);
                     if (Parent is TabView pause)
                     {
@@ -76,9 +89,9 @@ namespace ScaleformUI.LobbyMenu
                 case FriendItem:
                     FriendItem fi = (FriendItem)item;
                     if (Parent is MainView lobby)
-                        lobby._pause._lobby.CallFunction("ADD_PLAYER_ITEM", before, menuIndex, 1, 1, fi.Label, (int)fi.ItemColor, fi.ColoredTag, fi.iconL, fi.boolL, fi.iconR, fi.boolR, fi.Status, (int)fi.StatusColor, fi.Rank, fi.CrewTag, fi.KeepPanelVisible);
+                        lobby._pause._lobby.CallFunction("ADD_PLAYER_ITEM", before, menuIndex, 1, 1, fi.Label, fi.ItemColor, fi.ColoredTag, fi.iconL, fi.boolL, fi.iconR, fi.boolR, fi.Status, fi.StatusColor, fi.Rank, fi.CrewTag.TAG, fi.KeepPanelVisible);
                     else if (Parent is TabView pause)
-                        pause._pause._pause.CallFunction("ADD_PLAYERS_TAB_PLAYER_ITEM", ParentTab, before, menuIndex, 1, 1, fi.Label, (int)fi.ItemColor, fi.ColoredTag, fi.iconL, fi.boolL, fi.iconR, fi.boolR, fi.Status, (int)fi.StatusColor, fi.Rank, fi.CrewTag, fi.KeepPanelVisible);
+                        pause._pause._pause.CallFunction("ADD_PLAYERS_TAB_PLAYER_ITEM", ParentTab, before, menuIndex, 1, 1, fi.Label, fi.ItemColor, fi.ColoredTag, fi.iconL, fi.boolL, fi.iconR, fi.boolR, fi.Status, fi.StatusColor, fi.Rank, fi.CrewTag.TAG, fi.KeepPanelVisible);
                     break;
             }
             item.Panel?.UpdatePanel(true);
@@ -250,18 +263,32 @@ namespace ScaleformUI.LobbyMenu
                         {
                             lobby._pause._lobby.CallFunction("SET_PLAYERS_SELECTION", Pagination.GetScaleformIndex(Pagination.CurrentMenuIndex));
                             lobby._pause._lobby.CallFunction("SET_PLAYERS_QTTY", CurrentSelection + 1, Items.Count);
+                            Items[CurrentSelection].Selected = true;
+                            if (lobby.listCol[0].Type == "players" || (lobby.listCol.Any(x => x.Type == "players") && Items.Count > 0 && Items[0].KeepPanelVisible))
+                            {
+                                if (Items[CurrentSelection].ClonePed != null)
+                                    Items[CurrentSelection].CreateClonedPed();
+                            }
                         }
                         else if (Parent is TabView pause)
                         {
                             pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYERS_SELECTION", ParentTab, Pagination.GetScaleformIndex(Pagination.CurrentMenuIndex));
                             pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYERS_QTTY", ParentTab, CurrentSelection + 1, Items.Count);
+                            if (pause.Index == pause.Tabs.IndexOf(pause.Tabs[ParentTab]) && pause.FocusLevel == 1)
+                            {
+                                Items[CurrentSelection].Selected = true;
+                                if (Items[CurrentSelection].ClonePed != null)
+                                    Items[CurrentSelection].CreateClonedPed();
+                            }
                         }
                     }
-                    Items[CurrentSelection].Selected = true;
-                    if (Items[CurrentSelection].ClonePed != null)
-                        Items[CurrentSelection].CreateClonedPed();
                 }
             }
+        }
+
+        public void SelectItem()
+        {
+            OnPlayerItemActivated?.Invoke(Items[CurrentSelection], CurrentSelection);
         }
 
         public void IndexChangedEvent()

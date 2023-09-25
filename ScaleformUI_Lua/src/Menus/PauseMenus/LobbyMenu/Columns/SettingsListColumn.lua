@@ -6,7 +6,8 @@ end
 
 ---@class SettingsListColumn
 ---@field private _label string
----@field private _color number
+---@field private _color SColor
+---@field private _isBuilding boolean
 ---@field private _currentSelection number
 ---@field private _rightLabel string
 ---@field public Order number
@@ -24,7 +25,7 @@ function SettingsListColumn.New(label, color, scrollType)
         _isBuilding = false,
         Type = "settings",
         _label = label or "",
-        _color = color or 116,
+        _color = color or SColor.HUD_Freemode,
         _currentSelection = 0,
         _rightLabel = "",
         scrollingType = scrollType or MenuScrollingType.CLASSIC,
@@ -34,6 +35,8 @@ function SettingsListColumn.New(label, color, scrollType)
         ParentTab = 0,
         Items = {} --[[@type table<number, UIMenuItem|UIMenuListItem|UIMenuCheckboxItem|UIMenuSliderItem|UIMenuProgressItem>]],
         OnIndexChanged = function(index)
+        end,
+        OnSettingItemActivated = function(index)
         end
     }
     return setmetatable(_data, SettingsListColumn)
@@ -61,15 +64,18 @@ function SettingsListColumn:CurrentSelection(value)
         self.Pagination:CurrentPage(self.Pagination:GetPage(self.Pagination:CurrentMenuIndex()));
         self.Pagination:CurrentPageIndex(value);
         self.Pagination:ScaleformIndex(self.Pagination:GetScaleformIndex(self.Pagination:CurrentMenuIndex()));
-        self.Items[self:CurrentSelection()]:Selected(true)
         if self.Parent ~= nil and self.Parent:Visible() then
             local pSubT = self.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_SELECTION", false, self.Pagination:ScaleformIndex()) --[[@as number]]
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_QTTY", false, self:CurrentSelection(), #self.Items) --[[@as number]]
+                self.Items[self:CurrentSelection()]:Selected(true)
             elseif pSubT == "PauseMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", false, self.ParentTab, self.Pagination:ScaleformIndex()) --[[@as number]]
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", false, self.ParentTab, self:CurrentSelection(), #self.Items) --[[@as number]]
+                if self.Parent:Index() == self.ParentTab+1 and self.Parent:FocusLevel() == 1 then
+                    self.Items[self:CurrentSelection()]:Selected(true)
+                end
             end
         end
     end
@@ -89,6 +95,17 @@ function SettingsListColumn:AddSettings(item)
     if self.Parent ~= nil and self.Parent:Visible() then
         if self.Pagination:TotalItems() < self.Pagination:ItemsPerPage() then
             local sel = self:CurrentSelection()
+            self.Pagination:MinItem(self.Pagination:CurrentPageStartIndex())
+
+            if self.scrollingType == MenuScrollingType.CLASSIC and self.Pagination:TotalPages() > 1 then
+                local missingItems = self.Pagination:GetMissingItems()
+                if missingItems > 0 then
+                    self.Pagination:ScaleformIndex(self.Pagination:GetPageIndexFromMenuIndex(self.Pagination:CurrentPageEndIndex()) + missingItems - 1)
+                    self.Pagination.minItem = self.Pagination:CurrentPageStartIndex() - missingItems
+                end
+            end
+    
+            self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
             self:_itemCreation(0, #self.Items, false)
             local pSubT = self.Parent()
             if pSubT == "PauseMenu" then
@@ -131,35 +148,35 @@ function SettingsListColumn:_itemCreation(page, pageIndex, before, overflow)
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, before, menuIndex, 1, item.Base._formatLeftLabel,
                 descLabel, item:Enabled(), item:BlinkDescription(),
                 table.concat(item.Items, ","),
-                item:Index() - 1, item.Base._mainColor, item.Base._highlightColor, item.Base._textColor,
-                item.Base._highlightedTextColor)
+                item:Index() - 1, item.Base._mainColor:ToArgb(), item.Base._highlightColor:ToArgb(), item.Base._textColor:ToArgb(),
+                item.Base._highlightedTextColor:ToArgb())
         elseif SubType == "UIMenuCheckboxItem" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, before, menuIndex, 2, item.Base._formatLeftLabel,
                 descLabel, item:Enabled(), item:BlinkDescription(), item.CheckBoxStyle,
-                item._Checked, item.Base._mainColor, item.Base._highlightColor, item.Base._textColor,
-                item.Base._highlightedTextColor)
+                item._Checked, item.Base._mainColor:ToArgb(), item.Base._highlightColor:ToArgb(), item.Base._textColor:ToArgb(),
+                item.Base._highlightedTextColor:ToArgb())
         elseif SubType == "UIMenuSliderItem" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, before, menuIndex, 3, item.Base._formatLeftLabel,
                 descLabel, item:Enabled(), item:BlinkDescription(), item._Max,
                 item._Multiplier,
-                item:Index(), item.Base._mainColor, item.Base._highlightColor, item.Base._textColor,
-                item.Base._highlightedTextColor, item.SliderColor, item._heritage)
+                item:Index(), item.Base._mainColor:ToArgb(), item.Base._highlightColor:ToArgb(), item.Base._textColor:ToArgb(),
+                item.Base._highlightedTextColor:ToArgb(), item.SliderColor:ToArgb(), item._heritage)
         elseif SubType == "UIMenuProgressItem" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, before, menuIndex, 4, item.Base._formatLeftLabel,
                 descLabel, item:Enabled(), item:BlinkDescription(), item._Max,
                 item._Multiplier,
-                item:Index(), item.Base._mainColor, item.Base._highlightColor, item.Base._textColor,
-                item.Base._highlightedTextColor, item.SliderColor)
+                item:Index(), item.Base._mainColor:ToArgb(), item.Base._highlightColor:ToArgb(), item.Base._textColor:ToArgb(),
+                item.Base._highlightedTextColor:ToArgb(), item.SliderColor:ToArgb())
         elseif SubType == "UIMenuSeparatorItem" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, before, menuIndex, 6, item.Base._formatLeftLabel,
                 textEntry,
-                item:Enabled(), item:BlinkDescription(), item.Jumpable, item.Base._mainColor,
-                item.Base._highlightColor,
-                item.Base._textColor, item.Base._highlightedTextColor)
+                item:Enabled(), item:BlinkDescription(), item.Jumpable, item.Base._mainColor:ToArgb(),
+                item.Base._highlightColor:ToArgb(),
+                item.Base._textColor:ToArgb(), item.Base._highlightedTextColor:ToArgb())
         else
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", false, before, menuIndex, 0, item._formatLeftLabel,
-                descLabel, item:Enabled(), item:BlinkDescription(), item._mainColor,
-                item._highlightColor, item._textColor, item._highlightedTextColor)
+                descLabel, item:Enabled(), item:BlinkDescription(), item._mainColor:ToArgb(),
+                item._highlightColor:ToArgb(), item._textColor:ToArgb(), item._highlightedTextColor:ToArgb())
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_ITEM_LABEL_RIGHT", false, scaleformIndex,
                 item._formatRightLabel)
             if item._rightBadge ~= BadgeStyle.NONE then
@@ -187,30 +204,30 @@ function SettingsListColumn:_itemCreation(page, pageIndex, before, overflow)
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_SETTINGS_ITEM", false,
                 self.ParentTab, before, menuIndex, 1, item.Base._formatLeftLabel, descLabel, item:Enabled(),
                 item:BlinkDescription(), table.concat(item.Items, ","), item:Index() - 1,
-                item.Base._mainColor,
-                item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor)
+                item.Base._mainColor:ToArgb(),
+                item.Base._highlightColor:ToArgb(), item.Base._textColor:ToArgb(), item.Base._highlightedTextColor:ToArgb())
         elseif SubType == "UIMenuCheckboxItem" then
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_SETTINGS_ITEM", false,
                 self.ParentTab, before, menuIndex, 2, item.Base._formatLeftLabel, descLabel, item:Enabled(),
-                item:BlinkDescription(), item.CheckBoxStyle, item._Checked, item.Base._mainColor,
-                item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor)
+                item:BlinkDescription(), item.CheckBoxStyle, item._Checked, item.Base._mainColor:ToArgb(),
+                item.Base._highlightColor:ToArgb(), item.Base._textColor:ToArgb(), item.Base._highlightedTextColor:ToArgb())
         elseif SubType == "UIMenuSliderItem" then
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_SETTINGS_ITEM", false,
                 self.ParentTab, before, menuIndex, 3, item.Base._formatLeftLabel, descLabel, item:Enabled(),
-                item:BlinkDescription(), item._Max, item._Multiplier, item:Index(), item.Base._mainColor,
-                item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor,
-                item.SliderColor, item._heritage)
+                item:BlinkDescription(), item._Max, item._Multiplier, item:Index(), item.Base._mainColor:ToArgb(),
+                item.Base._highlightColor:ToArgb(), item.Base._textColor:ToArgb(), item.Base._highlightedTextColor:ToArgb(),
+                item.SliderColor:ToArgb(), item._heritage)
         elseif SubType == "UIMenuProgressItem" then
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_SETTINGS_ITEM", false,
                 self.ParentTab, before, menuIndex, 4, item.Base._formatLeftLabel, descLabel, item:Enabled(),
-                item:BlinkDescription(), item._Max, item._Multiplier, item:Index(), item.Base._mainColor,
-                item.Base._highlightColor, item.Base._textColor, item.Base._highlightedTextColor,
-                item.SliderColor)
+                item:BlinkDescription(), item._Max, item._Multiplier, item:Index(), item.Base._mainColor:ToArgb(),
+                item.Base._highlightColor:ToArgb(), item.Base._textColor:ToArgb(), item.Base._highlightedTextColor:ToArgb(),
+                item.SliderColor:ToArgb())
         else
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_SETTINGS_ITEM", false,
                 self.ParentTab, before, menuIndex, 0, item._formatLeftLabel, descLabel, item:Enabled(),
-                item:BlinkDescription(), item._mainColor, item._highlightColor, item._textColor,
-                item._highlightedTextColor)
+                item:BlinkDescription(), item._mainColor:ToArgb(), item._highlightColor:ToArgb(), item._textColor:ToArgb(),
+                item._highlightedTextColor:ToArgb())
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL_RIGHT", false, self.ParentTab, scaleformIndex, item._formatRightLabel)
             if item._rightBadge ~= BadgeStyle.NONE then
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_BADGE", false, self.ParentTab, scaleformIndex, item._rightBadge)

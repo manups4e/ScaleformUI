@@ -126,7 +126,7 @@ namespace ScaleformUI.Radial
                 for (int j = 0; j < segment.Items.Count; j++)
                 {
                     SegmentItem item = segment.Items[j];
-                    Main.radialMenu.CallFunction("ADD_ITEM", i, item.Label, item.Description, item.TextureDict, item.TextureName, item.TextureWidth, item.TextureHeight, (int)item.Color, item.qtty, item.max);
+                    Main.radialMenu.CallFunction("ADD_ITEM", i, item.Label, item.Description, item.TextureDict, item.TextureName, item.TextureWidth, item.TextureHeight, item.Color, item.qtty, item.max);
                 }
             }
             Main.radialMenu.CallFunction("LOAD_MENU", currentSelection, Segments[0].CurrentSelection, Segments[1].CurrentSelection, Segments[2].CurrentSelection, Segments[3].CurrentSelection, Segments[4].CurrentSelection, Segments[5].CurrentSelection, Segments[6].CurrentSelection, Segments[7].CurrentSelection);

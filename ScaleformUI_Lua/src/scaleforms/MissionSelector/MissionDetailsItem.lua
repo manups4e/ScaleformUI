@@ -9,7 +9,7 @@ end
 ---@field public TextLeft string
 ---@field public TextRight string
 ---@field public Icon JobIcon
----@field public IconColor Colours
+---@field public IconColor SColor
 ---@field public Tick boolean
 
 ---Creates a new MissionDetailsItem object
@@ -17,7 +17,7 @@ end
 ---@param textRight string
 ---@param seperator boolean
 ---@param icon JobIcon
----@param iconColor Colours
+---@param iconColor SColor
 ---@param tick boolean
 ---@return MissionDetailsItem
 function MissionDetailsItem.New(textLeft, textRight, seperator, icon, iconColor, tick)

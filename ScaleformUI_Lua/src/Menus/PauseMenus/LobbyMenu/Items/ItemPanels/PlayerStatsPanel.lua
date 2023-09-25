@@ -21,6 +21,7 @@ end
 ---@field public HasHeli fun(self: PlayerStatsPanel, bool: boolean?): boolean
 ---@field public HasBoat fun(self: PlayerStatsPanel, bool: boolean?): boolean
 ---@field public HasVehicle fun(self: PlayerStatsPanel, bool: boolean?): boolean
+---@field public HardwareVisible fun(self: PlayerStatsPanel, bool: boolean?): boolean
 ---@field public AddStat fun(self: PlayerStatsPanel, statItem: PlayerStatsPanelStatItem)
 ---@field public OnItemChanged fun(item: PlayerStatsPanelStatItem)
 ---@field public OnItemActivated fun(item: PlayerStatsPanelStatItem)
@@ -32,19 +33,29 @@ end
 function PlayerStatsPanel.New(title, titleColor)
     local _data = {
         ParentItem = nil,
+        _hardwareVisible = true,
         _title = title or "",
         _description = "",
-        _titleColor = titleColor or 116,
+        _titleColor = titleColor or SColor.HUD_Freemode,
         _hasPlane = false,
         _hasVehicle = false,
         _hasBoat = false,
         _hasHeli = false,
         RankInfo = nil,
+        DetailsItems = {},
         Items = {}
     }
     local retVal = setmetatable(_data, PlayerStatsPanel)
     retVal.RankInfo = UpperInformation.New(retVal)
     return retVal
+end
+
+function PlayerStatsPanel:HardwareVisible(v)
+    if v == nil then 
+        return self._hardwareVisible
+    else
+        self._hardwareVisible = v
+    end
 end
 
 ---Sets the title of the panel if supplied else it will return the current title.
@@ -59,8 +70,8 @@ function PlayerStatsPanel:Title(label)
 end
 
 ---Sets the title color of the panel if supplied else it will return the current color.
----@param color number?
----@return number
+---@param color SColor?
+---@return SColor
 function PlayerStatsPanel:TitleColor(color)
     if color ~= nil then
         self._titleColor = color
@@ -129,7 +140,12 @@ end
 function PlayerStatsPanel:AddStat(statItem)
     statItem.Parent = self
     statItem.idx = #self.Items
-    self.Items[#self.Items + 1] = statItem
+    table.insert(self.Items, statItem)
+    self:UpdatePanel()
+end
+
+function PlayerStatsPanel:AddDescriptionStatItem(item)
+    table.insert(self.DetailsItems, item)
     self:UpdatePanel()
 end
 
@@ -141,37 +157,28 @@ function PlayerStatsPanel:UpdatePanel(override)
         local idx = self.ParentItem.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentItem.ParentColumn.Items, self.ParentItem))
         local pSubT = self.ParentItem.ParentColumn.Parent()
         if pSubT == "LobbyMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_PANEL", false, idx, 0,
-                (self.ParentItem.ClonePed ~= nil and self.ParentItem.ClonePed ~= 0), self:Title(), self:Description(),
-                self:TitleColor(), self.RankInfo:RankLevel(), self:HasPlane(), self:HasHeli(), self:HasBoat(),
-                self:HasVehicle(), 0, self.RankInfo:LowLabel(), 0, 0, self.RankInfo:MidLabel(), 0, 0,
-                self.RankInfo:UpLabel(),
-                0, 0)
-            if not self:Description():IsNullOrEmpty() then
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_PANEL_DESCRIPTION", false, idx,
-                    self:Description(), 0, "", (self.ParentItem.ClonePed ~= nil and self.ParentItem.ClonePed ~= 0))
-            end
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_PANEL", false, idx, 0, (self.ParentItem.ClonePed ~= nil and self.ParentItem.ClonePed ~= 0), self:Title(), self:Description(), self:TitleColor(), self.RankInfo:RankLevel(), self:HasPlane(), self:HasHeli(), self:HasBoat(), self:HasVehicle(), 0, self.RankInfo:LowLabel(), 0, 0, self.RankInfo:MidLabel(), 0, 0, self.RankInfo:UpLabel(), 0, 0, self._hardwareVisible)
             for k, stat in pairs(self.Items) do
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_PANEL_STAT", false, idx, stat.idx,
-                    0, stat:Label(), stat:Description(), stat:Value())
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_PANEL_STAT", false, idx, stat.idx, 0, stat:Label(), stat:Description(), stat:Value())
+            end
+            if not self:Description():IsNullOrEmpty() then
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_PANEL_DESCRIPTION", false, idx, self:Description(), 0, "", (self.ParentItem.ClonePed ~= nil and self.ParentItem.ClonePed ~= 0))
+            else 
+                for k, item in pairs (self.DetailsItems) do
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_PANEL_DETAIL", false, idx, item.Type, item.TextLeft, item.TextRight, item.Icon, item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID)
+                end
             end
         elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL", false,
-                self.ParentItem.ParentColumn.ParentTab, idx, 0,
-                (self.ParentItem.ClonePed ~= nil and self.ParentItem.ClonePed ~= 0), self:Title(), self:Description(),
-                self:TitleColor(), self.RankInfo:RankLevel(), self:HasPlane(), self:HasHeli(), self:HasBoat(),
-                self:HasVehicle(), 0, self.RankInfo:LowLabel(), 0, 0, self.RankInfo:MidLabel(), 0, 0,
-                self.RankInfo:UpLabel(),
-                0, 0)
-            if not self:Description():IsNullOrEmpty() then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_DESCRIPTION",
-                    false, self.ParentItem.ParentColumn.ParentTab, idx, self:Description(), 0, "",
-                    (self.ParentItem.ClonePed ~= nil and self.ParentItem.ClonePed ~= 0))
-            end
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL", false, self.ParentItem.ParentColumn.ParentTab, idx, 0, (self.ParentItem.ClonePed ~= nil and self.ParentItem.ClonePed ~= 0), self:Title(), self:Description(), self:TitleColor(), self.RankInfo:RankLevel(), self:HasPlane(), self:HasHeli(), self:HasBoat(), self:HasVehicle(), 0, self.RankInfo:LowLabel(), 0, 0, self.RankInfo:MidLabel(), 0, 0, self.RankInfo:UpLabel(), 0, 0, self._hardwareVisible)
             for k, stat in pairs(self.Items) do
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_STAT", false,
-                    self.ParentItem.ParentColumn.ParentTab, idx, stat.idx, 0, stat:Label(), stat:Description(),
-                    stat:Value())
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_STAT", false, self.ParentItem.ParentColumn.ParentTab, idx, stat.idx, 0, stat:Label(), stat:Description(), stat:Value())
+            end
+            if not self:Description():IsNullOrEmpty() then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_DESCRIPTION", false, self.ParentItem.ParentColumn.ParentTab, idx, self:Description(), 0, "", (self.ParentItem.ClonePed ~= nil and self.ParentItem.ClonePed ~= 0))
+            else 
+                for k, item in pairs (self.DetailsItems) do
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_DETAIL", false, self.ParentItem.ParentColumn.ParentTab, idx, item.Type, item.TextLeft, item.TextRight, item.Icon, item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID)
+                end
             end
         end
     end

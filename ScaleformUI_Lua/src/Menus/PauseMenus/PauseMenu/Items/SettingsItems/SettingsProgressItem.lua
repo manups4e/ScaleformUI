@@ -18,7 +18,7 @@ end
 ---@param max number
 ---@param startIndex number
 ---@param masked boolean
----@param barColor number
+---@param barColor SColor
 ---@return table
 function SettingsProgressItem.New(label, max, startIndex, masked, barColor)
     local _type = SettingsItemType.ProgressBar
@@ -31,7 +31,7 @@ function SettingsProgressItem.New(label, max, startIndex, masked, barColor)
         Label = label or "",
         MaxValue = max,
         _value = startIndex,
-        _coloredBarColor = barColor or Colours.HUD_COLOUR_FREEMODE,
+        _coloredBarColor = barColor or SColor.HUD_Freemode,
         _enabled = true,
         _hovered = false,
         _selected = false,
@@ -99,8 +99,8 @@ function SettingsProgressItem:Value(value)
 end
 
 ---Set the color of the colored bar.
----@param color number
----@return number
+---@param color SColor
+---@return SColor
 function SettingsProgressItem:ColoredBarColor(color)
     if color ~= nil then
         self._coloredBarColor = color

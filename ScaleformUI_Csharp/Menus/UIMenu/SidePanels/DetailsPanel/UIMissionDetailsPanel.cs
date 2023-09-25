@@ -1,4 +1,4 @@
-﻿using ScaleformUI.Scaleforms;
+﻿using ScaleformUI.Elements;
 
 namespace ScaleformUI.Menu
 {
@@ -20,7 +20,7 @@ namespace ScaleformUI.Menu
                 }
             }
         }
-        public HudColor TitleColor;
+        public SColor TitleColor;
         public List<UIFreemodeDetailsItem> Items = new();
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace ScaleformUI.Menu
             else
                 _titleType = SidePanelsTitleType.Big;
             Title = title;
-            TitleColor = HudColor.NONE;
+            TitleColor = SColor.HUD_None;
             TextureDict = txd;
             TextureName = txn;
         }
@@ -52,7 +52,7 @@ namespace ScaleformUI.Menu
         /// <param name="color">Background color for the panel title</param>
         /// <param name="txd">Texture dictionary for the picture</param>
         /// <param name="txn">Texture name for the picture</param>
-        public UIMissionDetailsPanel(PanelSide side, string title, HudColor color, string txd = "", string txn = "")
+        public UIMissionDetailsPanel(PanelSide side, string title, SColor color, string txd = "", string txn = "")
         {
             PanelSide = side;
             _titleType = SidePanelsTitleType.Small;
@@ -89,7 +89,7 @@ namespace ScaleformUI.Menu
             if (ParentItem is not null && ParentItem.Parent != null && ParentItem.Parent.Visible)
             {
                 int wid = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
-                Main.scaleformUI.CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", wid, item.Type, item.TextLeft, item.TextRight, (int)item.Icon, (int)item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID);
+                Main.scaleformUI.CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", wid, item.Type, item.TextLeft, item.TextRight, (int)item.Icon, item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID);
             }
         }
 

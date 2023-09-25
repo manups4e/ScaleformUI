@@ -1,6 +1,5 @@
 ﻿using ScaleformUI.Elements;
 using ScaleformUI.Menu;
-using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI.PauseMenu
 {
@@ -29,8 +28,8 @@ namespace ScaleformUI.PauseMenu
         private bool enabled = true;
         private string label;
         internal string _formatLeftLabel;
-        private HudColor mainColor;
-        private HudColor highlightColor;
+        private SColor mainColor = SColor.HUD_Pause_bg;
+        private SColor highlightColor = SColor.HUD_White;
         private string textTitle;
         private string keymapRightLabel_1;
         private string keymapRightLabel_2;
@@ -65,8 +64,8 @@ namespace ScaleformUI.PauseMenu
                 }
             }
         }
-        public HudColor MainColor { get => mainColor; set => mainColor = value; }
-        public HudColor HighlightColor { get => highlightColor; set => highlightColor = value; }
+        public SColor MainColor { get => mainColor; set => mainColor = value; }
+        public SColor HighlightColor { get => highlightColor; set => highlightColor = value; }
         public bool Enabled
         {
             get => enabled;
@@ -167,14 +166,15 @@ namespace ScaleformUI.PauseMenu
         public event ActivatedEvent OnActivated;
         public BaseTab Parent { get; set; }
 
-        public TabLeftItem(string label, LeftItemType type, HudColor mainColor = HudColor.NONE, HudColor highlightColor = HudColor.NONE)
+        public TabLeftItem(string label, LeftItemType type) : this(label, type, SColor.HUD_Pause_bg, SColor.HUD_White) { }
+        public TabLeftItem(string label, LeftItemType type, SColor mainColor, SColor highlightColor)
         {
             Label = label;
             ItemType = type;
             MainColor = mainColor;
             HighlightColor = highlightColor;
         }
-        public TabLeftItem(string label, LeftItemType type, ItemFont labelFont, HudColor mainColor = HudColor.NONE, HudColor highlightColor = HudColor.NONE)
+        public TabLeftItem(string label, LeftItemType type, ItemFont labelFont, SColor mainColor, SColor highlightColor)
         {
             Label = label;
             ItemType = type;

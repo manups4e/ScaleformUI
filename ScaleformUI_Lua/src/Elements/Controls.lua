@@ -74,7 +74,8 @@ Controls = setmetatable({
     }
 }, Controls)
 
-
+---@comment Toggles all controls or only the ones used for the menu
+---@param toggle boolean
 function Controls:ToggleAll(toggle)
     if toggle then
         EnableAllControlActions(0)

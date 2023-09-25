@@ -1,4 +1,4 @@
-﻿using ScaleformUI.Scaleforms;
+﻿using ScaleformUI.Elements;
 
 namespace ScaleformUI.Menu
 {
@@ -10,9 +10,9 @@ namespace ScaleformUI.Menu
         protected internal int _value = 0;
         protected internal int _max = 100;
         protected internal int _multiplier = 5;
-        private HudColor sliderColor;
+        private SColor sliderColor;
         protected internal bool Divider;
-        public HudColor SliderColor
+        public SColor SliderColor
         {
             get => sliderColor;
             set
@@ -20,7 +20,7 @@ namespace ScaleformUI.Menu
                 sliderColor = value;
                 if (Parent is not null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    Main.scaleformUI.CallFunction("UPDATE_COLORS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), (int)MainColor, (int)HighlightColor, (int)TextColor, (int)HighlightedTextColor, (int)value);
+                    Main.scaleformUI.CallFunction("UPDATE_COLORS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), MainColor.ArgbValue, HighlightColor.ArgbValue, TextColor, HighlightedTextColor, value);
                 }
             }
         }
@@ -31,11 +31,11 @@ namespace ScaleformUI.Menu
             _value = startIndex;
         }
 
-        public UIMenuProgressItem(string text, int maxCount, int startIndex, string description, bool heritage = false) : this(text, maxCount, startIndex, description, HudColor.HUD_COLOUR_FREEMODE)
+        public UIMenuProgressItem(string text, int maxCount, int startIndex, string description, bool heritage = false) : this(text, maxCount, startIndex, description, SColor.HUD_Freemode)
         {
         }
 
-        public UIMenuProgressItem(string text, int maxCount, int startIndex, string description, HudColor sliderColor) : base(text, description)
+        public UIMenuProgressItem(string text, int maxCount, int startIndex, string description, SColor sliderColor) : base(text, description)
         {
             _max = maxCount;
             _value = startIndex;

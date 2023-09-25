@@ -29,7 +29,7 @@ ChatVisible = {
 function MultiplayerChat.New()
   local data = {
     _sc = nil --[[@type Scaleform]],
-    messages = {} --[[@type table<string, string, string, boolean, Colours>]],
+    messages = {} --[[@type table<string, string, string, boolean, HudColours>]],
     _start = 0,
     _enabled = false,
     _isTyping = false,
@@ -70,7 +70,7 @@ end
 ---@param scopeType? ChatScope
 ---@param scopeText? string
 ---@param playerName? string
----@param colour? Colours
+---@param colour? HudColours
 function MultiplayerChat:SetFocus(visibleState, scopeType, scopeText, playerName, colour)
   if visibleState == ChatVisible.Hidden then
     self._start = 0
@@ -88,7 +88,7 @@ function MultiplayerChat:Show()
 end
 
 function MultiplayerChat:StartTyping(scopeType, scopeText)
-  self:SetFocus(ChatVisible.Typing, scopeType, scopeText, GetPlayerName(PlayerId()), Colours.White)
+  self:SetFocus(ChatVisible.Typing, scopeType, scopeText, GetPlayerName(PlayerId()), HudColours.White)
 end
 
 ---Scroll the chat up
@@ -117,7 +117,7 @@ end
 ---@param message string
 ---@param scope? ChatScope
 ---@param teamOnly? boolean
----@param playerColour? Colours
+---@param playerColour? HudColours
 function MultiplayerChat:AddMessage(playerName, message, scope, teamOnly, playerColour)
   self._sc:CallFunction("ADD_MESSAGE", false, playerName, message, scope, teamOnly, playerColour)
 end

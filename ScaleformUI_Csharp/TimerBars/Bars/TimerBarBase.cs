@@ -20,7 +20,7 @@ namespace ScaleformUI
         {
             SizeF res = ScreenTools.ResolutionMaintainRatio;
             PointF safe = ScreenTools.SafezoneBounds;
-            new UIResText(Label, new PointF((int)res.Width - safe.X - 180, (int)res.Height - safe.Y - (30 + (4 * interval))), 0.3f, Colors.White, LabelFont, Alignment.Right).Draw();
+            new UIResText(Label, new PointF((int)res.Width - safe.X - 180, (int)res.Height - safe.Y - (30 + (4 * interval))), 0.3f, SColor.White.ToColor(), LabelFont, Alignment.Right).Draw();
 
             new Sprite("timerbars", "all_black_bg", new PointF((int)res.Width - safe.X - 298, (int)res.Height - safe.Y - (40 + (4 * interval))), new SizeF(300, 37), 0f, Color.FromArgb(180, 255, 255, 255)).Draw();
 

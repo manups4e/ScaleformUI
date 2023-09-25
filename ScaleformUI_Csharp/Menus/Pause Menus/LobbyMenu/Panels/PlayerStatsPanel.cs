@@ -1,4 +1,6 @@
-﻿using ScaleformUI.PauseMenu;
+﻿using ScaleformUI.Elements;
+using ScaleformUI.Menu;
+using ScaleformUI.PauseMenu;
 using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI.LobbyMenu
@@ -8,7 +10,7 @@ namespace ScaleformUI.LobbyMenu
         public LobbyItem ParentItem { get; set; }
         private string title;
         private string description;
-        private HudColor titleColor = HudColor.HUD_COLOUR_FREEMODE;
+        private SColor titleColor = SColor.FromHudColor(HudColor.HUD_COLOUR_FREEMODE);
         private bool hasPlane = false;
         private bool hasVehicle = false;
         private bool hasBoat = false;
@@ -24,7 +26,7 @@ namespace ScaleformUI.LobbyMenu
                 UpdatePanel();
             }
         }
-        public HudColor TitleColor
+        public SColor TitleColor
         {
             get => titleColor;
             set
@@ -78,14 +80,17 @@ namespace ScaleformUI.LobbyMenu
                 UpdatePanel();
             }
         }
+        public bool HardwareVisible { get; set; } = true;
         public List<PlayerStatsPanelStatItem> Items { get; private set; }
-        public PlayerStatsPanel(string title, HudColor titleColor)
+        public List<UIFreemodeDetailsItem> DetailsItems { get; private set; }
+        public PlayerStatsPanel(string title, SColor titleColor)
         {
             this.title = title;
             this.titleColor = titleColor;
             this.description = string.Empty;
             RankInfo = new(this);
             Items = new();
+            DetailsItems = new();
         }
 
         public void AddStat(PlayerStatsPanelStatItem item)
@@ -96,6 +101,12 @@ namespace ScaleformUI.LobbyMenu
             UpdatePanel();
         }
 
+        public void AddDescriptionStatItem(UIFreemodeDetailsItem item)
+        {
+            DetailsItems.Add(item);
+            UpdatePanel();
+        }
+
         public void UpdatePanel(bool _override = false)
         {
             if ((ParentItem != null && ParentItem.ParentColumn != null && ParentItem.ParentColumn.Parent != null && ParentItem.ParentColumn.Parent.Visible && ParentItem.ParentColumn.Pagination.IsItemVisible(ParentItem.ParentColumn.Items.IndexOf(ParentItem))) || _override)
@@ -103,19 +114,33 @@ namespace ScaleformUI.LobbyMenu
                 int idx = ParentItem.ParentColumn.Pagination.GetScaleformIndex(ParentItem.ParentColumn.Items.IndexOf(ParentItem));
                 if (ParentItem.ParentColumn.Parent is MainView lobby)
                 {
-                    lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_PANEL", idx, 0, ParentItem.ClonePed != null, Title, Description, (int)TitleColor, RankInfo.RankLevel, HasPlane, HasHeli, HasBoat, HasVehicle, 0, RankInfo.LowLabel, 0, 0, RankInfo.MidLabel, 0, 0, RankInfo.UpLabel, 0, 0);
-                    if (!string.IsNullOrWhiteSpace(Description))
-                        lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_PANEL_DESCRIPTION", idx, Description, 0, "", ParentItem.ClonePed != null);
+                    lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_PANEL", idx, 0, ParentItem.ClonePed != null, Title, Description, TitleColor, RankInfo.RankLevel, HasPlane, HasHeli, HasBoat, HasVehicle, 0, RankInfo.LowLabel, 0, 0, RankInfo.MidLabel, 0, 0, RankInfo.UpLabel, 0, 0, HardwareVisible);
                     foreach (PlayerStatsPanelStatItem stat in Items)
                         lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_PANEL_STAT", idx, stat.idx, 0, stat.Label, stat.Description, stat.Value);
+                    if (!string.IsNullOrWhiteSpace(Description))
+                        lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_PANEL_DESCRIPTION", idx, Description, 0, "", ParentItem.ClonePed != null);
+                    else if (DetailsItems.Count > 0)
+                    {
+                        foreach (UIFreemodeDetailsItem item in DetailsItems)
+                        {
+                            lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_PANEL_DETAIL", idx, item.Type, item.TextLeft, item.TextRight, (int)item.Icon, item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID);
+                        }
+                    }
                 }
                 else if (ParentItem.ParentColumn.Parent is TabView pause)
                 {
-                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL", ParentItem.ParentColumn.ParentTab, idx, 0, ParentItem.ClonePed != null, Title, Description, (int)TitleColor, RankInfo.RankLevel, HasPlane, HasHeli, HasBoat, HasVehicle, 0, RankInfo.LowLabel, 0, 0, RankInfo.MidLabel, 0, 0, RankInfo.UpLabel, 0, 0);
-                    if (!string.IsNullOrWhiteSpace(Description))
-                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_DESCRIPTION", ParentItem.ParentColumn.ParentTab, idx, Description, 0, "", ParentItem.ClonePed != null);
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL", ParentItem.ParentColumn.ParentTab, idx, 0, ParentItem.ClonePed != null, Title, Description, TitleColor, RankInfo.RankLevel, HasPlane, HasHeli, HasBoat, HasVehicle, 0, RankInfo.LowLabel, 0, 0, RankInfo.MidLabel, 0, 0, RankInfo.UpLabel, 0, 0, HardwareVisible);
                     foreach (PlayerStatsPanelStatItem stat in Items)
                         pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_STAT", ParentItem.ParentColumn.ParentTab, idx, stat.idx, 0, stat.Label, stat.Description, stat.Value);
+                    if (!string.IsNullOrWhiteSpace(Description))
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_DESCRIPTION", ParentItem.ParentColumn.ParentTab, idx, Description, 0, "", ParentItem.ClonePed != null);
+                    else if (DetailsItems.Count > 0)
+                    {
+                        foreach (UIFreemodeDetailsItem item in DetailsItems)
+                        {
+                            pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_DETAIL", ParentItem.ParentColumn.ParentTab, idx, item.Type, item.TextLeft, item.TextRight, (int)item.Icon, item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID);
+                        }
+                    }
                 }
             }
         }

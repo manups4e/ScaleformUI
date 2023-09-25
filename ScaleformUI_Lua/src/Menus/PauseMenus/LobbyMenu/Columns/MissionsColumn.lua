@@ -6,7 +6,8 @@ end
 
 ---@class MissionListColumn
 ---@field private _label string
----@field private _color number
+---@field private _color SColor
+---@field private _isBuilding boolean
 ---@field private _currentSelection number
 ---@field public Order number
 ---@field public Parent function
@@ -17,7 +18,7 @@ end
 
 ---Creates a new MissionListColumn.
 ---@param label string
----@param color number|116
+---@param color SColor
 ---@return table
 function MissionListColumn.New(label, color, scrollType)
     local handler = PaginationHandler.New()
@@ -27,7 +28,7 @@ function MissionListColumn.New(label, color, scrollType)
         _isBuilding = false,
         Type = "missions",
         _label = label or "",
-        _color = color or 116,
+        _color = color or SColor.HUD_Freemode,
         _currentSelection = 0,
         scrollingType = scrollType or MenuScrollingType.CLASSIC,
         Pagination = handler,
@@ -36,8 +37,10 @@ function MissionListColumn.New(label, color, scrollType)
         ParentTab = 0,
         Items = {} --[[@type table<number, FriendItem>]],
         OnIndexChanged = function(index)
+        end,
+        OnMissionItemActivated = function(index)
         end
-    }
+   }
     return setmetatable(_data, MissionListColumn)
 end
 
@@ -67,15 +70,18 @@ function MissionListColumn:CurrentSelection(value)
         self.Pagination:CurrentPage(self.Pagination:GetPage(self.Pagination:CurrentMenuIndex()));
         self.Pagination:CurrentPageIndex(value);
         self.Pagination:ScaleformIndex(self.Pagination:GetScaleformIndex(self.Pagination:CurrentMenuIndex()));
-        self.Items[self:CurrentSelection()]:Selected(true)
         if self.Parent ~= nil and self.Parent:Visible() then
             local pSubT = self.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSIONS_SELECTION", false, self.Pagination:ScaleformIndex()) --[[@as number]]
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSIONS_QTTY", false, self:CurrentSelection(), #self.Items) --[[@as number]]
+                self.Items[self:CurrentSelection()]:Selected(true)
             elseif pSubT == "PauseMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_MISSIONS_SELECTION", false, self.ParentTab, self.Pagination:ScaleformIndex()) --[[@as number]]
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_MISSIONS_QTTY", false, self.ParentTab, self:CurrentSelection(), #self.Items) --[[@as number]]
+                if self.Parent:Index() == self.ParentTab+1 and self.Parent:FocusLevel() == 1 then
+                    self.Items[self:CurrentSelection()]:Selected(true)
+                end
             end
         end
     end
@@ -91,6 +97,17 @@ function MissionListColumn:AddMissionItem(item)
     if self.Parent ~= nil and self.Parent:Visible() then
         if self.Pagination:TotalItems() < self.Pagination:ItemsPerPage() then
             local sel = self:CurrentSelection()
+            self.Pagination:MinItem(self.Pagination:CurrentPageStartIndex())
+
+            if self.scrollingType == MenuScrollingType.CLASSIC and self.Pagination:TotalPages() > 1 then
+                local missingItems = self.Pagination:GetMissingItems()
+                if missingItems > 0 then
+                    self.Pagination:ScaleformIndex(self.Pagination:GetPageIndexFromMenuIndex(self.Pagination:CurrentPageEndIndex()) + missingItems - 1)
+                    self.Pagination.minItem = self.Pagination:CurrentPageStartIndex() - missingItems
+                end
+            end
+    
+            self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
             self:_itemCreation(0, #self.Items, false)
             local pSubT = self.Parent()
             if pSubT == "PauseMenu" then

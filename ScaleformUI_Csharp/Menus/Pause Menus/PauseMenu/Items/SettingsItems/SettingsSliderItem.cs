@@ -1,4 +1,4 @@
-﻿using ScaleformUI.Scaleforms;
+﻿using ScaleformUI.Elements;
 
 namespace ScaleformUI.PauseMenu
 {
@@ -6,7 +6,7 @@ namespace ScaleformUI.PauseMenu
     public class SettingsSliderItem : SettingsItem
     {
         private int _value;
-        private HudColor coloredBarColor;
+        private SColor coloredBarColor = SColor.HUD_Freemode;
         public event SettingsSliderEvent OnBarChanged;
         public event SettingsSliderEvent OnSliderSelected;
         public int MaxValue { get; set; } = 100;
@@ -26,7 +26,7 @@ namespace ScaleformUI.PauseMenu
                 OnBarChanged?.Invoke(this, _value);
             }
         }
-        public HudColor ColoredBarColor
+        public SColor ColoredBarColor
         {
             get => coloredBarColor;
             set
@@ -42,7 +42,7 @@ namespace ScaleformUI.PauseMenu
             }
         }
 
-        public SettingsSliderItem(string label, int max, int startIndex, HudColor barColor = HudColor.HUD_COLOUR_FREEMODE) : base(label, "")
+        public SettingsSliderItem(string label, int max, int startIndex, SColor barColor) : base(label, "")
         {
             ItemType = SettingsItemType.SliderBar;
             Label = label;

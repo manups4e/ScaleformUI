@@ -18,7 +18,7 @@ function UIMenuFreemodeDetailsItem.New(textLeft, textRight, seperator, icon, ico
         TextLeft = textLeft,
         TextRight = textRight or "",
         Icon = icon or BadgeStyle.NONE,
-        IconColor = iconColor or Colours.HUD_COLOUR_WHITE,
+        IconColor = iconColor or SColor.HUD_White,
         Tick = tick or false,
         _labelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY,
         _rightLabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY

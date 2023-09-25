@@ -8,8 +8,8 @@ end
 ---@field public Label string
 ---@field public ItemType number
 ---@field public Focused boolean
----@field public MainColor number
----@field public HighlightColor number
+---@field public MainColor SColor
+---@field public HighlightColor SColor
 ---@field public Highlighted boolean
 ---@field public ItemIndex number
 ---@field public ItemList table<SettingsItem|SettingsListItem|SettingsProgressItem|SettingsCheckboxItem|SettingsSliderItem|KeymapItem>
@@ -36,8 +36,8 @@ function TabLeftItem.New(label, _type, mainColor, highlightColor, labelFont)
         Label = label or "",
         ItemType = _type,
         Focused = false,
-        MainColor = mainColor or Colours.NONE,
-        HighlightColor = highlightColor or Colours.NONE,
+        MainColor = mainColor or SColor.HUD_Pause_bg,
+        HighlightColor = highlightColor or SColor.HUD_White,
         Highlighted = false,
         ItemIndex = 0,
         ItemList = {} --[[@type table<SettingsItem|SettingsListItem|SettingsProgressItem|SettingsCheckboxItem|SettingsSliderItem|KeymapItem|BasicTabItem>]],

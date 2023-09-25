@@ -13,9 +13,9 @@ local function CreatePlayerMenuMenu()
     if not PlayerMenu then
         PlayerMenu = MainView.New("Player Management", "dec", "", "", "")
         local columns = {
-            SettingsListColumn.New("MANAGE", Colours.HUD_COLOUR_RED),
-            PlayerListColumn.New("PLAYER", Colours.HUD_COLOUR_ORANGE),
-            MissionDetailsPanel.New("PLAYER INFO", Colours.HUD_COLOUR_GREEN),
+            SettingsListColumn.New("MANAGE", HudColours.HUD_COLOUR_RED),
+            PlayerListColumn.New("PLAYER", HudColours.HUD_COLOUR_ORANGE),
+            MissionDetailsPanel.New("PLAYER INFO", HudColours.HUD_COLOUR_GREEN),
         }
         PlayerMenu:SetupColumns(columns)
         PlayerMenu:HeaderPicture("ScaleformUI_Lua_duiTxd", "LobbyHeadshot") -- playerMenu:CrewPicture used to add a picture on the left of the HeaderPicture
@@ -29,7 +29,7 @@ local function CreatePlayerMenuMenu()
         PlayerMenu.MissionPanel:UpdatePanelPicture("scaleformui", "lobby_panelbackground")
         PlayerMenu.MissionPanel:Title("ScaleformUI - Title")
 
-        local friend = FriendItem.New("", Colours.HUD_COLOUR_FREEMODE, false, 0, "", "")
+        local friend = FriendItem.New("", HudColours.HUD_COLOUR_FREEMODE, false, 0, "", "")
         PlayerMenu.PlayersColumn:AddPlayer(friend)
 
         PlayerMenu.SettingsColumn.OnIndexChanged = function(idx)
@@ -127,7 +127,7 @@ AddEventHandler("ScaleformUI_Lua:playermenu:SetPlayerList", function(data, Textu
         end
     end
 
-    local friend = FriendItem.New(data.name, data.Colours, data.colouredTag, data.lev, data.Status, data.CrewTag)
+    local friend = FriendItem.New(data.name, data.HudColours, data.colouredTag, data.lev, data.Status, data.CrewTag)
     friend:SetLeftIcon(LobbyBadge, false)
     friend:AddPedToPauseMenu((ClonePedData[data.name] or PlayerPedId())) -- defaulted to 0 if you set it to nil / 0 the ped will be removed from the pause menu
     local panel = PlayerStatsPanel.New(data.name, 116)
@@ -173,7 +173,7 @@ AddEventHandler("ScaleformUI_Lua:playermenu:SetInfo", function(data)
     end
 
     for k, v in pairs(data) do
-        local detailItem = UIMenuFreemodeDetailsItem.New(v.LeftLabel, v.RightLabel, false, v.BadgeStyle, v.Colours)
+        local detailItem = UIMenuFreemodeDetailsItem.New(v.LeftLabel, v.RightLabel, false, v.BadgeStyle, v.HudColours)
         PlayerMenu.MissionPanel:AddItem(detailItem)
     end
 end)

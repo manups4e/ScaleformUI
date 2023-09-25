@@ -6,9 +6,9 @@ end
 
 ---@class TextTab
 
-function TextTab.New(name, _title)
+function TextTab.New(name, _title, color)
     local data = {
-        Base = BaseTab.New(name or "", 0),
+        Base = BaseTab.New(name or "", 0, color),
         Label = name,
         TextTitle = _title or "",
         LabelsList = {},

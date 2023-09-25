@@ -26,6 +26,7 @@ function TabView.New(title, subtitle, sideTop, sideMiddle, sideBottom)
         index = 1,
         ParentPool = nil,
         _visible = false,
+        _isBuilding = false,
         focusLevel = 0,
         rightItemIndex = 1,
         leftItemIndex = 1,
@@ -95,6 +96,7 @@ function TabView:Index(idx)
         self.Tabs[self.index].Visible = false
         self.index = idx
         self.Tabs[self.index].Visible = true
+        self.OnPauseMenuTabChanged(self, self.Tabs[self.index], self.index)
     else
         return self.index
     end
@@ -183,12 +185,13 @@ function TabView:ShowHeader()
 end
 
 function TabView:BuildPauseMenu()
+    self._isBuilding = true
     self:ShowHeader()
     for k, tab in pairs(self.Tabs) do
         local tabIndex = k - 1
         local type, subtype = tab()
         if subtype == "TextTab" then
-            ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 1, tab.Base.Type)
+            ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 1, tab.Base.Type, tab.Base._color)
             if not tostring(tab.TextTitle):IsNullOrEmpty() then
                 ScaleformUI.Scaleforms._pauseMenu:AddRightTitle(tabIndex, 0, tab.TextTitle)
             end
@@ -199,7 +202,7 @@ function TabView:BuildPauseMenu()
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_BASE_TAB_BACKGROUND", false, tabIndex, tab.TextureDict, tab.TextureName)
             end
         elseif subtype == "SubmenuTab" then
-            ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 1, tab.Base.Type)
+            ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 1, tab.Base.Type, tab.Base._color)
             for j, item in pairs(tab.LeftItemList) do
                 local itemIndex = j - 1
                 ScaleformUI.Scaleforms._pauseMenu:AddLeftItem(tabIndex, item.ItemType, item._formatLeftLabel, item.MainColor,
@@ -265,7 +268,7 @@ function TabView:BuildPauseMenu()
                 end
             end
         elseif subtype == "PlayerListTab" then
-            ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 1, tab.Base.Type)
+            ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 1, tab.Base.Type, tab.Base._color)
             local count = #tab.listCol
             if count == 1 then
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CREATE_PLAYERS_TAB_COLUMNS", false, tabIndex, tab.listCol[1].Type)
@@ -274,7 +277,7 @@ function TabView:BuildPauseMenu()
             elseif count == 3 then
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CREATE_PLAYERS_TAB_COLUMNS", false, tabIndex, tab.listCol[1].Type, tab.listCol[2].Type, tab.listCol[3].Type)
             end
-            
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_NEWSTYLE", false, tabIndex, tab._newStyle)
             for i,col in pairs(tab.listCol) do
                 col.Parent = self
                 col.ParentTab = tabIndex
@@ -298,9 +301,10 @@ function TabView:BuildPauseMenu()
             while tab.SettingsColumn ~= nil and tab.SettingsColumn._isBuilding or tab.PlayerColumn ~= nil and tab.PlayerColumn._isBuilding or tab.MissionsColumn ~= nil and tab.MissionsColumn._isBuilding do
                 Citizen.Wait(0)
             end
-            tab:UpdateFocus(1)
+            tab:updateFocus(1)
         end
     end
+    self._isBuilding = false
 end
 
 function TabView:buildSettings(tab, tabIndex)
@@ -468,7 +472,7 @@ function TabView:UpdateKeymapItems()
 end
 
 function TabView:Draw()
-    if not self:Visible() or self.TemporarilyHidden then
+    if not self:Visible() or self.TemporarilyHidden or self._isBuilding then
         return
     end
     DisableControlAction(0, 199, true)
@@ -487,15 +491,19 @@ function TabView:Select()
         local tab = self.Tabs[self.index]
         local cur_tab, cur_sub_tab = tab()
         if cur_sub_tab == "PlayerListTab" then
-            if tab.listCol[tab:Focus()].Type == "settings" then
+            local selection = tab:Focus()
+            if tab._newStyle then
+                selection = 1
+            end
+            if tab.listCol[selection].Type == "settings" then
                 tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]:Selected(true)
-            elseif tab.listCol[tab:Focus()].Type == "players" then
+            elseif tab.listCol[selection].Type == "players" then
                 local it = tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]
                 it:Selected(true)
                 if it:KeepPanelVisible() then
                     it:AddPedToPauseMenu()
                 end
-            elseif tab.listCol[tab:Focus()].Type == "missions" then
+            elseif tab.listCol[selection].Type == "missions" then
                 tab.MissionsColumn.Items[tab.MissionsColumn:CurrentSelection()]:Selected(true)
             end
             for k,v in pairs(tab.listCol) do
@@ -553,29 +561,33 @@ function TabView:Select()
                 end
             end
         elseif cur_sub_tab == "PlayerListTab" then
-            local _item = tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]
-            if not _item:Enabled() then
-                PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
-                return
+            if tab.listCol[tab:Focus()].Type == "settings" then
+                local _item = tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]
+                if not _item:Enabled() then
+                    PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
+                    return
+                end
+                local _, subtype = _item()
+                if subtype == "UIMenuCheckboxItem" then
+                    _item:Checked(not _item:Checked())
+                    _item.OnCheckboxChanged(self, _item, _item:Checked())
+                elseif subtype == "UIMenuListItem" then
+                    _item.OnListSelected(self, _item, _item._Index)
+                elseif subtype == "UIMenuDynamicListItem" then
+                    _item.OnListSelected(self, _item, _item._currentItem)
+                elseif subtype == "UIMenuSliderItem" then
+                    _item.OnSliderSelected(self, _item, _item._Index)
+                elseif subtype == "UIMenuProgressItem" then
+                    _item.OnProgressSelected(self, _item, _item._Index)
+                elseif subtype == "UIMenuStatsItem" then
+                    _item.OnStatsSelected(self, _item, _item._Index)
+                else
+                    _item:Activated(self, _item)
+                end
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", false, 16)
+            elseif tab.listCol[tab:Focus()].Type == "missions" then
+                tab.MissionsColumn.Items[tab.MissionsColumn:CurrentSelection()].Activated(tab.MissionsColumn.Items[tab.MissionsColumn:CurrentSelection()])
             end
-            local _, subtype = _item()
-            if subtype == "UIMenuCheckboxItem" then
-                _item:Checked(not _item:Checked())
-                _item.OnCheckboxChanged(self, _item, _item:Checked())
-            elseif subtype == "UIMenuListItem" then
-                _item.OnListSelected(self, _item, _item._Index)
-            elseif subtype == "UIMenuDynamicListItem" then
-                _item.OnListSelected(self, _item, _item._currentItem)
-            elseif subtype == "UIMenuSliderItem" then
-                _item.OnSliderSelected(self, _item, _item._Index)
-            elseif subtype == "UIMenuProgressItem" then
-                _item.OnProgressSelected(self, _item, _item._Index)
-            elseif subtype == "UIMenuStatsItem" then
-                _item.OnStatsSelected(self, _item, _item._Index)
-            else
-                _item:Activated(self, _item)
-            end
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", false, 16)
         end
     elseif self:FocusLevel() == 2 then
         ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", false, 16)
@@ -607,20 +619,24 @@ end
 
 function TabView:GoBack()
     if self:FocusLevel() > 0 then
-        self:FocusLevel(self:FocusLevel() - 1)
         local tab = self.Tabs[self.index]
         local _, subT = tab()
-        if subT == "SubmenuTab" then
+        if subT ~= "PlayerListTab" then
+            self:FocusLevel(self:FocusLevel() - 1)
             tab.LeftItemList[self.leftItemIndex]:Selected(self:FocusLevel() == 1)
         elseif subT == "PlayerListTab" then
-            SetPauseMenuPedLighting(self:FocusLevel() ~= 0)
-            for k,v in pairs(tab.listCol) do
-                if v.Type == "settings" then
-                    tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]:Selected(false)
-                elseif v.Type == "players" then
-                    tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:Selected(false)
-                elseif v.Type == "missions" then
-                    tab.MissionsColumn.Items[tab.MissionsColumn:CurrentSelection()]:Selected(false)
+            if tab._newStyle then
+                self:FocusLevel(self:FocusLevel() - 1)
+                SetPauseMenuPedLighting(self:FocusLevel() ~= 0)
+                tab.listCol[tab:Focus()].Items[tab.listCol[tab:Focus()]:CurrentSelection()]:Selected(false)
+            else
+                if self:FocusLevel() == 1 then
+                    tab.listCol[tab:Focus()].Items[tab.listCol[tab:Focus()]:CurrentSelection()]:Selected(false)
+                    if tab:Focus() == 1 then
+                        self:FocusLevel(self:FocusLevel() - 1)
+                        return
+                    end
+                    tab:updateFocus(tab:Focus() - 1)
                 end
             end
         end
@@ -734,8 +750,12 @@ function TabView:GoLeft()
             if tab.listCol[tab:Focus()].Type == "settings" then
                 local Item = tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]
                 if not Item:Enabled() then
-                    Item:Selected(false)
-                    tab:UpdateFocus(tab:Focus() - 1)
+                    if tab._newStyle then
+                        Item:Selected(false)
+                        tab:updateFocus(tab:Focus() - 1)
+                    else
+                        PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
+                    end
                     return
                 end
                 local type, subtype = Item()
@@ -752,17 +772,30 @@ function TabView:GoLeft()
                     Item:Index(retVal)
                     Item.OnStatsChanged(self, Item, Item._Index)
                 else
-                    tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]:Selected(false)
-                    tab:UpdateFocus(tab:Focus() - 1)
+                    print(tab._newStyle)
+                    if tab._newStyle then
+                        tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]:Selected(false)
+                        tab:updateFocus(tab:Focus() - 1)
+                    end
                 end
             elseif tab.listCol[tab:Focus()].Type == "missions" then
-                tab.MissionsColumn.Items[tab.MissionsColumn:CurrentSelection()]:Selected(false)
-                tab:UpdateFocus(tab:Focus() - 1)
+                if tab._newStyle then
+                    tab.MissionsColumn.Items[tab.MissionsColumn:CurrentSelection()]:Selected(false)
+                    tab:updateFocus(tab:Focus() - 1)
+                end
             elseif tab.listCol[tab:Focus()].Type == "panel" then
-                tab:UpdateFocus(tab:Focus() - 1)
+                if tab._newStyle then
+                    tab:updateFocus(tab:Focus() - 1)
+                end
             elseif tab.listCol[tab:Focus()].Type == "players" then
-                tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:Selected(false)
-                tab:UpdateFocus(tab:Focus() - 1)
+                if tab._newStyle then
+                    tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:Selected(false)
+                    tab:updateFocus(tab:Focus() - 1)
+                else
+                    if tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
+                        tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu()
+                    end
+                end
             end
         end
     elseif self:FocusLevel() == 2 then
@@ -833,8 +866,12 @@ function TabView:GoRight()
             if tab.listCol[tab:Focus()].Type == "settings" then
                 local Item = tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]
                 if not Item:Enabled() then
-                    Item:Selected(false)
-                    tab:UpdateFocus(tab:Focus() + 1)
+                    if tab._newStyle then
+                        Item:Selected(false)
+                        tab:updateFocus(tab:Focus() + 1)
+                    else
+                        PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
+                    end
                     return
                 end
                 local type, subtype = Item()
@@ -851,17 +888,29 @@ function TabView:GoRight()
                     Item:Index(retVal)
                     Item.OnStatsChanged(self, Item, Item._Index)
                 else
-                    tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]:Selected(false)
-                    tab:UpdateFocus(tab:Focus() + 1)
+                    if tab._newStyle then
+                        tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]:Selected(false)
+                        tab:updateFocus(tab:Focus() + 1)
+                    end
                 end
             elseif tab.listCol[tab:Focus()].Type == "missions" then
-                tab.MissionsColumn.Items[tab.MissionsColumn:CurrentSelection()]:Selected(false)
-                tab:UpdateFocus(tab:Focus() + 1)
+                if tab._newStyle then
+                    tab.MissionsColumn.Items[tab.MissionsColumn:CurrentSelection()]:Selected(false)
+                    tab:updateFocus(tab:Focus() + 1)
+                end
             elseif tab.listCol[tab:Focus()].Type == "panel" then
-                tab:UpdateFocus(tab:Focus() + 1)
+                if tab._newStyle then
+                    tab:updateFocus(tab:Focus() + 1)
+                end
             elseif tab.listCol[tab:Focus()].Type == "players" then
-                tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:Selected(false)
-                tab:UpdateFocus(tab:Focus() + 1)
+                if tab._newStyle then
+                    tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:Selected(false)
+                    tab:updateFocus(tab:Focus() + 1)
+                else
+                    if tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
+                        tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu()
+                    end
+                end
             end
         end
     elseif self:FocusLevel() == 2 then
@@ -908,7 +957,7 @@ function TabView:ProcessMouse()
                     local tab = self.Tabs[self.index]
                     local _, subT = tab()
                     if subT == "PlayerListTab" then
-                        tab:UpdateFocus(tab._focus)
+                        tab:updateFocus(tab._focus)
                         if tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed ~= nil and tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
                             tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu()
                         else
@@ -940,18 +989,12 @@ function TabView:ProcessMouse()
                 if self:FocusLevel() == 1 and subT == "PlayerListTab" then
                     local foc = tab:Focus()
                     local curSel = 1
-                    for k,v in pairs(tab.listCol) do
-                        if v.Type == "settings" then
-                            curSel = tab.SettingsColumn:CurrentSelection()
-                        elseif v.Type == "missions" then
-                            curSel = tab.MissionsColumn:CurrentSelection()
-                        elseif v.Type == "players" then
-                            curSel = tab.PlayersColumn:CurrentSelection()
-                        end
+                    if tab._newStyle then
+                        curSel = tab.listCol[foc]:CurrentSelection()
                     end
                     if context+1 ~= foc then
                         tab.listCol[foc].Items[tab.listCol[foc]:CurrentSelection()]:Selected(false)
-                        tab:UpdateFocus(context+1, true)
+                        tab:updateFocus(context+1, true)
                         tab.listCol[context+1]:CurrentSelection(tab.listCol[context+1].Pagination:GetMenuIndexFromScaleformIndex(item_id-1))
                         tab.listCol[context+1].OnIndexChanged(tab.listCol[context+1]:CurrentSelection())
                         if curSel ~= tab.listCol[context+1]:CurrentSelection() then

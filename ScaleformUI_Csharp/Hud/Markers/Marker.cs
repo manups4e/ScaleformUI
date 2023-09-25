@@ -1,6 +1,5 @@
 ﻿using CitizenFX.Core;
-using System;
-using System.Drawing;
+using ScaleformUI.Elements;
 using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI
@@ -23,7 +22,7 @@ namespace ScaleformUI
         public Vector3 Rotation { get; set; } = Vector3.Zero;
 
         public Vector3 Scale { get; set; } = new Vector3(1.5f);
-        public Color Color { get; set; }
+        public SColor Color { get; set; }
         public bool BobUpDown { get; set; }
         public bool Rotate { get; set; }
         public bool FaceCamera { get; set; }
@@ -45,7 +44,7 @@ namespace ScaleformUI
         /// <param name="bobUpDown">The marker will bounce up and down</param>
         /// <param name="rotate">The marker will rotate on its Z axiz</param>
         /// <param name="faceCamera">The marker will face camera</param>
-        public Marker(MarkerType type, Vector3 position, float distance, Color color, bool placeOnGround = false, bool bobUpDown = false, bool rotate = false, bool faceCamera = false)
+        public Marker(MarkerType type, Vector3 position, float distance, SColor color, bool placeOnGround = false, bool bobUpDown = false, bool rotate = false, bool faceCamera = false)
         {
             MarkerType = type;
             Position = position;
@@ -70,7 +69,7 @@ namespace ScaleformUI
         /// <param name="bobUpDown">The marker will bounce up and down</param>
         /// <param name="rotate">The marker will rotate on its Z axiz</param>
         /// <param name="faceCamera">The marker will face camera</param>
-        public Marker(MarkerType type, Vector3 position, Vector3 scale, float distance, Color color, bool placeOnGround = false, bool bobUpDown = false, bool rotate = false, bool faceCamera = false)
+        public Marker(MarkerType type, Vector3 position, Vector3 scale, float distance, SColor color, bool placeOnGround = false, bool bobUpDown = false, bool rotate = false, bool faceCamera = false)
         {
             MarkerType = type;
             Position = position;
@@ -95,7 +94,7 @@ namespace ScaleformUI
                 if (GetGroundZFor_3dCoord(Position.X, Position.Y, Position.Z, ref _height, false))
                     Position = new Vector3(Position.X, Position.Y, _height + 0.03f);
             }
-            World.DrawMarker(MarkerType, Position, Direction, Rotation, Scale, Color, BobUpDown, FaceCamera, Rotate);
+            World.DrawMarker(MarkerType, Position, Direction, Rotation, Scale, Color.ToColor(), BobUpDown, FaceCamera, Rotate);
             if (CheckZ)
             {
                 float distanceSquared = Position.DistanceToSquared(MenuHandler.PlayerPed.Position);
@@ -103,7 +102,7 @@ namespace ScaleformUI
             }
             else
             {
-                var distanceSquared = Position.DistanceToSquared2D(MenuHandler.PlayerPed.Position);
+                float distanceSquared = Position.DistanceToSquared2D(MenuHandler.PlayerPed.Position);
                 IsInMarker = distanceSquared <= Math.Pow(Scale.X / 2, 2) || distanceSquared <= Math.Pow(Scale.Y / 2, 2);
             }
         }

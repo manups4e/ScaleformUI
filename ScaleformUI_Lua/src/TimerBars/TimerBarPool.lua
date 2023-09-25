@@ -1,6 +1,12 @@
 TimerBarPool = setmetatable({}, TimerBarPool)
 TimerBarPool.__index = TimerBarPool
 
+---@class TimerBarPool
+---@field public Bars table
+---@field public New fun(self:TimerBarPool)
+---@field public AddBar function
+---@field public Draw function
+
 function TimerBarPool.New()
     local _data = {
         Bars = {}

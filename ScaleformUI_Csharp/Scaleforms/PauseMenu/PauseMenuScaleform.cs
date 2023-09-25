@@ -64,14 +64,14 @@ namespace ScaleformUI.Scaleforms
             _header.CallFunction("GO_LEFT");
         }
 
-        public void AddPauseMenuTab(string title, int tabType, int tabContentType, HudColor color = HudColor.HUD_COLOUR_FREEMODE)
+        public void AddPauseMenuTab(string title, int tabType, int tabContentType, SColor color)
         {
-            _header.CallFunction("ADD_HEADER_TAB", title, tabType, (int)color);
+            _header.CallFunction("ADD_HEADER_TAB", title, tabType, color);
             _pause.CallFunction("ADD_TAB", tabContentType);
         }
-        public void AddLobbyMenuTab(string title, int tabType, int tabContentType, HudColor color = HudColor.HUD_COLOUR_FREEMODE)
+        public void AddLobbyMenuTab(string title, int tabType, SColor color)
         {
-            _header.CallFunction("ADD_HEADER_TAB", title, tabType, (int)color);
+            _header.CallFunction("ADD_HEADER_TAB", title, tabType, color);
         }
 
         public void SelectTab(int tab)
@@ -85,12 +85,12 @@ namespace ScaleformUI.Scaleforms
             _pause.CallFunction("SET_FOCUS", focus);
         }
 
-        public void AddLeftItem(int tab, int type, string title, HudColor itemColor = HudColor.NONE, HudColor highlightColor = HudColor.NONE, bool enabled = true)
+        public void AddLeftItem(int tab, int type, string title, SColor itemColor, SColor highlightColor, bool enabled = true)
         {
-            if (itemColor != HudColor.NONE)
-                _pause.CallFunction("ADD_LEFT_ITEM", tab, type, title, enabled, (int)itemColor);
-            else if (itemColor != HudColor.NONE && highlightColor != HudColor.NONE)
-                _pause.CallFunction("ADD_LEFT_ITEM", tab, type, title, enabled, (int)itemColor, (int)highlightColor);
+            if (itemColor != SColor.HUD_None && highlightColor != SColor.HUD_None)
+                _pause.CallFunction("ADD_LEFT_ITEM", tab, type, title, enabled, itemColor, highlightColor);
+            else if (itemColor != SColor.HUD_None)
+                _pause.CallFunction("ADD_LEFT_ITEM", tab, type, title, enabled, itemColor);
             else
                 _pause.CallFunction("ADD_LEFT_ITEM", tab, type, title, enabled);
         }
@@ -119,9 +119,9 @@ namespace ScaleformUI.Scaleforms
             _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 1, 0, label, rightLabel, -1, labelFont.FontName, labelFont.FontID, rLabelFont.FontName, rLabelFont.FontID);
         }
 
-        public void AddRightStatItemColorBar(int tab, int leftItem, string label, int value, HudColor barColor, ItemFont labelFont)
+        public void AddRightStatItemColorBar(int tab, int leftItem, string label, int value, SColor barColor, ItemFont labelFont)
         {
-            _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 1, 1, label, value, (int)barColor, labelFont.FontName, labelFont.FontID);
+            _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 1, 1, label, value, barColor, labelFont.FontName, labelFont.FontID);
         }
 
         public void AddRightSettingsBaseItem(int tab, int leftItem, string label, string rightLabel, bool enabled)
@@ -135,18 +135,18 @@ namespace ScaleformUI.Scaleforms
             _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 2, 1, label, enabled, stringList, startIndex);
         }
 
-        public void AddRightSettingsProgressItem(int tab, int leftItem, string label, int max, HudColor color, int index, bool enabled)
+        public void AddRightSettingsProgressItem(int tab, int leftItem, string label, int max, SColor color, int index, bool enabled)
         {
-            _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 2, 2, label, enabled, max, (int)color, index);
+            _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 2, 2, label, enabled, max, color, index);
         }
-        public void AddRightSettingsProgressItemAlt(int tab, int leftItem, string label, int max, HudColor color, int index, bool enabled)
+        public void AddRightSettingsProgressItemAlt(int tab, int leftItem, string label, int max, SColor color, int index, bool enabled)
         {
-            _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 2, 3, label, enabled, max, (int)color, index);
+            _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 2, 3, label, enabled, max, color, index);
         }
 
-        public void AddRightSettingsSliderItem(int tab, int leftItem, string label, int max, HudColor color, int index, bool enabled)
+        public void AddRightSettingsSliderItem(int tab, int leftItem, string label, int max, SColor color, int index, bool enabled)
         {
-            _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 2, 5, label, enabled, max, (int)color, index);
+            _pause.CallFunction("ADD_RIGHT_LIST_ITEM", tab, leftItem, 2, 5, label, enabled, max, color, index);
         }
         public void AddRightSettingsCheckboxItem(int tab, int leftItem, string label, UIMenuCheckboxStyle style, bool check, bool enabled)
         {
@@ -209,17 +209,17 @@ namespace ScaleformUI.Scaleforms
         {
             _pause.CallFunction("UPDATE_RIGHT_STATS_ITEM", tab, leftItem, rightItem, label, rightLabel);
         }
-        public void UpdateStatsItem(int tab, int leftItem, int rightItem, string label, int value, HudColor color)
+        public void UpdateStatsItem(int tab, int leftItem, int rightItem, string label, int value, SColor color)
         {
-            _pause.CallFunction("UPDATE_RIGHT_STATS_ITEM", tab, leftItem, rightItem, label, value, (int)color);
+            _pause.CallFunction("UPDATE_RIGHT_STATS_ITEM", tab, leftItem, rightItem, label, value, color);
         }
 
-        public void UpdateItemColoredBar(int tab, int leftItem, int rightItem, HudColor color)
+        public void UpdateItemColoredBar(int tab, int leftItem, int rightItem, SColor color)
         {
-            if (color == HudColor.NONE)
+            if (color == SColor.HUD_None)
                 _pause.CallFunction("UPDATE_COLORED_BAR_COLOR", tab, leftItem, rightItem, (int)HudColor.HUD_COLOUR_WHITE);
             else
-                _pause.CallFunction("UPDATE_COLORED_BAR_COLOR", tab, leftItem, rightItem, (int)color);
+                _pause.CallFunction("UPDATE_COLORED_BAR_COLOR", tab, leftItem, rightItem, color);
         }
         public async Task<string> SendInputEvent(int direction)
         {

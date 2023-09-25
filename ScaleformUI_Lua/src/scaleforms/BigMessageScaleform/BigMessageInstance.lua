@@ -93,8 +93,8 @@ end
 ---Runs the SHOW_SHARD_CENTERED_MP_MESSAGE message on the scaleform
 ---@param msg string
 ---@param desc string
----@param textColor Colours
----@param bgColor Colours
+---@param textColor HudColours
+---@param bgColor HudColours
 ---@param duration number
 ---@param manualDispose? boolean
 ---@return nil

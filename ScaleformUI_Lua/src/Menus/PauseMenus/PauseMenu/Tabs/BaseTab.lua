@@ -17,14 +17,16 @@ end
 ---Creates a new BaseTab.
 ---@param title string
 ---@param type number
+---@param color SColor
 ---@return BaseTab
-function BaseTab.New(title, type)
+function BaseTab.New(title, type, color)
     local data = {
         Title = title or "",
         Type = type or 0,
         Visible = false,
         Focused = false,
         Active = false,
+        _color = color or SColor.HUD_Freemode,
         Parent = nil,
         LeftItemList = {},
         Activated = function(item)

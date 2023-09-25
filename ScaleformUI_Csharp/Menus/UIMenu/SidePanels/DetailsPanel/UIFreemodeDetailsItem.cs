@@ -1,5 +1,4 @@
 ﻿using ScaleformUI.Elements;
-using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI.Menu
 {
@@ -8,7 +7,7 @@ namespace ScaleformUI.Menu
         public string TextLeft;
         public string TextRight = "";
         public BadgeIcon Icon = BadgeIcon.NONE;
-        public HudColor IconColor = HudColor.NONE;
+        public SColor IconColor = SColor.HUD_None;
         public int Type;
         public bool Tick;
         internal ItemFont _labelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
@@ -49,7 +48,8 @@ namespace ScaleformUI.Menu
             _rightLabelFont = rightLabelFont;
         }
 
-        public UIFreemodeDetailsItem(string textLeft, string textRight, BadgeIcon icon, HudColor iconColor = HudColor.NONE, bool tick = false)
+
+        public UIFreemodeDetailsItem(string textLeft, string textRight, BadgeIcon icon, SColor iconColor, bool tick = false)
         {
             Type = 2;
             TextLeft = textLeft;
@@ -58,7 +58,7 @@ namespace ScaleformUI.Menu
             IconColor = iconColor;
             Tick = tick;
         }
-        public UIFreemodeDetailsItem(string textLeft, string textRight, ItemFont labelFont, BadgeIcon icon, HudColor iconColor = HudColor.NONE, bool tick = false)
+        public UIFreemodeDetailsItem(string textLeft, string textRight, ItemFont labelFont, BadgeIcon icon, SColor iconColor, bool tick = false)
         {
             Type = 2;
             TextLeft = textLeft;
@@ -68,7 +68,7 @@ namespace ScaleformUI.Menu
             Tick = tick;
             _labelFont = labelFont;
         }
-        public UIFreemodeDetailsItem(string textLeft, string textRight, ItemFont labelFont, ItemFont rightLabelFont, BadgeIcon icon, HudColor iconColor = HudColor.NONE, bool tick = false)
+        public UIFreemodeDetailsItem(string textLeft, string textRight, ItemFont labelFont, ItemFont rightLabelFont, BadgeIcon icon, SColor iconColor, bool tick = false)
         {
             Type = 2;
             TextLeft = textLeft;
