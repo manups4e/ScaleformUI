@@ -49,6 +49,8 @@ function MenuHandler:SwitchTo(currentMenu, newMenu, newMenuCurrentSelection, inh
             newMenu:AnimationType(currentMenu:AnimationType())
             newMenu:BuildingAnimation(currentMenu:BuildingAnimation())
             newMenu:ScrollingType(currentMenu:ScrollingType())
+            newMenu.enabled3DAnimations = currentMenu.enabled3DAnimations
+            newMenu.fadingTime = currentMenu.fadingTime
         end
     end
     newMenu:CurrentSelection(newMenuCurrentSelection)
