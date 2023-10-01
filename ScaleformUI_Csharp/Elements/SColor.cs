@@ -426,9 +426,6 @@ namespace ScaleformUI.Elements
 
         public static SColor FromArgb(int red, int green, int blue) => FromArgb(byte.MaxValue, red, green, blue);
 
-        public static SColor FromKnownColor(KnownColor color) => new(Color.FromKnownColor(color));
-
-        public static SColor FromName(string name) => new(Color.FromName(name));
         public static SColor FromColor(Color color) => new(color);
 
         public float GetBrightness() => mainColor.GetBrightness();
