@@ -251,7 +251,7 @@ end
 ---DisableNonMenuControls
 ---@param bool boolean
 function UIMenu:DisableGameControls(bool)
-    if bool then
+    if bool ~= nil then
         self.disableGameControls = bool
     else
         return self.disableGameControls
