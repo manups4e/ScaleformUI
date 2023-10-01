@@ -727,7 +727,6 @@ namespace ScaleformUI.LobbyMenu
                             {
                                 Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
                             }
-
                             return;
                         }
 

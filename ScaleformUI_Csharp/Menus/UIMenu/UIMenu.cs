@@ -1184,7 +1184,6 @@ namespace ScaleformUI.Menu
                 new InstructionalButton(Control.PhoneSelect, _selectTextLocalized),
                 new InstructionalButton(Control.PhoneCancel, _backTextLocalized)
             };
-
         }
 
         #endregion
@@ -1338,7 +1337,7 @@ namespace ScaleformUI.Menu
             Main.scaleformUI.CallFunction("CLEAR_ITEMS");
             MenuItems.Clear();
             Pagination.Reset();
-            Pagination.TotalItems = 0;
+            //Pagination.TotalItems = 0;
         }
 
         /// <summary>
@@ -2208,7 +2207,7 @@ namespace ScaleformUI.Menu
                         throw new Exception($"UIMenu {this.Title} menu is empty... Closing and clearing history.");
                     }
 
-                    Main.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
+                    Main.InstructionalButtons.SetInstructionalButtons(this.InstructionalButtons);
                     canBuild = true;
                     MenuHandler.currentMenu = this;
                     MenuHandler.ableToDraw = true;
@@ -2220,6 +2219,7 @@ namespace ScaleformUI.Menu
                 }
                 else
                 {
+                    Main.InstructionalButtons.ClearButtonList();
                     canBuild = false;
                     MenuCloseEv(this);
                     MenuHandler.ableToDraw = false;

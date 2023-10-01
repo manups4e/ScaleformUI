@@ -244,7 +244,7 @@ namespace ScaleformUI.Scaleforms
         /// <param name="buttons">List of <see cref="InstructionalButton"/> to show.</param>
         public void SetInstructionalButtons(List<InstructionalButton> buttons)
         {
-            ControlButtons = buttons;
+            ControlButtons = buttons.ToList();
             _changed = true;
         }
 
@@ -298,7 +298,8 @@ namespace ScaleformUI.Scaleforms
         /// <param name="button">The index to remove.</param>
         public void ClearButtonList()
         {
-            ControlButtons.Clear();
+            if (ControlButtons != null && ControlButtons.Count > 0)
+                ControlButtons.Clear();
             _changed = true;
             _sc.CallFunction("CLEAR_ALL");
             _sc.CallFunction("CLEAR_RENDER");
