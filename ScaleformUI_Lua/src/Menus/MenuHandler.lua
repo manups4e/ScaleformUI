@@ -14,16 +14,16 @@ end
 ---@field ableToDraw boolean
 
 function MenuHandler:SwitchTo(currentMenu, newMenu, newMenuCurrentSelection, inheritOldMenuParams, data)
+    local current = currentMenu()
+    local new = newMenu()
     assert(currentMenu ~= nil, "The menu you're switching from cannot be null")
     assert(currentMenu == self._currentMenu, "The menu you're switching from must be opened")
     assert(newMenu ~= nil, "The menu you're switching to cannot be null")
     assert(newMenu ~= currentMenu, "You cannot switch a menu to itself")
+    assert(#new.Items > 0, "You cannot switch to an empty menu.")
     if BreadcrumbsHandler.SwitchInProgress then return end
     BreadcrumbsHandler.SwitchInProgress = true
     
-    local current = currentMenu()
-    local new = newMenu()
-
     if newMenuCurrentSelection == nil then newMenuCurrentSelection = 1 end
     if current == "UIMenu" and new == "UIMenu" then
         if inheritOldMenuParams == nil then inheritOldMenuParams = false end
