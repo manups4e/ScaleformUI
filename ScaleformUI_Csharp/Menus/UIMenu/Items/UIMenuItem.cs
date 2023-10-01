@@ -570,7 +570,7 @@ namespace ScaleformUI.Menu
                     Main.scaleformUI.CallFunction("SET_ITEM_LABELS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _formatLeftLabel, _formatRightLabel);
                     Main.scaleformUI.CallFunction("ENABLE_ITEM", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _enabled);
                 }
-                if (ParentColumn != null && ParentColumn.Parent.Visible)
+                if (ParentColumn != null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
                 {
                     if (ParentColumn.Parent is MainView lobby)
                     {
