@@ -250,6 +250,9 @@ namespace ScaleformUI.Scaleforms
             _lobby?.CallFunction("CLEAR_ALL");
             _header?.CallFunction("CLEAR_ALL");
             _visible = false;
+            _pause?.Dispose();
+            _lobby?.Dispose();
+            _header?.Dispose();
         }
 
         public void Draw(bool isLobby = false)
