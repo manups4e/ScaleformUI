@@ -717,7 +717,7 @@ function UIMenu:_itemCreation(page, pageIndex, before, overflow)
 
     local item = self.Items[menuIndex]
     local Type, SubType = item()
-    local textEntry = "menu_" .. BreadcrumbsHandler:CurrentDepth() .. "_desc_" .. menuIndex
+    local textEntry = "menu_" .. (BreadcrumbsHandler:CurrentDepth() + 1) .. "_desc_" .. menuIndex
     AddTextEntry(textEntry, item:Description())
 
     if SubType == "UIMenuListItem" then
