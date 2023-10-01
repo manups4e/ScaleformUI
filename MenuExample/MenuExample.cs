@@ -20,11 +20,11 @@ public class MenuExample : BaseScript
 {
     private bool enabled = true;
     private string dish = "Banana";
-    private TimerBarPool _timerBarPool;
+    //private TimerBarPool _timerBarPool;
     private long txd;
     private Random Random = new Random(API.GetGameTimer());
     #region UIMenu
-    public void ExampleMenu()
+    public async void ExampleMenu()
     {
         long _titledui = API.CreateDui("https://i.imgur.com/3yrFYbF.gif", 288, 130);
         API.CreateRuntimeTextureFromDuiHandle(txd, "bannerbackground", API.GetDuiHandle(_titledui));
@@ -1538,6 +1538,7 @@ public class MenuExample : BaseScript
         UIMenuProgressItem item4 = new UIMenuProgressItem("~o~UIMenuProgressItem", 10, 5, "UIMenuProgressItem description");
         item.LabelFont = ScaleformFonts.ENGRAVERS_OLD_ENGLISH_MT_STD;
         item.BlinkDescription = true;
+        item1.Enabled = false;
         pauseMenu.SettingsColumn.AddSettings(item);
         pauseMenu.SettingsColumn.AddSettings(item1);
         pauseMenu.SettingsColumn.AddSettings(item2);
@@ -1696,25 +1697,30 @@ public class MenuExample : BaseScript
         UIFreemodeDetailsItem missionItem1 = new("Hellooooo", "I'm here too!", false, ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST);
         UIFreemodeDetailsItem missionItem2 = new("Hellooooo", "I'm here too!", ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST, BadgeIcon.COUNTRY_ITALY, SColor.HUD_Pure_white, true);
         UIFreemodeDetailsItem missionItem3 = new("Hellooooo", "I'm here too!", true, ScaleformFonts.GTAV_COURIER, ScaleformFonts.HANDSTYLE_HEIST);
+        UIFreemodeDetailsItem missionItem4 = new("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat");
         //UIFreemodeDetailsItem missionItem4 = new("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "", false);
         pauseMenu.MissionPanel.AddItem(missionItem1);
         pauseMenu.MissionPanel.AddItem(missionItem2);
         pauseMenu.MissionPanel.AddItem(missionItem3);
+        pauseMenu.MissionPanel.AddItem(missionItem4);
 
         pauseMenu.Visible = true;
+        await BaseScript.Delay(1000);
+        item1.Label = "Pippo";
+        pauseMenu.SettingsColumn.CurrentSelection = 1;
         //API.UnregisterPedheadshot(mugshot);
     }
 
     bool feedOpen = false;
     Random r = new Random();
     public MenuExample()
-    {
+    {/*
         _timerBarPool = new TimerBarPool();
         TextTimerBar textTimerBar = new TextTimerBar("Label", "Caption", CitizenFX.Core.UI.Font.Pricedown);
         _timerBarPool.Add(textTimerBar);
         TextTimerBar textTimerBar2 = new TextTimerBar("Other", "Caption", CitizenFX.Core.UI.Font.ChaletComprimeCologne, CitizenFX.Core.UI.Font.HouseScript);
         _timerBarPool.Add(textTimerBar2);
-
+        */
         txd = API.CreateRuntimeTxd("scaleformui");
 
         // We create a marker on the peds position, adds it to the MarkerHandler
@@ -1723,7 +1729,7 @@ public class MenuExample : BaseScript
 
         Tick += async () =>
         {
-            _timerBarPool.Draw();
+            //_timerBarPool.Draw();
 
             //If the player is in drawing range for the marker, the marker will draw automatically and the DrawText will show itself (true if the ped enters the marker)
             if (playerMarker.IsInRange)
