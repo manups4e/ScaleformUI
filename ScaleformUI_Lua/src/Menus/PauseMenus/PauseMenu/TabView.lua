@@ -96,6 +96,9 @@ function TabView:Index(idx)
         self.Tabs[self.index].Visible = false
         self.index = idx
         self.Tabs[self.index].Visible = true
+        if self:Visible() then
+            ScaleformUI.Scaleforms._pauseMenu:SelectTab(idx-1)
+        end
         self.OnPauseMenuTabChanged(self, self.Tabs[self.index], self.index)
     else
         return self.index
@@ -950,7 +953,6 @@ function TabView:ProcessMouse()
         if successHeader then
             if event_type_h == 5 then
                 if context_h == -1 then
-                    ScaleformUI.Scaleforms._pauseMenu:SelectTab(item_id_h)
                     self:FocusLevel(1)
                     self:Index(item_id_h + 1)
                     PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
