@@ -11,6 +11,7 @@ ScaleformUI.Scaleforms.BigMessageInstance = BigMessageInstance --[[@type BigMess
 ScaleformUI.Scaleforms.Warning = WarningInstance --[[@type WarningInstance]]                          -- warning
 ScaleformUI.Scaleforms.JobMissionSelector = MissionSelectorHandler --[[@type MissionSelectorHandler]] -- missionselector
 ScaleformUI.Scaleforms.RankbarHandler = RankbarHandler --[[@type RankbarHandler]]                     -- rankbar
+ScaleformUI.Scaleforms.SplashText = SplashTextInstance
 ScaleformUI.Notifications = Notifications
 ScaleformUI.Scaleforms.BigFeed = BigFeedInstance
 ScaleformUI.Scaleforms.MinimapOverlays = MinimapOverlays
@@ -53,6 +54,9 @@ Citizen.CreateThread(function()
             MenuHandler:ProcessMenus()
         end
         ScaleformUI.Scaleforms.Warning:Update()
+        if ScaleformUI.Scaleforms.SplashText ~= nil then
+            ScaleformUI.Scaleforms.SplashText:Draw()
+        end
         ScaleformUI.Scaleforms.InstructionalButtons:Update()
         if not IsPauseMenuActive() then
             ScaleformUI.Scaleforms.BigMessageInstance:Update()
