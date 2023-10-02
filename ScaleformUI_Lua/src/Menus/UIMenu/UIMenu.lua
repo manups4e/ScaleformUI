@@ -552,9 +552,9 @@ end
 function UIMenu:Clear()
     self.Pagination:CurrentMenuIndex(1)
     self.Items = {}
-    self.Pagination:TotalItems(0)
+    self.Pagination:Reset()
     if self:Visible() then
-        ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
+        ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ITEMS", false)
     end
 end
 
@@ -581,10 +581,10 @@ function UIMenu:Visible(bool)
 
         if bool then
             ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
-            self.OnMenuOpen(self)
-            self:BuildUpMenuAsync()
             MenuHandler._currentMenu = self
             MenuHandler.ableToDraw = true
+            self.OnMenuOpen(self)
+            self:BuildUpMenuAsync()
         else
             self:FadeOutMenu()
             ScaleformUI.Scaleforms.InstructionalButtons:ClearButtonList()
@@ -603,8 +603,8 @@ end
 
 ---BuildUpMenu
 function UIMenu:BuildUpMenuAsync()
+    self._isBuilding = true
     Citizen.CreateThread(function()
-        self._isBuilding = true
         local enab = self:AnimationEnabled()
         self:AnimationEnabled(false)
         while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
@@ -643,8 +643,10 @@ function UIMenu:BuildUpMenuAsync()
                 end
             end
         end
+    end)
 
 
+    Citizen.CreateThread(function()
         local i = 1
         local max = self.Pagination:ItemsPerPage()
         if #self.Items < max then
