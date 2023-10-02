@@ -21,9 +21,6 @@ function SplashTextInstance:SetLabel(label, duration, sColor, transistionIn)
   self._scaleform:CallFunction("SET_SPLASH_TEXT", nil, { type = "label", data = "LBL_SPLASH_TEXT" }, duration or 0,
     sColor.R, sColor.G, sColor.B, sColor.A);
 
-  print(label);
-  Wait(0)
-
   if transistionIn then
     self:TransitionIn(300);
   end
@@ -34,8 +31,6 @@ function SplashTextInstance:SetTextLabel(label, sColor)
 
   self._scaleform:CallFunction("SPLASH_TEXT_LABEL", nil, { type = "label", data = "LBL_SPLASH_TEXT" }, sColor.R,
     sColor.G, sColor.B, sColor.A);
-
-  print(label);
 end
 
 function SplashTextInstance:TransitionIn(duration, managed)
