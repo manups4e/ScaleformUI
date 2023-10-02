@@ -15,16 +15,14 @@ function SplashTextInstance.New(posX, posY, width, height)
   return setmetatable(data, SplashTextInstance);
 end
 
-function SplashTextInstance:SetLabel(label, duration, sColor, transistionIn)
+function SplashTextInstance:SetLabel(label, sColor, transistionIn)
   AddTextEntry("LBL_SPLASH_TEXT", label);
 
   if not sColor then
     sColor = SColor.White;
   end
 
-  self._scaleform:CallFunction("SET_SPLASH_TEXT", nil, { type = "label", data = "LBL_SPLASH_TEXT" }, duration or 0,
-    sColor.R, sColor.G, sColor.B, sColor.A);
-
+  self.SetTextLabel({ type = "label", data = "LBL_SPLASH_TEXT" });
   if transistionIn then
     self:TransitionIn(300);
   end
@@ -37,16 +35,16 @@ function SplashTextInstance:SetTextLabel(label, sColor)
     sColor = SColor.White;
   end
 
-  self._scaleform:CallFunction("SPLASH_TEXT_LABEL", nil, { type = "label", data = "LBL_SPLASH_TEXT" }, sColor.R,
+  self._scaleform:CallFunction("SPLASH_TEXT_LABEL", false, { type = "label", data = "LBL_SPLASH_TEXT" }, sColor.R,
     sColor.G, sColor.B, sColor.A);
 end
 
 function SplashTextInstance:TransitionIn(duration, managed)
-  self._scaleform:CallFunction("SPLASH_TEXT_TRANSITION_IN", duration or 300, managed or false);
+  self._scaleform:CallFunction("SPLASH_TEXT_TRANSITION_IN", false, duration or 300, managed or false);
 end
 
 function SplashTextInstance:TransitionOut(duration, managed)
-  self._scaleform:CallFunction("SPLASH_TEXT_TRANSITION_OUT", duration or 300, managed or false);
+  self._scaleform:CallFunction("SPLASH_TEXT_TRANSITION_OUT", false, duration or 300, managed or false);
 end
 
 function SplashTextInstance:SetScale(width, height)
