@@ -18,6 +18,10 @@ end
 function SplashTextInstance:SetLabel(label, duration, sColor, transistionIn)
   AddTextEntry("LBL_SPLASH_TEXT", label);
 
+  if not sColor then
+    sColor = SColor.White;
+  end
+
   self._scaleform:CallFunction("SET_SPLASH_TEXT", nil, { type = "label", data = "LBL_SPLASH_TEXT" }, duration or 0,
     sColor.R, sColor.G, sColor.B, sColor.A);
 
@@ -28,6 +32,10 @@ end
 
 function SplashTextInstance:SetTextLabel(label, sColor)
   AddTextEntry("LBL_SPLASH_TEXT", label);
+
+  if not sColor then
+    sColor = SColor.White;
+  end
 
   self._scaleform:CallFunction("SPLASH_TEXT_LABEL", nil, { type = "label", data = "LBL_SPLASH_TEXT" }, sColor.R,
     sColor.G, sColor.B, sColor.A);
