@@ -15,13 +15,11 @@ function SplashTextInstance.New(posX, posY, width, height)
   return setmetatable(data, SplashTextInstance);
 end
 
-function SplashTextInstance:SetLabel(label, duration, red, green, blue, alpha, transistionIn)
+function SplashTextInstance:SetLabel(label, duration, sColor, transistionIn)
   AddTextEntry("LBL_SPLASH_TEXT", label);
 
   self._scaleform:CallFunction("SET_SPLASH_TEXT", nil, { type = "label", data = "LBL_SPLASH_TEXT" }, duration or 0,
-    red or 255,
-    green or 255,
-    blue or 255, alpha or 255);
+    sColor.R, sColor.G, sColor.B, sColor.A);
 
   print(label);
   Wait(0)
@@ -31,11 +29,11 @@ function SplashTextInstance:SetLabel(label, duration, red, green, blue, alpha, t
   end
 end
 
-function SplashTextInstance:SetTextLabel(label, red, green, blue, alpha)
+function SplashTextInstance:SetTextLabel(label, sColor)
   AddTextEntry("LBL_SPLASH_TEXT", label);
 
-  self._scaleform:CallFunction("SPLASH_TEXT_LABEL", nil, { type = "label", data = "LBL_SPLASH_TEXT" }, red or 255,
-    green or 255, blue or 255, alpha or 255);
+  self._scaleform:CallFunction("SPLASH_TEXT_LABEL", nil, { type = "label", data = "LBL_SPLASH_TEXT" }, sColor.R,
+    sColor.G, sColor.B, sColor.A);
 
   print(label);
 end
@@ -61,7 +59,7 @@ end
 function SplashTextInstance:Load()
   local prom = promise.new();
 
-  self._scaleform = Scaleform.Request("SPLASH_TEXT");
+  self._scaleform = Scaleform.RequestWidescreen("SPLASH_TEXT");
 
   while not self._scaleform:IsLoaded() do
     Citizen.Wait(0);
