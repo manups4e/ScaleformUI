@@ -50,13 +50,13 @@ function SplashTextInstance:TransitionOut(duration, managed)
 end
 
 function SplashTextInstance:SetScale(width, height)
-  self.width = width;
-  self.height = height;
+  self._width = width;
+  self._height = height;
 end
 
 function SplashTextInstance:SetPosition(x, y)
-  self.x = x;
-  self.y = y;
+  self._posX = x;
+  self._posY = y;
 end
 
 function SplashTextInstance:Load()
