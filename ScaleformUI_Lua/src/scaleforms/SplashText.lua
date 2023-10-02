@@ -4,9 +4,13 @@ SplashTextInstance.__call = function()
   return "SplashText"
 end
 
-function SplashTextInstance.New()
+function SplashTextInstance.New(posX, posY, width, height)
   local data = {
-    _scaleform = nil
+    _scaleform = nil,
+    _posX = posX or 0.5,
+    _posY = posY or 0.5,
+    _width = width or 1.0,
+    _height = height or 1.0
   };
   return setmetatable(data, SplashTextInstance);
 end
@@ -44,6 +48,16 @@ function SplashTextInstance:TransitionOut(duration, managed)
   self._scaleform:CallFunction("SPLASH_TEXT_TRANSITION_OUT", duration or 300, managed or false);
 end
 
+function SplashTextInstance:SetScale(width, height)
+  self.width = width;
+  self.height = height;
+end
+
+function SplashTextInstance:SetPosition(x, y)
+  self.x = x;
+  self.y = y;
+end
+
 function SplashTextInstance:Load()
   local prom = promise.new();
 
@@ -62,5 +76,5 @@ function SplashTextInstance:Draw()
     return;
   end
 
-  self._scaleform:Render2DNormal(0.5, 0.5, 1.0, 1.0);
+  self._scaleform:Render2DNormal(self._posX, self._posY, self._width, self._height);
 end
