@@ -22,7 +22,7 @@ function SplashTextInstance:SetLabel(label, sColor, transistionIn)
     sColor = SColor.White;
   end
 
-  self.SetTextLabel({ type = "label", data = "LBL_SPLASH_TEXT" });
+  self.SetTextLabel({ type = "label", data = "LBL_SPLASH_TEXT" }, sColor);
   if transistionIn then
     self:TransitionIn(300);
   end
