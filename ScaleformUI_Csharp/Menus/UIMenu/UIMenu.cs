@@ -2330,6 +2330,7 @@ namespace ScaleformUI.Menu
 
         public void SortMenuItems(Comparison<UIMenuItem> compare)
         {
+            MenuItems[CurrentSelection].Selected = false;
             _unfilteredMenuItems = MenuItems.ToList();
             Clear();
             List<UIMenuItem> list = _unfilteredMenuItems.ToList();
@@ -2341,6 +2342,7 @@ namespace ScaleformUI.Menu
 
         public void FilterMenuItems(Func<UIMenuItem, bool> predicate)
         {
+            MenuItems[CurrentSelection].Selected = false;
             _unfilteredMenuItems = MenuItems.ToList();
             Clear();
             MenuItems = _unfilteredMenuItems.Where(predicate.Invoke).ToList();
@@ -2350,6 +2352,7 @@ namespace ScaleformUI.Menu
 
         public void ResetFilter()
         {
+            MenuItems[CurrentSelection].Selected = false;
             Clear();
             MenuItems = _unfilteredMenuItems.ToList();
             Pagination.TotalItems = MenuItems.Count;
