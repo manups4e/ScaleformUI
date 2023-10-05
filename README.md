@@ -9,7 +9,7 @@ ScaleformUI is a library that helps you quickly and easily build Rockstar-like m
 ## ⚠️ NOTE: This also requires an Assets resource from the Github Repo Releases, it will not work without them. ⚠️
 
 ### Documentation 📖
-Take a look at our Wiki here: https://github.com/manups4e/ScaleformUI/wiki (WIP), you can always join our discord for help and talk about scripting and coding at https://discord.gg/KKN7kRT2vM
+Take a look at our Wiki here: https://github.com/manups4e/ScaleformUI/wiki (WIP)
 
 ### Discord
 If you didn't do that yet, join my discord server to talk about scripting, scaleformui, coding, and chilling :D https://discord.gg/KKN7kRT2vM
