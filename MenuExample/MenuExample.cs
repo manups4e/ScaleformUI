@@ -373,6 +373,29 @@ public class MenuExample : BaseScript
             PauseMenuShowcase(menu);
         };
 
+        UIMenuItem itemFilter = new UIMenuItem("Item filtering", "Select this item to filter items based on their labels");
+        itemFilter.Activated += async (menu, item) =>
+        {
+            string filter = await Game.GetUserInput(10);
+            menu.FilterMenuItems((mb) => mb.Label.ToLower().Contains(filter.ToLower()));
+        };
+
+        UIMenuItem itemSorter = new UIMenuItem("Item sorting", "Activate this item to sort items alphabetically");
+        itemSorter.Activated += (menu, item) =>
+        {
+            menu.SortMenuItems((pair1, pair2) => pair1.Label.ToString().ToLower().CompareTo(pair2.Label.ToString().ToLower()));
+        };
+
+        UIMenuItem ResetFiltering = new UIMenuItem("Reset item filters", "Select this item to reset any filtering");
+        ResetFiltering.Activated += (menu, item) =>
+        {
+            menu.ResetFilter();
+        };
+
+        exampleMenu.AddItem(itemFilter);
+        exampleMenu.AddItem(itemSorter);
+        exampleMenu.AddItem(ResetFiltering);
+
         #endregion
 
         #endregion
