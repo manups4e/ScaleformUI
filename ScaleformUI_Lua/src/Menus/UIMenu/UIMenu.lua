@@ -94,6 +94,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         Extra = {},
         Description = {},
         Items = {},
+        _unfilteredMenuItems = {},
         Windows = {},
         TxtDictionary = txtDictionary,
         TxtName = txtName,
@@ -602,49 +603,51 @@ function UIMenu:Visible(bool)
 end
 
 ---BuildUpMenu
-function UIMenu:BuildUpMenuAsync()
+function UIMenu:BuildUpMenuAsync(itemsOnly)
+    if itemsOnly == nil then itemsOnly = false end
     self._isBuilding = true
-    Citizen.CreateThread(function()
-        local enab = self:AnimationEnabled()
-        self:AnimationEnabled(false)
-        while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
-        ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self._Title, self._Subtitle, self.Position.x,
-            self.Position.y,
-            self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, true,
-            self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName,
-            self.descFont.FontID, self.fadingTime)
-        if #self.Windows > 0 then
-            for w_id, window in pairs(self.Windows) do
-                local Type, SubType = window()
-                if SubType == "UIMenuHeritageWindow" then
-                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_WINDOW", false, window.id, window.Mom, window.Dad)
-                elseif SubType == "UIMenuDetailsWindow" then
-                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_WINDOW", false, window.id, window.DetailBottom,
-                        window.DetailMid, window.DetailTop, window.DetailLeft.Txd, window.DetailLeft.Txn,
-                        window.DetailLeft.Pos.x, window.DetailLeft.Pos.y, window.DetailLeft.Size.x,
-                        window.DetailLeft.Size.y)
-                    if window.StatWheelEnabled then
-                        for key, value in pairs(window.DetailStats) do
-                            ScaleformUI.Scaleforms._ui:CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", false,
-                                window.id, value.Percentage, value.HudColor)
+    if not itemsOnly then
+        Citizen.CreateThread(function()
+            local enab = self:AnimationEnabled()
+            self:AnimationEnabled(false)
+            while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
+            ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self._Title, self._Subtitle, self.Position.x,
+                self.Position.y,
+                self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, true,
+                self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName,
+                self.descFont.FontID, self.fadingTime)
+            if #self.Windows > 0 then
+                for w_id, window in pairs(self.Windows) do
+                    local Type, SubType = window()
+                    if SubType == "UIMenuHeritageWindow" then
+                        ScaleformUI.Scaleforms._ui:CallFunction("ADD_WINDOW", false, window.id, window.Mom, window.Dad)
+                    elseif SubType == "UIMenuDetailsWindow" then
+                        ScaleformUI.Scaleforms._ui:CallFunction("ADD_WINDOW", false, window.id, window.DetailBottom,
+                            window.DetailMid, window.DetailTop, window.DetailLeft.Txd, window.DetailLeft.Txn,
+                            window.DetailLeft.Pos.x, window.DetailLeft.Pos.y, window.DetailLeft.Size.x,
+                            window.DetailLeft.Size.y)
+                        if window.StatWheelEnabled then
+                            for key, value in pairs(window.DetailStats) do
+                                ScaleformUI.Scaleforms._ui:CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", false,
+                                    window.id, value.Percentage, value.HudColor)
+                            end
                         end
                     end
                 end
             end
-        end
-        local timer = GlobalGameTimer
-        if #self.Items == 0 then
-            while #self.Items == 0 do
-                Citizen.Wait(0)
-                if GlobalGameTimer - timer > 150 then
-                    ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, 0)
-                    assert(#self.Items ~= 0, "ScaleformUI cannot build a menu with no items")
-                    return
+            local timer = GlobalGameTimer
+            if #self.Items == 0 then
+                while #self.Items == 0 do
+                    Citizen.Wait(0)
+                    if GlobalGameTimer - timer > 150 then
+                        ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", false, 0)
+                        assert(#self.Items ~= 0, "ScaleformUI cannot build a menu with no items")
+                        return
+                    end
                 end
             end
-        end
-    end)
-
+        end)
+    end
 
     Citizen.CreateThread(function()
         local i = 1
@@ -840,6 +843,41 @@ function UIMenu:_itemCreation(page, pageIndex, before, overflow)
             end
         end
     end
+end
+
+function UIMenu:FilterMenuItems(predicate)
+    self.Items[self:CurrentSelection()]:Selected(false)
+    self._unfilteredMenuItems = self.Items
+    self:Clear()
+    for i, item in ipairs(self._unfilteredMenuItems) do
+        if predicate(item) then
+            table.insert(self.Items, item)
+        end
+    end
+    self.Pagination:TotalItems(#self.Items)
+    self:BuildUpMenuAsync(true)
+end
+
+function UIMenu:SortMenuItems(compare)
+    self.Items[self:CurrentSelection()]:Selected(false)
+    self._unfilteredMenuItems = self.Items
+    self:Clear()
+    local list = {}
+    for i, item in ipairs(self._unfilteredMenuItems) do
+        table.insert(list, item)
+    end
+    table.sort(list, compare)
+    self.Items = list
+    self.Pagination:TotalItems(#self.Items)
+    self:BuildUpMenuAsync(true)
+end
+
+function UIMenu:ResetFilter()
+    self.Items[self:CurrentSelection()]:Selected(false)
+    self:Clear()
+    self.Items = self._unfilteredMenuItems
+    self.Pagination:TotalItems(#self.Items)
+    self:BuildUpMenuAsync(true)
 end
 
 ---ProcessControl

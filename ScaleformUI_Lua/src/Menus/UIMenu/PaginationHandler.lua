@@ -259,7 +259,6 @@ function PaginationHandler:Reset()
     self._currentPageIndex = 1
     self._currentMenuIndex = 1
     self.currentPage = 1
-    self.itemsPerPage = 0
     self.minItem = 1
     self.maxItem = 1
     self.totalItems = 0
