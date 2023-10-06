@@ -9,14 +9,17 @@ ScaleformUI is a library that helps you quickly and easily build Rockstar-like m
 ## ⚠️ NOTE: This also requires an Assets resource from the Github Repo Releases, it will not work without them. ⚠️
 
 ### Documentation 📖
-Take a look at our Wiki here: https://github.com/manups4e/ScaleformUI/wiki (WIP), you can always join our discord for help and talk about scripting and coding at https://discord.gg/KKN7kRT2vM
+Take a look at our Wiki here: https://github.com/manups4e/ScaleformUI/wiki (WIP)
+
+### Discord
+If you didn't do that yet, join my discord server to talk about scripting, scaleformui, coding, and chilling :D https://discord.gg/KKN7kRT2vM
 
 ### Features 🔧
-* Support for simple buttons, checkboxes and lists.
+* Support for simple buttons, checkboxes and lists with special support for dynamicLists.
 * Support for custom banners from game sprites and your own textures.
 * Support for panels from grid panels to color panels and side panels.
-* Support for custom labels, texts, icons using ~ symbol and emojis!
-* Easy nested menus for fast and painless nested menu system.
+* Support for custom labels, texts, icons using ~ symbol and emojis and custom fonts!
+* Easy nested menus for fast and painless nested menu system (no submenus, more like navigating webpages).
 * Controller support.
 * Mouse controls.
 * Custom instructional buttons.
@@ -27,7 +30,6 @@ Take a look at our Wiki here: https://github.com/manups4e/ScaleformUI/wiki (WIP)
 * Event-based callbacks.
 
 ### Screenshots 📸
-
 ![NativeUI Example](https://i.imgur.com/K4FXOvR.png)
 ![Lobby Menu Example](https://user-images.githubusercontent.com/4005518/175790747-7c80eb14-ca0b-431c-8e75-4aedac345a9f.png)
 ![Pause Menu Example](https://i.imgur.com/LMAHF4O.png)
