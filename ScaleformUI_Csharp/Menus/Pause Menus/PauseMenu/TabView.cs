@@ -397,7 +397,7 @@ namespace ScaleformUI.PauseMenu
             tab.SettingsColumn.isBuilding = false;
         }
 
-        public async void buildPlayers(PlayerListTab tab)
+        internal async void buildPlayers(PlayerListTab tab)
         {
             int i = 0;
             int tab_id = Tabs.IndexOf(tab);
@@ -432,7 +432,7 @@ namespace ScaleformUI.PauseMenu
             tab.PlayersColumn.isBuilding = false;
         }
 
-        public async void buildMissions(PlayerListTab tab)
+        internal async void buildMissions(PlayerListTab tab)
         {
             int i = 0;
             int tab_id = Tabs.IndexOf(tab);

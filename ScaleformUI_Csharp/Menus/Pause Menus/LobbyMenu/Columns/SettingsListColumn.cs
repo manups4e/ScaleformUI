@@ -12,6 +12,7 @@ namespace ScaleformUI.LobbyMenu
         internal bool isBuilding = false;
         public event IndexChanged OnIndexChanged;
         public List<UIMenuItem> Items { get; internal set; }
+        private List<UIMenuItem> _unfilteredItems;
         public event SettingItemSelected OnSettingItemActivated;
         public ScrollingType ScrollingType { get => Pagination.scrollType; set => Pagination.scrollType = value; }
         public SettingsListColumn(string label, SColor color, ScrollingType scrollType = ScrollingType.CLASSIC) : base(label, color)
@@ -518,6 +519,55 @@ namespace ScaleformUI.LobbyMenu
                 pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN", ParentTab);
             Items.Clear();
             Pagination.Reset();
+        }
+
+        public void SortMissions(Comparison<UIMenuItem> compare)
+        {
+            Items[CurrentSelection].Selected = false;
+            _unfilteredItems = Items.ToList();
+            Clear();
+            List<UIMenuItem> list = _unfilteredItems.ToList();
+            list.Sort(compare);
+            Items = list.ToList();
+            Pagination.TotalItems = Items.Count;
+            if (Parent != null && Parent.Visible)
+            {
+                if (Parent is MainView lobby)
+                    lobby.buildSettings();
+                else if (Parent is TabView pause)
+                    pause.buildSettings(pause.Tabs[ParentTab] as PlayerListTab);
+            }
+        }
+
+        public void FilterMissions(Func<UIMenuItem, bool> predicate)
+        {
+            Items[CurrentSelection].Selected = false;
+            _unfilteredItems = Items.ToList();
+            Clear();
+            Items = _unfilteredItems.Where(predicate.Invoke).ToList();
+            Pagination.TotalItems = Items.Count;
+            if (Parent != null && Parent.Visible)
+            {
+                if (Parent is MainView lobby)
+                    lobby.buildSettings();
+                else if (Parent is TabView pause)
+                    pause.buildSettings(pause.Tabs[ParentTab] as PlayerListTab);
+            }
+        }
+
+        public void ResetFilter()
+        {
+            Items[CurrentSelection].Selected = false;
+            Clear();
+            Items = _unfilteredItems.ToList();
+            Pagination.TotalItems = Items.Count;
+            if (Parent != null && Parent.Visible)
+            {
+                if (Parent is MainView lobby)
+                    lobby.buildSettings();
+                else if (Parent is TabView pause)
+                    pause.buildSettings(pause.Tabs[ParentTab] as PlayerListTab);
+            }
         }
         public void SelectItem()
         {

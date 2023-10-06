@@ -12,6 +12,7 @@ namespace ScaleformUI.LobbyMenu
         internal bool isBuilding = false;
         public event IndexChanged OnIndexChanged;
         public List<LobbyItem> Items { get; private set; }
+        private List<LobbyItem> _unfilteredItems;
         public event PlayerItemSelected OnPlayerItemActivated;
 
         public ScrollingType ScrollingType { get => Pagination.scrollType; set => Pagination.scrollType = value; }
@@ -286,6 +287,54 @@ namespace ScaleformUI.LobbyMenu
             }
         }
 
+        public void SortMissions(Comparison<LobbyItem> compare)
+        {
+            Items[CurrentSelection].Selected = false;
+            _unfilteredItems = Items.ToList();
+            Clear();
+            List<LobbyItem> list = _unfilteredItems.ToList();
+            list.Sort(compare);
+            Items = list.ToList();
+            Pagination.TotalItems = Items.Count;
+            if (Parent != null && Parent.Visible)
+            {
+                if (Parent is MainView lobby)
+                    lobby.buildPlayers();
+                else if (Parent is TabView pause)
+                    pause.buildPlayers(pause.Tabs[ParentTab] as PlayerListTab);
+            }
+        }
+
+        public void FilterMissions(Func<LobbyItem, bool> predicate)
+        {
+            Items[CurrentSelection].Selected = false;
+            _unfilteredItems = Items.ToList();
+            Clear();
+            Items = _unfilteredItems.Where(predicate.Invoke).ToList();
+            Pagination.TotalItems = Items.Count;
+            if (Parent != null && Parent.Visible)
+            {
+                if (Parent is MainView lobby)
+                    lobby.buildPlayers();
+                else if (Parent is TabView pause)
+                    pause.buildPlayers(pause.Tabs[ParentTab] as PlayerListTab);
+            }
+        }
+
+        public void ResetFilter()
+        {
+            Items[CurrentSelection].Selected = false;
+            Clear();
+            Items = _unfilteredItems.ToList();
+            Pagination.TotalItems = Items.Count;
+            if (Parent != null && Parent.Visible)
+            {
+                if (Parent is MainView lobby)
+                    lobby.buildPlayers();
+                else if (Parent is TabView pause)
+                    pause.buildPlayers(pause.Tabs[ParentTab] as PlayerListTab);
+            }
+        }
         public void SelectItem()
         {
             OnPlayerItemActivated?.Invoke(Items[CurrentSelection], CurrentSelection);

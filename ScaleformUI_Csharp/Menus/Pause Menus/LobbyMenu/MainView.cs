@@ -284,7 +284,7 @@ namespace ScaleformUI.LobbyMenu
             isBuilding = false;
         }
 
-        private async void buildSettings()
+        internal async void buildSettings()
         {
             if (SettingsColumn.Items.Count > 0)
             {
@@ -323,7 +323,7 @@ namespace ScaleformUI.LobbyMenu
 
         }
 
-        private async void buildPlayers()
+        internal async void buildPlayers()
         {
             if (PlayersColumn.Items.Count > 0)
             {
@@ -361,7 +361,7 @@ namespace ScaleformUI.LobbyMenu
             }
         }
 
-        private async void buildMissions()
+        internal async void buildMissions()
         {
             if (MissionsColumn.Items.Count > 0)
             {
