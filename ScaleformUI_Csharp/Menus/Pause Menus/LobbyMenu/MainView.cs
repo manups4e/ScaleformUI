@@ -691,7 +691,13 @@ namespace ScaleformUI.LobbyMenu
             if (_newStyle)
             {
                 if (listCol.Any(x => x.Type == "settings"))
-                    SettingsColumn.Items[SettingsColumn.CurrentSelection].Selected = false;
+                {
+                    UIMenuItem item = SettingsColumn.Items[SettingsColumn.CurrentSelection];
+                    if (item is not UIMenuListItem && item is not UIMenuSliderItem && item is not UIMenuProgressItem)
+                    {
+                        item.Selected = false;
+                    }
+                }
                 if (listCol.Any(x => x.Type == "missions"))
                     MissionsColumn.Items[MissionsColumn.CurrentSelection].Selected = false;
                 if (listCol.Any(x => x.Type == "players"))
@@ -792,7 +798,13 @@ namespace ScaleformUI.LobbyMenu
             if (_newStyle)
             {
                 if (listCol.Any(x => x.Type == "settings"))
-                    SettingsColumn.Items[SettingsColumn.CurrentSelection].Selected = false;
+                {
+                    UIMenuItem item = SettingsColumn.Items[SettingsColumn.CurrentSelection];
+                    if (item is not UIMenuListItem && item is not UIMenuSliderItem && item is not UIMenuProgressItem)
+                    {
+                        item.Selected = false;
+                    }
+                }
                 if (listCol.Any(x => x.Type == "missions"))
                     MissionsColumn.Items[MissionsColumn.CurrentSelection].Selected = false;
                 if (listCol.Any(x => x.Type == "players"))
