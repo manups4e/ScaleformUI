@@ -316,8 +316,8 @@ namespace ScaleformUI.LobbyMenu
                 SettingsColumn.CurrentSelection = 0;
                 SettingsColumn.Pagination.ScaleformIndex = SettingsColumn.Pagination.GetScaleformIndex(SettingsColumn.CurrentSelection);
                 SettingsColumn.Items[0].Selected = true;
-                _pause._pause.CallFunction("SET_SETTINGS_SELECTION", SettingsColumn.Pagination.ScaleformIndex);
-                _pause._pause.CallFunction("SET_SETTINGS_QTTY", SettingsColumn.CurrentSelection + 1, SettingsColumn.Items.Count);
+                _pause._lobby.CallFunction("SET_SETTINGS_SELECTION", SettingsColumn.Pagination.ScaleformIndex);
+                _pause._lobby.CallFunction("SET_SETTINGS_QTTY", SettingsColumn.CurrentSelection + 1, SettingsColumn.Items.Count);
                 SettingsColumn.isBuilding = false;
             }
 
@@ -355,8 +355,8 @@ namespace ScaleformUI.LobbyMenu
                 PlayersColumn.CurrentSelection = 0;
                 PlayersColumn.Pagination.ScaleformIndex = PlayersColumn.Pagination.GetScaleformIndex(PlayersColumn.CurrentSelection);
                 PlayersColumn.Items[0].Selected = true;
-                _pause._pause.CallFunction("SET_PLAYERS_SELECTION", PlayersColumn.Pagination.ScaleformIndex);
-                _pause._pause.CallFunction("SET_PLAYERS_QTTY", PlayersColumn.CurrentSelection + 1, PlayersColumn.Items.Count);
+                _pause._lobby.CallFunction("SET_PLAYERS_SELECTION", PlayersColumn.Pagination.ScaleformIndex);
+                _pause._lobby.CallFunction("SET_PLAYERS_QTTY", PlayersColumn.CurrentSelection + 1, PlayersColumn.Items.Count);
                 PlayersColumn.isBuilding = false;
             }
         }
@@ -393,8 +393,8 @@ namespace ScaleformUI.LobbyMenu
                 MissionsColumn.CurrentSelection = 0;
                 MissionsColumn.Pagination.ScaleformIndex = MissionsColumn.Pagination.GetScaleformIndex(MissionsColumn.CurrentSelection);
                 MissionsColumn.Items[0].Selected = true;
-                _pause._pause.CallFunction("SET_MISSIONS_SELECTION", MissionsColumn.Pagination.ScaleformIndex);
-                _pause._pause.CallFunction("SET_MISSIONS_QTTY", MissionsColumn.CurrentSelection + 1, MissionsColumn.Items.Count);
+                _pause._lobby.CallFunction("SET_MISSIONS_SELECTION", MissionsColumn.Pagination.ScaleformIndex);
+                _pause._lobby.CallFunction("SET_MISSIONS_QTTY", MissionsColumn.CurrentSelection + 1, MissionsColumn.Items.Count);
                 MissionsColumn.isBuilding = false;
             }
 
@@ -617,7 +617,7 @@ namespace ScaleformUI.LobbyMenu
                             SettingsColumn.SelectItem();
                             break;
                     }
-                    _pause._pause.CallFunction("SET_INPUT_EVENT", 16);
+                    _pause._lobby.CallFunction("SET_INPUT_EVENT", 16);
                     break;
                 case "missions":
                     MissionItem mitem = MissionsColumn.Items[MissionsColumn.CurrentSelection];
