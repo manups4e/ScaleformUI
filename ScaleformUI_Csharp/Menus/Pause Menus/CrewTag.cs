@@ -16,7 +16,7 @@ namespace ScaleformUI.PauseMenus
 
     public class CrewTag
     {
-        public string TAG { get; internal set; }
+        public string TAG { get; internal set; } = "";
         public CrewTag()
         {
             TAG = "";
