@@ -52,6 +52,10 @@ namespace ScaleformUI.LobbyMenu
                         if ((pause.Tabs[ParentTab] as PlayerListTab).listCol[(pause.Tabs[ParentTab] as PlayerListTab).Focus] == this)
                             CurrentSelection = sel;
                     }
+                    else if (Parent is TabView lobby)
+                    {
+                        CurrentSelection = sel;
+                    }
                 }
             }
         }

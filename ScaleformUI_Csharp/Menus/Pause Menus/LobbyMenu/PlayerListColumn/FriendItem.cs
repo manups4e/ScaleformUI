@@ -150,7 +150,7 @@ namespace ScaleformUI.LobbyMenu
             }
         }
 
-        public FriendItem(string label, SColor itemColor, bool coloredTag, int rank, string status = "", CrewTag crewTag = default)
+        public FriendItem(string label, SColor itemColor, bool coloredTag, int rank, string status = "", CrewTag crewTag = null)
         {
             _type = 1;
             this.label = label;
@@ -158,7 +158,7 @@ namespace ScaleformUI.LobbyMenu
             this.coloredTag = coloredTag;
             this.rank = rank;
             this.status = status;
-            this.crewTag = crewTag;
+            this.CrewTag = crewTag;
             if (this.itemColor == SColor.FromHudColor(HudColor.NONE))
                 this.itemColor = SColor.FromHudColor(HudColor.HUD_COLOUR_BLUE);
             if (this.statusColor == SColor.FromHudColor(HudColor.NONE))
