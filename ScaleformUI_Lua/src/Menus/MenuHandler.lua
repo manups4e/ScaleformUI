@@ -20,7 +20,7 @@ function MenuHandler:SwitchTo(currentMenu, newMenu, newMenuCurrentSelection, inh
     assert(currentMenu == self._currentMenu, "The menu you're switching from must be opened")
     assert(newMenu ~= nil, "The menu you're switching to cannot be null")
     assert(newMenu ~= currentMenu, "You cannot switch a menu to itself")
-    assert(#new.Items > 0, "You cannot switch to an empty menu.")
+    assert(#newMenu.Items > 0, "You cannot switch to an empty menu.")
     if BreadcrumbsHandler.SwitchInProgress then return end
     BreadcrumbsHandler.SwitchInProgress = true
     
