@@ -9,7 +9,7 @@ namespace ScaleformUI
         /// <summary>
         /// Provides the current game time in milliseconds.
         /// </summary>
-        public static int GameTime = API.GetGameTimer();
+        public static int GameTime = API.GetNetworkTimeAccurate();
 
         public static PauseMenuScaleform PauseMenu { get; set; }
         public static MediumMessageHandler MedMessageInstance { get; set; }
