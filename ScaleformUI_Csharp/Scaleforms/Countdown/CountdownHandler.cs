@@ -92,8 +92,8 @@ namespace ScaleformUI.Scaleforms
         {
             while (_sc != null && _sc.IsLoaded)
             {
-                await BaseScript.Delay(0);
                 _sc.Render2D();
+                await BaseScript.Delay(0);
             }
         }
     }
