@@ -74,7 +74,9 @@ function UIMenuItem.New(text, description, color, highlightColor, textColor, hig
         SidePanel = nil,
         ItemId = 0,
         Activated = function(menu, item)
-        end
+        end,
+        OnSelect = function(menu, item)
+        end,
     }
     return setmetatable(_UIMenuItem, UIMenuItem)
 end
@@ -156,6 +158,7 @@ function UIMenuItem:Selected(bool, item)
                 self._formatRightLabel = self._formatRightLabel:gsub("~w~", "~l~")
                 self._formatRightLabel = self._formatRightLabel:gsub("~s~", "~l~")
             end
+            self.OnSelect(self.ParentMenu, item)
         else
             self._formatLeftLabel = self._formatLeftLabel:gsub("~l~", "~s~")
             if not string.IsNullOrEmpty(self._formatRightLabel) then
