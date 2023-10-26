@@ -326,7 +326,11 @@ namespace ScaleformUI.Menu
         /// Called when user selects the current item.
         /// </summary>
         public event ItemActivatedEvent Activated;
-
+        
+        /// <summary>
+        /// Called when user "highlights" the current item.
+        /// </summary>
+        public event ItemHighlightedEvent Highlighted;
 
         /// <summary>
         /// Basic menu button.
@@ -433,6 +437,7 @@ namespace ScaleformUI.Menu
                         _formatRightLabel = _formatRightLabel.Replace("~w~", "~l~");
                         _formatRightLabel = _formatRightLabel.Replace("~s~", "~l~");
                     }
+                    Highlighted?.Invoke(Parent, this);
                 }
                 else
                 {
