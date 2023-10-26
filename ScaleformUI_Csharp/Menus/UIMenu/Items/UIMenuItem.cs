@@ -326,6 +326,11 @@ namespace ScaleformUI.Menu
         /// Called when user selects the current item.
         /// </summary>
         public event ItemActivatedEvent Activated;
+        
+        /// <summary>
+        /// Called when user changes items in the menu and this item becomes selected.
+        /// </summary>
+        public event ItemSelectedEvent OnSelect;
 
 
         /// <summary>
@@ -433,6 +438,7 @@ namespace ScaleformUI.Menu
                         _formatRightLabel = _formatRightLabel.Replace("~w~", "~l~");
                         _formatRightLabel = _formatRightLabel.Replace("~s~", "~l~");
                     }
+                    OnSelect?.Invoke(Parent, this);
                 }
                 else
                 {

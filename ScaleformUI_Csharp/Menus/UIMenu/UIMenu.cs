@@ -812,6 +812,7 @@ namespace ScaleformUI.Menu
     public delegate void GridPanelChangedEvent(UIMenuItem menu, UIMenuGridPanel panel, PointF value);
     public delegate void MenuOpenedEvent(UIMenu menu, dynamic data = null);
     public delegate void MenuClosedEvent(UIMenu menu);
+    public delegate void ItemSelectedEvent(UIMenu menu, UIMenuItem item);
 
     public enum MenuAnimationType
     {
