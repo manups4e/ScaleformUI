@@ -328,10 +328,9 @@ namespace ScaleformUI.Menu
         public event ItemActivatedEvent Activated;
         
         /// <summary>
-        /// Called when user changes items in the menu and this item becomes selected.
+        /// Called when user "highlights" the current item.
         /// </summary>
-        public event ItemSelectedEvent OnSelect;
-
+        public event ItemHighlightedEvent Highlighted;
 
         /// <summary>
         /// Basic menu button.
@@ -438,7 +437,7 @@ namespace ScaleformUI.Menu
                         _formatRightLabel = _formatRightLabel.Replace("~w~", "~l~");
                         _formatRightLabel = _formatRightLabel.Replace("~s~", "~l~");
                     }
-                    OnSelect?.Invoke(Parent, this);
+                    Highlighted?.Invoke(Parent, this);
                 }
                 else
                 {
