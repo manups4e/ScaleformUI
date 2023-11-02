@@ -71,7 +71,7 @@ namespace ScaleformUI
                 MenuHandler.ProcessMenus();
             if (Warning._sc != null)
                 Warning.Update();
-            if (InstructionalButtons._sc != null && (InstructionalButtons.ControlButtons != null && InstructionalButtons.ControlButtons.Count != 0) || InstructionalButtons.IsSaving)
+            if (InstructionalButtons._sc != null && (InstructionalButtons.ControlButtons != null && InstructionalButtons.ControlButtons.Count != 0))
                 InstructionalButtons.Update();
             if (Game.IsPaused) return;
             if (MedMessageInstance._sc != null)
