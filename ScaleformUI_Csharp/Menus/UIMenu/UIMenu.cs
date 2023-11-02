@@ -1663,11 +1663,7 @@ namespace ScaleformUI.Menu
                                 break;
                             case 10: // panels (10 => context 1, panel_type 0) // ColorPanel
                                 {
-                                    BeginScaleformMovieMethod(Main.scaleformUI.Handle, "SELECT_PANEL");
-                                    ScaleformMovieMethodAddParamInt(Pagination.GetScaleformIndex(CurrentSelection));
-                                    int ret = EndScaleformMovieMethodReturnValue();
-                                    while (!IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-                                    string res = GetScaleformMovieMethodReturnValueString(ret);
+                                    string res = await Main.scaleformUI.CallFunctionReturnValueString("SELECT_PANEL", Pagination.GetScaleformIndex(CurrentSelection));
                                     string[] split = res.Split(',');
                                     UIMenuColorPanel panel = (UIMenuColorPanel)MenuItems[CurrentSelection].Panels[Convert.ToInt32(split[0])];
                                     panel._value = Convert.ToInt32(split[1]);

@@ -1402,8 +1402,7 @@ function UIMenu:ProcessMouse()
                 PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
             elseif context == 10 then -- panels (10 => context 1, panel_type 0) // ColorPanel
                 Citizen.CreateThread(function()
-                    local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SELECT_PANEL", true,
-                        self:CurrentSelection() - 1) --[[@as number]]
+                    local return_value = ScaleformUI.Scaleforms._ui:CallFunction("SELECT_PANEL", true, self.Pagination:GetScaleformIndex(self.Pagination:CurrentMenuIndex())) --[[@as number]]
                     while not IsScaleformMovieMethodReturnValueReady(return_value) do
                         Citizen.Wait(0)
                     end
