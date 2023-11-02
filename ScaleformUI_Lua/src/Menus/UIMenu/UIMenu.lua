@@ -1221,14 +1221,15 @@ end
 
 ---Go back to the previous menu
 ---@param boolean boolean? Play sound
-function UIMenu:GoBack(boolean)
+---@param bypass boolean? Bypass the CanPlayerCloseMenu condition
+function UIMenu:GoBack(boolean, bypass)
     local playSound = true
 
     if type(boolean) == "boolean" then
         playSound = boolean
     end
 
-    if self:CanPlayerCloseMenu() then
+    if self:CanPlayerCloseMenu() or bypass then
         self:FadeOutMenu()
         if playSound then
             PlaySoundFrontend(-1, self.Settings.Audio.Back, self.Settings.Audio.Library, true)
