@@ -63,7 +63,7 @@ function UIMenuItem.New(text, description, color, highlightColor, textColor, hig
         _formatRightLabel = "",
         _rightBadge = 0,
         _leftBadge = 0,
-        _mainColor = color or SColor.HUD_Pause_bg,
+        _mainColor = color or SColor.HUD_Panel_light,
         _highlightColor = highlightColor or SColor.HUD_White,
         _textColor = textColor or SColor.HUD_White,
         _highlightedTextColor = highlightedTextColor or SColor.HUD_Black,

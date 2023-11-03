@@ -18,7 +18,7 @@ UIMenuProgressItem.__call = function() return "UIMenuItem", "UIMenuProgressItem"
 ---@param backgroundSliderColor SColor
 function UIMenuProgressItem.New(Text, Max, Index, Description, sliderColor, color, highlightColor, textColor, highlightedTextColor, backgroundSliderColor)
     local _UIMenuProgressItem = {
-        Base = UIMenuItem.New(Text or "", Description or "", color or SColor.HUD_Pause_bg, highlightColor or SColor.HUD_White, textColor or SColor.HUD_White, highlightedTextColor or SColor.HUD_Black),
+        Base = UIMenuItem.New(Text or "", Description or "", color or SColor.HUD_Panel_light, highlightColor or SColor.HUD_White, textColor or SColor.HUD_White, highlightedTextColor or SColor.HUD_Black),
         _Max = Max or 100,
         _Multiplier = 5,
         _Index = Index or 0,

@@ -23,7 +23,7 @@ UIMenuDynamicListItem.__call = function() return "UIMenuItem", "UIMenuDynamicLis
 function UIMenuDynamicListItem.New(Text, Description, StartingItem, callback, color, highlightColor, textColor,
                                    highlightedTextColor)
     local _UIMenuDynamicListItem = {
-        Base = UIMenuItem.New(Text or "", Description or "", color or SColor.HUD_Pause_bg, highlightColor or SColor.HUD_White, textColor or SColor.HUD_White, highlightedTextColor or SColor.HUD_Black),
+        Base = UIMenuItem.New(Text or "", Description or "", color or SColor.HUD_Panel_light, highlightColor or SColor.HUD_White, textColor or SColor.HUD_White, highlightedTextColor or SColor.HUD_Black),
         Panels = {},
         SidePanel = nil,
         _currentItem = StartingItem,

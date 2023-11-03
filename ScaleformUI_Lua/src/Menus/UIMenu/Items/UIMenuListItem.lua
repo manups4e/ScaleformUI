@@ -15,7 +15,7 @@ function UIMenuListItem.New(Text, Items, Index, Description, color, highlightCol
     if type(Items) ~= "table" then Items = {} end
     if Index == 0 then Index = 1 end
     local _UIMenuListItem = {
-        Base = UIMenuItem.New(Text or "", Description or "", color or SColor.HUD_Pause_bg, highlightColor or SColor.HUD_White, textColor or SColor.HUD_White, highlightedTextColor or SColor.HUD_Black),
+        Base = UIMenuItem.New(Text or "", Description or "", color or SColor.HUD_Panel_light, highlightColor or SColor.HUD_White, textColor or SColor.HUD_White, highlightedTextColor or SColor.HUD_Black),
         Items = Items,
         _Index = tonumber(Index) or 1,
         Panels = {},

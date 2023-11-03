@@ -19,7 +19,7 @@ UIMenuSliderItem.__call = function() return "UIMenuItem", "UIMenuSliderItem" end
 ---@param highlightedTextColor SColor
 function UIMenuSliderItem.New(Text, Max, Multiplier, Index, Heritage, Description, sliderColor, color, highlightColor, textColor, highlightedTextColor)
     local _UIMenuSliderItem = {
-        Base = UIMenuItem.New(Text or "", Description or "", color or SColor.HUD_Pause_bg, highlightColor or SColor.HUD_White, textColor or SColor.HUD_White, highlightedTextColor or SColor.HUD_Black),
+        Base = UIMenuItem.New(Text or "", Description or "", color or SColor.HUD_Panel_light, highlightColor or SColor.HUD_White, textColor or SColor.HUD_White, highlightedTextColor or SColor.HUD_Black),
         _Index = tonumber(Index) or 0,
         _Max = tonumber(Max) or 100,
         _Multiplier = Multiplier or 5,

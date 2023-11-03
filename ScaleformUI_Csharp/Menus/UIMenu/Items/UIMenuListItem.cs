@@ -67,7 +67,7 @@ namespace ScaleformUI.Menu
         /// <param name="items">List that contains your items.</param>
         /// <param name="index">Index in the list. If unsure user 0.</param>
         /// <param name="description">Description for this item.</param>
-        public UIMenuListItem(string text, List<dynamic> items, int index, string description) : this(text, items, index, description, SColor.HUD_Pause_bg, SColor.White)
+        public UIMenuListItem(string text, List<dynamic> items, int index, string description) : this(text, items, index, description, SColor.HUD_Panel_light, SColor.White)
         {
         }
 
