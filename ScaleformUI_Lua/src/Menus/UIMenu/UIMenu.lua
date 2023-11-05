@@ -54,7 +54,7 @@ end
 ---@param txtDictionary string? -- Custom texture dictionary for the menu banner background (default: commonmenu)
 ---@param txtName string? -- Custom texture name for the menu banner background (default: interaction_bgd)
 ---@param alternativeTitleStyle boolean? -- Use alternative title style (default: false)
-function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, alternativeTitleStyle, fadeTime)
+function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, alternativeTitleStyle, fadeTime, longdesc)
     local X, Y = tonumber(x) or 0, tonumber(y) or 0
     if title ~= nil then
         title = tostring(title) or ""
@@ -79,6 +79,9 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
     if alternativeTitleStyle == nil then
         alternativeTitleStyle = false
     end
+    if longdesc ~= nil then
+        AddTextEntry("ScaleformUILongDesc", longdesc)
+    end
     local _UIMenu = {
         _Title = title,
         _Subtitle = subTitle,
@@ -100,6 +103,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         TxtName = txtName,
         Glare = glare or false,
         Logo = nil,
+        _itemless = longdesc ~= nil,
         _keyboard = false,
         _changed = false,
         _maxItem = 7,
@@ -491,6 +495,8 @@ end
 ---AddWindow
 ---@param window table
 function UIMenu:AddWindow(window)
+    assert(not self._itemless, "ScaleformUI - You cannot add windows to an itemless menu, only a long description")
+
     if window() == "UIMenuWindow" then
         window:SetParentMenu(self)
         self.Windows[#self.Windows + 1] = window
@@ -511,6 +517,7 @@ end
 ---@param item UIMenuItem
 ---@see UIMenuItem
 function UIMenu:AddItem(item)
+    assert(not self._itemless, "ScaleformUI - You cannot add items to an itemless menu, only a long description")
     if item() ~= "UIMenuItem" then
         return
     end
@@ -581,6 +588,10 @@ function UIMenu:Visible(bool)
         self.Dirty = ToBool(bool)
 
         if bool then
+            if not self._itemless and #self.Items == 0 then
+                MenuHandler:CloseAndClearHistory()
+                assert(self._itemless or #self.Items == 0, "UIMenu ".. self:Title() .. " menu is empty... Closing and clearing history.")
+            end
             ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
             MenuHandler._currentMenu = self
             MenuHandler.ableToDraw = true
@@ -606,14 +617,41 @@ end
 function UIMenu:BuildUpMenuAsync(itemsOnly)
     if itemsOnly == nil then itemsOnly = false end
     self._isBuilding = true
+
+    if self._itemless then
+        BeginScaleformMovieMethod(ScaleformUI.Scaleforms._ui.handle, "CREATE_MENU");
+        PushScaleformMovieMethodParameterString(self._Title)
+        PushScaleformMovieMethodParameterString(self._Subtitle)
+        PushScaleformMovieMethodParameterFloat(self.Position.x)
+        PushScaleformMovieMethodParameterFloat(self.Position.y)
+        PushScaleformMovieMethodParameterBool(self.AlternativeTitle)
+        PushScaleformMovieMethodParameterString(self.TxtDictionary)
+        PushScaleformMovieMethodParameterString(self.TxtName)
+        PushScaleformMovieFunctionParameterInt(self:MaxItemsOnScreen())
+        PushScaleformMovieFunctionParameterInt(#self.Items)
+        PushScaleformMovieFunctionParameterBool(self:AnimationEnabled())
+        PushScaleformMovieFunctionParameterInt(self:AnimationType())
+        PushScaleformMovieFunctionParameterInt(self:BuildingAnimation())
+        PushScaleformMovieFunctionParameterInt(self.counterColor:ToArgb())
+        PushScaleformMovieMethodParameterString(self.descFont.FontName)
+        PushScaleformMovieFunctionParameterInt(self.descFont.FontID)
+        PushScaleformMovieMethodParameterFloat(self.fadingTime)
+        PushScaleformMovieFunctionParameterBool(true)
+        BeginTextCommandScaleformString("ScaleformUILongDesc");
+        EndTextCommandScaleformString_2()
+        EndScaleformMovieMethod()
+        self:FadeInMenu()
+        self._isBuilding = false;
+        return;
+
+    end
+
     if not itemsOnly then
         Citizen.CreateThread(function()
-            local enab = self:AnimationEnabled()
-            self:AnimationEnabled(false)
             while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
             ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", false, self._Title, self._Subtitle, self.Position.x,
                 self.Position.y,
-                self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, true,
+                self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, self:AnimationEnabled(),
                 self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName,
                 self.descFont.FontID, self.fadingTime)
             if #self.Windows > 0 then
@@ -846,6 +884,7 @@ function UIMenu:_itemCreation(page, pageIndex, before, overflow)
 end
 
 function UIMenu:FilterMenuItems(predicate)
+    assert(not self._itemless, "ScaleformUI - You can't compare or sort an itemless menu")
     self.Items[self:CurrentSelection()]:Selected(false)
     self._unfilteredMenuItems = self.Items
     self:Clear()
@@ -859,6 +898,7 @@ function UIMenu:FilterMenuItems(predicate)
 end
 
 function UIMenu:SortMenuItems(compare)
+    assert(not self._itemless, "ScaleformUI - You can't compare or sort an itemless menu")
     self.Items[self:CurrentSelection()]:Selected(false)
     self._unfilteredMenuItems = self.Items
     self:Clear()
@@ -873,6 +913,7 @@ function UIMenu:SortMenuItems(compare)
 end
 
 function UIMenu:ResetFilter()
+    assert(not self._itemless, "ScaleformUI - You can't compare or sort an itemless menu")
     self.Items[self:CurrentSelection()]:Selected(false)
     self:Clear()
     self.Items = self._unfilteredMenuItems

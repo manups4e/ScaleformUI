@@ -1033,7 +1033,7 @@ namespace ScaleformUI.Menu
         private bool canBuild = true;
         private bool isFading;
         private float fadingTime = 0.1f;
-
+        internal bool itemless = false;
         public PointF Offset { get; internal set; }
 
         public List<UIMenuWindow> Windows = new List<UIMenuWindow>();
@@ -1155,6 +1155,7 @@ namespace ScaleformUI.Menu
         /// <param name="spriteName">Sprite name for the banner.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
         /// <param name="alternativeTitle">Set the alternative type to the title?.</param>
+        /// <param name="fadingTime">Set fading time for the menu and the items, set it to 0.0 to disable it.</param>
         public UIMenu(string title, string subtitle, PointF offset, string spriteLibrary, string spriteName, bool glare = false, bool alternativeTitle = false, float fadingTime = 0.1f)
         {
             _customTexture = new KeyValuePair<string, string>(spriteLibrary, spriteName);
@@ -1185,6 +1186,50 @@ namespace ScaleformUI.Menu
                 new InstructionalButton(Control.PhoneSelect, _selectTextLocalized),
                 new InstructionalButton(Control.PhoneCancel, _backTextLocalized)
             };
+        }
+        /// <summary>
+        /// This is an itemless menu, it meas you cannot add items to this menu but you can add a description like on GTA:O
+        /// </summary>
+        /// <param name="title">Title that appears on the big banner. Set to "" if you are using a custom banner.</param>
+        /// <param name="subtitle">Subtitle that appears in capital letters in a small black bar.</param>
+        /// <param name="offset">PointF object with X and Y data for offsets. Applied to all menu elements.</param>
+        /// <param name="spriteLibrary">Sprite library name for the banner.</param>
+        /// <param name="spriteName">Sprite name for the banner.</param>
+        /// <param name="glare">Add menu Glare scaleform?.</param>
+        /// <param name="alternativeTitle">Set the alternative type to the title?.</param>
+        /// <param name="fadingTime">Set fading time for the menu and the items, set it to 0.0 to disable it.</param>
+        public UIMenu(string title, string subtitle, string description, PointF offset, string spriteLibrary, string spriteName, bool glare = false, bool alternativeTitle = false, float fadingTime = 0.1f)
+        {
+            _customTexture = new KeyValuePair<string, string>(spriteLibrary, spriteName);
+            Offset = offset;
+            WidthOffset = 0;
+            Glare = glare;
+            _menuGlare = new ScaleformWideScreen("mp_menu_glare");
+            Title = title;
+            Subtitle = subtitle;
+            AlternativeTitle = alternativeTitle;
+            MouseWheelControlEnabled = true;
+            Pagination = new PaginationHandler();
+            Pagination.ItemsPerPage = 7;
+            this.fadingTime = fadingTime;
+
+            SetKey(MenuControls.Up, Control.PhoneUp);
+            SetKey(MenuControls.Down, Control.PhoneDown);
+
+            SetKey(MenuControls.Left, Control.PhoneLeft);
+            SetKey(MenuControls.Right, Control.PhoneRight);
+            SetKey(MenuControls.Select, Control.FrontendAccept);
+
+            SetKey(MenuControls.Back, Control.PhoneCancel);
+            SetKey(MenuControls.Back, Control.FrontendPause);
+
+            InstructionalButtons = new List<InstructionalButton>()
+            {
+                new InstructionalButton(Control.PhoneSelect, _selectTextLocalized),
+                new InstructionalButton(Control.PhoneCancel, _backTextLocalized)
+            };
+            itemless = true;
+            AddTextEntry("ScaleformUILongDesc", description);
         }
 
         #endregion
@@ -1273,12 +1318,16 @@ namespace ScaleformUI.Menu
         /// <param name="item">Item object to be added. Can be normal item, checkbox or list item.</param>
         public void AddItem(UIMenuItem item)
         {
-            int selectedItem = CurrentSelection;
-            item.Parent = this;
-            MenuItems.Add(item);
-            if (Visible)
-                CurrentSelection = selectedItem;
-            Pagination.TotalItems = MenuItems.Count;
+            if (!itemless)
+            {
+                int selectedItem = CurrentSelection;
+                item.Parent = this;
+                MenuItems.Add(item);
+                if (Visible)
+                    CurrentSelection = selectedItem;
+                Pagination.TotalItems = MenuItems.Count;
+            }
+            else throw new Exception("ScaleformUI - You cannot add items to an itemless menu, only a long description");
         }
 
         /// <summary>
@@ -1287,8 +1336,12 @@ namespace ScaleformUI.Menu
         /// <param name="window"></param>
         public void AddWindow(UIMenuWindow window)
         {
-            window.ParentMenu = this;
-            Windows.Add(window);
+            if (!itemless)
+            {
+                window.ParentMenu = this;
+                Windows.Add(window);
+            }
+            else throw new Exception("ScaleformUI - You cannot add windows to an itemless menu, only a long description");
         }
 
         /// <summary>
@@ -1301,7 +1354,7 @@ namespace ScaleformUI.Menu
         }
 
         /// <summary>
-        /// If a Description is changed during some events after the menu as been opened this updates the description live
+        /// If an item's description is changed during some events after the menu as been opened this updates the description live
         /// </summary>
         public void UpdateDescription()
         {
@@ -2198,7 +2251,7 @@ namespace ScaleformUI.Menu
                 _itemsDirty = value;
                 if (value)
                 {
-                    if (this.MenuItems.Count == 0)
+                    if (!itemless && this.MenuItems.Count == 0)
                     {
                         MenuHandler.CloseAndClearHistory();
                         throw new Exception($"UIMenu {this.Title} menu is empty... Closing and clearing history.");
@@ -2235,11 +2288,41 @@ namespace ScaleformUI.Menu
         {
             isBuilding = true;
             bool _animEnabled = EnableAnimation;
+            if (itemless)
+            {
+                EnableAnimation = false;
+                while (!Main.scaleformUI.IsLoaded) await BaseScript.Delay(0);
+                //Main.scaleformUI.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, EnableAnimation, (int)AnimationType, (int)buildingAnimation, counterColor, descriptionFont.FontName, descriptionFont.FontID, fadingTime, true);
+                BeginScaleformMovieMethod(Main.scaleformUI.Handle, "CREATE_MENU");
+                PushScaleformMovieMethodParameterString(Title);
+                PushScaleformMovieMethodParameterString(Subtitle);
+                PushScaleformMovieMethodParameterFloat(Offset.X);
+                PushScaleformMovieMethodParameterFloat(Offset.Y);
+                PushScaleformMovieMethodParameterBool(AlternativeTitle);
+                PushScaleformMovieMethodParameterString(_customTexture.Key);
+                PushScaleformMovieMethodParameterString(_customTexture.Value);
+                PushScaleformMovieFunctionParameterInt(MaxItemsOnScreen);
+                PushScaleformMovieFunctionParameterInt(MenuItems.Count);
+                PushScaleformMovieFunctionParameterBool(EnableAnimation);
+                PushScaleformMovieFunctionParameterInt((int)AnimationType);
+                PushScaleformMovieFunctionParameterInt((int)buildingAnimation);
+                PushScaleformMovieFunctionParameterInt(counterColor.ArgbValue);
+                PushScaleformMovieMethodParameterString(descriptionFont.FontName);
+                PushScaleformMovieFunctionParameterInt(descriptionFont.FontID);
+                PushScaleformMovieMethodParameterFloat(fadingTime);
+                PushScaleformMovieFunctionParameterBool(true);
+                BeginTextCommandScaleformString("ScaleformUILongDesc");
+                EndTextCommandScaleformString_2();
+                EndScaleformMovieMethod();
+                FadeInMenu();
+                isBuilding = false;
+                return;
+            }
             if (!itemsOnly)
             {
                 EnableAnimation = false;
                 while (!Main.scaleformUI.IsLoaded) await BaseScript.Delay(0);
-                Main.scaleformUI.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, EnableAnimation, (int)AnimationType, (int)buildingAnimation, counterColor, descriptionFont.FontName, descriptionFont.FontID, fadingTime);
+                Main.scaleformUI.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, EnableAnimation, (int)AnimationType, (int)buildingAnimation, counterColor, descriptionFont.FontName, descriptionFont.FontID, fadingTime, false);
                 if (Windows.Count > 0)
                 {
                     foreach (UIMenuWindow wind in Windows)
@@ -2327,6 +2410,7 @@ namespace ScaleformUI.Menu
 
         public void SortMenuItems(Comparison<UIMenuItem> compare)
         {
+            if (itemless) throw new("ScaleformUI - You can't compare or sort an itemless menu");
             MenuItems[CurrentSelection].Selected = false;
             _unfilteredMenuItems = MenuItems.ToList();
             Clear();
@@ -2339,6 +2423,7 @@ namespace ScaleformUI.Menu
 
         public void FilterMenuItems(Func<UIMenuItem, bool> predicate)
         {
+            if (itemless) throw new("ScaleformUI - You can't compare or sort an itemless menu");
             MenuItems[CurrentSelection].Selected = false;
             _unfilteredMenuItems = MenuItems.ToList();
             Clear();
@@ -2349,6 +2434,7 @@ namespace ScaleformUI.Menu
 
         public void ResetFilter()
         {
+            if (itemless) throw new("ScaleformUI - You can't compare or sort an itemless menu");
             MenuItems[CurrentSelection].Selected = false;
             Clear();
             MenuItems = _unfilteredMenuItems.ToList();
@@ -2359,6 +2445,7 @@ namespace ScaleformUI.Menu
 
         private void _itemCreation(int page, int pageIndex, bool before, bool isOverflow = false)
         {
+            if (itemless) throw new("ScaleformUI - You can't add items to an itemless menu");
             int menuIndex = Pagination.GetMenuIndexFromPageIndex(page, pageIndex);
             if (!before)
             {
