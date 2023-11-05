@@ -35,7 +35,7 @@ namespace ScaleformUI.LobbyMenu
             Pagination.TotalItems = Items.Count;
             if (Parent != null && Parent.Visible)
             {
-                if (Pagination.TotalItems < Pagination.ItemsPerPage)
+                if (Pagination.TotalItems <= Pagination.ItemsPerPage)
                 {
                     int sel = CurrentSelection;
                     Pagination.MinItem = Pagination.CurrentPageStartIndex;
