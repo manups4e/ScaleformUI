@@ -597,6 +597,10 @@ function UIMenu:Visible(bool)
             MenuHandler.ableToDraw = true
             self.OnMenuOpen(self)
             self:BuildUpMenuAsync()
+            if BreadcrumbsHandler:Count() == 0 then
+                BreadcrumbsHandler:Forward(self)
+            end
+
         else
             self:FadeOutMenu()
             ScaleformUI.Scaleforms.InstructionalButtons:ClearButtonList()
