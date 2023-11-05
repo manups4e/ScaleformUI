@@ -67,14 +67,14 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         subTitle = ""
     end
     if txtDictionary ~= nil then
-        txtDictionary = tostring(txtDictionary) or "commonmenu"
+        txtDictionary = tostring(txtDictionary) or ""
     else
-        txtDictionary = "commonmenu"
+        txtDictionary = ""
     end
     if txtName ~= nil then
-        txtName = tostring(txtName) or "interaction_bgd"
+        txtName = tostring(txtName) or ""
     else
-        txtName = "interaction_bgd"
+        txtName = ""
     end
     if alternativeTitleStyle == nil then
         alternativeTitleStyle = false

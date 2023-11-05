@@ -1114,7 +1114,7 @@ namespace ScaleformUI.Menu
         /// <param name="title">Title that appears on the big banner.</param>
         /// <param name="subtitle">Subtitle that appears in capital letters in a small black bar.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
-        public UIMenu(string title, string subtitle, bool glare = false, bool alternativeTitle = false, float fadingTime = 0.1f) : this(title, subtitle, new PointF(0, 0), "commonmenu", "interaction_bgd", glare, alternativeTitle, fadingTime)
+        public UIMenu(string title, string subtitle, bool glare = false, bool alternativeTitle = false, float fadingTime = 0.1f) : this(title, subtitle, new PointF(0, 0), "", "", glare, alternativeTitle, fadingTime)
         {
         }
 
@@ -1127,7 +1127,7 @@ namespace ScaleformUI.Menu
         /// <param name="offset">PointF object with X and Y data for offsets. Applied to all menu elements.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
         /// <param name="alternativeTitle">Set the alternative type to the title?.</param>
-        public UIMenu(string title, string subtitle, PointF offset, bool glare = false, bool alternativeTitle = false, float fadingTime = 0.1f) : this(title, subtitle, offset, "commonmenu", "interaction_bgd", glare, alternativeTitle, fadingTime)
+        public UIMenu(string title, string subtitle, PointF offset, bool glare = false, bool alternativeTitle = false, float fadingTime = 0.1f) : this(title, subtitle, offset, "", "", glare, alternativeTitle, fadingTime)
         {
         }
 
