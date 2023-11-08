@@ -94,6 +94,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         buildingAnimation = MenuBuildingAnimation.NONE,
         scrollingType = MenuScrollingType.CLASSIC,
         descFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY,
+        leftClickEnabled = false,
         Extra = {},
         Description = {},
         Items = {},
@@ -185,6 +186,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
             ScaleWithSafezone = true,
             ResetCursorOnOpen = true,
             MouseControlsEnabled = true,
+            MouseWheelEnabled = true,
             MouseEdgeEnabled = true,
             ControlDisablingEnabled = true,
             Audio = {
@@ -315,6 +317,13 @@ function UIMenu:MouseEdgeEnabled(enabled)
         self.Settings.MouseEdgeEnabled = ToBool(enabled)
     end
     return self.Settings.MouseEdgeEnabled
+end
+
+function UIMenu:MouseWheelControlEnabled(enabled)
+    if enabled ~= nil then
+        self.Settings.MouseWheelEnabled = ToBool(enabled)
+    end
+    return self.Settings.MouseWheelEnabled
 end
 
 ---Enables or disables mouse controls for the menu. (Default: true)
@@ -577,6 +586,14 @@ end
 
 function UIMenu:SwitchTo(newMenu, newMenuCurrentSelection, inheritOldMenuParams)
     MenuHandler:SwitchTo(self, newMenu, newMenuCurrentSelection, inheritOldMenuParams)
+end
+
+function UIMenu:MouseSettings(enableMouseControls, enableEdge, isWheelEnabled, resetCursorOnOpen, leftClickSelect)
+    self:MouseControlsEnabled(enableMouseControls)
+    self:MouseEdgeEnabled(enableEdge)
+    self:MouseWheelControlEnabled(isWheelEnabled)
+    self.Settings.ResetCursorOnOpen = resetCursorOnOpen
+    self.leftClickEnabled = leftClickSelect;
 end
 
 ---Visible
@@ -951,12 +968,12 @@ function UIMenu:ProcessControl()
     if #self.Items == 0 or self._isBuilding then return end
 
     if self.Controls.Up.Enabled then
-        if IsDisabledControlJustPressed(0, 172) or IsDisabledControlJustPressed(1, 172) or IsDisabledControlJustPressed(2, 172) or IsDisabledControlJustPressed(0, 241) or IsDisabledControlJustPressed(1, 241) or IsDisabledControlJustPressed(2, 241) or IsDisabledControlJustPressed(2, 241) then
+        if IsDisabledControlJustPressed(0, 172) or IsDisabledControlJustPressed(1, 172) or IsDisabledControlJustPressed(2, 172) or (self.Settings.MouseWheelEnabled and (IsDisabledControlJustPressed(0, 241) or IsDisabledControlJustPressed(1, 241) or IsDisabledControlJustPressed(2, 241) or IsDisabledControlJustPressed(2, 241))) then
             self._timeBeforeOverflow = GlobalGameTimer
             Citizen.CreateThread(function()
                 self:GoUp()
             end)
-        elseif IsDisabledControlPressed(0, 172) or IsDisabledControlPressed(1, 172) or IsDisabledControlPressed(2, 172) or IsDisabledControlPressed(0, 241) or IsDisabledControlPressed(1, 241) or IsDisabledControlPressed(2, 241) or IsDisabledControlPressed(2, 241) then
+        elseif IsDisabledControlPressed(0, 172) or IsDisabledControlPressed(1, 172) or IsDisabledControlPressed(2, 172) or (self.Settings.MouseWheelEnabled and (IsDisabledControlPressed(0, 241) or IsDisabledControlPressed(1, 241) or IsDisabledControlPressed(2, 241) or IsDisabledControlPressed(2, 241))) then
             if GlobalGameTimer - self._timeBeforeOverflow > self._delayBeforeOverflow then
                 if GlobalGameTimer - self._time > self._delay then
                     self:ButtonDelay()
@@ -969,12 +986,12 @@ function UIMenu:ProcessControl()
     end
 
     if self.Controls.Down.Enabled then
-        if IsDisabledControlJustPressed(0, 173) or IsDisabledControlJustPressed(1, 173) or IsDisabledControlJustPressed(2, 173) or IsDisabledControlJustPressed(0, 242) or IsDisabledControlJustPressed(1, 242) or IsDisabledControlJustPressed(2, 242) then
+        if IsDisabledControlJustPressed(0, 173) or IsDisabledControlJustPressed(1, 173) or IsDisabledControlJustPressed(2, 173) or (self.Settings.MouseWheelEnabled and (IsDisabledControlJustPressed(0, 242) or IsDisabledControlJustPressed(1, 242) or IsDisabledControlJustPressed(2, 242))) then
             self._timeBeforeOverflow = GlobalGameTimer
             Citizen.CreateThread(function()
                 self:GoDown()
             end)
-        elseif IsDisabledControlPressed(0, 173) or IsDisabledControlPressed(1, 173) or IsDisabledControlPressed(2, 173) or IsDisabledControlPressed(0, 242) or IsDisabledControlPressed(1, 242) or IsDisabledControlPressed(2, 242) then
+        elseif IsDisabledControlPressed(0, 173) or IsDisabledControlPressed(1, 173) or IsDisabledControlPressed(2, 173) or (self.Settings.MouseWheelEnabled and (IsDisabledControlPressed(0, 242) or IsDisabledControlPressed(1, 242) or IsDisabledControlPressed(2, 242))) then
             if GlobalGameTimer - self._timeBeforeOverflow > self._delayBeforeOverflow then
                 if GlobalGameTimer - self._time > self._delay then
                     self:ButtonDelay()
@@ -1026,7 +1043,7 @@ function UIMenu:ProcessControl()
         end
     end
 
-    if self.Controls.Select.Enabled and (IsDisabledControlJustPressed(0, 201) or IsDisabledControlJustPressed(1, 201) or IsDisabledControlJustPressed(2, 201)) then
+    if self.Controls.Select.Enabled and ((IsDisabledControlJustPressed(0, 201) or IsDisabledControlJustPressed(1, 201) or IsDisabledControlJustPressed(2, 201)) or (self.leftClickEnabled and IsDisabledControlJustPressed(0, 24))) then
         Citizen.CreateThread(function()
             self:SelectItem()
             Citizen.Wait(125)

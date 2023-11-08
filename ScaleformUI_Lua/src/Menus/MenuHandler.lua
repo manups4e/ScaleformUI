@@ -42,15 +42,19 @@ function MenuHandler:SwitchTo(currentMenu, newMenu, newMenuCurrentSelection, inh
             end
 
             newMenu.Glare = currentMenu.Glare
-            newMenu.Settings.MouseControlsEnabled = currentMenu.Settings.MouseControlsEnabled
-            newMenu.Settings.MouseEdgeEnabled = currentMenu.Settings.MouseEdgeEnabled
             newMenu:MaxItemsOnScreen(currentMenu:MaxItemsOnScreen())
             newMenu:AnimationEnabled(currentMenu:AnimationEnabled())
             newMenu:AnimationType(currentMenu:AnimationType())
             newMenu:BuildingAnimation(currentMenu:BuildingAnimation())
             newMenu:ScrollingType(currentMenu:ScrollingType())
+            newMenu:MouseSettings(currentMenu:MouseControlsEnabled(), currentMenu:MouseEdgeEnabled(), currentMenu:MouseWheelControlEnabled(), currentMenu.Settings.ResetCursorOnOpen, currentMenu.leftClickEnabled)
             newMenu.enabled3DAnimations = currentMenu.enabled3DAnimations
             newMenu.fadingTime = currentMenu.fadingTime
+            --[[
+                newMenu.Settings.MouseControlsEnabled = currentMenu.Settings.MouseControlsEnabled
+                newMenu.Settings.MouseEdgeEnabled = currentMenu.Settings.MouseEdgeEnabled
+            ]]
+
         end
     end
     newMenu:CurrentSelection(newMenuCurrentSelection)
@@ -67,8 +71,8 @@ function MenuHandler:SwitchTo(currentMenu, newMenu, newMenuCurrentSelection, inh
 end
 
 function MenuHandler:ProcessMenus()
-    self:ProcessControl()
     self:Draw()
+    self:ProcessControl()
 end
 
 ---ProcessControl
