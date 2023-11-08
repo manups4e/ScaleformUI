@@ -71,9 +71,6 @@ namespace ScaleformUI
                         if (old._customTexture.Key != null && old._customTexture.Value != null)
                             newer.SetBannerType(old._customTexture);
                         newer.Offset = old.Offset;
-                        newer.MouseEdgeEnabled = old.MouseEdgeEnabled;
-                        newer.MouseWheelControlEnabled = old.MouseWheelControlEnabled;
-                        newer.MouseControlsEnabled = old.MouseControlsEnabled;
                         newer.MaxItemsOnScreen = old.MaxItemsOnScreen;
                         newer.AnimationType = old.AnimationType;
                         newer.BuildingAnimation = old.BuildingAnimation;
@@ -81,6 +78,7 @@ namespace ScaleformUI
                         newer.Glare = old.Glare;
                         newer.EnableAnimation = old.EnableAnimation;
                         newer.Enabled3DAnimations = old.Enabled3DAnimations;
+                        newer.MouseSettings(old.MouseControlsEnabled, old.MouseEdgeEnabled, old.MouseWheelControlEnabled, old.ResetCursorOnOpen, old.leftClickEnabled);
                     }
                     newer.CurrentSelection = newMenuCurrentSelection != 0 ? newMenuCurrentSelection : 0;
                 }
@@ -144,9 +142,9 @@ namespace ScaleformUI
         /// </summary>
         public static async void ProcessMenus()
         {
+            Draw();
             ProcessControl();
             ProcessMouse();
-            Draw();
         }
 
         /// <summary>
