@@ -2486,7 +2486,6 @@ namespace ScaleformUI.Menu
             if (itemless) throw new("ScaleformUI - You can't add items to an itemless menu");
             int menuIndex = Pagination.GetMenuIndexFromPageIndex(page, pageIndex);
             bool missing = false;
-            int missingI = 0;
             if (!before)
             {
                 if (Pagination.GetPageItemsCount(page) < Pagination.ItemsPerPage && Pagination.TotalPages > 1)
