@@ -929,6 +929,7 @@ namespace ScaleformUI.Menu
         public bool MouseEdgeEnabled = true;
         public bool ControlDisablingEnabled = true;
         private bool enabled3DAnimations;
+        internal bool leftClickEnabled;
 
         public bool EnableAnimation
         {
@@ -1470,7 +1471,6 @@ namespace ScaleformUI.Menu
             _keyDictionary[control].Item1.Clear();
             _keyDictionary[control].Item2.Clear();
         }
-
 
         /// <summary>
         /// Check whether a menucontrol has been pressed.
@@ -2408,6 +2408,37 @@ namespace ScaleformUI.Menu
             isBuilding = false;
         }
 
+        /// <summary>
+        /// Allows controlling all mouse aspects of the Menu.
+        /// </summary>
+        /// <param name="enableMouseControls">Enable mouse control</param>
+        /// <param name="enableEdge">Enables edge camera rotation</param>
+        /// <param name="isWheelEnabled">Enables mouse wheel to scroll items</param>
+        /// <param name="resetCursorOnOpen">Resets cursor's position on menu open</param>
+        /// <param name="leftClickSelect">If MouseControls are not enabled and this is true, left click selects the current item without pointing</param>
+        public void MouseSettings(bool enableMouseControls, bool enableEdge, bool isWheelEnabled, bool resetCursorOnOpen, bool leftClickSelect)
+        {
+            MouseControlsEnabled = enableMouseControls;
+            MouseEdgeEnabled = enableEdge;
+            MouseWheelControlEnabled = isWheelEnabled;
+            ResetCursorOnOpen = resetCursorOnOpen;
+            leftClickEnabled = leftClickSelect;
+            if (leftClickSelect && !MouseControlsEnabled)
+            {
+                SetKey(MenuControls.Select, Control.Attack);
+
+            }
+            else
+            {
+                ResetKey(MenuControls.Select);
+                SetKey(MenuControls.Select, Control.FrontendAccept);
+            }
+        }
+
+        /// <summary>
+        /// Sorts menu items based on the desired predicated
+        /// </summary>
+        /// <param name="compare"></param>
         public void SortMenuItems(Comparison<UIMenuItem> compare)
         {
             if (itemless) throw new("ScaleformUI - You can't compare or sort an itemless menu");
@@ -2421,6 +2452,10 @@ namespace ScaleformUI.Menu
             BuildUpMenuAsync(true);
         }
 
+        /// <summary>
+        /// Filters menu items based on the desired predicate
+        /// </summary>
+        /// <param name="predicate"></param>
         public void FilterMenuItems(Func<UIMenuItem, bool> predicate)
         {
             if (itemless) throw new("ScaleformUI - You can't compare or sort an itemless menu");
@@ -2432,6 +2467,9 @@ namespace ScaleformUI.Menu
             BuildUpMenuAsync(true);
         }
 
+        /// <summary>
+        /// Resets filtering/ordering of items going back to the original order.
+        /// </summary>
         public void ResetFilter()
         {
             if (itemless) throw new("ScaleformUI - You can't compare or sort an itemless menu");
@@ -2447,6 +2485,8 @@ namespace ScaleformUI.Menu
         {
             if (itemless) throw new("ScaleformUI - You can't add items to an itemless menu");
             int menuIndex = Pagination.GetMenuIndexFromPageIndex(page, pageIndex);
+            bool missing = false;
+            int missingI = 0;
             if (!before)
             {
                 if (Pagination.GetPageItemsCount(page) < Pagination.ItemsPerPage && Pagination.TotalPages > 1)
@@ -2457,6 +2497,7 @@ namespace ScaleformUI.Menu
                         {
                             menuIndex -= Pagination.TotalItems;
                             Pagination.MaxItem = menuIndex;
+                            missing = true;
                         }
                     }
                     else if (scrollingType == ScrollingType.CLASSIC && isOverflow)
@@ -2470,6 +2511,10 @@ namespace ScaleformUI.Menu
             }
 
             int scaleformIndex = Pagination.GetScaleformIndex(menuIndex);
+            if (scrollingType == ScrollingType.ENDLESS && missing)
+            {
+                scaleformIndex = menuIndex + (Pagination.GetScaleformIndex(Pagination.TotalItems));
+            }
 
             UIMenuItem item = MenuItems[menuIndex];
             AddTextEntry($"menu_{BreadcrumbsHandler.CurrentDepth}_desc_{menuIndex}", item.Description);
