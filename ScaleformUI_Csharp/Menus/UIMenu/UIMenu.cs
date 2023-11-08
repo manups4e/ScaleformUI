@@ -1033,7 +1033,7 @@ namespace ScaleformUI.Menu
         public bool AlternativeTitle = false;
         private bool canBuild = true;
         private bool isFading;
-        private float fadingTime = 0.1f;
+        internal float fadingTime = 0.1f;
         internal bool itemless = false;
         public PointF Offset { get; internal set; }
 
@@ -2314,7 +2314,7 @@ namespace ScaleformUI.Menu
                 BeginTextCommandScaleformString("ScaleformUILongDesc");
                 EndTextCommandScaleformString_2();
                 EndScaleformMovieMethod();
-                FadeInMenu();
+                await FadeInMenu();
                 isBuilding = false;
                 return;
             }
@@ -2404,7 +2404,7 @@ namespace ScaleformUI.Menu
             Main.scaleformUI.CallFunction("ENABLE_MOUSE", MouseControlsEnabled);
             Main.scaleformUI.CallFunction("ENABLE_3D_ANIMATIONS", enabled3DAnimations);
             EnableAnimation = _animEnabled;
-            FadeInMenu();
+            await FadeInMenu();
             isBuilding = false;
         }
 
@@ -2416,7 +2416,7 @@ namespace ScaleformUI.Menu
         /// <param name="isWheelEnabled">Enables mouse wheel to scroll items</param>
         /// <param name="resetCursorOnOpen">Resets cursor's position on menu open</param>
         /// <param name="leftClickSelect">If MouseControls are not enabled and this is true, left click selects the current item without pointing</param>
-        public void MouseSettings(bool enableMouseControls, bool enableEdge, bool isWheelEnabled, bool resetCursorOnOpen, bool leftClickSelect)
+        public void SetMouse(bool enableMouseControls, bool enableEdge, bool isWheelEnabled, bool resetCursorOnOpen, bool leftClickSelect)
         {
             MouseControlsEnabled = enableMouseControls;
             MouseEdgeEnabled = enableEdge;

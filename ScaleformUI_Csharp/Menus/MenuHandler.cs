@@ -64,6 +64,8 @@ namespace ScaleformUI
 
             if (currentMenu is UIMenu old)
             {
+                await old.FadeOutMenu();
+                currentMenu.Visible = false;
                 if (newMenu is UIMenu newer)
                 {
                     if (inheritOldMenuParams)
@@ -78,7 +80,8 @@ namespace ScaleformUI
                         newer.Glare = old.Glare;
                         newer.EnableAnimation = old.EnableAnimation;
                         newer.Enabled3DAnimations = old.Enabled3DAnimations;
-                        newer.MouseSettings(old.MouseControlsEnabled, old.MouseEdgeEnabled, old.MouseWheelControlEnabled, old.ResetCursorOnOpen, old.leftClickEnabled);
+                        newer.fadingTime = old.fadingTime;
+                        newer.SetMouse(old.MouseControlsEnabled, old.MouseEdgeEnabled, old.MouseWheelControlEnabled, old.ResetCursorOnOpen, old.leftClickEnabled);
                     }
                     newer.CurrentSelection = newMenuCurrentSelection != 0 ? newMenuCurrentSelection : 0;
                 }
@@ -88,12 +91,8 @@ namespace ScaleformUI
                     radio.CurrentSelection = newMenuCurrentSelection != 0 ? newMenuCurrentSelection : 0;
             }
 
-            if (currentMenu is UIMenu _old)
-                await _old.FadeOutMenu();
-            currentMenu.Visible = false;
+
             newMenu.Visible = true;
-            if (newMenu is UIMenu _newer)
-                await _newer.FadeInMenu();
             BreadcrumbsHandler.Forward(newMenu, data);
             BreadcrumbsHandler.SwitchInProgress = false;
         }
