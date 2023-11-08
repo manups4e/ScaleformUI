@@ -45,7 +45,7 @@ namespace ScaleformUI.Elements
 
         };
         /// <summary>
-        /// All of the controls required for using a keyboard.
+        /// All of the controls required for using a gamepad.
         /// </summary>
         private static readonly Control[] NecessaryControlsGamePad = NecessaryControlsKeyboard.Concat(new Control[]
         {
@@ -59,8 +59,7 @@ namespace ScaleformUI.Elements
             Control.MoveUpDown,
             Control.MoveLeftRight,
             Control.VehicleExit,
-        })
-        .ToArray();
+        }).ToArray();
 
         /// <summary>
         /// Toggles the availability of the controls.
