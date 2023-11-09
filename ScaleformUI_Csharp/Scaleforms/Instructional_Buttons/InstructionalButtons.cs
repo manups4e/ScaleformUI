@@ -209,6 +209,7 @@ namespace ScaleformUI.Scaleforms
 
         public InstructionalButtonsScaleform()
         {
+            ControlButtons = new List<InstructionalButton>();
             Load();
         }
         /// <summary>
@@ -254,6 +255,7 @@ namespace ScaleformUI.Scaleforms
         /// <param name="button"></param>
         public void AddInstructionalButton(InstructionalButton button)
         {
+            ControlButtons ??= new List<InstructionalButton>();
             ControlButtons.Add(button);
             _changed = true;
         }
@@ -264,6 +266,7 @@ namespace ScaleformUI.Scaleforms
         /// <param name="button">The <see cref="InstructionalButton"/> to remove.</param>
         public void RemoveInstructionalButton(InstructionalButton button)
         {
+            if (ControlButtons == null) return;
             ControlButtons.Remove(button);
             _changed = true;
         }
@@ -274,6 +277,7 @@ namespace ScaleformUI.Scaleforms
         /// <param name="buttons">The List of <see cref="InstructionalButton"/> to remove.</param>
         public void RemoveInstructionalButtons(List<InstructionalButton> buttons)
         {
+            if (ControlButtons == null) return;
             foreach (InstructionalButton button in buttons)
             {
                 if (ControlButtons.Contains(button))
@@ -288,6 +292,7 @@ namespace ScaleformUI.Scaleforms
         /// <param name="button">The index to remove.</param>
         public void RemoveInstructionalButton(int button)
         {
+            if (ControlButtons == null) return;
             ControlButtons.RemoveAt(button);
             _changed = true;
         }
