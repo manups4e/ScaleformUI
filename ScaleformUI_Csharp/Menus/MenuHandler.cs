@@ -73,6 +73,7 @@ namespace ScaleformUI
                         if (old._customTexture.Key != null && old._customTexture.Value != null)
                             newer.SetBannerType(old._customTexture);
                         newer.Offset = old.Offset;
+                        newer.AlternativeTitle = old.AlternativeTitle;
                         newer.MaxItemsOnScreen = old.MaxItemsOnScreen;
                         newer.AnimationType = old.AnimationType;
                         newer.BuildingAnimation = old.BuildingAnimation;
