@@ -11,16 +11,18 @@ namespace ScaleformUI
         /// </summary>
         public static int GameTime = API.GetNetworkTimeAccurate();
 
-        public static PauseMenuScaleform PauseMenu { get; set; }
-        public static MediumMessageHandler MedMessageInstance { get; set; }
-        public static InstructionalButtonsScaleform InstructionalButtons { get; set; }
-        public static BigMessageHandler BigMessageInstance { get; set; }
-        public static PopupWarning Warning { get; set; }
-        public static PlayerListHandler PlayerListInstance { get; set; }
-        public static MissionSelectorHandler JobMissionSelection { get; set; }
-        public static BigFeedHandler BigFeed { get; set; }
-        public static RankBarHandler RankBarInstance { get; set; }
-        public static CountdownHandler CountdownInstance { get; set; }
+        public static PauseMenuScaleform PauseMenu { get; internal set; }
+        public static MediumMessageHandler MedMessageInstance { get; internal set; }
+        public static InstructionalButtonsScaleform InstructionalButtons { get; internal set; }
+        public static BigMessageHandler BigMessageInstance { get; internal set; }
+        public static PopupWarning Warning { get; internal set; }
+        public static PlayerListHandler PlayerListInstance { get; internal set; }
+        public static MissionSelectorHandler JobMissionSelection { get; internal set; }
+        public static BigFeedHandler BigFeed { get; internal set; }
+        public static RankBarHandler RankBarInstance { get; internal set; }
+        public static CountdownHandler CountdownInstance { get; internal set; }
+        public static MultiplayerChatHandler MultiplayerChat { get; internal set; }
+
 
         internal static ScaleformWideScreen scaleformUI { get; set; }
         internal static ScaleformWideScreen radialMenu { get; set; }
@@ -34,13 +36,14 @@ namespace ScaleformUI
             JobMissionSelection = new();
             BigFeed = new();
             PauseMenu = new();
-            scaleformUI = new("scaleformui");
-            radialMenu = new("radialmenu");
-            radioMenu = new("radiomenu");
             InstructionalButtons = new();
             InstructionalButtons.Load();
             RankBarInstance = new();
             CountdownInstance = new();
+            MultiplayerChat = new();
+            scaleformUI = new("scaleformui");
+            radialMenu = new("radialmenu");
+            radioMenu = new("radiomenu");
             Tick += ScaleformUIThread_Tick;
             Tick += OnUpdateGlobalGameTimerAsync;
             MinimapOverlays.Load();
@@ -82,6 +85,8 @@ namespace ScaleformUI
                 PlayerListInstance.Update();
             if (JobMissionSelection._sc != null && JobMissionSelection.Enabled)
                 JobMissionSelection.Update();
+            if (MultiplayerChat.IsTyping())
+                MultiplayerChat.Update();
             if (BigFeed._sc != null)
                 BigFeed.Update();
             scaleformUI ??= new("ScaleformUI");

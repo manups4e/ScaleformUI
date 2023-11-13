@@ -246,10 +246,10 @@ namespace ScaleformUI.Scaleforms
 
         public void Dispose()
         {
+            _visible = false;
             _pause?.CallFunction("CLEAR_ALL");
             _lobby?.CallFunction("CLEAR_ALL");
             _header?.CallFunction("CLEAR_ALL");
-            _visible = false;
             _pause?.Dispose();
             _lobby?.Dispose();
             _header?.Dispose();
