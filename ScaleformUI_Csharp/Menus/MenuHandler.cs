@@ -103,8 +103,10 @@ namespace ScaleformUI
         /// </summary>
         internal static void ProcessControl()
         {
-            currentMenu?.ProcessControl();
-            currentBase?.ProcessControls();
+            if (currentMenu != null && currentBase == null)
+                currentMenu?.ProcessControl();
+            else
+                currentBase?.ProcessControls();
         }
 
 
@@ -113,8 +115,10 @@ namespace ScaleformUI
         /// </summary>
         internal static void ProcessMouse()
         {
-            currentMenu?.ProcessMouse();
-            currentBase?.ProcessMouse();
+            if (currentMenu != null && currentBase == null)
+                currentMenu?.ProcessMouse();
+            else
+                currentBase?.ProcessMouse();
         }
 
 
@@ -124,10 +128,11 @@ namespace ScaleformUI
         internal static void Draw()
         {
             if (Main.Warning.IsShowing || Main.Warning.IsShowingWithButtons) return;
-            currentMenu?.Draw();
-            currentBase?.Draw();
+            if (currentMenu != null && currentBase == null)
+                currentMenu?.Draw();
+            else
+                currentBase?.Draw();
         }
-
 
         /// <summary>
         /// Checks if any menu is currently visible.
@@ -152,6 +157,7 @@ namespace ScaleformUI
         /// </summary>
         public static void CloseAndClearHistory()
         {
+            ableToDraw = false;
             if (currentMenu != null)
                 currentMenu.Visible = false;
             if (currentBase != null)
