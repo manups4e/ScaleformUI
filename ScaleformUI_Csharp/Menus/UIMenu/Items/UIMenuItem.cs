@@ -425,7 +425,7 @@ namespace ScaleformUI.Menu
         public virtual bool Selected
         {
             get => _selected;
-            set
+            internal set
             {
                 _selected = value;
                 if (value)
@@ -465,7 +465,7 @@ namespace ScaleformUI.Menu
         /// <summary>
         /// Whether this item is currently being hovered on with a mouse.
         /// </summary>
-        public virtual bool Hovered { get; set; }
+        public virtual bool Hovered { get; internal set; }
 
         /// <summary>
         /// This item's description.
