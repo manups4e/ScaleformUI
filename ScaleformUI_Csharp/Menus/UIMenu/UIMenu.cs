@@ -2715,6 +2715,12 @@ namespace ScaleformUI.Menu
             }
         }
 
+        public UIMenuItem CurrentItem
+        {
+            get => MenuItems[CurrentSelection];
+            set => CurrentSelection = MenuItems.Any(x => x.Label == value.Label && x.Description == value.Description) ? MenuItems.IndexOf(value) : 0;
+        }
+
         /// <summary>
         /// Returns false if last input was made with mouse and keyboard, true if it was made with a controller.
         /// </summary>
