@@ -36,10 +36,10 @@ public class MenuExample : BaseScript
         exampleMenu.BuildingAnimation = MenuBuildingAnimation.LEFT_RIGHT;
         exampleMenu.AnimationType = MenuAnimationType.BACK_INOUT;
         exampleMenu.ScrollingType = ScrollingType.CLASSIC;
-        exampleMenu.Enabled3DAnimations = true;
+        exampleMenu.SetMouse(true, false, true, false, false);
+
         //exampleMenu.CounterColor = HudColor.HUD_COLOUR_PINK;
         // let's add the menu to the Pool
-
         #region Menu Declaration
 
         #region Big Message
