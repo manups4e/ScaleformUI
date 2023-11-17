@@ -2292,7 +2292,6 @@ namespace ScaleformUI.Menu
             {
                 EnableAnimation = false;
                 while (!Main.scaleformUI.IsLoaded) await BaseScript.Delay(0);
-                //Main.scaleformUI.CallFunction("CREATE_MENU", Title, Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, EnableAnimation, (int)AnimationType, (int)buildingAnimation, counterColor, descriptionFont.FontName, descriptionFont.FontID, fadingTime, true);
                 BeginScaleformMovieMethod(Main.scaleformUI.Handle, "CREATE_MENU");
                 PushScaleformMovieMethodParameterString(Title);
                 PushScaleformMovieMethodParameterString(Subtitle);
