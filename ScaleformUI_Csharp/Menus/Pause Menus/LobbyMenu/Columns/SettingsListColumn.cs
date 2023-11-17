@@ -87,7 +87,8 @@ namespace ScaleformUI.LobbyMenu
             int scaleformIndex = Pagination.GetScaleformIndex(menuIndex);
 
             UIMenuItem item = Items[menuIndex];
-
+            if (item.MainColor == SColor.HUD_Panel_light)
+                item.MainColor = SColor.HUD_Pause_bg;
             if (Parent is MainView lobby)
             {
                 AddTextEntry($"menu_lobby_desc_{menuIndex}", item.Description);
