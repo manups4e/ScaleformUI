@@ -133,8 +133,7 @@ function Scaleform:CallFunctionAsyncReturnInt(theFunction, ...)
     end
 
     local return_value = EndScaleformMovieMethodReturnValue()
-    print(return_value)
-    while not IsScaleformMovieMethodReturnValueReady(return_value) do print(theFunction.." waiting int") Citizen.Wait(0) end
+    while not IsScaleformMovieMethodReturnValueReady(return_value) do Citizen.Wait(0) end
     return GetScaleformMovieMethodReturnValueInt(return_value)
 end
 
@@ -230,7 +229,7 @@ function Scaleform:CallFunctionAsyncReturnString(theFunction, ...)
     end
 
     local return_value = EndScaleformMovieMethodReturnValue()
-    while not IsScaleformMovieMethodReturnValueReady(return_value) do print(theFunction.." waiting string") Citizen.Wait(0) end
+    while not IsScaleformMovieMethodReturnValueReady(return_value) do Citizen.Wait(0) end
     return GetScaleformMovieMethodReturnValueString(return_value)
 end
 

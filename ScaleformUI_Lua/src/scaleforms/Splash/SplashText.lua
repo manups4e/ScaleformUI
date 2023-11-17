@@ -72,7 +72,7 @@ end
 
 function SplashTextInstance:Draw()
   if not self._scaleform then
-    return;
+    return
   end
 
   self._scaleform:Render2DNormal(self._posX, self._posY, self._width, self._height);

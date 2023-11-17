@@ -132,7 +132,7 @@ function TabView:Visible(visible)
             SetPlayerControl(PlayerId(), true, 0)
             if IsPauseMenuActive() then
                 PlaySoundFrontend(self.SoundId, "Hit_Out", "PLAYER_SWITCH_CUSTOM_SOUNDSET", true)
-                ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
+                ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, false, -1)
             end
             SetFrontendActive(false)
         end
@@ -301,15 +301,13 @@ function TabView:BuildPauseMenu()
                     end
                 end
             end
-            while tab.SettingsColumn ~= nil and tab.SettingsColumn._isBuilding or tab.PlayerColumn ~= nil and tab.PlayerColumn._isBuilding or tab.MissionsColumn ~= nil and tab.MissionsColumn._isBuilding do
+            while (tab.SettingsColumn ~= nil and tab.SettingsColumn._isBuilding) or (tab.PlayerColumn ~= nil and tab.PlayerColumn._isBuilding) or (tab.MissionsColumn ~= nil and tab.MissionsColumn._isBuilding) do
                 Citizen.Wait(0)
-                print("wait building")
             end
             tab:updateFocus(1)
         end
     end
     self._isBuilding = false
-    print("end building")
 end
 
 function TabView:buildSettings(tab, tabIndex)
@@ -343,8 +341,8 @@ function TabView:buildSettings(tab, tabIndex)
         tab.SettingsColumn.Pagination:ScaleformIndex(tab.SettingsColumn.Pagination:GetScaleformIndex(tab.SettingsColumn:CurrentSelection()))
         tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]:Selected(false)
 
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", tab.SettingsColumn.Pagination:GetScaleformIndex(tab.SettingsColumn.Pagination:CurrentMenuIndex()))
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", tab.SettingsColumn:CurrentSelection(), #tab.SettingsColumn.Items)
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", tabIndex, tab.SettingsColumn.Pagination:GetScaleformIndex(tab.SettingsColumn.Pagination:CurrentMenuIndex()))
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", tabIndex, tab.SettingsColumn:CurrentSelection(), #tab.SettingsColumn.Items)
 
         local Item = tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]
         local _, subtype = Item()
@@ -389,8 +387,8 @@ function TabView:buildPlayers(tab, tabIndex)
         tab.PlayersColumn.Pagination:ScaleformIndex(tab.PlayersColumn.Pagination:GetScaleformIndex(tab.PlayersColumn:CurrentSelection()))
         tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:Selected(false)
 
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_SELECTION", tab.PlayersColumn.Pagination:GetScaleformIndex(tab.PlayersColumn.Pagination:CurrentMenuIndex()))
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_QTTY", tab.PlayersColumn:CurrentSelection(), #tab.PlayersColumn.Items)
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_SELECTION", tabIndex, tab.PlayersColumn.Pagination:GetScaleformIndex(tab.PlayersColumn.Pagination:CurrentMenuIndex()))
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_QTTY", tabIndex, tab.PlayersColumn:CurrentSelection(), #tab.PlayersColumn.Items)
 
         tab.PlayersColumn._isBuilding = false
     end)
@@ -427,8 +425,8 @@ function TabView:buildMissions(tab, tabIndex)
         tab.MissionsColumn.Pagination:ScaleformIndex(tab.MissionsColumn.Pagination:GetScaleformIndex(tab.MissionsColumn:CurrentSelection()))
         tab.MissionsColumn.Items[tab.MissionsColumn:CurrentSelection()]:Selected(false)
 
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_MISSIONS_SELECTION", tab.MissionsColumn.Pagination:GetScaleformIndex(tab.MissionsColumn.Pagination:CurrentMenuIndex()))
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_MISSIONS_QTTY", tab.MissionsColumn:CurrentSelection(), #tab.MissionsColumn.Items)
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_MISSIONS_SELECTION", tabIndex, tab.MissionsColumn.Pagination:GetScaleformIndex(tab.MissionsColumn.Pagination:CurrentMenuIndex()))
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_MISSIONS_QTTY", tabIndex, tab.MissionsColumn:CurrentSelection(), #tab.MissionsColumn.Items)
 
         tab.MissionsColumn._isBuilding = false
     end)
@@ -765,7 +763,6 @@ function TabView:GoLeft()
                     Item:Index(retVal)
                     Item.OnStatsChanged(self, Item, Item._Index)
                 else
-                    print(tab._newStyle)
                     if tab._newStyle then
                         tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]:Selected(false)
                         tab:updateFocus(tab:Focus() - 1)

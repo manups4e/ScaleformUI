@@ -139,6 +139,8 @@ function SettingsListColumn:_itemCreation(page, pageIndex, before, overflow)
     local item = self.Items[menuIndex]
     local pSubT = self.Parent()
 
+    item:MainColor(SColor.HUD_Pause_bg)
+
     if pSubT == "LobbyMenu" then
         local Type, SubType = item()
         local descLabel = "menu_lobby_desc_{" .. menuIndex .. "}"

@@ -145,8 +145,7 @@ end
 ---Draws the BigFeedInstance on the screen
 ---@return nil
 function BigFeedInstance:Update()
-    if self._sc == nil or self._sc == 0 then return end
-    ScaleformUI.WaitTime = 0
+    if self._sc == nil or self._sc == 0 or not self._enabled then return end
     self._sc:Render2D()
 end
 

@@ -120,7 +120,6 @@ function MissionListColumn:AddMissionItem(item)
 end
 
 function MissionListColumn:_itemCreation(page, pageIndex, before, overflow)
-
     local menuIndex = self.Pagination:GetMenuIndexFromPageIndex(page, pageIndex)
     if not before then
         if self.Pagination:GetPageItemsCount(page) < self.Pagination:ItemsPerPage() and self.Pagination:TotalPages() > 1 then

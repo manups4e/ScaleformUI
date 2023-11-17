@@ -596,7 +596,9 @@ function UIMenu:Visible(bool)
             ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
             MenuHandler._currentMenu = self
             MenuHandler.ableToDraw = true
-            self:BuildUpMenuAsync()
+            Citizen.CreateThread(function()
+                self:BuildUpMenuAsync()
+            end)
             self.OnMenuOpen(self)
             if BreadcrumbsHandler:Count() == 0 then
                 BreadcrumbsHandler:Forward(self)
@@ -620,124 +622,120 @@ end
 
 ---BuildUpMenu
 function UIMenu:BuildUpMenuAsync(itemsOnly)
-    CreateThread(function()
-        local time = GetNetworkTime()
-        if itemsOnly == nil then itemsOnly = false end
-        self._isBuilding = true
+    local time = GetNetworkTime()
+    if itemsOnly == nil then itemsOnly = false end
+    self._isBuilding = true
 
-        if self._itemless then
-            BeginScaleformMovieMethod(ScaleformUI.Scaleforms._ui.handle, "CREATE_MENU");
-            PushScaleformMovieMethodParameterString(self._Title)
-            PushScaleformMovieMethodParameterString(self._Subtitle)
-            PushScaleformMovieMethodParameterFloat(self.Position.x)
-            PushScaleformMovieMethodParameterFloat(self.Position.y)
-            PushScaleformMovieMethodParameterBool(self.AlternativeTitle)
-            PushScaleformMovieMethodParameterString(self.TxtDictionary)
-            PushScaleformMovieMethodParameterString(self.TxtName)
-            PushScaleformMovieFunctionParameterInt(self:MaxItemsOnScreen())
-            PushScaleformMovieFunctionParameterInt(#self.Items)
-            PushScaleformMovieFunctionParameterBool(self:AnimationEnabled())
-            PushScaleformMovieFunctionParameterInt(self:AnimationType())
-            PushScaleformMovieFunctionParameterInt(self:BuildingAnimation())
-            PushScaleformMovieFunctionParameterInt(self.counterColor:ToArgb())
-            PushScaleformMovieMethodParameterString(self.descFont.FontName)
-            PushScaleformMovieFunctionParameterInt(self.descFont.FontID)
-            PushScaleformMovieMethodParameterFloat(self.fadingTime)
-            PushScaleformMovieFunctionParameterBool(true)
-            BeginTextCommandScaleformString("ScaleformUILongDesc");
-            EndTextCommandScaleformString_2()
-            EndScaleformMovieMethod()
-            self:FadeInMenu()
-            self._isBuilding = false;
-            return;
+    if self._itemless then
+        BeginScaleformMovieMethod(ScaleformUI.Scaleforms._ui.handle, "CREATE_MENU");
+        PushScaleformMovieMethodParameterString(self._Title)
+        PushScaleformMovieMethodParameterString(self._Subtitle)
+        PushScaleformMovieMethodParameterFloat(self.Position.x)
+        PushScaleformMovieMethodParameterFloat(self.Position.y)
+        PushScaleformMovieMethodParameterBool(self.AlternativeTitle)
+        PushScaleformMovieMethodParameterString(self.TxtDictionary)
+        PushScaleformMovieMethodParameterString(self.TxtName)
+        PushScaleformMovieFunctionParameterInt(self:MaxItemsOnScreen())
+        PushScaleformMovieFunctionParameterInt(#self.Items)
+        PushScaleformMovieFunctionParameterBool(self:AnimationEnabled())
+        PushScaleformMovieFunctionParameterInt(self:AnimationType())
+        PushScaleformMovieFunctionParameterInt(self:BuildingAnimation())
+        PushScaleformMovieFunctionParameterInt(self.counterColor:ToArgb())
+        PushScaleformMovieMethodParameterString(self.descFont.FontName)
+        PushScaleformMovieFunctionParameterInt(self.descFont.FontID)
+        PushScaleformMovieMethodParameterFloat(self.fadingTime)
+        PushScaleformMovieFunctionParameterBool(true)
+        BeginTextCommandScaleformString("ScaleformUILongDesc");
+        EndTextCommandScaleformString_2()
+        EndScaleformMovieMethod()
+        self:FadeInMenu()
+        self._isBuilding = false;
+        return;
 
-        end
+    end
 
-        if not itemsOnly then
-            while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
-            ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", self._Title, self._Subtitle, self.Position.x,
-                self.Position.y,
-                self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, self:AnimationEnabled(),
-                self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName,
-                self.descFont.FontID, self.fadingTime)
-            if #self.Windows > 0 then
-                for w_id, window in pairs(self.Windows) do
-                    local Type, SubType = window()
-                    if SubType == "UIMenuHeritageWindow" then
-                        ScaleformUI.Scaleforms._ui:CallFunction("ADD_WINDOW", window.id, window.Mom, window.Dad)
-                    elseif SubType == "UIMenuDetailsWindow" then
-                        ScaleformUI.Scaleforms._ui:CallFunction("ADD_WINDOW", window.id, window.DetailBottom,
-                            window.DetailMid, window.DetailTop, window.DetailLeft.Txd, window.DetailLeft.Txn,
-                            window.DetailLeft.Pos.x, window.DetailLeft.Pos.y, window.DetailLeft.Size.x,
-                            window.DetailLeft.Size.y)
-                        if window.StatWheelEnabled then
-                            for key, value in pairs(window.DetailStats) do
-                                ScaleformUI.Scaleforms._ui:CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL",
-                                    window.id, value.Percentage, value.HudColor)
-                            end
+    if not itemsOnly then
+        while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
+        ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", self._Title, self._Subtitle, self.Position.x,
+            self.Position.y,
+            self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, self:AnimationEnabled(),
+            self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName,
+            self.descFont.FontID, self.fadingTime)
+        if #self.Windows > 0 then
+            for w_id, window in pairs(self.Windows) do
+                local Type, SubType = window()
+                if SubType == "UIMenuHeritageWindow" then
+                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_WINDOW", window.id, window.Mom, window.Dad)
+                elseif SubType == "UIMenuDetailsWindow" then
+                    ScaleformUI.Scaleforms._ui:CallFunction("ADD_WINDOW", window.id, window.DetailBottom,
+                        window.DetailMid, window.DetailTop, window.DetailLeft.Txd, window.DetailLeft.Txn,
+                        window.DetailLeft.Pos.x, window.DetailLeft.Pos.y, window.DetailLeft.Size.x,
+                        window.DetailLeft.Size.y)
+                    if window.StatWheelEnabled then
+                        for key, value in pairs(window.DetailStats) do
+                            ScaleformUI.Scaleforms._ui:CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL",
+                                window.id, value.Percentage, value.HudColor)
                         end
                     end
                 end
             end
-            local timer = GlobalGameTimer
-            if #self.Items == 0 then
-                while #self.Items == 0 do
-                    Citizen.Wait(0)
-                    if GlobalGameTimer - timer > 150 then
-                        ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", 0)
-                        assert(#self.Items ~= 0, "ScaleformUI cannot build a menu with no items")
-                        return
-                    end
+        end
+        local timer = GlobalGameTimer
+        if #self.Items == 0 then
+            while #self.Items == 0 do
+                Citizen.Wait(0)
+                if GlobalGameTimer - timer > 150 then
+                    ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", 0)
+                    assert(#self.Items ~= 0, "ScaleformUI cannot build a menu with no items")
+                    return
                 end
             end
         end
+    end
 
-        local max = self.Pagination:ItemsPerPage()
-        if #self.Items < max then
-            max = #self.Items
+    local max = self.Pagination:ItemsPerPage()
+    if #self.Items < max then
+        max = #self.Items
+    end
+    self.Pagination:MinItem(self.Pagination:CurrentPageStartIndex())
+
+    if self.scrollingType == MenuScrollingType.CLASSIC and self.Pagination:TotalPages() > 1 then
+        local missingItems = self.Pagination:GetMissingItems()
+        if missingItems > 0 then
+            self.Pagination:ScaleformIndex(self.Pagination:GetPageIndexFromMenuIndex(self.Pagination:CurrentPageEndIndex()) + missingItems - 1)
+            self.Pagination.minItem = self.Pagination:CurrentPageStartIndex() - missingItems
         end
-        self.Pagination:MinItem(self.Pagination:CurrentPageStartIndex())
+    end
 
-        if self.scrollingType == MenuScrollingType.CLASSIC and self.Pagination:TotalPages() > 1 then
-            local missingItems = self.Pagination:GetMissingItems()
-            if missingItems > 0 then
-                self.Pagination:ScaleformIndex(self.Pagination:GetPageIndexFromMenuIndex(self.Pagination
-                    :CurrentPageEndIndex()) + missingItems - 1)
-                self.Pagination.minItem = self.Pagination:CurrentPageStartIndex() - missingItems
-            end
+    self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
+
+    local i=1
+    while i <= max do
+        Citizen.Wait(0)
+        if not self:Visible() then return end
+        self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
+        i=i+1
+    end
+
+    self.Pagination:ScaleformIndex(self.Pagination:GetScaleformIndex(self:CurrentSelection()))
+    self.Items[self:CurrentSelection()]:Selected(true)
+
+    ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM",
+        self.Pagination:GetScaleformIndex(self.Pagination:CurrentMenuIndex()))
+    ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", self:CurrentSelection(), #self.Items)
+
+    local Item = self.Items[self:CurrentSelection()]
+    local _, subtype = Item()
+    if subtype == "UIMenuSeparatorItem" then
+        if (self.Items[self:CurrentSelection()].Jumpable) then
+            self:GoDown()
         end
-
-        self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
-
-        local i=1
-        while i <= max do
-            Citizen.Wait(0)
-            if not self:Visible() then break end
-            self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
-            i=i+1
-        end
-
-        self.Pagination:ScaleformIndex(self.Pagination:GetScaleformIndex(self:CurrentSelection()))
-        self.Items[self:CurrentSelection()]:Selected(true)
-
-        ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM",
-            self.Pagination:GetScaleformIndex(self.Pagination:CurrentMenuIndex()))
-        ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", self:CurrentSelection(), #self.Items)
-
-        local Item = self.Items[self:CurrentSelection()]
-        local _, subtype = Item()
-        if subtype == "UIMenuSeparatorItem" then
-            if (self.Items[self:CurrentSelection()].Jumpable) then
-                self:GoDown()
-            end
-        end
-        ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_MOUSE", self.Settings.MouseControlsEnabled)
-        ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_3D_ANIMATIONS", self.enabled3DAnimations)
-        self:AnimationEnabled(self:AnimationEnabled())
-        self:FadeInMenu()
-        self._isBuilding = false
-        print("Elapsed:" .. (GetNetworkTime() - time))
-    end)
+    end
+    ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_MOUSE", self.Settings.MouseControlsEnabled)
+    ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_3D_ANIMATIONS", self.enabled3DAnimations)
+    self:AnimationEnabled(self:AnimationEnabled())
+    self:FadeInMenu()
+    self._isBuilding = false
 end
 
 function UIMenu:_itemCreation(page, pageIndex, before, overflow)

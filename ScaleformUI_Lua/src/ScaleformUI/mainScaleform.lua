@@ -48,9 +48,7 @@ Citizen.CreateThread(function()
     ScaleformUI.Scaleforms.MinimapOverlays:Load()
 
     while true do
-        ScaleformUI.WaitTime = 850
         if MenuHandler.ableToDraw and not (IsWarningMessageActive() or ScaleformUI.Scaleforms.Warning:IsShowing()) then
-            ScaleformUI.WaitTime = 0
             MenuHandler:ProcessMenus()
         end
         ScaleformUI.Scaleforms.Warning:Update()
@@ -77,6 +75,6 @@ Citizen.CreateThread(function()
                 ScaleformUI.Scaleforms._pauseMenu:Load()
             end
         end
-        Citizen.Wait(ScaleformUI.WaitTime)
+        Citizen.Wait(0)
     end
 end)
