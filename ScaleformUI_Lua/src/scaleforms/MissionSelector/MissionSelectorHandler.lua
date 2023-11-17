@@ -158,7 +158,7 @@ function MissionSelectorHandler:UpdateOwnVote(idx, oldidx, showCheckMark, flashB
     if flashBG == nil then flashBG = false end
     if idx == oldidx then return end
     for i = 1, 9 do
-        self._sc:CallFunction("SET_GRID_ITEM_VOTE", false, i - 1, self.Votes[i], self.VotesColor, showCheckMark, flashBG)
+        self._sc:CallFunction("SET_GRID_ITEM_VOTE", i - 1, self.Votes[i], self.VotesColor, showCheckMark, flashBG)
     end
     local votes = 0
     for k, v in ipairs(self.Votes) do
@@ -175,14 +175,14 @@ function MissionSelectorHandler:ShowPlayerVote(idx, playerName, color, showCheck
     if flashBG == nil then flashBG = false end
 
     local r, g, b, a = GetHudColour(color)
-    self._sc:CallFunction("SHOW_PLAYER_VOTE", false, idx - 1, playerName, r, g, b)
+    self._sc:CallFunction("SHOW_PLAYER_VOTE", idx - 1, playerName, r, g, b)
     local votes = 0
     for k, v in ipairs(self.Votes) do
         if v > 0 then votes = votes + v end
     end
     self:SetVotes(votes)
     self:_SetTitle(self.JobTitle.Title, self.JobTitle.Votes)
-    self._sc:CallFunction("SET_GRID_ITEM_VOTE", false, idx - 1, self.Votes[idx], self.VotesColor, showCheckMark, flashBG)
+    self._sc:CallFunction("SET_GRID_ITEM_VOTE", idx - 1, self.Votes[idx], self.VotesColor, showCheckMark, flashBG)
 end
 
 ---Loads the mission selector scaleform
@@ -326,29 +326,29 @@ end
 -- These all don't make much sense based on their names, there is some cross over with naming conventions
 
 function MissionSelectorHandler:_SetTitle(left, votes)
-    self._sc:CallFunction("SET_TITLE", false, left, votes);
+    self._sc:CallFunction("SET_TITLE", left, votes);
 end
 
 function MissionSelectorHandler:SetGridItem(id, title, txd, txn, loadtype, verified_type, icon, check, rp_multiplier,
                                             cash_multiplier,
                                             disabled, iconColor, ap_multiplier)
-    self._sc:CallFunction("SET_GRID_ITEM", false, id, title, txd, txn, loadtype, verified_type, icon, check,
+    self._sc:CallFunction("SET_GRID_ITEM", id, title, txd, txn, loadtype, verified_type, icon, check,
         rp_multiplier, cash_multiplier, disabled, iconColor, ap_multiplier);
 end
 
 function MissionSelectorHandler:SetButtonItem(id, title)
-    self._sc:CallFunction("SET_GRID_ITEM", false, id + 6, title, "", "", -1, -1, -1, false, -1, -1, false, -1, -1);
+    self._sc:CallFunction("SET_GRID_ITEM", id + 6, title, "", "", -1, -1, -1, false, -1, -1, false, -1, -1);
 end
 
 function MissionSelectorHandler:SetSelection(index, title, description, hideHighlight)
     if hideHighlight == nil then hideHighlight = false end
-    self._sc:CallFunction("SET_SELECTION", false, index, title, description, hideHighlight);
+    self._sc:CallFunction("SET_SELECTION", index, title, description, hideHighlight);
 end
 
 function MissionSelectorHandler:SetDetailsItem(id, menu_id, unique_id, type, initial_index, is_selectable, lText, rText,
                                                icon, iconColor, tick)
     if iconColor == nil then iconColor = HudColours.HUD_COLOUR_WHITE end
     if tick == nil then tick = false end
-    self._sc:CallFunction("SET_DETAILS_ITEM", false, id, menu_id, unique_id, type, initial_index, is_selectable, lText,
+    self._sc:CallFunction("SET_DETAILS_ITEM", id, menu_id, unique_id, type, initial_index, is_selectable, lText,
         rText, icon, iconColor, tick)
 end

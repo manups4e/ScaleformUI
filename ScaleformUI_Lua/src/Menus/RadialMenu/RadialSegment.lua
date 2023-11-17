@@ -25,7 +25,7 @@ function RadialSegment:AddItem(item)
     item.Parent = self
     table.insert(self.Items, item)
     if self.Parent ~= nil and self.Parent:Visible() then
-        ScaleformUI.Scaleforms._radialMenu:CallFunction("ADD_ITEM", false, self.Index-1, item:Label(), item:Description(), item:TextureDict(), item:TextureName(), item:TextureWidth(), item:TextureHeight(), item:Color(), item.qtty, item.max)
+        ScaleformUI.Scaleforms._radialMenu:CallFunction("ADD_ITEM", self.Index-1, item:Label(), item:Description(), item:TextureDict(), item:TextureName(), item:TextureWidth(), item:TextureHeight(), item:Color(), item.qtty, item.max)
     end
 end
 
@@ -38,16 +38,11 @@ function RadialSegment:RemoveItem(item)
 end
 
 function RadialSegment:CycleItems(dir)
-    local retVal = 0
+    local input = 11
     if dir == -1 then
-        retVal = ScaleformUI.Scaleforms._radialMenu:CallFunction("SET_INPUT_EVENT", true, 10)
-    else
-        retVal = ScaleformUI.Scaleforms._radialMenu:CallFunction("SET_INPUT_EVENT", true, 11)
+        input = 10
     end
-    while not IsScaleformMovieMethodReturnValueReady(retVal) do
-        Citizen.Wait(0)
-    end
-    self.currentSelection = GetScaleformMovieMethodReturnValueInt(retVal) + 1
+    self.currentSelection = ScaleformUI.Scaleforms._radialMenu:CallFunctionAsyncReturnInt("SET_INPUT_EVENT", input) + 1
 
     self.OnIndexChanged(self.currentSelection)
     return self:CurrentSelection()

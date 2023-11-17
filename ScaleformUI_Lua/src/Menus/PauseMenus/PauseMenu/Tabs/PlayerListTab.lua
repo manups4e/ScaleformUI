@@ -112,11 +112,7 @@ function PlayerListTab:updateFocus(_f, isMouse)
     end
 
     if self.Base.Parent ~= nil and self.Base.Parent:Visible() then
-        local __idx = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_FOCUS", true, IndexOf(self.Base.Parent.Tabs, self) - 1, self._focus-1)
-        while not IsScaleformMovieMethodReturnValueReady(__idx) do
-            Citizen.Wait(0)
-        end
-        local idx = GetScaleformMovieMethodReturnValueInt(__idx)
+        local idx = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunctionAsyncReturnInt("SET_PLAYERS_TAB_FOCUS", IndexOf(self.Base.Parent.Tabs, self) - 1, self._focus-1)
         if not isMouse then
             local _id = self.listCol[self._focus].Pagination:GetMenuIndexFromScaleformIndex(idx)
             self.listCol[self._focus]:CurrentSelection(_id)

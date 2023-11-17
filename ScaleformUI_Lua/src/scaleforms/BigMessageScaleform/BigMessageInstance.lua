@@ -86,7 +86,7 @@ function BigMessageInstance:ShowMissionPassedMessage(msg, duration, manualDispos
     self:Load()
     self._start = GlobalGameTimer
     self._manualDispose = manualDispose or false
-    self._sc:CallFunction("SHOW_MISSION_PASSED_MESSAGE", false, msg, "", 100, true, 0, true)
+    self._sc:CallFunction("SHOW_MISSION_PASSED_MESSAGE", msg, "", 100, true, 0, true)
     self._duration = duration
 end
 
@@ -103,7 +103,7 @@ function BigMessageInstance:ShowColoredShard(msg, desc, textColor, bgColor, dura
     self:Load()
     self._start = GlobalGameTimer
     self._manualDispose = manualDispose or false
-    self._sc:CallFunction("SHOW_SHARD_CENTERED_MP_MESSAGE", false, msg, desc, bgColor, textColor)
+    self._sc:CallFunction("SHOW_SHARD_CENTERED_MP_MESSAGE", msg, desc, bgColor, textColor)
     self._duration = duration
 end
 
@@ -117,7 +117,7 @@ function BigMessageInstance:ShowOldMessage(msg, duration, manualDispose)
     self:Load()
     self._start = GlobalGameTimer
     self._manualDispose = manualDispose or false
-    self._sc:CallFunction("SHOW_MISSION_PASSED_MESSAGE", false, msg)
+    self._sc:CallFunction("SHOW_MISSION_PASSED_MESSAGE", msg)
     self._duration = duration
 end
 
@@ -132,7 +132,7 @@ function BigMessageInstance:ShowSimpleShard(msg, subtitle, duration, manualDispo
     self:Load()
     self._start = GlobalGameTimer
     self._manualDispose = manualDispose or false
-    self._sc:CallFunction("SHOW_SHARD_CREW_RANKUP_MP_MESSAGE", false, msg, subtitle)
+    self._sc:CallFunction("SHOW_SHARD_CREW_RANKUP_MP_MESSAGE", msg, subtitle)
     self._duration = duration
 end
 
@@ -148,7 +148,7 @@ function BigMessageInstance:ShowRankupMessage(msg, subtitle, rank, duration, man
     self:Load()
     self._start = GlobalGameTimer
     self._manualDispose = manualDispose or false
-    self._sc:CallFunction("SHOW_BIG_MP_MESSAGE", false, msg, subtitle, rank, "", "")
+    self._sc:CallFunction("SHOW_BIG_MP_MESSAGE", msg, subtitle, rank, "", "")
     self._duration = duration
 end
 
@@ -164,7 +164,7 @@ function BigMessageInstance:ShowWeaponPurchasedMessage(bigMessage, weaponName, w
     self:Load()
     self._start = GlobalGameTimer
     self._manualDispose = manualDispose or false
-    self._sc:CallFunction("SHOW_WEAPON_PURCHASED", false, bigMessage, weaponName, weaponHash, "", 100)
+    self._sc:CallFunction("SHOW_WEAPON_PURCHASED", bigMessage, weaponName, weaponHash, "", 100)
     self._duration = duration
 end
 
@@ -178,8 +178,8 @@ function BigMessageInstance:ShowMpMessageLarge(msg, duration, manualDispose)
     self:Load()
     self._start = GlobalGameTimer
     self._manualDispose = manualDispose or false
-    self._sc:CallFunction("SHOW_CENTERED_MP_MESSAGE_LARGE", false, msg, "", 100, true, 100)
-    self._sc:CallFunction("TRANSITION_IN", false)
+    self._sc:CallFunction("SHOW_CENTERED_MP_MESSAGE_LARGE", msg, "", 100, true, 100)
+    self._sc:CallFunction("TRANSITION_IN")
     self._duration = duration
 end
 
@@ -194,7 +194,7 @@ function BigMessageInstance:ShowMpWastedMessage(msg, subtitle, duration, manualD
     self:Load()
     self._start = GlobalGameTimer
     self._manualDispose = manualDispose or false
-    self._sc:CallFunction("SHOW_SHARD_WASTED_MP_MESSAGE", false, msg, subtitle)
+    self._sc:CallFunction("SHOW_SHARD_WASTED_MP_MESSAGE", msg, subtitle)
     self._duration = duration
 end
 

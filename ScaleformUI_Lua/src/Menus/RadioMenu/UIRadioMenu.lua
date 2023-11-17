@@ -83,7 +83,7 @@ function UIRadioMenu:CurrentSelection(index)
     if index ~= nil then
         self.currentSelection = index
         if self:Visible() then
-            ScaleformUI.Scaleforms._radioMenu:CallFunction("SET_POINTER", false, (index - 1), true)
+            ScaleformUI.Scaleforms._radioMenu:CallFunction("SET_POINTER", (index - 1), true)
         end
     else
         return self.currentSelection or 1
@@ -104,7 +104,7 @@ function UIRadioMenu:Visible(bool)
         else
             ScaleformUI.Scaleforms.InstructionalButtons:ClearButtonList()
             self.OnMenuClose(self)
-            ScaleformUI.Scaleforms._radioMenu:CallFunction("CLEAR_ALL", false)
+            ScaleformUI.Scaleforms._radioMenu:CallFunction("CLEAR_ALL")
             MenuHandler.ableToDraw = false
         end
     else
@@ -114,11 +114,11 @@ end
 
 function UIRadioMenu:BuildMenu()
     Citizen.CreateThread(function()
-        ScaleformUI.Scaleforms._radioMenu:CallFunction("CREATE_MENU", false, true, 0, 0)
+        ScaleformUI.Scaleforms._radioMenu:CallFunction("CREATE_MENU", true, 0, 0)
         for k,v in pairs(self.Stations) do
-            ScaleformUI.Scaleforms._radioMenu:CallFunction("ADD_ITEM", false, v.TextureDictionary, v.TextureName, v.StationName, v.Artist, v.Track)
+            ScaleformUI.Scaleforms._radioMenu:CallFunction("ADD_ITEM", v.TextureDictionary, v.TextureName, v.StationName, v.Artist, v.Track)
         end
-        ScaleformUI.Scaleforms._radioMenu:CallFunction("LOAD_MENU", false)
+        ScaleformUI.Scaleforms._radioMenu:CallFunction("LOAD_MENU")
         self:animateIn()
     end)
 end
@@ -174,7 +174,7 @@ function UIRadioMenu:ProcessControl()
         if self.changed then
             self.Stations[self.currentSelection].Selected = true
             self.OnIndexChange(self.currentSelection)
-            ScaleformUI.Scaleforms._radioMenu:CallFunction("SET_POINTER", false, finalizedAngle, true)
+            ScaleformUI.Scaleforms._radioMenu:CallFunction("SET_POINTER", finalizedAngle, true)
             self.changed = false
         end
     end
@@ -219,7 +219,7 @@ function UIRadioMenu:Draw()
 end
 
 function UIRadioMenu:animateIn()
-    ScaleformUI.Scaleforms._radioMenu:CallFunction("ANIMATE_IN", false, self._animDuration, self._AnimDirection, "zoom")
+    ScaleformUI.Scaleforms._radioMenu:CallFunction("ANIMATE_IN", self._animDuration, self._AnimDirection, "zoom")
     repeat
         Citizen.Wait(0)
         local return_value = ScaleformUI.Scaleforms._radioMenu:CallFunction("GET_IS_ANIMATING", true) --[[@as number]]
@@ -231,7 +231,7 @@ function UIRadioMenu:animateIn()
 end
 
 function UIRadioMenu:animateOut()
-    ScaleformUI.Scaleforms._radioMenu:CallFunction("ANIMATE_OUT", false, self._animDuration, self._AnimDirection, "zoom")
+    ScaleformUI.Scaleforms._radioMenu:CallFunction("ANIMATE_OUT", self._animDuration, self._AnimDirection, "zoom")
     repeat
         Citizen.Wait(0)
         local return_value = ScaleformUI.Scaleforms._radioMenu:CallFunction("GET_IS_ANIMATING", true) --[[@as number]]

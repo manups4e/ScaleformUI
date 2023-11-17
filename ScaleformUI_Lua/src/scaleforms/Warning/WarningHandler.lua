@@ -61,7 +61,7 @@ end
 ---Disposes the warning scaleform
 function WarningInstance:Dispose()
     if self._sc == nil then return end
-    self._sc:CallFunction("HIDE_POPUP_WARNING", false, 1000)
+    self._sc:CallFunction("HIDE_POPUP_WARNING", 1000)
     self._sc:Dispose()
     self._sc = nil
     self._disableControls = false
@@ -77,7 +77,7 @@ function WarningInstance:ShowWarning(title, subtitle, prompt, errorMsg, warningT
     self:Load():next(function()
         if warningType == nil then warningType = 0 end
         if showBackground == nil then showBackground = true end
-        self._sc:CallFunction("SHOW_POPUP_WARNING", false, 1000, title, subtitle, prompt, showBackground, warningType, errorMsg)
+        self._sc:CallFunction("SHOW_POPUP_WARNING", 1000, title, subtitle, prompt, showBackground, warningType, errorMsg)
     end, function(value)
         print("Error loading warning: " .. value)
     end)
@@ -93,7 +93,7 @@ function WarningInstance:UpdateWarning(title, subtitle, prompt, errorMsg, warnin
     if not self:IsShowing() then return end
     if warningType == nil then warningType = 0 end
     if showBackground == nil then showBackground = true end
-    self._sc:CallFunction("SHOW_POPUP_WARNING", false, 1000, title, subtitle, prompt, showBackground, warningType, errorMsg)
+    self._sc:CallFunction("SHOW_POPUP_WARNING", 1000, title, subtitle, prompt, showBackground, warningType, errorMsg)
 end
 
 ---Shows the warning with the given title, subtitle, prompt, error message, warning type and buttons
@@ -112,7 +112,7 @@ function WarningInstance:ShowWarningWithButtons(title, subtitle, prompt, buttons
         if buttons == nil or #buttons == 0 then return end
         ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self._buttonList)
         ScaleformUI.Scaleforms.InstructionalButtons.UseMouseButtons = true
-        self._sc:CallFunction("SHOW_POPUP_WARNING", false, 1000, title, subtitle, prompt, showBackground, warningType, errorMsg)
+        self._sc:CallFunction("SHOW_POPUP_WARNING", 1000, title, subtitle, prompt, showBackground, warningType, errorMsg)
     end, function(value)
         print("Error loading warning: " .. value)
     end)

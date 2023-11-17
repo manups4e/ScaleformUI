@@ -88,7 +88,7 @@ function RadialMenu:Enable3D(enable)
     if enable ~= nil then
         self.enable3D = enable
         if self:Visible() then
-            ScaleformUI.Scaleforms._radialMenu:CallFunction("ENABLE_3D", false, enable)
+            ScaleformUI.Scaleforms._radialMenu:CallFunction("ENABLE_3D", enable)
         end
     else
         return self.enable3D
@@ -99,7 +99,7 @@ function RadialMenu:CurrentSelection(index)
     if index ~= nil then
         self.currentSelection = index
         if self:Visible() then
-            ScaleformUI.Scaleforms._radialMenu:CallFunction("SET_POINTER", false, (index - 1), true)
+            ScaleformUI.Scaleforms._radialMenu:CallFunction("SET_POINTER", (index - 1), true)
         end
     else
         return self.currentSelection or 1
@@ -120,7 +120,7 @@ function RadialMenu:Visible(bool)
         else
             ScaleformUI.Scaleforms.InstructionalButtons:ClearButtonList()
             self.OnMenuClose(self)
-            ScaleformUI.Scaleforms._radialMenu:CallFunction("CLEAR_ALL", false)
+            ScaleformUI.Scaleforms._radialMenu:CallFunction("CLEAR_ALL")
             MenuHandler.ableToDraw = false
         end
     else
@@ -129,15 +129,15 @@ function RadialMenu:Visible(bool)
 end
 
 function RadialMenu:BuildMenu()
-    ScaleformUI.Scaleforms._radialMenu:CallFunction("CREATE_MENU", false, self:Enable3D(), (1280 / 2) + self.offset.x, ((720 / 2) - 60) + self.offset.y)
+    ScaleformUI.Scaleforms._radialMenu:CallFunction("CREATE_MENU", self:Enable3D(), (1280 / 2) + self.offset.x, ((720 / 2) - 60) + self.offset.y)
     for i=1, 8 do
         local seg = self.Segments[i]
         for j=1, #seg.Items do
             local item = seg.Items[j]
-            ScaleformUI.Scaleforms._radialMenu:CallFunction("ADD_ITEM", false, i-1, item:Label(), item:Description(), item:TextureDict(), item:TextureName(), item:TextureWidth(), item:TextureHeight(), item:Color(), item.qtty, item.max)
+            ScaleformUI.Scaleforms._radialMenu:CallFunction("ADD_ITEM", i-1, item:Label(), item:Description(), item:TextureDict(), item:TextureName(), item:TextureWidth(), item:TextureHeight(), item:Color(), item.qtty, item.max)
         end
     end
-    ScaleformUI.Scaleforms._radialMenu:CallFunction("LOAD_MENU", false, self.currentSelection-1, self.Segments[1]:CurrentSelection()-1, self.Segments[2]:CurrentSelection()-1, self.Segments[3]:CurrentSelection()-1, self.Segments[4]:CurrentSelection()-1, self.Segments[5]:CurrentSelection()-1, self.Segments[6]:CurrentSelection()-1, self.Segments[7]:CurrentSelection()-1, self.Segments[8]:CurrentSelection()-1)
+    ScaleformUI.Scaleforms._radialMenu:CallFunction("LOAD_MENU", self.currentSelection-1, self.Segments[1]:CurrentSelection()-1, self.Segments[2]:CurrentSelection()-1, self.Segments[3]:CurrentSelection()-1, self.Segments[4]:CurrentSelection()-1, self.Segments[5]:CurrentSelection()-1, self.Segments[6]:CurrentSelection()-1, self.Segments[7]:CurrentSelection()-1, self.Segments[8]:CurrentSelection()-1)
 end
 
 function RadialMenu:ProcessMouse()
@@ -185,7 +185,7 @@ function RadialMenu:ProcessControl()
         if self.changed then
             self.Segments[self.currentSelection].Selected = true
             self.OnSegmentHighlight(self.Segments[self.currentSelection])
-            ScaleformUI.Scaleforms._radialMenu:CallFunction("SET_POINTER", false, finalizedAngle, true)
+            ScaleformUI.Scaleforms._radialMenu:CallFunction("SET_POINTER", finalizedAngle, true)
             self.changed = false
         end
     end

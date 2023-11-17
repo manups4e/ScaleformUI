@@ -54,7 +54,7 @@ function MultiplayerChat:Load()
 
   if self._sc:IsLoaded() then
     if not INITIALIZED then
-      self._sc:CallFunction("RESET", false)
+      self._sc:CallFunction("RESET")
       INITIALIZED = true
     end
     p:resolve()
@@ -80,7 +80,7 @@ function MultiplayerChat:SetFocus(visibleState, scopeType, scopeText, playerName
     self._isTyping = true
   end
 
-  self._sc:CallFunction("SET_FOCUS", false, visibleState, scopeType, scopeText, playerName, colour)
+  self._sc:CallFunction("SET_FOCUS", visibleState, scopeType, scopeText, playerName, colour)
 end
 
 function MultiplayerChat:Show()
@@ -93,22 +93,22 @@ end
 
 ---Scroll the chat up
 function MultiplayerChat:PageUp()
-  self._sc:CallFunction("PAGE_UP", false)
+  self._sc:CallFunction("PAGE_UP")
 end
 
 ---Scroll the chat down
 function MultiplayerChat:PageDown()
-  self._sc:CallFunction("PAGE_DOWN", false)
+  self._sc:CallFunction("PAGE_DOWN")
 end
 
 ---Delete last character
 function MultiplayerChat:DeleteText()
-  self._sc:CallFunction("DELETE_TEXT", false)
+  self._sc:CallFunction("DELETE_TEXT")
 end
 
 ---Set the typing state as completed
 function MultiplayerChat:SetTypingDone()
-  self._sc:CallFunction("SET_TYPING_DONE", false)
+  self._sc:CallFunction("SET_TYPING_DONE")
   self._isTyping = false
 end
 
@@ -119,7 +119,7 @@ end
 ---@param teamOnly? boolean
 ---@param playerColour? HudColours
 function MultiplayerChat:AddMessage(playerName, message, scope, teamOnly, playerColour)
-  self._sc:CallFunction("ADD_MESSAGE", false, playerName, message, scope, teamOnly, playerColour)
+  self._sc:CallFunction("ADD_MESSAGE", playerName, message, scope, teamOnly, playerColour)
 end
 
 -- As a key is pressed this will add the letter onto the current message in the capture field
@@ -129,7 +129,7 @@ end
 ---Add a character to the chat
 ---@param text string -- The character to add, or "ENTER", "BACKSPACE", or "ESCAPE"
 function MultiplayerChat:AddText(text)
-  self._sc:CallFunction("ADD_TEXT", false, text)
+  self._sc:CallFunction("ADD_TEXT", text)
 end
 
 ---Close the chat
@@ -142,17 +142,17 @@ end
 
 ---Complete Text -- this will add the current messahe information to the chat locally, its also called by SetTypingDone
 function MultiplayerChat:CompleteText()
-  self._sc:CallFunction("COMPLETE_TEXT", false)
+  self._sc:CallFunction("COMPLETE_TEXT")
 end
 
 ---Abort Text
 function MultiplayerChat:AbortText()
-  self._sc:CallFunction("ABORT_TEXT", false)
+  self._sc:CallFunction("ABORT_TEXT")
 end
 
 ---Reset Text
 function MultiplayerChat:Reset()
-  self._sc:CallFunction("RESET", false)
+  self._sc:CallFunction("RESET")
 end
 
 function MultiplayerChat:IsEnabled()

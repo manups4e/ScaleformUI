@@ -35,16 +35,16 @@ function SplashTextInstance:SetTextLabel(label, sColor)
     sColor = SColor.White;
   end
 
-  self._scaleform:CallFunction("SPLASH_TEXT_LABEL", false, { type = "label", data = "LBL_SPLASH_TEXT" }, sColor.R,
+  self._scaleform:CallFunction("SPLASH_TEXT_LABEL", { type = "label", data = "LBL_SPLASH_TEXT" }, sColor.R,
     sColor.G, sColor.B, sColor.A);
 end
 
 function SplashTextInstance:TransitionIn(duration, managed)
-  self._scaleform:CallFunction("SPLASH_TEXT_TRANSITION_IN", false, duration or 300, managed or false);
+  self._scaleform:CallFunction("SPLASH_TEXT_TRANSITION_IN", duration or 300, managed or false);
 end
 
 function SplashTextInstance:TransitionOut(duration, managed)
-  self._scaleform:CallFunction("SPLASH_TEXT_TRANSITION_OUT", false, duration or 300, managed or false);
+  self._scaleform:CallFunction("SPLASH_TEXT_TRANSITION_OUT", duration or 300, managed or false);
 end
 
 function SplashTextInstance:SetScale(width, height)

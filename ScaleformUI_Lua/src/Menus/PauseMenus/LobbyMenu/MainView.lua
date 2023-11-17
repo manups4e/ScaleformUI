@@ -181,11 +181,7 @@ function MainView:updateFocus(value, isMouse)
     end
 
     if self:Visible() then
-        local __idx = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_FOCUS", true, self._focus-1)
-        while not IsScaleformMovieMethodReturnValueReady(__idx) do
-            Citizen.Wait(0)
-        end
-        local idx = GetScaleformMovieMethodReturnValueInt(__idx)
+        local idx = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunctionAsyncReturnInt("SET_FOCUS", self._focus-1)
         if not isMouse then
             local _id = self.listCol[self._focus].Pagination:GetMenuIndexFromScaleformIndex(idx)
             if not goingLeft or self._newStyle then
@@ -240,7 +236,7 @@ function MainView:ShowHeader()
     ScaleformUI.Scaleforms._pauseMenu:AddLobbyMenuTab(self.listCol[1]._label, 2, self.listCol[1]._color)
     ScaleformUI.Scaleforms._pauseMenu:AddLobbyMenuTab(self.listCol[2]._label, 2, self.listCol[2]._color)
     ScaleformUI.Scaleforms._pauseMenu:AddLobbyMenuTab(self.listCol[3]._label, 2, self.listCol[3]._color)
-    ScaleformUI.Scaleforms._pauseMenu._header:CallFunction("SET_ALL_HIGHLIGHTS", false, true, 117);
+    ScaleformUI.Scaleforms._pauseMenu._header:CallFunction("SET_ALL_HIGHLIGHTS", true, 117);
     self._loaded = true
 end
 
@@ -248,13 +244,13 @@ function MainView:BuildPauseMenu()
     self._isBuilding = true
     self:ShowHeader()
     if #self.listCol == 1 then
-        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CREATE_MENU", false, self.listCol[1].Type)
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CREATE_MENU", self.listCol[1].Type)
     elseif #self.listCol == 2 then
-        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CREATE_MENU", false, self.listCol[1].Type, self.listCol[2].Type)
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CREATE_MENU", self.listCol[1].Type, self.listCol[2].Type)
     elseif #self.listCol == 3 then
-        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CREATE_MENU", false, self.listCol[1].Type, self.listCol[2].Type, self.listCol[3].Type)
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CREATE_MENU", self.listCol[1].Type, self.listCol[2].Type, self.listCol[3].Type)
     end
-    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_NEWSTYLE", false, self._newStyle)
+    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_NEWSTYLE", self._newStyle)
 
     for i,col in pairs(self.listCol) do
         col.Parent = self
@@ -265,11 +261,10 @@ function MainView:BuildPauseMenu()
         elseif col.Type == "missions" then
             self:buildMissions()
         elseif col.Type == "panel" then
-            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_MISSION_PANEL_PICTURE", false,
-            self.MissionPanel.TextureDict, self.MissionPanel.TextureName);
-            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSION_PANEL_TITLE", false, self.MissionPanel:Title());
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_MISSION_PANEL_PICTURE", self.MissionPanel.TextureDict, self.MissionPanel.TextureName);
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSION_PANEL_TITLE", self.MissionPanel:Title());
             for k, item in pairs(self.MissionPanel.Items) do
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_MISSION_PANEL_ITEM", false, item.Type, item.TextLeft,
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_MISSION_PANEL_ITEM", item.Type, item.TextLeft,
                     item.TextRight, item.Icon or 0, item.IconColor or SColor.HUD_Pure_white, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID)
             end
         end
@@ -279,7 +274,7 @@ function MainView:BuildPauseMenu()
         Citizen.Wait(0)
     end
 
-    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("LOAD_MENU", false)
+    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("LOAD_MENU")
     Citizen.Wait(250)
     self:updateFocus(1)
     local containsPlayers = false
@@ -329,8 +324,8 @@ function MainView:buildSettings(tab, tabIndex)
         self.SettingsColumn.Pagination:ScaleformIndex(self.SettingsColumn.Pagination:GetScaleformIndex(self.SettingsColumn:CurrentSelection()))
         self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]:Selected(false)
 
-        ScaleformUI.Scaleforms._ui:CallFunction("SET_SETTINGS_SELECTION", false, self.SettingsColumn.Pagination:GetScaleformIndex(self.SettingsColumn.Pagination:CurrentMenuIndex()))
-        ScaleformUI.Scaleforms._ui:CallFunction("SET_SETTINGS_QTTY", false, self.SettingsColumn:CurrentSelection(), #self.SettingsColumn.Items)
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_SELECTION", self.SettingsColumn.Pagination:GetScaleformIndex(self.SettingsColumn.Pagination:CurrentMenuIndex()))
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_QTTY", self.SettingsColumn:CurrentSelection(), #self.SettingsColumn.Items)
 
         local Item = self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]
         local _, subtype = Item()
@@ -375,8 +370,8 @@ function MainView:buildPlayers(tab, tabIndex)
         self.PlayersColumn.Pagination:ScaleformIndex(self.PlayersColumn.Pagination:GetScaleformIndex(self.PlayersColumn:CurrentSelection()))
         self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()]:Selected(false)
 
-        ScaleformUI.Scaleforms._ui:CallFunction("SET_PLAYERS_SELECTION", false, self.PlayersColumn.Pagination:GetScaleformIndex(self.PlayersColumn.Pagination:CurrentMenuIndex()))
-        ScaleformUI.Scaleforms._ui:CallFunction("SET_PLAYERS_QTTY", false, self.PlayersColumn:CurrentSelection(), #self.PlayersColumn.Items)
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_SELECTION", self.PlayersColumn.Pagination:GetScaleformIndex(self.PlayersColumn.Pagination:CurrentMenuIndex()))
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_QTTY", self.PlayersColumn:CurrentSelection(), #self.PlayersColumn.Items)
 
         self.PlayersColumn._isBuilding = false
     end)
@@ -413,8 +408,8 @@ function MainView:buildMissions(tab, tabIndex)
         self.MissionsColumn.Pagination:ScaleformIndex(self.MissionsColumn.Pagination:GetScaleformIndex(self.MissionsColumn:CurrentSelection()))
         self.MissionsColumn.Items[self.MissionsColumn:CurrentSelection()]:Selected(false)
 
-        ScaleformUI.Scaleforms._ui:CallFunction("SET_MISSIONS_SELECTION", false, self.MissionsColumn.Pagination:GetScaleformIndex(self.MissionsColumn.Pagination:CurrentMenuIndex()))
-        ScaleformUI.Scaleforms._ui:CallFunction("SET_MISSIONS_QTTY", false, self.MissionsColumn:CurrentSelection(), #self.MissionsColumn.Items)
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSIONS_SELECTION", self.MissionsColumn.Pagination:GetScaleformIndex(self.MissionsColumn.Pagination:CurrentMenuIndex()))
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSIONS_QTTY", self.MissionsColumn:CurrentSelection(), #self.MissionsColumn.Items)
 
         self.MissionsColumn._isBuilding = false
     end)
@@ -432,7 +427,7 @@ function MainView:Draw()
     DisableControlAction(2, 200, true)
     ScaleformUI.Scaleforms._pauseMenu:Draw(true)
     if self._firstTick then
-        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("FADE_IN", false)
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("FADE_IN")
         self._firstTick = false
     end
 end
@@ -576,11 +571,7 @@ function MainView:ButtonDelay()
 end
 
 function MainView:Select()
-    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 16) --[[@as number]]
-    while not IsScaleformMovieMethodReturnValueReady(return_value) do
-        Citizen.Wait(0)
-    end
-    local retVal = GetScaleformMovieMethodReturnValueString(return_value)
+    local retVal = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunctionAsyncReturnString("SET_INPUT_EVENT", 16)
 
     local selection = self._focus
     if tab._newStyle then
@@ -643,11 +634,7 @@ function MainView:GoDown()
 end
 
 function MainView:GoLeft()
-    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 10, self._delay) --[[@as number]]
-    while not IsScaleformMovieMethodReturnValueReady(return_value) do
-        Citizen.Wait(0)
-    end
-    local retVal = GetScaleformMovieMethodReturnValueString(return_value)
+    local retVal = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunctionAsyncReturnString("SET_INPUT_EVENT", 10, self._delay)
 
     local splitted = Split(retVal, ",")
 
@@ -722,11 +709,7 @@ function MainView:GoLeft()
 end
 
 function MainView:GoRight()
-    local return_value = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", true, 11, self._delay) --[[@as number]]
-    while not IsScaleformMovieMethodReturnValueReady(return_value) do
-        Citizen.Wait(0)
-    end
-    local retVal = GetScaleformMovieMethodReturnValueString(return_value)
+    local retVal = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunctionAsyncReturnString("SET_INPUT_EVENT", 11, self._delay)
 
     local splitted = Split(retVal, ",")
 

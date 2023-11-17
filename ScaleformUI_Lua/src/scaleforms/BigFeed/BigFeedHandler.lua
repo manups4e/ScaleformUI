@@ -79,7 +79,7 @@ function BigFeedInstance:RightAligned(rightAligned)
     if rightAligned == nil then return self._rightAligned end
     self._rightAligned = ToBool(rightAligned)
     if self._enabled then
-        self._sc:CallFunction("SETUP_BIGFEED", false, self._rightAligned)
+        self._sc:CallFunction("SETUP_BIGFEED", self._rightAligned)
         self:UpdateInfo()
     end
     return self._rightAligned
@@ -94,7 +94,7 @@ function BigFeedInstance:Texture(textureName, textureDictionary)
     self._txn = textureName
     self._txd = textureDictionary
     if self._enabled then
-        self._sc:CallFunction("SET_BIGFEED_IMAGE", false, textureDictionary, textureName)
+        self._sc:CallFunction("SET_BIGFEED_IMAGE", textureDictionary, textureName)
         self:UpdateInfo()
     end
     return { txd = self._txd, txn = self._txn }
@@ -107,15 +107,15 @@ function BigFeedInstance:Enabled(enabled)
     if enabled == nil then return self._enabled end
     self._enabled = ToBool(enabled)
     if enabled == true then
-        self._sc:CallFunction("SETUP_BIGFEED", false, self._rightAligned)
-        self._sc:CallFunction("HIDE_ONLINE_LOGO", false)
-        self._sc:CallFunction("FADE_IN_BIGFEED", false)
+        self._sc:CallFunction("SETUP_BIGFEED", self._rightAligned)
+        self._sc:CallFunction("HIDE_ONLINE_LOGO")
+        self._sc:CallFunction("FADE_IN_BIGFEED")
         if self:DisabledNotifications() then
             ThefeedCommentTeleportPoolOn()
         end
         self:UpdateInfo()
     else
-        self._sc:CallFunction("END_BIGFEED", false)
+        self._sc:CallFunction("END_BIGFEED")
         if self:DisabledNotifications() then
             ThefeedCommentTeleportPoolOff()
         end
@@ -158,7 +158,7 @@ function BigFeedInstance:Load()
     local timeout = 1000
     local start = GlobalGameTimer
     while not self._sc:IsLoaded() and GlobalGameTimer - start < timeout do Citizen.Wait(0) end
-    self._sc:CallFunction("HIDE_ONLINE_LOGO", false)
+    self._sc:CallFunction("HIDE_ONLINE_LOGO")
 end
 
 ---Disposes the BigFeedInstance scaleform

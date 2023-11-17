@@ -27,11 +27,11 @@ AddEventHandler("onResourceStop", function(resName)
             AnimpostfxPlay("PauseMenuOut", 800, false);
         end
         ScaleformUI.Scaleforms._pauseMenu:Dispose()
-        ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
+        ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL")
         ScaleformUI.Scaleforms._ui:Dispose()
-        ScaleformUI.Scaleforms._radialMenu:CallFunction("CLEAR_ALL", false)
+        ScaleformUI.Scaleforms._radialMenu:CallFunction("CLEAR_ALL")
         ScaleformUI.Scaleforms._radialMenu:Dispose()
-        ScaleformUI.Scaleforms._radioMenu:CallFunction("CLEAR_ALL", false)
+        ScaleformUI.Scaleforms._radioMenu:CallFunction("CLEAR_ALL")
         ScaleformUI.Scaleforms._radioMenu:Dispose()
         if not IsPlayerControlOn(PlayerId()) then
             SetPlayerControl(PlayerId(), true, 0)
