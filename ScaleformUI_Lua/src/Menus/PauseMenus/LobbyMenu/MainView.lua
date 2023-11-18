@@ -450,8 +450,8 @@ function MainView:ProcessMouse()
         if event_type == 5 then
             local foc = self:Focus()
             local curSel = 1
-            if tab._newStyle then
-                curSel = tab.listCol[foc]:CurrentSelection()
+            if self._newStyle then
+                curSel = self.listCol[foc]:CurrentSelection()
             end
             for k,v in pairs(self.listCol) do
                 if v.Type == "settings" then
@@ -574,7 +574,7 @@ function MainView:Select()
     local retVal = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunctionAsyncReturnString("SET_INPUT_EVENT", 16)
 
     local selection = self._focus
-    if tab._newStyle then
+    if self._newStyle then
         selection = 1
     end
     local splitted = Split(retVal, ",")
