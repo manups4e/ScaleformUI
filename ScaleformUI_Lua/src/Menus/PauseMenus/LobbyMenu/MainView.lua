@@ -641,7 +641,11 @@ function MainView:GoLeft()
     if self._newStyle then
         for k,v in pairs(self.listCol) do
             if v.Type == "settings" then
-                self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]:Selected(false)
+                local item = self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]
+                local type, subType = item()
+                if subType ~= "UIMenuListItem" and subType ~= "UIMenuSliderItem" and subType ~= "UIMenuProgressItem" then
+                    self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]:Selected(false)
+                end
             elseif v.Type == "missions" then
                 self.MissionsColumn.Items[self.MissionsColumn:CurrentSelection()]:Selected(false)
             elseif v.Type == "players" then
@@ -716,7 +720,11 @@ function MainView:GoRight()
     if self._newStyle then
         for k,v in pairs(self.listCol) do
             if v.Type == "settings" then
-                self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]:Selected(false)
+                local item = self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]
+                local type, subType = item()
+                if subType ~= "UIMenuListItem" and subType ~= "UIMenuSliderItem" and subType ~= "UIMenuProgressItem" then
+                    self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]:Selected(false)
+                end
             elseif v.Type == "missions" then
                 self.MissionsColumn.Items[self.MissionsColumn:CurrentSelection()]:Selected(false)
             elseif v.Type == "players" then
