@@ -75,7 +75,10 @@ namespace ScaleformUI.Scaleforms
                         break;
                     case string:
                     case char:
-                        API.PushScaleformMovieMethodParameterString(argument.ToString());
+                        if (argument.ToString().StartsWith("b_") || argument.ToString().StartsWith("t_"))
+                            API.ScaleformMovieMethodAddParamPlayerNameString(argument.ToString());
+                        else
+                            API.PushScaleformMovieMethodParameterString(argument.ToString());
                         break;
                     case double:
                     case float:

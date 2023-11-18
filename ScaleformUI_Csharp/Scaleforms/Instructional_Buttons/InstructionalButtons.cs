@@ -188,7 +188,7 @@ namespace ScaleformUI.Scaleforms
             }
             else if (InputButton != InputGroup.UNUSED) return $"~{InputButton}~";
 
-            return IsUsingController ? API.GetControlInstructionalButton(2, (int)GamepadButton, 1) : API.GetControlInstructionalButton(2, (int)KeyboardButton, 1);
+            return IsUsingController ? API.GetControlInstructionalButton(2, (int)GamepadButton, 1) : API.GetControlInstructionalButton(0, (int)KeyboardButton, 1);
         }
 
         public void InvokeEvent(InstructionalButton control)
@@ -232,11 +232,12 @@ namespace ScaleformUI.Scaleforms
 
         internal async void Load()
         {
-            if (_sc != null) return;
             _sc = new ScaleformWideScreen("INSTRUCTIONAL_BUTTONS");
             int timeout = 1000;
             int start = Main.GameTime;
             while (!_sc.IsLoaded && Main.GameTime - start < timeout) await BaseScript.Delay(0);
+            Size res = Screen.Resolution;
+            _sc.CallFunction("SET_DISPLAY_CONFIG", 1280, 720, 0.05f, 0.95f, 0.05f, 0.95f, true, false, false, res.Width, res.Height);
         }
 
         /// <summary>
@@ -416,9 +417,8 @@ namespace ScaleformUI.Scaleforms
 
         internal void Update()
         {
-            if (_sc == null)
-                Load();
             if (ControlButtons.Count == 0) return;
+            if (_sc == null) Load();
             if (API.IsUsingKeyboard(2))
             {
                 if (!_isUsingKeyboard)
