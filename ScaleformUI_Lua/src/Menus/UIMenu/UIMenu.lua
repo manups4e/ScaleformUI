@@ -674,7 +674,7 @@ function UIMenu:BuildUpMenuAsync(itemsOnly)
                     if window.StatWheelEnabled then
                         for key, value in pairs(window.DetailStats) do
                             ScaleformUI.Scaleforms._ui:CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL",
-                                window.id, value.Percentage, value.HudColor)
+                                w_id-1, value.Percentage, value.HudColor)
                         end
                     end
                 end
