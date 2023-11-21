@@ -1816,17 +1816,35 @@ namespace ScaleformUI.Menu
                 }
             }
 
-            if (ScreenTools.IsMouseInBounds(new PointF(0, 0), new SizeF(30, 1080)) && MouseEdgeEnabled)
+            if (MouseEdgeEnabled)
             {
-                GameplayCamera.RelativeHeading += 5f;
-                SetCursorSprite(6);
+                float mouseVariance = GetDisabledControlNormal(2, 239);
+                if (ScreenTools.IsMouseInBounds(new PointF(0, 0), new SizeF(30, 1080)))
+                {
+                    if (mouseVariance < (0.05f * 0.75f))
+                    {
+                        SetCursorSprite(6);
+                        float mouseSpeed = 0.05f - mouseVariance;
+                        if (mouseSpeed > 0.05f) mouseSpeed = 0.05f;
+                        GameplayCamera.RelativeHeading += 70 * mouseSpeed;
+                    }
+                }
+                else if (ScreenTools.IsMouseInBounds(new PointF(Convert.ToInt32(Resolution.Width - 30f), 0), new SizeF(30, 1080)))
+                {
+                    if (mouseVariance > (1f - (0.05f * 0.75f)))
+                    {
+                        float mouseSpeed = 0.05f - (1f - mouseVariance);
+                        if (mouseSpeed > 0.05f) mouseSpeed = 0.05f;
+                        GameplayCamera.RelativeHeading -= 70 * mouseSpeed;
+                        SetCursorSprite(7);
+                    }
+                }
+                else if (!MenuItems.Any(x => x.Hovered))
+                {
+                    SetCursorSprite(1);
+                }
             }
-            else if (ScreenTools.IsMouseInBounds(new PointF(Convert.ToInt32(Resolution.Width - 30f), 0), new SizeF(30, 1080)) && MouseEdgeEnabled)
-            {
-                GameplayCamera.RelativeHeading -= 5f;
-                SetCursorSprite(7);
-            }
-            else if (MouseEdgeEnabled && !MenuItems.Any(x => x.Hovered))
+            else if (!MenuItems.Any(x => x.Hovered))
             {
                 SetCursorSprite(1);
             }
