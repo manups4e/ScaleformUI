@@ -1544,13 +1544,30 @@ function UIMenu:ProcessMouse()
             ReleaseSoundId(menuSound)
         end
     end
-    if IsMouseInBounds(0, 0, 30, 1080) and self.Settings.MouseEdgeEnabled then
-        SetGameplayCamRelativeHeading(GetGameplayCamRelativeHeading() + 5)
-        SetCursorSprite(6)
-    elseif IsMouseInBounds(1920 - 30, 0, 30, 1080) and self.Settings.MouseEdgeEnabled then
-        SetGameplayCamRelativeHeading(GetGameplayCamRelativeHeading() - 5)
-        SetCursorSprite(7)
-    elseif self.Settings.MouseEdgeEnabled then
+    if self.Settings.MouseEdgeEnabled then
+        local mouseVariance = GetDisabledControlNormal(2, 239)
+        if IsMouseInBounds(0, 0, 30, 1080) then
+            if mouseVariance < (0.05 * 0.75) then
+                local mouseSpeed = 0.05 - mouseVariance
+                if mouseSpeed > 0.05 then
+                    mouseSpeed = 0.05
+                end
+                SetGameplayCamRelativeHeading(GetGameplayCamRelativeHeading() + (70 * mouseSpeed))
+                SetCursorSprite(6)
+            end
+        elseif IsMouseInBounds(1920 - 30, 0, 30, 1080) then
+            if mouseVariance > (1 - (0.05 * 0.75)) then
+                local mouseSpeed = 0.05 - (1 - mouseVariance)
+                if mouseSpeed > 0.05 then
+                    mouseSpeed = 0.05
+                end
+                SetGameplayCamRelativeHeading(GetGameplayCamRelativeHeading() + (70 * mouseSpeed))
+                SetCursorSprite(7)
+            end
+        else
+            SetCursorSprite(1)
+        end
+    else
         SetCursorSprite(1)
     end
 end
