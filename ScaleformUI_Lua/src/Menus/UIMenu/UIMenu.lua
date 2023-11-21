@@ -569,6 +569,10 @@ function UIMenu:MaxItemsOnScreen(max)
 end
 
 function UIMenu:SwitchTo(newMenu, newMenuCurrentSelection, inheritOldMenuParams)
+    assert(newMenu ~= nil, "ScaleformUI - cannot switch to a nil menu")
+    assert(not newMenu:Visible(), "The menu is already open!")
+    if newMenuCurrentSelection == nil then newMenuCurrentSelection = 1 end
+    if inheritOldMenuParams == nil then inheritOldMenuParams = true end
     MenuHandler:SwitchTo(self, newMenu, newMenuCurrentSelection, inheritOldMenuParams)
 end
 
