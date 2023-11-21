@@ -1823,7 +1823,7 @@ namespace ScaleformUI.Menu
                 {
                     if (mouseVariance < (0.05f * 0.75f))
                     {
-                        SetCursorSprite(6);
+                        SetMouseCursorSprite(6);
                         float mouseSpeed = 0.05f - mouseVariance;
                         if (mouseSpeed > 0.05f) mouseSpeed = 0.05f;
                         GameplayCamera.RelativeHeading += 70 * mouseSpeed;
@@ -1836,17 +1836,17 @@ namespace ScaleformUI.Menu
                         float mouseSpeed = 0.05f - (1f - mouseVariance);
                         if (mouseSpeed > 0.05f) mouseSpeed = 0.05f;
                         GameplayCamera.RelativeHeading -= 70 * mouseSpeed;
-                        SetCursorSprite(7);
+                        SetMouseCursorSprite(7);
                     }
                 }
-                else if (!MenuItems.Any(x => x.Hovered))
+                else
                 {
-                    SetCursorSprite(1);
+                    if (!MenuItems.Any(x => x.Hovered)) SetMouseCursorSprite(1);
                 }
             }
-            else if (!MenuItems.Any(x => x.Hovered))
+            else
             {
-                SetCursorSprite(1);
+                if (!MenuItems.Any(x => x.Hovered)) SetMouseCursorSprite(1);
             }
         }
 
