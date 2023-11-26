@@ -102,7 +102,7 @@ function MinimapOverlays:RemoveOverlayFromMinimap(overlayId)
     if overlayId == nil then return end
     if self.overlay == 0 then self:Load() end
     CallMinimapScaleformFunction(self.overlay, "REM_OVERLAY");
-    ScaleformMovieMethodAddParamInt(overlayId)
+    ScaleformMovieMethodAddParamInt(overlayId-1)
     EndScaleformMovieMethod()
     for k,v in pairs(self.minimaps) do
         if k == overlayId then
