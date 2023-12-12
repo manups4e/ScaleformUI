@@ -1911,14 +1911,11 @@ namespace ScaleformUI.Menu
                             await FadeOutItems();
                             isFading = true;
                             Main.scaleformUI.CallFunction("CLEAR_ITEMS");
-                            int i = 0;
                             int max = Pagination.ItemsPerPage;
-                            while (i < max)
+                            for (int i = 0; i < max; i++)
                             {
-                                await BaseScript.Delay(0);
                                 if (!Visible) return;
                                 _itemCreation(Pagination.CurrentPage, i, false, true);
-                                i++;
                             }
                             isBuilding = false;
                         }
@@ -1960,14 +1957,11 @@ namespace ScaleformUI.Menu
                             await FadeOutItems();
                             isFading = true;
                             Main.scaleformUI.CallFunction("CLEAR_ITEMS");
-                            int i = 0;
                             int max = Pagination.ItemsPerPage;
-                            while (i < max)
+                            for (int i = 0; i < max; i++)
                             {
-                                await BaseScript.Delay(0);
                                 if (!Visible) return;
                                 _itemCreation(Pagination.CurrentPage, i, false);
-                                i++;
                             }
                             isBuilding = false;
                         }
