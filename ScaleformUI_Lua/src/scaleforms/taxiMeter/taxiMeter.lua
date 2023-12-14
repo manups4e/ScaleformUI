@@ -76,8 +76,8 @@ function TaxiMeterInstance:GetCurrentDestination()
   return self._destinations[self._current + 1]
 end
 
-function TaxiMeterInstance:Clear(price)
-  self._scaleform:CallFunction("SET_TAXI_PRICE", price)
+function TaxiMeterInstance:Clear()
+  self._scaleform:CallFunction("CLEAR_TAXI_DISPLAY")
 end
 
 function TaxiMeterInstance:NextDestination()
