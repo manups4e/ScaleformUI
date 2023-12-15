@@ -749,6 +749,7 @@ namespace ScaleformUI.PauseMenu
                         plTab.MissionsColumn.GoUp();
                         break;
                 }
+                Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
                 return;
             }
             int retVal = await _pause._pause.CallFunctionReturnValueInt("SET_INPUT_EVENT", 8);
@@ -781,6 +782,7 @@ namespace ScaleformUI.PauseMenu
                         plTab.MissionsColumn.GoDown();
                         break;
                 }
+                Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
                 return;
             }
 

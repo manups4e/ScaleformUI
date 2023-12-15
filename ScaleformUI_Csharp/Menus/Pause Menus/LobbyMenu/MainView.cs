@@ -676,6 +676,7 @@ namespace ScaleformUI.LobbyMenu
                     PlayersColumn.GoUp();
                     break;
             }
+            Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
         }
 
         public void GoDown()
@@ -692,6 +693,7 @@ namespace ScaleformUI.LobbyMenu
                     PlayersColumn.GoDown();
                     break;
             }
+            Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
         }
 
         public async void GoLeft()
