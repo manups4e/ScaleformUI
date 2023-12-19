@@ -10,7 +10,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
-    <BaseOutputPath>..\CompiledLibs\</BaseOutputPath>
     <Title>ScaleformUI</Title>
     <PackageProjectUrl>https://github.com/manups4e/ScaleformUI</PackageProjectUrl>
     <Copyright>Copyright Leonardo Emanuele Colecchia</Copyright>
@@ -25,6 +24,7 @@
     <Version>4.9.0</Version>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <BaseOutputPath>..\CompiledLibs\</BaseOutputPath>
   </PropertyGroup>
 
   <ItemGroup>

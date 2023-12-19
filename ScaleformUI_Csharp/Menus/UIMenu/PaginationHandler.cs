@@ -54,22 +54,28 @@
 
         internal int GetMenuIndexFromScaleformIndex(int scaleformIndex)
         {
+            int tmpIndex = minItem + scaleformIndex;
+            if (tmpIndex >= totalItems)
+                tmpIndex = totalItems - 1;
+            return tmpIndex;
+            /*
             int diff = (totalItems >= itemsPerPage ? itemsPerPage : totalItems) - 1 - scaleformIndex;
             int result = MaxItem - diff;
             if (result < 0)
                 result = totalItems + result;
             return result;
+            */
         }
 
         internal int GetPageIndexFromScaleformIndex(int scaleformIndex)
         {
-            int menuIndex = MinItem + scaleformIndex;
+            int menuIndex = GetMenuIndexFromScaleformIndex(scaleformIndex);
             return GetPageIndexFromMenuIndex(menuIndex);
         }
 
         internal int GetPageFromScaleformIndex(int scaleformIndex)
         {
-            int menuIndex = MinItem + scaleformIndex;
+            int menuIndex = GetMenuIndexFromScaleformIndex(scaleformIndex);
             return GetPage(menuIndex);
         }
 

@@ -7,6 +7,7 @@ namespace ScaleformUI.LobbyMenu
     public delegate void IndexChanged(int index);
     public class Column
     {
+        internal bool isBuilding = false;
         public int ParentTab { get; internal set; }
         public PauseMenuBase Parent { get; internal set; }
         internal PaginationHandler Pagination { get; set; }
