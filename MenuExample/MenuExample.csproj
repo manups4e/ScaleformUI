@@ -39,6 +39,10 @@
       <HintPath>..\packages\CitizenFX.Core.Client.1.0.6370\lib\net45\CitizenFX.Core.Client.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="ScaleformUI, Version=1.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\CompiledLibs\Debug\ScaleformUI.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -54,12 +58,6 @@
     <Compile Include="MenuExample.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ScaleformUI_Csharp\ScaleformUI.csproj">
-      <Project>{f5614594-90fd-4f4c-9c68-c9dc90060f8d}</Project>
-      <Name>ScaleformUI</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -70,8 +68,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-	    <Copy SkipUnchangedFiles="true" SourceFiles="@(SourceFiles)" DestinationFolder="..\CompiledLibs\" />
-        <Exec Command="IF EXIST &quot;$(SolutionDir)scripts\post_client.bat&quot; call &quot;$(SolutionDir)scripts\post_client.bat&quot; &gt; &quot;$(SolutionDir)\scripts\post_client.log&quot; 2&gt;&amp;1" IgnoreExitCode="true" />
-    </Target>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Copy SkipUnchangedFiles="true" SourceFiles="@(SourceFiles)" DestinationFolder="..\CompiledLibs\" />
+    <Exec Command="IF EXIST &quot;$(SolutionDir)scripts\post_client.bat&quot; call &quot;$(SolutionDir)scripts\post_client.bat&quot; &gt; &quot;$(SolutionDir)\scripts\post_client.log&quot; 2&gt;&amp;1" IgnoreExitCode="true" />
+  </Target>
 </Project>
