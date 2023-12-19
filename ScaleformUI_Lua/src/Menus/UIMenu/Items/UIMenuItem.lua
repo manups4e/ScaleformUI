@@ -335,7 +335,7 @@ function UIMenuItem:RightLabel(Text)
         else
             self._formatRightLabel = self._formatRightLabel:gsub("~l~", "~s~")
         end
-        if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self._textColor == 1 and self._highlightedTextColor == 2 and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, self) - 1) then
+        if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, self) - 1) then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_LABEL", self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, self)), self._formatRightLabel)
         end
         if self.ParentColumn ~= nil then
