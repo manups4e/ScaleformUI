@@ -47,7 +47,7 @@ function MinimapOverlays:AddSizedOverlayToMap(textureDict, textureName, x, y, ro
     local time = GetNetworkTime()
     while returned == 0 do
         Wait(0)
-        if GetNetworkTime() - time > 5000
+        if GetNetworkTime() - time > 5000 then
             return 0
         end
     end
@@ -91,7 +91,7 @@ function MinimapOverlays:AddScaledOverlayToMap(textureDict, textureName, x, y, r
     local time = GetNetworkTime()
     while returned == 0 do
         Wait(0)
-        if GetNetworkTime() - time > 5000
+        if GetNetworkTime() - time > 5000 then
             return 0
         end
     end
