@@ -1440,7 +1440,7 @@ namespace ScaleformUI.PauseMenu
                 GoRight();
             }
             else if (Game.IsControlJustPressed(2, Control.FrontendAccept))
-                Select(false);
+                Select(true);
             else if (Game.IsControlJustReleased(2, Control.PhoneCancel))
                 GoBack();
 
