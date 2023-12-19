@@ -662,24 +662,38 @@ namespace ScaleformUI.LobbyMenu
             }
         }
 
-        public async void GoUp()
+        public void GoUp()
         {
-            if (listCol[FocusLevel].Type == "settings")
-                SettingsColumn.GoUp();
-            else if (listCol[FocusLevel].Type == "missions")
-                MissionsColumn.GoUp();
-            else if (listCol[FocusLevel].Type == "players")
-                PlayersColumn.GoUp();
+            switch (listCol[FocusLevel].Type)
+            {
+                case "settings":
+                    SettingsColumn.GoUp();
+                    break;
+                case "missions":
+                    MissionsColumn.GoUp();
+                    break;
+                case "players":
+                    PlayersColumn.GoUp();
+                    break;
+            }
+            Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
         }
 
-        public async void GoDown()
+        public void GoDown()
         {
-            if (listCol[FocusLevel].Type == "settings")
-                SettingsColumn.GoDown();
-            else if (listCol[FocusLevel].Type == "missions")
-                MissionsColumn.GoDown();
-            else if (listCol[FocusLevel].Type == "players")
-                PlayersColumn.GoDown();
+            switch (listCol[FocusLevel].Type)
+            {
+                case "settings":
+                    SettingsColumn.GoDown();
+                    break;
+                case "missions":
+                    MissionsColumn.GoDown();
+                    break;
+                case "players":
+                    PlayersColumn.GoDown();
+                    break;
+            }
+            Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
         }
 
         public async void GoLeft()

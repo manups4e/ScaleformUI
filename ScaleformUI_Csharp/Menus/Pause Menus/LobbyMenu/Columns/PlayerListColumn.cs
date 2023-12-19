@@ -9,7 +9,6 @@ namespace ScaleformUI.LobbyMenu
     public delegate void PlayerItemSelected(LobbyItem item, int index);
     public class PlayerListColumn : Column
     {
-        internal bool isBuilding = false;
         public event IndexChanged OnIndexChanged;
         public List<LobbyItem> Items { get; private set; }
         private List<LobbyItem> _unfilteredItems;
@@ -144,15 +143,14 @@ namespace ScaleformUI.LobbyMenu
                             lobby._pause._lobby.CallFunction("CLEAR_PLAYERS_COLUMN");
                         else if (Parent is TabView pause)
                             pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_PLAYERS_COLUMN", ParentTab);
-                        int i = 0;
                         int max = Pagination.ItemsPerPage;
-                        while (i < max)
+                        isBuilding = true;
+                        for (int i = 0; i < max; i++)
                         {
-                            await BaseScript.Delay(0);
                             if (!Parent.Visible) return;
                             _itemCreation(Pagination.CurrentPage, i, false, true);
-                            i++;
                         }
+                        isBuilding = false;
                     }
                 }
                 if (Parent is MainView _lobby)
@@ -201,15 +199,14 @@ namespace ScaleformUI.LobbyMenu
                             lobby._pause._lobby.CallFunction("CLEAR_PLAYERS_COLUMN");
                         else if (Parent is TabView pause)
                             pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_PLAYERS_COLUMN", ParentTab);
-                        int i = 0;
                         int max = Pagination.ItemsPerPage;
-                        while (i < max)
+                        isBuilding = true;
+                        for (int i = 0; 0 < max; i++)
                         {
-                            await BaseScript.Delay(0);
                             if (!Parent.Visible) return;
-                            _itemCreation(Pagination.CurrentPage, i, false);
-                            i++;
+                            _itemCreation(Pagination.CurrentPage, 0, false, true);
                         }
+                        isBuilding = false;
                     }
                 }
                 if (Parent is MainView _lobby)

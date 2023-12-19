@@ -9,7 +9,6 @@ namespace ScaleformUI.LobbyMenu
     public delegate void SettingItemSelected(UIMenuItem item, int index);
     public class SettingsListColumn : Column
     {
-        internal bool isBuilding = false;
         public event IndexChanged OnIndexChanged;
         public List<UIMenuItem> Items { get; internal set; }
         private List<UIMenuItem> _unfilteredItems;
@@ -294,15 +293,14 @@ namespace ScaleformUI.LobbyMenu
                                 lobby._pause._lobby.CallFunction("CLEAR_SETTINGS_COLUMN");
                             else if (Parent is TabView pause)
                                 pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN", ParentTab);
-                            int i = 0;
                             int max = Pagination.ItemsPerPage;
-                            while (i < max)
+                            isBuilding = true;
+                            for (int i = 0; i < max; i++)
                             {
-                                await BaseScript.Delay(0);
                                 if (!Parent.Visible) return;
                                 _itemCreation(Pagination.CurrentPage, i, false, true);
-                                i++;
                             }
+                            isBuilding = false;
                         }
                     }
                 }
@@ -355,13 +353,13 @@ namespace ScaleformUI.LobbyMenu
                                 pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN", ParentTab);
                             int i = 0;
                             int max = Pagination.ItemsPerPage;
-                            while (i < max)
+                            isBuilding = true;
+                            for (i = 0; i < max; i++)
                             {
-                                await BaseScript.Delay(0);
                                 if (!Parent.Visible) return;
                                 _itemCreation(Pagination.CurrentPage, i, false);
-                                i++;
                             }
+                            isBuilding = false;
                         }
                     }
                 }
@@ -526,7 +524,7 @@ namespace ScaleformUI.LobbyMenu
             Pagination.Reset();
         }
 
-        public void SortMissions(Comparison<UIMenuItem> compare)
+        public void SortSettings(Comparison<UIMenuItem> compare)
         {
             Items[CurrentSelection].Selected = false;
             _unfilteredItems = Items.ToList();
@@ -544,7 +542,7 @@ namespace ScaleformUI.LobbyMenu
             }
         }
 
-        public void FilterMissions(Func<UIMenuItem, bool> predicate)
+        public void FilterSettings(Func<UIMenuItem, bool> predicate)
         {
             Items[CurrentSelection].Selected = false;
             _unfilteredItems = Items.ToList();

@@ -7,6 +7,7 @@
     <ProjectGuid>{79D9A09F-1999-4148-9BA0-20AEBA9B3C8B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <LangVersion>latest</LangVersion>
+    <BaseOutputPath>..\CompiledLibs\</BaseOutputPath>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MenuExample</RootNamespace>
     <AssemblyName>MenuExample.net</AssemblyName>
@@ -17,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>embedded</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <BaseOutputPath>..\CompiledLibs\</BaseOutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -25,7 +26,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <BaseOutputPath>..\CompiledLibs\</BaseOutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -37,6 +38,10 @@
     <Reference Include="CitizenFX.Core.Client, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CitizenFX.Core.Client.1.0.6370\lib\net45\CitizenFX.Core.Client.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="ScaleformUI, Version=1.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\CompiledLibs\Debug\ScaleformUI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -53,12 +58,6 @@
     <Compile Include="MenuExample.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ScaleformUI_Csharp\ScaleformUI.csproj">
-      <Project>{f5614594-90fd-4f4c-9c68-c9dc90060f8d}</Project>
-      <Name>ScaleformUI</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -69,8 +68,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Copy SkipUnchangedFiles="true" SourceFiles="@(SourceFiles)" DestinationFolder="..\CompiledLibs\" />
+    <Exec Command="IF EXIST &quot;$(SolutionDir)scripts\post_client.bat&quot; call &quot;$(SolutionDir)scripts\post_client.bat&quot; &gt; &quot;$(SolutionDir)\scripts\post_client.log&quot; 2&gt;&amp;1" IgnoreExitCode="true" />
+  </Target>
 </Project>
