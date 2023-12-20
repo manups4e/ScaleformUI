@@ -673,7 +673,8 @@ namespace ScaleformUI.PauseMenu
                     }
                     break;
             }
-            if (playSound) Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
+            if (playSound)
+                Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
         }
 
         public void GoBack()
