@@ -357,7 +357,7 @@ namespace ScaleformUI.LobbyMenu
                             for (i = 0; i < max; i++)
                             {
                                 if (!Parent.Visible) return;
-                                _itemCreation(Pagination.CurrentPage, i, false);
+                                _itemCreation(Pagination.CurrentPage, i, false, true);
                             }
                             isBuilding = false;
                         }
