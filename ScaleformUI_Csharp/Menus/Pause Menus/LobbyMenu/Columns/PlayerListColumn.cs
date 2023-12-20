@@ -201,10 +201,10 @@ namespace ScaleformUI.LobbyMenu
                             pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_PLAYERS_COLUMN", ParentTab);
                         int max = Pagination.ItemsPerPage;
                         isBuilding = true;
-                        for (int i = 0; 0 < max; i++)
+                        for (int i = 0; i < max; i++)
                         {
                             if (!Parent.Visible) return;
-                            _itemCreation(Pagination.CurrentPage, 0, false, true);
+                            _itemCreation(Pagination.CurrentPage, i, false, true);
                         }
                         isBuilding = false;
                     }
