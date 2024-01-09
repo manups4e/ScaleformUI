@@ -284,7 +284,7 @@ namespace ScaleformUI.LobbyMenu
             }
         }
 
-        public void SortMissions(Comparison<LobbyItem> compare)
+        public void SortPlayers(Comparison<LobbyItem> compare)
         {
             Items[CurrentSelection].Selected = false;
             _unfilteredItems = Items.ToList();
@@ -302,7 +302,7 @@ namespace ScaleformUI.LobbyMenu
             }
         }
 
-        public void FilterMissions(Func<LobbyItem, bool> predicate)
+        public void FilterPlayers(Func<LobbyItem, bool> predicate)
         {
             Items[CurrentSelection].Selected = false;
             _unfilteredItems = Items.ToList();
