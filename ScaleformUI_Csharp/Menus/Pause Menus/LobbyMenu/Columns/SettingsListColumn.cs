@@ -406,6 +406,10 @@ namespace ScaleformUI.LobbyMenu
                     Pagination.CurrentPage = Pagination.GetPage(Pagination.CurrentMenuIndex);
                     Pagination.CurrentPageIndex = value;
                     Pagination.ScaleformIndex = Pagination.GetScaleformIndex(value);
+                    if (value > Pagination.MaxItem || value < Pagination.MinItem)
+                    {
+                        RefreshColumn();
+                    }
 
                     if (Parent != null && Parent.Visible)
                     {
@@ -527,7 +531,10 @@ namespace ScaleformUI.LobbyMenu
         public void SortSettings(Comparison<UIMenuItem> compare)
         {
             Items[CurrentSelection].Selected = false;
-            _unfilteredItems = Items.ToList();
+            if (_unfilteredItems == null || _unfilteredItems.Count == 0)
+            {
+                _unfilteredItems = Items.ToList();
+            }
             Clear();
             List<UIMenuItem> list = _unfilteredItems.ToList();
             list.Sort(compare);
@@ -545,7 +552,10 @@ namespace ScaleformUI.LobbyMenu
         public void FilterSettings(Func<UIMenuItem, bool> predicate)
         {
             Items[CurrentSelection].Selected = false;
-            _unfilteredItems = Items.ToList();
+            if (_unfilteredItems == null || _unfilteredItems.Count == 0)
+            {
+                _unfilteredItems = Items.ToList();
+            }
             Clear();
             Items = _unfilteredItems.Where(predicate.Invoke).ToList();
             Pagination.TotalItems = Items.Count;
@@ -560,18 +570,68 @@ namespace ScaleformUI.LobbyMenu
 
         public void ResetFilter()
         {
-            Items[CurrentSelection].Selected = false;
-            Clear();
-            Items = _unfilteredItems.ToList();
-            Pagination.TotalItems = Items.Count;
-            if (Parent != null && Parent.Visible)
+            if (_unfilteredItems != null && _unfilteredItems.Count > 0)
             {
-                if (Parent is MainView lobby)
-                    lobby.buildSettings();
-                else if (Parent is TabView pause)
-                    pause.buildSettings(pause.Tabs[ParentTab] as PlayerListTab);
+                Items[CurrentSelection].Selected = false;
+                Clear();
+                Items = _unfilteredItems.ToList();
+                Pagination.TotalItems = Items.Count;
+                if (Parent != null && Parent.Visible)
+                {
+                    if (Parent is MainView lobby)
+                        lobby.buildSettings();
+                    else if (Parent is TabView pause)
+                        pause.buildSettings(pause.Tabs[ParentTab] as PlayerListTab);
+                }
             }
         }
+
+        private void RefreshColumn()
+        {
+            if (Parent is MainView lobby)
+                lobby._pause._lobby.CallFunction("CLEAR_SETTINGS_COLUMN");
+            else if (Parent is TabView pause)
+                pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN", ParentTab);
+            if (Items.Count > 0)
+            {
+                isBuilding = true;
+                int max = Pagination.ItemsPerPage;
+                if (Items.Count < max)
+                    max = Items.Count;
+
+                Pagination.MinItem = Pagination.CurrentPageStartIndex;
+                if (Pagination.scrollType == ScrollingType.CLASSIC && Pagination.TotalPages > 1)
+                {
+                    int missingItems = Pagination.GetMissingItems();
+                    if (missingItems > 0)
+                    {
+                        Pagination.ScaleformIndex = Pagination.GetPageIndexFromMenuIndex(Pagination.CurrentPageEndIndex) + missingItems;
+                        Pagination.MinItem = Pagination.CurrentPageStartIndex - missingItems;
+                    }
+                }
+                Pagination.MaxItem = Pagination.CurrentPageEndIndex;
+
+                for (int i = 0; i < max; i++)
+                {
+                    if (!Parent.Visible) return;
+                    _itemCreation(Pagination.CurrentPage, i, false, true);
+                }
+                Pagination.ScaleformIndex = Pagination.GetScaleformIndex(CurrentSelection);
+                if (Parent is MainView _lobby)
+                {
+                    _lobby._pause._lobby.CallFunction("SET_SETTINGS_SELECTION", Pagination.ScaleformIndex);
+                    _lobby._pause._lobby.CallFunction("SET_SETTINGS_QTTY", CurrentSelection + 1, Items.Count);
+                }
+                else if (Parent is TabView _pause)
+                {
+                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", ParentTab, Pagination.ScaleformIndex);
+                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", ParentTab, CurrentSelection + 1, Items.Count);
+                }
+                isBuilding = false;
+            }
+        }
+
+
         public void SelectItem()
         {
             OnSettingItemActivated?.Invoke(Items[CurrentSelection], CurrentSelection);
