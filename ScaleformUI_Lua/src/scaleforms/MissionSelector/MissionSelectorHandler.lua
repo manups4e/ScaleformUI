@@ -47,6 +47,7 @@ end
 ---@field public SelectCard fun(self:MissionSelectorHandler, card:number):nil
 ---@field public UpdateOwnVote fun(self:MissionSelectorHandler, card:number, oldCard:number, showCheckmark:boolean, flashBackground:boolean):nil
 ---@field public ShowPlayerVote fun(self:MissionSelectorHandler, card:number, playerName:string, colour:HudColours, showCheckmark:boolean, flashBackground:boolean):nil
+---@field public RemovePlayerVote fun(self:MissionSelectorHandler, card:number):nil
 ---@field public Load fun(self:MissionSelectorHandler):nil
 ---@field public Update fun(self:MissionSelectorHandler):nil
 
@@ -166,6 +167,19 @@ function MissionSelectorHandler:UpdateOwnVote(idx, oldidx, showCheckMark, flashB
     end
     self:SetVotes(votes)
     self:_SetTitle(self.JobTitle.Title, self.JobTitle.Votes)
+end
+
+-- Removes a player's vote on a card in the mission selector
+function MissionSelectorHandler:RemovePlayerVote(idx)
+    if self.Votes[idx] <= 0 then return end
+    self.Votes[idx] = self.Votes[idx] - 1
+    local votes = 0
+    for k, v in ipairs(self.Votes) do
+        if v > 0 then votes = votes + v end
+    end
+    self:SetVotes(votes)
+    self:_SetTitle(self.JobTitle.Title, self.JobTitle.Votes)
+    self._sc:CallFunction("SET_GRID_ITEM_VOTE", false, idx - 1, self.Votes[idx], self.VotesColor, false, false)
 end
 
 ---Shows a player's vote on a card in the mission selector
