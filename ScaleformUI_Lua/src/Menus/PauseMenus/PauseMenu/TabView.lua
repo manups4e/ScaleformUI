@@ -132,7 +132,7 @@ function TabView:Visible(visible)
             SetPlayerControl(PlayerId(), true, 0)
             if IsPauseMenuActive() then
                 PlaySoundFrontend(self.SoundId, "Hit_Out", "PLAYER_SWITCH_CUSTOM_SOUNDSET", true)
-                ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
+                ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, false, -1)
             end
             SetFrontendActive(false)
         end
@@ -202,7 +202,7 @@ function TabView:BuildPauseMenu()
                 ScaleformUI.Scaleforms._pauseMenu:AddRightListLabel(tabIndex, 0, item.Label, item.LabelFont.FontName, item.LabelFont.FontID)
             end
             if not (tab.TextureDict:IsNullOrEmpty() and tab.TextureName:IsNullOrEmpty()) then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_BASE_TAB_BACKGROUND", false, tabIndex, tab.TextureDict, tab.TextureName)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_BASE_TAB_BACKGROUND", tabIndex, tab.TextureDict, tab.TextureName)
             end
         elseif subtype == "SubmenuTab" then
             ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 1, tab.Base.Type, tab.Base._color)
@@ -210,7 +210,7 @@ function TabView:BuildPauseMenu()
                 local itemIndex = j - 1
                 ScaleformUI.Scaleforms._pauseMenu:AddLeftItem(tabIndex, item.ItemType, item._formatLeftLabel, item.MainColor,
                     item.HighlightColor, item:Enabled())
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_LEFT_ITEM_LABEL_FONT", false, tabIndex, itemIndex, item._labelFont.FontName, item._labelFont.FontID)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_LEFT_ITEM_LABEL_FONT", tabIndex, itemIndex, item._labelFont.FontName, item._labelFont.FontID)
 
                 if item.RightTitle ~= nil and not item.RightTitle:IsNullOrEmpty() then
                     if (item.ItemType == LeftItemType.Keymap) then
@@ -266,7 +266,7 @@ function TabView:BuildPauseMenu()
                 end
                 if item.ItemType == LeftItemType.Info or item.ItemType == LeftItemType.Statistics or item.ItemType == LeftItemType.Settings then
                     if not (item.TextureDict:IsNullOrEmpty() and item.TextureName:IsNullOrEmpty()) then
-                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_LEFT_ITEM_RIGHT_BACKGROUND", false, tabIndex, itemIndex, item.TextureDict, item.TextureName, item.LeftItemBGType);
+                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_LEFT_ITEM_RIGHT_BACKGROUND", tabIndex, itemIndex, item.TextureDict, item.TextureName, item.LeftItemBGType);
                     end
                 end
             end
@@ -274,13 +274,13 @@ function TabView:BuildPauseMenu()
             ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 1, tab.Base.Type, tab.Base._color)
             local count = #tab.listCol
             if count == 1 then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CREATE_PLAYERS_TAB_COLUMNS", false, tabIndex, tab.listCol[1].Type)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, tab.listCol[1].Type)
             elseif count == 2 then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CREATE_PLAYERS_TAB_COLUMNS", false, tabIndex, tab.listCol[1].Type, tab.listCol[2].Type)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, tab.listCol[1].Type, tab.listCol[2].Type)
             elseif count == 3 then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CREATE_PLAYERS_TAB_COLUMNS", false, tabIndex, tab.listCol[1].Type, tab.listCol[2].Type, tab.listCol[3].Type)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, tab.listCol[1].Type, tab.listCol[2].Type, tab.listCol[3].Type)
             end
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_NEWSTYLE", false, tabIndex, tab._newStyle)
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_NEWSTYLE", tabIndex, tab._newStyle)
             for i,col in pairs(tab.listCol) do
                 col.Parent = self
                 col.ParentTab = tabIndex
@@ -291,17 +291,17 @@ function TabView:BuildPauseMenu()
                 elseif col.Type == "missions" then
                     self:buildMissions(tab, tabIndex)
                 elseif col.Type == "panel" then
-                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_PICTURE", false, tabIndex, tab.MissionPanel.TextureDict, tab.MissionPanel.TextureName)
-                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_MISSION_PANEL_TITLE", false, tabIndex, tab.MissionPanel:Title())
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_PICTURE", tabIndex, tab.MissionPanel.TextureDict, tab.MissionPanel.TextureName)
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_MISSION_PANEL_TITLE", tabIndex, tab.MissionPanel:Title())
                     if #tab.MissionPanel.Items > 0 then
                         for j,item in pairs(tab.MissionPanel.Items) do
-                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_ITEM", false, tabIndex, item.Type, item.TextLeft,
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_ITEM", tabIndex, item.Type, item.TextLeft,
                             item.TextRight, item.Icon or 0, item.IconColor or 0, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID)
                         end
                     end
                 end
             end
-            while tab.SettingsColumn ~= nil and tab.SettingsColumn._isBuilding or tab.PlayerColumn ~= nil and tab.PlayerColumn._isBuilding or tab.MissionsColumn ~= nil and tab.MissionsColumn._isBuilding do
+            while (tab.SettingsColumn ~= nil and tab.SettingsColumn._isBuilding) or (tab.PlayerColumn ~= nil and tab.PlayerColumn._isBuilding) or (tab.MissionsColumn ~= nil and tab.MissionsColumn._isBuilding) do
                 Citizen.Wait(0)
             end
             tab:updateFocus(1)
@@ -341,8 +341,8 @@ function TabView:buildSettings(tab, tabIndex)
         tab.SettingsColumn.Pagination:ScaleformIndex(tab.SettingsColumn.Pagination:GetScaleformIndex(tab.SettingsColumn:CurrentSelection()))
         tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]:Selected(false)
 
-        ScaleformUI.Scaleforms._ui:CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", false, tab.SettingsColumn.Pagination:GetScaleformIndex(tab.SettingsColumn.Pagination:CurrentMenuIndex()))
-        ScaleformUI.Scaleforms._ui:CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", false, tab.SettingsColumn:CurrentSelection(), #tab.SettingsColumn.Items)
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", tabIndex, tab.SettingsColumn.Pagination:GetScaleformIndex(tab.SettingsColumn.Pagination:CurrentMenuIndex()))
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", tabIndex, tab.SettingsColumn:CurrentSelection(), #tab.SettingsColumn.Items)
 
         local Item = tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]
         local _, subtype = Item()
@@ -387,8 +387,8 @@ function TabView:buildPlayers(tab, tabIndex)
         tab.PlayersColumn.Pagination:ScaleformIndex(tab.PlayersColumn.Pagination:GetScaleformIndex(tab.PlayersColumn:CurrentSelection()))
         tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:Selected(false)
 
-        ScaleformUI.Scaleforms._ui:CallFunction("SET_PLAYERS_TAB_PLAYERS_SELECTION", false, tab.PlayersColumn.Pagination:GetScaleformIndex(tab.PlayersColumn.Pagination:CurrentMenuIndex()))
-        ScaleformUI.Scaleforms._ui:CallFunction("SET_PLAYERS_TAB_PLAYERS_QTTY", false, tab.PlayersColumn:CurrentSelection(), #tab.PlayersColumn.Items)
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_SELECTION", tabIndex, tab.PlayersColumn.Pagination:GetScaleformIndex(tab.PlayersColumn.Pagination:CurrentMenuIndex()))
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_QTTY", tabIndex, tab.PlayersColumn:CurrentSelection(), #tab.PlayersColumn.Items)
 
         tab.PlayersColumn._isBuilding = false
     end)
@@ -425,8 +425,8 @@ function TabView:buildMissions(tab, tabIndex)
         tab.MissionsColumn.Pagination:ScaleformIndex(tab.MissionsColumn.Pagination:GetScaleformIndex(tab.MissionsColumn:CurrentSelection()))
         tab.MissionsColumn.Items[tab.MissionsColumn:CurrentSelection()]:Selected(false)
 
-        ScaleformUI.Scaleforms._ui:CallFunction("SET_PLAYERS_TAB_MISSIONS_SELECTION", false, tab.MissionsColumn.Pagination:GetScaleformIndex(tab.MissionsColumn.Pagination:CurrentMenuIndex()))
-        ScaleformUI.Scaleforms._ui:CallFunction("SET_PLAYERS_TAB_MISSIONS_QTTY", false, tab.MissionsColumn:CurrentSelection(), #tab.MissionsColumn.Items)
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_MISSIONS_SELECTION", tabIndex, tab.MissionsColumn.Pagination:GetScaleformIndex(tab.MissionsColumn.Pagination:CurrentMenuIndex()))
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_MISSIONS_QTTY", tabIndex, tab.MissionsColumn:CurrentSelection(), #tab.MissionsColumn.Items)
 
         tab.MissionsColumn._isBuilding = false
     end)
@@ -531,7 +531,7 @@ function TabView:Select()
         while (not self.Tabs[self.index].LeftItemList[self.leftItemIndex]:Enabled()) do
             Citizen.Wait(0)
             self:LeftItemIndex(self.leftItemIndex + 1)
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_LEFT_ITEM_INDEX", false, self.leftItemIndex - 1)
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_LEFT_ITEM_INDEX", self.leftItemIndex - 1)
         end
     elseif self:FocusLevel() == 1 then
         local tab = self.Tabs[self.index]
@@ -559,7 +559,7 @@ function TabView:Select()
                 while (not self.Tabs[self.index].LeftItemList[self.leftItemIndex]:Enabled()) do
                     Citizen.Wait(0)
                     self.rightItemIndex = self.rightItemIndex + 1
-                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_RIGHT_ITEM_INDEX", false,
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_RIGHT_ITEM_INDEX",
                         self.rightItemIndex - 1)
                 end
             end
@@ -587,13 +587,13 @@ function TabView:Select()
                 else
                     _item:Activated(self, _item)
                 end
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", false, 16)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", 16)
             elseif tab.listCol[tab:Focus()].Type == "missions" then
                 tab.MissionsColumn.Items[tab.MissionsColumn:CurrentSelection()].Activated(tab.MissionsColumn.Items[tab.MissionsColumn:CurrentSelection()])
             end
         end
     elseif self:FocusLevel() == 2 then
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", false, 16)
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", 16)
         local leftItem = self.Tabs[self.index].LeftItemList[self.leftItemIndex]
         if leftItem.ItemType == LeftItemType.Settings then
             local rightItem = leftItem.ItemList[self.rightItemIndex]
@@ -664,11 +664,7 @@ function TabView:GoUp()
         return
     end
     
-    local return_value = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", true, 8) --[[@as number]]
-    while not IsScaleformMovieMethodReturnValueReady(return_value) do
-        Citizen.Wait(0)
-    end
-    local retVal = GetScaleformMovieMethodReturnValueInt(return_value)
+    local retVal = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunctionAsyncReturnInt("SET_INPUT_EVENT", 8)
     if retVal ~= -1 then
         if self:FocusLevel() == 1 then
             self:LeftItemIndex(retVal + 1)
@@ -691,11 +687,7 @@ function TabView:GoDown()
         end
         return
     end
-    local return_value = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", true, 9) --[[@as number]]
-    while not IsScaleformMovieMethodReturnValueReady(return_value) do
-        Citizen.Wait(0)
-    end
-    local retVal = GetScaleformMovieMethodReturnValueInt(return_value)
+    local retVal = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunctionAsyncReturnInt("SET_INPUT_EVENT", 9)
     if retVal ~= -1 then
         if self:FocusLevel() == 1 then
             self:LeftItemIndex(retVal + 1)
@@ -706,11 +698,7 @@ function TabView:GoDown()
 end
 
 function TabView:GoLeft()
-    local return_value = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", true, 10) --[[@as number]]
-    while not IsScaleformMovieMethodReturnValueReady(return_value) do
-        Citizen.Wait(0)
-    end
-    local retVal = GetScaleformMovieMethodReturnValueInt(return_value)
+    local retVal = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunctionAsyncReturnInt("SET_INPUT_EVENT", 10)
 
     if self:FocusLevel() == 0 then
         ClearPedInPauseMenu()
@@ -775,7 +763,6 @@ function TabView:GoLeft()
                     Item:Index(retVal)
                     Item.OnStatsChanged(self, Item, Item._Index)
                 else
-                    print(tab._newStyle)
                     if tab._newStyle then
                         tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]:Selected(false)
                         tab:updateFocus(tab:Focus() - 1)
@@ -822,11 +809,7 @@ function TabView:GoLeft()
 end
 
 function TabView:GoRight()
-    local return_value = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", true, 11) --[[@as number]]
-    while not IsScaleformMovieMethodReturnValueReady(return_value) do
-        Citizen.Wait(0)
-    end
-    local retVal = GetScaleformMovieMethodReturnValueInt(return_value)
+    local retVal = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunctionAsyncReturnInt("SET_INPUT_EVENT", 11)
 
     if self:FocusLevel() == 0 then
         ClearPedInPauseMenu()
@@ -976,7 +959,7 @@ function TabView:ProcessMouse()
                         while not tab.LeftItemList[self.leftItemIndex]:Enabled() do
                             Citizen.Wait(0)
                             self:LeftItemIndex(self:LeftItemIndex() + 1)
-                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_LEFT_ITEM_INDEX", false, self.leftItemIndex-1)
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_LEFT_ITEM_INDEX", self.leftItemIndex-1)
                         end
                     end
                 end
@@ -1023,7 +1006,7 @@ function TabView:ProcessMouse()
                             while not tab.LeftItemList[self.leftItemList]:Enabled() do
                                 Citizen.Wait(0)
                                 self:LeftItemIndex(self.leftItemIndex + 1)
-                                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_LEFT_ITEM_INDEX", false, self.leftItemIndex-1)
+                                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_LEFT_ITEM_INDEX", self.leftItemIndex-1)
                             end
                         end
                     end
@@ -1045,7 +1028,7 @@ function TabView:ProcessMouse()
                             end
                             if tab.LeftItemList[self.leftItemIndex].ItemType == LeftItemType.Settings then
                                 self:FocusLevel(2)
-                                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_RIGHT_ITEM_INDEX", false, 0)
+                                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_RIGHT_ITEM_INDEX", 0)
                                 self:RightItemIndex(1)
                             end
                             tab.LeftItemList[self.leftItemIndex]:Selected(false)
@@ -1053,7 +1036,7 @@ function TabView:ProcessMouse()
                             tab.LeftItemList[self.leftItemIndex]:Selected(true)
                             PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
                         end
-                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_LEFT_ITEM_INDEX", false, item_id)
+                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_LEFT_ITEM_INDEX", item_id)
                         tab.LeftItemList[self.leftItemIndex].OnActivated(tab.LeftItemList[self.leftItemIndex],
                             self.leftItemIndex)
                         self.OnLeftItemSelect(self, tab.LeftItemList[self.leftItemIndex], self.leftItemIndex)
@@ -1086,7 +1069,7 @@ function TabView:ProcessMouse()
                     end
                     tab.LeftItemList[self.leftItemIndex].ItemList[self.rightItemIndex]:Selected(false)
                     self:RightItemIndex(item_id + 1)
-                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_RIGHT_ITEM_INDEX", false, item_id)
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_RIGHT_ITEM_INDEX", item_id)
                     tab.LeftItemList[self.leftItemIndex].ItemList[self.rightItemIndex]:Selected(true)
                     PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
                 end

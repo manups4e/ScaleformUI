@@ -673,7 +673,8 @@ namespace ScaleformUI.PauseMenu
                     }
                     break;
             }
-            if (playSound) Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
+            if (playSound)
+                Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
         }
 
         public void GoBack()
@@ -1440,7 +1441,7 @@ namespace ScaleformUI.PauseMenu
                 GoRight();
             }
             else if (Game.IsControlJustPressed(2, Control.FrontendAccept))
-                Select(false);
+                Select(true);
             else if (Game.IsControlJustReleased(2, Control.PhoneCancel))
                 GoBack();
 

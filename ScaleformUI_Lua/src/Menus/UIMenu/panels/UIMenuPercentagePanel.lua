@@ -35,7 +35,7 @@ function UIMenuPercentagePanel:Percentage(value)
         if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
             local it = IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem)
             local van = IndexOf(self.ParentItem.Panels, self)
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_PERCENT_PANEL_RETURN_VALUE", false, it, van, value)
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_PERCENT_PANEL_RETURN_VALUE", it, van, value)
         end
     else
         return self.Percentage

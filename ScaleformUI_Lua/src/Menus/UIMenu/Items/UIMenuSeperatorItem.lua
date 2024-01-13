@@ -8,13 +8,13 @@ UIMenuSeparatorItem.__call = function() return "UIMenuItem", "UIMenuSeparatorIte
 ---New
 ---@param Text string
 ---@param jumpable boolean
----@param mainColor SColor
----@param highlightColor SColor
----@param textColor SColor
----@param highlightedTextColor SColor
+---@param mainColor? SColor
+---@param highlightColor? SColor
+---@param textColor? SColor
+---@param highlightedTextColor? SColor
 function UIMenuSeparatorItem.New(Text, jumpable, mainColor, highlightColor, textColor, highlightedTextColor)
     local _UIMenuSeparatorItem = {
-        Base = UIMenuItem.New(Text or "", Description or "", color or SColor.HUD_Pause_bg, highlightColor or SColor.HUD_White, textColor or SColor.HUD_White, highlightedTextColor or SColor.HUD_Black),
+        Base = UIMenuItem.New(Text or "", Description or "", color or SColor.HUD_Panel_light, highlightColor or SColor.HUD_White, textColor or SColor.HUD_White, highlightedTextColor or SColor.HUD_Black),
         Panels = {},
         SidePanel = nil,
         Jumpable = jumpable,
@@ -65,7 +65,7 @@ function UIMenuSeparatorItem:MainColor(color)
     if color ~= nil then
         self.Base._mainColor = color
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
                 self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
@@ -77,7 +77,7 @@ function UIMenuSeparatorItem:TextColor(color)
     if color ~= nil then
         self.Base._textColor = color
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
                 self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
@@ -89,7 +89,7 @@ function UIMenuSeparatorItem:HighlightColor(color)
     if color ~= nil then
         self.Base._highlightColor = color
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
                 self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else
@@ -101,7 +101,7 @@ function UIMenuSeparatorItem:HighlightedTextColor(color)
     if color ~= nil then
         self.Base._highlightedTextColor = color
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false, self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
                 self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
     else

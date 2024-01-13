@@ -66,10 +66,10 @@ function UIMenuDetailsWindow:UpdateLabels(top, mid, bot, leftDetail)
     if self.ParentMenu ~= nil then
         local wid = IndexOf(self.ParentMenu.Windows, self) - 1
         if self.StatWheelEnabled then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_DETAILS_WINDOW_VALUES", false, wid, self.DetailBottom,
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_DETAILS_WINDOW_VALUES", wid, self.DetailBottom,
                 self.DetailMid, self.DetailTop, "statWheel")
         else
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_DETAILS_WINDOW_VALUES", false, wid, self.DetailBottom,
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_DETAILS_WINDOW_VALUES", wid, self.DetailBottom,
                 self.DetailMid, self.DetailTop, self.DetailLeft.Txd, self.DetailLeft.Txn, self.DetailLeft.Pos.x,
                 self.DetailLeft.Pos.y, self.DetailLeft.Size.x, self.DetailLeft.Size.y)
         end
@@ -82,7 +82,7 @@ function UIMenuDetailsWindow:AddStatsListToWheel(stats)
         if self.ParentMenu ~= nil then
             local wid = IndexOf(self.ParentMenu.Windows, self) - 1
             for key, value in pairs(self.DetailStats) do
-                ScaleformUI.Scaleforms._ui:CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", false, wid, value.Percentage, value.HudColor)
+                ScaleformUI.Scaleforms._ui:CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", wid, value.Percentage, value.HudColor)
             end
         end
     end
@@ -93,7 +93,7 @@ function UIMenuDetailsWindow:AddStatSingleToWheel(stat)
         self.DetailStats[#self.DetailStats + 1] = stat
         if self.ParentMenu ~= nil then
             local wid = IndexOf(self.ParentMenu.Windows, self) - 1
-            ScaleformUI.Scaleforms._ui:CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", false, wid, stat.Percentage, stat.HudColor)
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", wid, stat.Percentage, stat.HudColor)
         end
     end
 end
@@ -103,7 +103,7 @@ function UIMenuDetailsWindow:UpdateStatsToWheel()
         if self.ParentMenu ~= nil then
             local wid = IndexOf(self.ParentMenu.Windows, self) - 1
             for key, value in pairs(self.DetailStats) do
-                ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_STATS_DETAILS_WINDOW_STATWHEEL", false, wid, key - 1, value.Percentage, value.HudColor)
+                ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_STATS_DETAILS_WINDOW_STATWHEEL", wid, key - 1, value.Percentage, value.HudColor)
             end
         end
     end

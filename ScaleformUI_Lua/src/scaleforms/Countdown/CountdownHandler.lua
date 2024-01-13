@@ -84,8 +84,8 @@ end
 ---Show a message on the COUNTDOWN scaleform
 ---@param message string
 function CountdownHandler:ShowMessage(message)
-    self._sc:CallFunction("SET_MESSAGE", false, message, self._colour.r, self._colour.g, self._colour.b, true);
-    self._sc:CallFunction("FADE_MP", false, message, self._colour.r, self._colour.g, self._colour.b);
+    self._sc:CallFunction("SET_MESSAGE", message, self._colour.r, self._colour.g, self._colour.b, true);
+    self._sc:CallFunction("FADE_MP", message, self._colour.r, self._colour.g, self._colour.b);
 end
 
 ---Starts the countdown and will return a promise when the countdown is finished

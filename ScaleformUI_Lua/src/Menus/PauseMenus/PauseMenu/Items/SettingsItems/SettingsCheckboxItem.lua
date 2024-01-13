@@ -45,7 +45,7 @@ function SettingsCheckboxItem:Enabled(enabled)
                 local tab = IndexOf(self.Parent.Parent.Base.Parent.Tabs, self.Parent.Parent) - 1
                 local leftItem = IndexOf(self.Parent.Parent.LeftItemList, self.Parent) - 1
                 local rightIndex = IndexOf(self.Parent.ItemList, self) - 1
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ENABLE_RIGHT_ITEM", false, tab, leftItem,
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ENABLE_RIGHT_ITEM", tab, leftItem,
                     rightIndex, self._enabled)
             end
         end

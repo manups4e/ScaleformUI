@@ -9,7 +9,6 @@ namespace ScaleformUI.LobbyMenu
     public delegate void PlayerItemSelected(LobbyItem item, int index);
     public class PlayerListColumn : Column
     {
-        internal bool isBuilding = false;
         public event IndexChanged OnIndexChanged;
         public List<LobbyItem> Items { get; private set; }
         private List<LobbyItem> _unfilteredItems;
@@ -35,7 +34,7 @@ namespace ScaleformUI.LobbyMenu
             Pagination.TotalItems = Items.Count;
             if (Parent != null && Parent.Visible)
             {
-                if (Pagination.TotalItems < Pagination.ItemsPerPage)
+                if (Pagination.TotalItems <= Pagination.ItemsPerPage)
                 {
                     int sel = CurrentSelection;
                     Pagination.MinItem = Pagination.CurrentPageStartIndex;
@@ -144,15 +143,14 @@ namespace ScaleformUI.LobbyMenu
                             lobby._pause._lobby.CallFunction("CLEAR_PLAYERS_COLUMN");
                         else if (Parent is TabView pause)
                             pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_PLAYERS_COLUMN", ParentTab);
-                        int i = 0;
                         int max = Pagination.ItemsPerPage;
-                        while (i < max)
+                        isBuilding = true;
+                        for (int i = 0; i < max; i++)
                         {
-                            await BaseScript.Delay(0);
                             if (!Parent.Visible) return;
                             _itemCreation(Pagination.CurrentPage, i, false, true);
-                            i++;
                         }
+                        isBuilding = false;
                     }
                 }
                 if (Parent is MainView _lobby)
@@ -201,15 +199,14 @@ namespace ScaleformUI.LobbyMenu
                             lobby._pause._lobby.CallFunction("CLEAR_PLAYERS_COLUMN");
                         else if (Parent is TabView pause)
                             pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_PLAYERS_COLUMN", ParentTab);
-                        int i = 0;
                         int max = Pagination.ItemsPerPage;
-                        while (i < max)
+                        isBuilding = true;
+                        for (int i = 0; i < max; i++)
                         {
-                            await BaseScript.Delay(0);
                             if (!Parent.Visible) return;
-                            _itemCreation(Pagination.CurrentPage, i, false);
-                            i++;
+                            _itemCreation(Pagination.CurrentPage, i, false, true);
                         }
+                        isBuilding = false;
                     }
                 }
                 if (Parent is MainView _lobby)
@@ -257,7 +254,10 @@ namespace ScaleformUI.LobbyMenu
                     Pagination.CurrentPage = Pagination.GetPage(Pagination.CurrentMenuIndex);
                     Pagination.CurrentPageIndex = Pagination.GetPageIndexFromMenuIndex(value);
                     Pagination.ScaleformIndex = Pagination.GetScaleformIndex(value);
-
+                    if (value > Pagination.MaxItem || value < Pagination.MinItem)
+                    {
+                        RefreshColumn();
+                    }
                     if (Parent != null && Parent.Visible)
                     {
                         if (Parent is MainView lobby)
@@ -287,10 +287,13 @@ namespace ScaleformUI.LobbyMenu
             }
         }
 
-        public void SortMissions(Comparison<LobbyItem> compare)
+        public void SortPlayers(Comparison<LobbyItem> compare)
         {
             Items[CurrentSelection].Selected = false;
-            _unfilteredItems = Items.ToList();
+            if (_unfilteredItems == null || _unfilteredItems.Count == 0)
+            {
+                _unfilteredItems = Items.ToList();
+            }
             Clear();
             List<LobbyItem> list = _unfilteredItems.ToList();
             list.Sort(compare);
@@ -305,10 +308,13 @@ namespace ScaleformUI.LobbyMenu
             }
         }
 
-        public void FilterMissions(Func<LobbyItem, bool> predicate)
+        public void FilterPlayers(Func<LobbyItem, bool> predicate)
         {
             Items[CurrentSelection].Selected = false;
-            _unfilteredItems = Items.ToList();
+            if (_unfilteredItems == null || _unfilteredItems.Count == 0)
+            {
+                _unfilteredItems = Items.ToList();
+            }
             Clear();
             Items = _unfilteredItems.Where(predicate.Invoke).ToList();
             Pagination.TotalItems = Items.Count;
@@ -323,16 +329,19 @@ namespace ScaleformUI.LobbyMenu
 
         public void ResetFilter()
         {
-            Items[CurrentSelection].Selected = false;
-            Clear();
-            Items = _unfilteredItems.ToList();
-            Pagination.TotalItems = Items.Count;
-            if (Parent != null && Parent.Visible)
+            if (_unfilteredItems != null && _unfilteredItems.Count > 0)
             {
-                if (Parent is MainView lobby)
-                    lobby.buildPlayers();
-                else if (Parent is TabView pause)
-                    pause.buildPlayers(pause.Tabs[ParentTab] as PlayerListTab);
+                Items[CurrentSelection].Selected = false;
+                Clear();
+                Items = _unfilteredItems.ToList();
+                Pagination.TotalItems = Items.Count;
+                if (Parent != null && Parent.Visible)
+                {
+                    if (Parent is MainView lobby)
+                        lobby.buildPlayers();
+                    else if (Parent is TabView pause)
+                        pause.buildPlayers(pause.Tabs[ParentTab] as PlayerListTab);
+                }
             }
         }
         public void SelectItem()
@@ -343,6 +352,51 @@ namespace ScaleformUI.LobbyMenu
         public void IndexChangedEvent()
         {
             OnIndexChanged?.Invoke(CurrentSelection);
+        }
+
+        private void RefreshColumn()
+        {
+            if (Parent is MainView lobby)
+                lobby._pause._lobby.CallFunction("CLEAR_PLAYERS_COLUMN");
+            else if (Parent is TabView pause)
+                pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_PLAYERS_COLUMN", ParentTab);
+            if (Items.Count > 0)
+            {
+                isBuilding = true;
+                int max = Pagination.ItemsPerPage;
+                if (Items.Count < max)
+                    max = Items.Count;
+
+                Pagination.MinItem = Pagination.CurrentPageStartIndex;
+                if (Pagination.scrollType == ScrollingType.CLASSIC && Pagination.TotalPages > 1)
+                {
+                    int missingItems = Pagination.GetMissingItems();
+                    if (missingItems > 0)
+                    {
+                        Pagination.ScaleformIndex = Pagination.GetPageIndexFromMenuIndex(Pagination.CurrentPageEndIndex) + missingItems;
+                        Pagination.MinItem = Pagination.CurrentPageStartIndex - missingItems;
+                    }
+                }
+                Pagination.MaxItem = Pagination.CurrentPageEndIndex;
+
+                for (int i = 0; i < max; i++)
+                {
+                    if (!Parent.Visible) return;
+                    _itemCreation(Pagination.CurrentPage, i, false, true);
+                }
+                Pagination.ScaleformIndex = Pagination.GetScaleformIndex(CurrentSelection);
+                if (Parent is TabView _pause)
+                {
+                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYERS_SELECTION", ParentTab, Pagination.ScaleformIndex);
+                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYERS_QTTY", ParentTab, CurrentSelection + 1, Items.Count);
+                }
+                else if (Parent is MainView _lobby)
+                {
+                    _lobby._pause._lobby.CallFunction("SET_PLAYERS_SELECTION", Pagination.ScaleformIndex);
+                    _lobby._pause._lobby.CallFunction("SET_PLAYERS_QTTY", CurrentSelection + 1, Items.Count);
+                }
+                isBuilding = false;
+            }
         }
     }
 }

@@ -34,7 +34,7 @@ namespace ScaleformUI.Menu
         /// <param name="text">Item label.</param>
         /// <param name="check">Boolean value whether the checkbox is checked.</param>
         /// <param name="description">Description for this item.</param>
-        public UIMenuCheckboxItem(string text, bool check, string description) : this(text, UIMenuCheckboxStyle.Tick, check, description, SColor.HUD_Pause_bg, SColor.HUD_White)
+        public UIMenuCheckboxItem(string text, bool check, string description) : this(text, UIMenuCheckboxStyle.Tick, check, description, SColor.HUD_Panel_light, SColor.HUD_White)
         {
         }
 
@@ -45,7 +45,7 @@ namespace ScaleformUI.Menu
         /// <param name="style">CheckBox style (Tick or Cross).</param>
         /// <param name="check">Boolean value whether the checkbox is checked.</param>
         /// <param name="description">Description for this item.</param>
-        public UIMenuCheckboxItem(string text, UIMenuCheckboxStyle style, bool check, string description) : this(text, style, check, description, SColor.HUD_Pause_bg, SColor.HUD_White)
+        public UIMenuCheckboxItem(string text, UIMenuCheckboxStyle style, bool check, string description) : this(text, style, check, description, SColor.HUD_Panel_light, SColor.HUD_White)
         {
         }
 

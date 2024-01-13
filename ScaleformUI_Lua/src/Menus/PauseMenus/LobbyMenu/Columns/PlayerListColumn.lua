@@ -73,15 +73,15 @@ function PlayerListColumn:CurrentSelection(value)
         if self.Parent ~= nil and self.Parent:Visible() then
             local pSubT = self.Parent()
             if pSubT == "LobbyMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_SELECTION", false, self.Pagination:ScaleformIndex()) --[[@as number]]
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_QTTY", false, self:CurrentSelection(), #self.Items) --[[@as number]]
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
                 self.Items[self:CurrentSelection()]:Selected(true)
                 if self.Items[self:CurrentSelection()].ClonePed ~= nil and self.Items[self:CurrentSelection()].ClonePed ~= 0 then
                     self.Items[self:CurrentSelection()]:AddPedToPauseMenu()
                 end
             elseif pSubT == "PauseMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_SELECTION", false, self.ParentTab, self.Pagination:ScaleformIndex()) --[[@as number]]
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_QTTY", false, self.ParentTab, self:CurrentSelection(), #self.Items) --[[@as number]]
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_SELECTION", self.ParentTab, self.Pagination:ScaleformIndex()) --[[@as number]]
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_QTTY", self.ParentTab, self:CurrentSelection(), #self.Items) --[[@as number]]
                 if self.Parent:Index() == self.ParentTab+1 and self.Parent:FocusLevel() == 1 then
                     self.Items[self:CurrentSelection()]:Selected(true)
                     if self.Items[self:CurrentSelection()].ClonePed ~= nil and self.Items[self:CurrentSelection()].ClonePed ~= 0 then
@@ -153,9 +153,9 @@ function PlayerListColumn:_itemCreation(page, pageIndex, before, overflow)
     if SubType == "FriendItem" then
         local pSubT = self.Parent()
         if pSubT == "LobbyMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_PLAYER_ITEM", false, before, menuIndex, 1, 1, item:Label(), item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL, item._iconR, item._boolR, item:Status(), item:StatusColor(), item:Rank(), item:CrewTag().TAG, item:KeepPanelVisible())
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_PLAYER_ITEM", before, menuIndex, 1, 1, item:Label(), item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL, item._iconR, item._boolR, item:Status(), item:StatusColor(), item:Rank(), item:CrewTag().TAG, item:KeepPanelVisible())
         elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_PLAYER_ITEM", false, self.ParentTab, before, menuIndex, 1, 1, item:Label(), item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL, item._iconR, item._boolR, item:Status(), item:StatusColor(), item:Rank(), item:CrewTag().TAG, item:KeepPanelVisible())
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_PLAYER_ITEM", self.ParentTab, before, menuIndex, 1, 1, item:Label(), item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL, item._iconR, item._boolR, item:Status(), item:StatusColor(), item:Rank(), item:CrewTag().TAG, item:KeepPanelVisible())
         end
     end
     if item.Panel ~= nil then
@@ -178,9 +178,9 @@ function PlayerListColumn:RemovePlayer(item)
         if SubType == "FriendItem" then
             local pSubT = self.Parent()
             if pSubT == "LobbyMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("REMOVE_PLAYER_ITEM", false, id - 1)
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("REMOVE_PLAYER_ITEM", id - 1)
             elseif pSubT == "PauseMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("REMOVE_PLAYERS_TAB_PLAYER_ITEM", false, self.ParentTab, id - 1)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("REMOVE_PLAYERS_TAB_PLAYER_ITEM", self.ParentTab, id - 1)
             end
         end
         if item.Panel ~= nil then
@@ -201,16 +201,16 @@ function PlayerListColumn:GoUp()
                 self:_itemCreation(self.Pagination:GetPage(self:CurrentSelection()), self.Pagination:CurrentPageIndex(), true, false)
                     local pSubT = self.Parent()
                     if pSubT == "LobbyMenu" then
-                        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", false, 8, self._delay) --[[@as number]]
+                        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", 8, self._delay) --[[@as number]]
                     elseif pSubT == "PauseMenu" then
-                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", false, 8, self._delay) --[[@as number]]
+                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", 8, self._delay) --[[@as number]]
                     end
             elseif self.scrollingType == MenuScrollingType.PAGINATED or (self.scrollingType == MenuScrollingType.CLASSIC and overflow) then
                 local pSubT = self.Parent()
                 if pSubT == "LobbyMenu" then
-                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CLEAR_PLAYERS_COLUMN", false) --[[@as number]]
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CLEAR_PLAYERS_COLUMN") --[[@as number]]
                 elseif pSubT == "PauseMenu" then
-                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_PLAYERS_COLUMN", false, self.ParentTab) --[[@as number]]
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_PLAYERS_COLUMN", self.ParentTab) --[[@as number]]
                 end
                 local i = 1
                 local max = self.Pagination:ItemsPerPage()
@@ -225,11 +225,11 @@ function PlayerListColumn:GoUp()
     until self.Items[self:CurrentSelection()].ItemId ~= 6 or (self.Items[self:CurrentSelection()].ItemId == 6 and not self.Items[self:CurrentSelection()].Jumpable)
     local pSubT = self.Parent()
     if pSubT == "LobbyMenu" then
-        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_SELECTION", false, self.Pagination:ScaleformIndex()) --[[@as number]]
-        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_QTTY", false, self:CurrentSelection(), #self.Items) --[[@as number]]
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
     elseif pSubT == "PauseMenu" then
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_SELECTION", false, self.ParentTab, self.Pagination:ScaleformIndex()) --[[@as number]]
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_QTTY", false, self.ParentTab, self:CurrentSelection(), #self.Items) --[[@as number]]
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_SELECTION", self.ParentTab, self.Pagination:ScaleformIndex()) --[[@as number]]
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_QTTY", self.ParentTab, self:CurrentSelection(), #self.Items) --[[@as number]]
     end
     self.Items[self:CurrentSelection()]:Selected(true)
     if self.Items[self:CurrentSelection()].ClonePed ~= nil and self.Items[self:CurrentSelection()].ClonePed ~= 0 then
@@ -249,16 +249,16 @@ function PlayerListColumn:GoDown()
                 self:_itemCreation(self.Pagination:GetPage(self:CurrentSelection()), self.Pagination:CurrentPageIndex(), false, false)
                     local pSubT = self.Parent()
                     if pSubT == "LobbyMenu" then
-                        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", false, 9, self._delay) --[[@as number]]
+                        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", 9, self._delay) --[[@as number]]
                     elseif pSubT == "PauseMenu" then
-                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", false, 9, self._delay) --[[@as number]]
+                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", 9, self._delay) --[[@as number]]
                     end
             elseif self.scrollingType == MenuScrollingType.PAGINATED or (self.scrollingType == MenuScrollingType.CLASSIC and overflow) then
                 local pSubT = self.Parent()
                 if pSubT == "LobbyMenu" then
-                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CLEAR_PLAYERS_COLUMN", false) --[[@as number]]
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CLEAR_PLAYERS_COLUMN") --[[@as number]]
                 elseif pSubT == "PauseMenu" then
-                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_PLAYERS_COLUMN", false, self.ParentTab) --[[@as number]]
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_PLAYERS_COLUMN", self.ParentTab) --[[@as number]]
                 end
                 local i = 1
                 local max = self.Pagination:ItemsPerPage()
@@ -273,11 +273,11 @@ function PlayerListColumn:GoDown()
     until self.Items[self:CurrentSelection()].ItemId ~= 6 or (self.Items[self:CurrentSelection()].ItemId == 6 and not self.Items[self:CurrentSelection()].Jumpable)
     local pSubT = self.Parent()
     if pSubT == "LobbyMenu" then
-        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_SELECTION", false, self.Pagination:ScaleformIndex()) --[[@as number]]
-        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_QTTY", false, self:CurrentSelection(), #self.Items) --[[@as number]]
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
     elseif pSubT == "PauseMenu" then
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_SELECTION", false, self.ParentTab, self.Pagination:ScaleformIndex()) --[[@as number]]
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_QTTY", false, self.ParentTab, self:CurrentSelection(), #self.Items) --[[@as number]]
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_SELECTION", self.ParentTab, self.Pagination:ScaleformIndex()) --[[@as number]]
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_QTTY", self.ParentTab, self:CurrentSelection(), #self.Items) --[[@as number]]
     end
     self.Items[self:CurrentSelection()]:Selected(true)
     if self.Items[self:CurrentSelection()].ClonePed ~= nil and self.Items[self:CurrentSelection()].ClonePed ~= 0 then
@@ -291,9 +291,9 @@ function PlayerListColumn:Clear()
     if self.Parent ~= nil and self.Parent:Visible() then
         local pSubT = self.Parent()
         if pSubT == "LobbyMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CLEAR_PLAYERS_COLUMN", false)
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CLEAR_PLAYERS_COLUMN")
         elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_PLAYERS_COLUMN", false, self.ParentTab)
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_PLAYERS_COLUMN", self.ParentTab)
         end
     end
     self.Items = {}

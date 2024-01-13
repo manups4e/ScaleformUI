@@ -44,7 +44,7 @@ function UIMissionDetailsPanel:UpdatePanelTitle(title)
 
     if self.ParentItem ~= nil then
         local item = IndexOf(self.ParentItem.Base.ParentMenu.Items, self.ParentItem) - 1
-        ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_SIDE_PANEL_TITLE", false, item, title)
+        ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_SIDE_PANEL_TITLE", item, title)
     end
 end
 
@@ -54,7 +54,7 @@ function UIMissionDetailsPanel:UpdatePanelPicture(txd, txn)
 
     if self.ParentItem ~= nil then
         local item = IndexOf(self.ParentItem.Base.ParentMenu.Items, self.ParentItem) - 1
-        ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_MISSION_DETAILS_PANEL_IMG", false, item, txd, txn)
+        ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_MISSION_DETAILS_PANEL_IMG", item, txd, txn)
     end
 end
 
@@ -62,7 +62,7 @@ function UIMissionDetailsPanel:AddItem(newitem)
     self.Items[#self.Items + 1] = newitem
     if self.ParentItem ~= nil then
         local item = IndexOf(self.ParentItem.Base.ParentMenu.Items, self.ParentItem) - 1
-        ScaleformUI.Scaleforms._ui:CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", false, item, newitem.Type,
+        ScaleformUI.Scaleforms._ui:CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", item, newitem.Type,
             newitem.TextLeft, newitem.TextRight, newitem.Icon, newitem.IconColor, newitem.Tick, newitem._labelFont.FontName, newitem._labelFont.FontID, 
             newitem._rightLabelFont.FontName, newitem._rightLabelFont.FontID)
     end
@@ -71,6 +71,6 @@ end
 function UIMissionDetailsPanel:RemoveItemAt(index)
     table.remove(self.Items, index)
     if self.ParentItem ~= nil then
-        ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_MISSION_DETAILS_DESC_ITEM", false, index - 1)
+        ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_MISSION_DETAILS_DESC_ITEM", index - 1)
     end
 end

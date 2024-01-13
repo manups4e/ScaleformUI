@@ -326,7 +326,7 @@ namespace ScaleformUI.Menu
         /// Called when user selects the current item.
         /// </summary>
         public event ItemActivatedEvent Activated;
-        
+
         /// <summary>
         /// Called when user "highlights" the current item.
         /// </summary>
@@ -343,14 +343,14 @@ namespace ScaleformUI.Menu
         /// </summary>
         /// <param name="text">Button label.</param>
         /// <param name="description">Description.</param>
-        public UIMenuItem(string text, string description) : this(text, description, SColor.HUD_Pause_bg, SColor.HUD_White, SColor.HUD_White, SColor.HUD_Black) { }
+        public UIMenuItem(string text, string description) : this(text, description, SColor.HUD_Panel_light, SColor.HUD_White, SColor.HUD_White, SColor.HUD_Black) { }
 
         /// <summary>
         /// Basic menu button with description.
         /// </summary>
         /// <param name="text">Button label.</param>
         /// <param name="descriptionHash">Description label hash.</param>
-        public UIMenuItem(string text, uint descriptionHash) : this(text, descriptionHash, SColor.HUD_Pause_bg, SColor.HUD_White, SColor.HUD_White, SColor.HUD_Black) { }
+        public UIMenuItem(string text, uint descriptionHash) : this(text, descriptionHash, SColor.HUD_Panel_light, SColor.HUD_White, SColor.HUD_White, SColor.HUD_Black) { }
 
         public UIMenuItem(string text, string description, SColor mainColor, SColor highlightColor) : this(text, description, mainColor, highlightColor, SColor.HUD_White, SColor.HUD_Black) { }
         public UIMenuItem(string text, uint descriptionHash, SColor mainColor, SColor highlightColor) : this(text, descriptionHash, mainColor, highlightColor, SColor.HUD_White, SColor.HUD_Black) { }
@@ -425,7 +425,7 @@ namespace ScaleformUI.Menu
         public virtual bool Selected
         {
             get => _selected;
-            set
+            internal set
             {
                 _selected = value;
                 if (value)
@@ -465,8 +465,7 @@ namespace ScaleformUI.Menu
         /// <summary>
         /// Whether this item is currently being hovered on with a mouse.
         /// </summary>
-        public virtual bool Hovered { get; set; }
-
+        public virtual bool Hovered { get; internal set; }
 
         /// <summary>
         /// This item's description.

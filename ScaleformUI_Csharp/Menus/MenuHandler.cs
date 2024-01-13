@@ -64,6 +64,8 @@ namespace ScaleformUI
 
             if (currentMenu is UIMenu old)
             {
+                await old.FadeOutMenu();
+                currentMenu.Visible = false;
                 if (newMenu is UIMenu newer)
                 {
                     if (inheritOldMenuParams)
@@ -71,9 +73,7 @@ namespace ScaleformUI
                         if (old._customTexture.Key != null && old._customTexture.Value != null)
                             newer.SetBannerType(old._customTexture);
                         newer.Offset = old.Offset;
-                        newer.MouseEdgeEnabled = old.MouseEdgeEnabled;
-                        newer.MouseWheelControlEnabled = old.MouseWheelControlEnabled;
-                        newer.MouseControlsEnabled = old.MouseControlsEnabled;
+                        newer.AlternativeTitle = old.AlternativeTitle;
                         newer.MaxItemsOnScreen = old.MaxItemsOnScreen;
                         newer.AnimationType = old.AnimationType;
                         newer.BuildingAnimation = old.BuildingAnimation;
@@ -81,6 +81,8 @@ namespace ScaleformUI
                         newer.Glare = old.Glare;
                         newer.EnableAnimation = old.EnableAnimation;
                         newer.Enabled3DAnimations = old.Enabled3DAnimations;
+                        newer.fadingTime = old.fadingTime;
+                        newer.SetMouse(old.MouseControlsEnabled, old.MouseEdgeEnabled, old.MouseWheelControlEnabled, old.ResetCursorOnOpen, old.leftClickEnabled);
                     }
                     newer.CurrentSelection = newMenuCurrentSelection != 0 ? newMenuCurrentSelection : 0;
                 }
@@ -90,12 +92,8 @@ namespace ScaleformUI
                     radio.CurrentSelection = newMenuCurrentSelection != 0 ? newMenuCurrentSelection : 0;
             }
 
-            if (currentMenu is UIMenu _old)
-                await _old.FadeOutMenu();
-            currentMenu.Visible = false;
+
             newMenu.Visible = true;
-            if (newMenu is UIMenu _newer)
-                await _newer.FadeInMenu();
             BreadcrumbsHandler.Forward(newMenu, data);
             BreadcrumbsHandler.SwitchInProgress = false;
         }
@@ -105,8 +103,10 @@ namespace ScaleformUI
         /// </summary>
         internal static void ProcessControl()
         {
-            currentMenu?.ProcessControl();
-            currentBase?.ProcessControls();
+            if (currentMenu != null && currentBase == null)
+                currentMenu?.ProcessControl();
+            else
+                currentBase?.ProcessControls();
         }
 
 
@@ -115,8 +115,10 @@ namespace ScaleformUI
         /// </summary>
         internal static void ProcessMouse()
         {
-            currentMenu?.ProcessMouse();
-            currentBase?.ProcessMouse();
+            if (currentMenu != null && currentBase == null)
+                currentMenu?.ProcessMouse();
+            else
+                currentBase?.ProcessMouse();
         }
 
 
@@ -126,10 +128,11 @@ namespace ScaleformUI
         internal static void Draw()
         {
             if (Main.Warning.IsShowing || Main.Warning.IsShowingWithButtons) return;
-            currentMenu?.Draw();
-            currentBase?.Draw();
+            if (currentMenu != null && currentBase == null)
+                currentMenu?.Draw();
+            else
+                currentBase?.Draw();
         }
-
 
         /// <summary>
         /// Checks if any menu is currently visible.
@@ -144,9 +147,9 @@ namespace ScaleformUI
         /// </summary>
         public static async void ProcessMenus()
         {
+            Draw();
             ProcessControl();
             ProcessMouse();
-            Draw();
         }
 
         /// <summary>
@@ -154,6 +157,7 @@ namespace ScaleformUI
         /// </summary>
         public static void CloseAndClearHistory()
         {
+            ableToDraw = false;
             if (currentMenu != null)
                 currentMenu.Visible = false;
             if (currentBase != null)

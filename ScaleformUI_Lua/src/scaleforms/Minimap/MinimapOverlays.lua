@@ -20,7 +20,7 @@ function MinimapOverlays:AddSizedOverlayToMap(textureDict, textureName, x, y, ro
     if height == nil then height = -1 end
     if alpha == nil then alpha = 100 end
     if centered == nil then centered = false end
-
+    local returned = 0
     Citizen.CreateThread(function()
     
         if not HasStreamedTextureDictLoaded(textureDict) then
@@ -42,8 +42,16 @@ function MinimapOverlays:AddSizedOverlayToMap(textureDict, textureName, x, y, ro
 
         SetStreamedTextureDictAsNoLongerNeeded(textureDict)
         table.insert(self.minimaps, {id = #self.minimaps + 1, txd = textureDict, txn = textureName})
-        return #self.minimaps
+        returned = #self.minimaps
     end)
+    local time = GetNetworkTime()
+    while returned == 0 do
+        Wait(0)
+        if GetNetworkTime() - time > 5000 then
+            return 0
+        end
+    end
+    return returned
 end
 
 function MinimapOverlays:AddScaledOverlayToMap(textureDict, textureName, x, y, rotation, xScale, yScale, alpha, centered)
@@ -53,6 +61,7 @@ function MinimapOverlays:AddScaledOverlayToMap(textureDict, textureName, x, y, r
     if yScale == nil then yScale = 100.0 end
     if alpha == nil then alpha = 100 end
     if centered == nil then centered = false end
+    local returned = 0
 
     Citizen.CreateThread(function()
    
@@ -77,19 +86,27 @@ function MinimapOverlays:AddScaledOverlayToMap(textureDict, textureName, x, y, r
         SetStreamedTextureDictAsNoLongerNeeded(textureDict)
 
         table.insert(self.minimaps, {id = #self.minimaps + 1, txd = textureDict, txn = textureName})
-        return #self.minimaps
+        returned = #self.minimaps
     end)
+    local time = GetNetworkTime()
+    while returned == 0 do
+        Wait(0)
+        if GetNetworkTime() - time > 5000 then
+            return 0
+        end
+    end
+    return returned
 end
 
 function MinimapOverlays:RemoveOverlayFromMinimap(overlayId)
     if overlayId == nil then return end
     if self.overlay == 0 then self:Load() end
     CallMinimapScaleformFunction(self.overlay, "REM_OVERLAY");
-    ScaleformMovieMethodAddParamInt(overlayId)
+    ScaleformMovieMethodAddParamInt(overlayId-1)
     EndScaleformMovieMethod()
     for k,v in pairs(self.minimaps) do
         if k == overlayId then
-            table.remove(k)
+            table.remove(self.minimaps, k)
         end
     end
 end

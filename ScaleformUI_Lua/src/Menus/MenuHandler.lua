@@ -21,6 +21,7 @@ function MenuHandler:SwitchTo(currentMenu, newMenu, newMenuCurrentSelection, inh
     assert(newMenu ~= nil, "The menu you're switching to cannot be null")
     assert(newMenu ~= currentMenu, "You cannot switch a menu to itself")
     assert(#newMenu.Items > 0, "You cannot switch to an empty menu.")
+    assert(not newMenu:Visible(), "The menu you're switching to is already open!")
     if BreadcrumbsHandler.SwitchInProgress then return end
     BreadcrumbsHandler.SwitchInProgress = true
     
@@ -42,15 +43,19 @@ function MenuHandler:SwitchTo(currentMenu, newMenu, newMenuCurrentSelection, inh
             end
 
             newMenu.Glare = currentMenu.Glare
-            newMenu.Settings.MouseControlsEnabled = currentMenu.Settings.MouseControlsEnabled
-            newMenu.Settings.MouseEdgeEnabled = currentMenu.Settings.MouseEdgeEnabled
             newMenu:MaxItemsOnScreen(currentMenu:MaxItemsOnScreen())
             newMenu:AnimationEnabled(currentMenu:AnimationEnabled())
             newMenu:AnimationType(currentMenu:AnimationType())
             newMenu:BuildingAnimation(currentMenu:BuildingAnimation())
             newMenu:ScrollingType(currentMenu:ScrollingType())
+            newMenu:MouseSettings(currentMenu:MouseControlsEnabled(), currentMenu:MouseEdgeEnabled(), currentMenu:MouseWheelControlEnabled(), currentMenu.Settings.ResetCursorOnOpen, currentMenu.leftClickEnabled)
             newMenu.enabled3DAnimations = currentMenu.enabled3DAnimations
             newMenu.fadingTime = currentMenu.fadingTime
+            --[[
+                newMenu.Settings.MouseControlsEnabled = currentMenu.Settings.MouseControlsEnabled
+                newMenu.Settings.MouseEdgeEnabled = currentMenu.Settings.MouseEdgeEnabled
+            ]]
+
         end
     end
     newMenu:CurrentSelection(newMenuCurrentSelection)
@@ -67,8 +72,8 @@ function MenuHandler:SwitchTo(currentMenu, newMenu, newMenuCurrentSelection, inh
 end
 
 function MenuHandler:ProcessMenus()
-    self:ProcessControl()
     self:Draw()
+    self:ProcessControl()
 end
 
 ---ProcessControl

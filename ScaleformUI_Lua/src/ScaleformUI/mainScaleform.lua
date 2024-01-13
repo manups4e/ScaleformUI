@@ -27,11 +27,11 @@ AddEventHandler("onResourceStop", function(resName)
             AnimpostfxPlay("PauseMenuOut", 800, false);
         end
         ScaleformUI.Scaleforms._pauseMenu:Dispose()
-        ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL", false)
+        ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL")
         ScaleformUI.Scaleforms._ui:Dispose()
-        ScaleformUI.Scaleforms._radialMenu:CallFunction("CLEAR_ALL", false)
+        ScaleformUI.Scaleforms._radialMenu:CallFunction("CLEAR_ALL")
         ScaleformUI.Scaleforms._radialMenu:Dispose()
-        ScaleformUI.Scaleforms._radioMenu:CallFunction("CLEAR_ALL", false)
+        ScaleformUI.Scaleforms._radioMenu:CallFunction("CLEAR_ALL")
         ScaleformUI.Scaleforms._radioMenu:Dispose()
         if not IsPlayerControlOn(PlayerId()) then
             SetPlayerControl(PlayerId(), true, 0)
@@ -48,9 +48,7 @@ Citizen.CreateThread(function()
     ScaleformUI.Scaleforms.MinimapOverlays:Load()
 
     while true do
-        ScaleformUI.WaitTime = 850
         if MenuHandler.ableToDraw and not (IsWarningMessageActive() or ScaleformUI.Scaleforms.Warning:IsShowing()) then
-            ScaleformUI.WaitTime = 0
             MenuHandler:ProcessMenus()
         end
         ScaleformUI.Scaleforms.Warning:Update()
@@ -77,6 +75,6 @@ Citizen.CreateThread(function()
                 ScaleformUI.Scaleforms._pauseMenu:Load()
             end
         end
-        Citizen.Wait(ScaleformUI.WaitTime)
+        Citizen.Wait(0)
     end
 end)

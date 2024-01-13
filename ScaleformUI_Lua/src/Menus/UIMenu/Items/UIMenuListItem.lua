@@ -15,7 +15,7 @@ function UIMenuListItem.New(Text, Items, Index, Description, color, highlightCol
     if type(Items) ~= "table" then Items = {} end
     if Index == 0 then Index = 1 end
     local _UIMenuListItem = {
-        Base = UIMenuItem.New(Text or "", Description or "", color or SColor.HUD_Pause_bg, highlightColor or SColor.HUD_White, textColor or SColor.HUD_White, highlightedTextColor or SColor.HUD_Black),
+        Base = UIMenuItem.New(Text or "", Description or "", color or SColor.HUD_Panel_light, highlightColor or SColor.HUD_White, textColor or SColor.HUD_White, highlightedTextColor or SColor.HUD_Black),
         Items = Items,
         _Index = tonumber(Index) or 1,
         Panels = {},
@@ -69,7 +69,7 @@ function UIMenuListItem:AddSidePanel(sidePanel)
         sidePanel:SetParentItem(self)
         self.SidePanel = sidePanel
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false,
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM",
                 self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)), 0,
                 sidePanel.PanelSide, sidePanel.TitleType,
                 sidePanel.Title,
@@ -79,7 +79,7 @@ function UIMenuListItem:AddSidePanel(sidePanel)
         sidePanel:SetParentItem(self)
         self.SidePanel = sidePanel
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM", false,
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM",
                 IndexOf(self.Base.ParentMenu.Items, self), 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title,
                 sidePanel.TitleColor)
         end
@@ -148,7 +148,7 @@ function UIMenuListItem:MainColor(color)
     if (color) then
         self.Base._mainColor = color
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false,
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS",
                 self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
                 self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
@@ -161,7 +161,7 @@ function UIMenuListItem:TextColor(color)
     if (color) then
         self.Base._textColor = color
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false,
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS",
                 self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
                 self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
@@ -174,7 +174,7 @@ function UIMenuListItem:HighlightColor(color)
     if (color) then
         self.Base._highlightColor = color
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false,
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS",
                 self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
                 self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
@@ -187,7 +187,7 @@ function UIMenuListItem:HighlightedTextColor(color)
     if color then
         self.Base._highlightedTextColor = color
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", false,
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS",
                 self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
                 self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
         end
@@ -197,7 +197,7 @@ function UIMenuListItem:HighlightedTextColor(color)
 end
 
 ---Index
----@param Index table
+---@param Index number
 function UIMenuListItem:Index(Index)
     if tonumber(Index) then
         if Index > #self.Items then
@@ -208,7 +208,7 @@ function UIMenuListItem:Index(Index)
             self._Index = Index
         end
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_VALUE", false,
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_VALUE",
                 self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
                 self._Index - 1)
         end
@@ -307,7 +307,7 @@ function UIMenuListItem:ChangeList(list)
     self.Items = {}
     self.Items = list
     if self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
-        ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_LISTITEM_LIST", false,
+        ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_LISTITEM_LIST",
             self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
             table.concat(self.Items, ","), self._Index - 1)
     end

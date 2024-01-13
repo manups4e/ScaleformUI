@@ -103,37 +103,37 @@ function ButtonsHandler:UpdateButtons()
     if not self._changed then return end
     if self._sc == nil or self.ControlButtons == nil or #self.ControlButtons == 0 then return end
 
-    self._sc:CallFunction("SET_DATA_SLOT_EMPTY", false)
-    self._sc:CallFunction("TOGGLE_MOUSE_BUTTONS", false, self.UseMouseButtons)
+    self._sc:CallFunction("SET_DATA_SLOT_EMPTY")
+    self._sc:CallFunction("TOGGLE_MOUSE_BUTTONS", self.UseMouseButtons)
     local count = 0
 
     for k, button in pairs(self.ControlButtons) do
         if not IsUsingKeyboard(2) then
             if button.PadCheck == 0 or button.PadCheck == -1 then
                 if ScaleformUI.Scaleforms.Warning:IsShowing() then
-                    self._sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text, 0, -1)
+                    self._sc:CallFunction("SET_DATA_SLOT", count, button:GetButtonId(), button.Text, 0, -1)
                 else
-                    self._sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text)
+                    self._sc:CallFunction("SET_DATA_SLOT", count, button:GetButtonId(), button.Text)
                 end
             end
         else
             if button.PadCheck == 1 or button.PadCheck == -1 then
                 if self.UseMouseButtons then
-                    self._sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text, 1,
+                    self._sc:CallFunction("SET_DATA_SLOT", count, button:GetButtonId(), button.Text, 1,
                         button.KeyboardButton)
                 else
                     if ScaleformUI.Scaleforms.Warning:IsShowing() then
-                        self._sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text, 0,
+                        self._sc:CallFunction("SET_DATA_SLOT", count, button:GetButtonId(), button.Text, 0,
                             -1)
                     else
-                        self._sc:CallFunction("SET_DATA_SLOT", false, count, button:GetButtonId(), button.Text)
+                        self._sc:CallFunction("SET_DATA_SLOT", count, button:GetButtonId(), button.Text)
                     end
                 end
             end
         end
         count = count + 1
     end
-    self._sc:CallFunction("DRAW_INSTRUCTIONAL_BUTTONS", false, -1)
+    self._sc:CallFunction("DRAW_INSTRUCTIONAL_BUTTONS", -1)
     self._changed = false
 end
 
@@ -159,8 +159,7 @@ end
 
 ---Update tick for the instructional buttons
 function ButtonsHandler:Update()
-    if #self.ControlButtons == 0 and not self.IsSaving then return end
-    ScaleformUI.WaitTime = 0
+    if (self.ControlButtons == nil or #self.ControlButtons == 0) and not self.IsSaving then return end
     if self._sc == nil then self:Load() end
     if IsUsingKeyboard(2) then
         if not self.IsUsingKeyboard then

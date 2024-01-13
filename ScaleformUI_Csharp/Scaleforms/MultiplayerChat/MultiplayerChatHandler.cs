@@ -11,18 +11,21 @@ namespace ScaleformUI.Scaleforms
         private int _start = 0;
         private int _duration = 5000;
 
-        public MultiplayerChatHandler() { Load(); }
+        public MultiplayerChatHandler()
+        {
+        }
 
-        private async void Load()
+        public async Task Load()
         {
             if (_sc is not null) return;
             _sc = new ScaleformWideScreen(SCALEFORM_NAME);
             int timeout = 1000;
             int start = Main.GameTime;
-            while (!_sc.IsLoaded && Main.GameTime - start < timeout) await BaseScript.Delay(0);
-            if (!_sc.IsLoaded) return;
-            _sc.CallFunction("RESET");
-            _sc.CallFunction("SET_FOCUS", ChatVisibility.Hidden, ChatScope.All, "All", Game.Player.Name, HudColor.HUD_COLOUR_WHITE);
+            while (!_sc.IsLoaded && Main.GameTime - start < timeout)
+            {
+                Debug.WriteLine(SCALEFORM_NAME + ": loading");
+                await BaseScript.Delay(0);
+            }
         }
 
         private void Dispose()
@@ -31,7 +34,7 @@ namespace ScaleformUI.Scaleforms
             _sc = null;
         }
 
-        public void SetFocus(ChatVisibility visibility, ChatScope? scope = null, string? scopeText = null, string? playerName = null, HudColor? color = null)
+        public void SetFocus(ChatVisibility visibility, ChatScope scope = ChatScope.Global, string scopeText = "All", string playerName = "", HudColor color = HudColor.HUD_COLOUR_PURE_WHITE)
         {
             if (visibility == ChatVisibility.Typing)
                 _isTyping = true;
@@ -39,13 +42,12 @@ namespace ScaleformUI.Scaleforms
                 _isTyping = false;
             else if (visibility == ChatVisibility.Default)
                 _start = Main.GameTime;
-
-            _sc.CallFunction("SET_FOCUS", visibility, scope, scopeText, playerName, color);
+            _sc.CallFunction("SET_FOCUS", (int)visibility, (int)scope, scopeText, playerName, (int)color);
         }
 
         public void AddMessage(string playerName, string message, ChatScope scope, bool teamOnly, HudColor color)
         {
-            _sc.CallFunction("ADD_MESSAGE", playerName, message, scope, teamOnly, color);
+            _sc.CallFunction("ADD_MESSAGE", playerName, message, (int)scope, teamOnly, (int)color);
         }
 
         public void Close()
@@ -59,12 +61,42 @@ namespace ScaleformUI.Scaleforms
         public void StartTyping() => SetFocus(ChatVisibility.Typing);
         public void Hide() => SetFocus(ChatVisibility.Hidden);
         public void Reset() => _sc.CallFunction("RESET");
-        public void PageUp() => _sc.CallFunction("PAGE_UP");
-        public void PageDown() => _sc.CallFunction("PAGE_DOWN");
-        public void DeleteText() => _sc.CallFunction("DELETE_TEXT");
-        public void AddText(string text) => _sc.CallFunction("ADD_TEXT", text);
-        public void CompleteText() => _sc.CallFunction("COMPLETE_TEXT");
-        public void AbortText() => _sc.CallFunction("ABORT_TEXT");
+        public void PageUp()
+        {
+            if (!_isTyping) return;
+            _sc.CallFunction("PAGE_UP");
+        }
+
+        public void PageDown()
+        {
+            if (!_isTyping) return;
+            _sc.CallFunction("PAGE_DOWN");
+        }
+
+        public void DeleteText()
+        {
+            if (!_isTyping) return;
+            _sc.CallFunction("DELETE_TEXT");
+        }
+
+        public void AddText(string text)
+        {
+            if (!_isTyping) return;
+            _sc.CallFunction("ADD_TEXT", text);
+        }
+
+        public void CompleteText()
+        {
+            if (!_isTyping) return;
+            _sc.CallFunction("COMPLETE_TEXT");
+        }
+
+        public void AbortText()
+        {
+            if (!_isTyping) return;
+            _sc.CallFunction("ABORT_TEXT");
+        }
+
         public bool IsTyping() => _isTyping;
         public void SetDuration(int duration) => _duration = duration;
 

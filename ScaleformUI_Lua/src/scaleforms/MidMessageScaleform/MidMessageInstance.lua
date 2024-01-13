@@ -45,7 +45,7 @@ function MidMessageInstance:ShowColoredShard(msg, desc, bgColor, useDarkerShard,
     if time == nil then time = 5000 end
     self:Load()
     self._start = GlobalGameTimer
-    self._sc:CallFunction("SHOW_SHARD_MIDSIZED_MESSAGE", false, msg, desc, bgColor, useDarkerShard, useCondensedShard)
+    self._sc:CallFunction("SHOW_SHARD_MIDSIZED_MESSAGE", msg, desc, bgColor, useDarkerShard, useCondensedShard)
     self._timer = time
     self._hasAnimatedOut = false
 end
@@ -57,7 +57,7 @@ function MidMessageInstance:Update()
     self._sc:Render2D()
     if self._start ~= 0 and GlobalGameTimer - self._start > self._timer then
         if not self._hasAnimatedOut then
-            self._sc:CallFunction("SHARD_ANIM_OUT", false, 21, 750)
+            self._sc:CallFunction("SHARD_ANIM_OUT", 21, 750)
             self._hasAnimatedOut = true
             self._timer = self._timer + 750
         else
