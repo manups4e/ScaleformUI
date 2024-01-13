@@ -242,6 +242,9 @@ function MissionSelectorHandler:Update()
                             if (old ~= self.SelectedCard) then
                                 self.VotedFor = self.SelectedCard
                                 self.Votes[self.VotedFor] = self.Votes[self.VotedFor] + 1
+                            else
+                                self.alreadyVoted = false
+                                self.VotedFor = -1
                             end
                             self:UpdateOwnVote(self.VotedFor, old)
                         else
@@ -260,6 +263,9 @@ function MissionSelectorHandler:Update()
                                 if (old ~= self.SelectedCard) then
                                     self.VotedFor = self.SelectedCard
                                     self.Votes[self.VotedFor] = self.Votes[self.VotedFor] + 1
+                                else
+                                    self.alreadyVoted = false
+                                    self.VotedFor = -1
                                 end
                                 self:UpdateOwnVote(self.VotedFor, old)
                             else
@@ -305,6 +311,9 @@ function MissionSelectorHandler:Update()
                 if (old ~= self.SelectedCard) then
                     self.VotedFor = self.SelectedCard
                     self.Votes[self.VotedFor] = self.Votes[self.VotedFor] + 1
+                else
+                    self.alreadyVoted = false
+                    self.VotedFor = -1
                 end
                 self:UpdateOwnVote(self.VotedFor, old)
             else
@@ -323,6 +332,9 @@ function MissionSelectorHandler:Update()
                     if (old ~= self.SelectedCard) then
                         self.VotedFor = self.SelectedCard
                         self.Votes[self.VotedFor] = self.Votes[self.VotedFor] + 1
+                    else
+                        self.alreadyVoted = false
+                        self.VotedFor = -1
                     end
                     self:UpdateOwnVote(self.VotedFor, old)
                 else
