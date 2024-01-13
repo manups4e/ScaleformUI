@@ -171,6 +171,7 @@ end
 
 -- Removes a player's vote on a card in the mission selector
 function MissionSelectorHandler:RemovePlayerVote(idx)
+    if idx <= 0 or idx > 9 then return end
     if self.Votes[idx] <= 0 then return end
     self.Votes[idx] = self.Votes[idx] - 1
     local votes = 0
