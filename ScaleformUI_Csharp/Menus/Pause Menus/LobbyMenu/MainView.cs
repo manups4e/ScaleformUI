@@ -234,6 +234,7 @@ namespace ScaleformUI.LobbyMenu
             _pause.AddLobbyMenuTab(listCol[1].Label, 2, listCol[1].Color);
             _pause.AddLobbyMenuTab(listCol[2].Label, 2, listCol[2].Color);
             _pause._header.CallFunction("SET_ALL_HIGHLIGHTS", true, (int)HudColor.HUD_COLOUR_PAUSE_BG);
+            _pause._header.CallFunction("ENABLE_DYNAMIC_WIDTH", false);
 
             _loaded = true;
         }

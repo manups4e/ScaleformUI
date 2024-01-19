@@ -33,6 +33,7 @@ namespace ScaleformUI.PauseMenu
         public string SideStringBottom { get; set; }
         public Tuple<string, string> HeaderPicture { internal get; set; }
         public Tuple<string, string> CrewPicture { internal get; set; }
+        public bool SetHeaderDynamicWidth { get; set; }
         public List<BaseTab> Tabs { get; set; }
         private int index;
         public int LeftItemIndex
@@ -180,6 +181,7 @@ namespace ScaleformUI.PauseMenu
             if (CrewPicture != null)
                 _pause.SetHeaderSecondaryImg(CrewPicture.Item1, CrewPicture.Item2, true);
             _pause.SetHeaderDetails(SideStringTop, SideStringMiddle, SideStringBottom);
+            _pause._header.CallFunction("ENABLE_DYNAMIC_WIDTH", SetHeaderDynamicWidth);
             _loaded = true;
         }
 
@@ -685,7 +687,8 @@ namespace ScaleformUI.PauseMenu
                 if (Tabs[Index] is not PlayerListTab)
                 {
                     FocusLevel--;
-                    Tabs[Index].LeftItemList[LeftItemIndex].Selected = focusLevel == 1;
+                    if (Tabs[Index] is not TextTab)
+                        Tabs[Index].LeftItemList[LeftItemIndex].Selected = focusLevel == 1;
                 }
                 else if (Tabs[Index] is PlayerListTab pl)
                 {
