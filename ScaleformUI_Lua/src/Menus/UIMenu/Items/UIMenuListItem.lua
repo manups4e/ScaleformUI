@@ -197,7 +197,7 @@ function UIMenuListItem:HighlightedTextColor(color)
 end
 
 ---Index
----@param Index table
+---@param Index number
 function UIMenuListItem:Index(Index)
     if tonumber(Index) then
         if Index > #self.Items then

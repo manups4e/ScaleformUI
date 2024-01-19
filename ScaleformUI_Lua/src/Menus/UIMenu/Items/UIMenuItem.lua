@@ -39,10 +39,10 @@ end
 ---New
 ---@param text string
 ---@param description string
----@param color SColor
----@param highlightColor SColor
----@param textColor SColor
----@param highlightedTextColor SColor
+---@param color? SColor
+---@param highlightColor? SColor
+---@param textColor? SColor
+---@param highlightedTextColor? SColor
 function UIMenuItem.New(text, description, color, highlightColor, textColor, highlightedTextColor)
     local __formatLeftLabel = (tostring(text))
     if not __formatLeftLabel:StartsWith("~") then

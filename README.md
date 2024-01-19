@@ -15,19 +15,21 @@ Take a look at our Wiki here: https://github.com/manups4e/ScaleformUI/wiki (WIP)
 If you didn't do that yet, join my discord server to talk about scripting, scaleformui, coding, and chilling :D https://discord.gg/KKN7kRT2vM
 
 ### Features 🔧
-* Support for simple buttons, checkboxes and lists with special support for dynamicLists.
+* Support for simple buttons, checkboxes and lists.
 * Support for custom banners from game sprites and your own textures.
-* Support for panels from grid panels to color panels and side panels.
-* Support for custom labels, texts, icons using ~ symbol and emojis and custom fonts!
-* Easy nested menus for fast and painless nested menu system (no submenus, more like navigating webpages).
+* Easy nested menus for fast and painless nested menu system.
 * Controller support.
 * Mouse controls.
-* Custom instructional buttons.
 * Support for all screen resolutions.
 * Item descriptions.
 * Rebindable keys and controls.
 * Badges to decorate your items.
-* Event-based callbacks.
+* Event-based callbacks for C#.
+* Easy and painless PauseMenu creation.
+* Custom instructional buttons.
+* Custom warning screen.
+* Custom big message and midsize message.
+* Timer bars easy and for everyone!
 
 ### Screenshots 📸
 ![NativeUI Example](https://i.imgur.com/K4FXOvR.png)
@@ -36,5 +38,5 @@ If you didn't do that yet, join my discord server to talk about scripting, scale
 
 ### Made for CitizenFX
 This is a custom made version for CitizenFX. 
-Developers looking to create C# Resources for [FiveM](https://fivem.net/) can use this port to create custom menus.
-Note, not all features are documented yet.
+Developers looking to create C# or Lua Resources for [FiveM](https://fivem.net/) can use this port to create custom menus and much more !
+Note that not all features are documented yet.
