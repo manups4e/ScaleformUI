@@ -108,7 +108,7 @@ function MissionListColumn:AddMissionItem(item)
             end
     
             self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
-            self:_itemCreation(0, #self.Items, false)
+            self:_itemCreation(self.Pagination:CurrentPage(), #self.Items, false)
             local pSubT = self.Parent()
             if pSubT == "PauseMenu" then
                 if self.Parent.Tabs[self.ParentTab+1].listCol[self.Parent.Tabs[self.ParentTab+1]:Focus()] == self then

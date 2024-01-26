@@ -107,20 +107,30 @@ function BigFeedInstance:Enabled(enabled)
     if enabled == nil then return self._enabled end
     self._enabled = ToBool(enabled)
     if enabled == true then
+        self:Load()
         self._sc:CallFunction("SETUP_BIGFEED", self._rightAligned)
         self._sc:CallFunction("HIDE_ONLINE_LOGO")
         self._sc:CallFunction("FADE_IN_BIGFEED")
-        if self:DisabledNotifications() then
+        if self._disabledNotifications then
             ThefeedCommentTeleportPoolOn()
         end
         self:UpdateInfo()
     else
         self._sc:CallFunction("END_BIGFEED")
-        if self:DisabledNotifications() then
+        if self._disabledNotifications then
             ThefeedCommentTeleportPoolOff()
         end
+        self:Dispose()
     end
     return self._enabled
+end
+
+function BigFeedInstance:DisableNotifications(bool)
+    if bool == nil then
+        return self._disabledNotifications
+    else
+        self._disabledNotifications = bool
+    end
 end
 
 ---Updates the information displayed on the BigFeedInstance
