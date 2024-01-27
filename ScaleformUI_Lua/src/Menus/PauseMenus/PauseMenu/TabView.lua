@@ -35,6 +35,7 @@ function TabView.New(title, subtitle, sideTop, sideMiddle, sideBottom)
         _loaded = false,
         _timer = 0,
         _canHe = true,
+        setHeaderDynamicWidth = false,
         InstructionalButtons = {
             InstructionalButton.New(GetLabelText("HUD_INPUT2"), -1, 176, 176, -1),
             InstructionalButton.New(GetLabelText("HUD_INPUT3"), -1, 177, 177, -1),
@@ -68,6 +69,14 @@ function TabView:LeftItemIndex(index)
         self.OnLeftItemChange(self, self.Tabs[self.index].LeftItemList[self.leftItemIndex], self.leftItemIndex)
     else
         return self.leftItemIndex
+    end
+end
+
+function TabView:SetHeaderDynamicWidth(value)
+    if value ~= nil then
+        self.setHeaderDynamicWidth = value
+    else
+        return self.setHeaderDynamicWidth
     end
 end
 
@@ -184,6 +193,7 @@ function TabView:ShowHeader()
         ScaleformUI.Scaleforms._pauseMenu:SetHeaderSecondaryImg(self:CrewPicture().txd, self:CrewPicture().txn, true)
     end
     ScaleformUI.Scaleforms._pauseMenu:SetHeaderDetails(self.SideTop, self.SideMid, self.SideBot)
+    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ENABLE_DYNAMIC_WIDTH", self:SetHeaderDynamicWidth())
     self._loaded = true
 end
 
@@ -625,7 +635,9 @@ function TabView:GoBack()
         local tab = self.Tabs[self.index]
         local _, subT = tab()
         if subT ~= "PlayerListTab" then
-            self:FocusLevel(self:FocusLevel() - 1)
+            if subT ~= "TextTab" then
+                self:FocusLevel(self:FocusLevel() - 1)
+            end
             tab.LeftItemList[self.leftItemIndex]:Selected(self:FocusLevel() == 1)
         elseif subT == "PlayerListTab" then
             if tab._newStyle then
