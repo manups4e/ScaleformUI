@@ -237,6 +237,7 @@ function MainView:ShowHeader()
     ScaleformUI.Scaleforms._pauseMenu:AddLobbyMenuTab(self.listCol[2]._label, 2, self.listCol[2]._color)
     ScaleformUI.Scaleforms._pauseMenu:AddLobbyMenuTab(self.listCol[3]._label, 2, self.listCol[3]._color)
     ScaleformUI.Scaleforms._pauseMenu._header:CallFunction("SET_ALL_HIGHLIGHTS", true, 117);
+    ScaleformUI.Scaleforms._pauseMenu._header:CallFunction("ENABLE_DYNAMIC_WIDTH", false);
     self._loaded = true
 end
 
@@ -322,7 +323,7 @@ function MainView:buildSettings(tab, tabIndex)
 
         self.SettingsColumn:CurrentSelection(1)
         self.SettingsColumn.Pagination:ScaleformIndex(self.SettingsColumn.Pagination:GetScaleformIndex(self.SettingsColumn:CurrentSelection()))
-        self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]:Selected(false)
+        self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]:Selected(true)
 
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_SELECTION", self.SettingsColumn.Pagination:GetScaleformIndex(self.SettingsColumn.Pagination:CurrentMenuIndex()))
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_QTTY", self.SettingsColumn:CurrentSelection(), #self.SettingsColumn.Items)
@@ -368,7 +369,7 @@ function MainView:buildPlayers(tab, tabIndex)
 
         self.PlayersColumn:CurrentSelection(1)
         self.PlayersColumn.Pagination:ScaleformIndex(self.PlayersColumn.Pagination:GetScaleformIndex(self.PlayersColumn:CurrentSelection()))
-        self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()]:Selected(false)
+        self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()]:Selected(true)
 
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_SELECTION", self.PlayersColumn.Pagination:GetScaleformIndex(self.PlayersColumn.Pagination:CurrentMenuIndex()))
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_QTTY", self.PlayersColumn:CurrentSelection(), #self.PlayersColumn.Items)
@@ -406,7 +407,7 @@ function MainView:buildMissions(tab, tabIndex)
 
         self.MissionsColumn:CurrentSelection(1)
         self.MissionsColumn.Pagination:ScaleformIndex(self.MissionsColumn.Pagination:GetScaleformIndex(self.MissionsColumn:CurrentSelection()))
-        self.MissionsColumn.Items[self.MissionsColumn:CurrentSelection()]:Selected(false)
+        self.MissionsColumn.Items[self.MissionsColumn:CurrentSelection()]:Selected(true)
 
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSIONS_SELECTION", self.MissionsColumn.Pagination:GetScaleformIndex(self.MissionsColumn.Pagination:CurrentMenuIndex()))
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSIONS_QTTY", self.MissionsColumn:CurrentSelection(), #self.MissionsColumn.Items)
