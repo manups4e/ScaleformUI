@@ -9,6 +9,7 @@ end
 ---@field private _color SColor
 ---@field private _isBuilding boolean
 ---@field private _currentSelection number
+---@field private _unfilteredItems table
 ---@field private _rightLabel string
 ---@field public Order number
 ---@field public Parent function
@@ -34,6 +35,7 @@ function SettingsListColumn.New(label, color, scrollType)
         Parent = nil,
         ParentTab = 0,
         Items = {} --[[@type table<number, UIMenuItem|UIMenuListItem|UIMenuCheckboxItem|UIMenuSliderItem|UIMenuProgressItem>]],
+        _unfilteredItems = {} --[[@type table<number, UIMenuItem|UIMenuListItem|UIMenuCheckboxItem|UIMenuSliderItem|UIMenuProgressItem>]],
         OnIndexChanged = function(index)
         end,
         OnSettingItemActivated = function(index)
@@ -64,6 +66,9 @@ function SettingsListColumn:CurrentSelection(value)
         self.Pagination:CurrentPage(self.Pagination:GetPage(self.Pagination:CurrentMenuIndex()));
         self.Pagination:CurrentPageIndex(value);
         self.Pagination:ScaleformIndex(self.Pagination:GetScaleformIndex(self.Pagination:CurrentMenuIndex()));
+        if value > self.Pagination:MaxItem() or value < self.Pagination:MinItem() then
+            self:refreshColumn()
+        end
         if self.Parent ~= nil and self.Parent:Visible() then
             local pSubT = self.Parent()
             if pSubT == "LobbyMenu" then
@@ -270,13 +275,10 @@ function SettingsListColumn:GoUp()
                 elseif pSubT == "PauseMenu" then
                     ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN", self.ParentTab) --[[@as number]]
                 end
-                local i = 1
                 local max = self.Pagination:ItemsPerPage()
-                while i <= max do
-                    Citizen.Wait(0)
+                for i=1, i <= max, 1 do
                     if not self:Visible() then return end
                     self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
-                    i = i + 1
                 end
             end
         end
@@ -314,13 +316,10 @@ function SettingsListColumn:GoDown()
                 elseif pSubT == "PauseMenu" then
                     ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN", self.ParentTab) --[[@as number]]
                 end
-                local i = 1
                 local max = self.Pagination:ItemsPerPage()
-                while i <= max do
-                    Citizen.Wait(0)
+                for i=1, i <= max, 1 do
                     if not self:Visible() then return end
                     self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
-                    i = i + 1
                 end
             end
         end
@@ -431,4 +430,106 @@ function SettingsListColumn:Clear()
     end
     self.Items = {}
     self.Pagination:Reset()
+end
+
+function SettingsListColumn:SortSettings(compare)
+    self.Items[self:CurrentSelection()]:Selected(false)
+    if self._unfilteredItems == nil or #self._unfilteredItems == 0 then
+        self._unfilteredMenuItems = self.Items
+    end
+    self:Clear()
+    local list = self._unfilteredItems
+    table.sort(list, compare)
+    self.Items = list
+    self.Pagination:TotalItems(#self.Items)
+    if self.Parent ~= nil and self.Parent:Visible() then
+        local pSubT = self.Parent()
+        if pSubT == "LobbyMenu" then
+            self.Parent:buildSettings()
+        elseif pSubT == "PauseMenu" then
+            self.Parent:buildSettings(self.Parent.Tabs[self.ParentTab])
+        end
+    end
+end
+
+function SettingsListColumn:FilterSettings(predicate)
+    self.Items[self:CurrentSelection()]:Selected(false)
+    if self._unfilteredItems == nil or #self._unfilteredItems == 0 then
+        self._unfilteredMenuItems = self.Items
+    end
+    self:Clear()
+    local filteredItems = {}
+    for i, item in ipairs(self._unfilteredItems) do
+        if predicate(item) then
+            table.insert(filteredItems, item)
+        end
+    end
+    self.Items = filteredItems
+    self.Pagination:TotalItems(#self.Items)
+    if self.Parent ~= nil and self.Parent:Visible() then
+        local pSubT = self.Parent()
+        if pSubT == "LobbyMenu" then
+            self.Parent:buildSettings()
+        elseif pSubT == "PauseMenu" then
+            self.Parent:buildSettings(self.Parent.Tabs[self.ParentTab])
+        end
+    end
+end
+
+function SettingsListColumn:ResetFilter()
+    if self._unfilteredItems ~= nil and #self._unfilteredItems > 0 then
+        self.Items[self:CurrentSelection()]:Selected(false)
+        self:Clear()
+        self.Items = self._unfilteredItems
+        self.Pagination:TotalItems(#self.Items)
+        if self.Parent ~= nil and self.Parent:Visible() then
+            local pSubT = self.Parent()
+            if pSubT == "LobbyMenu" then
+                self.Parent:buildSettings()
+            elseif pSubT == "PauseMenu" then
+                self.Parent:buildSettings(self.Parent.Tabs[self.ParentTab])
+            end
+        end
+    end
+end
+
+function SettingsListColumn:refreshColumn()
+    local pSubT = self.Parent()
+    if pSubT == "LobbyMenu" then
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CLEAR_SETTINGS_COLUMN")
+    elseif pSubT == "PauseMenu" then
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN", self.ParentTab)
+    end
+    if #self.Items > 0 then
+        self._isBuilding = true
+        local max = self.Pagination:ItemsPerPage()
+        if #self.Items < max then
+            max = #self.Items
+        end
+        self.Pagination:MinItem(self.Pagination:CurrentPageStartIndex())
+
+        if self.scrollingType == MenuScrollingType.CLASSIC and self.Pagination:TotalPages() > 1 then
+            local missingItems = self.Pagination:GetMissingItems()
+            if missingItems > 0 then
+                self.Pagination:ScaleformIndex(self.Pagination:GetPageIndexFromMenuIndex(self.Pagination:CurrentPageEndIndex()) + missingItems - 1)
+                self.Pagination.minItem = self.Pagination:CurrentPageStartIndex() - missingItems
+            end
+        end
+
+        self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
+
+        for i = 1, i <= max, 1 do
+            if not self:Visible() then return end
+            self._itemCreation(self.Pagination:CurrentPage(), i, false, true)
+        end
+        self.Pagination:ScaleformIndex(self.Pagination:GetScaleformIndex(self:CurrentSelection()))
+        if pSubT == "LobbyMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
+        elseif pSubT == "PauseMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", self.ParentTab, self.Pagination:ScaleformIndex()) --[[@as number]]
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", self.ParentTab, self:CurrentSelection(), #self.Items) --[[@as number]]
+        end
+        self._isBuilding = false
+    end
 end
