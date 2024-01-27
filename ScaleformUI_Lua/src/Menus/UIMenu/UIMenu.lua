@@ -928,7 +928,9 @@ end
 function UIMenu:FilterMenuItems(predicate)
     assert(not self._itemless, "ScaleformUI - You can't compare or sort an itemless menu")
     self.Items[self:CurrentSelection()]:Selected(false)
-    self._unfilteredMenuItems = self.Items
+    if self._unfilteredItems == nil or #self._unfilteredItems == 0 then
+        self._unfilteredMenuItems = self.Items
+    end
     self:Clear()
     for i, item in ipairs(self._unfilteredMenuItems) do
         if predicate(item) then
@@ -942,12 +944,11 @@ end
 function UIMenu:SortMenuItems(compare)
     assert(not self._itemless, "ScaleformUI - You can't compare or sort an itemless menu")
     self.Items[self:CurrentSelection()]:Selected(false)
-    self._unfilteredMenuItems = self.Items
-    self:Clear()
-    local list = {}
-    for i, item in ipairs(self._unfilteredMenuItems) do
-        table.insert(list, item)
+    if self._unfilteredItems == nil or #self._unfilteredItems == 0 then
+        self._unfilteredMenuItems = self.Items
     end
+    self:Clear()
+    local list = self._unfilteredMenuItems
     table.sort(list, compare)
     self.Items = list
     self.Pagination:TotalItems(#self.Items)
@@ -956,11 +957,13 @@ end
 
 function UIMenu:ResetFilter()
     assert(not self._itemless, "ScaleformUI - You can't compare or sort an itemless menu")
-    self.Items[self:CurrentSelection()]:Selected(false)
-    self:Clear()
-    self.Items = self._unfilteredMenuItems
-    self.Pagination:TotalItems(#self.Items)
-    self:BuildUpMenuAsync(true)
+    if self._unfilteredItems ~= nil and #self._unfilteredItems > 0 then
+        self.Items[self:CurrentSelection()]:Selected(false)
+        self:Clear()
+        self.Items = self._unfilteredMenuItems
+        self.Pagination:TotalItems(#self.Items)
+        self:BuildUpMenuAsync(true)
+    end
 end
 
 ---ProcessControl
