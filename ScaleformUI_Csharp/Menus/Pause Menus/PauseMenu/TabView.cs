@@ -177,7 +177,7 @@ namespace ScaleformUI.PauseMenu
                 _pause.SetHeaderTitle(Title, SubTitle);
             }
             if (HeaderPicture != null)
-                _pause.SetHeaderCharImg(HeaderPicture.Item2, HeaderPicture.Item2, true);
+                _pause.SetHeaderCharImg(HeaderPicture.Item1, HeaderPicture.Item2, true);
             if (CrewPicture != null)
                 _pause.SetHeaderSecondaryImg(CrewPicture.Item1, CrewPicture.Item2, true);
             _pause.SetHeaderDetails(SideStringTop, SideStringMiddle, SideStringBottom);
