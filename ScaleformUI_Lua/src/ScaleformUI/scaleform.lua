@@ -80,6 +80,8 @@ function Scaleform:CallFunction(theFunction, ...)
                 if arg[i]:find("^menu_") or arg[i]:find("^menu_lobby_desc_{") or arg[i]:find("^PauseMenu_") or arg[i]:find("^menu_pause_playerTab{") then
                     BeginTextCommandScaleformString(arg[i])
                     EndTextCommandScaleformString_2()
+                elseif arg[i]:find("^b_") or arg[i]:find("^t_") then
+                    ScaleformMovieMethodAddParamPlayerNameString(arg[i])
                 else
                     ScaleformMovieMethodAddParamTextureNameString(arg[i])
                 end
