@@ -30,6 +30,8 @@ function ButtonsHandler:Load()
     local timeout = 1000
     local start = GlobalGameTimer
     while not self._sc:IsLoaded() and GlobalGameTimer - start < timeout do Citizen.Wait(0) end
+    local width, height = GetActiveScreenResolution()
+    self._sc:CallFunction("SET_DISPLAY_CONFIG", 1280, 720, 0.05, 0.95, 0.05, 0.95, true, false, false, width, height)
 end
 
 ---Sets the instructional buttons
