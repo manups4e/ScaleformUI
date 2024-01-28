@@ -2,9 +2,10 @@
 using ScaleformUI.LobbyMenu;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenu;
+using ScaleformUI.PauseMenus.Elements.Columns;
 using ScaleformUI.Scaleforms;
 
-namespace ScaleformUI
+namespace ScaleformUI.PauseMenus.Elements.Items
 {
     public delegate void MissionActivated(PlayerListTab tab, MissionsListColumn column, MissionItem item);
     public class MissionItem

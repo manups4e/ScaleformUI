@@ -1,6 +1,8 @@
 ﻿using CitizenFX.Core.Native;
 using ScaleformUI.Elements;
-using ScaleformUI.LobbyMenu;
+using ScaleformUI.PauseMenus.Elements;
+using ScaleformUI.PauseMenus.Elements.Columns;
+using ScaleformUI.PauseMenus.Elements.Panels;
 
 namespace ScaleformUI.PauseMenu
 {
@@ -31,6 +33,7 @@ namespace ScaleformUI.PauseMenu
         public SettingsListColumn SettingsColumn { get; private set; }
         public PlayerListColumn PlayersColumn { get; private set; }
         public MissionsListColumn MissionsColumn { get; private set; }
+        public StoreListColumn StoreColumn { get; private set; }
         public MissionDetailsPanel MissionPanel { get; private set; }
         public PlayerListTab(string name, SColor color, bool newStyle = true) : base(name, color)
         {
@@ -97,6 +100,11 @@ namespace ScaleformUI.PauseMenu
                             if (!goingLeft || _newStyle)
                                 MissionsColumn.IndexChangedEvent();
                             break;
+                        case "store":
+                            StoreColumn.CurrentSelection = StoreColumn.Pagination.GetMenuIndexFromScaleformIndex(ForceFirstSelectionOnFocus ? 0 : idx);
+                            if (!goingLeft || _newStyle)
+                                StoreColumn.IndexChangedEvent();
+                            break;
                     }
                 }
             }
@@ -132,6 +140,10 @@ namespace ScaleformUI.PauseMenu
                     case MissionsListColumn:
                         MissionsColumn = col as MissionsListColumn;
                         MissionsColumn.Order = columns.IndexOf(col);
+                        break;
+                    case StoreListColumn:
+                        StoreColumn = col as StoreListColumn;
+                        StoreColumn.Order = columns.IndexOf(col);
                         break;
                     case MissionDetailsPanel:
                         MissionPanel = col as MissionDetailsPanel;

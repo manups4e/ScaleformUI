@@ -10,6 +10,8 @@ namespace ScaleformUI.Scaleforms
         public ScaleformWideScreen _header;
         public ScaleformWideScreen _pause;
         public ScaleformWideScreen _lobby;
+        public ScaleformWideScreen _pauseBG;
+        internal bool BGEnabled;
         private bool _visible;
         internal bool Loaded => _header is not null && _header.IsLoaded && _pause is not null && _pause.IsLoaded;
         public bool Visible { get => _visible; set => _visible = value; }
@@ -23,6 +25,7 @@ namespace ScaleformUI.Scaleforms
             _header = new ScaleformWideScreen("pausemenuheader");
             _pause = new ScaleformWideScreen("pausemenu");
             _lobby = new ScaleformWideScreen("lobbymenu");
+            _pauseBG = new ScaleformWideScreen("store_background");
         }
 
         public void SetHeaderTitle(string title, string subtitle = "", bool shiftUpHeader = false)
@@ -260,6 +263,10 @@ namespace ScaleformUI.Scaleforms
             if (_visible && GetCurrentFrontendMenuVersion() == -2060115030)
             {
                 SetScriptGfxDrawBehindPausemenu(true);
+                if (BGEnabled)
+                {
+                    _pauseBG.Render2D();
+                }
                 DrawScaleformMovie(_header.Handle, 0.501f, 0.162f, 0.6782f, 0.145f, 255, 255, 255, 255, 0);
                 if (!isLobby)
                     DrawScaleformMovie(_pause.Handle, 0.6617187f, 0.7226667f, 1, 1, 255, 255, 255, 255, 0);

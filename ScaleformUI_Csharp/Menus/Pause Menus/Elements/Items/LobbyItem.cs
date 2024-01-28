@@ -2,8 +2,10 @@
 using CitizenFX.Core.Native;
 using ScaleformUI.LobbyMenu;
 using ScaleformUI.PauseMenu;
+using ScaleformUI.PauseMenus.Elements.Columns;
+using ScaleformUI.PauseMenus.Elements.Panels;
 
-namespace ScaleformUI
+namespace ScaleformUI.PauseMenus.Elements.Items
 {
     public class LobbyItem
     {

@@ -1,8 +1,7 @@
 ﻿using ScaleformUI.Elements;
 using ScaleformUI.Menu;
-using ScaleformUI.PauseMenus;
 
-namespace ScaleformUI.LobbyMenu
+namespace ScaleformUI.PauseMenus.Elements
 {
     public delegate void IndexChanged(int index);
     public class Column

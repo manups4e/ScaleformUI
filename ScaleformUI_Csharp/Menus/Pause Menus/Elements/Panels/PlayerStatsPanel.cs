@@ -1,9 +1,11 @@
 ﻿using ScaleformUI.Elements;
+using ScaleformUI.LobbyMenu;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenu;
+using ScaleformUI.PauseMenus.Elements.Items;
 using ScaleformUI.Scaleforms;
 
-namespace ScaleformUI.LobbyMenu
+namespace ScaleformUI.PauseMenus.Elements.Panels
 {
     public class PlayerStatsPanel
     {

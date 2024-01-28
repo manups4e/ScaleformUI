@@ -1,6 +1,7 @@
 ﻿using CitizenFX.Core;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenus;
+using ScaleformUI.PauseMenus.Elements.Items;
 using ScaleformUI.Scaleforms;
 using static CitizenFX.Core.Native.API;
 
@@ -340,6 +341,13 @@ namespace ScaleformUI.PauseMenu
                                 plTab.MissionsColumn.ParentTab = Tabs.IndexOf(plTab);
                                 buildMissions(plTab);
                             }
+                            if (plTab.listCol.Any(x => x.Type == "store"))
+                            {
+                                plTab.StoreColumn.isBuilding = true;
+                                plTab.StoreColumn.Parent = this;
+                                plTab.StoreColumn.ParentTab = Tabs.IndexOf(plTab);
+                                buildStore(plTab);
+                            }
                             if (plTab.listCol.Any(x => x.Type == "panel"))
                             {
                                 plTab.MissionPanel.Parent = this;
@@ -469,6 +477,41 @@ namespace ScaleformUI.PauseMenu
             tab.MissionsColumn.isBuilding = false;
         }
 
+        internal async void buildStore(PlayerListTab tab)
+        {
+            int i = 0;
+            int tab_id = Tabs.IndexOf(tab);
+            int max = tab.StoreColumn.Pagination.ItemsPerPage;
+            if (tab.StoreColumn.Items.Count < max)
+                max = tab.StoreColumn.Items.Count;
+
+            tab.StoreColumn.Pagination.MinItem = tab.StoreColumn.Pagination.CurrentPageStartIndex;
+            if (tab.StoreColumn.Pagination.scrollType == ScrollingType.CLASSIC && tab.StoreColumn.Pagination.TotalPages > 1)
+            {
+                int missingItems = tab.StoreColumn.Pagination.GetMissingItems();
+                if (missingItems > 0)
+                {
+                    tab.StoreColumn.Pagination.ScaleformIndex = tab.StoreColumn.Pagination.GetPageIndexFromMenuIndex(tab.StoreColumn.Pagination.CurrentPageEndIndex) + missingItems;
+                    tab.StoreColumn.Pagination.MinItem = tab.StoreColumn.Pagination.CurrentPageStartIndex - missingItems;
+                }
+            }
+            tab.StoreColumn.Pagination.MaxItem = tab.StoreColumn.Pagination.CurrentPageEndIndex;
+
+            while (i < max)
+            {
+                await BaseScript.Delay(0);
+                if (!Visible) return;
+                tab.StoreColumn._itemCreation(tab.StoreColumn.Pagination.CurrentPage, i, false, true);
+                i++;
+            }
+            tab.StoreColumn.CurrentSelection = 0;
+            tab.StoreColumn.Pagination.ScaleformIndex = tab.StoreColumn.Pagination.GetScaleformIndex(tab.StoreColumn.CurrentSelection);
+            tab.StoreColumn.Items[0].Selected = false;
+            _pause._pause.CallFunction("SET_PLAYERS_TAB_STORE_SELECTION", tab_id, tab.StoreColumn.Pagination.ScaleformIndex);
+            _pause._pause.CallFunction("SET_PLAYERS_TAB_STORE_QTTY", tab_id, tab.StoreColumn.CurrentSelection + 1, tab.StoreColumn.Items.Count);
+            tab.StoreColumn.isBuilding = false;
+        }
+
         private bool controller = false;
         public override async void Draw()
         {
@@ -539,6 +582,9 @@ namespace ScaleformUI.PauseMenu
                         {
                             case "settings":
                                 pl.SettingsColumn.Items[pl.SettingsColumn.CurrentSelection].Selected = true;
+                                break;
+                            case "store":
+                                pl.StoreColumn.Items[pl.StoreColumn.CurrentSelection].Selected = true;
                                 break;
                             case "players":
                                 pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].Selected = true;
@@ -629,6 +675,11 @@ namespace ScaleformUI.PauseMenu
                                     mitem.ActivateMission(plTab);
                                     plTab.MissionsColumn.SelectItem();
                                     break;
+                                case "store":
+                                    StoreItem stItem = plTab.StoreColumn.Items[plTab.StoreColumn.CurrentSelection];
+                                    stItem.ActivateImage(plTab);
+                                    plTab.StoreColumn.SelectItem();
+                                    break;
                                 case "players":
                                     plTab.PlayersColumn.SelectItem();
                                     break;
@@ -698,6 +749,8 @@ namespace ScaleformUI.PauseMenu
                         SetPauseMenuPedLighting(FocusLevel != 0);
                         if (pl.listCol.Any(x => x.Type == "settings"))
                             pl.SettingsColumn.Items[pl.SettingsColumn.CurrentSelection].Selected = false;
+                        if (pl.listCol.Any(x => x.Type == "store"))
+                            pl.StoreColumn.Items[pl.StoreColumn.CurrentSelection].Selected = false;
                         if (pl.listCol.Any(x => x.Type == "players"))
                             pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].Selected = false;
                         if (pl.listCol.Any(x => x.Type == "missions"))
@@ -711,6 +764,9 @@ namespace ScaleformUI.PauseMenu
                             {
                                 case "settings":
                                     pl.SettingsColumn.Items[pl.SettingsColumn.CurrentSelection].Selected = false;
+                                    break;
+                                case "store":
+                                    pl.StoreColumn.Items[pl.StoreColumn.CurrentSelection].Selected = false;
                                     break;
                                 case "players":
                                     pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].Selected = false;
@@ -746,6 +802,9 @@ namespace ScaleformUI.PauseMenu
                     case "players":
                         plTab.PlayersColumn.GoUp();
                         break;
+                    case "store":
+                        plTab.StoreColumn.GoUp();
+                        break;
                     case "settings":
                         plTab.SettingsColumn.GoUp();
                         break;
@@ -778,6 +837,9 @@ namespace ScaleformUI.PauseMenu
                 {
                     case "players":
                         plTab.PlayersColumn.GoDown();
+                        break;
+                    case "store":
+                        plTab.StoreColumn.GoDown();
                         break;
                     case "settings":
                         plTab.SettingsColumn.GoDown();
@@ -831,6 +893,8 @@ namespace ScaleformUI.PauseMenu
                         }
                         if (_plTab.listCol.Any(x => x.Type == "missions") && _plTab.MissionsColumn != null && _plTab.MissionsColumn.Items.Count > 0)
                             _plTab.MissionsColumn.Items[_plTab.MissionsColumn.CurrentSelection].Selected = false;
+                        if (_plTab.listCol.Any(x => x.Type == "store") && _plTab.StoreColumn != null && _plTab.StoreColumn.Items.Count > 0)
+                            _plTab.StoreColumn.Items[_plTab.StoreColumn.CurrentSelection].Selected = false;
                         if (_plTab.listCol.Any(x => x.Type == "players"))
                         {
                             _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].Selected = false;
@@ -904,6 +968,13 @@ namespace ScaleformUI.PauseMenu
                                     if (plTab._newStyle)
                                     {
                                         plTab.MissionsColumn.Items[plTab.MissionsColumn.CurrentSelection].Selected = false;
+                                        plTab.updateFocus(plTab.Focus - 1);
+                                    }
+                                    break;
+                                case "store":
+                                    if (plTab._newStyle)
+                                    {
+                                        plTab.StoreColumn.Items[plTab.StoreColumn.CurrentSelection].Selected = false;
                                         plTab.updateFocus(plTab.Focus - 1);
                                     }
                                     break;
@@ -979,6 +1050,8 @@ namespace ScaleformUI.PauseMenu
                         }
                         if (_plTab.listCol.Any(x => x.Type == "missions") && _plTab.MissionsColumn != null && _plTab.MissionsColumn.Items.Count > 0)
                             _plTab.MissionsColumn.Items[_plTab.MissionsColumn.CurrentSelection].Selected = false;
+                        if (_plTab.listCol.Any(x => x.Type == "store") && _plTab.StoreColumn != null && _plTab.StoreColumn.Items.Count > 0)
+                            _plTab.StoreColumn.Items[_plTab.StoreColumn.CurrentSelection].Selected = false;
                         if (_plTab.listCol.Any(x => x.Type == "players"))
                         {
                             _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].Selected = false;
@@ -1050,6 +1123,13 @@ namespace ScaleformUI.PauseMenu
                                     if (plTab._newStyle)
                                     {
                                         plTab.MissionsColumn.Items[plTab.MissionsColumn.CurrentSelection].Selected = false;
+                                        plTab.updateFocus(plTab.Focus + 1);
+                                    }
+                                    break;
+                                case "store":
+                                    if (plTab._newStyle)
+                                    {
+                                        plTab.StoreColumn.Items[plTab.StoreColumn.CurrentSelection].Selected = false;
                                         plTab.updateFocus(plTab.Focus + 1);
                                     }
                                     break;
@@ -1187,6 +1267,10 @@ namespace ScaleformUI.PauseMenu
                                         curSel = tab.MissionsColumn.CurrentSelection;
                                         tab.MissionsColumn.Items[tab.MissionsColumn.CurrentSelection].Selected = false;
                                         break;
+                                    case "store":
+                                        curSel = tab.StoreColumn.CurrentSelection;
+                                        tab.StoreColumn.Items[tab.StoreColumn.CurrentSelection].Selected = false;
+                                        break;
                                 }
                             }
                             tab.updateFocus(context, true);
@@ -1201,6 +1285,9 @@ namespace ScaleformUI.PauseMenu
                                     break;
                                 case "missions":
                                     tab.MissionsColumn.CurrentSelection = index;
+                                    break;
+                                case "store":
+                                    tab.StoreColumn.CurrentSelection = index;
                                     break;
                             }
                             if (curSel != index) Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
@@ -1239,6 +1326,9 @@ namespace ScaleformUI.PauseMenu
                                             break;
                                         case "missions":
                                             _tab.MissionsColumn.Items[_tab.MissionsColumn.CurrentSelection].Selected = true;
+                                            break;
+                                        case "store":
+                                            _tab.StoreColumn.Items[_tab.StoreColumn.CurrentSelection].Selected = true;
                                             break;
                                     }
                                     if (_tab.listCol.Any(x => x.Type == "players"))
@@ -1346,6 +1436,9 @@ namespace ScaleformUI.PauseMenu
                                         case "missions":
                                             plTab.MissionsColumn.Items[index].Hovered = false;
                                             break;
+                                        case "store":
+                                            plTab.StoreColumn.Items[index].Hovered = false;
+                                            break;
                                     }
                                     return;
                                 }
@@ -1383,6 +1476,9 @@ namespace ScaleformUI.PauseMenu
                                             break;
                                         case "missions":
                                             plTab.MissionsColumn.Items[index].Hovered = true;
+                                            break;
+                                        case "store":
+                                            plTab.StoreColumn.Items[index].Hovered = true;
                                             break;
                                     }
                                     return;

@@ -2,7 +2,7 @@
 using ScaleformUI.Elements;
 using System.Drawing;
 
-namespace ScaleformUI.PauseMenus
+namespace ScaleformUI.PauseMenus.Elements
 {
     public enum CrewHierarchy
     {

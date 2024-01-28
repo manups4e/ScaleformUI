@@ -1,10 +1,11 @@
 ﻿using ScaleformUI.Elements;
+using ScaleformUI.LobbyMenu;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenu;
-using ScaleformUI.PauseMenus;
+using ScaleformUI.PauseMenus.Elements.Panels;
 using ScaleformUI.Scaleforms;
 
-namespace ScaleformUI.LobbyMenu
+namespace ScaleformUI.PauseMenus.Elements.Items
 {
     public enum LobbyBadgeIcon
     {

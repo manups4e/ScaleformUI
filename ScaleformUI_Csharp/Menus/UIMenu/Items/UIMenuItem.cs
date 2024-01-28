@@ -3,6 +3,7 @@ using ScaleformUI.Elements;
 using ScaleformUI.LobbyMenu;
 using ScaleformUI.Menus;
 using ScaleformUI.PauseMenu;
+using ScaleformUI.PauseMenus.Elements.Columns;
 
 namespace ScaleformUI.Menu
 {

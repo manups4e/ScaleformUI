@@ -6,7 +6,10 @@ using ScaleformUI.Elements;
 using ScaleformUI.LobbyMenu;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenu;
-using ScaleformUI.PauseMenus;
+using ScaleformUI.PauseMenus.Elements;
+using ScaleformUI.PauseMenus.Elements.Columns;
+using ScaleformUI.PauseMenus.Elements.Items;
+using ScaleformUI.PauseMenus.Elements.Panels;
 using ScaleformUI.Radial;
 using ScaleformUI.Radio;
 using ScaleformUI.Scaleforms;
@@ -1102,13 +1105,12 @@ public class MenuExample : BaseScript
         UIMenu mainMenu = _menu;
         // tabview is the main menu.. the container of all the tabs.
         TabView pauseMenu = new TabView("PauseMenu example", "Look there's a subtitle too!", "Detail 1", "Detail 2", "Detail 3");
-
         int mugshot = API.RegisterPedheadshot(Game.PlayerPed.Handle);
         while (!API.IsPedheadshotReady(mugshot)) await BaseScript.Delay(1);
         string mugtxd = API.GetPedheadshotTxdString(mugshot);
         pauseMenu.HeaderPicture = new(mugtxd, mugtxd);
 
-        TextTab basicTab = new TextTab("TabTextItem", "This is the title!", SColor.HUD_Freemode);
+        TextTab basicTab = new TextTab("TEXTTAB", "This is the title!", SColor.HUD_Freemode);
 
         long bg_dui = API.CreateDui("https://giphy.com/embed/sxwk9hGlsULcYm6hDX", 1280, 720);
         API.CreateRuntimeTextureFromDuiHandle(txd, "pausebigbg", API.GetDuiHandle(bg_dui));
@@ -1129,7 +1131,7 @@ public class MenuExample : BaseScript
         basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
         pauseMenu.AddTab(basicTab);
 
-        SubmenuTab multiItemTab = new SubmenuTab("TabSubMenu", SColor.HUD_Freemode);
+        SubmenuTab multiItemTab = new SubmenuTab("SUBMENUTAB", SColor.HUD_Freemode);
         pauseMenu.AddTab(multiItemTab);
         TabLeftItem first = new TabLeftItem("1 - Empty", LeftItemType.Empty);
         TabLeftItem second = new TabLeftItem("2 - Info", LeftItemType.Info);
@@ -1212,12 +1214,16 @@ public class MenuExample : BaseScript
         fifth.AddItem(key1);
         fifth.AddItem(key2);
 
-        PlayerListTab playersTab = new("PLAYERLIST", SColor.HUD_Freemode, false);
+        long _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
+        API.CreateRuntimeTextureFromDuiHandle(txd, "lobby_panelbackground", API.GetDuiHandle(_paneldui));
+
+        PlayerListTab playersTab = new("PLAYERLISTTAB", SColor.HUD_Freemode, false);
         List<Column> columns = new List<Column>()
         {
             new SettingsListColumn("COLUMN SETTINGS", SColor.HUD_Red), // color will be ignored for PauseMenu
             //new PlayerListColumn("COLUMN PLAYERS", SColor.HUD_Orange), // color will be ignored for PauseMenu
-            new MissionsListColumn("COLUMN MISSIONS", SColor.HUD_Orange), // color will be ignored for PauseMenu
+            //new MissionsListColumn("COLUMN MISSIONS", SColor.HUD_Orange), // color will be ignored for PauseMenu
+            new StoreListColumn("CONTENT", SColor.HUD_Freemode),
             new MissionDetailsPanel("COLUMN INFO PANEL", SColor.HUD_Green), // color will be ignored for PauseMenu
         };
         playersTab.SetUpColumns(columns);
@@ -1239,7 +1245,19 @@ public class MenuExample : BaseScript
             playersTab.SelectColumn(1);
         };
 
+        StoreItem image0 = new StoreItem("scaleformui", "lobby_panelbackground");
+        StoreItem image1 = new StoreItem("scaleformui", "lobby_panelbackground");
+        StoreItem image2 = new StoreItem("scaleformui", "lobby_panelbackground");
+        StoreItem image3 = new StoreItem("scaleformui", "lobby_panelbackground");
+        StoreItem image4 = new StoreItem("scaleformui", "lobby_panelbackground");
 
+        playersTab.StoreColumn.AddImageItem(image0);
+        playersTab.StoreColumn.AddImageItem(image1);
+        playersTab.StoreColumn.AddImageItem(image2);
+        playersTab.StoreColumn.AddImageItem(image3);
+        playersTab.StoreColumn.AddImageItem(image4);
+
+        /*
         MissionItem mission1 = new MissionItem("Mission 1");
         MissionItem mission2 = new MissionItem("Mission 2");
         MissionItem mission3 = new MissionItem("Mission 3");
@@ -1262,40 +1280,9 @@ public class MenuExample : BaseScript
         playersTab.MissionsColumn.AddMissionItem(mission3);
         playersTab.MissionsColumn.AddMissionItem(mission4);
         playersTab.MissionsColumn.AddMissionItem(mission5);
+        */
 
-        playersTab.SettingsColumn.OnIndexChanged += (i) =>
-        {
-            if (playersTab.MissionsColumn.Items.Count > 0)
-            {
-                playersTab.MissionsColumn.Clear();
-            }
 
-            MissionItem mission1 = new MissionItem("Mission 1");
-            MissionItem mission2 = new MissionItem("Mission 2");
-            MissionItem mission3 = new MissionItem("Mission 3");
-            MissionItem mission4 = new MissionItem("Mission 4");
-            MissionItem mission5 = new MissionItem("Mission 5");
-
-            mission1.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
-            mission1.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
-            mission2.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
-            mission2.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
-            mission3.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
-            mission3.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
-            mission4.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
-            mission4.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
-            mission5.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
-            mission5.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues(), true);
-
-            playersTab.MissionsColumn.AddMissionItem(mission1);
-            playersTab.MissionsColumn.AddMissionItem(mission2);
-            playersTab.MissionsColumn.AddMissionItem(mission3);
-            playersTab.MissionsColumn.AddMissionItem(mission4);
-            playersTab.MissionsColumn.AddMissionItem(mission5);
-        };
-
-        long _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
-        API.CreateRuntimeTextureFromDuiHandle(txd, "lobby_panelbackground", API.GetDuiHandle(_paneldui));
 
         playersTab.MissionPanel.UpdatePanelPicture("scaleformui", "lobby_panelbackground");
         playersTab.MissionPanel.Title = "ScaleformUI - Title";
@@ -1541,11 +1528,13 @@ public class MenuExample : BaseScript
         // tabview is the main menu.. the container of all the tabs.
         MainView pauseMenu = new("Lobby Menu", "ScaleformUI for you by Manups4e!", "Detail 1", "Detail 2", "Detail 3", false);
         pauseMenu.CanPlayerCloseMenu = true;
+        pauseMenu.ShowStoreBackground = true;
         // this is a showcase... CanPlayerCloseMenu is always defaulted to true.. if false players won't be able to close the menu!
         List<Column> columns = new List<Column>()
         {
             new SettingsListColumn("COLUMN SETTINGS", SColor.HUD_Red),
-            new PlayerListColumn("COLUMN PLAYERS", SColor.HUD_Orange),
+            //new PlayerListColumn("COLUMN PLAYERS", SColor.HUD_Orange),
+            new StoreListColumn("COLUMN STORE", SColor.HUD_Orange),
             new MissionDetailsPanel("COLUMN INFO PANEL", SColor.HUD_Green),
         };
         pauseMenu.SetUpColumns(columns);
@@ -1578,6 +1567,7 @@ public class MenuExample : BaseScript
             Screen.ShowSubtitle($"~y~ {item.Label} ~s~~w~ has been selected!");
         };
 
+        /*
         CrewTag crew1 = new CrewTag("hello", false, false, CrewHierarchy.Leader, SColor.HUD_Green);
         CrewTag crew2 = new CrewTag("evry1", false, false, CrewHierarchy.Commissioner, SColor.HUD_Pink);
         CrewTag crew3 = new CrewTag("look", false, false, CrewHierarchy.Liutenant, SColor.HUD_Blue);
@@ -1711,6 +1701,19 @@ public class MenuExample : BaseScript
         pauseMenu.PlayersColumn.AddPlayer(friend3);
         pauseMenu.PlayersColumn.AddPlayer(friend4);
         pauseMenu.PlayersColumn.AddPlayer(friend5);
+        */
+        StoreItem image0 = new StoreItem("scaleformui", "lobby_panelbackground");
+        StoreItem image1 = new StoreItem("scaleformui", "lobby_panelbackground");
+        StoreItem image2 = new StoreItem("scaleformui", "lobby_panelbackground");
+        StoreItem image3 = new StoreItem("scaleformui", "lobby_panelbackground");
+        StoreItem image4 = new StoreItem("scaleformui", "lobby_panelbackground");
+
+        pauseMenu.StoreColumn.AddImageItem(image0);
+        pauseMenu.StoreColumn.AddImageItem(image1);
+        pauseMenu.StoreColumn.AddImageItem(image2);
+        pauseMenu.StoreColumn.AddImageItem(image3);
+        pauseMenu.StoreColumn.AddImageItem(image4);
+
 
         long _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
         API.CreateRuntimeTextureFromDuiHandle(txd, "lobby_panelbackground", API.GetDuiHandle(_paneldui));

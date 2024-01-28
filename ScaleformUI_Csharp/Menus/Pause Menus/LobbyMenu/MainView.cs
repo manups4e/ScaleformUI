@@ -2,6 +2,10 @@
 using CitizenFX.Core.Native;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenus;
+using ScaleformUI.PauseMenus.Elements;
+using ScaleformUI.PauseMenus.Elements.Columns;
+using ScaleformUI.PauseMenus.Elements.Items;
+using ScaleformUI.PauseMenus.Elements.Panels;
 using ScaleformUI.Scaleforms;
 using static CitizenFX.Core.Native.API;
 
@@ -38,11 +42,14 @@ namespace ScaleformUI.LobbyMenu
         public string SideStringTop { get; set; }
         public string SideStringMiddle { get; set; }
         public string SideStringBottom { get; set; }
+        public bool ShowStoreBackground { internal get; set; }
+        public float StoreBackgroundAnimationSpeed { internal get; set; } = 240f;
         public Tuple<string, string> HeaderPicture { internal get; set; }
         public Tuple<string, string> CrewPicture { internal get; set; }
         public SettingsListColumn SettingsColumn { get; private set; }
         public MissionsListColumn MissionsColumn { get; private set; }
         public PlayerListColumn PlayersColumn { get; private set; }
+        public StoreListColumn StoreColumn { get; private set; }
         public MissionDetailsPanel MissionPanel { get; private set; }
         public int FocusLevel
         {
@@ -175,6 +182,11 @@ namespace ScaleformUI.LobbyMenu
                             if (!goingLeft || _newStyle)
                                 MissionsColumn.IndexChangedEvent();
                             break;
+                        case "store":
+                            StoreColumn.CurrentSelection = StoreColumn.Pagination.GetMenuIndexFromScaleformIndex(ForceFirstSelectionOnFocus ? 0 : idx);
+                            if (!goingLeft || _newStyle)
+                                StoreColumn.IndexChangedEvent();
+                            break;
                     }
                 }
             }
@@ -193,22 +205,27 @@ namespace ScaleformUI.LobbyMenu
                 switch (col)
                 {
                     case SettingsListColumn:
-                        SettingsColumn = col as SettingsListColumn;
+                        SettingsColumn = (SettingsListColumn)col;
                         SettingsColumn.Parent = this;
                         SettingsColumn.Order = columns.IndexOf(col);
                         break;
                     case PlayerListColumn:
-                        PlayersColumn = col as PlayerListColumn;
+                        PlayersColumn = (PlayerListColumn)col;
                         PlayersColumn.Parent = this;
                         PlayersColumn.Order = columns.IndexOf(col);
                         break;
                     case MissionsListColumn:
-                        MissionsColumn = col as MissionsListColumn;
+                        MissionsColumn = (MissionsListColumn)col;
                         MissionsColumn.Parent = this;
                         MissionsColumn.Order = columns.IndexOf(col);
                         break;
+                    case StoreListColumn:
+                        StoreColumn = (StoreListColumn)col;
+                        StoreColumn.Parent = this;
+                        StoreColumn.Order = columns.IndexOf(col);
+                        break;
                     case MissionDetailsPanel:
-                        MissionPanel = col as MissionDetailsPanel;
+                        MissionPanel = (MissionDetailsPanel)col;
                         MissionPanel.Parent = this;
                         MissionPanel.Order = columns.IndexOf(col);
                         break;
@@ -244,6 +261,8 @@ namespace ScaleformUI.LobbyMenu
         {
             isBuilding = true;
             ShowHeader();
+            _pause.BGEnabled = ShowStoreBackground;
+            _pause._pauseBG.CallFunction("ANIMATE_BACKGROUND", StoreBackgroundAnimationSpeed);
             switch (listCol.Count)
             {
                 case 1:
@@ -265,6 +284,9 @@ namespace ScaleformUI.LobbyMenu
 
             if (listCol.Any(x => x is MissionsListColumn))
                 buildMissions();
+
+            if (listCol.Any(x => x is StoreListColumn))
+                buildStore();
 
             if (listCol.Any(x => x is MissionDetailsPanel))
             {
@@ -401,6 +423,44 @@ namespace ScaleformUI.LobbyMenu
 
         }
 
+        internal async void buildStore()
+        {
+            if (StoreColumn.Items.Count > 0)
+            {
+                StoreColumn.isBuilding = true;
+                int i = 0;
+                int max = StoreColumn.Pagination.ItemsPerPage;
+                if (StoreColumn.Items.Count < max)
+                    max = StoreColumn.Items.Count;
+
+                StoreColumn.Pagination.MinItem = StoreColumn.Pagination.CurrentPageStartIndex;
+                if (StoreColumn.Pagination.scrollType == ScrollingType.CLASSIC && StoreColumn.Pagination.TotalPages > 1)
+                {
+                    int missingItems = StoreColumn.Pagination.GetMissingItems();
+                    if (missingItems > 0)
+                    {
+                        StoreColumn.Pagination.ScaleformIndex = StoreColumn.Pagination.GetPageIndexFromMenuIndex(StoreColumn.Pagination.CurrentPageEndIndex) + missingItems;
+                        StoreColumn.Pagination.MinItem = StoreColumn.Pagination.CurrentPageStartIndex - missingItems;
+                    }
+                }
+                StoreColumn.Pagination.MaxItem = StoreColumn.Pagination.CurrentPageEndIndex;
+
+                while (i < max)
+                {
+                    await BaseScript.Delay(0);
+                    if (!Visible) return;
+                    StoreColumn._itemCreation(StoreColumn.Pagination.CurrentPage, i, false, true);
+                    i++;
+                }
+                StoreColumn.CurrentSelection = 0;
+                StoreColumn.Pagination.ScaleformIndex = StoreColumn.Pagination.GetScaleformIndex(StoreColumn.CurrentSelection);
+                StoreColumn.Items[0].Selected = true;
+                _pause._lobby.CallFunction("SET_STORE_SELECTION", StoreColumn.Pagination.ScaleformIndex);
+                _pause._lobby.CallFunction("SET_STORE_QTTY", StoreColumn.CurrentSelection + 1, StoreColumn.Items.Count);
+                StoreColumn.isBuilding = false;
+            }
+        }
+
         private bool controller = false;
         public override async void Draw()
         {
@@ -456,6 +516,10 @@ namespace ScaleformUI.LobbyMenu
                                         curSel = MissionsColumn.CurrentSelection;
                                         MissionsColumn.Items[MissionsColumn.CurrentSelection].Selected = false;
                                         break;
+                                    case "store":
+                                        curSel = StoreColumn.CurrentSelection;
+                                        StoreColumn.Items[StoreColumn.CurrentSelection].Selected = false;
+                                        break;
                                 }
                             }
                             updateFocus(context, true);
@@ -470,6 +534,9 @@ namespace ScaleformUI.LobbyMenu
                                     break;
                                 case "missions":
                                     MissionsColumn.CurrentSelection = index;
+                                    break;
+                                case "store":
+                                    StoreColumn.CurrentSelection = index;
                                     break;
                             }
                             if (curSel != index) Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
@@ -492,6 +559,9 @@ namespace ScaleformUI.LobbyMenu
                                 case "missions":
                                     MissionsColumn.Items[itemId].Hovered = false;
                                     break;
+                                case "store":
+                                    StoreColumn.Items[itemId].Hovered = false;
+                                    break;
                             }
                         }
                         break;
@@ -508,6 +578,9 @@ namespace ScaleformUI.LobbyMenu
                                     break;
                                 case "missions":
                                     MissionsColumn.Items[itemId].Hovered = true;
+                                    break;
+                                case "store":
+                                    StoreColumn.Items[itemId].Hovered = true;
                                     break;
                             }
                         }
@@ -625,6 +698,11 @@ namespace ScaleformUI.LobbyMenu
                     mitem.ActivateMission(null);
                     MissionsColumn.SelectItem();
                     break;
+                case "store":
+                    StoreItem stItem = StoreColumn.Items[StoreColumn.CurrentSelection];
+                    stItem.ActivateImage(null);
+                    StoreColumn.SelectItem();
+                    break;
                 case "players":
                     PlayersColumn.SelectItem();
                     break;
@@ -644,6 +722,9 @@ namespace ScaleformUI.LobbyMenu
                 {
                     case "settings":
                         SettingsColumn.Items[SettingsColumn.CurrentSelection].Selected = false;
+                        break;
+                    case "store":
+                        StoreColumn.Items[StoreColumn.CurrentSelection].Selected = false;
                         break;
                     case "players":
                         PlayersColumn.Items[PlayersColumn.CurrentSelection].Selected = false;
@@ -676,6 +757,9 @@ namespace ScaleformUI.LobbyMenu
                 case "players":
                     PlayersColumn.GoUp();
                     break;
+                case "store":
+                    StoreColumn.GoUp();
+                    break;
             }
             Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
         }
@@ -692,6 +776,9 @@ namespace ScaleformUI.LobbyMenu
                     break;
                 case "players":
                     PlayersColumn.GoDown();
+                    break;
+                case "store":
+                    StoreColumn.GoDown();
                     break;
             }
             Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
@@ -715,6 +802,8 @@ namespace ScaleformUI.LobbyMenu
                 }
                 if (listCol.Any(x => x.Type == "missions"))
                     MissionsColumn.Items[MissionsColumn.CurrentSelection].Selected = false;
+                if (listCol.Any(x => x.Type == "store"))
+                    StoreColumn.Items[StoreColumn.CurrentSelection].Selected = false;
                 if (listCol.Any(x => x.Type == "players"))
                 {
                     PlayersColumn.Items[PlayersColumn.CurrentSelection].Selected = false;
@@ -786,6 +875,13 @@ namespace ScaleformUI.LobbyMenu
                         updateFocus(focusLevel - 1);
                     }
                     break;
+                case "store":
+                    if (_newStyle)
+                    {
+                        StoreColumn.Items[StoreColumn.CurrentSelection].Selected = false;
+                        updateFocus(focusLevel - 1);
+                    }
+                    break;
                 case "panel":
                     updateFocus(focusLevel - 1);
                     break;
@@ -822,6 +918,8 @@ namespace ScaleformUI.LobbyMenu
                 }
                 if (listCol.Any(x => x.Type == "missions"))
                     MissionsColumn.Items[MissionsColumn.CurrentSelection].Selected = false;
+                if (listCol.Any(x => x.Type == "store"))
+                    StoreColumn.Items[StoreColumn.CurrentSelection].Selected = false;
                 if (listCol.Any(x => x.Type == "players"))
                 {
                     PlayersColumn.Items[PlayersColumn.CurrentSelection].Selected = false;
@@ -890,6 +988,13 @@ namespace ScaleformUI.LobbyMenu
                     {
                         MissionsColumn.Items[MissionsColumn.CurrentSelection].Selected = false;
                         updateFocus(focusLevel + 1);
+                    }
+                    break;
+                case "store":
+                    if (_newStyle)
+                    {
+                        StoreColumn.Items[StoreColumn.CurrentSelection].Selected = false;
+                        updateFocus(focusLevel - 1);
                     }
                     break;
                 case "panel":

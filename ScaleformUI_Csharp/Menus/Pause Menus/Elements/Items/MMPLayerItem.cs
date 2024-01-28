@@ -1,4 +1,4 @@
-﻿namespace ScaleformUI.LobbyMenu
+﻿namespace ScaleformUI.PauseMenus.Elements.Items
 {
     public enum PlayerCardType
     {

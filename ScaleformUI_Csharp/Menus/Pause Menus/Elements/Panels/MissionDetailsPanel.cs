@@ -1,8 +1,9 @@
 ﻿using ScaleformUI.Elements;
+using ScaleformUI.LobbyMenu;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenu;
 
-namespace ScaleformUI.LobbyMenu
+namespace ScaleformUI.PauseMenus.Elements.Panels
 {
     public class MissionDetailsPanel : Column
     {

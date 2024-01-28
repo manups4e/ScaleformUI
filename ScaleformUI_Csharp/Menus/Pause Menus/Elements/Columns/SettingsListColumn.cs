@@ -1,10 +1,11 @@
 ﻿using CitizenFX.Core;
 using ScaleformUI.Elements;
+using ScaleformUI.LobbyMenu;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenu;
 using static CitizenFX.Core.Native.API;
 
-namespace ScaleformUI.LobbyMenu
+namespace ScaleformUI.PauseMenus.Elements.Columns
 {
     public delegate void SettingItemSelected(UIMenuItem item, int index);
     public class SettingsListColumn : Column
