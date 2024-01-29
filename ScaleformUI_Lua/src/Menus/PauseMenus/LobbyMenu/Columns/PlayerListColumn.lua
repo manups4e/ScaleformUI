@@ -296,7 +296,7 @@ function PlayerListColumn:Clear()
         end
     end
     self.Items = {}
-    self.Paginatiom:Reset()
+    self.Pagination:Reset()
 end
 
 function PlayerListColumn:SortPlayers(compare)
