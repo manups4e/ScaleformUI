@@ -35,8 +35,11 @@ function MainView.New(title, subtitle, sideTop, sideMid, sideBot, newStyle)
         _visible = false,
         SettingsColumn = nil --[[@type SettingsListColumn]],
         PlayersColumn = nil --[[@type PlayerListColumn]],
-        MissionsColumns = nil --[[@type MissionListColumn]],
+        MissionsColumn = nil --[[@type MissionListColumn]],
+        StoreColumn = nil --[[@type StoreListColumn]],
         MissionPanel = nil --[[@type MissionDetailsPanel]],
+        _showStoreBG = false,
+        _storeBGSpeed = 240,
         _focus = 1,
         TemporarilyHidden = false,
         controller = false,
@@ -73,6 +76,22 @@ end
 
 function MainView:Focus()
     return self._focus
+end
+
+function MainView:ShowStoreBackground(bool)
+    if bool == nil then
+        return self._showStoreBG
+    else
+        self._showStoreBG = bool
+    end
+end
+
+function MainView:StoreBackgroundAnimationSpeed(speed)
+    if speed == nil then
+        return self._storeBGSpeed
+    else
+        self._storeBGSpeed = speed
+    end
 end
 
 function MainView:CanPlayerCloseMenu(canHe)
@@ -211,6 +230,10 @@ function MainView:SetupColumns(columns)
             self.PlayersColumn = v
             self.PlayersColumn.Parent = self
             self.PlayersColumn.Order = k
+        elseif v.Type == "store" then
+            self.StoreColumn = v
+            self.StoreColumn.Parent = self
+            self.StoreColumn.Order = k
         elseif v.Type == "panel" then
             self.MissionPanel = v
             self.MissionPanel.Parent = self
@@ -244,6 +267,8 @@ end
 function MainView:BuildPauseMenu()
     self._isBuilding = true
     self:ShowHeader()
+    ScaleformUI.Scaleforms._pauseMenu.BGEnabled = self:ShowStoreBackground()
+    ScaleformUI.Scaleforms._pauseMenu._pauseBG:CallFunction("ANIMATE_BACKGROUND", self:StoreBackgroundAnimationSpeed())
     if #self.listCol == 1 then
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CREATE_MENU", self.listCol[1].Type)
     elseif #self.listCol == 2 then
@@ -261,6 +286,8 @@ function MainView:BuildPauseMenu()
             self:buildPlayers()
         elseif col.Type == "missions" then
             self:buildMissions()
+        elseif col.Type == "store" then
+            self:buildStore()
         elseif col.Type == "panel" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_MISSION_PANEL_PICTURE", self.MissionPanel.TextureDict, self.MissionPanel.TextureName);
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSION_PANEL_TITLE", self.MissionPanel:Title());
@@ -416,6 +443,44 @@ function MainView:buildMissions(tab, tabIndex)
     end)
 end
 
+function MainView:buildStore(tab, tabIndex)
+    Citizen.CreateThread(function()
+        self.StoreColumn._isBuilding = true
+        local i = 1
+        local max = self.StoreColumn.Pagination:ItemsPerPage()
+        if #self.StoreColumn.Items < max then
+            max = #self.StoreColumn.Items
+        end
+        self.StoreColumn.Pagination:MinItem(self.StoreColumn.Pagination:CurrentPageStartIndex())
+
+        if self.StoreColumn.scrollingType == MenuScrollingType.CLASSIC and self.StoreColumn.Pagination:TotalPages() > 1 then
+            local missingItems = self.StoreColumn.Pagination:GetMissingItems()
+            if missingItems > 0 then
+                self.StoreColumn.Pagination:ScaleformIndex(self.StoreColumn.Pagination:GetPageIndexFromMenuIndex(self.StoreColumn.Pagination:CurrentPageEndIndex()) + missingItems - 1)
+                self.StoreColumn.Pagination.minItem = self.StoreColumn.Pagination:CurrentPageStartIndex() - missingItems
+            end
+        end
+
+        self.StoreColumn.Pagination:MaxItem(self.StoreColumn.Pagination:CurrentPageEndIndex())
+
+        while i <= max do
+            Citizen.Wait(0)
+            if not self:Visible() then return end
+            self.StoreColumn:_itemCreation(self.StoreColumn.Pagination:CurrentPage(), i, false, true)
+            i = i + 1
+        end
+
+        self.StoreColumn:CurrentSelection(1)
+        self.StoreColumn.Pagination:ScaleformIndex(self.StoreColumn.Pagination:GetScaleformIndex(self.StoreColumn:CurrentSelection()))
+        self.StoreColumn.Items[self.StoreColumn:CurrentSelection()]:Selected(true)
+
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_STORE_SELECTION", self.StoreColumn.Pagination:GetScaleformIndex(self.StoreColumn.Pagination:CurrentMenuIndex()))
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_STORE_QTTY", self.StoreColumn:CurrentSelection(), #self.StoreColumn.Items)
+
+        self.StoreColumn._isBuilding = false
+    end)
+end
+
 function MainView:Draw()
     if not self:Visible() or self.TemporarilyHidden or self._isBuilding then
         return
@@ -461,6 +526,8 @@ function MainView:ProcessMouse()
                     curSel = self.MissionsColumn:CurrentSelection()
                 elseif v.Type == "players" then
                     curSel = self.PlayersColumn:CurrentSelection()
+                elseif v.Type == "store" then
+                    curSel = self.StoreColumn:CurrentSelection()
                 end
             end
             if context+1 ~= foc then
@@ -606,6 +673,8 @@ function MainView:Select()
         self.PlayersColumn.OnPlayerItemActivated(self.PlayersColumn:CurrentSelection())
     elseif self.listCol[selection].Type == "missions" then
         self.MissionsColumn.OnMissionItemActivated(self.MissionsColumn:CurrentSelection())
+    elseif self.listCol[selection].Type == "store" then
+        self.StoreColumn.OnStoreItemActivated(self.StoreColumn:CurrentSelection())
     end
 end
 
@@ -649,6 +718,8 @@ function MainView:GoLeft()
                 end
             elseif v.Type == "missions" then
                 self.MissionsColumn.Items[self.MissionsColumn:CurrentSelection()]:Selected(false)
+            elseif v.Type == "store" then
+                self.StoreColumn.Items[self.StoreColumn:CurrentSelection()]:Selected(false)
             elseif v.Type == "players" then
                 self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()]:Selected(false)
                 if k == 1 or self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()]:KeepPanelVisible() then
@@ -708,6 +779,11 @@ function MainView:GoLeft()
             self.MissionsColumn.Items[self.MissionsColumn:CurrentSelection()]:Selected(false)
             self:updateFocus(self._focus - 1)
         end
+    elseif self.listCol[self._focus].Type == "store" then
+        if self._newStyle then
+            self.StoreColumn.Items[self.StoreColumn:CurrentSelection()]:Selected(false)
+            self:updateFocus(self._focus - 1)
+        end
     elseif self.listCol[self._focus].Type == "panel" then
         self:updateFocus(self._focus - 1)
     end
@@ -728,6 +804,8 @@ function MainView:GoRight()
                 end
             elseif v.Type == "missions" then
                 self.MissionsColumn.Items[self.MissionsColumn:CurrentSelection()]:Selected(false)
+            elseif v.Type == "store" then
+                self.StoreColumn.Items[self.StoreColumn:CurrentSelection()]:Selected(false)
             elseif v.Type == "players" then
                 self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()]:Selected(false)
                 if k == 1 or self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()]:KeepPanelVisible() then
@@ -785,6 +863,11 @@ function MainView:GoRight()
     elseif self.listCol[self._focus].Type == "missions" then
         if self._newStyle then
             self.MissionsColumn.Items[self.MissionsColumn:CurrentSelection()]:Selected(false)
+            self:updateFocus(self._focus + 1)
+        end
+    elseif self.listCol[self._focus].Type == "store" then
+        if self._newStyle then
+            self.StoreColumn.Items[self.StoreColumn:CurrentSelection()]:Selected(false)
             self:updateFocus(self._focus + 1)
         end
     elseif self.listCol[self._focus].Type == "panel" then

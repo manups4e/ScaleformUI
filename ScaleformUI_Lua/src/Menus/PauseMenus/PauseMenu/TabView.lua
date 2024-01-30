@@ -300,6 +300,8 @@ function TabView:BuildPauseMenu()
                     self:buildPlayers(tab, tabIndex)
                 elseif col.Type == "missions" then
                     self:buildMissions(tab, tabIndex)
+                elseif col.Type == "store" then
+                    self:buildStore(tab, tabIndex)
                 elseif col.Type == "panel" then
                     ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_PICTURE", tabIndex, tab.MissionPanel.TextureDict, tab.MissionPanel.TextureName)
                     ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_MISSION_PANEL_TITLE", tabIndex, tab.MissionPanel:Title())
@@ -442,6 +444,44 @@ function TabView:buildMissions(tab, tabIndex)
     end)
 end
 
+function TabView:buildStore(tab, tabIndex)
+    Citizen.CreateThread(function()
+        tab.StoreColumn._isBuilding = true
+        local i = 1
+        local max = tab.StoreColumn.Pagination:ItemsPerPage()
+        if #tab.StoreColumn.Items < max then
+            max = #tab.StoreColumn.Items
+        end
+        tab.StoreColumn.Pagination:MinItem(tab.StoreColumn.Pagination:CurrentPageStartIndex())
+
+        if tab.StoreColumn.scrollingType == MenuScrollingType.CLASSIC and tab.StoreColumn.Pagination:TotalPages() > 1 then
+            local missingItems = tab.StoreColumn.Pagination:GetMissingItems()
+            if missingItems > 0 then
+                tab.StoreColumn.Pagination:ScaleformIndex(tab.StoreColumn.Pagination:GetPageIndexFromMenuIndex(tab.StoreColumn.Pagination:CurrentPageEndIndex()) + missingItems - 1)
+                tab.StoreColumn.Pagination.minItem = tab.StoreColumn.Pagination:CurrentPageStartIndex() - missingItems
+            end
+        end
+
+        tab.StoreColumn.Pagination:MaxItem(tab.StoreColumn.Pagination:CurrentPageEndIndex())
+
+        while i <= max do
+            Citizen.Wait(0)
+            if not self:Visible() then return end
+            tab.StoreColumn:_itemCreation(tab.StoreColumn.Pagination:CurrentPage(), i, false, true)
+            i = i + 1
+        end
+
+        tab.StoreColumn:CurrentSelection(1)
+        tab.StoreColumn.Pagination:ScaleformIndex(tab.StoreColumn.Pagination:GetScaleformIndex(tab.StoreColumn:CurrentSelection()))
+        tab.StoreColumn.Items[tab.StoreColumn:CurrentSelection()]:Selected(false)
+
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_SELECTION", tabIndex, tab.StoreColumn.Pagination:GetScaleformIndex(tab.StoreColumn.Pagination:CurrentMenuIndex()))
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_QTTY", tabIndex, tab.StoreColumn:CurrentSelection(), #tab.StoreColumn.Items)
+
+        tab.StoreColumn._isBuilding = false
+    end)
+end
+
 function TabView:UpdateKeymapItems()
     if not IsUsingKeyboard(2) then
         if not self.controller then
@@ -518,6 +558,8 @@ function TabView:Select()
                 end
             elseif tab.listCol[selection].Type == "missions" then
                 tab.MissionsColumn.Items[tab.MissionsColumn:CurrentSelection()]:Selected(true)
+            elseif tab.listCol[selection].Type == "store" then
+                tab.StoreColumn.Items[tab.StoreColumn:CurrentSelection()]:Selected(true)
             end
             for k,v in pairs(tab.listCol) do
                 if v.Type == "players" then
@@ -666,13 +708,7 @@ function TabView:GoUp()
     local tab = self.Tabs[self.index]
     local _, subT = tab()
     if subT == "PlayerListTab" then
-        if tab.listCol[tab:Focus()].Type == "players" then
-            tab.PlayersColumn:GoUp()
-        elseif tab.listCol[tab:Focus()].Type == "settings" then
-            tab.SettingsColumn:GoUp()
-        elseif tab.listCol[tab:Focus()].Type == "missions" then
-            tab.MissionsColumn:GoUp()
-        end
+        tab.listCol[tab:Focus()]:GoUp()
         return
     end
     
@@ -690,13 +726,7 @@ function TabView:GoDown()
     local tab = self.Tabs[self.index]
     local _, subT = tab()
     if subT == "PlayerListTab" then
-        if tab.listCol[tab:Focus()].Type == "players" then
-            tab.PlayersColumn:GoDown()
-        elseif tab.listCol[tab:Focus()].Type == "settings" then
-            tab.SettingsColumn:GoDown()
-        elseif tab.listCol[tab:Focus()].Type == "missions" then
-            tab.MissionsColumn:GoDown()
-        end
+        tab.listCol[tab:Focus()]:GoDown()
         return
     end
     local retVal = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunctionAsyncReturnInt("SET_INPUT_EVENT", 9)
@@ -729,6 +759,8 @@ function TabView:GoLeft()
                     tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]:Selected(false)
                 elseif v.Type == "missions" then
                     tab.MissionsColumn.Items[tab.MissionsColumn:CurrentSelection()]:Selected(false)
+                elseif v.Type == "store" then
+                    tab.StoreColumn.Items[tab.StoreColumn:CurrentSelection()]:Selected(false)
                 elseif v.Type == "players" then
                     tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:Selected(false)
                     if k == 1 or tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:KeepPanelVisible() then
@@ -785,8 +817,9 @@ function TabView:GoLeft()
                     tab.MissionsColumn.Items[tab.MissionsColumn:CurrentSelection()]:Selected(false)
                     tab:updateFocus(tab:Focus() - 1)
                 end
-            elseif tab.listCol[tab:Focus()].Type == "panel" then
+            elseif tab.listCol[tab:Focus()].Type == "store" then
                 if tab._newStyle then
+                    tab.StoreColumn.Items[tab.StoreColumn:CurrentSelection()]:Selected(false)
                     tab:updateFocus(tab:Focus() - 1)
                 end
             elseif tab.listCol[tab:Focus()].Type == "players" then
@@ -797,6 +830,10 @@ function TabView:GoLeft()
                     if tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
                         tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu()
                     end
+                end
+            elseif tab.listCol[tab:Focus()].Type == "panel" then
+                if tab._newStyle then
+                    tab:updateFocus(tab:Focus() - 1)
                 end
             end
         end
@@ -840,6 +877,8 @@ function TabView:GoRight()
                     tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]:Selected(false)
                 elseif v.Type == "missions" then
                     tab.MissionsColumn.Items[tab.MissionsColumn:CurrentSelection()]:Selected(false)
+                elseif v.Type == "store" then
+                    tab.StoreColumn.Items[tab.StoreColumn:CurrentSelection()]:Selected(false)
                 elseif v.Type == "players" then
                     tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:Selected(false)
                     if k == 1 or tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:KeepPanelVisible() then
@@ -896,8 +935,9 @@ function TabView:GoRight()
                     tab.MissionsColumn.Items[tab.MissionsColumn:CurrentSelection()]:Selected(false)
                     tab:updateFocus(tab:Focus() + 1)
                 end
-            elseif tab.listCol[tab:Focus()].Type == "panel" then
+            elseif tab.listCol[tab:Focus()].Type == "store" then
                 if tab._newStyle then
+                    tab.StoreColumn.Items[tab.StoreColumn:CurrentSelection()]:Selected(false)
                     tab:updateFocus(tab:Focus() + 1)
                 end
             elseif tab.listCol[tab:Focus()].Type == "players" then
@@ -908,6 +948,10 @@ function TabView:GoRight()
                     if tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
                         tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu()
                     end
+                end
+            elseif tab.listCol[tab:Focus()].Type == "panel" then
+                if tab._newStyle then
+                    tab:updateFocus(tab:Focus() + 1)
                 end
             end
         end

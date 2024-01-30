@@ -8,6 +8,7 @@ end
 ---@field public _header Scaleform
 ---@field public _pause Scaleform
 ---@field public _lobby Scaleform
+---@field public _pauseBG Scaleform
 ---@field public Loaded boolean
 ---@field public _visible boolean
 ---@field public Visible fun(self:PauseMenu, visible:boolean):boolean
@@ -58,6 +59,8 @@ function PauseMenu.New()
         _header = nil,
         _pause = nil,
         _lobby = nil,
+        _pauseBG = nil,
+        BGEnabled = false,
         Loaded = false,
         _visible = false,
     }
@@ -80,6 +83,7 @@ function PauseMenu:Load()
     self._header = Scaleform.Request("pausemenuheader")
     self._pause = Scaleform.Request("pausemenu")
     self._lobby = Scaleform.Request("lobbymenu")
+    self._pauseBG = Scaleform.Request("store_background")
     self.Loaded = self._header:IsLoaded() and self._pause:IsLoaded() and self._lobby:IsLoaded()
 end
 
@@ -464,6 +468,9 @@ function PauseMenu:Draw(isLobby)
         SetScriptGfxDrawBehindPausemenu(true)
         if IsUsingKeyboard(2) then
             SetMouseCursorActiveThisFrame()
+        end
+        if self.BGEnabled then
+            self._pauseBG:Render2D()
         end
         self._header:Render2DNormal(0.501, 0.162, 0.6782, 0.145)
         if isLobby then

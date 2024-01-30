@@ -11,6 +11,8 @@ end
 ---@field public TextTitle string
 ---@field public SettingsColumn SettingsListColumn
 ---@field public PlayersColumn PlayerListColumn
+---@field public MissionsColumn MissionListColumn
+---@field public StoreColumn StoreListColumn
 ---@field public Index number
 ---@field public Focused boolean
 
@@ -31,6 +33,7 @@ function PlayerListTab.New(name, color, newStyle)
         SettingsColumn = nil,
         PlayersColumn = nil,
         MissionsColumn = nil,
+        StoreColumn = nil,
         MissionPanel = nil,
         Index = 0,
         Focused = false,
@@ -61,6 +64,9 @@ function PlayerListTab:SetUpColumns(columns)
         elseif v.Type == "missions" then
             self.MissionsColumn = v
             self.MissionsColumn.Order = k
+        elseif v.Type == "store" then
+            self.StoreColumn = v
+            self.StoreColumn.Order = k
         elseif v.Type == "panel" then
             self.MissionPanel = v
             self.MissionPanel.Order = k

@@ -218,8 +218,8 @@ function PlayerListColumn:GoUp()
                     ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_PLAYERS_COLUMN", self.ParentTab) --[[@as number]]
                 end
                 local max = self.Pagination:ItemsPerPage()
-                for i=1, i <= max, 1 do
-                    if not self:Visible() then return end
+                for i=1, max, 1 do
+                    if not self.Parent:Visible() then return end
                     self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
                 end
             end
@@ -263,8 +263,8 @@ function PlayerListColumn:GoDown()
                     ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_PLAYERS_COLUMN", self.ParentTab) --[[@as number]]
                 end
                 local max = self.Pagination:ItemsPerPage()
-                for i=1, i <= max, 1 do
-                    if not self:Visible() then return end
+                for i=1, max, 1 do
+                    if not self.Parent:Visible() then return end
                     self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
                 end
             end
@@ -302,7 +302,9 @@ end
 function PlayerListColumn:SortPlayers(compare)
     self.Items[self:CurrentSelection()]:Selected(false)
     if self._unfilteredItems == nil or #self._unfilteredItems == 0 then
-        self._unfilteredMenuItems = self.Items
+        for i, item in ipairs(self.Items) do
+            table.insert(self._unfilteredItems, item)
+        end
     end
     self:Clear()
     local list = self._unfilteredItems
@@ -322,7 +324,9 @@ end
 function PlayerListColumn:FilterPlayers(predicate)
     self.Items[self:CurrentSelection()]:Selected(false)
     if self._unfilteredItems == nil or #self._unfilteredItems == 0 then
-        self._unfilteredItems = self.Items
+        for i, item in ipairs(self.Items) do
+            table.insert(self._unfilteredItems, item)
+        end
     end
     self:Clear()
     local filteredItems = {}
@@ -385,9 +389,9 @@ function PlayerListColumn:refreshColumn()
 
         self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
 
-        for i = 1, i <= max, 1 do
-            if not self:Visible() then return end
-            self._itemCreation(self.Pagination:CurrentPage(), i, false, true)
+        for i=1, max, 1 do
+            if not self.Parent:Visible() then return end
+            self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
         end
         self.Pagination:ScaleformIndex(self.Pagination:GetScaleformIndex(self:CurrentSelection()))
         if pSubT == "LobbyMenu" then
