@@ -26,7 +26,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             };
         }
 
-        public void AddImageItem(StoreItem item)
+        public void AddStoreItem(StoreItem item)
         {
             item.ParentColumn = this;
             Items.Add(item);
