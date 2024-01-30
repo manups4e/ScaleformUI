@@ -14,7 +14,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
         public List<StoreItem> Items { get; private set; }
         private List<StoreItem> _unfilteredItems;
         public ScrollingType ScrollingType { get => Pagination.scrollType; set => Pagination.scrollType = value; }
-        public event StoreItemSelected ImageColumnItemActivated;
+        public event StoreItemSelected StoreItemActivated;
         public StoreListColumn(string label, SColor color, ScrollingType scrollType = ScrollingType.CLASSIC) : base(label, color)
         {
             Items = new();
@@ -370,7 +370,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
 
         public void SelectItem()
         {
-            ImageColumnItemActivated?.Invoke(Items[CurrentSelection], CurrentSelection);
+            StoreItemActivated?.Invoke(Items[CurrentSelection], CurrentSelection);
         }
         public void IndexChangedEvent()
         {
