@@ -677,7 +677,7 @@ namespace ScaleformUI.PauseMenu
                                     break;
                                 case "store":
                                     StoreItem stItem = plTab.StoreColumn.Items[plTab.StoreColumn.CurrentSelection];
-                                    stItem.ActivateImage(plTab);
+                                    stItem.Activate(plTab);
                                     plTab.StoreColumn.SelectItem();
                                     break;
                                 case "players":

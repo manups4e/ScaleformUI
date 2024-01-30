@@ -3,14 +3,14 @@ using ScaleformUI.PauseMenus.Elements.Columns;
 
 namespace ScaleformUI.PauseMenus.Elements.Items
 {
-    public delegate void ImageColumnActivated(PlayerListTab tab, StoreListColumn column, int index);
+    public delegate void StoreItemActivated(PlayerListTab tab, StoreListColumn column, int index);
 
     public class StoreItem
     {
         internal string textureName;
         internal string textureDictionary;
         internal string description = string.Empty;
-        public event ImageColumnActivated ImageActivated;
+        public event StoreItemActivated Activated;
         public StoreListColumn ParentColumn { get; internal set; }
         public string TextureDictionary { get => textureDictionary; }
         public string TextureName { get => textureName; }
@@ -31,9 +31,9 @@ namespace ScaleformUI.PauseMenus.Elements.Items
             this.description = description;
         }
 
-        internal void ActivateImage(PlayerListTab tab)
+        internal void Activate(PlayerListTab tab)
         {
-            this.ImageActivated?.Invoke(tab, ParentColumn, ParentColumn.Items.IndexOf(this));
+            this.Activated?.Invoke(tab, ParentColumn, ParentColumn.Items.IndexOf(this));
         }
     }
 }

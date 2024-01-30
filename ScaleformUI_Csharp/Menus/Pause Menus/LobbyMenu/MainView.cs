@@ -700,7 +700,7 @@ namespace ScaleformUI.LobbyMenu
                     break;
                 case "store":
                     StoreItem stItem = StoreColumn.Items[StoreColumn.CurrentSelection];
-                    stItem.ActivateImage(null);
+                    stItem.Activate(null);
                     StoreColumn.SelectItem();
                     break;
                 case "players":
