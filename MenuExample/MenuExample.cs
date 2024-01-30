@@ -1222,8 +1222,8 @@ public class MenuExample : BaseScript
         {
             new SettingsListColumn("COLUMN SETTINGS", SColor.HUD_Red), // color will be ignored for PauseMenu
             //new PlayerListColumn("COLUMN PLAYERS", SColor.HUD_Orange), // color will be ignored for PauseMenu
-            //new MissionsListColumn("COLUMN MISSIONS", SColor.HUD_Orange), // color will be ignored for PauseMenu
-            new StoreListColumn("CONTENT", SColor.HUD_Freemode),
+            new MissionsListColumn("COLUMN MISSIONS", SColor.HUD_Orange), // color will be ignored for PauseMenu
+            //new StoreListColumn("CONTENT", SColor.HUD_Freemode),
             new MissionDetailsPanel("COLUMN INFO PANEL", SColor.HUD_Green), // color will be ignored for PauseMenu
         };
         playersTab.SetUpColumns(columns);
@@ -1245,19 +1245,6 @@ public class MenuExample : BaseScript
             playersTab.SelectColumn(1);
         };
 
-        StoreItem image0 = new StoreItem("scaleformui", "lobby_panelbackground");
-        StoreItem image1 = new StoreItem("scaleformui", "lobby_panelbackground");
-        StoreItem image2 = new StoreItem("scaleformui", "lobby_panelbackground");
-        StoreItem image3 = new StoreItem("scaleformui", "lobby_panelbackground");
-        StoreItem image4 = new StoreItem("scaleformui", "lobby_panelbackground");
-
-        playersTab.StoreColumn.AddImageItem(image0);
-        playersTab.StoreColumn.AddImageItem(image1);
-        playersTab.StoreColumn.AddImageItem(image2);
-        playersTab.StoreColumn.AddImageItem(image3);
-        playersTab.StoreColumn.AddImageItem(image4);
-
-        /*
         MissionItem mission1 = new MissionItem("Mission 1");
         MissionItem mission2 = new MissionItem("Mission 2");
         MissionItem mission3 = new MissionItem("Mission 3");
@@ -1280,9 +1267,6 @@ public class MenuExample : BaseScript
         playersTab.MissionsColumn.AddMissionItem(mission3);
         playersTab.MissionsColumn.AddMissionItem(mission4);
         playersTab.MissionsColumn.AddMissionItem(mission5);
-        */
-
-
 
         playersTab.MissionPanel.UpdatePanelPicture("scaleformui", "lobby_panelbackground");
         playersTab.MissionPanel.Title = "ScaleformUI - Title";
@@ -1533,8 +1517,7 @@ public class MenuExample : BaseScript
         List<Column> columns = new List<Column>()
         {
             new SettingsListColumn("COLUMN SETTINGS", SColor.HUD_Red),
-            //new PlayerListColumn("COLUMN PLAYERS", SColor.HUD_Orange),
-            new StoreListColumn("COLUMN STORE", SColor.HUD_Orange),
+            new PlayerListColumn("COLUMN PLAYERS", SColor.HUD_Orange),
             new MissionDetailsPanel("COLUMN INFO PANEL", SColor.HUD_Green),
         };
         pauseMenu.SetUpColumns(columns);
@@ -1567,7 +1550,6 @@ public class MenuExample : BaseScript
             Screen.ShowSubtitle($"~y~ {item.Label} ~s~~w~ has been selected!");
         };
 
-        /*
         CrewTag crew1 = new CrewTag("hello", false, false, CrewHierarchy.Leader, SColor.HUD_Green);
         CrewTag crew2 = new CrewTag("evry1", false, false, CrewHierarchy.Commissioner, SColor.HUD_Pink);
         CrewTag crew3 = new CrewTag("look", false, false, CrewHierarchy.Liutenant, SColor.HUD_Blue);
@@ -1701,19 +1683,6 @@ public class MenuExample : BaseScript
         pauseMenu.PlayersColumn.AddPlayer(friend3);
         pauseMenu.PlayersColumn.AddPlayer(friend4);
         pauseMenu.PlayersColumn.AddPlayer(friend5);
-        */
-        StoreItem image0 = new StoreItem("scaleformui", "lobby_panelbackground");
-        StoreItem image1 = new StoreItem("scaleformui", "lobby_panelbackground");
-        StoreItem image2 = new StoreItem("scaleformui", "lobby_panelbackground");
-        StoreItem image3 = new StoreItem("scaleformui", "lobby_panelbackground");
-        StoreItem image4 = new StoreItem("scaleformui", "lobby_panelbackground");
-
-        pauseMenu.StoreColumn.AddImageItem(image0);
-        pauseMenu.StoreColumn.AddImageItem(image1);
-        pauseMenu.StoreColumn.AddImageItem(image2);
-        pauseMenu.StoreColumn.AddImageItem(image3);
-        pauseMenu.StoreColumn.AddImageItem(image4);
-
 
         long _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
         API.CreateRuntimeTextureFromDuiHandle(txd, "lobby_panelbackground", API.GetDuiHandle(_paneldui));
