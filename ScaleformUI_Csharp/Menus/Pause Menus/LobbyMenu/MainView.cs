@@ -43,7 +43,7 @@ namespace ScaleformUI.LobbyMenu
         public string SideStringMiddle { get; set; }
         public string SideStringBottom { get; set; }
         public bool ShowStoreBackground { internal get; set; }
-        public float StoreBackgroundAnimationSpeed { internal get; set; } = 240f;
+        public int StoreBackgroundAnimationSpeed { internal get; set; } = 240; // should be expressed in ms
         public Tuple<string, string> HeaderPicture { internal get; set; }
         public Tuple<string, string> CrewPicture { internal get; set; }
         public SettingsListColumn SettingsColumn { get; private set; }
