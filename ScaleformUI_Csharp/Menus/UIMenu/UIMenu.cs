@@ -2005,7 +2005,7 @@ namespace ScaleformUI.Menu
                 case UIMenuDynamicListItem:
                     {
                         UIMenuDynamicListItem it = (UIMenuDynamicListItem)MenuItems[CurrentSelection];
-                        string newItem = await it.Callback(it, UIMenuDynamicListItem.ChangeDirection.Left);
+                        string newItem = await it.Callback(it, ChangeDirection.Left);
                         it.CurrentListItem = newItem;
                         break;
                     }
@@ -2058,7 +2058,7 @@ namespace ScaleformUI.Menu
                 case UIMenuDynamicListItem:
                     {
                         UIMenuDynamicListItem it = (UIMenuDynamicListItem)MenuItems[CurrentSelection];
-                        string newItem = await it.Callback(it, UIMenuDynamicListItem.ChangeDirection.Right);
+                        string newItem = await it.Callback(it, ChangeDirection.Right);
                         it.CurrentListItem = newItem;
                         break;
                     }
