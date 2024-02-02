@@ -872,15 +872,6 @@ namespace ScaleformUI.Menu
         /// </summary>
         private bool canPlayerCloseMenu = true;
         //Pagination
-        public int MaxItemsOnScreen
-        {
-            get => Pagination.ItemsPerPage;
-            set
-            {
-                Pagination.ItemsPerPage = value;
-            }
-        }
-
         private bool mouseWheelControlEnabled = true;
         private int menuSound;
         private bool _changed = true;
@@ -930,6 +921,14 @@ namespace ScaleformUI.Menu
         public bool ControlDisablingEnabled = true;
         private bool enabled3DAnimations;
         internal bool leftClickEnabled;
+        public int MaxItemsOnScreen
+        {
+            get => Pagination.ItemsPerPage;
+            set
+            {
+                Pagination.ItemsPerPage = value;
+            }
+        }
 
         public bool EnableAnimation
         {
