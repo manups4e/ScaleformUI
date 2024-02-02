@@ -1,14 +1,14 @@
 ﻿namespace ScaleformUI.Menu
 {
+    public enum ChangeDirection
+    {
+        Left,
+        Right
+    }
+    public delegate Task<string> DynamicListItemChangeCallback(UIMenuDynamicListItem sender, ChangeDirection direction);
     public class UIMenuDynamicListItem : UIMenuItem, IListItem
     {
-        public enum ChangeDirection
-        {
-            Left,
-            Right
-        }
 
-        public delegate Task<string> DynamicListItemChangeCallback(UIMenuDynamicListItem sender, ChangeDirection direction);
         private string currentListItem;
 
         public string CurrentListItem
