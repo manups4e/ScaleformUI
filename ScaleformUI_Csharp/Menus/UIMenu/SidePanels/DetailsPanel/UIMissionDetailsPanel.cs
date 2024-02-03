@@ -103,7 +103,7 @@ namespace ScaleformUI.Menu
             if (ParentItem is not null && ParentItem.Parent != null && ParentItem.Parent.Visible)
             {
                 int wid = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
-                Main.scaleformUI.CallFunction("REMOVE_MISSION_DETAILS_DESC_ITEM", wid, TextureDict, TextureName);
+                Main.scaleformUI.CallFunction("REMOVE_MISSION_DETAILS_DESC_ITEM", wid, idx);
             }
         }
     }
