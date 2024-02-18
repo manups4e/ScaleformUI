@@ -17,7 +17,7 @@ If you didn't do that yet, join my discord server to talk about scripting, scale
 ### Wanna see it in action?
 **Question**: "Could you provide real-world examples of menus in action?"
 
-**Answer**: "Absolutely! Welcome to the enthralling realm of the GTA Series Arcade, where ScaleformUI showcases its prowess on one of the most distinguished servers in the FiveM universe. Join me as we explore tangible instances of menus that exemplify the zenith of gaming immersion."
+**Answer**: "Absolutely! Welcome to the enthralling realm of the **GTA Series Arcade**, where ScaleformUI showcases its prowess on one of the most distinguished servers in the FiveM universe. Join me as we explore tangible instances of menus that exemplify the zenith of gaming immersion."
 
 ### Features 🔧
 * Support for simple buttons, checkboxes and lists.
