@@ -14,6 +14,11 @@ Take a look at our Wiki here: https://github.com/manups4e/ScaleformUI/wiki (WIP)
 ### Discord
 If you didn't do that yet, join my discord server to talk about scripting, scaleformui, coding, and chilling :D https://discord.gg/KKN7kRT2vM
 
+### Wanna see it in action?
+**Question**: "Could you provide real-world examples of menus in action?"
+
+**Answer**: "Absolutely! Welcome to the enthralling realm of the **GTA Series Arcade**, where ScaleformUI showcases its prowess on one of the most distinguished servers in the FiveM universe. Join me as we explore tangible instances of menus that exemplify the zenith of gaming immersion."
+
 ### Features 🔧
 * Support for simple buttons, checkboxes and lists.
 * Support for custom banners from game sprites and your own textures.
