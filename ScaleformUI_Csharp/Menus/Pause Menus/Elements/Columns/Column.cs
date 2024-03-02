@@ -7,6 +7,7 @@ namespace ScaleformUI.PauseMenus.Elements
     public class Column
     {
         internal bool isBuilding = false;
+        internal int _maxItems = 16;
         public int ParentTab { get; internal set; }
         public PauseMenuBase Parent { get; internal set; }
         internal PaginationHandler Pagination { get; set; }

@@ -23,7 +23,7 @@ namespace ScaleformUI.Menu
         /// </summary>
         public int Index
         {
-            get { return _index % Items.Count; }
+            get { return Items.Count == 0 ? 0 : _index % Items.Count; }
             set
             {
                 if (value < 0)

@@ -191,7 +191,7 @@ public class MenuExample : BaseScript
         float dynamicvalue = 0f;
         UIMenuDynamicListItem dynamicItem = new UIMenuDynamicListItem("Dynamic List Item", "Try pressing ~INPUT_FRONTEND_LEFT~ or ~INPUT_FRONTEND_RIGHT~", dynamicvalue.ToString("F3"), async (sender, direction) =>
         {
-            if (direction == UIMenuDynamicListItem.ChangeDirection.Left) dynamicvalue -= 0.01f;
+            if (direction == ChangeDirection.Left) dynamicvalue -= 0.01f;
             else dynamicvalue += 0.01f;
             return dynamicvalue.ToString("F3");
         });
@@ -1225,6 +1225,7 @@ public class MenuExample : BaseScript
             new MissionsListColumn("COLUMN MISSIONS", SColor.HUD_Orange), // color will be ignored for PauseMenu
             //new StoreListColumn("CONTENT", SColor.HUD_Freemode),
             new MissionDetailsPanel("COLUMN INFO PANEL", SColor.HUD_Green), // color will be ignored for PauseMenu
+            //new MinimapPanel("Minimap", SColor.HUD_Freemode)
         };
         playersTab.SetUpColumns(columns);
         pauseMenu.AddTab(playersTab);
@@ -1278,7 +1279,6 @@ public class MenuExample : BaseScript
         playersTab.MissionPanel.AddItem(missionItem2);
         playersTab.MissionPanel.AddItem(missionItem3);
         playersTab.MissionPanel.AddItem(missionItem4);
-
 
         /*
 
@@ -1473,6 +1473,34 @@ public class MenuExample : BaseScript
 
                     ScaleformUI.Main.InstructionalButtons.SetInstructionalButtons(buttons);
                 }
+                else if (tab is PlayerListTab _t)
+                {
+                    List<InstructionalButton> buttons = new List<InstructionalButton>()
+                    {
+                        new InstructionalButton(Control.PhoneCancel, Game.GetGXTEntry("HUD_INPUT3")),
+                        new InstructionalButton(Control.FrontendX, "Show Map panel")
+
+                    };
+                    ScaleformUI.Main.InstructionalButtons.SetInstructionalButtons(buttons);
+                    ScaleformUI.Main.InstructionalButtons.ControlButtons[1].OnControlSelected += (button) =>
+                    {
+                        minimapLobbyEnabled = !minimapLobbyEnabled;
+                        if (minimapLobbyEnabled)
+                        {
+                            playersTab.Minimap.MinimapRoute.RouteColor = HudColor.HUD_COLOUR_RED;
+                            playersTab.Minimap.MinimapRoute.StartPoint = new MinimapRaceCheckpoint(new Vector3(-213.4f, -1426.1f, 31.3f), (int)BlipSprite.Race);
+                            playersTab.Minimap.MinimapRoute.CheckPoints.Add(new MinimapRaceCheckpoint(new Vector3(-275.88f, -1145.813f, 23.0f), (int)BlipSprite.Number1));
+                            playersTab.Minimap.MinimapRoute.CheckPoints.Add(new MinimapRaceCheckpoint(new Vector3(-105.36f, -1144.17f, 25.78f), (int)BlipSprite.Number2));
+                            playersTab.Minimap.MinimapRoute.EndPoint = new MinimapRaceCheckpoint(new Vector3(-213.4f, -1426.1f, 31.3f), (int)BlipSprite.RaceFinish);
+                        }
+                        else
+                        {
+                            playersTab.Minimap.ClearMinimap();
+                        }
+
+                        playersTab.Minimap.Enabled = minimapLobbyEnabled;
+                    };
+                }
             }
             else if (focusLevel == 0)
                 ScaleformUI.Main.InstructionalButtons.SetInstructionalButtons(menu.InstructionalButtons);
@@ -1506,20 +1534,43 @@ public class MenuExample : BaseScript
         //API.UnregisterPedheadshot(mugshot);
     }
 
+    bool minimapLobbyEnabled = false;
     public async void LobbyPauseMenuShowcase(UIMenu _menu)
     {
         UIMenu mainMenu = _menu;
         // tabview is the main menu.. the container of all the tabs.
-        MainView pauseMenu = new("Lobby Menu", "ScaleformUI for you by Manups4e!", "Detail 1", "Detail 2", "Detail 3", false);
+        MainView pauseMenu = new("Lobby Menu", "ScaleformUI for you by Manups4e!", "Detail 1", "Detail 2", "Detail 3", true);
         pauseMenu.CanPlayerCloseMenu = true;
-        pauseMenu.ShowStoreBackground = true;
+        pauseMenu.InstructionalButtons.Add(new InstructionalButton(Control.FrontendX, "Show Map panel"));
+        pauseMenu.InstructionalButtons[2].OnControlSelected += (button) =>
+        {
+            minimapLobbyEnabled = !minimapLobbyEnabled;
+            if (minimapLobbyEnabled)
+            {
+                pauseMenu.Minimap.MinimapRoute.RouteColor = HudColor.HUD_COLOUR_RED;
+                pauseMenu.Minimap.MinimapRoute.StartPoint = new MinimapRaceCheckpoint(new Vector3(-213.4f, -1426.1f, 31.3f), (int)BlipSprite.Race);
+                pauseMenu.Minimap.MinimapRoute.CheckPoints.Add(new MinimapRaceCheckpoint(new Vector3(-275.88f, -1145.813f, 23.0f), (int)BlipSprite.Number1));
+                pauseMenu.Minimap.MinimapRoute.CheckPoints.Add(new MinimapRaceCheckpoint(new Vector3(-105.36f, -1144.17f, 25.78f), (int)BlipSprite.Number2));
+                pauseMenu.Minimap.MinimapRoute.EndPoint = new MinimapRaceCheckpoint(new Vector3(-213.4f, -1426.1f, 31.3f), (int)BlipSprite.RaceFinish);
+            }
+            else
+            {
+                pauseMenu.Minimap.ClearMinimap();
+            }
+
+            pauseMenu.Minimap.Enabled = minimapLobbyEnabled;
+        };
+        //pauseMenu.ShowStoreBackground = true;
         // this is a showcase... CanPlayerCloseMenu is always defaulted to true.. if false players won't be able to close the menu!
         List<Column> columns = new List<Column>()
         {
             new SettingsListColumn("COLUMN SETTINGS", SColor.HUD_Red),
             new PlayerListColumn("COLUMN PLAYERS", SColor.HUD_Orange),
             new MissionDetailsPanel("COLUMN INFO PANEL", SColor.HUD_Green),
+            //new MinimapPanel("RACE DETAILS", SColor.HUD_Green),
+
         };
+
         pauseMenu.SetUpColumns(columns);
         int mugshot = API.RegisterPedheadshot(Game.PlayerPed.Handle);
         while (!API.IsPedheadshotReady(mugshot)) await BaseScript.Delay(1);

@@ -51,6 +51,8 @@ namespace ScaleformUI.LobbyMenu
         public PlayerListColumn PlayersColumn { get; private set; }
         public StoreListColumn StoreColumn { get; private set; }
         public MissionDetailsPanel MissionPanel { get; private set; }
+        public MinimapPanel Minimap { get; private set; }
+        private int timer = 100;
         public int FocusLevel
         {
             get => focusLevel;
@@ -83,6 +85,7 @@ namespace ScaleformUI.LobbyMenu
             };
             _newStyle = newStyle;
             _pause = Main.PauseMenu;
+            Minimap = new MinimapPanel(this);
         }
 
         public override bool Visible
@@ -93,7 +96,7 @@ namespace ScaleformUI.LobbyMenu
                 Game.IsPaused = value;
                 if (value)
                 {
-                    ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY_NO_BACKGROUND"), true, -1);
+                    ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_CORONA"), true, 0);
                     BuildPauseMenu();
                     SendPauseMenuOpen();
                     AnimpostfxPlay("PauseMenuIn", 800, true);
@@ -104,13 +107,14 @@ namespace ScaleformUI.LobbyMenu
                 }
                 else
                 {
+                    Minimap?.Dispose();
                     _pause.Dispose();
                     AnimpostfxStop("PauseMenuIn");
                     AnimpostfxPlay("PauseMenuOut", 800, false);
                     SendPauseMenuClose();
                     SetPlayerControl(Game.Player.Handle, true, 0);
                     MenuHandler.currentBase = null;
-                    ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY_NO_BACKGROUND"), false, -1);
+                    ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_CORONA"), false, 0);
                     Main.InstructionalButtons.ClearButtonList();
                 }
                 base.Visible = value;
@@ -152,7 +156,7 @@ namespace ScaleformUI.LobbyMenu
                     API.ClearPedInPauseMenu();
             }
             focusLevel = f;
-            if (listCol[focusLevel].Type == "panel")
+            if (listCol[focusLevel].Type == "panel" || listCol[focusLevel].Type == "minimap")
             {
                 if (goingLeft)
                     updateFocus(focusLevel - 1, isMouse);
@@ -267,12 +271,18 @@ namespace ScaleformUI.LobbyMenu
             {
                 case 1:
                     _pause._lobby.CallFunction("CREATE_MENU", listCol[0].Type);
+                    _pause._lobby.CallFunction("SET_COLUMN_MAXITEMS", 0, listCol[0]._maxItems);
                     break;
                 case 2:
                     _pause._lobby.CallFunction("CREATE_MENU", listCol[0].Type, listCol[1].Type);
+                    _pause._lobby.CallFunction("SET_COLUMN_MAXITEMS", 0, listCol[0]._maxItems);
+                    _pause._lobby.CallFunction("SET_COLUMN_MAXITEMS", 1, listCol[1]._maxItems);
                     break;
                 case 3:
                     _pause._lobby.CallFunction("CREATE_MENU", listCol[0].Type, listCol[1].Type, listCol[2].Type);
+                    _pause._lobby.CallFunction("SET_COLUMN_MAXITEMS", 0, listCol[0]._maxItems);
+                    _pause._lobby.CallFunction("SET_COLUMN_MAXITEMS", 1, listCol[1]._maxItems);
+                    _pause._lobby.CallFunction("SET_COLUMN_MAXITEMS", 2, listCol[2]._maxItems);
                     break;
             }
             _pause._lobby.CallFunction("SET_NEWSTYLE", _newStyle);
@@ -462,15 +472,29 @@ namespace ScaleformUI.LobbyMenu
         }
 
         private bool controller = false;
-        public override async void Draw()
+        public override void Draw()
         {
             if (!Visible || TemporarilyHidden || isBuilding) return;
+            Minimap.MaintainMap();
+            BeginScaleformMovieMethodOnFrontend("INSTRUCTIONAL_BUTTONS");
+            ScaleformMovieMethodAddParamPlayerNameString("SET_DATA_SLOT_EMPTY");
+            EndScaleformMovieMethod();
             base.Draw();
             _pause.Draw(true);
             if (_firstDrawTick)
             {
                 _pause._lobby.CallFunction("FADE_IN");
                 _firstDrawTick = false;
+                timer = GetNetworkTime();
+            }
+            if (Main.GameTime - timer < 150)
+            {
+                BeginScaleformMovieMethodOnFrontendHeader("SHOW_MENU");
+                ScaleformMovieMethodAddParamBool(false);
+                EndScaleformMovieMethod();
+                BeginScaleformMovieMethodOnFrontendHeader("SHOW_HEADING_DETAILS");
+                ScaleformMovieMethodAddParamBool(false);
+                EndScaleformMovieMethod();
             }
         }
 
@@ -810,15 +834,23 @@ namespace ScaleformUI.LobbyMenu
                     if (listCol[0].Type == "players" || PlayersColumn.Items[PlayersColumn.CurrentSelection].KeepPanelVisible)
                     {
                         if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
+                        {
                             PlayersColumn.Items[PlayersColumn.CurrentSelection].CreateClonedPed();
+                        }
                         else
+                        {
                             ClearPedInPauseMenu();
+                        }
                     }
                     else
+                    {
                         ClearPedInPauseMenu();
+                    }
                 }
                 else
+                {
                     ClearPedInPauseMenu();
+                }
             }
 
             switch (listCol[focusLevel].Type)
@@ -885,6 +917,9 @@ namespace ScaleformUI.LobbyMenu
                 case "panel":
                     updateFocus(focusLevel - 1);
                     break;
+                case "minimap":
+                    updateFocus(focusLevel - 1);
+                    break;
                 case "players":
                     if (_newStyle)
                     {
@@ -926,15 +961,25 @@ namespace ScaleformUI.LobbyMenu
                     if (listCol[0].Type == "players" || PlayersColumn.Items[PlayersColumn.CurrentSelection].KeepPanelVisible)
                     {
                         if (PlayersColumn.Items[PlayersColumn.CurrentSelection].ClonePed != null)
+                        {
                             PlayersColumn.Items[PlayersColumn.CurrentSelection].CreateClonedPed();
+                        }
                         else
+                        {
                             ClearPedInPauseMenu();
+                        }
+
                     }
                     else
+                    {
                         ClearPedInPauseMenu();
+                    }
+
                 }
                 else
+                {
                     ClearPedInPauseMenu();
+                }
             }
             switch (listCol[focusLevel].Type)
             {
@@ -998,6 +1043,9 @@ namespace ScaleformUI.LobbyMenu
                     }
                     break;
                 case "panel":
+                    updateFocus(focusLevel + 1);
+                    break;
+                case "minimap":
                     updateFocus(focusLevel + 1);
                     break;
                 case "players":

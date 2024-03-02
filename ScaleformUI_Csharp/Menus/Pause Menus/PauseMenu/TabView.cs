@@ -2,6 +2,7 @@
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenus;
 using ScaleformUI.PauseMenus.Elements.Items;
+using ScaleformUI.PauseMenus.Elements.Panels;
 using ScaleformUI.Scaleforms;
 using static CitizenFX.Core.Native.API;
 
@@ -37,6 +38,9 @@ namespace ScaleformUI.PauseMenu
         public bool SetHeaderDynamicWidth { get; set; }
         public List<BaseTab> Tabs { get; set; }
         private int index;
+        private bool _firstDrawTick = false;
+        private int timer = 100;
+
         public int LeftItemIndex
         {
             get => leftItemIndex;
@@ -120,25 +124,32 @@ namespace ScaleformUI.PauseMenu
                 Game.IsPaused = value;
                 if (value)
                 {
-                    ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY_NO_BACKGROUND"), true, -1);
+                    ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_CORONA"), true, 1);
+                    BuildPauseMenu();
                     SendPauseMenuOpen();
                     AnimpostfxPlay("PauseMenuIn", 800, true);
                     Main.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
                     SetPlayerControl(Game.Player.Handle, false, 0);
-                    isBuilding = true;
-                    BuildPauseMenu();
+                    _firstDrawTick = true;
                     MenuHandler.currentBase = this;
                 }
                 else
                 {
+                    foreach (BaseTab tab in Tabs)
+                    {
+                        if (tab is PlayerListTab t)
+                        {
+                            t.Minimap?.Dispose();
+                        }
+                    }
                     _pause.Dispose();
                     AnimpostfxStop("PauseMenuIn");
                     AnimpostfxPlay("PauseMenuOut", 800, false);
                     SendPauseMenuClose();
                     SetPlayerControl(Game.Player.Handle, true, 0);
                     MenuHandler.currentBase = null;
+                    ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_CORONA"), false, 1);
                     Main.InstructionalButtons.ClearButtonList();
-                    ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_EMPTY_NO_BACKGROUND"), false, -1);
                 }
                 base.Visible = value;
                 _visible = value;
@@ -159,6 +170,10 @@ namespace ScaleformUI.PauseMenu
 
         public void AddTab(BaseTab item)
         {
+            if (item is PlayerListTab t)
+            {
+                t.Minimap = new MinimapPanel(this);
+            }
             item.Parent = this;
             Tabs.Add(item);
         }
@@ -188,6 +203,7 @@ namespace ScaleformUI.PauseMenu
 
         public async void BuildPauseMenu()
         {
+            isBuilding = true;
             ShowHeader();
             foreach (BaseTab tab in Tabs)
             {
@@ -311,12 +327,18 @@ namespace ScaleformUI.PauseMenu
                             {
                                 case 1:
                                     _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, plTab.listCol[0].Type);
+                                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", tabIndex, 0, plTab.listCol[0]._maxItems);
                                     break;
                                 case 2:
                                     _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, plTab.listCol[0].Type, plTab.listCol[1].Type);
+                                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", tabIndex, 0, plTab.listCol[0]._maxItems);
+                                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", tabIndex, 1, plTab.listCol[1]._maxItems);
                                     break;
                                 case 3:
                                     _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, plTab.listCol[0].Type, plTab.listCol[1].Type, plTab.listCol[2].Type);
+                                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", tabIndex, 0, plTab.listCol[0]._maxItems);
+                                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", tabIndex, 1, plTab.listCol[1]._maxItems);
+                                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", tabIndex, 2, plTab.listCol[2]._maxItems);
                                     break;
                             }
                             _pause._pause.CallFunction("SET_PLAYERS_TAB_NEWSTYLE", tabIndex, plTab._newStyle);
@@ -513,12 +535,30 @@ namespace ScaleformUI.PauseMenu
         }
 
         private bool controller = false;
-        public override async void Draw()
+        public override void Draw()
         {
             if (!Visible || TemporarilyHidden || isBuilding) return;
+            BeginScaleformMovieMethodOnFrontend("INSTRUCTIONAL_BUTTONS");
+            ScaleformMovieMethodAddParamPlayerNameString("SET_DATA_SLOT_EMPTY");
+            if (Tabs[Index] is PlayerListTab tab)
+            {
+                tab.Minimap.MaintainMap();
+            }
             base.Draw();
             _pause.Draw();
             UpdateKeymapItems();
+            if (_firstDrawTick)
+            {
+                _pause._lobby.CallFunction("FADE_IN");
+                _firstDrawTick = false;
+                timer = GetNetworkTime();
+            }
+            BeginScaleformMovieMethodOnFrontendHeader("SHOW_MENU");
+            ScaleformMovieMethodAddParamBool(false);
+            EndScaleformMovieMethod();
+            BeginScaleformMovieMethodOnFrontendHeader("SHOW_HEADING_DETAILS");
+            ScaleformMovieMethodAddParamBool(false);
+            EndScaleformMovieMethod();
         }
 
         private void UpdateKeymapItems()
@@ -1206,10 +1246,13 @@ namespace ScaleformUI.PauseMenu
                                 Index = itemId;
                                 if (Tabs[Index] is PlayerListTab tab)
                                 {
-                                    if (tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].ClonePed != null)
-                                        tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].CreateClonedPed();
-                                    else
-                                        ClearPedInPauseMenu();
+                                    if (tab.PlayersColumn != null)
+                                    {
+                                        if (tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].ClonePed != null)
+                                            tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].CreateClonedPed();
+                                        else
+                                            ClearPedInPauseMenu();
+                                    }
                                 }
                                 else
                                     ClearPedInPauseMenu();

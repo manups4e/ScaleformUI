@@ -35,6 +35,7 @@ namespace ScaleformUI.PauseMenu
         public MissionsListColumn MissionsColumn { get; private set; }
         public StoreListColumn StoreColumn { get; private set; }
         public MissionDetailsPanel MissionPanel { get; private set; }
+        public MinimapPanel Minimap { get; internal set; }
         public PlayerListTab(string name, SColor color, bool newStyle = true) : base(name, color)
         {
             _type = V;

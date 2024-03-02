@@ -18,13 +18,14 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
 
         public ScrollingType ScrollingType { get => Pagination.scrollType; set => Pagination.scrollType = value; }
 
-        public PlayerListColumn(string label, SColor color, ScrollingType scrollType = ScrollingType.CLASSIC) : base(label, color)
+        public PlayerListColumn(string label, SColor color, ScrollingType scrollType = ScrollingType.CLASSIC, int maxItems = 16) : base(label, color)
         {
             Items = new List<LobbyItem>();
             Type = "players";
+            _maxItems = maxItems;
             Pagination = new PaginationHandler
             {
-                ItemsPerPage = 12,
+                ItemsPerPage = _maxItems,
                 scrollType = scrollType
             };
         }

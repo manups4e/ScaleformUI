@@ -36,8 +36,7 @@ namespace ScaleformUI.PauseMenus.Elements.Items
         /// </summary>
         public bool KeepPanelVisible
         {
-            get =>
-                keepPanelVisible;
+            get => keepPanelVisible;
             set
             {
                 keepPanelVisible = value;

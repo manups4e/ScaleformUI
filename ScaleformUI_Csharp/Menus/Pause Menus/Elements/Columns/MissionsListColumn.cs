@@ -15,13 +15,14 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
         private List<MissionItem> _unfilteredItems;
         public ScrollingType ScrollingType { get => Pagination.scrollType; set => Pagination.scrollType = value; }
         public event MissionItemSelected OnMissionItemActivated;
-        public MissionsListColumn(string label, SColor color, ScrollingType scrollType = ScrollingType.CLASSIC) : base(label, color)
+        public MissionsListColumn(string label, SColor color, ScrollingType scrollType = ScrollingType.CLASSIC, int maxItems = 16) : base(label, color)
         {
             Items = new List<MissionItem>();
             Type = "missions";
+            _maxItems = maxItems;
             Pagination = new PaginationHandler
             {
-                ItemsPerPage = 12,
+                ItemsPerPage = _maxItems,
                 scrollType = scrollType
             };
         }

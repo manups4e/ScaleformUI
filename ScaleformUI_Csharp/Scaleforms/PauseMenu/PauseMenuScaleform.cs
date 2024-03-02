@@ -13,7 +13,7 @@ namespace ScaleformUI.Scaleforms
         public ScaleformWideScreen _pauseBG;
         internal bool BGEnabled;
         private bool _visible;
-        internal bool Loaded => _header is not null && _header.IsLoaded && _pause is not null && _pause.IsLoaded;
+        internal bool Loaded => _header is not null && _header.IsLoaded && _pause is not null && _pause.IsLoaded && _lobby is not null && _lobby.IsLoaded;
         public bool Visible { get => _visible; set => _visible = value; }
 
         public PauseMenuScaleform()
@@ -260,7 +260,7 @@ namespace ScaleformUI.Scaleforms
 
         public void Draw(bool isLobby = false)
         {
-            if (_visible && GetCurrentFrontendMenuVersion() == -2060115030)
+            if (_visible && GetCurrentFrontendMenuVersion() == GetHashKey("FE_MENU_VERSION_CORONA"))
             {
                 SetScriptGfxDrawBehindPausemenu(true);
                 if (BGEnabled)

@@ -83,6 +83,7 @@ namespace ScaleformUI
                         newer.Enabled3DAnimations = old.Enabled3DAnimations;
                         newer.fadingTime = old.fadingTime;
                         newer.SetMouse(old.MouseControlsEnabled, old.MouseEdgeEnabled, old.MouseWheelControlEnabled, old.ResetCursorOnOpen, old.leftClickEnabled);
+                        newer.SubtitleColor = old.SubtitleColor;
                     }
                     newer.CurrentSelection = newMenuCurrentSelection != 0 ? newMenuCurrentSelection : 0;
                 }
