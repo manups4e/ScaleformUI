@@ -79,12 +79,16 @@ end
 
 ---Load the pause menu scaleforms
 function PauseMenu:Load()
-    if (self._header ~= nil and self._pause ~= nil and self._lobby ~= nil) then return end
-    self._header = Scaleform.Request("pausemenuheader")
-    self._pause = Scaleform.Request("pausemenu")
-    self._lobby = Scaleform.Request("lobbymenu")
-    self._pauseBG = Scaleform.Request("store_background")
-    self.Loaded = self._header:IsLoaded() and self._pause:IsLoaded() and self._lobby:IsLoaded()
+    if (self._header ~= nil and self._pause ~= nil and self._lobby ~= nil and self._pauseBG ~= nil) then return end
+    self._header = Scaleform.RequestWidescreen("pausemenuheader")
+    self._pause = Scaleform.RequestWidescreen("pausemenu")
+    self._lobby = Scaleform.RequestWidescreen("lobbymenu")
+    self._pauseBG = Scaleform.RequestWidescreen("store_background")
+    self.Loaded = self._header:IsLoaded() and self._pause:IsLoaded() and self._lobby:IsLoaded() and self._pauseBG:IsLoaded()
+end
+
+function PauseMenu:IsLoaded()
+    return self._header:IsLoaded() and self._pause:IsLoaded() and self._lobby:IsLoaded() and self._pauseBG:IsLoaded()
 end
 
 ---Set the header title and subtitle text of the pause menu header
@@ -457,15 +461,28 @@ function PauseMenu:Dispose()
     self._pause:CallFunction("CLEAR_ALL")
     self._header:CallFunction("CLEAR_ALL")
     self._lobby:CallFunction("CLEAR_ALL")
+    self._pause:Dispose()
+    self._header:Dispose()
+    self._lobby:Dispose()
+    --self._pauseBG:Dispose()
     self._visible = false
 end
 
 ---Draw the pause menu
----@param isLobby boolean?
+---@param isLobby boolean|nil
 function PauseMenu:Draw(isLobby)
     if isLobby == nil then isLobby = false end
-    if self._visible and GetCurrentFrontendMenuVersion() == -2060115030 then
+    if self._visible and GetCurrentFrontendMenuVersion() == `FE_MENU_VERSION_CORONA` then
         SetScriptGfxDrawBehindPausemenu(true)
+        BeginScaleformMovieMethodOnFrontend("INSTRUCTIONAL_BUTTONS");
+        ScaleformMovieMethodAddParamPlayerNameString("SET_DATA_SLOT_EMPTY");
+        EndScaleformMovieMethod()
+        BeginScaleformMovieMethodOnFrontendHeader("SHOW_MENU");
+        ScaleformMovieMethodAddParamBool(false);
+        EndScaleformMovieMethod();
+        BeginScaleformMovieMethodOnFrontendHeader("SHOW_HEADING_DETAILS");
+        ScaleformMovieMethodAddParamBool(false);
+        EndScaleformMovieMethod();
         if IsUsingKeyboard(2) then
             SetMouseCursorActiveThisFrame()
         end

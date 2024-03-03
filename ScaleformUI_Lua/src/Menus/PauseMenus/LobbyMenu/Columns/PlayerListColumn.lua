@@ -21,9 +21,9 @@ end
 ---@param label string
 ---@param color number|SColor
 ---@return table
-function PlayerListColumn.New(label, color, scrollType)
+function PlayerListColumn.New(label, color, scrollType,_maxItems)
     local handler = PaginationHandler.New()
-    handler:ItemsPerPage(12)
+    handler:ItemsPerPage(_maxItems or 16)
     handler.scrollType = scrollType or MenuScrollingType.CLASSIC
     local _data = {
         _isBuilding = false,

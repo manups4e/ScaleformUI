@@ -36,6 +36,8 @@ function TabView.New(title, subtitle, sideTop, sideMiddle, sideBottom)
         _timer = 0,
         _canHe = true,
         setHeaderDynamicWidth = false,
+        _firstDrawTick = false,
+        timer = 100,
         InstructionalButtons = {
             InstructionalButton.New(GetLabelText("HUD_INPUT2"), -1, 176, 176, -1),
             InstructionalButton.New(GetLabelText("HUD_INPUT3"), -1, 177, 177, -1),
@@ -121,16 +123,23 @@ function TabView:Visible(visible)
         if visible == true then
             if not IsPauseMenuActive() then
                 PlaySoundFrontend(self.SoundId, "Hit_In", "PLAYER_SWITCH_CUSTOM_SOUNDSET", true)
-                ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
+                ActivateFrontendMenu(`FE_MENU_VERSION_CORONA`, true, 0)
                 self:BuildPauseMenu()
-                MenuHandler._currentPauseMenu = self
-                MenuHandler.ableToDraw = true;
                 self.OnPauseMenuOpen(self)
                 AnimpostfxPlay("PauseMenuIn", 800, true)
+                self._firstDrawTick = true
                 ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
                 SetPlayerControl(PlayerId(), false, 0)
+                MenuHandler._currentPauseMenu = self
+                MenuHandler.ableToDraw = true;
             end
         else
+            for k,tab in pairs (self.Tabs) do
+                local type, subtype = tab()
+                if subtype == "PlayerListTab" then
+                    tab.Minimap:Dispose()
+                end
+            end
             MenuHandler.ableToDraw = false
             MenuHandler._currentPauseMenu = nil
             ScaleformUI.Scaleforms._pauseMenu:Dispose()
@@ -141,7 +150,7 @@ function TabView:Visible(visible)
             SetPlayerControl(PlayerId(), true, 0)
             if IsPauseMenuActive() then
                 PlaySoundFrontend(self.SoundId, "Hit_Out", "PLAYER_SWITCH_CUSTOM_SOUNDSET", true)
-                ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, false, -1)
+                ActivateFrontendMenu(`FE_MENU_VERSION_CORONA`, false, 0)
             end
             SetFrontendActive(false)
         end
@@ -152,6 +161,10 @@ end
 
 function TabView:AddTab(item)
     item.Base.Parent = self
+    local type, subtype = item()
+    if subtype == "PlayerListTab" then
+        item.Minimap = MinimapPanel.New(self)
+    end
     self.Tabs[#self.Tabs + 1] = item
 end
 
@@ -199,6 +212,7 @@ end
 
 function TabView:BuildPauseMenu()
     self._isBuilding = true
+    ScaleformUI.Scaleforms._pauseMenu.BGEnabled = false
     self:ShowHeader()
     for k, tab in pairs(self.Tabs) do
         local tabIndex = k - 1
@@ -285,10 +299,16 @@ function TabView:BuildPauseMenu()
             local count = #tab.listCol
             if count == 1 then
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, tab.listCol[1].Type)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", tabIndex, 0, tab.listCol[1].Pagination:ItemsPerPage())
             elseif count == 2 then
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, tab.listCol[1].Type, tab.listCol[2].Type)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", tabIndex, 0, tab.listCol[1].Pagination:ItemsPerPage())
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", tabIndex, 1, tab.listCol[2].Pagination:ItemsPerPage())
             elseif count == 3 then
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, tab.listCol[1].Type, tab.listCol[2].Type, tab.listCol[3].Type)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", tabIndex, 0, tab.listCol[1].Pagination:ItemsPerPage())
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", tabIndex, 1, tab.listCol[2].Pagination:ItemsPerPage())
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", tabIndex, 2, tab.listCol[3].Pagination:ItemsPerPage())
             end
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_NEWSTYLE", tabIndex, tab._newStyle)
             for i,col in pairs(tab.listCol) do
@@ -528,13 +548,18 @@ function TabView:Draw()
     if not self:Visible() or self.TemporarilyHidden or self._isBuilding then
         return
     end
+    local tab = self.Tabs[self.index]
+    local type, subtype = tab()
+    if subtype == "PlayerListTab" then
+        tab.Minimap:MaintainMap()
+    end
     DisableControlAction(0, 199, true)
     DisableControlAction(0, 200, true)
     DisableControlAction(1, 199, true)
     DisableControlAction(1, 200, true)
     DisableControlAction(2, 199, true)
     DisableControlAction(2, 200, true)
-    ScaleformUI.Scaleforms._pauseMenu:Draw()
+    ScaleformUI.Scaleforms._pauseMenu:Draw(false)
     self:UpdateKeymapItems()
 end
 
@@ -999,10 +1024,12 @@ function TabView:ProcessMouse()
                     local _, subT = tab()
                     if subT == "PlayerListTab" then
                         tab:updateFocus(tab._focus)
-                        if tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed ~= nil and tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
-                            tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu()
-                        else
-                            ClearPedInPauseMenu()
+                        if tab.PlayersColumn ~= nil then
+                            if tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed ~= nil and tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()].ClonePed ~= 0 then
+                                tab.PlayersColumn.Items[tab.PlayersColumn:CurrentSelection()]:AddPedToPauseMenu()
+                            else
+                                ClearPedInPauseMenu()
+                            end
                         end
                     else
                         ClearPedInPauseMenu()

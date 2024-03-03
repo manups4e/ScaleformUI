@@ -38,6 +38,8 @@ function MainView.New(title, subtitle, sideTop, sideMid, sideBot, newStyle)
         MissionsColumn = nil --[[@type MissionListColumn]],
         StoreColumn = nil --[[@type StoreListColumn]],
         MissionPanel = nil --[[@type MissionDetailsPanel]],
+        Minimap = MinimapPanel.New(nil), --[[@type MinimapPanel]]
+        timer = 100,
         _showStoreBG = false,
         _storeBGSpeed = 240,
         _focus = 1,
@@ -71,7 +73,9 @@ function MainView.New(title, subtitle, sideTop, sideMid, sideBot, newStyle)
         end
         ]]
     }
-    return setmetatable(_data, MainView)
+    local meta = setmetatable(_data, MainView)
+    meta.Minimap.Parent = meta
+    return meta
 end
 
 function MainView:Focus()
@@ -110,7 +114,7 @@ function MainView:Visible(visible)
             if not IsPauseMenuActive() then
                 self._focus = 1
                 PlaySoundFrontend(self.SoundId, "Hit_In", "PLAYER_SWITCH_CUSTOM_SOUNDSET", true)
-                ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
+                ActivateFrontendMenu(`FE_MENU_VERSION_CORONA`, true, 0)
                 self:BuildPauseMenu()
                 self.OnLobbyMenuOpen(self)
                 AnimpostfxPlay("PauseMenuIn", 800, true)
@@ -118,10 +122,11 @@ function MainView:Visible(visible)
                 SetPlayerControl(PlayerId(), false, 0)
                 self._firstTick = true
                 MenuHandler._currentPauseMenu = self
-                MenuHandler.ableToDraw = true;
+                MenuHandler.ableToDraw = true
             end
         else
-            MenuHandler.ableToDraw = false;
+            self.Minimap:Dispose()
+            MenuHandler.ableToDraw = false
             MenuHandler._currentPauseMenu = nil
             ScaleformUI.Scaleforms._pauseMenu:Dispose()
             ScaleformUI.Scaleforms.InstructionalButtons:ClearButtonList()
@@ -131,7 +136,7 @@ function MainView:Visible(visible)
             SetPlayerControl(PlayerId(), true, 0)
             if IsPauseMenuActive() then
                 PlaySoundFrontend(self.SoundId, "Hit_Out", "PLAYER_SWITCH_CUSTOM_SOUNDSET", true)
-                ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, false, -1)
+                ActivateFrontendMenu(`FE_MENU_VERSION_CORONA`, false, 0)
             end
             SetFrontendActive(false)
         end
@@ -259,8 +264,8 @@ function MainView:ShowHeader()
     ScaleformUI.Scaleforms._pauseMenu:AddLobbyMenuTab(self.listCol[1]._label, 2, self.listCol[1]._color)
     ScaleformUI.Scaleforms._pauseMenu:AddLobbyMenuTab(self.listCol[2]._label, 2, self.listCol[2]._color)
     ScaleformUI.Scaleforms._pauseMenu:AddLobbyMenuTab(self.listCol[3]._label, 2, self.listCol[3]._color)
-    ScaleformUI.Scaleforms._pauseMenu._header:CallFunction("SET_ALL_HIGHLIGHTS", true, 117);
-    ScaleformUI.Scaleforms._pauseMenu._header:CallFunction("ENABLE_DYNAMIC_WIDTH", false);
+    ScaleformUI.Scaleforms._pauseMenu._header:CallFunction("SET_ALL_HIGHLIGHTS", true, 117)
+    ScaleformUI.Scaleforms._pauseMenu._header:CallFunction("ENABLE_DYNAMIC_WIDTH", false)
     self._loaded = true
 end
 
@@ -271,10 +276,16 @@ function MainView:BuildPauseMenu()
     ScaleformUI.Scaleforms._pauseMenu._pauseBG:CallFunction("ANIMATE_BACKGROUND", self:StoreBackgroundAnimationSpeed())
     if #self.listCol == 1 then
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CREATE_MENU", self.listCol[1].Type)
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_COLUMN_MAXITEMS", 0, self.listCol[1].Pagination:ItemsPerPage())
     elseif #self.listCol == 2 then
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CREATE_MENU", self.listCol[1].Type, self.listCol[2].Type)
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_COLUMN_MAXITEMS", 0, self.listCol[1].Pagination:ItemsPerPage())
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_COLUMN_MAXITEMS", 1, self.listCol[2].Pagination:ItemsPerPage())
     elseif #self.listCol == 3 then
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CREATE_MENU", self.listCol[1].Type, self.listCol[2].Type, self.listCol[3].Type)
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_COLUMN_MAXITEMS", 0, self.listCol[1].Pagination:ItemsPerPage())
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_COLUMN_MAXITEMS", 1, self.listCol[2].Pagination:ItemsPerPage())
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_COLUMN_MAXITEMS", 2, self.listCol[3].Pagination:ItemsPerPage())
     end
     ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_NEWSTYLE", self._newStyle)
 
@@ -289,8 +300,8 @@ function MainView:BuildPauseMenu()
         elseif col.Type == "store" then
             self:buildStore()
         elseif col.Type == "panel" then
-            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_MISSION_PANEL_PICTURE", self.MissionPanel.TextureDict, self.MissionPanel.TextureName);
-            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSION_PANEL_TITLE", self.MissionPanel:Title());
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_MISSION_PANEL_PICTURE", self.MissionPanel.TextureDict, self.MissionPanel.TextureName)
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSION_PANEL_TITLE", self.MissionPanel:Title())
             for k, item in pairs(self.MissionPanel.Items) do
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_MISSION_PANEL_ITEM", item.Type, item.TextLeft,
                     item.TextRight, item.Icon or 0, item.IconColor or SColor.HUD_Pure_white, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID)
@@ -485,6 +496,7 @@ function MainView:Draw()
     if not self:Visible() or self.TemporarilyHidden or self._isBuilding then
         return
     end
+    self.Minimap:MaintainMap();
     DisableControlAction(0, 199, true)
     DisableControlAction(0, 200, true)
     DisableControlAction(1, 199, true)
@@ -494,6 +506,7 @@ function MainView:Draw()
     ScaleformUI.Scaleforms._pauseMenu:Draw(true)
     if self._firstTick then
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("FADE_IN")
+        self.timer = GetNetworkTime()
         self._firstTick = false
     end
 end
@@ -510,8 +523,7 @@ function MainView:ProcessMouse()
     SetInputExclusive(2, 237)
     SetInputExclusive(2, 238)
 
-    success, event_type, context, item_id = GetScaleformMovieCursorSelection(ScaleformUI.Scaleforms._pauseMenu._lobby
-        .handle)
+    success, event_type, context, item_id = GetScaleformMovieCursorSelection(ScaleformUI.Scaleforms._pauseMenu._lobby.handle)
     if success then
         if event_type == 5 then
             local foc = self:Focus()
@@ -738,8 +750,8 @@ function MainView:GoLeft()
     end
 
     if self.listCol[self._focus].Type == "settings" then
-        ClearPedInPauseMenu();
-        local item = self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()];
+        ClearPedInPauseMenu()
+        local item = self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]
         if not item:Enabled() then
             if self._newStyle then
                 item:Selected(false)
@@ -824,8 +836,8 @@ function MainView:GoRight()
     end
 
     if self.listCol[self._focus].Type == "settings" then
-        ClearPedInPauseMenu();
-        local item = self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()];
+        ClearPedInPauseMenu()
+        local item = self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]
         if not item:Enabled() then
             if self._newStyle then
                 item:Selected(false)

@@ -94,6 +94,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         buildingAnimation = MenuBuildingAnimation.NONE,
         scrollingType = MenuScrollingType.CLASSIC,
         descFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY,
+        SubtitleColor = HudColours.NONE,
         leftClickEnabled = false,
         Extra = {},
         Description = {},
@@ -215,8 +216,13 @@ function UIMenu:Title(title)
     else
         self._Title = title
         if self:Visible() then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_TITLE_SUBTITLE", self._Title, self._Subtitle,
+            if self.SubtitleColor == HudColours.NONE then
+                ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_TITLE_SUBTITLE", self._Title, self._Subtitle,
                 self.alternativeTitle)
+            else
+                ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_TITLE_SUBTITLE", self._Title, "~HC_" .. self.SubtitleColor .. "~" .. self._Subtitle,
+                self.alternativeTitle)
+            end
         end
     end
 end
@@ -238,8 +244,13 @@ function UIMenu:Subtitle(sub)
     else
         self._Subtitle = sub
         if self:Visible() then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_TITLE_SUBTITLE", self._Title, self._Subtitle,
+            if self.SubtitleColor == HudColours.NONE then
+                ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_TITLE_SUBTITLE", self._Title, self._Subtitle,
                 self.alternativeTitle)
+            else
+                ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_TITLE_SUBTITLE", self._Title, "~HC_" .. self.SubtitleColor .. "~" .. self._Subtitle,
+                self.alternativeTitle)
+            end
         end
     end
 end
@@ -337,6 +348,48 @@ function UIMenu:MouseControlsEnabled(enabled)
         end
     end
     return self.Settings.MouseControlsEnabled
+end
+
+function UIMenu:RefreshMenu(keepIndex)
+    if keepIndex == nil then keepIndex = false end
+    if (self:Visible()) then
+        local index = self:CurrentSelection()
+        self.BannerisBuilding = true
+        ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ITEMS")
+        for k,it in pairs (self.Items) do
+             it:Selected(false)
+        end
+        if (#self.Items > 0) then
+            self.isBuilding = true
+            local max = self.Pagination:ItemsPerPage()
+            if (self.Items.Count < max) then
+                max = self.Items.Count
+            end
+
+            self.Pagination:MinItem(self.Pagination:CurrentPageStartIndex())
+            if (self.Pagination.scrollType == MenuScrollingType.CLASSIC and self.Pagination:TotalPages() > 1) then
+                local missingItems = self.Pagination:GetMissingItems()
+                if (missingItems > 0) then
+                    self.Pagination:ScaleformIndex(self.Pagination:GetPageIndexFromMenuIndex(self.Pagination:CurrentPageEndIndex()) + missingItems)
+                    self.Pagination:MinItem(self.Pagination:CurrentPageStartIndex() - missingItems)
+                end
+            end
+            self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
+
+            for i = 1, max,1 do
+                if (not self:Visible()) then return end
+                self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
+            end
+            self.Pagination:ScaleformIndex(self.Pagination:GetScaleformIndex(CurrentSelection))
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", self:CurrentSelection(), #self.Items)
+            self.isBuilding = false
+            if keepIndex then
+                self:CurrentSelection(index)
+            else
+                self:CurrentSelection(0)
+            end
+        end
+    end
 end
 
 ---SetBannerSprite
@@ -471,15 +524,16 @@ function UIMenu:CurrentSelection(value)
         end
 
         self.Items[self:CurrentSelection()]:Selected(false)
-        self.Pagination:CurrentMenuIndex(value);
-        self.Pagination:CurrentPage(self.Pagination:GetPage(self.Pagination:CurrentMenuIndex()));
-        self.Pagination:CurrentPageIndex(value);
-        self.Pagination:ScaleformIndex(self.Pagination:GetScaleformIndex(self.Pagination:CurrentMenuIndex()));
+        self.Pagination:CurrentMenuIndex(value)
+        self.Pagination:CurrentPage(self.Pagination:GetPage(self.Pagination:CurrentMenuIndex()))
+        self.Pagination:CurrentPageIndex(value)
+        self.Pagination:ScaleformIndex(self.Pagination:GetScaleformIndex(self.Pagination:CurrentMenuIndex()))
         self.Items[self:CurrentSelection()]:Selected(true)
         if self:Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM",
                 self.Pagination:GetScaleformIndex(self.Pagination:CurrentMenuIndex()))
-        end
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", self:CurrentSelection(), #self.Items)
+            end
     else
         return self.Pagination:CurrentMenuIndex()
     end
@@ -517,6 +571,28 @@ function UIMenu:AddItem(item)
     item:SetParentMenu(self)
     self.Items[#self.Items + 1] = item
     self.Pagination:TotalItems(#self.Items)
+end
+
+function UIMenu:AddItemAt(item, index)
+    assert(not self._itemless, "ScaleformUI - You cannot add items to an itemless menu, only a long description")
+    if item() ~= "UIMenuItem" then
+        return
+    end
+    item:SetParentMenu(self)
+    table.insert(this.Items, index, item)
+    self.Pagination:TotalItems(#self.Items)
+    if self:Visible() then
+        if self.Pagination:IsItemVisible(index) then
+            self:RefreshMenu();
+        end
+        local it = self.Items[self:CurrentSelection()]
+        local t, subt = it()
+        if subt == "UIMenuSeparatorItem" then
+            if it.Jumpable then
+                self:GoDown();
+            end
+        end
+    end
 end
 
 ---RemoveItemAt
@@ -581,7 +657,7 @@ function UIMenu:MouseSettings(enableMouseControls, enableEdge, isWheelEnabled, r
     self:MouseEdgeEnabled(enableEdge)
     self:MouseWheelControlEnabled(isWheelEnabled)
     self.Settings.ResetCursorOnOpen = resetCursorOnOpen
-    self.leftClickEnabled = leftClickSelect;
+    self.leftClickEnabled = leftClickSelect
 end
 
 ---Visible
@@ -631,9 +707,13 @@ function UIMenu:BuildUpMenuAsync(itemsOnly)
     self._isBuilding = true
 
     if self._itemless then
-        BeginScaleformMovieMethod(ScaleformUI.Scaleforms._ui.handle, "CREATE_MENU");
+        BeginScaleformMovieMethod(ScaleformUI.Scaleforms._ui.handle, "CREATE_MENU")
         PushScaleformMovieMethodParameterString(self._Title)
-        PushScaleformMovieMethodParameterString(self._Subtitle)
+        if self.SubtitleColor == HudColours.NONE then
+            PushScaleformMovieMethodParameterString(self._Subtitle)
+        else
+            PushScaleformMovieMethodParameterString("~HC_" .. self.SubtitleColor .. "~" .. self._Subtitle)
+        end
         PushScaleformMovieMethodParameterFloat(self.Position.x)
         PushScaleformMovieMethodParameterFloat(self.Position.y)
         PushScaleformMovieMethodParameterBool(self.AlternativeTitle)
@@ -649,22 +729,30 @@ function UIMenu:BuildUpMenuAsync(itemsOnly)
         PushScaleformMovieFunctionParameterInt(self.descFont.FontID)
         PushScaleformMovieMethodParameterFloat(self.fadingTime)
         PushScaleformMovieFunctionParameterBool(true)
-        BeginTextCommandScaleformString("ScaleformUILongDesc");
+        BeginTextCommandScaleformString("ScaleformUILongDesc")
         EndTextCommandScaleformString_2()
         EndScaleformMovieMethod()
         self:FadeInMenu()
-        self._isBuilding = false;
-        return;
+        self._isBuilding = false
+        return
 
     end
 
     if not itemsOnly then
         while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
-        ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", self._Title, self._Subtitle, self.Position.x,
-            self.Position.y,
-            self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, self:AnimationEnabled(),
-            self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName,
-            self.descFont.FontID, self.fadingTime)
+        if self.SubtitleColor == HudColours.NONE then
+            ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", self._Title, self._Subtitle, self.Position.x,
+                self.Position.y,
+                self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, self:AnimationEnabled(),
+                self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName,
+                self.descFont.FontID, self.fadingTime)
+        else
+            ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", self._Title, "~HC_" .. self.SubtitleColor .. "~" .. self._Subtitle, self.Position.x,
+                self.Position.y,
+                self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, self:AnimationEnabled(),
+                self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName,
+                self.descFont.FontID, self.fadingTime)
+        end
         if #self.Windows > 0 then
             for w_id, window in pairs(self.Windows) do
                 local Type, SubType = window()
@@ -713,12 +801,9 @@ function UIMenu:BuildUpMenuAsync(itemsOnly)
 
     self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
 
-    local i=1
-    while i <= max do
-        Citizen.Wait(0)
-        if not self:Visible() then return end
+    for i = 1, max,1 do
+        if (not self:Visible()) then return end
         self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
-        i=i+1
     end
 
     self.Pagination:ScaleformIndex(self.Pagination:GetScaleformIndex(self:CurrentSelection()))
@@ -767,7 +852,7 @@ function UIMenu:_itemCreation(page, pageIndex, before, overflow)
     local textEntry = "menu_" .. (BreadcrumbsHandler:CurrentDepth() + 1) .. "_desc_" .. menuIndex
     AddTextEntry(textEntry, item:Description())
 
-    BeginScaleformMovieMethod(ScaleformUI.Scaleforms._ui.handle, "ADD_ITEM");
+    BeginScaleformMovieMethod(ScaleformUI.Scaleforms._ui.handle, "ADD_ITEM")
     PushScaleformMovieFunctionParameterBool(before)
     PushScaleformMovieFunctionParameterInt(item.ItemId)
     PushScaleformMovieFunctionParameterInt(menuIndex)
@@ -776,7 +861,7 @@ function UIMenu:_itemCreation(page, pageIndex, before, overflow)
     else
         PushScaleformMovieMethodParameterString(item._formatLeftLabel)
     end
-    BeginTextCommandScaleformString(textEntry);
+    BeginTextCommandScaleformString(textEntry)
     EndTextCommandScaleformString_2()
     PushScaleformMovieFunctionParameterBool(item:Enabled())
     PushScaleformMovieFunctionParameterBool(item:BlinkDescription())
@@ -792,7 +877,7 @@ function UIMenu:_itemCreation(page, pageIndex, before, overflow)
     elseif SubType == "UIMenuListItem" then
         AddTextEntry("listitem_"..menuIndex.."_list", table.concat(item.Items, ","))
         BeginTextCommandScaleformString("listitem_"..menuIndex.."_list")
-        EndTextCommandScaleformString();
+        EndTextCommandScaleformString()
         PushScaleformMovieFunctionParameterInt(item:Index() - 1)
         PushScaleformMovieFunctionParameterInt(item.Base._mainColor:ToArgb())
         PushScaleformMovieFunctionParameterInt(item.Base._highlightColor:ToArgb())
@@ -1112,13 +1197,10 @@ function UIMenu:GoUp()
                 self:FadeOutItems()
                 self.isFading = true
                 ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ITEMS")
-                local i = 1
                 local max = self.Pagination:ItemsPerPage()
-                while i <= max do
-                    Citizen.Wait(0)
-                    if not self:Visible() then return end
+                for i = 1, max,1 do
+                    if (not self:Visible()) then return end
                     self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
-                    i = i + 1
                 end
                 self._isBuilding = false
             end
@@ -1150,13 +1232,10 @@ function UIMenu:GoDown()
                 self:FadeOutItems()
                 self.isFading = true
                 ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ITEMS")
-                local i = 1
                 local max = self.Pagination:ItemsPerPage()
-                while i <= max do
-                    Citizen.Wait(0)
-                    if not self:Visible() then return end
-                    self:_itemCreation(self.Pagination:CurrentPage(), i, false, overflow)
-                    i = i + 1
+                for i = 1, max,1 do
+                    if (not self:Visible()) then return end
+                    self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
                 end
                 self._isBuilding = false
             end

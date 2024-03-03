@@ -71,6 +71,7 @@ end
 function UIMissionDetailsPanel:RemoveItemAt(index)
     table.remove(self.Items, index)
     if self.ParentItem ~= nil then
-        ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_MISSION_DETAILS_DESC_ITEM", index - 1)
+        local item = IndexOf(self.ParentItem.Base.ParentMenu.Items, self.ParentItem) - 1
+        ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_MISSION_DETAILS_DESC_ITEM", item, index - 1)
     end
 end

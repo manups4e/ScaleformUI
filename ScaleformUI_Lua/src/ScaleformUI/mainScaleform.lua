@@ -21,8 +21,11 @@ ScaleformUI.Scaleforms._pauseMenu = nil
 
 AddEventHandler("onResourceStop", function(resName)
     if resName == GetCurrentResourceName() then
-        if IsPauseMenuActive() and GetCurrentFrontendMenuVersion() == -2060115030 then
-            ActivateFrontendMenu(`FE_MENU_VERSION_EMPTY_NO_BACKGROUND`, true, -1)
+        if MenuHandler:IsAnyMenuOpen() or MenuHandler:IsAnyPauseMenuOpen() then
+            MenuHandler:CloseAndClearHistory()
+        end
+        if IsPauseMenuActive() or GetCurrentFrontendMenuVersion() == `FE_MENU_VERSION_CORONA` then
+            ActivateFrontendMenu(`FE_MENU_VERSION_CORONA`, false, 0)
             AnimpostfxStop("PauseMenuIn");
             AnimpostfxPlay("PauseMenuOut", 800, false);
         end
@@ -71,7 +74,7 @@ Citizen.CreateThread(function()
             if ScaleformUI.Scaleforms._radioMenu == nil then
                 ScaleformUI.Scaleforms._radioMenu = Scaleform.RequestWidescreen("radiomenu")
             end
-            if not ScaleformUI.Scaleforms._pauseMenu.Loaded then
+            if not ScaleformUI.Scaleforms._pauseMenu:IsLoaded() then
                 ScaleformUI.Scaleforms._pauseMenu:Load()
             end
         end

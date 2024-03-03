@@ -18,6 +18,8 @@ end
 ---@field public OnIndexChanged fun(index: number)
 
 function MissionDetailsPanel.New(label, color)
+    local handler = PaginationHandler.New()
+    handler:ItemsPerPage(0)
     local _data = {
         Type = "panel",
         ParentTab = nil,
@@ -26,6 +28,7 @@ function MissionDetailsPanel.New(label, color)
         _color = color or SColor.HUD_Freemode,
         Parent = nil,
         Items = {} --[[@type table<MissionDetailsItem>]],
+        Pagination = handler,
         TextureDict = "",
         TextureName = "",
         OnIndexChanged = function(index)

@@ -18,9 +18,9 @@ end
 ---@field public OnIndexChanged fun(index: number)
 ---@field public AddSettings fun(self: SettingsListColumn, item: SettingsListItem)
 
-function SettingsListColumn.New(label, color, scrollType)
+function SettingsListColumn.New(label, color, scrollType,_maxItems)
     local handler = PaginationHandler.New()
-    handler:ItemsPerPage(12)
+    handler:ItemsPerPage(_maxItems or 16)
     handler.scrollType = scrollType or MenuScrollingType.CLASSIC
     local _data = {
         _isBuilding = false,

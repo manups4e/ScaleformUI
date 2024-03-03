@@ -26,7 +26,8 @@ function InstructionalButton.New(text, padcheck, gamepadControls, keyboardContro
         GamepadButton = -1,
         KeyboardButtons = nil,
         KeyboardButton = -1,
-        PadCheck = padcheck or -1
+        PadCheck = padcheck or -1,
+        OnControlSelected = function(button) end
     }
 
     if type(gamepadControls) == "table" then

@@ -35,6 +35,7 @@ function PlayerListTab.New(name, color, newStyle)
         MissionsColumn = nil,
         StoreColumn = nil,
         MissionPanel = nil,
+        Minimap = nil,
         Index = 0,
         Focused = false,
         _focus = 0,

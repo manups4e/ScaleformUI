@@ -184,3 +184,7 @@ function TableHasKey(table, key)
     
     return false
 end
+
+function LengthSquared(vector)
+    return math.sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z)
+end
