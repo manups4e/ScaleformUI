@@ -262,6 +262,15 @@ namespace ScaleformUI.Scaleforms
         {
             if (_visible && GetCurrentFrontendMenuVersion() == GetHashKey("FE_MENU_VERSION_CORONA"))
             {
+                BeginScaleformMovieMethodOnFrontend("INSTRUCTIONAL_BUTTONS");
+                ScaleformMovieMethodAddParamPlayerNameString("SET_DATA_SLOT_EMPTY");
+                EndScaleformMovieMethod();
+                BeginScaleformMovieMethodOnFrontendHeader("SHOW_MENU");
+                ScaleformMovieMethodAddParamBool(false);
+                EndScaleformMovieMethod();
+                BeginScaleformMovieMethodOnFrontendHeader("SHOW_HEADING_DETAILS");
+                ScaleformMovieMethodAddParamBool(false);
+                EndScaleformMovieMethod();
                 SetScriptGfxDrawBehindPausemenu(true);
                 if (BGEnabled)
                 {

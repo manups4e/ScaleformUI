@@ -538,8 +538,6 @@ namespace ScaleformUI.PauseMenu
         public override void Draw()
         {
             if (!Visible || TemporarilyHidden || isBuilding) return;
-            BeginScaleformMovieMethodOnFrontend("INSTRUCTIONAL_BUTTONS");
-            ScaleformMovieMethodAddParamPlayerNameString("SET_DATA_SLOT_EMPTY");
             if (Tabs[Index] is PlayerListTab tab)
             {
                 tab.Minimap.MaintainMap();
@@ -553,12 +551,6 @@ namespace ScaleformUI.PauseMenu
                 _firstDrawTick = false;
                 timer = GetNetworkTime();
             }
-            BeginScaleformMovieMethodOnFrontendHeader("SHOW_MENU");
-            ScaleformMovieMethodAddParamBool(false);
-            EndScaleformMovieMethod();
-            BeginScaleformMovieMethodOnFrontendHeader("SHOW_HEADING_DETAILS");
-            ScaleformMovieMethodAddParamBool(false);
-            EndScaleformMovieMethod();
         }
 
         private void UpdateKeymapItems()

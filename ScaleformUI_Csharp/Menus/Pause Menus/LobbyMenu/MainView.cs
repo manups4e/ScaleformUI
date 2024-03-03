@@ -476,25 +476,12 @@ namespace ScaleformUI.LobbyMenu
         {
             if (!Visible || TemporarilyHidden || isBuilding) return;
             Minimap.MaintainMap();
-            BeginScaleformMovieMethodOnFrontend("INSTRUCTIONAL_BUTTONS");
-            ScaleformMovieMethodAddParamPlayerNameString("SET_DATA_SLOT_EMPTY");
-            EndScaleformMovieMethod();
             base.Draw();
             _pause.Draw(true);
             if (_firstDrawTick)
             {
                 _pause._lobby.CallFunction("FADE_IN");
                 _firstDrawTick = false;
-                timer = GetNetworkTime();
-            }
-            if (Main.GameTime - timer < 150)
-            {
-                BeginScaleformMovieMethodOnFrontendHeader("SHOW_MENU");
-                ScaleformMovieMethodAddParamBool(false);
-                EndScaleformMovieMethod();
-                BeginScaleformMovieMethodOnFrontendHeader("SHOW_HEADING_DETAILS");
-                ScaleformMovieMethodAddParamBool(false);
-                EndScaleformMovieMethod();
             }
         }
 
