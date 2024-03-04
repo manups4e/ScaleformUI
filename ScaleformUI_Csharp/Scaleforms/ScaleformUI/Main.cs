@@ -67,7 +67,22 @@ namespace ScaleformUI
         private async Task ScaleformUIThread_Tick()
         {
             if (MenuHandler.ableToDraw && !(API.IsWarningMessageActive() || Warning.IsShowing))
+            {
                 MenuHandler.ProcessMenus();
+                if (API.GetCurrentFrontendMenuVersion() == API.GetHashKey("FE_MENU_VERSION_CORONA"))
+                {
+                    API.BeginScaleformMovieMethodOnFrontend("INSTRUCTIONAL_BUTTONS");
+                    API.ScaleformMovieMethodAddParamPlayerNameString("SET_DATA_SLOT_EMPTY");
+                    API.EndScaleformMovieMethod();
+                    API.BeginScaleformMovieMethodOnFrontendHeader("SHOW_MENU");
+                    API.ScaleformMovieMethodAddParamBool(false);
+                    API.EndScaleformMovieMethod();
+                    API.BeginScaleformMovieMethodOnFrontendHeader("SHOW_HEADING_DETAILS");
+                    API.ScaleformMovieMethodAddParamBool(false);
+                    API.EndScaleformMovieMethod();
+                }
+            }
+
             if (Warning._sc != null)
                 Warning.Update();
             if (InstructionalButtons._sc != null && (InstructionalButtons.ControlButtons != null && InstructionalButtons.ControlButtons.Count != 0))

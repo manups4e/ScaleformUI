@@ -29,7 +29,8 @@ namespace ScaleformUI.PauseMenus.Elements.Items
         public void SetupCustomRoute()
         {
             if (StartPoint.Position.IsZero) return;
-
+            ClearGpsFlags();
+            SetGpsFlags(8, 0f);
             StartGpsCustomRoute((int)RouteColor, true, true);
 
             RaceGalleryNextBlipSprite(StartPoint.BlipSprite);
@@ -41,7 +42,10 @@ namespace ScaleformUI.PauseMenus.Elements.Items
             {
                 MinimapRaceCheckpoint checkPoint = CheckPoints[i];
                 RaceGalleryNextBlipSprite(checkPoint.BlipSprite);
-                RaceGalleryAddBlip(checkPoint.Position.X, checkPoint.Position.Y, checkPoint.Position.Z);
+                int blip = RaceGalleryAddBlip(checkPoint.Position.X, checkPoint.Position.Y, checkPoint.Position.Z);
+                if (checkPoint.Scale > 0)
+                    SetBlipScale(blip, checkPoint.Scale);
+                SetBlipColour(blip, (int)checkPoint.Color);
                 AddPointToGpsCustomRoute(checkPoint.Position.X, checkPoint.Position.Y, checkPoint.Position.Z);
             }
 
@@ -49,7 +53,7 @@ namespace ScaleformUI.PauseMenus.Elements.Items
             RaceGalleryAddBlip(EndPoint.Position.X, EndPoint.Position.Y, EndPoint.Position.Z);
             AddPointToGpsCustomRoute(EndPoint.Position.X, EndPoint.Position.Y, EndPoint.Position.Z);
 
-            SetGpsCustomRouteRender(true, RadarThickness * 10, MapThickness * 10); ;
+            SetGpsCustomRouteRender(true, 18, MapThickness); ;
         }
     }
 }

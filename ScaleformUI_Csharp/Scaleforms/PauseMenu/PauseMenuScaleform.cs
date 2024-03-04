@@ -260,18 +260,8 @@ namespace ScaleformUI.Scaleforms
 
         public void Draw(bool isLobby = false)
         {
-            if (_visible && GetCurrentFrontendMenuVersion() == GetHashKey("FE_MENU_VERSION_CORONA"))
+            if (_visible)
             {
-                BeginScaleformMovieMethodOnFrontend("INSTRUCTIONAL_BUTTONS");
-                ScaleformMovieMethodAddParamPlayerNameString("SET_DATA_SLOT_EMPTY");
-                EndScaleformMovieMethod();
-                BeginScaleformMovieMethodOnFrontendHeader("SHOW_MENU");
-                ScaleformMovieMethodAddParamBool(false);
-                EndScaleformMovieMethod();
-                BeginScaleformMovieMethodOnFrontendHeader("SHOW_HEADING_DETAILS");
-                ScaleformMovieMethodAddParamBool(false);
-                EndScaleformMovieMethod();
-                SetScriptGfxDrawBehindPausemenu(true);
                 if (BGEnabled)
                 {
                     _pauseBG.Render2D();

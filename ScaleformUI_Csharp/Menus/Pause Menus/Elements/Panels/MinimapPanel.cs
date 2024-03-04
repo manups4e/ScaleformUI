@@ -157,7 +157,10 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             foreach (FakeBlip blip in MinimapBlips)
             {
                 RaceGalleryNextBlipSprite(blip.Sprite);
-                RaceGalleryAddBlip(blip.Position.X, blip.Position.Y, blip.Position.Z);
+                int b = RaceGalleryAddBlip(blip.Position.X, blip.Position.Y, blip.Position.Z);
+                if (blip.Scale > 0)
+                    SetBlipScale(b, blip.Scale);
+                SetBlipColour(b, (int)blip.Color);
             }
         }
 
@@ -194,6 +197,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
                     Dispose();
                 }
             }
+            SetPlayerBlipPositionThisFrame(-5000, -5000);
             RefreshZoom();
         }
 
