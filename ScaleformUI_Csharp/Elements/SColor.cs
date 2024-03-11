@@ -157,7 +157,7 @@ namespace ScaleformUI.Elements
         public static readonly SColor YellowGreen = FromArgb(-6632142);
         #endregion
         #region HUD_Colors
-        public static readonly SColor HUD_None = FromHudColor((HudColor)(-1));
+        public static readonly SColor HUD_None = FromArgb(-1);
         public static readonly SColor HUD_Pure_white = FromHudColor(0);
         public static readonly SColor HUD_White = FromHudColor((HudColor)1);
         public static readonly SColor HUD_Black = FromHudColor((HudColor)2);

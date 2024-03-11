@@ -914,6 +914,7 @@ namespace ScaleformUI.Menu
         public string AUDIO_BACK = "BACK";
         public string AUDIO_ERROR = "ERROR";
         public HudColor SubtitleColor = HudColor.NONE;
+        private SColor bannerColor = SColor.HUD_None;
 
         public List<UIMenuItem> MenuItems = new List<UIMenuItem>();
         public List<UIMenuItem> _unfilteredMenuItems = new List<UIMenuItem>();
@@ -1351,6 +1352,19 @@ namespace ScaleformUI.Menu
         public void SetBannerType(KeyValuePair<string, string> pathToCustomSprite)
         {
             _customTexture = pathToCustomSprite;
+            if (Visible)
+            {
+                Main.scaleformUI.CallFunction("UPDATE_MENU_BANNER_TEXTURE", _customTexture.Key, _customTexture.Value);
+            }
+        }
+
+        public void SetBannerColor(SColor color)
+        {
+            bannerColor = color;
+            if (Visible)
+            {
+                Main.scaleformUI.CallFunction("SET_MENU_BANNER_COLOR", bannerColor.ArgbValue);
+            }
         }
 
         /// <summary>
@@ -2389,6 +2403,7 @@ namespace ScaleformUI.Menu
                 PushScaleformMovieMethodParameterString(descriptionFont.FontName);
                 PushScaleformMovieFunctionParameterInt(descriptionFont.FontID);
                 PushScaleformMovieMethodParameterFloat(fadingTime);
+                PushScaleformMovieFunctionParameterInt(bannerColor.ArgbValue);
                 PushScaleformMovieFunctionParameterBool(true);
                 BeginTextCommandScaleformString("ScaleformUILongDesc");
                 EndTextCommandScaleformString_2();
@@ -2401,7 +2416,7 @@ namespace ScaleformUI.Menu
             {
                 EnableAnimation = false;
                 while (!Main.scaleformUI.IsLoaded) await BaseScript.Delay(0);
-                Main.scaleformUI.CallFunction("CREATE_MENU", Title, SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, EnableAnimation, (int)AnimationType, (int)buildingAnimation, counterColor, descriptionFont.FontName, descriptionFont.FontID, fadingTime, false);
+                Main.scaleformUI.CallFunction("CREATE_MENU", Title, SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, EnableAnimation, (int)AnimationType, (int)buildingAnimation, counterColor, descriptionFont.FontName, descriptionFont.FontID, fadingTime, bannerColor.ArgbValue, false);
                 if (Windows.Count > 0)
                 {
                     foreach (UIMenuWindow wind in Windows)

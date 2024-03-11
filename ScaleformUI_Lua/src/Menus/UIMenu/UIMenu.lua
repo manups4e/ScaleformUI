@@ -21,7 +21,7 @@ end
 ---@field public TxtName string -- Texture name for the menu banner background (default: interaction_bgd)
 ---@field public Logo Sprite -- nil
 ---@field public Settings table -- Defines the menus settings
----@field public MaxItemsOnScreen fun(self: UIMenu, max: number?):number -- Maximum number of items that can be displayed (default: 7)
+---@field public MaxItemsOnScreen fun(self: UIMenu, max: number|nil):number -- Maximum number of items that can be displayed (default: 7)
 ---@field public AddItem fun(self: UIMenu, item: UIMenuItem)
 ---@field public OnIndexChange fun(menu: UIMenu, newindex: number)
 ---@field public OnListChange fun(menu: UIMenu, list: UIMenuListItem, newindex: number)
@@ -34,11 +34,11 @@ end
 ---@field public OnItemSelect fun(menu: UIMenu, item: UIMenuItem, checked: boolean)
 ---@field public OnMenuOpen fun(menu: UIMenu)
 ---@field public OnMenuClose fun(menu: UIMenu)
----@field public BuildAsync fun(self: UIMenu, enabled: boolean?):boolean -- If the menu should be built async (default: false)
----@field public AnimationEnabled fun(self: UIMenu, enabled: boolean?):boolean -- If the menu animation is enabled or disabled (default: true)
----@field public AnimationType fun(self: UIMenu, type: MenuAnimationType?):MenuAnimationType -- Animation type for the menu (default: MenuAnimationType.LINEAR)
----@field public BuildingAnimation fun(self: UIMenu, type: MenuBuildingAnimation?):MenuBuildingAnimation -- Build animation type for the menu (default: MenuBuildingAnimation.LEFT)
----@field public Visible fun(self: UIMenu, visible: boolean?):boolean -- If the menu is visible or not (default: false)
+---@field public BuildAsync fun(self: UIMenu, enabled: boolean|nil):boolean -- If the menu should be built async (default: false)
+---@field public AnimationEnabled fun(self: UIMenu, enabled: boolean|nil):boolean -- If the menu animation is enabled or disabled (default: true)
+---@field public AnimationType fun(self: UIMenu, type: MenuAnimationType|nil):MenuAnimationType -- Animation type for the menu (default: MenuAnimationType.LINEAR)
+---@field public BuildingAnimation fun(self: UIMenu, type: MenuBuildingAnimation|nil):MenuBuildingAnimation -- Build animation type for the menu (default: MenuBuildingAnimation.LEFT)
+---@field public Visible fun(self: UIMenu, visible: boolean|nil):boolean -- If the menu is visible or not (default: false)
 ---@field private counterColor SColor -- Set the counter color (default: SColor.HUD_Freemode)
 ---@field private enableAnimation boolean -- Enable or disable the menu animation (default: true)
 ---@field private animationType MenuAnimationType -- Sets the menu animation type (default: MenuAnimationType.LINEAR)
@@ -48,12 +48,12 @@ end
 ---Creates a new UIMenu.
 ---@param title string -- Menu title
 ---@param subTitle string -- Menu subtitle
----@param x number? -- Menu Offset X position
----@param y number? -- Menu Offset Y position
----@param glare boolean? -- Menu glare effect
----@param txtDictionary string? -- Custom texture dictionary for the menu banner background (default: commonmenu)
----@param txtName string? -- Custom texture name for the menu banner background (default: interaction_bgd)
----@param alternativeTitleStyle boolean? -- Use alternative title style (default: false)
+---@param x number|nil -- Menu Offset X position
+---@param y number|nil -- Menu Offset Y position
+---@param glare boolean|nil -- Menu glare effect
+---@param txtDictionary string|nil -- Custom texture dictionary for the menu banner background (default: commonmenu)
+---@param txtName string|nil -- Custom texture name for the menu banner background (default: interaction_bgd)
+---@param alternativeTitleStyle boolean|nil -- Use alternative title style (default: false)
 function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, alternativeTitleStyle, fadeTime, longdesc)
     local X, Y = tonumber(x) or 0, tonumber(y) or 0
     if title ~= nil then
@@ -96,6 +96,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         descFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY,
         SubtitleColor = HudColours.NONE,
         leftClickEnabled = false,
+        bannerColor = -1,
         Extra = {},
         Description = {},
         Items = {},
@@ -277,7 +278,7 @@ function UIMenu:DisableGameControls(bool)
 end
 
 ---InstructionalButtons
----@param enabled boolean?
+---@param enabled boolean|nil
 ---@return boolean
 function UIMenu:HasInstructionalButtons(enabled)
     if enabled ~= nil then
@@ -287,7 +288,7 @@ function UIMenu:HasInstructionalButtons(enabled)
 end
 
 --- Sets if the menu can be closed by the player.
----@param playerCanCloseMenu boolean?
+---@param playerCanCloseMenu boolean|nil
 ---@return boolean
 function UIMenu:CanPlayerCloseMenu(playerCanCloseMenu)
     if playerCanCloseMenu ~= nil then
@@ -311,7 +312,7 @@ end
 
 -- TODO: Refactor this method and process as its rather backwards.
 ---Sets if some controls (attack, game camera movement) are disabled when the menu is open. (Default: true) (set to false to disable default left click controls)
----@param enabled boolean?
+---@param enabled boolean|nil
 ---@return boolean
 function UIMenu:ControlDisablingEnabled(enabled)
     if enabled ~= nil then
@@ -321,7 +322,7 @@ function UIMenu:ControlDisablingEnabled(enabled)
 end
 
 ---Sets if the camera can be rotated when the mouse cursor is near the edges of the screen. (Default: true)
----@param enabled boolean?
+---@param enabled boolean|nil
 ---@return boolean
 function UIMenu:MouseEdgeEnabled(enabled)
     if enabled ~= nil then
@@ -338,7 +339,7 @@ function UIMenu:MouseWheelControlEnabled(enabled)
 end
 
 ---Enables or disables mouse controls for the menu. (Default: true)
----@param enabled boolean?
+---@param enabled boolean|nil
 ---@return boolean
 function UIMenu:MouseControlsEnabled(enabled)
     if enabled ~= nil then
@@ -393,28 +394,28 @@ function UIMenu:RefreshMenu(keepIndex)
 end
 
 ---SetBannerSprite
----@param sprite Sprite
----@param includeChildren boolean
----@see Sprite
-function UIMenu:SetBannerSprite(sprite, includeChildren)
-    if sprite() == "Sprite" then
-        self.Logo = sprite
-        self.Logo:Size(431 + self.WidthOffset, 107)
-        self.Logo:Position(self.Position.X, self.Position.Y)
-        self.Banner = nil
-        if includeChildren then
-            for item, menu in pairs(self.Children) do
-                menu.Logo = sprite
-                menu.Logo:Size(431 + self.WidthOffset, 107)
-                menu.Logo:Position(self.Position.X, self.Position.Y)
-                menu.Banner = nil
-            end
-        end
+---@param txtDictionary string
+---@param txtName string
+function UIMenu:SetBannerSprite(txtDictionary,txtName)
+    self.TxtDictionary = txtDictionary
+    self.TxtName = txtName
+    if self:Visible() then
+        ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_MENU_BANNER_TEXTURE", txtDictionary,txtName)
     end
 end
 
+---SetBannerColor
+---@param color SColor
+function UIMenu:SetBannerColor(color)
+    self.bannerColor = color
+    if self:Visible() then
+        ScaleformUI.Scaleforms._ui:CallFunction("SET_MENU_BANNER_COLOR", color)
+    end
+end
+
+
 --- Enables or disabls the menu's animations while the menu is visible.
----@param enable boolean?
+---@param enable boolean|nil
 ---@return boolean
 function UIMenu:AnimationEnabled(enable)
     if enable ~= nil then
@@ -438,7 +439,7 @@ function UIMenu:Enabled3DAnimations(enable)
 end
 
 --- Sets the menu's scrolling animationType while the menu is visible.
----@param menuAnimationType MenuAnimationType?
+---@param menuAnimationType MenuAnimationType|nil
 ---@return number MenuAnimationType
 ---@see MenuAnimationType
 function UIMenu:AnimationType(menuAnimationType)
@@ -453,7 +454,7 @@ function UIMenu:AnimationType(menuAnimationType)
 end
 
 --- Enables or disables the menu's building animationType.
----@param buildingAnimationType MenuBuildingAnimation?
+---@param buildingAnimationType MenuBuildingAnimation|nil
 ---@return MenuBuildingAnimation
 ---@see MenuBuildingAnimation
 function UIMenu:BuildingAnimation(buildingAnimationType)
@@ -467,7 +468,7 @@ function UIMenu:BuildingAnimation(buildingAnimationType)
 end
 
 --- Decides how menu behaves on scrolling and overflowing.
----@param scrollType MenuScrollingType?
+---@param scrollType MenuScrollingType|nil
 ---@return MenuScrollingType
 ---@see MenuScrollingType
 function UIMenu:ScrollingType(scrollType)
@@ -514,7 +515,7 @@ function UIMenu:FadeInItems()
 end
 
 ---CurrentSelection
----@param value number?
+---@param value number|nil
 function UIMenu:CurrentSelection(value)
     if value ~= nil then
         if value < 1 then
@@ -636,7 +637,7 @@ function UIMenu:Clear()
 end
 
 ---MaxItemsOnScreen
----@param max number?
+---@param max number|nil
 function UIMenu:MaxItemsOnScreen(max)
     if max == nil then
         return self.Pagination:ItemsPerPage()
@@ -661,7 +662,7 @@ function UIMenu:MouseSettings(enableMouseControls, enableEdge, isWheelEnabled, r
 end
 
 ---Visible
----@param bool boolean?
+---@param bool boolean|nil
 function UIMenu:Visible(bool)
     if bool ~= nil then
         self._Visible = ToBool(bool)
@@ -1333,7 +1334,7 @@ function UIMenu:GoRight()
 end
 
 ---SelectItem
----@param play boolean?
+---@param play boolean|nil
 function UIMenu:SelectItem(play)
     if not self.Items[self:CurrentSelection()]:Enabled() then
         PlaySoundFrontend(-1, self.Settings.Audio.Error, self.Settings.Audio.Library, true)
@@ -1377,8 +1378,8 @@ function UIMenu:SelectItem(play)
 end
 
 ---Go back to the previous menu
----@param boolean boolean? Play sound
----@param bypass boolean? Bypass the CanPlayerCloseMenu condition
+---@param boolean boolean|nil Play sound
+---@param bypass boolean|nil Bypass the CanPlayerCloseMenu condition
 function UIMenu:GoBack(boolean, bypass)
     local playSound = true
 

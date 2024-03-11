@@ -13,7 +13,7 @@ namespace ScaleformUI.Scaleforms
         public ScaleformWideScreen _pauseBG;
         internal bool BGEnabled;
         private bool _visible;
-        internal bool Loaded => _header is not null && _header.IsLoaded && _pause is not null && _pause.IsLoaded && _lobby is not null && _lobby.IsLoaded;
+        internal bool Loaded => _header is not null && _header.IsLoaded && _pause is not null && _pause.IsLoaded && _lobby is not null && _lobby.IsLoaded && _pauseBG is not null && _pauseBG.IsLoaded;
         public bool Visible { get => _visible; set => _visible = value; }
 
         public PauseMenuScaleform()

@@ -52,6 +52,18 @@ Citizen.CreateThread(function()
 
     while true do
         if MenuHandler.ableToDraw and not (IsWarningMessageActive() or ScaleformUI.Scaleforms.Warning:IsShowing()) then
+            if GetCurrentFrontendMenuVersion() == `FE_MENU_VERSION_CORONA` then
+                SetScriptGfxDrawBehindPausemenu(true)
+                BeginScaleformMovieMethodOnFrontend("INSTRUCTIONAL_BUTTONS");
+                ScaleformMovieMethodAddParamPlayerNameString("SET_DATA_SLOT_EMPTY");
+                EndScaleformMovieMethod()
+                BeginScaleformMovieMethodOnFrontendHeader("SHOW_MENU");
+                ScaleformMovieMethodAddParamBool(false);
+                EndScaleformMovieMethod();
+                BeginScaleformMovieMethodOnFrontendHeader("SHOW_HEADING_DETAILS");
+                ScaleformMovieMethodAddParamBool(false);
+                EndScaleformMovieMethod();
+            end
             MenuHandler:ProcessMenus()
         end
         ScaleformUI.Scaleforms.Warning:Update()
