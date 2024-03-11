@@ -19,7 +19,6 @@ function MinimapRoute.New()
         StartPoint = MinimapRaceCheckpoint.New(0, vector3(0,0,0)),
         EndPoint = MinimapRaceCheckpoint.New(0, vector3(0,0,0)),
         CheckPoints = {},
-        RadarThickness = 18,
         MapThickness = 30,
         RouteColor = HudColours.HUD_COLOUR_FREEMODE
     }
@@ -30,7 +29,9 @@ function MinimapRoute:SetupCustomRoute()
     if self.StartPoint == nil or self.StartPoint.Position.x == 0 or self.StartPoint.Position.y == 0 or self.StartPoint.Position.z == 0 then
         return
     end
-
+    
+    ClearGpsFlags()
+    SetGpsFlags(8, 0.0)
     StartGpsCustomRoute(self.RouteColor, true, true)
 
     RaceGalleryNextBlipSprite(self.StartPoint.Sprite)
@@ -41,7 +42,11 @@ function MinimapRoute:SetupCustomRoute()
     for i=1,#self.CheckPoints, 1 do
         local checkPoint = self.CheckPoints[i]
         RaceGalleryNextBlipSprite(checkPoint.Sprite)
-        RaceGalleryAddBlip(checkPoint.Position.x, checkPoint.Position.y, checkPoint.Position.z)
+        local b = RaceGalleryAddBlip(checkPoint.Position.x, checkPoint.Position.y, checkPoint.Position.z)
+        if checkPoint.Scale > 0 then
+            SetBlipScale(b, checkPoint.Scale)
+        end
+        SetBlipColour(b, checkPoint.Color)
         AddPointToGpsCustomRoute(checkPoint.Position.x, checkPoint.Position.y, checkPoint.Position.z)
     end
 
@@ -49,5 +54,5 @@ function MinimapRoute:SetupCustomRoute()
     RaceGalleryAddBlip(self.EndPoint.Position.x, self.EndPoint.Position.y, self.EndPoint.Position.z)
     AddPointToGpsCustomRoute(self.EndPoint.Position.x, self.EndPoint.Position.y, self.EndPoint.Position.z)
 
-    SetGpsCustomRouteRender(true, self.RadarThickness * 10, self.MapThickness * 10)
+    SetGpsCustomRouteRender(true, 18, self.MapThickness)
 end

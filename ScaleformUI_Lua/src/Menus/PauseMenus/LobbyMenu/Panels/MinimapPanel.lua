@@ -149,7 +149,11 @@ end
 function MinimapPanel:SetupBlips()
     for _,blip in pairs (self.MinimapBlips) do
         RaceGalleryNextBlipSprite(blip.Sprite)
-        RaceGalleryAddBlip(blip.Position.x, blip.Position.y, blip.Position.z)
+        local b = RaceGalleryAddBlip(blip.Position.x, blip.Position.y, blip.Position.z)
+        if blip.Scale > 0 then
+            SetBlipScale(b, blip.Scale)
+        end
+        SetBlipColour(b, blip.Color)
     end
 end
 function MinimapPanel:MaintainMap()
@@ -174,6 +178,7 @@ function MinimapPanel:ProcessMap()
             self:Dispose()
         end
     end
+    SetPlayerBlipPositionThisFrame(-5000.0, -5000.0)
     self:RefreshZoom()
 end
 function MinimapPanel:InitializeMapDisplay()

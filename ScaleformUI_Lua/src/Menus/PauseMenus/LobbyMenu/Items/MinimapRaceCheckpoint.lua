@@ -5,14 +5,16 @@ MinimapRaceCheckpoint.__call = function()
 end
 
 ---@class MinimapRaceCheckpoint
----@field private New fun(sprite:number, position:vector3)
+---@field private New fun(sprite:number, position:vector3, color:HudColours, scale:number)
 ---@field public Sprite number
 ---@field public Position vector3
 
-function MinimapRaceCheckpoint.New(sprite, position)
+function MinimapRaceCheckpoint.New(sprite, position, color, scale)
     local _data = {
         Sprite = sprite,
-        Position = position
+        Position = position,
+        Scale = scale or 0.0,
+        Color = color or HudColours.HUD_COLOUR_WHITE
     }
     return setmetatable(_data, MinimapRaceCheckpoint)
 end
