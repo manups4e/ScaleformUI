@@ -1011,7 +1011,7 @@ function UIMenu:_itemCreation(page, pageIndex, before, overflow)
     end
 end
 
-function UIMenu:FilterMenuItems(predicate)
+function UIMenu:FilterMenuItems(predicate, fail)
     assert(not self._itemless, "ScaleformUI - You can't compare or sort an itemless menu")
     self.Items[self:CurrentSelection()]:Selected(false)
     if self._unfilteredMenuItems == nil or #self._unfilteredMenuItems == 0 then
@@ -1022,6 +1022,14 @@ function UIMenu:FilterMenuItems(predicate)
         if predicate(item) then
             table.insert(self.Items, item)
         end
+    end
+    if #self.Items == 0 then
+        self:Clear()
+        self.Items = self._unfilteredMenuItems
+        self.Pagination:TotalItems(#self.Items)
+        self:BuildUpMenuAsync(true)
+        fail()
+        return
     end
     self.Pagination:TotalItems(#self.Items)
     self:BuildUpMenuAsync(true)
