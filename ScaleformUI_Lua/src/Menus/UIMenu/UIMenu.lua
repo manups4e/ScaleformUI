@@ -1013,7 +1013,7 @@ end
 function UIMenu:FilterMenuItems(predicate)
     assert(not self._itemless, "ScaleformUI - You can't compare or sort an itemless menu")
     self.Items[self:CurrentSelection()]:Selected(false)
-    if self._unfilteredItems == nil or #self._unfilteredItems == 0 then
+    if self._unfilteredMenuItems == nil or #self._unfilteredMenuItems == 0 then
         self._unfilteredMenuItems = self.Items
     end
     self:Clear()
@@ -1029,7 +1029,7 @@ end
 function UIMenu:SortMenuItems(compare)
     assert(not self._itemless, "ScaleformUI - You can't compare or sort an itemless menu")
     self.Items[self:CurrentSelection()]:Selected(false)
-    if self._unfilteredItems == nil or #self._unfilteredItems == 0 then
+    if self._unfilteredMenuItems == nil or #self._unfilteredMenuItems == 0 then
         self._unfilteredMenuItems = self.Items
     end
     self:Clear()
@@ -1042,7 +1042,7 @@ end
 
 function UIMenu:ResetFilter()
     assert(not self._itemless, "ScaleformUI - You can't compare or sort an itemless menu")
-    if self._unfilteredItems ~= nil and #self._unfilteredItems > 0 then
+    if self._unfilteredMenuItems ~= nil and #self._unfilteredMenuItems > 0 then
         self.Items[self:CurrentSelection()]:Selected(false)
         self:Clear()
         self.Items = self._unfilteredMenuItems
