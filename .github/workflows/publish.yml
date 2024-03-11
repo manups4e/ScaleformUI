@@ -1,0 +1,43 @@
+name: Publish Package
+
+on:
+    release:
+        types: [published]
+
+jobs:
+    publish:
+        name: Create Release and publish Nuget package
+        runs-on: ubuntu-latest
+        permissions:
+          contents: read
+          packages: write
+        steps:
+          - name: Checkout
+            uses: actions/checkout@v4
+    
+          - name: Setup .NET Core
+            uses: actions/setup-dotnet@v4
+            with:
+              dotnet-version: 8.0.x
+    
+          - name: Restore dependencies
+            run: dotnet restore
+    
+          - name: Build
+            id: build
+            run: dotnet build --configuration Release -p:Version=${{ github.head_ref }}
+    
+          - name: Pack
+            run: dotnet pack --configuration Release --no-build -p:Version=${{ github.head_ref }}
+            env:
+              NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+    
+          - name: Push Nuget Package to Nuget.org
+            run: dotnet nuget push **/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
+            env:
+              NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+    
+          - name: Push Nuget Package to GitHub Package Registry
+            run: dotnet nuget push **/*.nupkg --source https://nuget.pkg.github.com/${{ github.REPOSITORY_OWNER }}/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
+            env:
+              NUGET_API_KEY: ${{ secrets.GITHUB_TOKEN }}
