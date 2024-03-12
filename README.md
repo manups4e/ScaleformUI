@@ -35,6 +35,7 @@ If you didn't do that yet, join my discord server to talk about scripting, scale
 * Custom warning screen.
 * Custom big message and midsize message.
 * Timer bars easy and for everyone!
+* Map for custom lobby layouts
 
 ### Screenshots 📸
 ![NativeUI Example](https://i.imgur.com/K4FXOvR.png)
