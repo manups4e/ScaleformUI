@@ -1653,7 +1653,7 @@ function UIMenu:ProcessMouse()
                 if mouseSpeed > 0.05 then
                     mouseSpeed = 0.05
                 end
-                SetGameplayCamRelativeHeading(GetGameplayCamRelativeHeading() + (70 * mouseSpeed))
+                SetGameplayCamRelativeHeading(GetGameplayCamRelativeHeading() - (70 * mouseSpeed))
                 SetCursorSprite(7)
             end
         else
