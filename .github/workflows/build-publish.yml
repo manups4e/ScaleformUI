@@ -1,0 +1,66 @@
+on:
+  push:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+  cancel-in-progress: true
+
+env:
+  is-tag: ${{ startsWith(github.ref, 'refs/tags/') }}
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        client: ['FiveM']
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup - GitVersion
+      uses: gittools/actions/gitversion/setup@v0
+      with:
+        versionSpec: '5.x'
+        preferLatestVersion: true
+
+    - name: Setup - dotnet framework 4.8
+      run: |
+        choco install netfx-4.8-devpack -y
+        dotnet --version  # Verify installation
+    - name: Setup - dotnet 8
+      uses: actions/setup-dotnet@v4
+      with:
+        source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+      env:
+        NUGET_AUTH_TOKEN: ${{ github.token }}
+
+    - name: GitVersion
+      id: git-version
+      uses: gittools/actions/gitversion/execute@v0
+      with:
+        useConfigFile: true
+
+    - name: Dotnet - Restore
+      run: dotnet restore
+
+    - name: Dotnet - Build
+      run: dotnet build -c "Release ${{ matrix.client }}" --no-restore
+
+    - name: Dotnet - Test
+      run: dotnet test -c "Release ${{ matrix.client }}" --no-restore
+
+    - name: Dotnet - Pack
+      run: dotnet pack -c "Release ${{ matrix.client }}" --no-restore
+
+    - name: Publish - NuGet
+      if: ${{ env.is-tag == 'true' }}
+      run: dotnet nuget push **/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
+      working-directory: ScaleformUI\CompiledLibs\Debug\net452
+
+    - name: Publish - GitHub
+      if: ${{ env.is-tag == 'true' }}
+      run: dotnet nuget push **/*.nupkg --skip-duplicate
+      working-directory: ScaleformUI\CompiledLibs\Debug\net452

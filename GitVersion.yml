@@ -1,0 +1,10 @@
+mode: ContinuousDelivery
+branches:
+  master:
+    mode: ContinuousDeployment
+    tag: ci
+    track-merge-target: true
+ignore:
+  sha: []
+merge-message-formats: {}
+tag-prefix: ""

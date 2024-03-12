@@ -21,7 +21,6 @@
     <Nullable>annotations</Nullable>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Version>5.0.1</Version>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <BaseOutputPath>..\CompiledLibs\</BaseOutputPath>
@@ -29,7 +28,11 @@
 
   <ItemGroup>
     <PackageReference Include="CitizenFX.Core.Client" Version="1.0.6370" ExcludeAssets="runtime" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+	<PackageReference Include="GitVersion.MsBuild" Version="5.12.0">
+		<PrivateAssets>all</PrivateAssets>
+		<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <None Include="..\LICENSE.txt">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
@@ -39,9 +42,4 @@
       <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="System.Net.Http" />
-  </ItemGroup>
-
 </Project>
