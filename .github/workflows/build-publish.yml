@@ -47,13 +47,13 @@ jobs:
       run: dotnet restore
 
     - name: Dotnet - Build
-      run: dotnet build ScaleformUI -c "Release" --no-restore
+      run: dotnet build ScaleformUI_CSharp -c "Release" --no-restore
 
     - name: Dotnet - Test
-      run: dotnet test ScaleformUI -c "Release" --no-restore
+      run: dotnet test ScaleformUI_CSharp -c "Release" --no-restore
 
     - name: Dotnet - Pack
-      run: dotnet pack ScaleformUI -c "Release" --no-restore
+      run: dotnet pack ScaleformUI_CSharp -c "Release" --no-restore
 
     - name: Publish - NuGet
       if: ${{ env.is-tag == 'true' }}
