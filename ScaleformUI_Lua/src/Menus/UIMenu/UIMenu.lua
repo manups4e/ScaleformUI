@@ -96,7 +96,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         descFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY,
         SubtitleColor = HudColours.NONE,
         leftClickEnabled = false,
-        bannerColor = -1,
+        bannerColor = SColor.HUD_None,
         Extra = {},
         Description = {},
         Items = {},
@@ -729,6 +729,7 @@ function UIMenu:BuildUpMenuAsync(itemsOnly)
         PushScaleformMovieMethodParameterString(self.descFont.FontName)
         PushScaleformMovieFunctionParameterInt(self.descFont.FontID)
         PushScaleformMovieMethodParameterFloat(self.fadingTime)
+        PushScaleformMovieFunctionParameterInt(self.bannerColor:ToArgb())
         PushScaleformMovieFunctionParameterBool(true)
         BeginTextCommandScaleformString("ScaleformUILongDesc")
         EndTextCommandScaleformString_2()
@@ -746,13 +747,13 @@ function UIMenu:BuildUpMenuAsync(itemsOnly)
                 self.Position.y,
                 self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, self:AnimationEnabled(),
                 self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName,
-                self.descFont.FontID, self.fadingTime)
+                self.descFont.FontID, self.fadingTime, self.bannerColor:ToArgb())
         else
             ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", self._Title, "~HC_" .. self.SubtitleColor .. "~" .. self._Subtitle, self.Position.x,
                 self.Position.y,
                 self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, self:AnimationEnabled(),
                 self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName,
-                self.descFont.FontID, self.fadingTime)
+                self.descFont.FontID, self.fadingTime, self.bannerColor:ToArgb())
         end
         if #self.Windows > 0 then
             for w_id, window in pairs(self.Windows) do
@@ -1652,7 +1653,7 @@ function UIMenu:ProcessMouse()
                 if mouseSpeed > 0.05 then
                     mouseSpeed = 0.05
                 end
-                SetGameplayCamRelativeHeading(GetGameplayCamRelativeHeading() + (70 * mouseSpeed))
+                SetGameplayCamRelativeHeading(GetGameplayCamRelativeHeading() - (70 * mouseSpeed))
                 SetCursorSprite(7)
             end
         else
