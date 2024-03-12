@@ -58,9 +58,9 @@ jobs:
     - name: Publish - NuGet
       if: ${{ env.is-tag == 'true' }}
       run: dotnet nuget push **/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
-      working-directory: ScaleformUI\CompiledLibs\Release\net452\
+      working-directory: ScaleformUI\CompiledLibs\Release\
 
     - name: Publish - GitHub
       if: ${{ env.is-tag == 'true' }}
       run: dotnet nuget push **/*.nupkg --skip-duplicate
-      working-directory: ScaleformUI\CompiledLibs\Release\net452\
+      working-directory: ScaleformUI\CompiledLibs\Release\
