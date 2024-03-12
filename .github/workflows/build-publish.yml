@@ -6,7 +6,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  is-tag: ${{ startsWith(github.ref, 'refs/tags/') }} 
+  is-tag: ${{ startsWith(github.ref, 'refs/tags/v') }} 
 
 jobs:
   build:
