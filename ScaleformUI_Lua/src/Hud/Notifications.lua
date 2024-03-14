@@ -169,6 +169,7 @@ end
 ---@param showInBrief boolean @Should the notification be saved in the brief?
 ---@return nil
 function Notifications:ShowNotificationWithColor(msg, color, blink, showInBrief)
+    ThefeedResetAllParameters()
     AddTextEntry("ScaleformUINotification", msg)
     BeginTextCommandThefeedPost("ScaleformUINotification")
     ThefeedSetNextPostBackgroundColor(color)
@@ -222,13 +223,14 @@ function Notifications:ShowAdvancedNotification(title, subtitle, text, character
     if (characterIcon == nil) then characterIcon = self.IconChars.Default end
     if (backgroundColour == nil) then backgroundColour = -1 end
     if (blink == nil) then blink = false end
+    ThefeedResetAllParameters()
     AddTextEntry("ScaleformUIAdvancedNotification", text)
     BeginTextCommandThefeedPost("ScaleformUIAdvancedNotification")
     AddTextComponentSubstringPlayerName(text)
     if (backgroundColour and backgroundColour ~= -1) then
         ThefeedSetNextPostBackgroundColor(backgroundColour)
     end
-    if (flashColour and not blink) then
+    if (flashColour ~= nil and not blink) then
         ThefeedSetAnimpostfxColor(flashColour.R, flashColour.G, flashColour.B, flashColour.A)
     end
     if (sound) then PlaySoundFrontend(-1, "DELETE", "HUD_DEATHMATCH_SOUNDSET", true); end
