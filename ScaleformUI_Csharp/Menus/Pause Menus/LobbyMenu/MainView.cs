@@ -246,8 +246,12 @@ namespace ScaleformUI.LobbyMenu
                 _pause.ShiftCoronaDescription(true, false);
                 _pause.SetHeaderTitle(Title, SubTitle);
             }
-            if (HeaderPicture != null)
-                _pause.SetHeaderCharImg(HeaderPicture.Item2, HeaderPicture.Item2, true);
+            
+            if (HeaderPicture != null && !string.IsNullOrEmpty(HeaderPicture.Item1) && !string.IsNullOrEmpty(HeaderPicture.Item2))
+                _pause.SetHeaderCharImg(HeaderPicture.Item1, HeaderPicture.Item2, true);
+            else
+                _pause.SetHeaderCharImg("CHAR_DEFAULT", "CHAR_DEFAULT", true);
+                
             if (CrewPicture != null)
                 _pause.SetHeaderSecondaryImg(CrewPicture.Item1, CrewPicture.Item2, true);
             _pause.SetHeaderDetails(SideStringTop, SideStringMiddle, SideStringBottom);
