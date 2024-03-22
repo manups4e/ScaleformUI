@@ -736,7 +736,7 @@ SColor.Yellow = SColor.FromArgb(-256)
 SColor.YellowGreen = SColor.FromArgb(-6632142)
 
 --[[ GTA HUD COLORS ]]
-SColor.HUD_None = SColor.FromHudColor(-1)
+SColor.HUD_None = SColor.FromArgb(-1)
 SColor.HUD_Pure_white = SColor.FromHudColor(0)
 SColor.HUD_White = SColor.FromHudColor(1)
 SColor.HUD_Black = SColor.FromHudColor(2)
