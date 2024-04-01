@@ -504,11 +504,6 @@ function MainView:Draw()
     DisableControlAction(2, 199, true)
     DisableControlAction(2, 200, true)
     ScaleformUI.Scaleforms._pauseMenu:Draw(true)
-    if self._firstTick then
-        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("FADE_IN")
-        self.timer = GetNetworkTime()
-        self._firstTick = false
-    end
 end
 
 local success, event_type, context, item_id

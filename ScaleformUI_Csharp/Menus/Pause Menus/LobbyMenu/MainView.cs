@@ -492,11 +492,6 @@ namespace ScaleformUI.LobbyMenu
             Minimap.MaintainMap();
             base.Draw();
             _pause.Draw(true);
-            if (_firstDrawTick)
-            {
-                _pause._lobby.CallFunction("FADE_IN");
-                _firstDrawTick = false;
-            }
         }
 
         private int eventType = 0;
