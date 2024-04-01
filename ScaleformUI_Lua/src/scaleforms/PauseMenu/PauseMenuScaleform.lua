@@ -481,22 +481,24 @@ end
 function PauseMenu:Draw(isLobby)
     if isLobby == nil then isLobby = false end
     if self._visible then
-        SetScriptGfxDrawBehindPausemenu(true);
-        if IsUsingKeyboard(2) then
-            SetMouseCursorActiveThisFrame()
-        end
-        if self.firstTick then
-            self:FadeInMenus()
-            self.firstTick = false;
-        end
-        if self.BGEnabled then
-            self._pauseBG:Render2D()
-        end
-        self._header:Render2DNormal(0.501, 0.162, 0.6782, 0.145)
-        if isLobby then
-            self._lobby:Render2DNormal(0.6617187, 0.7226667, 1.0, 1.0)
-        else
-            self._pause:Render2DNormal(0.6617187, 0.7226667, 1.0, 1.0)
+        if IsFrontendReadyForControl() then
+            SetScriptGfxDrawBehindPausemenu(true);
+            if IsUsingKeyboard(2) then
+                SetMouseCursorActiveThisFrame()
+            end
+            if self.firstTick then
+                self:FadeInMenus()
+                self.firstTick = false;
+            end
+            if self.BGEnabled then
+                self._pauseBG:Render2D()
+            end
+            self._header:Render2DNormal(0.501, 0.162, 0.6782, 0.145)
+            if isLobby then
+                self._lobby:Render2DNormal(0.6617187, 0.7226667, 1.0, 1.0)
+            else
+                self._pause:Render2DNormal(0.6617187, 0.7226667, 1.0, 1.0)
+            end
         end
     end
 end

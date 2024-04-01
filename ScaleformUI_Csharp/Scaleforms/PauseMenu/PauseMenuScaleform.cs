@@ -271,19 +271,22 @@ namespace ScaleformUI.Scaleforms
         {
             if (_visible)
             {
-                SetScriptGfxDrawBehindPausemenu(true);
-                if (firstTick)
+                if (IsFrontendReadyForControl())
                 {
-                    FadeInMenus();
-                    firstTick = false;
+                    SetScriptGfxDrawBehindPausemenu(true);
+                    if (firstTick)
+                    {
+                        FadeInMenus();
+                        firstTick = false;
+                    }
+                    if (BGEnabled)
+                        _pauseBG.Render2D();
+                    DrawScaleformMovie(_header.Handle, 0.501f, 0.162f, 0.6782f, 0.145f, 255, 255, 255, 255, 0);
+                    if (!isLobby)
+                        DrawScaleformMovie(_pause.Handle, 0.6617187f, 0.7226667f, 1, 1, 255, 255, 255, 255, 0);
+                    else
+                        DrawScaleformMovie(_lobby.Handle, 0.6617187f, 0.7226667f, 1, 1, 255, 255, 255, 255, 0);
                 }
-                if (BGEnabled)
-                    _pauseBG.Render2D();
-                DrawScaleformMovie(_header.Handle, 0.501f, 0.162f, 0.6782f, 0.145f, 255, 255, 255, 255, 0);
-                if (!isLobby)
-                    DrawScaleformMovie(_pause.Handle, 0.6617187f, 0.7226667f, 1, 1, 255, 255, 255, 255, 0);
-                else
-                    DrawScaleformMovie(_lobby.Handle, 0.6617187f, 0.7226667f, 1, 1, 255, 255, 255, 255, 0);
             }
         }
     }

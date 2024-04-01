@@ -211,7 +211,7 @@ namespace ScaleformUI.PauseMenu
             _loaded = true;
         }
 
-        public void BuildPauseMenu()
+        public async void BuildPauseMenu()
         {
             isBuilding = true;
             ShowHeader();
