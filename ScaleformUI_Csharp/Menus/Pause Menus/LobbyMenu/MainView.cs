@@ -99,7 +99,7 @@ namespace ScaleformUI.LobbyMenu
                     ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_CORONA"), true, 0);
                     BuildPauseMenu();
                     SendPauseMenuOpen();
-                    AnimpostfxPlay("PauseMenuIn", 800, true);
+                    doScreenBlur();
                     Main.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
                     SetPlayerControl(Game.Player.Handle, false, 0);
                     _firstDrawTick = true;
@@ -121,6 +121,16 @@ namespace ScaleformUI.LobbyMenu
                 _visible = value;
                 _pause.Visible = value;
             }
+        }
+
+        private async void doScreenBlur()
+        {
+            while (AnimpostfxIsRunning("PauseMenuOut"))
+            {
+                await BaseScript.Delay(0);
+                AnimpostfxStop("PauseMenuOut");
+            }
+            AnimpostfxPlay("PauseMenuIn", 800, true);
         }
 
         public int Index;
@@ -246,12 +256,12 @@ namespace ScaleformUI.LobbyMenu
                 _pause.ShiftCoronaDescription(true, false);
                 _pause.SetHeaderTitle(Title, SubTitle);
             }
-            
+
             if (HeaderPicture != null && !string.IsNullOrEmpty(HeaderPicture.Item1) && !string.IsNullOrEmpty(HeaderPicture.Item2))
                 _pause.SetHeaderCharImg(HeaderPicture.Item1, HeaderPicture.Item2, true);
             else
                 _pause.SetHeaderCharImg("CHAR_DEFAULT", "CHAR_DEFAULT", true);
-                
+
             if (CrewPicture != null)
                 _pause.SetHeaderSecondaryImg(CrewPicture.Item1, CrewPicture.Item2, true);
             _pause.SetHeaderDetails(SideStringTop, SideStringMiddle, SideStringBottom);

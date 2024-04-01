@@ -121,17 +121,20 @@ namespace ScaleformUI.PauseMenu
             get { return _visible; }
             set
             {
+                base.Visible = value;
+                _visible = value;
+                _pause.Visible = value;
                 Game.IsPaused = value;
                 if (value)
                 {
                     ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_CORONA"), true, 1);
-                    BuildPauseMenu();
-                    SendPauseMenuOpen();
-                    AnimpostfxPlay("PauseMenuIn", 800, true);
+                    doScreenBlur();
                     Main.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
                     SetPlayerControl(Game.Player.Handle, false, 0);
                     _firstDrawTick = true;
                     MenuHandler.currentBase = this;
+                    BuildPauseMenu();
+                    SendPauseMenuOpen();
                 }
                 else
                 {
@@ -151,10 +154,17 @@ namespace ScaleformUI.PauseMenu
                     ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_CORONA"), false, 1);
                     Main.InstructionalButtons.ClearButtonList();
                 }
-                base.Visible = value;
-                _visible = value;
-                _pause.Visible = value;
             }
+        }
+
+        private async void doScreenBlur()
+        {
+            while (AnimpostfxIsRunning("PauseMenuOut"))
+            {
+                await BaseScript.Delay(0);
+                AnimpostfxStop("PauseMenuOut");
+            }
+            AnimpostfxPlay("PauseMenuIn", 800, true);
         }
 
         public int Index
@@ -201,53 +211,61 @@ namespace ScaleformUI.PauseMenu
             _loaded = true;
         }
 
-        public async void BuildPauseMenu()
+        public void BuildPauseMenu()
         {
             isBuilding = true;
             ShowHeader();
-            foreach (BaseTab tab in Tabs)
+            RequestStreamedTextureDict("commonmenu", true);
+            for (int i = 0; i < Tabs.Count; i++)
             {
-                int tabIndex = Tabs.IndexOf(tab);
-                switch (tab)
+                BaseTab tab = Tabs[i];
+                switch (tab._type)
                 {
-                    case TextTab simpleTab:
+                    case 0:
                         {
+                            TextTab simpleTab = (TextTab)tab;
                             _pause.AddPauseMenuTab(simpleTab.Title, 0, simpleTab._type, simpleTab.TabColor);
                             if (!string.IsNullOrWhiteSpace(simpleTab.TextTitle))
-                                _pause.AddRightTitle(tabIndex, 0, simpleTab.TextTitle);
-                            foreach (BasicTabItem it in simpleTab.LabelsList)
-                                _pause.AddRightListLabel(tabIndex, 0, it.Label, it.LabelFont.FontName, it.LabelFont.FontID);
+                                _pause.AddRightTitle(i, 0, simpleTab.TextTitle);
+                            for (int j = 0; j < simpleTab.LabelsList.Count; j++)
+                            {
+                                BasicTabItem it = simpleTab.LabelsList[j];
+                                _pause.AddRightListLabel(i, 0, it.Label, it.LabelFont.FontName, it.LabelFont.FontID);
+                            }
                             if (!(string.IsNullOrWhiteSpace(simpleTab.TextureDict) && string.IsNullOrWhiteSpace(simpleTab.TextureName)))
-                                _pause._pause.CallFunction("UPDATE_BASE_TAB_BACKGROUND", tabIndex, simpleTab.TextureDict, simpleTab.TextureName);
+                                _pause._pause.CallFunction("UPDATE_BASE_TAB_BACKGROUND", i, simpleTab.TextureDict, simpleTab.TextureName);
                         }
                         break;
-                    case SubmenuTab submenu:
+                    case 1:
                         {
+                            SubmenuTab submenu = (SubmenuTab)tab;
                             _pause.AddPauseMenuTab(submenu.Title, 1, submenu._type, submenu.TabColor);
-                            foreach (TabLeftItem item in submenu.LeftItemList)
+                            for (int j = 0; j < submenu.LeftItemList.Count; j++)
                             {
+                                TabLeftItem item = submenu.LeftItemList[j];
                                 int itemIndex = tab.LeftItemList.IndexOf(item);
-                                _pause.AddLeftItem(tabIndex, (int)item.ItemType, item._formatLeftLabel, item.MainColor, item.HighlightColor, item.Enabled);
+                                _pause.AddLeftItem(i, (int)item.ItemType, item._formatLeftLabel, item.MainColor, item.HighlightColor, item.Enabled);
 
-                                _pause._pause.CallFunction("SET_LEFT_ITEM_LABEL_FONT", tabIndex, itemIndex, item._labelFont.FontName, item._labelFont.FontID);
-                                //_pause._pause.CallFunction("SET_LEFT_ITEM_RIGHT_LABEL_FONT", tabIndex, itemIndex, item._labelFont.FontName, item._labelFont.FontID);
+                                _pause._pause.CallFunction("SET_LEFT_ITEM_LABEL_FONT", i, itemIndex, item._labelFont.FontName, item._labelFont.FontID);
+                                //_pause._pause.CallFunction("SET_LEFT_ITEM_RIGHT_LABEL_FONT", i, itemIndex, item._labelFont.FontName, item._labelFont.FontID);
 
                                 if (!string.IsNullOrWhiteSpace(item.RightTitle))
                                 {
                                     if (item.ItemType == LeftItemType.Keymap)
-                                        _pause.AddKeymapTitle(tabIndex, itemIndex, item.RightTitle, item.KeymapRightLabel_1, item.KeymapRightLabel_2);
+                                        _pause.AddKeymapTitle(i, itemIndex, item.RightTitle, item.KeymapRightLabel_1, item.KeymapRightLabel_2);
                                     else
-                                        _pause.AddRightTitle(tabIndex, itemIndex, item.RightTitle);
+                                        _pause.AddRightTitle(i, itemIndex, item.RightTitle);
                                 }
 
 
-                                foreach (BasicTabItem ii in item.ItemList)
+                                for (int k = 0; k < item.ItemList.Count; k++)
                                 {
+                                    BasicTabItem ii = item.ItemList[k];
                                     switch (ii)
                                     {
                                         default:
                                             {
-                                                _pause.AddRightListLabel(tabIndex, itemIndex, ii.Label, ii.LabelFont.FontName, ii.LabelFont.FontID);
+                                                _pause.AddRightListLabel(i, itemIndex, ii.Label, ii.LabelFont.FontName, ii.LabelFont.FontID);
                                             }
                                             break;
                                         case StatsTabItem:
@@ -256,10 +274,10 @@ namespace ScaleformUI.PauseMenu
                                                 switch (sti.Type)
                                                 {
                                                     case StatItemType.Basic:
-                                                        _pause.AddRightStatItemLabel(tabIndex, itemIndex, sti.Label, sti.RightLabel, sti.LabelFont, sti.rightLabelFont);
+                                                        _pause.AddRightStatItemLabel(i, itemIndex, sti.Label, sti.RightLabel, sti.LabelFont, sti.rightLabelFont);
                                                         break;
                                                     case StatItemType.ColoredBar:
-                                                        _pause.AddRightStatItemColorBar(tabIndex, itemIndex, sti.Label, sti.Value, sti.ColoredBarColor, sti.labelFont);
+                                                        _pause.AddRightStatItemColorBar(i, itemIndex, sti.Label, sti.Value, sti.ColoredBarColor, sti.labelFont);
                                                         break;
                                                 }
                                             }
@@ -270,42 +288,37 @@ namespace ScaleformUI.PauseMenu
                                                 switch (sti.ItemType)
                                                 {
                                                     case SettingsItemType.Basic:
-                                                        _pause.AddRightSettingsBaseItem(tabIndex, itemIndex, sti.Label, sti.RightLabel, sti.Enabled);
+                                                        _pause.AddRightSettingsBaseItem(i, itemIndex, sti.Label, sti.RightLabel, sti.Enabled);
                                                         break;
                                                     case SettingsItemType.ListItem:
                                                         SettingsListItem lis = (SettingsListItem)sti;
-                                                        _pause.AddRightSettingsListItem(tabIndex, itemIndex, lis.Label, lis.ListItems, lis.ItemIndex, lis.Enabled);
+                                                        _pause.AddRightSettingsListItem(i, itemIndex, lis.Label, lis.ListItems, lis.ItemIndex, lis.Enabled);
                                                         break;
                                                     case SettingsItemType.ProgressBar:
                                                         SettingsProgressItem prog = (SettingsProgressItem)sti;
-                                                        _pause.AddRightSettingsProgressItem(tabIndex, itemIndex, prog.Label, prog.MaxValue, prog.ColoredBarColor, prog.Value, prog.Enabled);
+                                                        _pause.AddRightSettingsProgressItem(i, itemIndex, prog.Label, prog.MaxValue, prog.ColoredBarColor, prog.Value, prog.Enabled);
                                                         break;
                                                     case SettingsItemType.MaskedProgressBar:
                                                         SettingsProgressItem prog_alt = (SettingsProgressItem)sti;
-                                                        _pause.AddRightSettingsProgressItemAlt(tabIndex, itemIndex, sti.Label, prog_alt.MaxValue, prog_alt.ColoredBarColor, prog_alt.Value, prog_alt.Enabled);
+                                                        _pause.AddRightSettingsProgressItemAlt(i, itemIndex, sti.Label, prog_alt.MaxValue, prog_alt.ColoredBarColor, prog_alt.Value, prog_alt.Enabled);
                                                         break;
                                                     case SettingsItemType.CheckBox:
-                                                        while (!HasStreamedTextureDictLoaded("commonmenu"))
-                                                        {
-                                                            await BaseScript.Delay(0);
-                                                            RequestStreamedTextureDict("commonmenu", true);
-                                                        }
                                                         SettingsCheckboxItem check = (SettingsCheckboxItem)sti;
-                                                        _pause.AddRightSettingsCheckboxItem(tabIndex, itemIndex, check.Label, check.CheckBoxStyle, check.IsChecked, check.Enabled);
+                                                        _pause.AddRightSettingsCheckboxItem(i, itemIndex, check.Label, check.CheckBoxStyle, check.IsChecked, check.Enabled);
                                                         break;
                                                     case SettingsItemType.SliderBar:
                                                         SettingsSliderItem slid = (SettingsSliderItem)sti;
-                                                        _pause.AddRightSettingsSliderItem(tabIndex, itemIndex, slid.Label, slid.MaxValue, slid.ColoredBarColor, slid.Value, slid.Enabled);
+                                                        _pause.AddRightSettingsSliderItem(i, itemIndex, slid.Label, slid.MaxValue, slid.ColoredBarColor, slid.Value, slid.Enabled);
                                                         break;
                                                 }
                                             }
                                             break;
                                         case KeymapItem:
                                             KeymapItem ki = ii as KeymapItem;
-                                            if (IsInputDisabled(2))
-                                                _pause.AddKeymapItem(tabIndex, itemIndex, ki.Label, ki.PrimaryKeyboard, ki.SecondaryKeyboard);
+                                            if (IsUsingKeyboard(2))
+                                                _pause.AddKeymapItem(i, itemIndex, ki.Label, ki.PrimaryKeyboard, ki.SecondaryKeyboard);
                                             else
-                                                _pause.AddKeymapItem(tabIndex, itemIndex, ki.Label, ki.PrimaryGamepad, ki.SecondaryGamepad);
+                                                _pause.AddKeymapItem(i, itemIndex, ki.Label, ki.PrimaryGamepad, ki.SecondaryGamepad);
                                             UpdateKeymapItems();
                                             break;
                                     }
@@ -314,58 +327,55 @@ namespace ScaleformUI.PauseMenu
                                 if (item.ItemType == LeftItemType.Info || item.ItemType == LeftItemType.Statistics || item.ItemType == LeftItemType.Settings)
                                 {
                                     if (!(string.IsNullOrWhiteSpace(item.TextureDict) && string.IsNullOrWhiteSpace(item.TextureName)))
-                                        _pause._pause.CallFunction("UPDATE_LEFT_ITEM_RIGHT_BACKGROUND", tabIndex, itemIndex, item.TextureDict, item.TextureName, (int)item.LeftItemBGType);
+                                        _pause._pause.CallFunction("UPDATE_LEFT_ITEM_RIGHT_BACKGROUND", i, itemIndex, item.TextureDict, item.TextureName, (int)item.LeftItemBGType);
                                 }
 
                             }
                         }
                         break;
-                    case PlayerListTab plTab:
+                    case 2:
                         {
+                            PlayerListTab plTab = (PlayerListTab)tab;
                             _pause.AddPauseMenuTab(plTab.Title, 1, plTab._type, plTab.TabColor);
                             switch (plTab.listCol.Count)
                             {
                                 case 1:
-                                    _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, plTab.listCol[0].Type);
-                                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", tabIndex, 0, plTab.listCol[0]._maxItems);
+                                    _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", i, plTab.listCol[0].Type);
+                                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", i, 0, plTab.listCol[0]._maxItems);
                                     break;
                                 case 2:
-                                    _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, plTab.listCol[0].Type, plTab.listCol[1].Type);
-                                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", tabIndex, 0, plTab.listCol[0]._maxItems);
-                                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", tabIndex, 1, plTab.listCol[1]._maxItems);
+                                    _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", i, plTab.listCol[0].Type, plTab.listCol[1].Type);
+                                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", i, 0, plTab.listCol[0]._maxItems);
+                                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", i, 1, plTab.listCol[1]._maxItems);
                                     break;
                                 case 3:
-                                    _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", tabIndex, plTab.listCol[0].Type, plTab.listCol[1].Type, plTab.listCol[2].Type);
-                                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", tabIndex, 0, plTab.listCol[0]._maxItems);
-                                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", tabIndex, 1, plTab.listCol[1]._maxItems);
-                                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", tabIndex, 2, plTab.listCol[2]._maxItems);
+                                    _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", i, plTab.listCol[0].Type, plTab.listCol[1].Type, plTab.listCol[2].Type);
+                                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", i, 0, plTab.listCol[0]._maxItems);
+                                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", i, 1, plTab.listCol[1]._maxItems);
+                                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", i, 2, plTab.listCol[2]._maxItems);
                                     break;
                             }
-                            _pause._pause.CallFunction("SET_PLAYERS_TAB_NEWSTYLE", tabIndex, plTab._newStyle);
+                            _pause._pause.CallFunction("SET_PLAYERS_TAB_NEWSTYLE", i, plTab._newStyle);
                             if (plTab.listCol.Any(x => x.Type == "settings"))
                             {
                                 plTab.SettingsColumn.Parent = this;
                                 plTab.SettingsColumn.ParentTab = Tabs.IndexOf(plTab);
-                                plTab.SettingsColumn.isBuilding = true;
                                 buildSettings(plTab);
                             }
                             if (plTab.listCol.Any(x => x.Type == "players"))
                             {
                                 plTab.PlayersColumn.Parent = this;
                                 plTab.PlayersColumn.ParentTab = Tabs.IndexOf(plTab);
-                                plTab.PlayersColumn.isBuilding = true;
                                 buildPlayers(plTab);
                             }
                             if (plTab.listCol.Any(x => x.Type == "missions"))
                             {
-                                plTab.MissionsColumn.isBuilding = true;
                                 plTab.MissionsColumn.Parent = this;
                                 plTab.MissionsColumn.ParentTab = Tabs.IndexOf(plTab);
                                 buildMissions(plTab);
                             }
                             if (plTab.listCol.Any(x => x.Type == "store"))
                             {
-                                plTab.StoreColumn.isBuilding = true;
                                 plTab.StoreColumn.Parent = this;
                                 plTab.StoreColumn.ParentTab = Tabs.IndexOf(plTab);
                                 buildStore(plTab);
@@ -374,18 +384,17 @@ namespace ScaleformUI.PauseMenu
                             {
                                 plTab.MissionPanel.Parent = this;
                                 plTab.MissionPanel.ParentTab = Tabs.IndexOf(plTab);
-                                _pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_PICTURE", tabIndex, plTab.MissionPanel.TextureDict, plTab.MissionPanel.TextureName);
-                                _pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_PANEL_TITLE", tabIndex, plTab.MissionPanel.Title);
+                                _pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_PICTURE", i, plTab.MissionPanel.TextureDict, plTab.MissionPanel.TextureName);
+                                _pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_PANEL_TITLE", i, plTab.MissionPanel.Title);
                                 if (plTab.MissionPanel.Items.Count > 0)
                                 {
-                                    foreach (UIFreemodeDetailsItem item in plTab.MissionPanel.Items)
+                                    for (int j = 0; j < plTab.MissionPanel.Items.Count; j++)
                                     {
-                                        _pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_ITEM", tabIndex, item.Type, item.TextLeft, item.TextRight, (int)item.Icon, item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID);
+                                        UIFreemodeDetailsItem item = plTab.MissionPanel.Items[j];
+                                        _pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_ITEM", i, item.Type, item.TextLeft, item.TextRight, (int)item.Icon, item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID);
                                     }
                                 }
                             }
-                            while ((plTab.SettingsColumn != null && plTab.SettingsColumn.isBuilding) || (plTab.PlayersColumn != null && plTab.PlayersColumn.isBuilding) || (plTab.MissionsColumn != null && plTab.MissionsColumn.isBuilding)) await BaseScript.Delay(0);
-                            plTab.updateFocus(0);
                         }
                         break;
                 }
