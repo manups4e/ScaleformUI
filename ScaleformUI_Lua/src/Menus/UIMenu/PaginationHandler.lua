@@ -100,7 +100,10 @@ function PaginationHandler:ScaleformIndex(val)
 end
 
 function PaginationHandler:IsItemVisible(menuIndex)
-    return menuIndex >= self.minItem or (menuIndex <= self.minItem and menuIndex <= self.maxItem) -- >= / <= ?
+    if self.minItem > self.maxItem then
+        return menuIndex <= self.minItem and menuIndex <= self.maxItem
+    end
+    return menuIndex >= self.minItem and menuIndex <= self.maxItem
 end
 
 function PaginationHandler:GetScaleformIndex(menuIndex)
