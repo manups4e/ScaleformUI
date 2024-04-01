@@ -124,7 +124,6 @@ function TabView:Visible(visible)
             if not IsPauseMenuActive() then
                 PlaySoundFrontend(self.SoundId, "Hit_In", "PLAYER_SWITCH_CUSTOM_SOUNDSET", true)
                 ActivateFrontendMenu(`FE_MENU_VERSION_CORONA`, true, 0)
-                self:BuildPauseMenu()
                 self.OnPauseMenuOpen(self)
                 AnimpostfxPlay("PauseMenuIn", 800, true)
                 self._firstDrawTick = true
@@ -132,6 +131,7 @@ function TabView:Visible(visible)
                 SetPlayerControl(PlayerId(), false, 0)
                 MenuHandler._currentPauseMenu = self
                 MenuHandler.ableToDraw = true;
+                self:BuildPauseMenu()
             end
         else
             for k,tab in pairs (self.Tabs) do
