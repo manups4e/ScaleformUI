@@ -171,7 +171,7 @@ public class MenuExample : BaseScript
         UIVehicleColourPickerPanel sidePanelB = new UIVehicleColourPickerPanel(PanelSide.Right, "ColorPicker");
         cookItem.AddSidePanel(sidePanelB);
         cookItem.SetRightBadge(BadgeIcon.STAR);
-        sidePanelB.OnVehicleColorPickerSelect += (item, panel, value) =>
+        sidePanelB.OnVehicleColorPickerSelect += (item, panel, value, color) =>
         {
             Notifications.ShowNotification($"Vehicle Color: {(VehicleColor)value}");
             sidePanelB.Title = ((VehicleColor)value).ToString();

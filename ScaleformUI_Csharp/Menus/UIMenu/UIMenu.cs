@@ -807,7 +807,7 @@ namespace ScaleformUI.Menu
     public delegate void OnProgressSelected(UIMenu menu, UIMenuProgressItem item, int newIndex);
     public delegate void StatItemProgressChange(UIMenu menu, UIMenuStatsItem item, int value);
     public delegate void ColorPanelChangedEvent(UIMenuItem menu, UIMenuColorPanel panel, int index);
-    public delegate void VehicleColorPickerSelectEvent(UIMenuItem menu, UIVehicleColourPickerPanel panel, int index);
+    public delegate void VehicleColorPickerSelectEvent(UIMenuItem menu, UIVehicleColourPickerPanel panel, int index, SColor color);
     public delegate void PercentagePanelChangedEvent(UIMenuItem menu, UIMenuPercentagePanel panel, float value);
     public delegate void GridPanelChangedEvent(UIMenuItem menu, UIMenuGridPanel panel, PointF value);
     public delegate void MenuOpenedEvent(UIMenu menu, dynamic data = null);
@@ -1806,6 +1806,23 @@ namespace ScaleformUI.Menu
                                     panel.PanelChanged();
                                 }
                                 break;
+                            case 14: // panels (14 => context 1, panel_type 4) // ColorPanel
+                                {
+                                    int res = await Main.scaleformUI.CallFunctionReturnValueInt("SELECT_PANEL", CurrentSelection);
+                                    UIMenuColourPickePanel picker = (UIMenuColourPickePanel)MenuItems[CurrentSelection].Panels[res];
+                                    if (picker != null)
+                                    {
+                                        if (itemId != -1)
+                                        {
+                                            string colString = await Main.scaleformUI.CallFunctionReturnValueString("GET_PICKER_COLOR", itemId);
+                                            string[] split = colString.Split(',');
+                                            picker._value = itemId;
+                                            picker.PickerSelect(SColor.FromArgb(Convert.ToInt32(split[1]), Convert.ToInt32(split[2]), Convert.ToInt32(split[3])));
+                                            Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
+                                        }
+                                    }
+                                }
+                                break;
                             case 11: // panels (11 => context 1, panel_type 1) // PercentagePanel
                                 cursorPressed = true;
                                 break;
@@ -1817,8 +1834,10 @@ namespace ScaleformUI.Menu
                                     UIVehicleColourPickerPanel panel = (UIVehicleColourPickerPanel)MenuItems[CurrentSelection].SidePanel;
                                     if (itemId != -1)
                                     {
+                                        string colString = await Main.scaleformUI.CallFunctionReturnValueString("GET_PICKER_COLOR", itemId);
+                                        string[] split = colString.Split(',');
                                         panel._value = itemId;
-                                        panel.PickerSelect();
+                                        panel.PickerSelect(SColor.FromArgb(Convert.ToInt32(split[1]), Convert.ToInt32(split[2]), Convert.ToInt32(split[3])));
                                         Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
                                     }
                                 }
@@ -2768,6 +2787,9 @@ namespace ScaleformUI.Menu
                                 Main.scaleformUI.CallFunction("ADD_STATISTIC_TO_PANEL", scaleformIndex, pan, stat.Text, stat.Value);
                             }
                         }
+                        break;
+                    case UIMenuColourPickePanel:
+                        Main.scaleformUI.CallFunction("ADD_PANEL", scaleformIndex, 4);
                         break;
                 }
             }

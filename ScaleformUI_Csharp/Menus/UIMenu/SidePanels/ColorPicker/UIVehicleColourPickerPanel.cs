@@ -55,9 +55,9 @@ namespace ScaleformUI.Menu
             TitleColor = titleColor;
         }
 
-        internal void PickerSelect()
+        internal void PickerSelect(SColor color)
         {
-            OnVehicleColorPickerSelect?.Invoke(ParentItem, this, _value);
+            OnVehicleColorPickerSelect?.Invoke(ParentItem, this, _value, color);
         }
     }
 }
