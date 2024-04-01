@@ -326,5 +326,16 @@ namespace ScaleformUI.Scaleforms
             EndScaleformMovieMethod();
             minimaps.RemoveAt(overlayId - 1);
         }
+
+        /// <summary>
+        /// Removes all the overlays from the minimap
+        /// </summary>
+        public static void ClearAll()
+        {
+            if (overlay == 0) return;
+            CallMinimapScaleformFunction(overlay, "CLEAR_ALL");
+            EndScaleformMovieMethod();
+            minimaps.Clear();
+        }
     }
 }
