@@ -747,13 +747,13 @@ function UIMenu:BuildUpMenuAsync(itemsOnly)
                 self.Position.y,
                 self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, self:AnimationEnabled(),
                 self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName,
-                self.descFont.FontID, self.fadingTime, self.bannerColor:ToArgb())
+                self.descFont.FontID, self.fadingTime, self.bannerColor:ToArgb(), false)
         else
             ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", self._Title, "~HC_" .. self.SubtitleColor .. "~" .. self._Subtitle, self.Position.x,
                 self.Position.y,
                 self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, self:AnimationEnabled(),
                 self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName,
-                self.descFont.FontID, self.fadingTime, self.bannerColor:ToArgb())
+                self.descFont.FontID, self.fadingTime, self.bannerColor:ToArgb(), false)
         end
         if #self.Windows > 0 then
             for w_id, window in pairs(self.Windows) do
