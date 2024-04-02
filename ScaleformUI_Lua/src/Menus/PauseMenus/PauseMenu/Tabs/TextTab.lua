@@ -15,8 +15,10 @@ function TextTab.New(name, _title, color)
         LeftItemList = {},
         Index = 0,
         Focused = false,
-        TextureDict = "",
-        TextureName = "",
+        BGTextureDict = "",
+        BGTextureName = "",
+        RightTextureDict = "",
+        RightTextureName = "",
         Parent = nil
     }
     return setmetatable(data, TextTab)
@@ -33,10 +35,19 @@ function TextTab:AddItem(item)
 end
 
 function TextTab:UpdateBackground(txd, txn)
-    self.TextureDict = txd
-    self.TextureName = txn
+    self.BGTextureDict = txd
+    self.BGTextureName = txn
     if self.Parent ~= nil and self.Base.Parent ~= nil and self.Base.Parent:Visible() then
         local tab = IndexOf(self.Base.Parent.Tabs, self.Parent) - 1
         ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_BASE_TAB_BACKGROUND", tab, txd, txn)
+    end
+end
+
+function TextTab:AddPicture(txd, txn)
+    self.RightTextureDict = txd
+    self.RightTextureName = txn
+    if self.Parent ~= nil and self.Base.Parent ~= nil and self.Base.Parent:Visible() then
+        local tab = IndexOf(self.Base.Parent.Tabs, self.Parent) - 1
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_BASE_TAB_RIGHT_PICTURE", tab, txd, txn)
     end
 end

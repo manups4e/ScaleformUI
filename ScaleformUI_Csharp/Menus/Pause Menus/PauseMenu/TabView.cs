@@ -232,8 +232,10 @@ namespace ScaleformUI.PauseMenu
                                 BasicTabItem it = simpleTab.LabelsList[j];
                                 _pause.AddRightListLabel(i, 0, it.Label, it.LabelFont.FontName, it.LabelFont.FontID);
                             }
-                            if (!(string.IsNullOrWhiteSpace(simpleTab.TextureDict) && string.IsNullOrWhiteSpace(simpleTab.TextureName)))
-                                _pause._pause.CallFunction("UPDATE_BASE_TAB_BACKGROUND", i, simpleTab.TextureDict, simpleTab.TextureName);
+                            if (!(string.IsNullOrWhiteSpace(simpleTab.BGTextureDict) && string.IsNullOrWhiteSpace(simpleTab.BGTextureName)))
+                                _pause._pause.CallFunction("UPDATE_BASE_TAB_BACKGROUND", i, simpleTab.BGTextureDict, simpleTab.BGTextureName);
+                            if (!(string.IsNullOrWhiteSpace(simpleTab.RightTextureDict) && string.IsNullOrWhiteSpace(simpleTab.RightTextureName)))
+                                _pause._pause.CallFunction("SET_BASE_TAB_RIGHT_PICTURE", i, simpleTab.RightTextureDict, simpleTab.RightTextureName);
                         }
                         break;
                     case 1:
