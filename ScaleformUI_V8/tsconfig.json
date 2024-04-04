@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "outDir": "./dist",
+    "noImplicitAny": true,
+    "module": "commonjs",
+    "target": "es2020",
+    "lib": ["es2020"],
+    "types": ["@citizenfx/client", "jest"],
+    "moduleResolution": "node",
+    "inlineSourceMap": true,
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "experimentalDecorators": true
+  },
+  "include": ["./**/*"],
+  "exclude": ["**/node_modules"]
+}
