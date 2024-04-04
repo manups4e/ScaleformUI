@@ -1115,7 +1115,11 @@ public class MenuExample : BaseScript
         long bg_dui = API.CreateDui("https://giphy.com/embed/sxwk9hGlsULcYm6hDX", 1280, 720);
         API.CreateRuntimeTextureFromDuiHandle(txd, "pausebigbg", API.GetDuiHandle(bg_dui));
 
+        long rightPic = API.CreateDui("https://i.giphy.com/sEU384ODAcnSg.webp", 288, 430);
+        API.CreateRuntimeTextureFromDuiHandle(txd, "rightPic", API.GetDuiHandle(rightPic));
+
         basicTab.UpdateBackground("scaleformui", "pausebigbg");
+        basicTab.AddPicture("scaleformui", "rightPic");
         basicTab.AddItem(new BasicTabItem("~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
         basicTab.LabelsList[0].LabelFont = ScaleformFonts.HANDSTYLE_HEIST;
         basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
