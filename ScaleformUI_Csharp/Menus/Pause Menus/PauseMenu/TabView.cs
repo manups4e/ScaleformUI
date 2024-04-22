@@ -211,7 +211,7 @@ namespace ScaleformUI.PauseMenu
             _loaded = true;
         }
 
-        public async void BuildPauseMenu()
+        public void BuildPauseMenu()
         {
             isBuilding = true;
             ShowHeader();
@@ -405,9 +405,8 @@ namespace ScaleformUI.PauseMenu
         }
 
         bool canBuild = true;
-        internal async void buildSettings(PlayerListTab tab)
+        internal void buildSettings(PlayerListTab tab)
         {
-            int i = 0;
             int tab_id = Tabs.IndexOf(tab);
             int max = tab.SettingsColumn.Pagination.ItemsPerPage;
             if (tab.SettingsColumn.Items.Count < max)
@@ -425,13 +424,9 @@ namespace ScaleformUI.PauseMenu
             }
             tab.SettingsColumn.Pagination.MaxItem = tab.SettingsColumn.Pagination.CurrentPageEndIndex;
 
-            while (i < max)
-            {
-                await BaseScript.Delay(0);
-                if (!Visible) return;
+            for (int i = 0; i < max; i++)
                 tab.SettingsColumn._itemCreation(tab.SettingsColumn.Pagination.CurrentPage, i, false, true);
-                i++;
-            }
+
             tab.SettingsColumn.CurrentSelection = 0;
             tab.SettingsColumn.Pagination.ScaleformIndex = tab.SettingsColumn.Pagination.GetScaleformIndex(tab.SettingsColumn.CurrentSelection);
             tab.SettingsColumn.Items[0].Selected = false;
@@ -440,9 +435,8 @@ namespace ScaleformUI.PauseMenu
             tab.SettingsColumn.isBuilding = false;
         }
 
-        internal async void buildPlayers(PlayerListTab tab)
+        internal void buildPlayers(PlayerListTab tab)
         {
-            int i = 0;
             int tab_id = Tabs.IndexOf(tab);
             int max = tab.PlayersColumn.Pagination.ItemsPerPage;
             if (tab.PlayersColumn.Items.Count < max)
@@ -460,13 +454,9 @@ namespace ScaleformUI.PauseMenu
             }
             tab.PlayersColumn.Pagination.MaxItem = tab.PlayersColumn.Pagination.CurrentPageEndIndex;
 
-            while (i < max)
-            {
-                await BaseScript.Delay(0);
-                if (!Visible) return;
+            for (int i = 0; i < max; i++)
                 tab.PlayersColumn._itemCreation(tab.PlayersColumn.Pagination.CurrentPage, i, false, true);
-                i++;
-            }
+
             tab.PlayersColumn.CurrentSelection = 0;
             tab.PlayersColumn.Pagination.ScaleformIndex = tab.PlayersColumn.Pagination.GetScaleformIndex(tab.PlayersColumn.CurrentSelection);
             tab.PlayersColumn.Items[0].Selected = false;
@@ -475,9 +465,8 @@ namespace ScaleformUI.PauseMenu
             tab.PlayersColumn.isBuilding = false;
         }
 
-        internal async void buildMissions(PlayerListTab tab)
+        internal void buildMissions(PlayerListTab tab)
         {
-            int i = 0;
             int tab_id = Tabs.IndexOf(tab);
             int max = tab.MissionsColumn.Pagination.ItemsPerPage;
             if (tab.MissionsColumn.Items.Count < max)
@@ -495,13 +484,9 @@ namespace ScaleformUI.PauseMenu
             }
             tab.MissionsColumn.Pagination.MaxItem = tab.MissionsColumn.Pagination.CurrentPageEndIndex;
 
-            while (i < max)
-            {
-                await BaseScript.Delay(0);
-                if (!Visible) return;
+            for (int i = 0; i < max; i++)
                 tab.MissionsColumn._itemCreation(tab.MissionsColumn.Pagination.CurrentPage, i, false, true);
-                i++;
-            }
+
             tab.MissionsColumn.CurrentSelection = 0;
             tab.MissionsColumn.Pagination.ScaleformIndex = tab.MissionsColumn.Pagination.GetScaleformIndex(tab.MissionsColumn.CurrentSelection);
             tab.MissionsColumn.Items[0].Selected = false;
@@ -510,9 +495,8 @@ namespace ScaleformUI.PauseMenu
             tab.MissionsColumn.isBuilding = false;
         }
 
-        internal async void buildStore(PlayerListTab tab)
+        internal void buildStore(PlayerListTab tab)
         {
-            int i = 0;
             int tab_id = Tabs.IndexOf(tab);
             int max = tab.StoreColumn.Pagination.ItemsPerPage;
             if (tab.StoreColumn.Items.Count < max)
@@ -530,13 +514,9 @@ namespace ScaleformUI.PauseMenu
             }
             tab.StoreColumn.Pagination.MaxItem = tab.StoreColumn.Pagination.CurrentPageEndIndex;
 
-            while (i < max)
-            {
-                await BaseScript.Delay(0);
-                if (!Visible) return;
+            for (int i = 0; i < max; i++)
                 tab.StoreColumn._itemCreation(tab.StoreColumn.Pagination.CurrentPage, i, false, true);
-                i++;
-            }
+
             tab.StoreColumn.CurrentSelection = 0;
             tab.StoreColumn.Pagination.ScaleformIndex = tab.StoreColumn.Pagination.GetScaleformIndex(tab.StoreColumn.CurrentSelection);
             tab.StoreColumn.Items[0].Selected = false;
