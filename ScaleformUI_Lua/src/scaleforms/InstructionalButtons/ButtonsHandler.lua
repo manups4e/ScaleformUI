@@ -32,7 +32,9 @@ end
 ---@field public HideBusySpinner fun(self: table):nil
 ---@field public UpdateButtons fun(self: table):nil
 ---@field public Draw fun(self: table):nil
-
+---@field public DrawScreenSpace fun(self: table, x: number, y: number):nil
+---@field public DrawScreeSpace fun(self: table, x: number, y: number):nil
+---@field public Update fun(self: table):nil
 
 ---Loads the instructional buttons
 function ButtonsHandler:Load()
