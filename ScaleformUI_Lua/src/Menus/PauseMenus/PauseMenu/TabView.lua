@@ -124,7 +124,6 @@ function TabView:Visible(visible)
             if not IsPauseMenuActive() then
                 PlaySoundFrontend(self.SoundId, "Hit_In", "PLAYER_SWITCH_CUSTOM_SOUNDSET", true)
                 ActivateFrontendMenu(`FE_MENU_VERSION_CORONA`, true, 0)
-                self:BuildPauseMenu()
                 self.OnPauseMenuOpen(self)
                 AnimpostfxPlay("PauseMenuIn", 800, true)
                 self._firstDrawTick = true
@@ -132,6 +131,7 @@ function TabView:Visible(visible)
                 SetPlayerControl(PlayerId(), false, 0)
                 MenuHandler._currentPauseMenu = self
                 MenuHandler.ableToDraw = true;
+                self:BuildPauseMenu()
             end
         else
             for k,tab in pairs (self.Tabs) do
@@ -225,8 +225,11 @@ function TabView:BuildPauseMenu()
             for j, item in pairs(tab.LabelsList) do
                 ScaleformUI.Scaleforms._pauseMenu:AddRightListLabel(tabIndex, 0, item.Label, item.LabelFont.FontName, item.LabelFont.FontID)
             end
-            if not (tab.TextureDict:IsNullOrEmpty() and tab.TextureName:IsNullOrEmpty()) then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_BASE_TAB_BACKGROUND", tabIndex, tab.TextureDict, tab.TextureName)
+            if not (tab.BGTextureDict:IsNullOrEmpty() and tab.BGTextureName:IsNullOrEmpty()) then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_BASE_TAB_BACKGROUND", tabIndex, tab.BGTextureDict, tab.BGTextureName)
+            end
+            if not (tab.RightTextureDict:IsNullOrEmpty() and tab.RightTextureName:IsNullOrEmpty()) then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_BASE_TAB_RIGHT_PICTURE", tabIndex, tab.RightTextureDict, tab.RightTextureName)
             end
         elseif subtype == "SubmenuTab" then
             ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 1, tab.Base.Type, tab.Base._color)

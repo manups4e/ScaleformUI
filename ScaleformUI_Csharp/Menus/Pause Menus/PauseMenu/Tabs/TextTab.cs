@@ -7,8 +7,11 @@ namespace ScaleformUI.PauseMenu
         public string TextTitle { get; set; }
         public int WordWrap { get; set; }
         public List<BasicTabItem> LabelsList = new List<BasicTabItem>();
-        public string TextureDict { get; private set; }
-        public string TextureName { get; private set; }
+        public string BGTextureDict { get; private set; }
+        public string BGTextureName { get; private set; }
+        public string RightTextureDict { get; private set; }
+        public string RightTextureName { get; private set; }
+
         public TextTab(string name, string title, SColor color) : base(name, color)
         {
             TextTitle = title;
@@ -33,11 +36,26 @@ namespace ScaleformUI.PauseMenu
         /// <param name="txn"></param>
         public void UpdateBackground(string txd, string txn)
         {
-            TextureDict = txd;
-            TextureName = txn;
+            BGTextureDict = txd;
+            BGTextureName = txn;
             if (Parent != null && Parent.Visible)
             {
                 Parent._pause._pause.CallFunction("UPDATE_BASE_TAB_BACKGROUND", Parent.Tabs.IndexOf(this), txd, txn);
+            }
+        }
+
+        /// <summary>
+        /// Image suggested has size 288 X 430
+        /// </summary>
+        /// <param name="txd"></param>
+        /// <param name="txn"></param>
+        public void AddPicture(string txd, string txn)
+        {
+            RightTextureDict = txd;
+            RightTextureName = txn;
+            if (Parent != null && Parent.Visible)
+            {
+                Parent._pause._pause.CallFunction("SET_BASE_TAB_RIGHT_PICTURE", Parent.Tabs.IndexOf(this), txd, txn);
             }
         }
     }

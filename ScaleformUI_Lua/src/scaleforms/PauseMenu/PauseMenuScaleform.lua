@@ -63,6 +63,7 @@ function PauseMenu.New()
         BGEnabled = false,
         Loaded = false,
         _visible = false,
+        firstTick = true,
     }
     return setmetatable(_data, PauseMenu)
 end
@@ -85,6 +86,12 @@ function PauseMenu:Load()
     self._lobby = Scaleform.RequestWidescreen("lobbymenu")
     self._pauseBG = Scaleform.RequestWidescreen("store_background")
     self.Loaded = self._header:IsLoaded() and self._pause:IsLoaded() and self._lobby:IsLoaded() and self._pauseBG:IsLoaded()
+end
+
+function PauseMenu:FadeInMenus()
+    self._header:CallFunction("DRAW_MENU")
+    self._pause:CallFunction("DRAW_MENU")
+    self._lobby:CallFunction("DRAW_MENU")
 end
 
 function PauseMenu:IsLoaded()
@@ -466,6 +473,7 @@ function PauseMenu:Dispose()
     self._lobby:Dispose()
     --self._pauseBG:Dispose()
     self._visible = false
+    self.firstTick = true;
 end
 
 ---Draw the pause menu
@@ -473,17 +481,24 @@ end
 function PauseMenu:Draw(isLobby)
     if isLobby == nil then isLobby = false end
     if self._visible then
-        if IsUsingKeyboard(2) then
-            SetMouseCursorActiveThisFrame()
-        end
-        if self.BGEnabled then
-            self._pauseBG:Render2D()
-        end
-        self._header:Render2DNormal(0.501, 0.162, 0.6782, 0.145)
-        if isLobby then
-            self._lobby:Render2DNormal(0.6617187, 0.7226667, 1.0, 1.0)
-        else
-            self._pause:Render2DNormal(0.6617187, 0.7226667, 1.0, 1.0)
+        if IsFrontendReadyForControl() then
+            SetScriptGfxDrawBehindPausemenu(true);
+            if IsUsingKeyboard(2) then
+                SetMouseCursorActiveThisFrame()
+            end
+            if self.firstTick then
+                self:FadeInMenus()
+                self.firstTick = false;
+            end
+            if self.BGEnabled then
+                self._pauseBG:Render2D()
+            end
+            self._header:Render2DNormal(0.501, 0.162, 0.6782, 0.145)
+            if isLobby then
+                self._lobby:Render2DNormal(0.6617187, 0.7226667, 1.0, 1.0)
+            else
+                self._pause:Render2DNormal(0.6617187, 0.7226667, 1.0, 1.0)
+            end
         end
     end
 end

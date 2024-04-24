@@ -35,7 +35,9 @@
 
         internal bool IsItemVisible(int menuIndex)
         {
-            return menuIndex >= minItem || menuIndex <= minItem && menuIndex <= maxItem;
+            if (minItem > maxItem)
+                return (menuIndex <= minItem && menuIndex <= maxItem);
+            return (menuIndex >= minItem && menuIndex <= maxItem);
         }
 
         internal int GetScaleformIndex(int menuIndex)

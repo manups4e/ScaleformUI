@@ -11,9 +11,11 @@ namespace ScaleformUI.Scaleforms
         internal ScaleformWideScreen _sc { get; set; }
         private int Index { get; set; } = 0;
         public int MaxPages { get; set; } = 1;
+        public Vector2 Position { get => position; set => position = value; }
 
         public List<PlayerRow> PlayerRows { get; set; }
         private int currentPage = 0;
+        private Vector2 position = new Vector2(0.122f, 0.3f);
 
         public int CurrentPage
         {
@@ -126,7 +128,7 @@ namespace ScaleformUI.Scaleforms
 
         internal void Update()
         {
-            API.DrawScaleformMovie(_sc.Handle, 0.122f, 0.3f, 0.28f, 0.6f, 255, 255, 255, 255, 0);
+            API.DrawScaleformMovie(_sc.Handle, Position.X, Position.Y, 0.28f, 0.6f, 255, 255, 255, 255, 0);
             if (_start != 0 && Main.GameTime - _start > _timer)
             {
                 CurrentPage = 0;

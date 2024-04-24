@@ -28,6 +28,13 @@ namespace ScaleformUI.Scaleforms
             _pauseBG = new ScaleformWideScreen("store_background");
         }
 
+        internal void FadeInMenus()
+        {
+            _header.CallFunction("DRAW_MENU");
+            _pause.CallFunction("DRAW_MENU");
+            _lobby.CallFunction("DRAW_MENU");
+        }
+
         public void SetHeaderTitle(string title, string subtitle = "", bool shiftUpHeader = false)
         {
             _header.CallFunction("SET_HEADER_TITLE", title, subtitle, shiftUpHeader);
@@ -256,21 +263,30 @@ namespace ScaleformUI.Scaleforms
             _pause?.Dispose();
             _lobby?.Dispose();
             _header?.Dispose();
+            firstTick = true;
         }
 
+        bool firstTick = true;
         public void Draw(bool isLobby = false)
         {
             if (_visible)
             {
-                if (BGEnabled)
+                if (IsFrontendReadyForControl())
                 {
-                    _pauseBG.Render2D();
+                    SetScriptGfxDrawBehindPausemenu(true);
+                    if (firstTick)
+                    {
+                        FadeInMenus();
+                        firstTick = false;
+                    }
+                    if (BGEnabled)
+                        _pauseBG.Render2D();
+                    DrawScaleformMovie(_header.Handle, 0.501f, 0.162f, 0.6782f, 0.145f, 255, 255, 255, 255, 0);
+                    if (!isLobby)
+                        DrawScaleformMovie(_pause.Handle, 0.6617187f, 0.7226667f, 1, 1, 255, 255, 255, 255, 0);
+                    else
+                        DrawScaleformMovie(_lobby.Handle, 0.6617187f, 0.7226667f, 1, 1, 255, 255, 255, 255, 0);
                 }
-                DrawScaleformMovie(_header.Handle, 0.501f, 0.162f, 0.6782f, 0.145f, 255, 255, 255, 255, 0);
-                if (!isLobby)
-                    DrawScaleformMovie(_pause.Handle, 0.6617187f, 0.7226667f, 1, 1, 255, 255, 255, 255, 0);
-                else
-                    DrawScaleformMovie(_lobby.Handle, 0.6617187f, 0.7226667f, 1, 1, 255, 255, 255, 255, 0);
             }
         }
     }
