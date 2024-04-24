@@ -9,6 +9,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
     public class MinimapPanel
     {
         internal PauseMenuBase Parent { get; set; }
+        internal PlayerListTab ParentTab { get; set; }
         internal Vector2 mapPosition = new Vector2();
         internal float zoomDistance = 0;
         internal bool enabled;
@@ -18,11 +19,12 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
         public MinimapRoute MinimapRoute;
         public List<FakeBlip> MinimapBlips { get; internal set; }
 
-        public MinimapPanel(PauseMenuBase parent)
+        public MinimapPanel(PauseMenuBase parent, PlayerListTab parenttab)
         {
             MinimapBlips = new List<FakeBlip>();
             MinimapRoute = new MinimapRoute();
             Parent = parent;
+            ParentTab = parenttab;
         }
 
         public bool Enabled
@@ -44,19 +46,12 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
                     }
                     else if (Parent is TabView pause)
                     {
-                        if (pause.Tabs[pause.Index] is PlayerListTab tab)
+                        if (ParentTab.listCol[ParentTab.Focus].Type == "players")
                         {
-                            if (tab.listCol[tab.Focus].Type == "players")
+                            if (ParentTab.PlayersColumn.Items[ParentTab.PlayersColumn.CurrentSelection].KeepPanelVisible)
                             {
-                                if (tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].KeepPanelVisible)
-                                {
-                                    return;
-                                }
+                                return;
                             }
-                        }
-                        else
-                        {
-                            return;
                         }
                     }
                 }
@@ -75,7 +70,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
                         turnedOn = false;
                     }
                 }
-                if (Parent != null && Parent.Visible)
+                if (Parent != null && Parent.Visible && ParentTab.Visible)
                 {
                     if (Parent is MainView lobby)
                     {

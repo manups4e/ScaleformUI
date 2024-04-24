@@ -3,6 +3,7 @@ using ScaleformUI.Elements;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenus;
 using ScaleformUI.PauseMenus.Elements.Items;
+using ScaleformUI.PauseMenus.Elements.Panels;
 using ScaleformUI.Scaleforms;
 using static CitizenFX.Core.Native.API;
 
@@ -207,6 +208,10 @@ namespace ScaleformUI.PauseMenu
 
         public void AddTab(BaseTab item)
         {
+            if (item is PlayerListTab t)
+            {
+                t.Minimap = new MinimapPanel(this, t);
+            }
             item.Parent = this;
             Tabs.Add(item);
         }
