@@ -228,7 +228,7 @@ function RadialMenu:ProcessControl()
         end)
 
     end
-    
+
     if IsDisabledControlJustPressed(0, 14) then
         Citizen.CreateThread(function()
             local sel = self.Segments[self.currentSelection]:CycleItems(1)

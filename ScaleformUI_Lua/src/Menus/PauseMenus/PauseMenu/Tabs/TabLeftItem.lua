@@ -73,7 +73,7 @@ end
 function TabLeftItem:Label(label)
     if label ~= nil then
         self.Label = label
-        self._formatLeftLabel = tostring(Text)
+        self._formatLeftLabel = tostring(label)
         if not self._formatLeftLabel:StartsWith("~") then
             self._formatLeftLabel = "~s~" .. self._formatLeftLabel
         end
@@ -91,7 +91,7 @@ function TabLeftItem:Label(label)
     else
         return self.Label
     end
-end 
+end
 
 function TabLeftItem:Enabled(enabled)
     if enabled ~= nil then

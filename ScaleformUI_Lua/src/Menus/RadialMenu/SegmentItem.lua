@@ -58,7 +58,7 @@ function SegmentItem:Description(desc)
         if self.Parent ~= nil and self.Parent.Parent ~= nil and self.Parent.Parent:Visible() then
             ScaleformUI.Scaleforms._radialMenu:CallFunction("UPDATE_SUBITEM", self.Parent.index-1, IndexOf(self.Parent.Items, self)-1, self.label, self.description, self.textureName, self.textureDict, self.textureHeight, self.textureWidth, self.color, self.qtty, self.max);
         end
-    else 
+    else
         return self.description
     end
 end
@@ -69,7 +69,7 @@ function SegmentItem:TextureDict(txd)
         if self.Parent ~= nil and self.Parent.Parent ~= nil and self.Parent.Parent:Visible() then
             ScaleformUI.Scaleforms._radialMenu:CallFunction("UPDATE_SUBITEM", self.Parent.index-1, IndexOf(self.Parent.Items, self)-1, self.label, self.description, self.textureName, self.textureDict, self.textureHeight, self.textureWidth, self.color, self.qtty, self.max);
         end
-    else 
+    else
         return self.textureDict
     end
 end
@@ -80,7 +80,7 @@ function SegmentItem:TextureName(txn)
         if self.Parent ~= nil and self.Parent.Parent ~= nil and self.Parent.Parent:Visible() then
             ScaleformUI.Scaleforms._radialMenu:CallFunction("UPDATE_SUBITEM", self.Parent.index-1, IndexOf(self.Parent.Items, self)-1, self.label, self.description, self.textureName, self.textureDict, self.textureHeight, self.textureWidth, self.color, self.qtty, self.max);
         end
-    else 
+    else
         return self.textureName
     end
 end
@@ -91,7 +91,7 @@ function SegmentItem:TextureWidth(width)
         if self.Parent ~= nil and self.Parent.Parent ~= nil and self.Parent.Parent:Visible() then
             ScaleformUI.Scaleforms._radialMenu:CallFunction("UPDATE_SUBITEM", self.Parent.index-1, IndexOf(self.Parent.Items, self)-1, self.label, self.description, self.textureName, self.textureDict, self.textureHeight, self.textureWidth, self.color, self.qtty, self.max);
         end
-    else 
+    else
         return self.textureWidth
     end
 end
@@ -102,7 +102,7 @@ function SegmentItem:TextureHeight(height)
         if self.Parent ~= nil and self.Parent.Parent ~= nil and self.Parent.Parent:Visible() then
             ScaleformUI.Scaleforms._radialMenu:CallFunction("UPDATE_SUBITEM", self.Parent.index-1, IndexOf(self.Parent.Items, self)-1, self.label, self.description, self.textureName, self.textureDict, self.textureHeight, self.textureWidth, self.color, self.qtty, self.max);
         end
-    else 
+    else
         return self.textureHeight
     end
 end
@@ -113,7 +113,7 @@ function SegmentItem:Color(color)
         if self.Parent ~= nil and self.Parent.Parent ~= nil and self.Parent.Parent:Visible() then
             ScaleformUI.Scaleforms._radialMenu:CallFunction("UPDATE_SUBITEM", self.Parent.index-1, IndexOf(self.Parent.Items, self)-1, self.label, self.description, self.textureName, self.textureDict, self.textureHeight, self.textureWidth, self.color, self.qtty, self.max);
         end
-    else 
+    else
         return self.color
     end
 end
