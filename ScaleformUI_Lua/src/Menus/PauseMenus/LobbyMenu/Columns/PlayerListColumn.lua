@@ -55,8 +55,8 @@ function PlayerListColumn:ScrollingType(type)
 end
 
 ---Sets or gets the current selection.
----@param value number?
----@return number
+---@param value? number
+---@return number | nil
 function PlayerListColumn:CurrentSelection(value)
     if value == nil then
         return self.Pagination:CurrentMenuIndex()
