@@ -55,8 +55,8 @@ function MissionListColumn:ScrollingType(type)
 end
 
 ---Sets or gets the current selection.
----@param value number?
----@return number
+---@param value? number
+---@return number | nil
 function MissionListColumn:CurrentSelection(value)
     if value == nil then
         return self.Pagination:CurrentMenuIndex()
