@@ -109,7 +109,7 @@ function SettingsListColumn:AddSettings(item)
                     self.Pagination.minItem = self.Pagination:CurrentPageStartIndex() - missingItems
                 end
             end
-    
+
             self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
             self:_itemCreation(self.Pagination:CurrentPage(), #self.Items, false)
             local pSubT = self.Parent()
@@ -176,8 +176,7 @@ function SettingsListColumn:_itemCreation(page, pageIndex, before, overflow)
                 item.Base._highlightedTextColor:ToArgb(), item.SliderColor:ToArgb())
         elseif SubType == "UIMenuSeparatorItem" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", before, menuIndex, 6, item.Base._formatLeftLabel,
-                textEntry,
-                item:Enabled(), item:BlinkDescription(), item.Jumpable, item.Base._mainColor:ToArgb(),
+                descLabel, item:Enabled(), item:BlinkDescription(), item.Jumpable, item.Base._mainColor:ToArgb(),
                 item.Base._highlightColor:ToArgb(),
                 item.Base._textColor:ToArgb(), item.Base._highlightedTextColor:ToArgb())
         else
@@ -191,7 +190,7 @@ function SettingsListColumn:_itemCreation(page, pageIndex, before, overflow)
                     item._rightBadge)
             end
         end
-    
+
         if (SubType == "UIMenuItem" and item._leftBadge ~= BadgeStyle.NONE) or (SubType ~= "UIMenuItem" and item.Base._leftBadge ~= BadgeStyle.NONE) then
             if SubType ~= "UIMenuItem" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", scaleformIndex, item.Base._leftBadge)

@@ -4,6 +4,39 @@ UIRadioMenu.__call = function()
     return "UIRadioMenu"
 end
 
+---@class UIRadioMenu
+---@field public visible boolean
+---@field public isAnimating boolean
+---@field public currentSelection number
+---@field public oldAngle number
+---@field public changed boolean
+---@field public Stations table
+---@field public _AnimDirection number
+---@field public _animDuration number
+---@field public InstructionalButtons table
+---@field public OnMenuOpen fun(menu: UIRadioMenu, data: any)
+---@field public OnMenuClose fun(menu: UIRadioMenu)
+---@field public OnIndexChange fun(index: number)
+---@field public OnStationSelect fun(segment: any, index: number)
+---@field public AnimDirection fun(direction: number)
+---@field public AnimationDuration fun(time: number)
+---@field public AddInstructionButton fun(button: table)
+---@field public RemoveInstructionButton fun(button: table)
+---@field public CurrentSelection fun(index: number)
+---@field public Visible fun(bool: boolean)
+---@field public BuildMenu fun()
+---@field public AddStation fun(station: table)
+---@field public ProcessMouse fun()
+---@field public ProcessControl fun()
+---@field public SwitchTo fun(newMenu: UIRadioMenu, newMenuCurrentSelection: number, inheritOldMenuParams: boolean)
+---@field public GoBack fun()
+---@field public Select fun()
+---@field public Draw fun()
+---@field private _visible boolean
+---@field private _animating boolean
+
+---New
+---@return UIRadioMenu
 function UIRadioMenu.New()
     local data = {
         visible=false,

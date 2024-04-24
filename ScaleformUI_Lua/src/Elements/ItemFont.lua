@@ -2,10 +2,10 @@ ItemFont = setmetatable({}, ItemFont)
 
 ---@comment Creates a new ItemFont
 ---@param fontName string
----@param fontId number
+---@param fontId? number
 ---@return table
 function ItemFont.New(fontName, fontId)
-    if fontId == nil then fontId = 0 end
+    if not fontId then fontId = 0 end
     local font = {
         FontName = fontName,
         FontID = fontId

@@ -320,21 +320,21 @@ end
 ---@param x number @The x position of the text (0-1)
 ---@param y number @The y position of the text (0-1)
 ---@param text string @The text
----@param color SColor @The color of the text (RGBA)
----@param font Font @The font
----@param textAlignment number @The text alignment
----@param shadow boolean @Should the text have a shadow?
----@param outline boolean @Should the text have an outline?
----@param wrap number @The wrap
+---@param color? SColor @The color of the text (RGBA)
+---@param font? Font @The font
+---@param textAlignment? number @The text alignment
+---@param shadow? boolean @Should the text have a shadow?
+---@param outline? boolean @Should the text have an outline?
+---@param wrap? number @The wrap
 ---@see Font
 ---@return nil
 function Notifications:DrawText(x, y, text, color, font, textAlignment, shadow, outline, wrap)
-    if (color == nil) then color = { r = 255, g = 255, b = 255, a = 255 } end
-    if (font == nil) then font = 4 end
-    if (textAlignment == nil) then textAlignment = 1 end
-    if (shadow == nil) then shadow = true end
-    if (outline == nil) then outline = true end
-    if (wrap == nil) then wrap = 0 end
+    if not color then color = SColor.HUD_Pure_white end
+    if not font then font = 4 end
+    if not textAlignment then textAlignment = 1 end
+    if not shadow then shadow = true end
+    if not outline then outline = true end
+    if not wrap then wrap = 0 end
 
     local screenw, screenh = GetActiveScreenResolution()
     local height = 1080
@@ -344,8 +344,8 @@ function Notifications:DrawText(x, y, text, color, font, textAlignment, shadow, 
     SetTextFont(font)
     SetTextScale(0.0, 0.5)
     SetTextColour(color.r, color.g, color.b, color.a)
-    if (shadow) then SetTextDropShadow() end
-    if (outline) then SetTextOutline() end
+    if shadow then SetTextDropShadow() end
+    if outline then SetTextOutline() end
     if (wrap ~= 0) then
         local xsize = (x + wrap) / width
         SetTextWrap(x, xsize)
@@ -363,10 +363,10 @@ end
 
 ---Add subtitle to the screen
 ---@param msg string @The message
----@param duration number @The duration of how long the subtitle will be displayed (in ms)
+---@param duration? number @The duration of how long the subtitle will be displayed (in ms)
 ---@return nil
 function Notifications:ShowSubtitle(msg, duration)
-    if (duration == nil) then duration = 2500 end
+    if not duration then duration = 2500 end
     AddTextEntry("ScaleformUISubtitle", msg)
     BeginTextCommandPrint("ScaleformUISubtitle")
     EndTextCommandPrint(duration, true)

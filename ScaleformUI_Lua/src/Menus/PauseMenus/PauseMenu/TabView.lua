@@ -594,7 +594,7 @@ function TabView:Select()
                     SetPauseMenuPedLighting(self:FocusLevel() ~= 0)
                 end
             end
-        elseif cut_sub_tab == "SubmenuTab" then
+        elseif cur_sub_tab == "SubmenuTab" then
             self.Tabs[self.index].LeftItemList[self.leftItemIndex]:Selected(true)
         end
         --[[ check if all disabled ]]

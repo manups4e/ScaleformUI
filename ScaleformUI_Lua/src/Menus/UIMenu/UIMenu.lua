@@ -21,8 +21,42 @@ end
 ---@field public TxtName string -- Texture name for the menu banner background (default: interaction_bgd)
 ---@field public Logo Sprite -- nil
 ---@field public Settings table -- Defines the menus settings
+---@field public JustOpened boolean -- If the menu was just opened
+---@field public Title fun(self: UIMenu, title: string|nil):string -- Menu title
+---@field public DescriptionFont fun(self: UIMenu, fontTable: ScaleformFonts|nil):ScaleformFonts -- Menu description font
+---@field public Subtitle fun(self: UIMenu, subTitle: string|nil):string -- Menu subtitle
+---@field public CounterColor fun(self: UIMenu, color: SColor|nil):SColor -- Counter color
+---@field public DisableGameControls fun(self: UIMenu, bool: boolean|nil):boolean -- Disable non menu controls
+---@field public HasInstructionalButtons fun(self: UIMenu, enabled: boolean|nil):boolean -- If the menu has instructional buttons
+---@field public CanPlayerCloseMenu fun(self: UIMenu, playerCanCloseMenu: boolean|nil):boolean -- If the player can close the menu
+---@field public ControlDisablingEnabled fun(self: UIMenu, enabled: boolean|nil):boolean -- If the menu disables controls
+---@field public MouseEdgeEnabled fun(self: UIMenu, enabled: boolean|nil):boolean -- If the mouse edge is enabled
+---@field public MouseWheelControlEnabled fun(self: UIMenu, enabled: boolean|nil):boolean -- If the mouse wheel is enabled
+---@field public MouseControlsEnabled fun(self: UIMenu, enabled: boolean|nil):boolean -- If the mouse controls are enabled
+---@field public RefreshMenu fun(self: UIMenu, keepIndex: boolean|nil)
+---@field public SetBannerSprite fun(self: UIMenu, txtDictionary: string, txtName: string)
+---@field public SetBannerColor fun(self: UIMenu, color: SColor)
+---@field public AnimationEnabled fun(self: UIMenu, enabled: boolean|nil):boolean -- If the menu animation is enabled or disabled (default: true)
+---@field public Enabled3DAnimations fun(self: UIMenu, enabled: boolean|nil):boolean -- If the 3D animations are enabled or disabled (default: true)
+---@field public AnimationType fun(self: UIMenu, type: MenuAnimationType|nil):MenuAnimationType -- Animation type for the menu (default: MenuAnimationType.LINEAR)
+---@field public BuildingAnimation fun(self: UIMenu, type: MenuBuildingAnimation|nil):MenuBuildingAnimation -- Build animation type for the menu (default: MenuBuildingAnimation.LEFT)
+---@field public ScrollingType fun(self: UIMenu, type: MenuScrollingType|nil):MenuScrollingType -- Scrolling type for the menu (default: MenuScrollingType.CLASSIC)
+---@field public FadeOutMenu fun(self: UIMenu) -- Fade out the menu
+---@field public FadeInMenu fun(self: UIMenu) -- Fade in the menu
+---@field public FadeOutItems fun(self: UIMenu) -- Fade out the menu items
+---@field public FadeInItems fun(self: UIMenu) -- Fade in the menu items
+---@field public CurrentSelection fun(self: UIMenu, value: number|nil):number -- Current selected item index
+---@field public AddWindow fun(self: UIMenu, window: table) -- Add a new window to the menu
+---@field public RemoveWindowAt fun(self: UIMenu, Index: number) -- Remove a window at the specified index
+---@field public AddItem fun(self: UIMenu, item: UIMenuItem) -- Add a new item to the menu
+---@field public AddItemAt fun(self: UIMenu, item: UIMenuItem, index: number) -- Add a new item at the specified index
+---@field public RemoveItemAt fun(self: UIMenu, Index: number) -- Remove an item at the specified index
+---@field public RemoveItem fun(self: UIMenu, item: table) -- Remove an item from the menu
+---@field public Clear fun(self: UIMenu) -- Clear the menu
 ---@field public MaxItemsOnScreen fun(self: UIMenu, max: number|nil):number -- Maximum number of items that can be displayed (default: 7)
----@field public AddItem fun(self: UIMenu, item: UIMenuItem)
+---@field public SwitchTo fun(self: UIMenu, newMenu: UIMenu, newMenuCurrentSelection: number|nil, inheritOldMenuParams: boolean|nil) -- Switch to a new menu
+---@field public MouseSettings fun(self: UIMenu, enableMouseControls: boolean, enableEdge: boolean, isWheelEnabled: boolean, resetCursorOnOpen: boolean, leftClickSelect: boolean) -- Set the mouse settings for the menu
+---@field public Visible fun(self: UIMenu, bool: boolean|nil):boolean -- If the menu is visible
 ---@field public OnIndexChange fun(menu: UIMenu, newindex: number)
 ---@field public OnListChange fun(menu: UIMenu, list: UIMenuListItem, newindex: number)
 ---@field public OnSliderChange fun(menu: UIMenu, slider: UIMenuSliderItem, newindex: number)
@@ -34,16 +68,37 @@ end
 ---@field public OnItemSelect fun(menu: UIMenu, item: UIMenuItem, checked: boolean)
 ---@field public OnMenuOpen fun(menu: UIMenu)
 ---@field public OnMenuClose fun(menu: UIMenu)
----@field public BuildAsync fun(self: UIMenu, enabled: boolean|nil):boolean -- If the menu should be built async (default: false)
----@field public AnimationEnabled fun(self: UIMenu, enabled: boolean|nil):boolean -- If the menu animation is enabled or disabled (default: true)
----@field public AnimationType fun(self: UIMenu, type: MenuAnimationType|nil):MenuAnimationType -- Animation type for the menu (default: MenuAnimationType.LINEAR)
----@field public BuildingAnimation fun(self: UIMenu, type: MenuBuildingAnimation|nil):MenuBuildingAnimation -- Build animation type for the menu (default: MenuBuildingAnimation.LEFT)
----@field public Visible fun(self: UIMenu, visible: boolean|nil):boolean -- If the menu is visible or not (default: false)
 ---@field private counterColor SColor -- Set the counter color (default: SColor.HUD_Freemode)
 ---@field private enableAnimation boolean -- Enable or disable the menu animation (default: true)
 ---@field private animationType MenuAnimationType -- Sets the menu animation type (default: MenuAnimationType.LINEAR)
 ---@field private buildingAnimation MenuBuildingAnimation -- Sets the menu building animation type (default: MenuBuildingAnimation.NONE)
 ---@field private descFont ScaleformFonts -- Sets the desctiption text font. (default: ScaleformFonts.CHALET_LONDON_NINETEENSIXTY)
+---@field private SubtitleColor HudColours -- Sets the subtitle color (default: HudColours.NONE)
+---@field private leftClickEnabled boolean -- Enable or disable left click controls (default: false)
+---@field private bannerColor SColor -- Sets the menu banner color (default: SColor.HUD_None)
+---@field private _unfilteredMenuItems table -- {}
+---@field private _menuGlare number -- Menu glare effect
+---@field private _canBuild boolean -- If the menu can be built
+---@field private _isBuilding boolean -- If the menu is building
+---@field private _time number -- Time
+---@field private _times number -- Times
+---@field private _delay number -- Delay
+---@field private _delayBeforeOverflow number -- Delay before overflow
+---@field private _timeBeforeOverflow number -- Time before overflow
+---@field private _canHe boolean -- If the player can close the menu
+---@field private _scaledWidth number -- Scaled width
+---@field private enabled3DAnimations boolean -- If the 3D animations are enabled
+---@field private isFading boolean -- If the menu is fading
+---@field private fadingTime number -- Fading time
+---@field private ParentPool table -- {}
+---@field private _Visible boolean -- If the menu is visible
+---@field private Dirty boolean -- If the menu is dirty
+---@field private disableGameControls boolean -- If the game controls are disabled
+---@field private InstructionalButtons table -- {}
+---@field private _itemless boolean -- If the menu has no items
+---@field private _keyboard boolean -- If the menu is using the keyboard
+---@field private _changed boolean -- If the menu has changed
+---@field private _maxItem number -- Maximum number of items
 
 ---Creates a new UIMenu.
 ---@param title string -- Menu title
@@ -146,7 +201,6 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         ParentPool = nil,
         _Visible = false,
         Dirty = false,
-        ReDraw = true,
         disableGameControls = true,
         InstructionalButtons = {
             InstructionalButton.New(GetLabelText("HUD_INPUT2"), -1, 176, 176, -1),
@@ -268,7 +322,8 @@ function UIMenu:CounterColor(color)
 end
 
 ---DisableNonMenuControls
----@param bool boolean
+---@param bool? boolean
+---@return boolean | nil
 function UIMenu:DisableGameControls(bool)
     if bool ~= nil then
         self.disableGameControls = bool
@@ -381,7 +436,7 @@ function UIMenu:RefreshMenu(keepIndex)
                 if (not self:Visible()) then return end
                 self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
             end
-            self.Pagination:ScaleformIndex(self.Pagination:GetScaleformIndex(CurrentSelection))
+            self.Pagination:ScaleformIndex(self.Pagination:GetScaleformIndex(self.Pagination:CurrentMenuIndex()))
             ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", self:CurrentSelection(), #self.Items)
             self.isBuilding = false
             if keepIndex then
@@ -580,7 +635,7 @@ function UIMenu:AddItemAt(item, index)
         return
     end
     item:SetParentMenu(self)
-    table.insert(this.Items, index, item)
+    table.insert(self.Items, index, item)
     self.Pagination:TotalItems(#self.Items)
     if self:Visible() then
         if self.Pagination:IsItemVisible(index) then

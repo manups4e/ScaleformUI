@@ -4,6 +4,27 @@ MissionItem.__call = function()
     return "LobbyItem", "MissionItem"
 end
 
+---@class MissionItem
+---@field Label string
+---@field Handle number
+---@field ParentColumn MissionListColumn
+---@field enabled boolean
+---@field MainColor SColor
+---@field HighlightColor SColor
+---@field LeftIcon BadgeStyle
+---@field LeftIconColor SColor
+---@field RightIcon BadgeStyle
+---@field RightIconColor SColor
+---@field RightIconChecked boolean
+---@field _Selected boolean
+---@field hovered boolean
+---@field Activated fun(item:MissionItem)
+---@field Hovered fun(val:boolean)
+---@field Enabled fun(bool:boolean)
+---@field SetLeftIcon fun(icon:BadgeStyle, color:SColor)
+---@field SetRightIcon fun(icon:BadgeStyle, color:SColor, checked:boolean)
+
+
 ---@param label string
 ---@param mainColor SColor
 ---@param highlightColor SColor

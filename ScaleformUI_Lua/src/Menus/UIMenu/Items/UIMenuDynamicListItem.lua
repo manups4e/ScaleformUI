@@ -16,10 +16,10 @@ UIMenuDynamicListItem.__call = function() return "UIMenuItem", "UIMenuDynamicLis
 ---@param Description string
 ---@param StartingItem string
 ---@param callback function
----@param color number|117
----@param highlightColor number|1
----@param textColor number|1
----@param highlightedTextColor number|2
+---@param color SColor
+---@param highlightColor SColor
+---@param textColor SColor
+---@param highlightedTextColor SColor
 function UIMenuDynamicListItem.New(Text, Description, StartingItem, callback, color, highlightColor, textColor,
                                    highlightedTextColor)
     local _UIMenuDynamicListItem = {
@@ -245,7 +245,7 @@ function UIMenuDynamicListItem:AddPanel(Panel)
 end
 
 ---RemovePanelAt
----@param Index table
+---@param Index number
 function UIMenuDynamicListItem:RemovePanelAt(Index)
     if tonumber(Index) then
         if self.Panels[Index] then
