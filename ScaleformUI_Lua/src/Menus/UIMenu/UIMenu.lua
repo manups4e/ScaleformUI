@@ -322,7 +322,8 @@ function UIMenu:CounterColor(color)
 end
 
 ---DisableNonMenuControls
----@param bool boolean
+---@param bool? boolean
+---@return boolean | nil
 function UIMenu:DisableGameControls(bool)
     if bool ~= nil then
         self.disableGameControls = bool
