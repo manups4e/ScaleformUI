@@ -51,14 +51,14 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                             lobby._pause._lobby.CallFunction("SET_PLAYERS_STAT_PANEL_PERMANENT", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), keepPanelVisible);
                         }
                     }
-                    else if (ParentColumn.Parent is TabView pause)
+                    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
                     {
                         if (pause.Tabs[pause.Index] is PlayerListTab tab)
                         {
                             if (tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection] == this)
                             {
                                 UpdateClone();
-                                pause._pause._lobby.CallFunction("SET_PLAYERS_TAB_PLAYERS_STAT_PANEL_PERMANENT", ParentColumn.ParentTab, ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), keepPanelVisible);
+                                pause._pause._lobby.CallFunction("SET_PLAYERS_TAB_PLAYERS_STAT_PANEL_PERMANENT", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), keepPanelVisible);
                             }
                         }
                     }
@@ -136,7 +136,7 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                         UpdateClone();
                     }
                 }
-                else if (ParentColumn.Parent is TabView pause)
+                else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
                 {
                     if (pause.Tabs[pause.Index] is PlayerListTab tab)
                     {
@@ -179,7 +179,7 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                 {
                     API.SetPauseMenuPedLighting(_clonePedLighting);
                 }
-                else if (ParentColumn.Parent is TabView pause)
+                else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
                 {
                     API.SetPauseMenuPedLighting(_clonePedLighting && pause.FocusLevel > 0);
                 }

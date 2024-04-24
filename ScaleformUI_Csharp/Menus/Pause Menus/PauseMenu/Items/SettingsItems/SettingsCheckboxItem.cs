@@ -16,10 +16,9 @@ namespace ScaleformUI.PauseMenu
                 isChecked = value;
                 if (Parent != null)
                 {
-                    int tab = Parent.Parent.Parent.Tabs.IndexOf(Parent.Parent);
                     int leftItem = Parent.Parent.LeftItemList.IndexOf(Parent);
                     int rightIndex = Parent.ItemList.IndexOf(this);
-                    Parent.Parent.Parent._pause.SetRightSettingsItemBool(tab, leftItem, rightIndex, isChecked);
+                    Parent.Parent.Parent._pause.SetRightSettingsItemBool(leftItem, rightIndex, isChecked);
                 }
                 CheckboxChanged();
             }

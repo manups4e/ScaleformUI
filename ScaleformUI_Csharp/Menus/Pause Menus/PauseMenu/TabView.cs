@@ -1,8 +1,8 @@
 ﻿using CitizenFX.Core;
+using ScaleformUI.Elements;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenus;
 using ScaleformUI.PauseMenus.Elements.Items;
-using ScaleformUI.PauseMenus.Elements.Panels;
 using ScaleformUI.Scaleforms;
 using static CitizenFX.Core.Native.API;
 
@@ -10,7 +10,7 @@ namespace ScaleformUI.PauseMenu
 {
     public delegate void PauseMenuOpenEvent(TabView menu);
     public delegate void PauseMenuCloseEvent(TabView menu);
-    public delegate void PauseMenuTabChanged(TabView menu, BaseTab tab, int tabIndex);
+    public delegate void PauseMenuTabChanged(TabView menu, BaseTab tab, int i);
     public delegate void PauseMenuFocusChanged(TabView menu, BaseTab tab, int focusLevel);
     public delegate void LeftItemSelect(TabView menu, TabLeftItem item, int leftItemIndex);
     public delegate void RightItemSelect(TabView menu, SettingsItem item, int leftItemIndex, int rightItemIndex);
@@ -33,14 +33,21 @@ namespace ScaleformUI.PauseMenu
         public string SideStringTop { get; set; }
         public string SideStringMiddle { get; set; }
         public string SideStringBottom { get; set; }
-        public Tuple<string, string> HeaderPicture { internal get; set; }
+        public Tuple<string, string> HeaderPicture
+        {
+            internal get => headerPicture;
+            set
+            {
+                headerPicture = value;
+                if (Visible)
+                    _pause.SetHeaderCharImg(HeaderPicture.Item1, HeaderPicture.Item2, true);
+
+            }
+        }
         public Tuple<string, string> CrewPicture { internal get; set; }
         public bool SetHeaderDynamicWidth { get; set; }
         public List<BaseTab> Tabs { get; set; }
         private int index;
-        private bool _firstDrawTick = false;
-        private int timer = 100;
-
         public int LeftItemIndex
         {
             get => leftItemIndex;
@@ -127,32 +134,45 @@ namespace ScaleformUI.PauseMenu
                 Game.IsPaused = value;
                 if (value)
                 {
-                    ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_CORONA"), true, 1);
+                    ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_CORONA"), true, -1);
                     doScreenBlur();
                     Main.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
                     SetPlayerControl(Game.Player.Handle, false, 0);
-                    _firstDrawTick = true;
-                    MenuHandler.currentBase = this;
+                    isBuilding = true;
+                    ShowHeader();
+                    foreach (BaseTab tab in Tabs)
+                    {
+                        switch (tab._type)
+                        {
+                            case 0:
+                                TextTab simpleTab = (TextTab)tab;
+                                _pause.AddPauseMenuTab(simpleTab.Title, 0, simpleTab._type, simpleTab.TabColor);
+                                break;
+                            case 1:
+                                SubmenuTab submenu = (SubmenuTab)tab;
+                                _pause.AddPauseMenuTab(submenu.Title, 1, submenu._type, submenu.TabColor);
+                                break;
+                            case 2:
+                                PlayerListTab plTab = (PlayerListTab)tab;
+                                _pause.AddPauseMenuTab(plTab.Title, 1, plTab._type, plTab.TabColor);
+                                break;
+                        }
+                    }
+                    Tabs[0].Visible = true;
                     BuildPauseMenu();
+                    MenuHandler.currentBase = this;
                     SendPauseMenuOpen();
                 }
                 else
                 {
-                    foreach (BaseTab tab in Tabs)
-                    {
-                        if (tab is PlayerListTab t)
-                        {
-                            t.Minimap?.Dispose();
-                        }
-                    }
-                    _pause.Dispose();
                     AnimpostfxStop("PauseMenuIn");
-                    AnimpostfxPlay("PauseMenuOut", 800, false);
+                    AnimpostfxPlay("PauseMenuOut", 0, false);
                     SendPauseMenuClose();
                     SetPlayerControl(Game.Player.Handle, true, 0);
                     MenuHandler.currentBase = null;
-                    ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_CORONA"), false, 1);
                     Main.InstructionalButtons.ClearButtonList();
+                    _pause.Dispose();
+                    ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_CORONA"), false, -1);
                 }
             }
         }
@@ -164,26 +184,29 @@ namespace ScaleformUI.PauseMenu
                 await BaseScript.Delay(0);
                 AnimpostfxStop("PauseMenuOut");
             }
-            AnimpostfxPlay("PauseMenuIn", 800, true);
+            AnimpostfxPlay("PauseMenuIn", 0, true);
         }
 
         public int Index
         {
             get => index; set
             {
+                _pause._pause.CallFunction("CLEAR_ALL");
+                _pause._pause.CallFunction("FADE_OUT");
                 Tabs[Index].Visible = false;
                 index = value;
+                if (index > Tabs.Count - 1)
+                    index = 0;
+                if (index < 0)
+                    index = Tabs.Count - 1;
                 Tabs[Index].Visible = true;
+                BuildPauseMenu();
                 SendPauseMenuTabChange();
             }
         }
 
         public void AddTab(BaseTab item)
         {
-            if (item is PlayerListTab t)
-            {
-                t.Minimap = new MinimapPanel(this);
-            }
             item.Parent = this;
             Tabs.Add(item);
         }
@@ -202,8 +225,10 @@ namespace ScaleformUI.PauseMenu
                 _pause.ShiftCoronaDescription(true, false);
                 _pause.SetHeaderTitle(Title, SubTitle);
             }
-            if (HeaderPicture != null)
+            if (HeaderPicture != null && !string.IsNullOrEmpty(HeaderPicture.Item1) && !string.IsNullOrEmpty(HeaderPicture.Item2))
                 _pause.SetHeaderCharImg(HeaderPicture.Item1, HeaderPicture.Item2, true);
+            else
+                _pause.SetHeaderCharImg("CHAR_DEFAULT", "CHAR_DEFAULT", true);
             if (CrewPicture != null)
                 _pause.SetHeaderSecondaryImg(CrewPicture.Item1, CrewPicture.Item2, true);
             _pause.SetHeaderDetails(SideStringTop, SideStringMiddle, SideStringBottom);
@@ -214,200 +239,189 @@ namespace ScaleformUI.PauseMenu
         public void BuildPauseMenu()
         {
             isBuilding = true;
-            ShowHeader();
-            RequestStreamedTextureDict("commonmenu", true);
-            for (int i = 0; i < Tabs.Count; i++)
+            if (!HasStreamedTextureDictLoaded("commonmenu"))
+                RequestStreamedTextureDict("commonmenu", true);
+            BaseTab tab = Tabs[Index];
+            switch (tab._type)
             {
-                BaseTab tab = Tabs[i];
-                switch (tab._type)
-                {
-                    case 0:
+                case 0:
+                    {
+                        TextTab simpleTab = (TextTab)tab;
+                        _pause._pause.CallFunction("ADD_TAB", 0);
+                        if (!string.IsNullOrWhiteSpace(simpleTab.TextTitle))
+                            _pause.AddRightTitle(0, simpleTab.TextTitle);
+                        for (int j = 0; j < simpleTab.LabelsList.Count; j++)
                         {
-                            TextTab simpleTab = (TextTab)tab;
-                            _pause.AddPauseMenuTab(simpleTab.Title, 0, simpleTab._type, simpleTab.TabColor);
-                            if (!string.IsNullOrWhiteSpace(simpleTab.TextTitle))
-                                _pause.AddRightTitle(i, 0, simpleTab.TextTitle);
-                            for (int j = 0; j < simpleTab.LabelsList.Count; j++)
-                            {
-                                BasicTabItem it = simpleTab.LabelsList[j];
-                                _pause.AddRightListLabel(i, 0, it.Label, it.LabelFont.FontName, it.LabelFont.FontID);
-                            }
-                            if (!(string.IsNullOrWhiteSpace(simpleTab.BGTextureDict) && string.IsNullOrWhiteSpace(simpleTab.BGTextureName)))
-                                _pause._pause.CallFunction("UPDATE_BASE_TAB_BACKGROUND", i, simpleTab.BGTextureDict, simpleTab.BGTextureName);
-                            if (!(string.IsNullOrWhiteSpace(simpleTab.RightTextureDict) && string.IsNullOrWhiteSpace(simpleTab.RightTextureName)))
-                                _pause._pause.CallFunction("SET_BASE_TAB_RIGHT_PICTURE", i, simpleTab.RightTextureDict, simpleTab.RightTextureName);
+                            BasicTabItem it = simpleTab.LabelsList[j];
+                            _pause.AddRightListLabel(0, it.Label, it.LabelFont.FontName, it.LabelFont.FontID);
                         }
-                        break;
-                    case 1:
+                        if (!(string.IsNullOrWhiteSpace(simpleTab.BGTextureDict) && string.IsNullOrWhiteSpace(simpleTab.BGTextureName)))
+                            _pause._pause.CallFunction("UPDATE_BASE_TAB_BACKGROUND", simpleTab.BGTextureDict, simpleTab.BGTextureName);
+                        if (!(string.IsNullOrWhiteSpace(simpleTab.RightTextureDict) && string.IsNullOrWhiteSpace(simpleTab.RightTextureName)))
+                            _pause._pause.CallFunction("SET_BASE_TAB_RIGHT_PICTURE", simpleTab.RightTextureDict, simpleTab.RightTextureName);
+                    }
+                    break;
+                case 1:
+                    {
+                        SubmenuTab submenu = (SubmenuTab)tab;
+                        _pause._pause.CallFunction("ADD_TAB", 1);
+                        for (int j = 0; j < submenu.LeftItemList.Count; j++)
                         {
-                            SubmenuTab submenu = (SubmenuTab)tab;
-                            _pause.AddPauseMenuTab(submenu.Title, 1, submenu._type, submenu.TabColor);
-                            for (int j = 0; j < submenu.LeftItemList.Count; j++)
+                            TabLeftItem item = submenu.LeftItemList[j];
+                            _pause.AddLeftItem((int)item.ItemType, item._formatLeftLabel, item.MainColor, item.HighlightColor);
+
+                            if (item._labelFont != ScaleformFonts.CHALET_LONDON_NINETEENSIXTY)
+                                _pause._pause.CallFunction("SET_LEFT_ITEM_LABEL_FONT", j, item._labelFont.FontName, item._labelFont.FontID);
+                            //_pause._pause.CallFunction("SET_LEFT_ITEM_RIGHT_LABEL_FONT", i, j, item._labelFont.FontName, item._labelFont.FontID);
+
+                            if (!string.IsNullOrWhiteSpace(item.RightTitle))
                             {
-                                TabLeftItem item = submenu.LeftItemList[j];
-                                int itemIndex = tab.LeftItemList.IndexOf(item);
-                                _pause.AddLeftItem(i, (int)item.ItemType, item._formatLeftLabel, item.MainColor, item.HighlightColor, item.Enabled);
-
-                                _pause._pause.CallFunction("SET_LEFT_ITEM_LABEL_FONT", i, itemIndex, item._labelFont.FontName, item._labelFont.FontID);
-                                //_pause._pause.CallFunction("SET_LEFT_ITEM_RIGHT_LABEL_FONT", i, itemIndex, item._labelFont.FontName, item._labelFont.FontID);
-
-                                if (!string.IsNullOrWhiteSpace(item.RightTitle))
-                                {
-                                    if (item.ItemType == LeftItemType.Keymap)
-                                        _pause.AddKeymapTitle(i, itemIndex, item.RightTitle, item.KeymapRightLabel_1, item.KeymapRightLabel_2);
-                                    else
-                                        _pause.AddRightTitle(i, itemIndex, item.RightTitle);
-                                }
-
-
-                                for (int k = 0; k < item.ItemList.Count; k++)
-                                {
-                                    BasicTabItem ii = item.ItemList[k];
-                                    switch (ii)
-                                    {
-                                        default:
-                                            {
-                                                _pause.AddRightListLabel(i, itemIndex, ii.Label, ii.LabelFont.FontName, ii.LabelFont.FontID);
-                                            }
-                                            break;
-                                        case StatsTabItem:
-                                            {
-                                                StatsTabItem sti = ii as StatsTabItem;
-                                                switch (sti.Type)
-                                                {
-                                                    case StatItemType.Basic:
-                                                        _pause.AddRightStatItemLabel(i, itemIndex, sti.Label, sti.RightLabel, sti.LabelFont, sti.rightLabelFont);
-                                                        break;
-                                                    case StatItemType.ColoredBar:
-                                                        _pause.AddRightStatItemColorBar(i, itemIndex, sti.Label, sti.Value, sti.ColoredBarColor, sti.labelFont);
-                                                        break;
-                                                }
-                                            }
-                                            break;
-                                        case SettingsItem:
-                                            {
-                                                SettingsItem sti = ii as SettingsItem;
-                                                switch (sti.ItemType)
-                                                {
-                                                    case SettingsItemType.Basic:
-                                                        _pause.AddRightSettingsBaseItem(i, itemIndex, sti.Label, sti.RightLabel, sti.Enabled);
-                                                        break;
-                                                    case SettingsItemType.ListItem:
-                                                        SettingsListItem lis = (SettingsListItem)sti;
-                                                        _pause.AddRightSettingsListItem(i, itemIndex, lis.Label, lis.ListItems, lis.ItemIndex, lis.Enabled);
-                                                        break;
-                                                    case SettingsItemType.ProgressBar:
-                                                        SettingsProgressItem prog = (SettingsProgressItem)sti;
-                                                        _pause.AddRightSettingsProgressItem(i, itemIndex, prog.Label, prog.MaxValue, prog.ColoredBarColor, prog.Value, prog.Enabled);
-                                                        break;
-                                                    case SettingsItemType.MaskedProgressBar:
-                                                        SettingsProgressItem prog_alt = (SettingsProgressItem)sti;
-                                                        _pause.AddRightSettingsProgressItemAlt(i, itemIndex, sti.Label, prog_alt.MaxValue, prog_alt.ColoredBarColor, prog_alt.Value, prog_alt.Enabled);
-                                                        break;
-                                                    case SettingsItemType.CheckBox:
-                                                        SettingsCheckboxItem check = (SettingsCheckboxItem)sti;
-                                                        _pause.AddRightSettingsCheckboxItem(i, itemIndex, check.Label, check.CheckBoxStyle, check.IsChecked, check.Enabled);
-                                                        break;
-                                                    case SettingsItemType.SliderBar:
-                                                        SettingsSliderItem slid = (SettingsSliderItem)sti;
-                                                        _pause.AddRightSettingsSliderItem(i, itemIndex, slid.Label, slid.MaxValue, slid.ColoredBarColor, slid.Value, slid.Enabled);
-                                                        break;
-                                                }
-                                            }
-                                            break;
-                                        case KeymapItem:
-                                            KeymapItem ki = ii as KeymapItem;
-                                            if (IsUsingKeyboard(2))
-                                                _pause.AddKeymapItem(i, itemIndex, ki.Label, ki.PrimaryKeyboard, ki.SecondaryKeyboard);
-                                            else
-                                                _pause.AddKeymapItem(i, itemIndex, ki.Label, ki.PrimaryGamepad, ki.SecondaryGamepad);
-                                            UpdateKeymapItems();
-                                            break;
-                                    }
-                                }
-
-                                if (item.ItemType == LeftItemType.Info || item.ItemType == LeftItemType.Statistics || item.ItemType == LeftItemType.Settings)
-                                {
-                                    if (!(string.IsNullOrWhiteSpace(item.TextureDict) && string.IsNullOrWhiteSpace(item.TextureName)))
-                                        _pause._pause.CallFunction("UPDATE_LEFT_ITEM_RIGHT_BACKGROUND", i, itemIndex, item.TextureDict, item.TextureName, (int)item.LeftItemBGType);
-                                }
-
+                                if (item.ItemType == LeftItemType.Keymap)
+                                    _pause.AddKeymapTitle(j, item.RightTitle, item.KeymapRightLabel_1, item.KeymapRightLabel_2);
+                                else
+                                    _pause.AddRightTitle(j, item.RightTitle);
                             }
+
+
+                            for (int k = 0; k < item.ItemList.Count; k++)
+                            {
+                                BasicTabItem ii = item.ItemList[k];
+                                switch (ii)
+                                {
+                                    default:
+                                        {
+                                            _pause.AddRightListLabel(j, ii.Label, ii.LabelFont.FontName, ii.LabelFont.FontID);
+                                        }
+                                        break;
+                                    case StatsTabItem:
+                                        {
+                                            StatsTabItem sti = ii as StatsTabItem;
+                                            switch (sti.Type)
+                                            {
+                                                case StatItemType.Basic:
+                                                    _pause.AddRightStatItemLabel(j, sti.Label, sti.RightLabel, sti.LabelFont, sti.rightLabelFont);
+                                                    break;
+                                                case StatItemType.ColoredBar:
+                                                    _pause.AddRightStatItemColorBar(j, sti.Label, sti.Value, sti.ColoredBarColor, sti.labelFont);
+                                                    break;
+                                            }
+                                        }
+                                        break;
+                                    case SettingsItem:
+                                        {
+                                            SettingsItem sti = ii as SettingsItem;
+                                            switch (sti.ItemType)
+                                            {
+                                                case SettingsItemType.Basic:
+                                                    _pause.AddRightSettingsBaseItem(j, sti.Label, sti.RightLabel, sti.Enabled);
+                                                    break;
+                                                case SettingsItemType.ListItem:
+                                                    SettingsListItem lis = (SettingsListItem)sti;
+                                                    _pause.AddRightSettingsListItem(j, lis.Label, lis.ListItems, lis.ItemIndex, lis.Enabled);
+                                                    break;
+                                                case SettingsItemType.ProgressBar:
+                                                    SettingsProgressItem prog = (SettingsProgressItem)sti;
+                                                    _pause.AddRightSettingsProgressItem(j, prog.Label, prog.MaxValue, prog.ColoredBarColor, prog.Value, prog.Enabled);
+                                                    break;
+                                                case SettingsItemType.MaskedProgressBar:
+                                                    SettingsProgressItem prog_alt = (SettingsProgressItem)sti;
+                                                    _pause.AddRightSettingsProgressItemAlt(j, sti.Label, prog_alt.MaxValue, prog_alt.ColoredBarColor, prog_alt.Value, prog_alt.Enabled);
+                                                    break;
+                                                case SettingsItemType.CheckBox:
+                                                    SettingsCheckboxItem check = (SettingsCheckboxItem)sti;
+                                                    _pause.AddRightSettingsCheckboxItem(j, check.Label, check.CheckBoxStyle, check.IsChecked, check.Enabled);
+                                                    break;
+                                                case SettingsItemType.SliderBar:
+                                                    SettingsSliderItem slid = (SettingsSliderItem)sti;
+                                                    _pause.AddRightSettingsSliderItem(j, slid.Label, slid.MaxValue, slid.ColoredBarColor, slid.Value, slid.Enabled);
+                                                    break;
+                                            }
+                                        }
+                                        break;
+                                    case KeymapItem:
+                                        KeymapItem ki = ii as KeymapItem;
+                                        if (IsUsingKeyboard(2))
+                                            _pause.AddKeymapItem(j, ki.Label, ki.PrimaryKeyboard, ki.SecondaryKeyboard);
+                                        else
+                                            _pause.AddKeymapItem(j, ki.Label, ki.PrimaryGamepad, ki.SecondaryGamepad);
+                                        UpdateKeymapItems();
+                                        break;
+                                }
+                            }
+
+                            if (item.ItemType == LeftItemType.Info || item.ItemType == LeftItemType.Statistics || item.ItemType == LeftItemType.Settings)
+                            {
+                                if (!(string.IsNullOrWhiteSpace(item.TextureDict) && string.IsNullOrWhiteSpace(item.TextureName)))
+                                    _pause._pause.CallFunction("UPDATE_LEFT_ITEM_RIGHT_BACKGROUND", j, item.TextureDict, item.TextureName, (int)item.LeftItemBGType);
+                            }
+
                         }
-                        break;
-                    case 2:
+                    }
+                    break;
+                case 2:
+                    {
+                        PlayerListTab plTab = (PlayerListTab)tab;
+                        _pause._pause.CallFunction("ADD_TAB", 2);
+                        switch (plTab.listCol.Count)
                         {
-                            PlayerListTab plTab = (PlayerListTab)tab;
-                            _pause.AddPauseMenuTab(plTab.Title, 1, plTab._type, plTab.TabColor);
-                            switch (plTab.listCol.Count)
-                            {
-                                case 1:
-                                    _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", i, plTab.listCol[0].Type);
-                                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", i, 0, plTab.listCol[0]._maxItems);
-                                    break;
-                                case 2:
-                                    _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", i, plTab.listCol[0].Type, plTab.listCol[1].Type);
-                                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", i, 0, plTab.listCol[0]._maxItems);
-                                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", i, 1, plTab.listCol[1]._maxItems);
-                                    break;
-                                case 3:
-                                    _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", i, plTab.listCol[0].Type, plTab.listCol[1].Type, plTab.listCol[2].Type);
-                                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", i, 0, plTab.listCol[0]._maxItems);
-                                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", i, 1, plTab.listCol[1]._maxItems);
-                                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", i, 2, plTab.listCol[2]._maxItems);
-                                    break;
-                            }
-                            _pause._pause.CallFunction("SET_PLAYERS_TAB_NEWSTYLE", i, plTab._newStyle);
-                            if (plTab.listCol.Any(x => x.Type == "settings"))
-                            {
-                                plTab.SettingsColumn.Parent = this;
-                                plTab.SettingsColumn.ParentTab = Tabs.IndexOf(plTab);
-                                buildSettings(plTab);
-                            }
-                            if (plTab.listCol.Any(x => x.Type == "players"))
-                            {
-                                plTab.PlayersColumn.Parent = this;
-                                plTab.PlayersColumn.ParentTab = Tabs.IndexOf(plTab);
-                                buildPlayers(plTab);
-                            }
-                            if (plTab.listCol.Any(x => x.Type == "missions"))
-                            {
-                                plTab.MissionsColumn.Parent = this;
-                                plTab.MissionsColumn.ParentTab = Tabs.IndexOf(plTab);
-                                buildMissions(plTab);
-                            }
-                            if (plTab.listCol.Any(x => x.Type == "store"))
-                            {
-                                plTab.StoreColumn.Parent = this;
-                                plTab.StoreColumn.ParentTab = Tabs.IndexOf(plTab);
-                                buildStore(plTab);
-                            }
-                            if (plTab.listCol.Any(x => x.Type == "panel"))
-                            {
-                                plTab.MissionPanel.Parent = this;
-                                plTab.MissionPanel.ParentTab = Tabs.IndexOf(plTab);
-                                _pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_PICTURE", i, plTab.MissionPanel.TextureDict, plTab.MissionPanel.TextureName);
-                                _pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_PANEL_TITLE", i, plTab.MissionPanel.Title);
-                                if (plTab.MissionPanel.Items.Count > 0)
-                                {
-                                    for (int j = 0; j < plTab.MissionPanel.Items.Count; j++)
-                                    {
-                                        UIFreemodeDetailsItem item = plTab.MissionPanel.Items[j];
-                                        _pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_ITEM", i, item.Type, item.TextLeft, item.TextRight, (int)item.Icon, item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID);
-                                    }
-                                }
-                            }
+                            case 1:
+                                _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", plTab.listCol[0].Type);
+                                _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", 0, plTab.listCol[0]._maxItems);
+                                break;
+                            case 2:
+                                _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", plTab.listCol[0].Type, plTab.listCol[1].Type);
+                                _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", 0, plTab.listCol[0]._maxItems);
+                                _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", 1, plTab.listCol[1]._maxItems);
+                                break;
+                            case 3:
+                                _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", plTab.listCol[0].Type, plTab.listCol[1].Type, plTab.listCol[2].Type);
+                                _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", 0, plTab.listCol[0]._maxItems);
+                                _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", 1, plTab.listCol[1]._maxItems);
+                                _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", 2, plTab.listCol[2]._maxItems);
+                                break;
                         }
-                        break;
-                }
+                        _pause._pause.CallFunction("SET_PLAYERS_TAB_NEWSTYLE", plTab._newStyle);
+                        if (plTab.listCol.Any(x => x.Type == "settings"))
+                        {
+                            plTab.SettingsColumn.Parent = this;
+                            plTab.SettingsColumn.isBuilding = true;
+                            buildSettings(plTab);
+                        }
+                        if (plTab.listCol.Any(x => x.Type == "players"))
+                        {
+                            plTab.PlayersColumn.Parent = this;
+                            plTab.PlayersColumn.isBuilding = true;
+                            buildPlayers(plTab);
+                        }
+                        if (plTab.listCol.Any(x => x.Type == "missions"))
+                        {
+                            plTab.MissionsColumn.isBuilding = true;
+                            plTab.MissionsColumn.Parent = this;
+                            buildMissions(plTab);
+                        }
+                        if (plTab.listCol.Any(x => x.Type == "store"))
+                        {
+                            plTab.StoreColumn.isBuilding = true;
+                            plTab.StoreColumn.Parent = this;
+                            buildStore(plTab);
+                        }
+                        if (plTab.listCol.Any(x => x.Type == "panel"))
+                        {
+                            plTab.MissionPanel.Parent = this;
+                            buildPanel(plTab);
+                        }
+                        plTab.SelectColumn(0);
+                    }
+                    break;
             }
+            _pause._pause.CallFunction("UPDATE_DRAWING");
+            _pause._pause.CallFunction("FADE_IN");
             isBuilding = false;
         }
 
         bool canBuild = true;
         internal void buildSettings(PlayerListTab tab)
         {
-            int tab_id = Tabs.IndexOf(tab);
             int max = tab.SettingsColumn.Pagination.ItemsPerPage;
             if (tab.SettingsColumn.Items.Count < max)
                 max = tab.SettingsColumn.Items.Count;
@@ -425,19 +439,19 @@ namespace ScaleformUI.PauseMenu
             tab.SettingsColumn.Pagination.MaxItem = tab.SettingsColumn.Pagination.CurrentPageEndIndex;
 
             for (int i = 0; i < max; i++)
+            {
                 tab.SettingsColumn._itemCreation(tab.SettingsColumn.Pagination.CurrentPage, i, false, true);
-
+            }
             tab.SettingsColumn.CurrentSelection = 0;
             tab.SettingsColumn.Pagination.ScaleformIndex = tab.SettingsColumn.Pagination.GetScaleformIndex(tab.SettingsColumn.CurrentSelection);
             tab.SettingsColumn.Items[0].Selected = false;
-            _pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", tab_id, tab.SettingsColumn.Pagination.ScaleformIndex);
-            _pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", tab_id, tab.SettingsColumn.CurrentSelection + 1, tab.SettingsColumn.Items.Count);
+            _pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", tab.SettingsColumn.Pagination.ScaleformIndex);
+            _pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", tab.SettingsColumn.CurrentSelection + 1, tab.SettingsColumn.Items.Count);
             tab.SettingsColumn.isBuilding = false;
         }
 
         internal void buildPlayers(PlayerListTab tab)
         {
-            int tab_id = Tabs.IndexOf(tab);
             int max = tab.PlayersColumn.Pagination.ItemsPerPage;
             if (tab.PlayersColumn.Items.Count < max)
                 max = tab.PlayersColumn.Items.Count;
@@ -455,19 +469,19 @@ namespace ScaleformUI.PauseMenu
             tab.PlayersColumn.Pagination.MaxItem = tab.PlayersColumn.Pagination.CurrentPageEndIndex;
 
             for (int i = 0; i < max; i++)
+            {
                 tab.PlayersColumn._itemCreation(tab.PlayersColumn.Pagination.CurrentPage, i, false, true);
-
+            }
             tab.PlayersColumn.CurrentSelection = 0;
             tab.PlayersColumn.Pagination.ScaleformIndex = tab.PlayersColumn.Pagination.GetScaleformIndex(tab.PlayersColumn.CurrentSelection);
             tab.PlayersColumn.Items[0].Selected = false;
-            _pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYERS_SELECTION", tab_id, tab.PlayersColumn.Pagination.ScaleformIndex);
-            _pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYERS_QTTY", tab_id, tab.PlayersColumn.CurrentSelection + 1, tab.PlayersColumn.Items.Count);
+            _pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYERS_SELECTION", tab.PlayersColumn.Pagination.ScaleformIndex);
+            _pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYERS_QTTY", tab.PlayersColumn.CurrentSelection + 1, tab.PlayersColumn.Items.Count);
             tab.PlayersColumn.isBuilding = false;
         }
 
         internal void buildMissions(PlayerListTab tab)
         {
-            int tab_id = Tabs.IndexOf(tab);
             int max = tab.MissionsColumn.Pagination.ItemsPerPage;
             if (tab.MissionsColumn.Items.Count < max)
                 max = tab.MissionsColumn.Items.Count;
@@ -485,19 +499,19 @@ namespace ScaleformUI.PauseMenu
             tab.MissionsColumn.Pagination.MaxItem = tab.MissionsColumn.Pagination.CurrentPageEndIndex;
 
             for (int i = 0; i < max; i++)
+            {
                 tab.MissionsColumn._itemCreation(tab.MissionsColumn.Pagination.CurrentPage, i, false, true);
-
+            }
             tab.MissionsColumn.CurrentSelection = 0;
             tab.MissionsColumn.Pagination.ScaleformIndex = tab.MissionsColumn.Pagination.GetScaleformIndex(tab.MissionsColumn.CurrentSelection);
             tab.MissionsColumn.Items[0].Selected = false;
-            _pause._pause.CallFunction("SET_PLAYERS_TAB_MISSIONS_SELECTION", tab_id, tab.MissionsColumn.Pagination.ScaleformIndex);
-            _pause._pause.CallFunction("SET_PLAYERS_TAB_MISSIONS_QTTY", tab_id, tab.MissionsColumn.CurrentSelection + 1, tab.MissionsColumn.Items.Count);
+            _pause._pause.CallFunction("SET_PLAYERS_TAB_MISSIONS_SELECTION", tab.MissionsColumn.Pagination.ScaleformIndex);
+            _pause._pause.CallFunction("SET_PLAYERS_TAB_MISSIONS_QTTY", tab.MissionsColumn.CurrentSelection + 1, tab.MissionsColumn.Items.Count);
             tab.MissionsColumn.isBuilding = false;
         }
 
         internal void buildStore(PlayerListTab tab)
         {
-            int tab_id = Tabs.IndexOf(tab);
             int max = tab.StoreColumn.Pagination.ItemsPerPage;
             if (tab.StoreColumn.Items.Count < max)
                 max = tab.StoreColumn.Items.Count;
@@ -515,38 +529,43 @@ namespace ScaleformUI.PauseMenu
             tab.StoreColumn.Pagination.MaxItem = tab.StoreColumn.Pagination.CurrentPageEndIndex;
 
             for (int i = 0; i < max; i++)
+            {
                 tab.StoreColumn._itemCreation(tab.StoreColumn.Pagination.CurrentPage, i, false, true);
-
+            }
             tab.StoreColumn.CurrentSelection = 0;
             tab.StoreColumn.Pagination.ScaleformIndex = tab.StoreColumn.Pagination.GetScaleformIndex(tab.StoreColumn.CurrentSelection);
             tab.StoreColumn.Items[0].Selected = false;
-            _pause._pause.CallFunction("SET_PLAYERS_TAB_STORE_SELECTION", tab_id, tab.StoreColumn.Pagination.ScaleformIndex);
-            _pause._pause.CallFunction("SET_PLAYERS_TAB_STORE_QTTY", tab_id, tab.StoreColumn.CurrentSelection + 1, tab.StoreColumn.Items.Count);
+            _pause._pause.CallFunction("SET_PLAYERS_TAB_STORE_SELECTION", tab.StoreColumn.Pagination.ScaleformIndex);
+            _pause._pause.CallFunction("SET_PLAYERS_TAB_STORE_QTTY", tab.StoreColumn.CurrentSelection + 1, tab.StoreColumn.Items.Count);
             tab.StoreColumn.isBuilding = false;
         }
 
+        internal void buildPanel(PlayerListTab tab)
+        {
+            _pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_PICTURE", tab.MissionPanel.TextureDict, tab.MissionPanel.TextureName);
+            _pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_PANEL_TITLE", tab.MissionPanel.Title);
+            if (tab.MissionPanel.Items.Count > 0)
+            {
+                for (int j = 0; j < tab.MissionPanel.Items.Count; j++)
+                {
+                    UIFreemodeDetailsItem item = tab.MissionPanel.Items[j];
+                    _pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_ITEM", item.Type, item.TextLeft, item.TextRight, (int)item.Icon, item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID);
+                }
+            }
+        }
+
         private bool controller = false;
-        public override void Draw()
+        public override async void Draw()
         {
             if (!Visible || TemporarilyHidden || isBuilding) return;
-            if (Tabs[Index] is PlayerListTab tab)
-            {
-                tab.Minimap.MaintainMap();
-            }
             base.Draw();
             _pause.Draw();
             UpdateKeymapItems();
-            if (_firstDrawTick)
-            {
-                _pause._lobby.CallFunction("FADE_IN");
-                _firstDrawTick = false;
-                timer = GetNetworkTime();
-            }
         }
 
         private void UpdateKeymapItems()
         {
-            if (!IsInputDisabled(2))
+            if (!IsUsingKeyboard(2))
             {
                 if (!controller)
                 {
@@ -561,7 +580,7 @@ namespace ScaleformUI.PauseMenu
                                 for (int i = 0; i < lItem.ItemList.Count; i++)
                                 {
                                     KeymapItem item = (KeymapItem)lItem.ItemList[i];
-                                    _pause.UpdateKeymap(Index, idx, i, item.PrimaryGamepad, item.SecondaryGamepad);
+                                    _pause.UpdateKeymap(idx, i, item.PrimaryGamepad, item.SecondaryGamepad);
                                 }
                             }
                         }
@@ -583,7 +602,7 @@ namespace ScaleformUI.PauseMenu
                                 for (int i = 0; i < lItem.ItemList.Count; i++)
                                 {
                                     KeymapItem item = (KeymapItem)lItem.ItemList[i];
-                                    _pause.UpdateKeymap(Index, idx, i, item.PrimaryKeyboard, item.SecondaryKeyboard);
+                                    _pause.UpdateKeymap(idx, i, item.PrimaryKeyboard, item.SecondaryKeyboard);
                                 }
                             }
                         }
@@ -606,9 +625,6 @@ namespace ScaleformUI.PauseMenu
                             case "settings":
                                 pl.SettingsColumn.Items[pl.SettingsColumn.CurrentSelection].Selected = true;
                                 break;
-                            case "store":
-                                pl.StoreColumn.Items[pl.StoreColumn.CurrentSelection].Selected = true;
-                                break;
                             case "players":
                                 pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].Selected = true;
                                 if (pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].KeepPanelVisible)
@@ -616,6 +632,9 @@ namespace ScaleformUI.PauseMenu
                                 break;
                             case "missions":
                                 pl.MissionsColumn.Items[pl.MissionsColumn.CurrentSelection].Selected = true;
+                                break;
+                            case "store":
+                                pl.StoreColumn.Items[pl.StoreColumn.CurrentSelection].Selected = true;
                                 break;
                         }
                         if (pl.listCol.Any(x => x.Type == "players"))
@@ -698,13 +717,13 @@ namespace ScaleformUI.PauseMenu
                                     mitem.ActivateMission(plTab);
                                     plTab.MissionsColumn.SelectItem();
                                     break;
+                                case "players":
+                                    plTab.PlayersColumn.SelectItem();
+                                    break;
                                 case "store":
                                     StoreItem stItem = plTab.StoreColumn.Items[plTab.StoreColumn.CurrentSelection];
                                     stItem.Activate(plTab);
                                     plTab.StoreColumn.SelectItem();
-                                    break;
-                                case "players":
-                                    plTab.PlayersColumn.SelectItem();
                                     break;
                             }
                         }
@@ -749,8 +768,7 @@ namespace ScaleformUI.PauseMenu
                     }
                     break;
             }
-            if (playSound)
-                Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
+            if (playSound) Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
         }
 
         public void GoBack()
@@ -772,12 +790,12 @@ namespace ScaleformUI.PauseMenu
                         SetPauseMenuPedLighting(FocusLevel != 0);
                         if (pl.listCol.Any(x => x.Type == "settings"))
                             pl.SettingsColumn.Items[pl.SettingsColumn.CurrentSelection].Selected = false;
-                        if (pl.listCol.Any(x => x.Type == "store"))
-                            pl.StoreColumn.Items[pl.StoreColumn.CurrentSelection].Selected = false;
                         if (pl.listCol.Any(x => x.Type == "players"))
                             pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].Selected = false;
                         if (pl.listCol.Any(x => x.Type == "missions"))
                             pl.MissionsColumn.Items[pl.MissionsColumn.CurrentSelection].Selected = false;
+                        if (pl.listCol.Any(x => x.Type == "store"))
+                            pl.StoreColumn.Items[pl.StoreColumn.CurrentSelection].Selected = false;
                     }
                     else
                     {
@@ -788,15 +806,15 @@ namespace ScaleformUI.PauseMenu
                                 case "settings":
                                     pl.SettingsColumn.Items[pl.SettingsColumn.CurrentSelection].Selected = false;
                                     break;
-                                case "store":
-                                    pl.StoreColumn.Items[pl.StoreColumn.CurrentSelection].Selected = false;
-                                    break;
                                 case "players":
                                     pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].Selected = false;
                                     ClearPedInPauseMenu();
                                     break;
                                 case "missions":
                                     pl.MissionsColumn.Items[pl.MissionsColumn.CurrentSelection].Selected = false;
+                                    break;
+                                case "store":
+                                    pl.StoreColumn.Items[pl.StoreColumn.CurrentSelection].Selected = false;
                                     break;
                             }
                             if (pl.Focus == 0)
@@ -825,14 +843,14 @@ namespace ScaleformUI.PauseMenu
                     case "players":
                         plTab.PlayersColumn.GoUp();
                         break;
-                    case "store":
-                        plTab.StoreColumn.GoUp();
-                        break;
                     case "settings":
                         plTab.SettingsColumn.GoUp();
                         break;
                     case "missions":
                         plTab.MissionsColumn.GoUp();
+                        break;
+                    case "store":
+                        plTab.StoreColumn.GoUp();
                         break;
                 }
                 Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
@@ -861,14 +879,14 @@ namespace ScaleformUI.PauseMenu
                     case "players":
                         plTab.PlayersColumn.GoDown();
                         break;
-                    case "store":
-                        plTab.StoreColumn.GoDown();
-                        break;
                     case "settings":
                         plTab.SettingsColumn.GoDown();
                         break;
                     case "missions":
                         plTab.MissionsColumn.GoDown();
+                        break;
+                    case "store":
+                        plTab.StoreColumn.GoDown();
                         break;
                 }
                 Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
@@ -901,9 +919,7 @@ namespace ScaleformUI.PauseMenu
                     {
                         Tabs[Index].LeftItemList[LeftItemIndex].Selected = false;
                     }
-                    Tabs[Index].Visible = false;
-                    Index = retVal;
-                    Tabs[Index].Visible = true;
+                    Index--;
                     if (Tabs[Index] is PlayerListTab _plTab)
                     {
                         if (_plTab.listCol.Any(x => x.Type == "settings") && _plTab.SettingsColumn != null && _plTab.SettingsColumn.Items.Count > 0)
@@ -1058,9 +1074,7 @@ namespace ScaleformUI.PauseMenu
                     {
                         Tabs[Index].LeftItemList[LeftItemIndex].Selected = false;
                     }
-                    Tabs[Index].Visible = false;
-                    Index = retVal;
-                    Tabs[Index].Visible = true;
+                    Index++;
                     if (Tabs[Index] is PlayerListTab _plTab)
                     {
                         if (_plTab.listCol.Any(x => x.Type == "settings") && _plTab.SettingsColumn != null && _plTab.SettingsColumn.Items.Count > 0)
@@ -1201,6 +1215,7 @@ namespace ScaleformUI.PauseMenu
         private int itemId = 0;
         private int context = 0;
         private int unused = 0;
+        private Tuple<string, string> headerPicture = new Tuple<string, string>("CHAR_DEFAULT", "CHAR_DEFAULT");
 
         public override async void ProcessMouse()
         {
@@ -1229,13 +1244,10 @@ namespace ScaleformUI.PauseMenu
                                 Index = itemId;
                                 if (Tabs[Index] is PlayerListTab tab)
                                 {
-                                    if (tab.PlayersColumn != null)
-                                    {
-                                        if (tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].ClonePed != null)
-                                            tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].CreateClonedPed();
-                                        else
-                                            ClearPedInPauseMenu();
-                                    }
+                                    if (tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].ClonePed != null)
+                                        tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].CreateClonedPed();
+                                    else
+                                        ClearPedInPauseMenu();
                                 }
                                 else
                                     ClearPedInPauseMenu();
@@ -1542,10 +1554,9 @@ namespace ScaleformUI.PauseMenu
             {
                 firstTick = false;
                 return;
-                // without this shit the menu goes on focus without need if opened from another menu.
             }
 
-            if (!Visible || TemporarilyHidden) return;
+            if (!Visible || TemporarilyHidden || isBuilding) return;
 
             if (Game.IsControlJustPressed(2, Control.PhoneUp))
                 GoUp();
@@ -1566,7 +1577,9 @@ namespace ScaleformUI.PauseMenu
                 GoRight();
             }
             else if (Game.IsControlJustPressed(2, Control.FrontendAccept))
+            {
                 Select(true);
+            }
             else if (Game.IsControlJustReleased(2, Control.PhoneCancel))
                 GoBack();
 

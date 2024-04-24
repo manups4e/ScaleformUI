@@ -40,7 +40,7 @@ namespace ScaleformUI.PauseMenu
             BGTextureName = txn;
             if (Parent != null && Parent.Visible)
             {
-                Parent._pause._pause.CallFunction("UPDATE_BASE_TAB_BACKGROUND", Parent.Tabs.IndexOf(this), txd, txn);
+                Parent._pause._pause.CallFunction("UPDATE_BASE_TAB_BACKGROUND", txd, txn);
             }
         }
 
@@ -55,7 +55,7 @@ namespace ScaleformUI.PauseMenu
             RightTextureName = txn;
             if (Parent != null && Parent.Visible)
             {
-                Parent._pause._pause.CallFunction("SET_BASE_TAB_RIGHT_PICTURE", Parent.Tabs.IndexOf(this), txd, txn);
+                Parent._pause._pause.CallFunction("SET_BASE_TAB_RIGHT_PICTURE", txd, txn);
             }
         }
     }

@@ -129,18 +129,18 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
                         }
                     }
                 }
-                else if (ParentItem.ParentColumn.Parent is TabView pause)
+                else if (ParentItem.ParentColumn.Parent is TabView pause && ParentItem.ParentColumn.ParentTab.Visible)
                 {
-                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL", ParentItem.ParentColumn.ParentTab, idx, 0, ParentItem.ClonePed != null, Title, Description, TitleColor, RankInfo.RankLevel, HasPlane, HasHeli, HasBoat, HasVehicle, 0, RankInfo.LowLabel, 0, 0, RankInfo.MidLabel, 0, 0, RankInfo.UpLabel, 0, 0, HardwareVisible);
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL", idx, 0, ParentItem.ClonePed != null, Title, Description, TitleColor, RankInfo.RankLevel, HasPlane, HasHeli, HasBoat, HasVehicle, 0, RankInfo.LowLabel, 0, 0, RankInfo.MidLabel, 0, 0, RankInfo.UpLabel, 0, 0, HardwareVisible);
                     foreach (PlayerStatsPanelStatItem stat in Items)
-                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_STAT", ParentItem.ParentColumn.ParentTab, idx, stat.idx, 0, stat.Label, stat.Description, stat.Value);
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_STAT", idx, stat.idx, 0, stat.Label, stat.Description, stat.Value);
                     if (!string.IsNullOrWhiteSpace(Description))
-                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_DESCRIPTION", ParentItem.ParentColumn.ParentTab, idx, Description, 0, "", ParentItem.ClonePed != null);
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_DESCRIPTION", idx, Description, 0, "", ParentItem.ClonePed != null);
                     else if (DetailsItems.Count > 0)
                     {
                         foreach (UIFreemodeDetailsItem item in DetailsItems)
                         {
-                            pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_DETAIL", ParentItem.ParentColumn.ParentTab, idx, item.Type, item.TextLeft, item.TextRight, (int)item.Icon, item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID);
+                            pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_DETAIL", idx, item.Type, item.TextLeft, item.TextRight, (int)item.Icon, item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID);
                         }
                     }
                 }

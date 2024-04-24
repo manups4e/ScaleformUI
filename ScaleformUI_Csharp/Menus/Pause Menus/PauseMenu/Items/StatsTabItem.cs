@@ -25,10 +25,9 @@ namespace ScaleformUI.PauseMenu
                 rightLabel = value;
                 if (Parent != null)
                 {
-                    int tab = Parent.Parent.Parent.Tabs.IndexOf(Parent.Parent);
                     int leftItem = Parent.Parent.LeftItemList.IndexOf(Parent);
                     int rightIndex = Parent.ItemList.IndexOf(this);
-                    Parent.Parent.Parent._pause.UpdateStatsItem(tab, leftItem, rightIndex, Label, rightLabel);
+                    Parent.Parent.Parent._pause.UpdateStatsItem(leftItem, rightIndex, Label, rightLabel);
                 }
             }
         }
@@ -40,10 +39,9 @@ namespace ScaleformUI.PauseMenu
                 coloredBarColor = value;
                 if (Parent != null)
                 {
-                    int tab = Parent.Parent.Parent.Tabs.IndexOf(Parent.Parent);
                     int leftItem = Parent.Parent.LeftItemList.IndexOf(Parent);
                     int rightIndex = Parent.ItemList.IndexOf(this);
-                    Parent.Parent.Parent._pause.UpdateStatsItem(tab, leftItem, rightIndex, Label, _value, coloredBarColor);
+                    Parent.Parent.Parent._pause.UpdateStatsItem(leftItem, rightIndex, Label, _value, coloredBarColor);
                 }
             }
         }
@@ -55,10 +53,9 @@ namespace ScaleformUI.PauseMenu
                 _value = value;
                 if (Parent != null)
                 {
-                    int tab = Parent.Parent.Parent.Tabs.IndexOf(Parent.Parent);
                     int leftItem = Parent.Parent.LeftItemList.IndexOf(Parent);
                     int rightIndex = Parent.ItemList.IndexOf(this);
-                    Parent.Parent.Parent._pause.UpdateStatsItem(tab, leftItem, rightIndex, Label, _value, coloredBarColor);
+                    Parent.Parent.Parent._pause.UpdateStatsItem(leftItem, rightIndex, Label, _value, coloredBarColor);
                 }
             }
         }

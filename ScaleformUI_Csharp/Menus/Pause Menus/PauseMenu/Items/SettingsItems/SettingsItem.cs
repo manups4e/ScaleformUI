@@ -28,10 +28,9 @@
                 {
                     if (Parent.Selected)
                     {
-                        var tab = Parent.Parent.Parent.Tabs.IndexOf(Parent.Parent);
-                        var it = Parent.Parent.LeftItemList.IndexOf(Parent);
-                        var rIt = Parent.ItemList.IndexOf(this);
-                        Parent.Parent.Parent._pause._pause.CallFunction("ENABLE_RIGHT_ITEM", tab, it, rIt, enabled);
+                        int it = Parent.Parent.LeftItemList.IndexOf(Parent);
+                        int rIt = Parent.ItemList.IndexOf(this);
+                        Parent.Parent.Parent._pause._pause.CallFunction("ENABLE_RIGHT_ITEM", it, rIt, enabled);
                     }
                 }
             }
@@ -48,10 +47,9 @@
                 rightLabel = value;
                 if (Parent != null)
                 {
-                    int tab = Parent.Parent.Parent.Tabs.IndexOf(Parent.Parent);
                     int leftItem = Parent.Parent.LeftItemList.IndexOf(Parent);
                     int rightIndex = Parent.ItemList.IndexOf(this);
-                    Parent.Parent.Parent._pause.UpdateItemRightLabel(tab, leftItem, rightIndex, rightLabel);
+                    Parent.Parent.Parent._pause.UpdateItemRightLabel(leftItem, rightIndex, rightLabel);
                 }
             }
         }

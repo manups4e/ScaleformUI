@@ -79,9 +79,9 @@ namespace ScaleformUI.PauseMenu
                     updateFocus(focus + 1, isMouse);
                 return;
             }
-            if (Parent != null && Parent.Visible)
+            if (Parent != null && Parent.Visible && Visible)
             {
-                int idx = await Parent._pause._pause.CallFunctionReturnValueInt("SET_PLAYERS_TAB_FOCUS", Parent.Tabs.IndexOf(this), focus);
+                int idx = await Parent._pause._pause.CallFunctionReturnValueInt("SET_PLAYERS_TAB_FOCUS", focus);
                 if (!isMouse)
                 {
                     switch (listCol[Focus].Type)
@@ -123,32 +123,26 @@ namespace ScaleformUI.PauseMenu
             foreach (Column col in columns)
             {
                 if (this.Parent != null)
-                {
                     col.Parent = this.Parent;
-                    col.ParentTab = Parent.Tabs.IndexOf(this);
-                }
+                col.ParentTab = this;
+                col.Order = columns.IndexOf(col);
 
                 switch (col)
                 {
                     case SettingsListColumn:
                         SettingsColumn = col as SettingsListColumn;
-                        SettingsColumn.Order = columns.IndexOf(col);
                         break;
                     case PlayerListColumn:
                         PlayersColumn = col as PlayerListColumn;
-                        PlayersColumn.Order = columns.IndexOf(col);
                         break;
                     case MissionsListColumn:
                         MissionsColumn = col as MissionsListColumn;
-                        MissionsColumn.Order = columns.IndexOf(col);
                         break;
                     case StoreListColumn:
                         StoreColumn = col as StoreListColumn;
-                        StoreColumn.Order = columns.IndexOf(col);
                         break;
                     case MissionDetailsPanel:
                         MissionPanel = col as MissionDetailsPanel;
-                        MissionPanel.Order = columns.IndexOf(col);
                         break;
                 }
             }

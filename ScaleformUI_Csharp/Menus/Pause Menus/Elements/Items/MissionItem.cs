@@ -34,9 +34,9 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                     {
                         lobby._pause._lobby.CallFunction("SET_MISSION_ITEM_ENABLED", ParentColumn.Items.IndexOf(this), value);
                     }
-                    else if (ParentColumn.Parent is TabView pause)
+                    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
                     {
-                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_ITEM_ENABLED", ParentColumn.ParentTab, ParentColumn.Items.IndexOf(this), value);
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_ITEM_ENABLED", ParentColumn.Items.IndexOf(this), value);
                     }
                 }
             }
@@ -67,9 +67,9 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                 {
                     lobby._pause._lobby.CallFunction("SET_MISSION_ITEM_LEFT_ICON", ParentColumn.Items.IndexOf(this), (int)icon, color);
                 }
-                else if (ParentColumn.Parent is TabView pause)
+                else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
                 {
-                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_ITEM_LEFT_ICON", ParentColumn.ParentTab, ParentColumn.Items.IndexOf(this), (int)icon, color);
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_ITEM_LEFT_ICON", ParentColumn.Items.IndexOf(this), (int)icon, color);
                 }
             }
         }
@@ -84,9 +84,9 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                 {
                     lobby._pause._lobby.CallFunction("SET_MISSION_ITEM_RIGHT_ICON", ParentColumn.Items.IndexOf(this), (int)icon, @checked, color);
                 }
-                else if (ParentColumn.Parent is TabView pause)
+                else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
                 {
-                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_ITEM_RIGHT_ICON", ParentColumn.ParentTab, ParentColumn.Items.IndexOf(this), (int)icon, @checked, color);
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_ITEM_RIGHT_ICON", ParentColumn.Items.IndexOf(this), (int)icon, @checked, color);
                 }
             }
         }

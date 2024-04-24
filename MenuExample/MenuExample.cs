@@ -1137,7 +1137,7 @@ public class MenuExample : BaseScript
 
         SubmenuTab multiItemTab = new SubmenuTab("SUBMENUTAB", SColor.HUD_Freemode);
         pauseMenu.AddTab(multiItemTab);
-        TabLeftItem first = new TabLeftItem("1 - Empty", LeftItemType.Empty);
+        TabLeftItem first = new TabLeftItem("1 - Empty", LeftItemType.Empty, ScaleformFonts.CHALET_LONDON_NINETEENSIXTY, SColor.HUD_Pause_bg, SColor.HUD_White);
         TabLeftItem second = new TabLeftItem("2 - Info", LeftItemType.Info);
         TabLeftItem third = new TabLeftItem("3 - Statistics", LeftItemType.Statistics);
         TabLeftItem fourth = new TabLeftItem("4 - Settings", LeftItemType.Settings);

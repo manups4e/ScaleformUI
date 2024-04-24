@@ -48,12 +48,12 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                     }
                     Pagination.MaxItem = Pagination.CurrentPageEndIndex;
                     _itemCreation(0, Items.Count - 1, false);
-                    if (Parent is TabView pause)
+                    if (Parent is TabView pause && ParentTab.Visible)
                     {
-                        if ((pause.Tabs[ParentTab] as PlayerListTab).listCol[(pause.Tabs[ParentTab] as PlayerListTab).Focus] == this)
+                        if (ParentTab.listCol[ParentTab.Focus] == this)
                             CurrentSelection = sel;
                     }
-                    else if (Parent is TabView lobby)
+                    else if (Parent is MainView)
                     {
                         CurrentSelection = sel;
                     }
@@ -178,11 +178,10 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                 if (item.LeftBadge != BadgeIcon.NONE)
                     lobby._pause._lobby.CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", scaleformIndex, (int)item.LeftBadge);
             }
-            else if (Parent is TabView pause)
+            else if (Parent is TabView pause && ParentTab.Visible)
             {
-                AddTextEntry($"menu_pause_playerTab[{ParentTab}]_desc_{menuIndex}", item.Description);
+                AddTextEntry($"menu_pause_playerTab[{pause.Index}]_desc_{menuIndex}", item.Description);
                 BeginScaleformMovieMethod(pause._pause._pause.Handle, "ADD_PLAYERS_TAB_SETTINGS_ITEM");
-                PushScaleformMovieFunctionParameterInt(ParentTab);
                 PushScaleformMovieFunctionParameterBool(before);
                 PushScaleformMovieFunctionParameterInt(menuIndex);
                 PushScaleformMovieFunctionParameterInt(item._itemId);
@@ -195,7 +194,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                 }
                 else
                 {
-                    BeginTextCommandScaleformString($"menu_pause_playerTab[{ParentTab}]_desc_{menuIndex}");
+                    BeginTextCommandScaleformString($"menu_pause_playerTab[{pause.Index}]_desc_{menuIndex}");
                     EndTextCommandScaleformString_2();
                 }
                 PushScaleformMovieFunctionParameterBool(item.Enabled);
@@ -204,8 +203,8 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                 {
                     case UIMenuListItem:
                         UIMenuListItem it = (UIMenuListItem)item;
-                        AddTextEntry($"listitem_menu_pause_playerTab[{ParentTab}]_{menuIndex}_list", string.Join(",", it.Items));
-                        BeginTextCommandScaleformString($"listitem_menu_pause_playerTab[{ParentTab}]_{menuIndex}_list");
+                        AddTextEntry($"listitem_menu_pause_playerTab[{pause.Index}]_{menuIndex}_list", string.Join(",", it.Items));
+                        BeginTextCommandScaleformString($"listitem_menu_pause_playerTab[{pause.Index}]_{menuIndex}_list");
                         EndTextCommandScaleformString();
                         PushScaleformMovieFunctionParameterInt(it.Index);
                         PushScaleformMovieFunctionParameterInt(it.MainColor.ArgbValue/**/);
@@ -255,17 +254,17 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                         PushScaleformMovieFunctionParameterInt(item.TextColor.ArgbValue);
                         PushScaleformMovieFunctionParameterInt(item.HighlightedTextColor.ArgbValue);
                         EndScaleformMovieMethod();
-                        pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL_RIGHT", ParentTab, scaleformIndex, item._formatRightLabel);
+                        pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL_RIGHT", scaleformIndex, item._formatRightLabel);
                         if (item.RightBadge != BadgeIcon.NONE)
                         {
-                            pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_BADGE", ParentTab, scaleformIndex, (int)item.RightBadge);
+                            pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_BADGE", scaleformIndex, (int)item.RightBadge);
                         }
                         break;
                 }
-                pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LABEL_FONT", ParentTab, scaleformIndex, item.labelFont.FontName, item.labelFont.FontID);
-                pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_LABEL_FONT", ParentTab, scaleformIndex, item.rightLabelFont.FontName, item.rightLabelFont.FontID);
+                pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LABEL_FONT", scaleformIndex, item.labelFont.FontName, item.labelFont.FontID);
+                pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_LABEL_FONT", scaleformIndex, item.rightLabelFont.FontName, item.rightLabelFont.FontID);
                 if (item.LeftBadge != BadgeIcon.NONE)
-                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", ParentTab, scaleformIndex, (int)item.LeftBadge);
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", scaleformIndex, (int)item.LeftBadge);
 
             }
         }
@@ -286,15 +285,15 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                             _itemCreation(Pagination.GetPage(CurrentSelection), Pagination.CurrentPageIndex, true);
                             if (Parent is MainView lobby)
                                 await lobby._pause._lobby.CallFunctionReturnValueInt("SET_INPUT_EVENT", 8, 100);
-                            else if (Parent is TabView pause)
+                            else if (Parent is TabView pause && ParentTab.Visible)
                                 await pause._pause._pause.CallFunctionReturnValueInt("SET_INPUT_EVENT", 8, 100);
                         }
                         else if (Pagination.scrollType == ScrollingType.PAGINATED || (Pagination.scrollType == ScrollingType.CLASSIC && overflow))
                         {
                             if (Parent is MainView lobby)
                                 lobby._pause._lobby.CallFunction("CLEAR_SETTINGS_COLUMN");
-                            else if (Parent is TabView pause)
-                                pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN", ParentTab);
+                            else if (Parent is TabView pause && ParentTab.Visible)
+                                pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN");
                             int max = Pagination.ItemsPerPage;
                             isBuilding = true;
                             for (int i = 0; i < max; i++)
@@ -313,10 +312,10 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                     _lobby._pause._lobby.CallFunction("SET_SETTINGS_SELECTION", Pagination.ScaleformIndex);
                     _lobby._pause._lobby.CallFunction("SET_SETTINGS_QTTY", CurrentSelection + 1, Items.Count);
                 }
-                else if (Parent is TabView _pause)
+                else if (Parent is TabView _pause && ParentTab.Visible)
                 {
-                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", ParentTab, Pagination.ScaleformIndex);
-                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", ParentTab, CurrentSelection + 1, Items.Count);
+                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", Pagination.ScaleformIndex);
+                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", CurrentSelection + 1, Items.Count);
                 }
 
                 Items[CurrentSelection].Selected = true;
@@ -344,15 +343,15 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
 
                             if (Parent is MainView lobby)
                                 lobby._pause._lobby.CallFunction("SET_INPUT_EVENT", 9, 100);
-                            else if (Parent is TabView pause)
+                            else if (Parent is TabView pause && ParentTab.Visible)
                                 await pause._pause._pause.CallFunctionReturnValueInt("SET_INPUT_EVENT", 9, 100);
                         }
                         else if (Pagination.scrollType == ScrollingType.PAGINATED || (Pagination.scrollType == ScrollingType.CLASSIC && overflow))
                         {
                             if (Parent is MainView lobby)
                                 lobby._pause._lobby.CallFunction("CLEAR_SETTINGS_COLUMN");
-                            else if (Parent is TabView pause)
-                                pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN", ParentTab);
+                            else if (Parent is TabView pause && ParentTab.Visible)
+                                pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN");
                             int i = 0;
                             int max = Pagination.ItemsPerPage;
                             isBuilding = true;
@@ -372,10 +371,10 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                     _lobby._pause._lobby.CallFunction("SET_SETTINGS_SELECTION", Pagination.ScaleformIndex);
                     _lobby._pause._lobby.CallFunction("SET_SETTINGS_QTTY", CurrentSelection + 1, Items.Count);
                 }
-                else if (Parent is TabView _pause)
+                else if (Parent is TabView _pause && ParentTab.Visible)
                 {
-                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", ParentTab, Pagination.ScaleformIndex);
-                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", ParentTab, CurrentSelection + 1, Items.Count);
+                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", Pagination.ScaleformIndex);
+                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", CurrentSelection + 1, Items.Count);
                 }
 
                 Items[CurrentSelection].Selected = true;
@@ -392,6 +391,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             get { return Items.Count == 0 ? 0 : Pagination.CurrentMenuIndex; }
             set
             {
+                if (value == CurrentSelection) return;
                 if (value < 0)
                 {
                     Pagination.CurrentMenuIndex = 0;
@@ -421,13 +421,14 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                             lobby._pause._lobby.CallFunction("SET_SETTINGS_QTTY", CurrentSelection + 1, Items.Count);
                             Items[CurrentSelection].Selected = true;
                         }
-                        else if (Parent is TabView pause)
+                        else if (Parent is TabView pause && ParentTab.Visible)
                         {
-                            pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", ParentTab, Pagination.GetScaleformIndex(Pagination.CurrentMenuIndex));
-                            pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", ParentTab, CurrentSelection + 1, Items.Count);
-                            if (pause.Index == pause.Tabs.IndexOf(pause.Tabs[ParentTab]) && pause.FocusLevel == 1)
+                            pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", Pagination.GetScaleformIndex(Pagination.CurrentMenuIndex));
+                            pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", CurrentSelection + 1, Items.Count);
+                            if (pause.Index == pause.Tabs.IndexOf(ParentTab) && pause.FocusLevel == 1)
                                 Items[CurrentSelection].Selected = true;
                         }
+                        IndexChangedEvent();
                     }
                     if (Items[CurrentSelection] is UIMenuSeparatorItem jp)
                     {
@@ -449,8 +450,8 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             {
                 if (Parent is MainView lobby)
                     lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_ITEM_LABELS", Pagination.GetScaleformIndex(index), leftLabel, rightLabel);
-                else if (Parent is TabView pause)
-                    pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABELS", ParentTab, Pagination.GetScaleformIndex(index), leftLabel, rightLabel);
+                else if (Parent is TabView pause && ParentTab.Visible)
+                    pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABELS", Pagination.GetScaleformIndex(index), leftLabel, rightLabel);
             }
         }
 
@@ -460,8 +461,8 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             {
                 if (Parent is MainView lobby)
                     lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_ITEM_BLINK_DESC", Pagination.GetScaleformIndex(index), blink);
-                else if (Parent is TabView pause)
-                    pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_BLINK_DESC", ParentTab, Pagination.GetScaleformIndex(index), blink);
+                else if (Parent is TabView pause && ParentTab.Visible)
+                    pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_BLINK_DESC", Pagination.GetScaleformIndex(index), blink);
             }
         }
 
@@ -471,8 +472,8 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             {
                 if (Parent is MainView lobby)
                     lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_ITEM_LABEL", Pagination.GetScaleformIndex(index), label);
-                else if (Parent is TabView pause)
-                    pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL", ParentTab, Pagination.GetScaleformIndex(index), label);
+                else if (Parent is TabView pause && ParentTab.Visible)
+                    pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL", Pagination.GetScaleformIndex(index), label);
             }
         }
 
@@ -482,8 +483,8 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             {
                 if (Parent is MainView lobby)
                     lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_ITEM_LABEL_RIGHT", Pagination.GetScaleformIndex(index), label);
-                else if (Parent is TabView pause)
-                    pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL_RIGHT", ParentTab, Pagination.GetScaleformIndex(index), label);
+                else if (Parent is TabView pause && ParentTab.Visible)
+                    pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL_RIGHT", Pagination.GetScaleformIndex(index), label);
             }
         }
 
@@ -493,8 +494,8 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             {
                 if (Parent is MainView lobby)
                     lobby._pause._lobby.CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", Pagination.GetScaleformIndex(index), (int)badge);
-                else if (Parent is TabView pause)
-                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", ParentTab, Pagination.GetScaleformIndex(index), (int)badge);
+                else if (Parent is TabView pause && ParentTab.Visible)
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", Pagination.GetScaleformIndex(index), (int)badge);
             }
         }
 
@@ -504,28 +505,31 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             {
                 if (Parent is MainView lobby)
                     lobby._pause._lobby.CallFunction("SET_SETTINGS_ITEM_RIGHT_BADGE", Pagination.GetScaleformIndex(index), (int)badge);
-                else if (Parent is TabView pause)
-                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_BADGE", ParentTab, Pagination.GetScaleformIndex(index), (int)badge);
+                else if (Parent is TabView pause && ParentTab.Visible)
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_BADGE", Pagination.GetScaleformIndex(index), (int)badge);
             }
         }
 
         public void EnableItem(int index, bool enable)
         {
-            if (Parent != null)
+            if (Parent != null && Parent.Visible)
             {
                 if (Parent is MainView lobby)
                     lobby._pause._lobby.CallFunction("ENABLE_SETTINGS_ITEM", Pagination.GetScaleformIndex(index), enable);
-                else if (Parent is TabView pause)
-                    pause._pause._pause.CallFunction("ENABLE_PLAYERS_TAB_SETTINGS_ITEM", ParentTab, Pagination.GetScaleformIndex(index), enable);
+                else if (Parent is TabView pause && ParentTab.Visible)
+                    pause._pause._pause.CallFunction("ENABLE_PLAYERS_TAB_SETTINGS_ITEM", Pagination.GetScaleformIndex(index), enable);
             }
         }
 
         public void Clear()
         {
-            if (Parent is MainView lobby)
-                lobby._pause._lobby.CallFunction("CLEAR_SETTINGS_COLUMN");
-            else if (Parent is TabView pause)
-                pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN", ParentTab);
+            if (Parent != null && Parent.Visible)
+            {
+                if (Parent is MainView lobby)
+                    lobby._pause._lobby.CallFunction("CLEAR_SETTINGS_COLUMN");
+                else if (Parent is TabView pause && ParentTab.Visible)
+                    pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN");
+            }
             Items.Clear();
             Pagination.Reset();
         }
@@ -546,8 +550,8 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             {
                 if (Parent is MainView lobby)
                     lobby.buildSettings();
-                else if (Parent is TabView pause)
-                    pause.buildSettings(pause.Tabs[ParentTab] as PlayerListTab);
+                else if (Parent is TabView pause && ParentTab.Visible)
+                    pause.buildSettings(ParentTab);
             }
         }
 
@@ -565,8 +569,8 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             {
                 if (Parent is MainView lobby)
                     lobby.buildSettings();
-                else if (Parent is TabView pause)
-                    pause.buildSettings(pause.Tabs[ParentTab] as PlayerListTab);
+                else if (Parent is TabView pause && ParentTab.Visible)
+                    pause.buildSettings(ParentTab);
             }
         }
 
@@ -582,8 +586,8 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                 {
                     if (Parent is MainView lobby)
                         lobby.buildSettings();
-                    else if (Parent is TabView pause)
-                        pause.buildSettings(pause.Tabs[ParentTab] as PlayerListTab);
+                    else if (Parent is TabView pause && ParentTab.Visible)
+                        pause.buildSettings(ParentTab);
                 }
             }
         }
@@ -592,8 +596,8 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
         {
             if (Parent is MainView lobby)
                 lobby._pause._lobby.CallFunction("CLEAR_SETTINGS_COLUMN");
-            else if (Parent is TabView pause)
-                pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN", ParentTab);
+            else if (Parent is TabView pause && ParentTab.Visible)
+                pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN");
             if (Items.Count > 0)
             {
                 isBuilding = true;
@@ -624,10 +628,10 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                     _lobby._pause._lobby.CallFunction("SET_SETTINGS_SELECTION", Pagination.ScaleformIndex);
                     _lobby._pause._lobby.CallFunction("SET_SETTINGS_QTTY", CurrentSelection + 1, Items.Count);
                 }
-                else if (Parent is TabView _pause)
+                else if (Parent is TabView _pause && ParentTab.Visible)
                 {
-                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", ParentTab, Pagination.ScaleformIndex);
-                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", ParentTab, CurrentSelection + 1, Items.Count);
+                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", Pagination.ScaleformIndex);
+                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", CurrentSelection + 1, Items.Count);
                 }
                 isBuilding = false;
             }

@@ -58,9 +58,8 @@ namespace ScaleformUI.PauseMenu
                 }
                 if (Parent != null && Parent.Visible)
                 {
-                    int tab = Parent.Parent.Tabs.IndexOf(Parent);
                     int it = Parent.LeftItemList.IndexOf(this);
-                    Parent.Parent._pause._pause.CallFunction("UPDATE_LEFT_ITEM_LABEL", tab, it, _formatLeftLabel);
+                    Parent.Parent._pause._pause.CallFunction("UPDATE_LEFT_ITEM_LABEL", it, _formatLeftLabel);
                 }
             }
         }
@@ -79,10 +78,9 @@ namespace ScaleformUI.PauseMenu
 
                 if (Parent != null && Parent.Visible)
                 {
-                    int tab = Parent.Parent.Tabs.IndexOf(Parent);
                     int it = Parent.LeftItemList.IndexOf(this);
-                    Parent.Parent._pause._pause.CallFunction("ENABLE_LEFT_ITEM", tab, it, enabled);
-                    Parent.Parent._pause._pause.CallFunction("UPDATE_LEFT_ITEM_LABEL", tab, it, _formatLeftLabel);
+                    Parent.Parent._pause._pause.CallFunction("ENABLE_LEFT_ITEM", it, enabled);
+                    Parent.Parent._pause._pause.CallFunction("UPDATE_LEFT_ITEM_LABEL", it, _formatLeftLabel);
                 }
             }
         }
@@ -107,9 +105,8 @@ namespace ScaleformUI.PauseMenu
                 }
                 if (Parent != null && Parent.Visible)
                 {
-                    int tab = Parent.Parent.Tabs.IndexOf(Parent);
                     int it = Parent.LeftItemList.IndexOf(this);
-                    Parent.Parent._pause._pause.CallFunction("UPDATE_LEFT_ITEM_LABEL", tab, it, _formatLeftLabel);
+                    Parent.Parent._pause._pause.CallFunction("UPDATE_LEFT_ITEM_LABEL", it, _formatLeftLabel);
                 }
             }
         }
@@ -126,9 +123,8 @@ namespace ScaleformUI.PauseMenu
                 textTitle = value;
                 if (Parent != null && Parent.Visible)
                 {
-                    int tab = Parent.Parent.Tabs.IndexOf(Parent);
                     int it = Parent.LeftItemList.IndexOf(this);
-                    Parent.Parent._pause._pause.CallFunction("ADD_RIGHT_TITLE", tab, it, textTitle, KeymapRightLabel_1, KeymapRightLabel_2);
+                    Parent.Parent._pause._pause.CallFunction("ADD_RIGHT_TITLE", it, textTitle, KeymapRightLabel_1, KeymapRightLabel_2);
                 }
             }
         }
@@ -141,9 +137,8 @@ namespace ScaleformUI.PauseMenu
                 keymapRightLabel_1 = value;
                 if (Parent != null && Parent.Visible)
                 {
-                    int tab = Parent.Parent.Tabs.IndexOf(Parent);
                     int it = Parent.LeftItemList.IndexOf(this);
-                    Parent.Parent._pause._pause.CallFunction("ADD_RIGHT_TITLE", tab, it, textTitle, keymapRightLabel_1, KeymapRightLabel_2);
+                    Parent.Parent._pause._pause.CallFunction("ADD_RIGHT_TITLE", it, textTitle, keymapRightLabel_1, KeymapRightLabel_2);
                 }
             }
         }
@@ -155,9 +150,8 @@ namespace ScaleformUI.PauseMenu
                 keymapRightLabel_2 = value;
                 if (Parent != null && Parent.Visible)
                 {
-                    int tab = Parent.Parent.Tabs.IndexOf(Parent);
                     int it = Parent.LeftItemList.IndexOf(this);
-                    Parent.Parent._pause._pause.CallFunction("ADD_RIGHT_TITLE", tab, it, textTitle, KeymapRightLabel_1, keymapRightLabel_2);
+                    Parent.Parent._pause._pause.CallFunction("ADD_RIGHT_TITLE", it, textTitle, KeymapRightLabel_1, keymapRightLabel_2);
                 }
             }
         }
@@ -193,7 +187,7 @@ namespace ScaleformUI.PauseMenu
             TextureDict = txd;
             TextureName = txn;
             LeftItemBGType = resizeType;
-            if (Parent != null && Parent.Visible && Parent.Parent != null && Parent.Parent.Visible)
+            if (Parent != null && Parent.Visible && Parent.Parent != null && Parent.Parent.Visible && this.ItemType != LeftItemType.Empty)
             {
                 Parent.Parent._pause._pause.CallFunction("UPDATE_LEFT_ITEM_RIGHT_BACKGROUND", Parent.Parent.Tabs.IndexOf(Parent), Parent.LeftItemList.IndexOf(this), txd, txn, (int)resizeType);
             }

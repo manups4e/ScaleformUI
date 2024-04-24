@@ -20,8 +20,8 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
                 {
                     if (Parent is MainView lobby)
                         lobby._pause._lobby.CallFunction("SET_MISSION_PANEL_TITLE", title);
-                    else if (Parent is TabView pause)
-                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_PANEL_TITLE", ParentTab, title);
+                    else if (Parent is TabView pause && ParentTab.Visible)
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_PANEL_TITLE", title);
                 }
             }
         }
@@ -46,8 +46,8 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             {
                 if (Parent is MainView lobby)
                     lobby._pause._lobby.CallFunction("ADD_MISSION_PANEL_PICTURE", TextureDict, TextureName);
-                else if (Parent is TabView pause)
-                    pause._pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_PICTURE", ParentTab, TextureDict, TextureName);
+                else if (Parent is TabView pause && ParentTab.Visible)
+                    pause._pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_PICTURE", TextureDict, TextureName);
             }
 
         }
@@ -63,8 +63,8 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             {
                 if (Parent is MainView lobby)
                     lobby._pause._lobby.CallFunction("ADD_MISSION_PANEL_ITEM", item.Type, item.TextLeft, item.TextRight, (int)item.Icon, item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID);
-                else if (Parent is TabView pause)
-                    pause._pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_ITEM", ParentTab, item.Type, item.TextLeft, item.TextRight, (int)item.Icon, item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID);
+                else if (Parent is TabView pause && ParentTab.Visible)
+                    pause._pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_ITEM", item.Type, item.TextLeft, item.TextRight, (int)item.Icon, item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID);
             }
         }
 
@@ -79,8 +79,8 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             {
                 if (Parent is MainView lobby)
                     lobby._pause._lobby.CallFunction("REMOVE_MISSION_PANEL_ITEM", idx);
-                else if (Parent is TabView pause)
-                    pause._pause._pause.CallFunction("REMOVE_PLAYERS_TAB_MISSION_PANEL_ITEM", ParentTab, idx);
+                else if (Parent is TabView pause && ParentTab.Visible)
+                    pause._pause._pause.CallFunction("REMOVE_PLAYERS_TAB_MISSION_PANEL_ITEM", idx);
             }
         }
 
@@ -88,8 +88,8 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
         {
             if (Parent is MainView lobby)
                 lobby._pause._lobby.CallFunction("CLEAR_MISSION_PANEL_ITEMS");
-            else if (Parent is TabView pause)
-                pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_MISSION_PANEL_ITEMS", ParentTab);
+            else if (Parent is TabView pause && ParentTab.Visible)
+                pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_MISSION_PANEL_ITEMS");
             Items.Clear();
         }
     }

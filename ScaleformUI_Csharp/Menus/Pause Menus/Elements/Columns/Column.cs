@@ -1,5 +1,6 @@
 ﻿using ScaleformUI.Elements;
 using ScaleformUI.Menu;
+using ScaleformUI.PauseMenu;
 
 namespace ScaleformUI.PauseMenus.Elements
 {
@@ -8,7 +9,7 @@ namespace ScaleformUI.PauseMenus.Elements
     {
         internal bool isBuilding = false;
         internal int _maxItems = 16;
-        public int ParentTab { get; internal set; }
+        public PlayerListTab ParentTab { get; internal set; }
         public PauseMenuBase Parent { get; internal set; }
         internal PaginationHandler Pagination { get; set; }
         public string Label { get; internal set; }

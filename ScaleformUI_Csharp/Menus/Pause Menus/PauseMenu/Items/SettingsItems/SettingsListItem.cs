@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ScaleformUI.PauseMenu
+﻿namespace ScaleformUI.PauseMenu
 {
     public delegate void SettingsListItemChanged(SettingsListItem item, int value, string listItem);
     public delegate void SettingsListItemSelected(SettingsListItem item, int value, string listItem);
@@ -18,10 +16,9 @@ namespace ScaleformUI.PauseMenu
                 itemIndex = value;
                 if (Parent != null)
                 {
-                    int tab = Parent.Parent.Parent.Tabs.IndexOf(Parent.Parent);
                     int leftItem = Parent.Parent.LeftItemList.IndexOf(Parent);
                     int rightIndex = Parent.ItemList.IndexOf(this);
-                    Parent.Parent.Parent._pause.SetRightSettingsItemIndex(tab, leftItem, rightIndex, itemIndex);
+                    Parent.Parent.Parent._pause.SetRightSettingsItemIndex(leftItem, rightIndex, itemIndex);
                 }
                 ListChanged();
             }

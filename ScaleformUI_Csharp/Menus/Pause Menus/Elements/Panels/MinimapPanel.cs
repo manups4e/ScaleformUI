@@ -83,7 +83,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
                     }
                     else if (Parent is TabView pause)
                     {
-                        pause._pause._pause.CallFunction("HIDE_PLAYERS_TAB_MISSION_PANEL", pause.Index, !enabled);
+                        pause._pause._pause.CallFunction("HIDE_PLAYERS_TAB_MISSION_PANEL", !enabled);
                     }
                 }
             }

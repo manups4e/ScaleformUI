@@ -47,8 +47,8 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                     int idx = ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this));
                     if (ParentColumn.Parent is MainView lobby)
                         lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_LABEL", idx, label);
-                    else if (ParentColumn.Parent is TabView pause)
-                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_LABEL", ParentColumn.ParentTab, idx, label);
+                    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_LABEL", idx, label);
                 }
             }
         }
@@ -63,8 +63,8 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                     int idx = ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this));
                     if (ParentColumn.Parent is MainView lobby)
                         lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_COLOUR", idx, itemColor, coloredTag);
-                    else if (ParentColumn.Parent is TabView pause)
-                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_COLOUR", ParentColumn.ParentTab, idx, itemColor, coloredTag);
+                    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_COLOUR", idx, itemColor, coloredTag);
                 }
             }
         }
@@ -79,8 +79,8 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                     int idx = ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this));
                     if (ParentColumn.Parent is MainView lobby)
                         lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_COLOUR", idx, itemColor, coloredTag);
-                    else if (ParentColumn.Parent is TabView pause)
-                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_COLOUR", ParentColumn.ParentTab, idx, itemColor, coloredTag);
+                    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_COLOUR", idx, itemColor, coloredTag);
                 }
             }
         }
@@ -95,8 +95,8 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                     int idx = ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this));
                     if (ParentColumn.Parent is MainView lobby)
                         lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_RANK", idx, rank);
-                    else if (ParentColumn.Parent is TabView pause)
-                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_RANK", ParentColumn.ParentTab, idx, rank);
+                    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_RANK", idx, rank);
                 }
             }
         }
@@ -111,8 +111,8 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                     int idx = ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this));
                     if (ParentColumn.Parent is MainView lobby)
                         lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_STATUS", idx, status, statusColor);
-                    else if (ParentColumn.Parent is TabView pause)
-                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_STATUS", ParentColumn.ParentTab, idx, status, statusColor);
+                    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_STATUS", idx, status, statusColor);
                 }
             }
         }
@@ -127,8 +127,8 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                     int idx = ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this));
                     if (ParentColumn.Parent is MainView lobby)
                         lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_STATUS", idx, status, statusColor);
-                    else if (ParentColumn.Parent is TabView pause)
-                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_STATUS", ParentColumn.ParentTab, idx, status, statusColor);
+                    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_STATUS", idx, status, statusColor);
                 }
             }
         }
@@ -145,8 +145,8 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                     int idx = ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this));
                     if (ParentColumn.Parent is MainView lobby)
                         lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_CREW", idx, crewTag.TAG);
-                    else if (ParentColumn.Parent is TabView pause)
-                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_CREW", ParentColumn.ParentTab, idx, crewTag.TAG);
+                    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_CREW", idx, crewTag.TAG);
                 }
             }
         }
@@ -177,8 +177,8 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                 int idx = ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this));
                 if (ParentColumn.Parent is MainView lobby)
                     lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_LEFT", idx, iconL, boolL);
-                else if (ParentColumn.Parent is TabView pause)
-                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ICON_LEFT", ParentColumn.ParentTab, idx, iconL, boolL);
+                else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ICON_LEFT", idx, iconL, boolL);
             }
         }
         public void SetLeftIcon(BadgeIcon icon)
@@ -190,8 +190,8 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                 int idx = ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this));
                 if (ParentColumn.Parent is MainView lobby)
                     lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_LEFT", idx, iconL, boolL);
-                else if (ParentColumn.Parent is TabView pause)
-                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ICON_LEFT", ParentColumn.ParentTab, idx, iconL, boolL);
+                else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ICON_LEFT", idx, iconL, boolL);
             }
         }
 
@@ -204,8 +204,8 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                 int idx = ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this));
                 if (ParentColumn.Parent is MainView lobby)
                     lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_RIGHT", idx, iconR, boolR);
-                else if (ParentColumn.Parent is TabView pause)
-                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ICON_RIGHT", ParentColumn.ParentTab, idx, iconR, boolR);
+                else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ICON_RIGHT", idx, iconR, boolR);
             }
         }
         public void SetRightIcon(BadgeIcon icon)
@@ -217,8 +217,8 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                 int idx = ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this));
                 if (ParentColumn.Parent is MainView lobby)
                     lobby._pause._lobby.CallFunction("SET_PLAYER_ITEM_ICON_RIGHT", idx, iconR, boolR);
-                else if (ParentColumn.Parent is TabView pause)
-                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ICON_RIGHT", ParentColumn.ParentTab, idx, iconR, boolR);
+                else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYER_ICON_RIGHT", idx, iconR, boolR);
             }
         }
 
