@@ -85,7 +85,7 @@ namespace ScaleformUI.LobbyMenu
             };
             _newStyle = newStyle;
             _pause = Main.PauseMenu;
-            Minimap = new MinimapPanel(this);
+            Minimap = new MinimapPanel(this, null);
         }
 
         public override bool Visible

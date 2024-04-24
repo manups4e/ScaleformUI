@@ -166,6 +166,10 @@ namespace ScaleformUI.PauseMenu
                 }
                 else
                 {
+                    if (Tabs[Index] is PlayerListTab t)
+                    {
+                        t.Minimap?.Dispose();
+                    }
                     AnimpostfxStop("PauseMenuIn");
                     AnimpostfxPlay("PauseMenuOut", 0, false);
                     SendPauseMenuClose();
@@ -563,6 +567,10 @@ namespace ScaleformUI.PauseMenu
         public override async void Draw()
         {
             if (!Visible || TemporarilyHidden || isBuilding) return;
+            if (Tabs[Index] is PlayerListTab t)
+            {
+                t.Minimap?.MaintainMap();
+            }
             base.Draw();
             _pause.Draw();
             UpdateKeymapItems();
