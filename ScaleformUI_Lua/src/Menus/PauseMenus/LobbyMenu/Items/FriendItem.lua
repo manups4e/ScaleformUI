@@ -11,7 +11,7 @@ end
 ---@field public Rank number
 ---@field public Status string
 ---@field public StatusColor SColor
----@field public CrewTag CrewTag
+---@field public _crewTag CrewTag
 ---@field public _iconL number
 ---@field public _iconR number
 ---@field public _boolL boolean
@@ -262,9 +262,9 @@ end
 
 ---Sets the crew tag of the item if supplied else it will return the current crew tag.
 ---@param tag CrewTag?
----@return string
+---@return CrewTag | nil
 function FriendItem:CrewTag(tag)
-    if tag ~= nil then
+    if tag then
         self._crewTag = tag
         if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
             local idx = self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self))
@@ -276,8 +276,9 @@ function FriendItem:CrewTag(tag)
                     self.ParentColumn.ParentTab, idx, self._crewTag.TAG)
             end
         end
+    else
+        return self._crewTag
     end
-    return self._crewTag
 end
 
 ---Sets the left icon of the item.

@@ -4,6 +4,37 @@ RadialMenu.__call = function()
     return "RadialMenu"
 end
 
+---@class RadialMenu
+---@field public Segments table
+---@field public InstructionalButtons table
+---@field public OnMenuOpen fun(menu:RadialMenu, data:any)
+---@field public OnMenuClose fun(menu:RadialMenu)
+---@field public OnSegmentHighlight fun(segment:SegmentItem)
+---@field public OnSegmentIndexChange fun(segment:SegmentItem, index:number)
+---@field public OnSegmentSelect fun(segment:SegmentItem)
+---@field public currentSelection number
+---@field public oldAngle number
+---@field public changed boolean
+---@field public enable3D boolean
+---@field public offset table
+---@field public AddInstructionButton fun(button:InstructionalButton)
+---@field public RemoveInstructionButton fun(button:table)
+---@field public Enable3D fun(enable:boolean)
+---@field public CurrentSelection fun(index:number)
+---@field public Visible fun(bool:boolean)
+---@field public BuildMenu fun()
+---@field public ProcessMouse fun()
+---@field public ProcessControl fun()
+---@field public SwitchTo fun(newMenu:RadialMenu, newMenuCurrentSelection:number, inheritOldMenuParams:boolean)
+---@field public GoBack fun()
+---@field public Select fun()
+---@field public Draw fun()
+---@field public New fun(x:number, y:number):RadialMenu
+
+---New
+---@param x number
+---@param y number
+---@return RadialMenu
 function RadialMenu.New(x, y)
     local X, Y = tonumber(x) or 0, tonumber(y) or 0
     local _rad = {

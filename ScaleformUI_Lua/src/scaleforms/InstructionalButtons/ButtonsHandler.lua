@@ -22,6 +22,17 @@ end
 ---@field public IsSaving boolean
 ---@field public ControlButtons table<string, InstructionalButton>
 ---@field public Enabled fun(self: table, bool: boolean?): boolean
+---@field public Load fun(self: table):nil
+---@field public SetInstructionalButtons fun(self: table, buttons: table<InstructionalButton>):nil
+---@field public AddInstructionalButton fun(self: table, button: InstructionalButton):nil
+---@field public RemoveInstructionalButton fun(self: table, button: InstructionalButton):nil
+---@field public ClearButtonList fun(self: table):nil
+---@field public Refresh fun(self: table):nil
+---@field public ShowBusySpinner fun(self: table, spinnerType: number, text: string, time: number, manualDispose?: boolean):nil
+---@field public HideBusySpinner fun(self: table):nil
+---@field public UpdateButtons fun(self: table):nil
+---@field public Draw fun(self: table):nil
+
 
 ---Loads the instructional buttons
 function ButtonsHandler:Load()

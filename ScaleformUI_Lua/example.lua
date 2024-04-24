@@ -422,7 +422,6 @@ function CreateRadialMenu()
 end
 
 function CreateRadioMenu()
-	
     local txd = CreateRuntimeTxd("scaleformui")
 	local imgdui1 = CreateDui("https://giphy.com/embed/10bTCLE8GtHHS8", 96, 64)
 	CreateRuntimeTextureFromDuiHandle(txd, "item2", GetDuiHandle(imgdui1))

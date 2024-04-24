@@ -435,7 +435,7 @@ function UIMenu:RefreshMenu(keepIndex)
                 if (not self:Visible()) then return end
                 self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
             end
-            self.Pagination:ScaleformIndex(self.Pagination:GetScaleformIndex(CurrentSelection))
+            self.Pagination:ScaleformIndex(self.Pagination:GetScaleformIndex(self.Pagination:CurrentMenuIndex()))
             ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", self:CurrentSelection(), #self.Items)
             self.isBuilding = false
             if keepIndex then
@@ -634,7 +634,7 @@ function UIMenu:AddItemAt(item, index)
         return
     end
     item:SetParentMenu(self)
-    table.insert(this.Items, index, item)
+    table.insert(self.Items, index, item)
     self.Pagination:TotalItems(#self.Items)
     if self:Visible() then
         if self.Pagination:IsItemVisible(index) then

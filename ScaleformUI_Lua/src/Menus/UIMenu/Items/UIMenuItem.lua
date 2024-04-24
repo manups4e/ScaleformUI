@@ -30,6 +30,7 @@ end
 ---@field _highlightedTextColor SColor
 ---@field _itemData table
 ---@field ParentMenu UIMenu
+---@field ParentColumn MissionListColumn|PlayerListColumn|SettingsListColumn|StoreListColumn
 ---@field Panels table<UIMenuGridPanel|UIMenuPercentagePanel|UIMenuStatisticsPanel|UIMenuColorPanel>
 ---@field SidePanel UIMenuPanel -- UIMenuGridPanel, UIMenuPercentagePanel, UIMenuStatisticsPanel, UIMenuColorPanel
 ---@field ItemId number
@@ -234,7 +235,7 @@ function UIMenuItem:Description(str, item)
                 AddTextEntry(desc, str)
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_ITEM_DESCRIPTION", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), desc)
             elseif pSubT == "PauseMenu" then
-                local desc = "menu_pause_playerTab_{".. self.ParentColumn.ParentTab .."}_{" .. it .. "}"
+                local desc = "menu_pause_playerTab_{".. self.ParentColumn.ParentTab .."}_{" .. item.ItemId .. "}"
                 AddTextEntry(desc, str)
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_DESCRIPTION", self.ParentColumn.ParentTab, self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), desc)
             end

@@ -26,9 +26,9 @@ end
 ---@field public SetFocus fun(self:PauseMenu, focus:number):nil
 ---@field public AddLeftItem fun(self:PauseMenu, tab:number, title:string, _type:number, _tabContentType:number, color:SColor, enabled:boolean):nil
 ---@field public AddRightTitle fun(self:PauseMenu, tab:number, leftItemIndex:number, title:string):nil
----@field public AddRightListLabel fun(self:PauseMenu, tab:number, leftItemIndex:number, title:string):nil
----@field public AddRightStatItemLabel fun(self:PauseMenu, tab:number, leftItemIndex:number, label:string, rightLabel:string):nil
----@field public AddRightStatItemColorBar fun(self:PauseMenu, tab:number, leftItemIndex:number, label:string, value:number, color:SColor):nil
+---@field public AddRightListLabel fun(self:PauseMenu, tab:number, leftItemIndex:number, title:string, fontName:string, fontId:number):nil
+---@field public AddRightStatItemLabel fun(self:PauseMenu, tab:number, leftItemIndex:number, label:string, rightLabel:string, labelFont:Font, rLabelFont:Font):nil
+---@field public AddRightStatItemColorBar fun(self:PauseMenu, tab:number, leftItemIndex:number, label:string, value:number, color:SColor, labelFont:Font):nil
 ---@field public AddRightSettingsBaseItem fun(self:PauseMenu, tab:number, leftItemIndex:number, label:string, rightLabel:string, enabled:boolean):nil
 ---@field public AddRightSettingsListItem fun(self:PauseMenu, tab:number, leftItemIndex:number, label:string, items:table, startIndex:number, enabled:boolean):nil
 ---@field public AddRightSettingsProgressItem fun(self:PauseMenu, tab:number, leftItemIndex:number, label:string, max:number, colour:SColor, index:number, enabled:boolean):nil
@@ -448,7 +448,7 @@ end
 ---@param direction any
 ---@return string
 function PauseMenu:SendInputEvent(direction) -- to be awaited
-    return self._pause:CallFunctionAsyncReturnString("SET_INPUT_EVENT", direction) --[[@as number]]
+    return self._pause:CallFunctionAsyncReturnString("SET_INPUT_EVENT", direction)
 end
 
 ---Send a scroll event to the pause menu
@@ -460,7 +460,7 @@ end
 ---Send a click event to the pause menu
 ---@return string
 function PauseMenu:SendClickEvent() -- to be awaited
-    return self._pause:CallFunctionAsyncReturnString("MOUSE_CLICK_EVENT") --[[@as number]]
+    return self._pause:CallFunctionAsyncReturnString("MOUSE_CLICK_EVENT")
 end
 
 ---Dispose the pause menu

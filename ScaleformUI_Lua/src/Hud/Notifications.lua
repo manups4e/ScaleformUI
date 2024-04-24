@@ -363,10 +363,10 @@ end
 
 ---Add subtitle to the screen
 ---@param msg string @The message
----@param duration number @The duration of how long the subtitle will be displayed (in ms)
+---@param duration? number @The duration of how long the subtitle will be displayed (in ms)
 ---@return nil
 function Notifications:ShowSubtitle(msg, duration)
-    if (duration == nil) then duration = 2500 end
+    if not duration then duration = 2500 end
     AddTextEntry("ScaleformUISubtitle", msg)
     BeginTextCommandPrint("ScaleformUISubtitle")
     EndTextCommandPrint(duration, true)

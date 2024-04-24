@@ -14,7 +14,7 @@ UIMenuSeparatorItem.__call = function() return "UIMenuItem", "UIMenuSeparatorIte
 ---@param highlightedTextColor? SColor
 function UIMenuSeparatorItem.New(Text, jumpable, mainColor, highlightColor, textColor, highlightedTextColor)
     local _UIMenuSeparatorItem = {
-        Base = UIMenuItem.New(Text or "", Description or "", color or SColor.HUD_Panel_light, highlightColor or SColor.HUD_White, textColor or SColor.HUD_White, highlightedTextColor or SColor.HUD_Black),
+        Base = UIMenuItem.New(Text or "", "", mainColor or SColor.HUD_Panel_light, highlightColor or SColor.HUD_White, textColor or SColor.HUD_White, highlightedTextColor or SColor.HUD_Black),
         Panels = {},
         SidePanel = nil,
         Jumpable = jumpable,

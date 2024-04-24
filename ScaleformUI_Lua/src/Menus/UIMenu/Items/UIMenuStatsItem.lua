@@ -17,7 +17,7 @@ UIMenuStatsItem.__call = function() return "UIMenuItem", "UIMenuStatsItem" end
 ---@param highlightedTextColor SColor
 function UIMenuStatsItem.New(Text, Description, Index, barColor, type, mainColor, highlightColor, textColor, highlightedTextColor)
     local _UIMenuStatsItem = {
-        Base = UIMenuItem.New(Text or "", Description or "", color or SColor.HUD_Panel_light, highlightColor or SColor.HUD_White, textColor or SColor.HUD_White, highlightedTextColor or SColor.HUD_Black),
+        Base = UIMenuItem.New(Text or "", Description or "", SColor.HUD_Panel_light, highlightColor or SColor.HUD_White, textColor or SColor.HUD_White, highlightedTextColor or SColor.HUD_Black),
         _Index = Index or 0,
         Panels = {},
         SidePanel = nil,

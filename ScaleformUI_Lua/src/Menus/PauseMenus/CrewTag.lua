@@ -4,16 +4,19 @@ CrewTag.__call = function()
     return "Tag", "CrewTag"
 end
 
----@param tag string
----@param crewTypeIsPrivate boolean
----@param crewTagContainsRockstar boolean
----@param level number|CrewHierarchy
----@param crewColor SColor
+---@class CrewTag
+---@field TAG string
+
+
+---@param tag? string
+---@param crewTypeIsPrivate? boolean
+---@param crewTagContainsRockstar? boolean
+---@param level? number|CrewHierarchy
+---@param crewColor? SColor
 ---@return table
 function CrewTag.New(tag, crewTypeIsPrivate, crewTagContainsRockstar, level, crewColor)
-    local r, g, b, a
     local hexColor
-    hexColor = crewColor:ToHex()
+    hexColor = crewColor and crewColor:ToHex() or SColor.HUD_White:ToHex()
 
     local result = "";
     if tag ~= nil and tag ~= "" then
@@ -28,5 +31,3 @@ function CrewTag.New(tag, crewTypeIsPrivate, crewTagContainsRockstar, level, cre
     }
     return setmetatable(data, CrewTag)
 end
-
-    

@@ -4,6 +4,27 @@ SegmentItem.__call = function()
     return "SegmentItem"
 end
 
+---@class SegmentItem
+---@field public label string
+---@field public description string
+---@field public textureDict string
+---@field public textureName string
+---@field public textureWidth number
+---@field public textureHeight number
+---@field public color SColor
+---@field public qtty number
+---@field public max number
+---@field public Parent SegmentItem
+
+---New
+---@param _label string
+---@param _desc? string
+---@param _txd? string
+---@param _txn? string
+---@param _txwidth? number
+---@param _txheight? number
+---@param _color? SColor
+---@return SegmentItem
 function SegmentItem.New(_label, _desc, _txd, _txn, _txwidth, _txheight, _color)
     local _it = {
         label = _label or "",
