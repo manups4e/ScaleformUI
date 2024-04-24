@@ -33,7 +33,7 @@ function StoreListColumn.New(label, color, scrollType)
         Pagination = handler,
         Order = 0,
         Parent = nil,
-        ParentTab = 0,
+        ParentTab = nil,
         Items = {} --[[@type table<number, StoreItem>]],
         _unfilteredItems = {} --[[@type table<number, StoreItem>]],
         OnIndexChanged = function(index)
@@ -75,10 +75,10 @@ function StoreListColumn:CurrentSelection(value)
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_STORE_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_STORE_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
                 self.Items[self:CurrentSelection()]:Selected(true)
-            elseif pSubT == "PauseMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_SELECTION", self.ParentTab, self.Pagination:ScaleformIndex()) --[[@as number]]
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_QTTY", self.ParentTab, self:CurrentSelection(), #self.Items) --[[@as number]]
-                if self.Parent:Index() == self.ParentTab+1 and self.Parent:FocusLevel() == 1 then
+            elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
+                if self.Parent:Index() == IndexOf(self.Parent.Tabs, self.ParentTab) and self.Parent:FocusLevel() == 1 then
                     self.Items[self:CurrentSelection()]:Selected(true)
                 end
             end
@@ -109,8 +109,8 @@ function StoreListColumn:AddStoreItem(item)
             self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
             self:_itemCreation(self.Pagination:CurrentPage(), #self.Items, false)
             local pSubT = self.Parent()
-            if pSubT == "PauseMenu" then
-                if self.Parent.Tabs[self.ParentTab+1].listCol[self.Parent.Tabs[self.ParentTab+1]:Focus()] == self then
+            if pSubT == "PauseMenu" and self.ParentTab.Visible then
+                if self.ParentTab.listCol[self.ParentTab:Focus()] == self then
                     self:CurrentSelection(sel)
                 end
             end
@@ -142,8 +142,8 @@ function StoreListColumn:_itemCreation(page, pageIndex, before, overflow)
 
     if pSubT == "LobbyMenu" then
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_STORE_ITEM", before, menuIndex, 0, item.TextureDictionary, item.TextureName, item.Description, item:Enabled())
-    elseif pSubT == "PauseMenu" then
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_STORE_ITEM", self.ParentTab, before, menuIndex, 0, item.TextureDictionary, item.TextureName, item.Description, item:Enabled())
+    elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_STORE_ITEM", before, menuIndex, 0, item.TextureDictionary, item.TextureName, item.Description, item:Enabled())
     end
 end
 
@@ -158,15 +158,15 @@ function StoreListColumn:GoUp()
                     local pSubT = self.Parent()
                     if pSubT == "LobbyMenu" then
                         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", 8, self._delay) --[[@as number]]
-                    elseif pSubT == "PauseMenu" then
+                    elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
                         ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", 8, self._delay) --[[@as number]]
                     end
             elseif self.scrollingType == MenuScrollingType.PAGINATED or (self.scrollingType == MenuScrollingType.CLASSIC and overflow) then
                 local pSubT = self.Parent()
                 if pSubT == "LobbyMenu" then
                     ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CLEAR_STORE_COLUMN") --[[@as number]]
-                elseif pSubT == "PauseMenu" then
-                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_STORE_COLUMN", self.ParentTab) --[[@as number]]
+                elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_STORE_COLUMN") --[[@as number]]
                 end
                 local max = self.Pagination:ItemsPerPage()
                 for i=1, max, 1 do
@@ -180,9 +180,9 @@ function StoreListColumn:GoUp()
     if pSubT == "LobbyMenu" then
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_STORE_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_STORE_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
-    elseif pSubT == "PauseMenu" then
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_SELECTION", self.ParentTab, self.Pagination:ScaleformIndex()) --[[@as number]]
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_QTTY", self.ParentTab, self:CurrentSelection(), #self.Items) --[[@as number]]
+    elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
     end
     self.Items[self:CurrentSelection()]:Selected(true)
     self.OnIndexChanged(self:CurrentSelection())
@@ -199,15 +199,15 @@ function StoreListColumn:GoDown()
                     local pSubT = self.Parent()
                     if pSubT == "LobbyMenu" then
                         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", 9, self._delay) --[[@as number]]
-                    elseif pSubT == "PauseMenu" then
+                    elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
                         ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", 9, self._delay) --[[@as number]]
                     end
             elseif self.scrollingType == MenuScrollingType.PAGINATED or (self.scrollingType == MenuScrollingType.CLASSIC and overflow) then
                 local pSubT = self.Parent()
                 if pSubT == "LobbyMenu" then
                     ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CLEAR_STORE_COLUMN") --[[@as number]]
-                elseif pSubT == "PauseMenu" then
-                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_STORE_COLUMN", self.ParentTab) --[[@as number]]
+                elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_STORE_COLUMN") --[[@as number]]
                 end
                 local max = self.Pagination:ItemsPerPage()
                 for i=1, max, 1 do
@@ -221,9 +221,9 @@ function StoreListColumn:GoDown()
     if pSubT == "LobbyMenu" then
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_STORE_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_STORE_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
-    elseif pSubT == "PauseMenu" then
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_SELECTION", self.ParentTab, self.Pagination:ScaleformIndex()) --[[@as number]]
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_QTTY", self.ParentTab, self:CurrentSelection(), #self.Items) --[[@as number]]
+    elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
     end
     self.Items[self:CurrentSelection()]:Selected(true)
     self.OnIndexChanged(self:CurrentSelection())
@@ -236,8 +236,8 @@ function StoreListColumn:UpdateItemLabels(index, leftLabel, rightLabel)
         self._rightLabel = rightLabel;
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_STORE_ITEM_LABELS", self.Pagination:GetScaleformIndex(index), leftLabel, rightLabel)
-        elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_STORE_ITEM_LABELS", self.ParentTab, self.Pagination:GetScaleformIndex(index), self._label, self._rightLabel)
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_STORE_ITEM_LABELS", self.Pagination:GetScaleformIndex(index), self._label, self._rightLabel)
         end
     end
 end
@@ -248,8 +248,8 @@ function StoreListColumn:UpdateItemBlinkDescription(index, blink)
         local pSubT = self.Parent()
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_STORE_ITEM_BLINK_DESC", self.Pagination:GetScaleformIndex(index), blink)
-        elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_STORE_ITEM_BLINK_DESC", self.ParentTab, self.Pagination:GetScaleformIndex(index), self._label, self._rightLabel)
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_STORE_ITEM_BLINK_DESC", self.Pagination:GetScaleformIndex(index), self._label, self._rightLabel)
         end
     end
 end
@@ -260,8 +260,8 @@ function StoreListColumn:UpdateItemLabel(index, label)
         self._label = label;
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_STORE_ITEM_LABEL", self.Pagination:GetScaleformIndex(index), label)
-        elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_STORE_ITEM_LABEL", self.ParentTab, self.Pagination:GetScaleformIndex(index), self._label)
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_STORE_ITEM_LABEL", self.Pagination:GetScaleformIndex(index), self._label)
         end
     end
 end
@@ -272,8 +272,8 @@ function StoreListColumn:UpdateItemRightLabel(index, label)
         self._rightLabel = label;
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_STORE_ITEM_LABEL_RIGHT", self.Pagination:GetScaleformIndex(index), label)
-        elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_STORE_ITEM_LABEL_RIGHT", self.ParentTab, self.Pagination:GetScaleformIndex(index), self._rightLabel)
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_STORE_ITEM_LABEL_RIGHT", self.Pagination:GetScaleformIndex(index), self._rightLabel)
         end
     end
 end
@@ -283,8 +283,8 @@ function StoreListColumn:UpdateItemLeftBadge(index, badge)
         local pSubT = self.Parent()
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_STORE_ITEM_LEFT_BADGE", self.Pagination:GetScaleformIndex(index), badge)
-        elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_ITEM_LEFT_BADGE", self.ParentTab, self.Pagination:GetScaleformIndex(index), badge)
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_ITEM_LEFT_BADGE", self.Pagination:GetScaleformIndex(index), badge)
         end
     end
 end
@@ -295,8 +295,8 @@ function StoreListColumn:UpdateItemRightBadge(index, badge)
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_STORE_ITEM_RIGHT_BADGE", self.Pagination:GetScaleformIndex(index),
                 badge)
-        elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_ITEM_RIGHT_BADGE", self.ParentTab, self.Pagination:GetScaleformIndex(index), badge)
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_ITEM_RIGHT_BADGE", self.Pagination:GetScaleformIndex(index), badge)
         end
     end
 end
@@ -306,8 +306,8 @@ function StoreListColumn:EnableItem(index, enable)
         local pSubT = self.Parent()
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ENABLE_STORE_ITEM", self.Pagination:GetScaleformIndex(index), enable)
-        elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ENABLE_PLAYERS_TAB_STORE_ITEM", self.ParentTab, self.Pagination:GetScaleformIndex(index), enable)
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ENABLE_PLAYERS_TAB_STORE_ITEM", self.Pagination:GetScaleformIndex(index), enable)
         end
     end
 end
@@ -317,8 +317,8 @@ function StoreListColumn:Clear()
         local pSubT = self.Parent()
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CLEAR_STORE_COLUMN")
-        elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_STORE_COLUMN", self.ParentTab)
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_STORE_COLUMN")
         end
     end
     self.Items = {}
@@ -341,7 +341,7 @@ function StoreListColumn:SortStore(compare)
         local pSubT = self.Parent()
         if pSubT == "LobbyMenu" then
             self.Parent:buildStore()
-        elseif pSubT == "PauseMenu" then
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
             self.Parent:buildStore(self.Parent.Tabs[self.ParentTab])
         end
     end
@@ -367,7 +367,7 @@ function StoreListColumn:FilterStore(predicate)
         local pSubT = self.Parent()
         if pSubT == "LobbyMenu" then
             self.Parent:buildStore()
-        elseif pSubT == "PauseMenu" then
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
             self.Parent:buildStore(self.Parent.Tabs[self.ParentTab])
         end
     end
@@ -383,7 +383,7 @@ function StoreListColumn:ResetFilter()
             local pSubT = self.Parent()
             if pSubT == "LobbyMenu" then
                 self.Parent:buildStore()
-            elseif pSubT == "PauseMenu" then
+            elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
                 self.Parent:buildStore(self.Parent.Tabs[self.ParentTab])
             end
         end
@@ -394,8 +394,8 @@ function StoreListColumn:refreshColumn()
     local pSubT = self.Parent()
     if pSubT == "LobbyMenu" then
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CLEAR_STORE_COLUMN")
-    elseif pSubT == "PauseMenu" then
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_STORE_COLUMN", self.ParentTab)
+    elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_STORE_COLUMN")
     end
     if #self.Items > 0 then
         self._isBuilding = true
@@ -423,9 +423,9 @@ function StoreListColumn:refreshColumn()
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_STORE_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_STORE_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
-        elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_SELECTION", self.ParentTab, self.Pagination:ScaleformIndex()) --[[@as number]]
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_QTTY", self.ParentTab, self:CurrentSelection(), #self.Items) --[[@as number]]
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
         end
         self._isBuilding = false
     end

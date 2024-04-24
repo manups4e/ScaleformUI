@@ -39,6 +39,7 @@ function PlayerListTab.New(name, color, newStyle)
         Index = 0,
         Focused = false,
         _focus = 0,
+        Visible = false,
         OnFocusChanged = function(focus)
         end
     }
@@ -49,30 +50,27 @@ end
 function PlayerListTab:SetUpColumns(columns)
     assert(#columns <= 3, "You must have 3 columns!")
     assert(not(#columns == 3 and columns[3].Type == "players"), "For panel designs reasons, you can't have Players list in 3rd column!")
-    self.listCol = columns
     for k,v in pairs (columns) do
         if self.Base.Parent ~= nil then
             v.Parent = self.Base.Parent
-            v.ParentTab = IndexOf(self.Base.Parent.Tabs, self)
         end
+
+        v.ParentTab = self
+        v.Order = k
 
         if v.Type == "settings" then
             self.SettingsColumn = v
-            self.SettingsColumn.Order = k
         elseif v.Type == "players" then
             self.PlayersColumn = v
-            self.PlayersColumn.Order = k
         elseif v.Type == "missions" then
             self.MissionsColumn = v
-            self.MissionsColumn.Order = k
         elseif v.Type == "store" then
             self.StoreColumn = v
-            self.StoreColumn.Order = k
         elseif v.Type == "panel" then
             self.MissionPanel = v
-            self.MissionPanel.Order = k
         end
     end
+    self.listCol = columns
 end
 
 function PlayerListTab:SelectColumn(column)
@@ -118,8 +116,8 @@ function PlayerListTab:updateFocus(_f, isMouse)
         return
     end
 
-    if self.Base.Parent ~= nil and self.Base.Parent:Visible() then
-        local idx = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunctionAsyncReturnInt("SET_PLAYERS_TAB_FOCUS", IndexOf(self.Base.Parent.Tabs, self) - 1, self._focus-1)
+    if self.Base.Parent ~= nil and self.Base.Parent:Visible() and self.Visible then
+        local idx = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunctionAsyncReturnInt("SET_PLAYERS_TAB_FOCUS", self._focus-1)
         if not isMouse then
             local _id = self.listCol[self._focus].Pagination:GetMenuIndexFromScaleformIndex(idx)
             self.listCol[self._focus]:CurrentSelection(_id)

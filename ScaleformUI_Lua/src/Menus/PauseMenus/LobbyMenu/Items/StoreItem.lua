@@ -43,8 +43,8 @@ function StoreItem:Enabled(bool)
             local pSubT = self.ParentColumn.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_STORE_ITEM_ENABLED", idx, bool)
-            elseif pSubT == "PauseMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_ITEM_ENABLED", self.ParentColumn.ParentTab, idx, bool)
+            elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_ITEM_ENABLED", idx, bool)
             end
         end
     end

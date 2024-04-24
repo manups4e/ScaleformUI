@@ -46,8 +46,8 @@ function MissionDetailsPanel:Title(label)
             local pSubT = self.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSION_PANEL_TITLE", self._title)
-            elseif pSubT == "PauseMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_MISSION_PANEL_TITLE", self.ParentTab, self._title)
+            elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_MISSION_PANEL_TITLE", self._title)
             end
         end
     end
@@ -60,8 +60,8 @@ function MissionDetailsPanel:UpdatePanelPicture(txd, txn)
         local pSubT = self.Parent()
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_MISSION_PANEL_PICTURE", self.TextureDict, self.TextureName)
-        elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_PICTURE", self.ParentTab, self.TextureDict, self.TextureName)
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_PICTURE", self.TextureDict, self.TextureName)
         end
     end
 end
@@ -72,8 +72,8 @@ function MissionDetailsPanel:AddItem(item)
         local pSubT = self.Parent()
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_MISSION_PANEL_ITEM", item.Type, item.TextLeft, item.TextRight, item.Icon, item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID)
-        elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_ITEM", self.ParentTab, item.Type, item.TextLeft, item.TextRight, item.Icon, item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID)
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_ITEM", item.Type, item.TextLeft, item.TextRight, item.Icon, item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID)
         end
     end
 end
@@ -84,8 +84,8 @@ function MissionDetailsPanel:RemoveItem(idx)
         local pSubT = self.Parent()
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("REMOVE_MISSION_PANEL_ITEM", idx - 1)
-        elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("REMOVE_PLAYERS_TAB_MISSION_PANEL_ITEM", self.ParentTab, idx - 1)
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("REMOVE_PLAYERS_TAB_MISSION_PANEL_ITEM", idx - 1)
         end
     end
 end
@@ -95,7 +95,7 @@ function MissionDetailsPanel:Clear()
         local pSubT = self.Parent()
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CLEAR_MISSION_PANEL_ITEMS")
-        elseif pSubT == "PauseMenu" then
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_MISSION_PANEL_ITEMS")
         end
     end

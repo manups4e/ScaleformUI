@@ -51,7 +51,7 @@ function MinimapOverlays:AddSizedOverlayToMap(textureDict, textureName, x, y, ro
 
     SetStreamedTextureDictAsNoLongerNeeded(textureDict)
 
-    local overlay = MinimapOverlay.New(self.minimaps+1, textureDict, textureName, x, y, rotation, width, height, alpha, centered)
+    local overlay = MinimapOverlay.New(#self.minimaps+1, textureDict, textureName, x, y, rotation, width, height, alpha, centered)
     table.insert(self.minimaps, overlay)
     return  overlay
 end
@@ -97,7 +97,7 @@ function MinimapOverlays:AddScaledOverlayToMap(textureDict, textureName, x, y, r
 
     SetStreamedTextureDictAsNoLongerNeeded(textureDict)
 
-    local overlay = MinimapOverlay.New(self.minimaps+1, textureDict, textureName, x, y, rotation, width, height, alpha, centered)
+    local overlay = MinimapOverlay.New(#self.minimaps+1, textureDict, textureName, x, y, rotation, width, height, alpha, centered)
     table.insert(self.minimaps, overlay)
     return  overlay
 end

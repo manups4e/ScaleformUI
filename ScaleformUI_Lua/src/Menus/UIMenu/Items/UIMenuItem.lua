@@ -103,8 +103,8 @@ function UIMenuItem:LabelFont(itemFont)
             local pSubT = self.ParentColumn.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LABEL_FONT", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self)), self._labelFont.FontName, self._labelFont.FontID)
-            elseif pSubT == "PauseMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LABEL_FONT", self.ParentColumn.ParentTab, self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self)), self._labelFont.FontName, self._labelFont.FontID)
+            elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LABEL_FONT", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self)), self._labelFont.FontName, self._labelFont.FontID)
             end
         end
     end
@@ -123,8 +123,8 @@ function UIMenuItem:RightLabelFont(itemFont)
             local pSubT = self.ParentColumn.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_RIGHT_LABEL_FONT", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self)), self._rightLabelFont.FontName, self._rightLabelFont.FontID)
-            elseif pSubT == "PauseMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_LABEL_FONT", self.ParentColumn.ParentTab, self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self)), self._rightLabelFont.FontName, self._rightLabelFont.FontID)
+            elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_LABEL_FONT", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self)), self._rightLabelFont.FontName, self._rightLabelFont.FontID)
             end
         end
     end
@@ -173,8 +173,8 @@ function UIMenuItem:Selected(bool, item)
             local pSubT = self.ParentColumn.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_ITEM_LABELS", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), self._formatLeftLabel, self._formatRightLabel)
-            elseif pSubT == "PauseMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABELS", self.ParentColumn.ParentTab, self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), self._formatLeftLabel, self._formatRightLabel)
+            elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABELS", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), self._formatLeftLabel, self._formatRightLabel)
             end
         end
     else
@@ -208,9 +208,9 @@ function UIMenuItem:Enabled(bool, item)
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_ITEM_LABELS", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), self._formatLeftLabel, self._formatRightLabel)
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ENABLE_SETTINGS_ITEM", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), self._enabled)
-            elseif pSubT == "PauseMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABELS", self.ParentColumn.ParentTab, self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), self._formatLeftLabel, self._formatRightLabel)
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ENABLE_PLAYERS_TAB_SETTINGS_ITEM", self.ParentColumn.ParentTab, self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), self._enabled)
+            elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABELS", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), self._formatLeftLabel, self._formatRightLabel)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ENABLE_PLAYERS_TAB_SETTINGS_ITEM", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), self._enabled)
             end
         end
     else
@@ -234,10 +234,10 @@ function UIMenuItem:Description(str, item)
                 local desc = "menu_lobby_desc_{" .. IndexOf(self.ParentColumn.Items, item) .. "}"
                 AddTextEntry(desc, str)
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_ITEM_DESCRIPTION", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), desc)
-            elseif pSubT == "PauseMenu" then
+            elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
                 local desc = "menu_pause_playerTab_{".. self.ParentColumn.ParentTab .."}_{" .. item.ItemId .. "}"
                 AddTextEntry(desc, str)
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_DESCRIPTION", self.ParentColumn.ParentTab, self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), desc)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_DESCRIPTION", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), desc)
             end
         end
     else
@@ -314,8 +314,8 @@ function UIMenuItem:Label(Text, item)
             local pSubT = self.ParentColumn.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_ITEM_LABEL", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), self._formatLeftLabel)
-            elseif pSubT == "PauseMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL", self.ParentColumn.ParentTab, self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), self._formatLeftLabel)
+            elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), self._formatLeftLabel)
             end
         end
     else
@@ -343,8 +343,8 @@ function UIMenuItem:RightLabel(Text)
             local pSubT = self.ParentColumn.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_ITEM_LABEL_RIGHT", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self)), self._formatRightLabel)
-            elseif pSubT == "PauseMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL_RIGHT", self.ParentColumn.ParentTab, self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self)), self._formatRightLabel)
+            elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL_RIGHT", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self)), self._formatRightLabel)
             end
         end
     else
@@ -363,8 +363,8 @@ function UIMenuItem:RightBadge(Badge, item)
             local pSubT = self.ParentColumn.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_RIGHT_BADGE", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), self._rightBadge)
-            elseif pSubT == "PauseMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_BADGE", self.ParentColumn.ParentTab, self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), self._rightBadge)
+            elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_BADGE", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), self._rightBadge)
             end
         end
     else
@@ -383,8 +383,8 @@ function UIMenuItem:LeftBadge(Badge, item)
             local pSubT = self.ParentColumn.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), self._leftBadge)
-            elseif pSubT == "PauseMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", self.ParentColumn.ParentTab, self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), self._leftBadge)
+            elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), self._leftBadge)
             end
         end
     else

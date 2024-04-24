@@ -52,10 +52,9 @@ function StatsTabItem:RightLabel(label)
     if self.Type == StatItemType.Basic then
         if label ~= nil then
             self._rightLabel = label
-            local tab = IndexOf(self.Base.Parent.Parent.Parent.Tabs, self.Base.Parent.Parent) - 1
             local leftItem = IndexOf(self.Base.Parent.Parent.LeftItemList, self.Base.Parent) - 1
             local rightIndex = IndexOf(self.Base.Parent.ItemList, self) - 1
-            self.Base.Parent.Parent.Parent._pause:UpdateStatsItemBasic(tab, leftItem, rightIndex, self.Label,
+            self.Base.Parent.Parent.Parent._pause:UpdateStatsItemBasic(leftItem, rightIndex, self.Label,
                 self._rightLabel)
         else
             return self._rightLabel
@@ -78,10 +77,9 @@ function StatsTabItem:Value(value)
     if self.Type == StatItemType.ColoredBar then
         if value ~= nil then
             self._value = value
-            local tab = IndexOf(self.Base.Parent.Parent.Parent.Tabs, self.Base.Parent.Parent) - 1
             local leftItem = IndexOf(self.Base.Parent.Parent.LeftItemList, self.Base.Parent) - 1
             local rightIndex = IndexOf(self.Base.Parent.ItemList, self) - 1
-            self.Base.Parent.Parent.Parent._pause:UpdateStatsItemBar(tab, leftItem, rightIndex, self._value)
+            self.Base.Parent.Parent.Parent._pause:UpdateStatsItemBar(leftItem, rightIndex, self._value)
             self.OnBarChanged(self, value)
         else
             return self._value
@@ -104,10 +102,9 @@ function StatsTabItem:ColoredBarColor(color)
     if self.Type == StatItemType.ColoredBar then
         if color ~= nil then
             self._coloredBarColor = color
-            local tab = IndexOf(self.Base.Parent.Parent.Parent.Tabs, self.Base.Parent.Parent) - 1
             local leftItem = IndexOf(self.Base.Parent.Parent.LeftItemList, self.Base.Parent) - 1
             local rightIndex = IndexOf(self.Base.Parent.ItemList, self) - 1
-            self.Base.Parent.Parent.Parent._pause:UpdateStatsItemBar(tab, leftItem, rightIndex, color)
+            self.Base.Parent.Parent.Parent._pause:UpdateStatsItemBar(leftItem, rightIndex, color)
         else
             return self._coloredBarColor
         end

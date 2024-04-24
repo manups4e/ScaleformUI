@@ -74,9 +74,9 @@ function FriendItem:Label(label)
             local pSubT = self.ParentColumn.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_LABEL", idx, self._label)
-            elseif pSubT == "PauseMenu" then
+            elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_LABEL",
-                    self.ParentColumn.ParentTab, idx, self._label)
+                    idx, self._label)
             end
         end
     end
@@ -96,10 +96,10 @@ function FriendItem:KeepPanelVisible(bool)
                 if pSubT == "LobbyMenu" then
                     self:AddPedToPauseMenu()
                     ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_STAT_PANEL_PERMANENT", idx, self.keepPanelVisible)
-                elseif pSubT == "PauseMenu" then
+                elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
                     self:AddPedToPauseMenu()
                     ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_STAT_PANEL_PERMANENT",
-                        self.ParentColumn.ParentTab, idx, self.keepPanelVisible)
+                        idx, self.keepPanelVisible)
                 end
             end
         end
@@ -140,7 +140,7 @@ function FriendItem:AddPedToPauseMenu()
                     SetPauseMenuPedSleepState(true)
                     SetPauseMenuPedLighting(true)
                 end
-            elseif pSubT == "PauseMenu" then
+            elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
                 local tab = self.ParentColumn.Parent.Tabs[self.ParentColumn.Parent.index]
                 local _, subT = tab()
                 if subT == "PlayerListTab" then
@@ -168,9 +168,9 @@ function FriendItem:ItemColor(color)
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_COLOUR", idx,
                     self._itemColor, self._coloredTag)
-            elseif pSubT == "PauseMenu" then
+            elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_COLOUR",
-                    self.ParentColumn.ParentTab, idx, self._itemColor, self._coloredTag)
+                    idx, self._itemColor, self._coloredTag)
             end
         end
     end
@@ -189,9 +189,9 @@ function FriendItem:ColoredTag(enableColorTag)
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_COLOUR", idx,
                     self._itemColor, self._coloredTag)
-            elseif pSubT == "PauseMenu" then
+            elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_COLOUR",
-                    self.ParentColumn.ParentTab, idx, self._itemColor, self._coloredTag)
+                    idx, self._itemColor, self._coloredTag)
             end
         end
     end
@@ -209,9 +209,9 @@ function FriendItem:Rank(rank)
             local pSubT = self.ParentColumn.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_RANK", idx, self._rank)
-            elseif pSubT == "PauseMenu" then
+            elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_RANK",
-                    self.ParentColumn.ParentTab, idx, self._rank)
+                    idx, self._rank)
             end
         end
     end
@@ -230,9 +230,9 @@ function FriendItem:Status(status)
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_STATUS", idx, self._status,
                     self._statusColor)
-            elseif pSubT == "PauseMenu" then
+            elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_STATUS",
-                    self.ParentColumn.ParentTab, idx, self._status, self._statusColor)
+                    idx, self._status, self._statusColor)
             end
         end
     end
@@ -251,9 +251,9 @@ function FriendItem:StatusColor(color)
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_STATUS", idx, self._status,
                     self._statusColor)
-            elseif pSubT == "PauseMenu" then
+            elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_STATUS",
-                    self.ParentColumn.ParentTab, idx, self._status, self._statusColor)
+                    idx, self._status, self._statusColor)
             end
         end
     end
@@ -271,9 +271,9 @@ function FriendItem:CrewTag(tag)
             local pSubT = self.ParentColumn.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_CREW", idx, self._crewTag.TAG)
-            elseif pSubT == "PauseMenu" then
+            elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_CREW",
-                    self.ParentColumn.ParentTab, idx, self._crewTag.TAG)
+                    idx, self._crewTag.TAG)
             end
         end
     else
@@ -293,9 +293,9 @@ function FriendItem:SetLeftIcon(icon, isBadge)
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_ICON_LEFT", idx, self._iconL,
                 self._boolL)
-        elseif pSubT == "PauseMenu" then
+        elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ICON_LEFT",
-                self.ParentColumn.ParentTab, idx, self._iconL, self._boolL)
+                idx, self._iconL, self._boolL)
         end
     end
 end
@@ -312,9 +312,9 @@ function FriendItem:SetRightIcon(icon, isBadge)
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_ICON_RIGHT", idx, self._iconR,
                 self._boolR)
-        elseif pSubT == "PauseMenu" then
+        elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ICON_RIGHT",
-                self.ParentColumn.ParentTab, idx, self._iconR, self._boolR)
+                idx, self._iconR, self._boolR)
         end
     end
 end

@@ -33,7 +33,7 @@ function SettingsListColumn.New(label, color, scrollType,_maxItems)
         Pagination = handler,
         Order = 0,
         Parent = nil,
-        ParentTab = 0,
+        ParentTab = nil,
         Items = {} --[[@type table<number, UIMenuItem|UIMenuListItem|UIMenuCheckboxItem|UIMenuSliderItem|UIMenuProgressItem>]],
         _unfilteredItems = {} --[[@type table<number, UIMenuItem|UIMenuListItem|UIMenuCheckboxItem|UIMenuSliderItem|UIMenuProgressItem>]],
         OnIndexChanged = function(index)
@@ -75,10 +75,10 @@ function SettingsListColumn:CurrentSelection(value)
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
                 self.Items[self:CurrentSelection()]:Selected(true)
-            elseif pSubT == "PauseMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", self.ParentTab, self.Pagination:ScaleformIndex()) --[[@as number]]
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", self.ParentTab, self:CurrentSelection(), #self.Items) --[[@as number]]
-                if self.Parent:Index() == self.ParentTab+1 and self.Parent:FocusLevel() == 1 then
+            elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
+                if self.Parent:Index() == IndexOf(self.Parent.Tabs, self.ParentTab) and self.Parent:FocusLevel() == 1 then
                     self.Items[self:CurrentSelection()]:Selected(true)
                 end
             end
@@ -113,8 +113,8 @@ function SettingsListColumn:AddSettings(item)
             self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
             self:_itemCreation(self.Pagination:CurrentPage(), #self.Items, false)
             local pSubT = self.Parent()
-            if pSubT == "PauseMenu" then
-                if self.Parent.Tabs[self.ParentTab+1].listCol[self.Parent.Tabs[self.ParentTab+1]:Focus()] == self then
+            if pSubT == "PauseMenu" and self.ParentTab.Visible then
+                if self.ParentTab.listCol[self.ParentTab:Focus()] == self then
                     self:CurrentSelection(sel)
                 end
             end
@@ -202,52 +202,52 @@ function SettingsListColumn:_itemCreation(page, pageIndex, before, overflow)
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LABEL_FONT", scaleformIndex, item._rightLabelFont.FontName, item._rightLabelFont.FontID)
             end
         end
-    elseif pSubT == "PauseMenu" then
+    elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
         local Type, SubType = item()
-        local descLabel = "menu_pause_playerTab_{".. self.ParentTab .."}_{" .. menuIndex .. "}"
+        local descLabel = "menu_pause_playerTab_{" .. menuIndex .. "}"
         AddTextEntry(descLabel, item:Description())
         if SubType == "UIMenuListItem" then
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_SETTINGS_ITEM",
-                self.ParentTab, before, menuIndex, 1, item.Base._formatLeftLabel, descLabel, item:Enabled(),
+                before, menuIndex, 1, item.Base._formatLeftLabel, descLabel, item:Enabled(),
                 item:BlinkDescription(), table.concat(item.Items, ","), item:Index() - 1,
                 item.Base._mainColor:ToArgb(),
                 item.Base._highlightColor:ToArgb(), item.Base._textColor:ToArgb(), item.Base._highlightedTextColor:ToArgb())
         elseif SubType == "UIMenuCheckboxItem" then
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_SETTINGS_ITEM",
-                self.ParentTab, before, menuIndex, 2, item.Base._formatLeftLabel, descLabel, item:Enabled(),
+                before, menuIndex, 2, item.Base._formatLeftLabel, descLabel, item:Enabled(),
                 item:BlinkDescription(), item.CheckBoxStyle, item._Checked, item.Base._mainColor:ToArgb(),
                 item.Base._highlightColor:ToArgb(), item.Base._textColor:ToArgb(), item.Base._highlightedTextColor:ToArgb())
         elseif SubType == "UIMenuSliderItem" then
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_SETTINGS_ITEM",
-                self.ParentTab, before, menuIndex, 3, item.Base._formatLeftLabel, descLabel, item:Enabled(),
+                before, menuIndex, 3, item.Base._formatLeftLabel, descLabel, item:Enabled(),
                 item:BlinkDescription(), item._Max, item._Multiplier, item:Index(), item.Base._mainColor:ToArgb(),
                 item.Base._highlightColor:ToArgb(), item.Base._textColor:ToArgb(), item.Base._highlightedTextColor:ToArgb(),
                 item.SliderColor:ToArgb(), item._heritage)
         elseif SubType == "UIMenuProgressItem" then
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_SETTINGS_ITEM",
-                self.ParentTab, before, menuIndex, 4, item.Base._formatLeftLabel, descLabel, item:Enabled(),
+                before, menuIndex, 4, item.Base._formatLeftLabel, descLabel, item:Enabled(),
                 item:BlinkDescription(), item._Max, item._Multiplier, item:Index(), item.Base._mainColor:ToArgb(),
                 item.Base._highlightColor:ToArgb(), item.Base._textColor:ToArgb(), item.Base._highlightedTextColor:ToArgb(),
                 item.SliderColor:ToArgb())
         else
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_SETTINGS_ITEM",
-                self.ParentTab, before, menuIndex, 0, item._formatLeftLabel, descLabel, item:Enabled(),
+                before, menuIndex, 0, item._formatLeftLabel, descLabel, item:Enabled(),
                 item:BlinkDescription(), item._mainColor:ToArgb(), item._highlightColor:ToArgb(), item._textColor:ToArgb(),
                 item._highlightedTextColor:ToArgb())
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL_RIGHT", self.ParentTab, scaleformIndex, item._formatRightLabel)
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL_RIGHT", scaleformIndex, item._formatRightLabel)
             if item._rightBadge ~= BadgeStyle.NONE then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_BADGE", self.ParentTab, scaleformIndex, item._rightBadge)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_BADGE", scaleformIndex, item._rightBadge)
             end
         end
         if (SubType == "UIMenuItem" and item._leftBadge ~= BadgeStyle.NONE) or (SubType ~= "UIMenuItem" and item.Base._leftBadge ~= BadgeStyle.NONE) then
             if SubType ~= "UIMenuItem" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", self.ParentTab, scaleformIndex, item.Base._leftBadge)
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LABEL_FONT", self.ParentTab, scaleformIndex, item.Base._labelFont.FontName, item.Base._labelFont.FontID)
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_LABEL_FONT", self.ParentTab, scaleformIndex, item.Base._labelFont.FontName, item.Base._labelFont.FontID)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", scaleformIndex, item.Base._leftBadge)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LABEL_FONT", scaleformIndex, item.Base._labelFont.FontName, item.Base._labelFont.FontID)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_LABEL_FONT", scaleformIndex, item.Base._labelFont.FontName, item.Base._labelFont.FontID)
             else
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", self.ParentTab, scaleformIndex, item._leftBadge)
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LABEL_FONT", self.ParentTab, scaleformIndex, item._labelFont.FontName, item._labelFont.FontID)
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_LABEL_FONT", self.ParentTab, scaleformIndex, item._labelFont.FontName, item._labelFont.FontID)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", scaleformIndex, item._leftBadge)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LABEL_FONT", scaleformIndex, item._labelFont.FontName, item._labelFont.FontID)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_LABEL_FONT", scaleformIndex, item._labelFont.FontName, item._labelFont.FontID)
             end
         end
     end
@@ -264,15 +264,15 @@ function SettingsListColumn:GoUp()
                     local pSubT = self.Parent()
                     if pSubT == "LobbyMenu" then
                         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", 8, self._delay) --[[@as number]]
-                    elseif pSubT == "PauseMenu" then
+                    elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
                         ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", 8, self._delay) --[[@as number]]
                     end
             elseif self.scrollingType == MenuScrollingType.PAGINATED or (self.scrollingType == MenuScrollingType.CLASSIC and overflow) then
                 local pSubT = self.Parent()
                 if pSubT == "LobbyMenu" then
                     ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CLEAR_SETTINGS_COLUMN") --[[@as number]]
-                elseif pSubT == "PauseMenu" then
-                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN", self.ParentTab) --[[@as number]]
+                elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN") --[[@as number]]
                 end
                 local max = self.Pagination:ItemsPerPage()
                 for i=1, max, 1 do
@@ -286,9 +286,9 @@ function SettingsListColumn:GoUp()
     if pSubT == "LobbyMenu" then
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
-    elseif pSubT == "PauseMenu" then
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", self.ParentTab, self.Pagination:ScaleformIndex()) --[[@as number]]
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", self.ParentTab, self:CurrentSelection(), #self.Items) --[[@as number]]
+    elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
     end
     self.Items[self:CurrentSelection()]:Selected(true)
     self.OnIndexChanged(self:CurrentSelection())
@@ -305,15 +305,15 @@ function SettingsListColumn:GoDown()
                     local pSubT = self.Parent()
                     if pSubT == "LobbyMenu" then
                         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", 9, self._delay) --[[@as number]]
-                    elseif pSubT == "PauseMenu" then
+                    elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
                         ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", 9, self._delay) --[[@as number]]
                     end
             elseif self.scrollingType == MenuScrollingType.PAGINATED or (self.scrollingType == MenuScrollingType.CLASSIC and overflow) then
                 local pSubT = self.Parent()
                 if pSubT == "LobbyMenu" then
                     ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CLEAR_SETTINGS_COLUMN") --[[@as number]]
-                elseif pSubT == "PauseMenu" then
-                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN", self.ParentTab) --[[@as number]]
+                elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN") --[[@as number]]
                 end
                 local max = self.Pagination:ItemsPerPage()
                 for i=1, max, 1 do
@@ -327,9 +327,9 @@ function SettingsListColumn:GoDown()
     if pSubT == "LobbyMenu" then
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
-    elseif pSubT == "PauseMenu" then
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", self.ParentTab, self.Pagination:ScaleformIndex()) --[[@as number]]
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", self.ParentTab, self:CurrentSelection(), #self.Items) --[[@as number]]
+    elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
     end
     self.Items[self:CurrentSelection()]:Selected(true)
     self.OnIndexChanged(self:CurrentSelection())
@@ -342,8 +342,8 @@ function SettingsListColumn:UpdateItemLabels(index, leftLabel, rightLabel)
         self._rightLabel = rightLabel;
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_ITEM_LABELS", self.Pagination:GetScaleformIndex(index), leftLabel, rightLabel)
-        elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABELS", self.ParentTab, self.Pagination:GetScaleformIndex(index), self._label, self._rightLabel)
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABELS", self.Pagination:GetScaleformIndex(index), self._label, self._rightLabel)
         end
     end
 end
@@ -354,8 +354,8 @@ function SettingsListColumn:UpdateItemBlinkDescription(index, blink)
         local pSubT = self.Parent()
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_ITEM_BLINK_DESC", self.Pagination:GetScaleformIndex(index), blink)
-        elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_BLINK_DESC", self.ParentTab, self.Pagination:GetScaleformIndex(index), self._label, self._rightLabel)
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_BLINK_DESC", self.Pagination:GetScaleformIndex(index), self._label, self._rightLabel)
         end
     end
 end
@@ -366,8 +366,8 @@ function SettingsListColumn:UpdateItemLabel(index, label)
         self._label = label;
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_ITEM_LABEL", self.Pagination:GetScaleformIndex(index), label)
-        elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL", self.ParentTab, self.Pagination:GetScaleformIndex(index), self._label)
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL", self.Pagination:GetScaleformIndex(index), self._label)
         end
     end
 end
@@ -378,8 +378,8 @@ function SettingsListColumn:UpdateItemRightLabel(index, label)
         self._rightLabel = label;
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_ITEM_LABEL_RIGHT", self.Pagination:GetScaleformIndex(index), label)
-        elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL_RIGHT", self.ParentTab, self.Pagination:GetScaleformIndex(index), self._rightLabel)
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL_RIGHT", self.Pagination:GetScaleformIndex(index), self._rightLabel)
         end
     end
 end
@@ -389,8 +389,8 @@ function SettingsListColumn:UpdateItemLeftBadge(index, badge)
         local pSubT = self.Parent()
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", self.Pagination:GetScaleformIndex(index), badge)
-        elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", self.ParentTab, self.Pagination:GetScaleformIndex(index), badge)
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", self.Pagination:GetScaleformIndex(index), badge)
         end
     end
 end
@@ -401,8 +401,8 @@ function SettingsListColumn:UpdateItemRightBadge(index, badge)
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_RIGHT_BADGE", self.Pagination:GetScaleformIndex(index),
                 badge)
-        elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_BADGE", self.ParentTab, self.Pagination:GetScaleformIndex(index), badge)
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_BADGE", self.Pagination:GetScaleformIndex(index), badge)
         end
     end
 end
@@ -412,8 +412,8 @@ function SettingsListColumn:EnableItem(index, enable)
         local pSubT = self.Parent()
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ENABLE_SETTINGS_ITEM", self.Pagination:GetScaleformIndex(index), enable)
-        elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ENABLE_PLAYERS_TAB_SETTINGS_ITEM", self.ParentTab, self.Pagination:GetScaleformIndex(index), enable)
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ENABLE_PLAYERS_TAB_SETTINGS_ITEM", self.Pagination:GetScaleformIndex(index), enable)
         end
     end
 end
@@ -423,8 +423,8 @@ function SettingsListColumn:Clear()
         local pSubT = self.Parent()
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CLEAR_SETTINGS_COLUMN")
-        elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN", self.ParentTab)
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN")
         end
     end
     self.Items = {}
@@ -447,7 +447,7 @@ function SettingsListColumn:SortSettings(compare)
         local pSubT = self.Parent()
         if pSubT == "LobbyMenu" then
             self.Parent:buildSettings()
-        elseif pSubT == "PauseMenu" then
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
             self.Parent:buildSettings(self.Parent.Tabs[self.ParentTab])
         end
     end
@@ -473,7 +473,7 @@ function SettingsListColumn:FilterSettings(predicate)
         local pSubT = self.Parent()
         if pSubT == "LobbyMenu" then
             self.Parent:buildSettings()
-        elseif pSubT == "PauseMenu" then
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
             self.Parent:buildSettings(self.Parent.Tabs[self.ParentTab])
         end
     end
@@ -489,7 +489,7 @@ function SettingsListColumn:ResetFilter()
             local pSubT = self.Parent()
             if pSubT == "LobbyMenu" then
                 self.Parent:buildSettings()
-            elseif pSubT == "PauseMenu" then
+            elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
                 self.Parent:buildSettings(self.Parent.Tabs[self.ParentTab])
             end
         end
@@ -500,8 +500,8 @@ function SettingsListColumn:refreshColumn()
     local pSubT = self.Parent()
     if pSubT == "LobbyMenu" then
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("CLEAR_SETTINGS_COLUMN")
-    elseif pSubT == "PauseMenu" then
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN", self.ParentTab)
+    elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN")
     end
     if #self.Items > 0 then
         self._isBuilding = true
@@ -529,9 +529,9 @@ function SettingsListColumn:refreshColumn()
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
-        elseif pSubT == "PauseMenu" then
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", self.ParentTab, self.Pagination:ScaleformIndex()) --[[@as number]]
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", self.ParentTab, self:CurrentSelection(), #self.Items) --[[@as number]]
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
         end
         self._isBuilding = false
     end

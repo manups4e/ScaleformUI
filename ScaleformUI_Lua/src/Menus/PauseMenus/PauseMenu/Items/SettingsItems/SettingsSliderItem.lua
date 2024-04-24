@@ -47,10 +47,9 @@ function SettingsSliderItem:Enabled(enabled)
         self._enabled = enabled
         if self.Parent ~= nil and self.Parent.Parent ~= nil and self.Parent.Parent.Base.Parent ~= nil and self.Parent.Parent.Base.Parent:Visible() then
             if self.Parent:Selected() then
-                local tab = IndexOf(self.Parent.Parent.Base.Parent.Tabs, self.Parent.Parent) - 1
                 local leftItem = IndexOf(self.Parent.Parent.LeftItemList, self.Parent) - 1
                 local rightIndex = IndexOf(self.Parent.ItemList, self) - 1
-                ScaleformUI.Scaleforms._pauseMenu._pause.CallFunction("ENABLE_RIGHT_ITEM", tab, leftItem,
+                ScaleformUI.Scaleforms._pauseMenu._pause.CallFunction("ENABLE_RIGHT_ITEM", leftItem,
                     rightIndex, self._enabled)
             end
         end
@@ -84,10 +83,9 @@ end
 function SettingsSliderItem:Value(value)
     if value ~= nil then
         self._value = value
-        local tab = IndexOf(self.Parent.Parent.Base.Parent.Tabs, self.Parent.Parent) - 1
         local leftItem = IndexOf(self.Parent.Parent.LeftItemList, self.Parent) - 1
         local rightIndex = IndexOf(self.Parent.ItemList, self) - 1
-        ScaleformUI.Scaleforms._pauseMenu:SetRightSettingsItemValue(tab, leftItem, rightIndex, value)
+        ScaleformUI.Scaleforms._pauseMenu:SetRightSettingsItemValue(leftItem, rightIndex, value)
         self.OnBarChanged(self, value)
     end
     return self._value
@@ -99,10 +97,9 @@ end
 function SettingsSliderItem:ColoredBarColor(color)
     if color ~= nil then
         self._coloredBarColor = color
-        local tab = IndexOf(self.Parent.Parent.Base.Parent.Tabs, self.Parent.Parent) - 1
         local leftItem = IndexOf(self.Parent.Parent.LeftItemList, self.Parent) - 1
         local rightIndex = IndexOf(self.Parent.ItemList, self) - 1
-        ScaleformUI.Scaleforms._pauseMenu:UpdateItemColoredBar(tab, leftItem, rightIndex, color)
+        ScaleformUI.Scaleforms._pauseMenu:UpdateItemColoredBar(leftItem, rightIndex, color)
     end
     return self._coloredBarColor
 end
