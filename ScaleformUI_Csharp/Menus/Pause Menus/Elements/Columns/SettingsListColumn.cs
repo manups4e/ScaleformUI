@@ -391,7 +391,23 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             get { return Items.Count == 0 ? 0 : Pagination.CurrentMenuIndex; }
             set
             {
-                if (value == CurrentSelection) return;
+                if (value == CurrentSelection)
+                {
+                    if (Parent != null && Parent.Visible)
+                    {
+                        if (Parent is MainView)
+                        {
+                            if (!Items[CurrentSelection].Selected)
+                                Items[CurrentSelection].Selected = true;
+                        }
+                        else if (Parent is TabView pause && ParentTab.Visible)
+                        {
+                            if (pause.Index == pause.Tabs.IndexOf(ParentTab) && pause.FocusLevel == 1 && !Items[CurrentSelection].Selected)
+                                Items[CurrentSelection].Selected = true;
+                        }
+                    }
+                    return;
+                }
                 if (value < 0)
                 {
                     Pagination.CurrentMenuIndex = 0;
