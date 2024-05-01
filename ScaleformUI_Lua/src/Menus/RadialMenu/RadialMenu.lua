@@ -4,7 +4,7 @@ RadialMenu.__call = function()
     return "RadialMenu"
 end
 
----@class RadialMenu
+---@class RadialMenu: Scaleform
 ---@field public Segments table
 ---@field public InstructionalButtons table
 ---@field public OnMenuOpen fun(menu:RadialMenu, data:any)

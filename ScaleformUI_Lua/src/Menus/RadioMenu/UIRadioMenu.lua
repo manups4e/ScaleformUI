@@ -4,7 +4,7 @@ UIRadioMenu.__call = function()
     return "UIRadioMenu"
 end
 
----@class UIRadioMenu
+---@class UIRadioMenu: Scaleform
 ---@field public visible boolean
 ---@field public isAnimating boolean
 ---@field public currentSelection number

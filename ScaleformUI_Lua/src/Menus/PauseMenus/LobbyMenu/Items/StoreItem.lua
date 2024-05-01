@@ -5,6 +5,19 @@ StoreItem.__call = function()
 end
 
 ---@class StoreItem
+---@field public Handle number
+---@field public ParentColumn StoreListColumn
+---@field public TextureDictionary string
+---@field public TextureName string
+---@field public Description string
+---@field private _Selected boolean
+---@field public hovered boolean
+---@field public Hovered fun(val: boolean): boolean
+---@field public Enabled fun(bool: boolean): boolean
+---@field public Selected fun(bool: boolean): boolean
+
+
+
 ---@param textureDictionary string
 ---@param textureName string
 ---@param description string

@@ -6,7 +6,7 @@ end
 
 ---@class PlayerStatsPanelStatItem
 ---@field Parent PlayerStatsPanel
----@field private _idx number
+---@field public _idx number
 ---@field private _value number
 ---@field private _description string
 ---@field private _label string
