@@ -105,7 +105,7 @@ function StoreListColumn:AddStoreItem(item)
                     self.Pagination.minItem = self.Pagination:CurrentPageStartIndex() - missingItems
                 end
             end
-    
+
             self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
             self:_itemCreation(self.Pagination:CurrentPage(), #self.Items, false)
             local pSubT = self.Parent()

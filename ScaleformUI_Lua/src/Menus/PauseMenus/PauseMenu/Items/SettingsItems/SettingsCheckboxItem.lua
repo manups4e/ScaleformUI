@@ -80,7 +80,7 @@ function SettingsCheckboxItem:Checked(checked)
         self._isChecked = checked
         local leftItem = IndexOf(self.Parent.Parent.LeftItemList, self.Parent) - 1
         local rightIndex = IndexOf(self.Parent.ItemList, self) - 1
-        ScaleformUI.Scaleforms._pauseMenu:SetRightSettingsItemBool(tab, leftItem, rightIndex, checked)
+        ScaleformUI.Scaleforms._pauseMenu:SetRightSettingsItemBool(leftItem, rightIndex, checked)
         self.OnCheckboxChanged(self, checked)
     end
     return self._isChecked

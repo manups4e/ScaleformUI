@@ -84,7 +84,7 @@ function SettingsListItem:ItemIndex(index)
         local tab = IndexOf(self.Parent.Parent.Base.Parent.Tabs, self.Parent.Parent) - 1
         local leftItem = IndexOf(self.Parent.Parent.LeftItemList, self.Parent) - 1
         local rightIndex = IndexOf(self.Parent.ItemList, self) - 1
-        ScaleformUI.Scaleforms._pauseMenu:SetRightSettingsItemIndex(tab, leftItem, rightIndex, index)
+        ScaleformUI.Scaleforms._pauseMenu:SetRightSettingsItemIndex(leftItem, rightIndex, index)
         self.OnListChanged(self, self._itemIndex, tostring(self.ListItems[index]))
     end
     return self._itemIndex

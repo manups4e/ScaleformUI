@@ -49,8 +49,7 @@ function SettingsSliderItem:Enabled(enabled)
             if self.Parent:Selected() then
                 local leftItem = IndexOf(self.Parent.Parent.LeftItemList, self.Parent) - 1
                 local rightIndex = IndexOf(self.Parent.ItemList, self) - 1
-                ScaleformUI.Scaleforms._pauseMenu._pause.CallFunction("ENABLE_RIGHT_ITEM", leftItem,
-                    rightIndex, self._enabled)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ENABLE_RIGHT_ITEM", leftItem, rightIndex, self._enabled)
             end
         end
     end

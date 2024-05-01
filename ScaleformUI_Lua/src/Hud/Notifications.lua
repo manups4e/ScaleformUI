@@ -197,7 +197,7 @@ end
 ---@return nil
 function Notifications:ShowFloatingHelpNotification(msg, coords)
     AddTextEntry("ScaleformUIFloatingHelpText", msg)
-    SetFloatingHelpTextWorldPosition(1, coords)
+    SetFloatingHelpTextWorldPosition(1, coords.x, coords.y, coords.z)
     SetFloatingHelpTextStyle(1, 1, 2, -1, 3, 0)
     BeginTextCommandDisplayHelp("ScaleformUIFloatingHelpText")
     EndTextCommandDisplayHelp(2, false, false, -1)
