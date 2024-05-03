@@ -665,18 +665,15 @@ end
 function UIMenu:RemoveItemAt(Index)
     if tonumber(Index) then
         if self.Items[Index] then
-            local SelectedItemIndex = self:CurrentSelection()
-            if self:Visible() then
-                ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_ITEM", Index - 1) -- scaleform index starts at 0, better remove 1 to the index
-            end
             local size = #self.Items
             for i = Index, size - 1 do
                 self.Items[i] = self.Items[i + 1]
             end
             self.Items[size] = nil
             self.Pagination:TotalItems(#self.Items)
-            self:CurrentSelection(SelectedItemIndex)
-            self:DebugPrint()
+            if self:Visible() then
+                self:RefreshMenu(true);
+            end
         else
             print("ScaleformUI - UIMenu:RemoveItemAt - Index out of range (Index: " .. Index .. ", Items: " .. #self.Items .. ")")
         end
