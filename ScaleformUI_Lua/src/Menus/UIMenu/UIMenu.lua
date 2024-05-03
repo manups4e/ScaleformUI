@@ -575,14 +575,13 @@ function UIMenu:CurrentSelection(value)
     if value ~= nil then
         if value < 1 then
             self.Pagination:CurrentMenuIndex(1)
+            value = 1
         elseif value > #self.Items then
             self.Pagination:CurrentMenuIndex(#self.Items)
+            value = #self.Items
         end
 
-        -- Prevents the menu from trying to call a method on a nil value
-        if self.Items[self:CurrentSelection()] ~= nil then
-            self.Items[self:CurrentSelection()]:Selected(false)
-        end
+        self.Items[self:CurrentSelection()]:Selected(false)
         self.Pagination:CurrentMenuIndex(value)
         self.Pagination:CurrentPage(self.Pagination:GetPage(self.Pagination:CurrentMenuIndex()))
         self.Pagination:CurrentPageIndex(value)
@@ -654,6 +653,13 @@ function UIMenu:AddItemAt(item, index)
     end
 end
 
+function UIMenu:DebugPrint()
+    print("ScaleformUI - UIMenu:DebugPrint - Items: " .. #self.Items)
+    for i, v in ipairs(self.Items) do
+        print("ScaleformUI - UIMenu:DebugPrint - Item[" .. i .. "]: " .. v:Label())
+    end
+end
+
 ---RemoveItemAt
 ---@param Index number
 function UIMenu:RemoveItemAt(Index)
@@ -663,15 +669,14 @@ function UIMenu:RemoveItemAt(Index)
             if self:Visible() then
                 ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_ITEM", Index - 1) -- scaleform index starts at 0, better remove 1 to the index
             end
-            -- This part checks if the Currently selected item is at the end and adapts the SelectedItemIndex to the new item table size
-            if SelectedItemIndex >= Index then
-                if SelectedItemIndex > #self.Items - 1 then
-                    SelectedItemIndex = #self.Items - 1
-                end
+            local size = #self.Items
+            for i = Index, size - 1 do
+                self.Items[i] = self.Items[i + 1]
             end
-            table.remove(self.Items, tonumber(Index))
-            self:CurrentSelection(SelectedItemIndex)
+            self.Items[size] = nil
             self.Pagination:TotalItems(#self.Items)
+            self:CurrentSelection(SelectedItemIndex)
+            self:DebugPrint()
         else
             print("ScaleformUI - UIMenu:RemoveItemAt - Index out of range (Index: " .. Index .. ", Items: " .. #self.Items .. ")")
         end
