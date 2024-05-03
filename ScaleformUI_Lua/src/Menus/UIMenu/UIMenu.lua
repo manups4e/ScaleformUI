@@ -418,8 +418,8 @@ function UIMenu:RefreshMenu(keepIndex)
         if (#self.Items > 0) then
             self.isBuilding = true
             local max = self.Pagination:ItemsPerPage()
-            if (self.Items.Count < max) then
-                max = self.Items.Count
+            if (#self.Items < max) then
+                max = #self.Items
             end
 
             self.Pagination:MinItem(self.Pagination:CurrentPageStartIndex())
