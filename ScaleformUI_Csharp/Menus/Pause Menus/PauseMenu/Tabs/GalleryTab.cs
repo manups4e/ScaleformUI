@@ -106,7 +106,7 @@ namespace ScaleformUI.PauseMenu
                 {
                     // 0, index, menuId, uniqueID (33 for gallery), type (check GalleryState), initialIndex, isSelectable, [item data after]
                     // item data is: string unknown, txd, txn, string unkown, bookmarkVisible, 
-                    Parent._pause._pause.CallFunction("ADD_GALLERY_ITEM", 0, GalleryItems.IndexOf(item), GalleryItems.IndexOf(item), 33, 0, 0, 1, "", item.TextureDictionary, item.TextureName, "", 1, false, item.Label1, item.Label2, item.Label3, item.Label4);
+                    Parent._pause._pause.CallFunction("ADD_GALLERY_ITEM", GalleryItems.IndexOf(item), GalleryItems.IndexOf(item), 33, 0, 0, 1, "", item.TextureDictionary, item.TextureName, "", 1, false, item.Label1, item.Label2, item.Label3, item.Label4);
                 }
             }
         }
@@ -114,7 +114,7 @@ namespace ScaleformUI.PauseMenu
         public int CurrentSelection
         {
             get => currentSelection;
-            set
+            internal set
             {
                 currentSelection = value;
                 if (Parent != null && Parent.Visible && Visible)
