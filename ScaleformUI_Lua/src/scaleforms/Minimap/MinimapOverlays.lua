@@ -76,7 +76,6 @@ function MinimapOverlays:AddScaledOverlayToMap(textureDict, textureName, x, y, r
     local returned = 0
 
     Citizen.CreateThread(function()
-   
         if not HasStreamedTextureDictLoaded(textureDict) then
             RequestStreamedTextureDict(textureDict, false)
             while not HasStreamedTextureDictLoaded(textureDict) do Citizen.Wait(0) end
@@ -97,9 +96,9 @@ function MinimapOverlays:AddScaledOverlayToMap(textureDict, textureName, x, y, r
 
     SetStreamedTextureDictAsNoLongerNeeded(textureDict)
 
-    local overlay = MinimapOverlay.New(#self.minimaps+1, textureDict, textureName, x, y, rotation, width, height, alpha, centered)
+    local overlay = MinimapOverlay.New(#self.minimaps+1, textureDict, textureName, x, y, rotation, xScale, yScale, alpha, centered)
     table.insert(self.minimaps, overlay)
-    return  overlay
+    return overlay
 end
 
 ---Changes color to the desired overlay

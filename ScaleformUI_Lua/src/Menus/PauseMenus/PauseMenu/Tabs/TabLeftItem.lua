@@ -85,7 +85,7 @@ function TabLeftItem:Label(label)
         end
         if self.Parent ~= nil and self.Parent.Base.Parent ~= nil and self.Parent.Base.Parent:Visible() then
             local leftItem = IndexOf(self.Parent.LeftItemList, self) - 1
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_LEFT_ITEM_LABEL", Tab, leftItem, self._formatLeftLabel)
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_LEFT_ITEM_LABEL", leftItem, self._formatLeftLabel)
         end
     else
         return self.Label
@@ -102,8 +102,8 @@ function TabLeftItem:Enabled(enabled)
         end
         if self.Parent ~= nil and self.Parent.Base.Parent ~= nil and self.Parent.Base.Parent:Visible() then
             local leftItem = IndexOf(self.Parent.LeftItemList, self) - 1
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ENABLE_LEFT_ITEM", Tab, leftItem, self._enabled)
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_LEFT_ITEM_LABEL", Tab, leftItem, self._formatLeftLabel)
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ENABLE_LEFT_ITEM", leftItem, self._enabled)
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_LEFT_ITEM_LABEL", leftItem, self._formatLeftLabel)
         end
     else
         return self._enabled
@@ -129,7 +129,7 @@ function TabLeftItem:Selected(selected)
         end
         if self.Parent ~= nil and self.Parent.Base.Parent ~= nil and self.Parent.Base.Parent:Visible() then
             local leftItem = IndexOf(self.Parent.LeftItemList, self) - 1
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_LEFT_ITEM_LABEL", Tab, leftItem, self._formatLeftLabel)
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_LEFT_ITEM_LABEL", leftItem, self._formatLeftLabel)
         end
     else
         return self._selected
@@ -141,7 +141,7 @@ function TabLeftItem:RightTitle(rtit)
         self.RightTitle = rtit
         if self.Parent ~= nil and self.Parent.Base.Parent ~= nil and self.Parent.Base.Parent:Visible() then
             local leftItem = IndexOf(self.Parent.LeftItemList, self) - 1
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_RIGHT_TITLE", Tab, leftItem, self.RightTitle, self.keymapRightLabel_1, self.KeymapRightLabel_2)
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_RIGHT_TITLE", leftItem, self.RightTitle, self.keymapRightLabel_1, self.KeymapRightLabel_2)
         end
     else
         return self.RightLabel
@@ -153,7 +153,7 @@ function TabLeftItem:KeymapRightLabel_1(rtit)
         self.KeymapRightLabel_1 = rtit
         if self.Parent ~= nil and self.Parent.Base.Parent ~= nil and self.Parent.Base.Parent:Visible() then
             local leftItem = IndexOf(self.Parent.LeftItemList, self) - 1
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_RIGHT_TITLE", Tab, leftItem, self.RightTitle, self.keymapRightLabel_1, self.KeymapRightLabel_2)
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_RIGHT_TITLE", leftItem, self.RightTitle, self.keymapRightLabel_1, self.KeymapRightLabel_2)
         end
     else
         return self.KeymapRightLabel_1
@@ -165,7 +165,7 @@ function TabLeftItem:KeymapRightLabel_2(rtit)
         self.KeymapRightLabel_2 = rtit
         if self.Parent ~= nil and self.Parent.Base.Parent ~= nil and self.Parent.Base.Parent:Visible() then
             local leftItem = IndexOf(self.Parent.LeftItemList, self) - 1
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_RIGHT_TITLE", Tab, leftItem, self.RightTitle, self.keymapRightLabel_1, self.KeymapRightLabel_2)
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_RIGHT_TITLE", leftItem, self.RightTitle, self.keymapRightLabel_1, self.KeymapRightLabel_2)
         end
     else
         return self.KeymapRightLabel_2
@@ -178,6 +178,6 @@ function TabLeftItem:UpdateBackground(txd, txn, resizeType)
     self.LeftItemBGType = resizeType
     if self.Parent ~= nil and self.Parent.Base.Parent ~= nil and self.Parent.Base.Parent:Visible() then
         local leftItem = IndexOf(self.Parent.LeftItemList, self) - 1
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_LEFT_ITEM_RIGHT_BACKGROUND", Tab, leftItem, txd, txn, resizeType)
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_LEFT_ITEM_RIGHT_BACKGROUND", leftItem, txd, txn, resizeType)
     end
 end

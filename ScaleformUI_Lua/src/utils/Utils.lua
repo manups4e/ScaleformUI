@@ -1,5 +1,9 @@
 -- Globals
-GlobalGameTimer = GetGameTimer() --[[@type number]] -- GlobalGameTimer is used in many places, so we'll just define it here.
+GlobalGameTimer = GetNetworkTime() --[[@type number]] -- GlobalGameTimer is used in many places, so we'll just define it here.
+
+-- Make the number type detected as integer to avoid multiple lint detections.
+---@diagnostic disable-next-line: duplicate-doc-alias
+---@alias integer number
 
 --Update GlobalGameTimer every 100ms, so we don't have to call GetNetworkTime() every time we need it.
 Citizen.CreateThread(function()

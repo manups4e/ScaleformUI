@@ -139,7 +139,7 @@ end
 ---@param statItem PlayerStatsPanelStatItem
 function PlayerStatsPanel:AddStat(statItem)
     statItem.Parent = self
-    statItem.idx = #self.Items
+    statItem._idx = #self.Items
     table.insert(self.Items, statItem)
     self:UpdatePanel()
 end
