@@ -23,7 +23,7 @@ namespace ScaleformUI.PauseMenu
     {
         internal string txd = "";
         internal string txn = "";
-        internal int maxItemsPerPage = 1;
+        internal int maxItemsPerPage = 12;
         internal GalleryState state;
         internal string titleLabel = "";
         internal string dateLabel = "";
