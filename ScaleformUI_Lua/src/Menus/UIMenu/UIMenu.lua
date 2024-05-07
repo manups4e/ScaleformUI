@@ -418,8 +418,8 @@ function UIMenu:RefreshMenu(keepIndex)
         if (#self.Items > 0) then
             self.isBuilding = true
             local max = self.Pagination:ItemsPerPage()
-            if (self.Items.Count < max) then
-                max = self.Items.Count
+            if (#self.Items < max) then
+                max = #self.Items
             end
 
             self.Pagination:MinItem(self.Pagination:CurrentPageStartIndex())
@@ -575,8 +575,10 @@ function UIMenu:CurrentSelection(value)
     if value ~= nil then
         if value < 1 then
             self.Pagination:CurrentMenuIndex(1)
+            value = 1
         elseif value > #self.Items then
             self.Pagination:CurrentMenuIndex(#self.Items)
+            value = #self.Items
         end
 
         self.Items[self:CurrentSelection()]:Selected(false)
@@ -651,18 +653,29 @@ function UIMenu:AddItemAt(item, index)
     end
 end
 
+function UIMenu:DebugPrint()
+    print("ScaleformUI - UIMenu:DebugPrint - Items: " .. #self.Items)
+    for i, v in ipairs(self.Items) do
+        print("ScaleformUI - UIMenu:DebugPrint - Item[" .. i .. "]: " .. v:Label())
+    end
+end
+
 ---RemoveItemAt
 ---@param Index number
 function UIMenu:RemoveItemAt(Index)
     if tonumber(Index) then
         if self.Items[Index] then
-            local SelectedItem = self:CurrentSelection()
-            table.remove(self.Items, tonumber(Index))
-            if self:Visible() then
-                ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_ITEM", Index - 1) -- scaleform index starts at 0, better remove 1 to the index
+            local size = #self.Items
+            for i = Index, size - 1 do
+                self.Items[i] = self.Items[i + 1]
             end
-            self:CurrentSelection(SelectedItem)
+            self.Items[size] = nil
             self.Pagination:TotalItems(#self.Items)
+            if self:Visible() then
+                self:RefreshMenu(true);
+            end
+        else
+            print("ScaleformUI - UIMenu:RemoveItemAt - Index out of range (Index: " .. Index .. ", Items: " .. #self.Items .. ")")
         end
     end
 end
