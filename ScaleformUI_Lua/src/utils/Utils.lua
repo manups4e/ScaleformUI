@@ -1,5 +1,5 @@
 -- Globals
-GlobalGameTimer = GetGameTimer() --[[@type number]] -- GlobalGameTimer is used in many places, so we'll just define it here.
+GlobalGameTimer = GetNetworkTime() --[[@type number]] -- GlobalGameTimer is used in many places, so we'll just define it here.
 
 -- Make the number type detected as integer to avoid multiple lint detections.
 ---@diagnostic disable-next-line: duplicate-doc-alias
