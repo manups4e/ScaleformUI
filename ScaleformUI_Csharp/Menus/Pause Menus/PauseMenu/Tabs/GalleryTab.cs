@@ -32,9 +32,9 @@ namespace ScaleformUI.PauseMenu
         internal bool labelsVisible = false;
         internal bool bigPic = false;
         internal int CurPage = 0;
-        internal int MaxPages => (int)Math.Ceiling(GalleryItems.Count / (float)12);
         private int currentSelection = 0;
         internal int currentIndex = 0;
+        public int MaxPages => (int)Math.Ceiling(GalleryItems.Count / (float)12);
 
         public event GalleryModeChanged OnGalleryModeChanged;
         public event GalleryIndexChanged OnGalleryIndexChanged;
