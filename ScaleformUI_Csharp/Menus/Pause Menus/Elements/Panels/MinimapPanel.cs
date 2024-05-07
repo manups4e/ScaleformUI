@@ -9,7 +9,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
     public class MinimapPanel
     {
         internal PauseMenuBase Parent { get; set; }
-        internal PlayerListTab ParentTab { get; set; }
+        internal BaseTab ParentTab { get; set; }
         internal Vector2 mapPosition = new Vector2();
         internal float zoomDistance = 0;
         internal bool enabled;
@@ -19,7 +19,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
         public MinimapRoute MinimapRoute;
         public List<FakeBlip> MinimapBlips { get; internal set; }
 
-        public MinimapPanel(PauseMenuBase parent, PlayerListTab parenttab)
+        public MinimapPanel(PauseMenuBase parent, BaseTab parenttab)
         {
             MinimapBlips = new List<FakeBlip>();
             MinimapRoute = new MinimapRoute();
@@ -44,13 +44,16 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
                             }
                         }
                     }
-                    else if (Parent is TabView pause)
+                    else if (Parent is TabView)
                     {
-                        if (ParentTab.listCol[ParentTab.Focus].Type == "players")
+                        if (ParentTab is PlayerListTab plTab)
                         {
-                            if (ParentTab.PlayersColumn.Items[ParentTab.PlayersColumn.CurrentSelection].KeepPanelVisible)
+                            if (plTab.listCol[plTab.Focus].Type == "players")
                             {
-                                return;
+                                if (plTab.PlayersColumn.Items[plTab.PlayersColumn.CurrentSelection].KeepPanelVisible)
+                                {
+                                    return;
+                                }
                             }
                         }
                     }
@@ -58,7 +61,8 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
                 enabled = value;
                 if (enabled)
                 {
-                    localCoronaMapStage = 0;
+                    if (localCoronaMapStage == -1)
+                        localCoronaMapStage = 0;
                 }
                 else
                 {
@@ -124,9 +128,6 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             // Calculate our range and get the correct zoom.
             mapPosition = new Vector2((vNodeMax.X + vNodeMin.X) / 2f, (vNodeMax.Y + vNodeMin.Y) / 2f);
 
-            LockMinimapPosition(mapPosition.X, mapPosition.Y);
-            LockMinimapAngle(0);
-
             float DistanceX = vNodeMax.X - vNodeMin.X;
             float DistanceY = vNodeMax.Y - vNodeMin.Y;
 
@@ -134,6 +135,16 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
                 zoomDistance = DistanceX / 1.5f;
             else
                 zoomDistance = DistanceY / 1.5f;
+
+            RefreshMapPosition(mapPosition);
+            LockMinimapAngle(0);
+        }
+
+        public void RefreshMapPosition(Vector2 position)
+        {
+            mapPosition = new Vector2(position);
+            if (ParentTab is GalleryTab g)
+                zoomDistance = g.bigPic ? 600 : 1200;
         }
 
         internal Vector3 GetVectorToCheck(int i)

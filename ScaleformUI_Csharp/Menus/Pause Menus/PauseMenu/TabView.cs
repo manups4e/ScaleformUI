@@ -75,8 +75,7 @@ namespace ScaleformUI.PauseMenu
             set
             {
                 focusLevel = value;
-                if (_pause is not null)
-                    _pause.SetFocus(value);
+                _pause?.SetFocus(value);
                 SendPauseMenuFocusChange();
             }
         }
@@ -143,21 +142,7 @@ namespace ScaleformUI.PauseMenu
                     ShowHeader();
                     foreach (BaseTab tab in Tabs)
                     {
-                        switch (tab._type)
-                        {
-                            case 0:
-                                TextTab simpleTab = (TextTab)tab;
-                                _pause.AddPauseMenuTab(simpleTab.Title, 0, simpleTab._type, simpleTab.TabColor);
-                                break;
-                            case 1:
-                                SubmenuTab submenu = (SubmenuTab)tab;
-                                _pause.AddPauseMenuTab(submenu.Title, 1, submenu._type, submenu.TabColor);
-                                break;
-                            case 2:
-                                PlayerListTab plTab = (PlayerListTab)tab;
-                                _pause.AddPauseMenuTab(plTab.Title, 1, plTab._type, plTab.TabColor);
-                                break;
-                        }
+                        _pause.AddPauseMenuTab(tab.Title, 0, tab._type, tab.TabColor);
                     }
                     Tabs[0].Visible = true;
                     BuildPauseMenu();
@@ -167,9 +152,9 @@ namespace ScaleformUI.PauseMenu
                 else
                 {
                     if (Tabs[Index] is PlayerListTab t)
-                    {
                         t.Minimap?.Dispose();
-                    }
+                    else if (Tabs[Index] is GalleryTab g)
+                        g.Minimap?.Dispose();
                     AnimpostfxStop("PauseMenuIn");
                     AnimpostfxPlay("PauseMenuOut", 0, false);
                     SendPauseMenuClose();
@@ -422,6 +407,27 @@ namespace ScaleformUI.PauseMenu
                         plTab.SelectColumn(0);
                     }
                     break;
+                case 3:
+                    _pause._pause.CallFunction("ADD_TAB", 3);
+                    GalleryTab glTab = (GalleryTab)tab;
+                    if (!string.IsNullOrEmpty(glTab.dateLabel) && !string.IsNullOrEmpty(glTab.locationLabel) && !string.IsNullOrEmpty(glTab.trackLabel))
+                        _pause._pause.CallFunction("SET_GALLERY_DESCRIPTION_LABELS", glTab.maxItemsPerPage, glTab.titleLabel, glTab.dateLabel, glTab.locationLabel, glTab.trackLabel, glTab.labelsVisible);
+
+                    for (int i = 0; i < 12; i++)
+                    {
+                        if (i <= glTab.GalleryItems.Count - 1)
+                        {
+                            GalleryItem item = glTab.GalleryItems[i];
+                            _pause._pause.CallFunction("ADD_GALLERY_ITEM", i, i, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4);
+                            if (item.Blip != null)
+                                glTab.Minimap.MinimapBlips.Add(item.Blip);
+                        }
+                        else
+                            _pause._pause.CallFunction("ADD_GALLERY_ITEM", i, i, 33, 0, 0, 1, "", "", "", "", 1, false);
+                    }
+                    glTab.UpdatePage();
+                    _pause._pause.CallFunction("DISPLAY_GALLERY");
+                    break;
             }
             _pause._pause.CallFunction("UPDATE_DRAWING");
             _pause._pause.CallFunction("FADE_IN");
@@ -571,6 +577,10 @@ namespace ScaleformUI.PauseMenu
             {
                 t.Minimap?.MaintainMap();
             }
+            else if (Tabs[Index] is GalleryTab g)
+            {
+                g.Minimap.MaintainMap();
+            }
             base.Draw();
             _pause.Draw();
             UpdateKeymapItems();
@@ -653,6 +663,33 @@ namespace ScaleformUI.PauseMenu
                         if (pl.listCol.Any(x => x.Type == "players"))
                             SetPauseMenuPedLighting(FocusLevel != 0);
                     }
+                    else if (Tabs[Index] is GalleryTab gT)
+                    {
+                        if (gT.GalleryItems[gT.CurrentSelection].Blip != null)
+                        {
+                            _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+                            _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+                            gT.Minimap.Enabled = true;
+                            gT.Minimap.RefreshMapPosition(new Vector2(gT.GalleryItems[gT.CurrentSelection].Blip.Position.X, gT.GalleryItems[gT.CurrentSelection].Blip.Position.Y));
+                        }
+                        else if (!string.IsNullOrEmpty(gT.GalleryItems[gT.CurrentSelection].RightPanelDescription))
+                        {
+                            gT.Minimap.Enabled = false;
+                            AddTextEntry("gallerytab_desc", gT.GalleryItems[gT.CurrentSelection].RightPanelDescription);
+                            _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
+                            BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+                            BeginTextCommandScaleformString("gallerytab_desc");
+                            EndTextCommandScaleformString_2();
+                            EndScaleformMovieMethod();
+                        }
+                        else
+                        {
+                            gT.Minimap.Enabled = false;
+                            _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+                            _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+                        }
+                        return;
+                    }
                     else if (Tabs[Index] is SubmenuTab)
                     {
                         Tabs[Index].LeftItemList[LeftItemIndex].Selected = true;
@@ -687,6 +724,43 @@ namespace ScaleformUI.PauseMenu
                                 }
                             }
                             SendPauseMenuLeftItemSelect();
+                        }
+                        else if (Tabs[Index] is GalleryTab gT)
+                        {
+                            if (!gT.bigPic)
+                            {
+                                gT.SetTitle(gT.GalleryItems[gT.CurrentSelection].TextureDictionary, gT.GalleryItems[gT.CurrentSelection].TextureName, GalleryState.LOADED);
+
+                                if (gT.GalleryItems[gT.CurrentSelection].Blip != null)
+                                {
+                                    _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+                                    _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+                                    gT.Minimap.Enabled = true;
+                                    gT.Minimap.RefreshMapPosition(new Vector2(gT.GalleryItems[gT.CurrentSelection].Blip.Position.X, gT.GalleryItems[gT.CurrentSelection].Blip.Position.Y));
+                                }
+                                else if (!string.IsNullOrEmpty(gT.GalleryItems[gT.CurrentSelection].RightPanelDescription))
+                                {
+                                    gT.Minimap.Enabled = false;
+                                    AddTextEntry("gallerytab_desc", gT.GalleryItems[gT.CurrentSelection].RightPanelDescription);
+                                    _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
+                                    BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+                                    BeginTextCommandScaleformString("gallerytab_desc");
+                                    EndTextCommandScaleformString_2();
+                                    EndScaleformMovieMethod();
+                                }
+                                else
+                                {
+                                    gT.Minimap.Enabled = false;
+                                    _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+                                    _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+                                }
+                                gT.ModeChanged();
+                            }
+                            else
+                            {
+                                gT.ItemSelected();
+                                gT.GalleryItems[gT.CurrentSelection].ItemSelected(gT, gT.GalleryItems[gT.CurrentSelection], gT.currentIndex, gT.CurrentSelection);
+                            }
                         }
                         else if (Tabs[Index] is PlayerListTab plTab)
                         {
@@ -791,9 +865,49 @@ namespace ScaleformUI.PauseMenu
             {
                 if (Tabs[Index] is not PlayerListTab)
                 {
+                    if (Tabs[Index] is GalleryTab gT)
+                    {
+                        if (gT.bigPic)
+                        {
+                            gT.SetTitle("", "", GalleryState.EMPTY);
+                            if (gT.GalleryItems[gT.CurrentSelection].Blip != null)
+                            {
+                                _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+                                _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+                                gT.Minimap.Enabled = true;
+                                gT.Minimap.RefreshMapPosition(new Vector2(gT.GalleryItems[gT.CurrentSelection].Blip.Position.X, gT.GalleryItems[gT.CurrentSelection].Blip.Position.Y));
+                            }
+                            else if (!string.IsNullOrEmpty(gT.GalleryItems[gT.CurrentSelection].RightPanelDescription))
+                            {
+                                gT.Minimap.Enabled = false;
+                                AddTextEntry("gallerytab_desc", gT.GalleryItems[gT.CurrentSelection].RightPanelDescription);
+                                _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
+                                BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+                                BeginTextCommandScaleformString("gallerytab_desc");
+                                EndTextCommandScaleformString_2();
+                                EndScaleformMovieMethod();
+                            }
+                            else
+                            {
+                                _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+                                gT.Minimap.Enabled = false;
+                                _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
+                            }
+                            gT.ModeChanged();
+                            return;
+                        }
+                        else
+                        {
+                            gT.CurrentSelection = 0;
+                            gT.currentIndex = 0;
+                            _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+                            if (gT.Minimap.enabled)
+                                gT.Minimap.Enabled = false;
+                        }
+                    }
                     FocusLevel--;
-                    if (Tabs[Index] is not TextTab)
-                        Tabs[Index].LeftItemList[LeftItemIndex].Selected = focusLevel == 1;
+                    if (Tabs[Index] is SubmenuTab subTab)
+                        subTab.LeftItemList[LeftItemIndex].Selected = focusLevel == 1;
                 }
                 else if (Tabs[Index] is PlayerListTab pl)
                 {
@@ -869,6 +983,68 @@ namespace ScaleformUI.PauseMenu
                 Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
                 return;
             }
+
+            if (FocusLevel == 1)
+            {
+                if (Tabs[Index] is GalleryTab g)
+                {
+                    int iPotentialIndex = g.currentIndex;
+                    int iPotentialIndexPerPage = g.CurrentSelection;
+
+                    if (iPotentialIndexPerPage > 3)
+                    {
+                        iPotentialIndex -= 4;
+                        iPotentialIndexPerPage -= 4;
+                    }
+                    else
+                    {
+                        iPotentialIndex += 8;
+                        iPotentialIndexPerPage += 8;
+                    }
+
+                    if (iPotentialIndex >= g.GalleryItems.Count)
+                        return;
+
+                    g.currentIndex = iPotentialIndex;
+                    g.CurrentSelection = iPotentialIndexPerPage;
+
+                    g.UpdateHighlight();
+                    g.UpdatePage();
+                    g.IndexChanged();
+
+                    GalleryItem it = g.GalleryItems[g.CurrentSelection];
+                    if (g.bigPic)
+                    {
+                        g.SetTitle(it.TextureDictionary, it.TextureName, GalleryState.LOADED);
+                    }
+
+                    if (it.Blip != null)
+                    {
+                        _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+                        g.Minimap.Enabled = true;
+                        g.Minimap.RefreshMapPosition(new Vector2(it.Blip.Position.X, it.Blip.Position.Y));
+                    }
+                    else if (!string.IsNullOrEmpty(it.RightPanelDescription))
+                    {
+                        AddTextEntry("gallerytab_desc", it.RightPanelDescription);
+                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
+                        BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+                        BeginTextCommandScaleformString("gallerytab_desc");
+                        EndTextCommandScaleformString_2();
+                        EndScaleformMovieMethod();
+                    }
+                    else
+                    {
+                        _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+                        g.Minimap.Enabled = false;
+                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+                    }
+                    return;
+                }
+            }
+
+
             int retVal = await _pause._pause.CallFunctionReturnValueInt("SET_INPUT_EVENT", 8);
             if (retVal != -1)
             {
@@ -906,6 +1082,66 @@ namespace ScaleformUI.PauseMenu
                 return;
             }
 
+            if (FocusLevel == 1)
+            {
+                if (Tabs[Index] is GalleryTab g)
+                {
+                    int iPotentialIndex = g.currentIndex;
+                    int iPotentialIndexPerPage = g.CurrentSelection;
+
+                    if (iPotentialIndexPerPage < 8)
+                    {
+                        iPotentialIndex += 4;
+                        iPotentialIndexPerPage += 4;
+                    }
+                    else
+                    {
+                        iPotentialIndex -= 8;
+                        iPotentialIndexPerPage -= 8;
+                    }
+
+                    if (iPotentialIndex >= g.GalleryItems.Count)
+                        return;
+
+                    g.currentIndex = iPotentialIndex;
+                    g.CurrentSelection = iPotentialIndexPerPage;
+                    g.IndexChanged();
+
+                    g.UpdateHighlight();
+                    g.UpdatePage();
+
+                    GalleryItem it = g.GalleryItems[g.CurrentSelection];
+                    if (g.bigPic)
+                    {
+                        g.SetTitle(it.TextureDictionary, it.TextureName, GalleryState.LOADED);
+                    }
+
+                    if (it.Blip != null)
+                    {
+                        _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+                        g.Minimap.Enabled = true;
+                        g.Minimap.RefreshMapPosition(new Vector2(it.Blip.Position.X, it.Blip.Position.Y));
+                    }
+                    else if (!string.IsNullOrEmpty(it.RightPanelDescription))
+                    {
+                        AddTextEntry("gallerytab_desc", it.RightPanelDescription);
+                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
+                        BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+                        BeginTextCommandScaleformString("gallerytab_desc");
+                        EndTextCommandScaleformString_2();
+                        EndScaleformMovieMethod();
+                    }
+                    else
+                    {
+                        _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+                        g.Minimap.Enabled = false;
+                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+                    }
+                    return;
+                }
+            }
+
             int retVal = await _pause._pause.CallFunctionReturnValueInt("SET_INPUT_EVENT", 9);
             if (retVal != -1)
             {
@@ -922,6 +1158,119 @@ namespace ScaleformUI.PauseMenu
 
         public async void GoLeft()
         {
+            if (FocusLevel == 1)
+            {
+                if (Tabs[Index] is GalleryTab g)
+                {
+                    int iPotentialIndex = g.currentIndex;
+                    int iPotentialIndexPerPage = g.CurrentSelection;
+                    if (g.currentIndex == 0)
+                    {
+                        g.currentIndex = g.GalleryItems.Count - 1;
+                        g.CurrentSelection = g.currentIndex % 12;
+                        g.CurPage = g.MaxPages - 1;
+                        if (g.MaxPages > 1)
+                        {
+                            _pause._pause.CallFunction("CLEAR_GALLERY");
+                            g.SetDescriptionLabels(g.maxItemsPerPage, g.titleLabel, g.dateLabel, g.locationLabel, g.trackLabel, g.labelsVisible);
+                            for (int i = 0; i < 12; i++)
+                            {
+                                int index = i + (g.CurPage * 12);
+                                if (index <= g.GalleryItems.Count - 1)
+                                {
+                                    GalleryItem item = g.GalleryItems[index];
+                                    _pause._pause.CallFunction("UPDATE_GALLERY_ITEM", i, i, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4);
+                                    if (item.Blip != null)
+                                        g.Minimap.MinimapBlips.Add(item.Blip);
+                                }
+                                else
+                                    _pause._pause.CallFunction("UPDATE_GALLERY_ITEM", i, i, 33, 0, 0, 1, "", "", "", "", 1, false);
+                            }
+                        }
+                        g.UpdateHighlight();
+                        g.UpdatePage();
+                    }
+                    else
+                    {
+
+                        if (g.CurrentSelection % 4 > 0 || (g.MaxPages <= 1) || (g.bigPic && g.CurrentSelection > 0))
+                        {
+                            iPotentialIndex--;
+                            iPotentialIndexPerPage--;
+                        }
+
+                        if (g.ShouldNavigateToNewPage(iPotentialIndexPerPage))
+                        {
+                            g.CurPage = g.CurPage <= 0 ? (g.MaxPages - 1) : g.CurPage - 1;
+
+                            g.currentIndex = g.CurPage * g.maxItemsPerPage + 3;
+                            g.CurrentSelection = iPotentialIndexPerPage + 3;
+                            if (g.currentIndex >= g.GalleryItems.Count || g.CurPage == g.MaxPages - 1)
+                            {
+                                g.currentIndex = g.GalleryItems.Count - 1;
+                                g.CurrentSelection = g.currentIndex % 12;
+                            }
+
+                            _pause._pause.CallFunction("CLEAR_GALLERY");
+                            g.SetDescriptionLabels(g.maxItemsPerPage, g.titleLabel, g.dateLabel, g.locationLabel, g.trackLabel, g.labelsVisible);
+                            for (int i = 0; i < 12; i++)
+                            {
+                                int index = i + (g.CurPage * 12);
+                                if (index <= g.GalleryItems.Count - 1)
+                                {
+                                    GalleryItem item = g.GalleryItems[index];
+                                    _pause._pause.CallFunction("UPDATE_GALLERY_ITEM", i, i, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4);
+                                    if (item.Blip != null)
+                                        g.Minimap.MinimapBlips.Add(item.Blip);
+                                }
+                                else
+                                    _pause._pause.CallFunction("UPDATE_GALLERY_ITEM", i, i, 33, 0, 0, 1, "", "", "", "", 1, false);
+                            }
+
+                            g.UpdateHighlight();
+                            g.UpdatePage();
+                        }
+                        else
+                        {
+                            g.currentIndex = iPotentialIndex;
+                            g.CurrentSelection = iPotentialIndexPerPage;
+                            g.UpdateHighlight();
+                        }
+                    }
+
+                    GalleryItem it = g.GalleryItems[g.CurrentSelection];
+                    if (g.bigPic)
+                    {
+                        g.SetTitle(it.TextureDictionary, it.TextureName, GalleryState.LOADED);
+                    }
+
+                    if (it.Blip != null)
+                    {
+                        _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+                        g.Minimap.Enabled = true;
+                        g.Minimap.RefreshMapPosition(new Vector2(it.Blip.Position.X, it.Blip.Position.Y));
+                    }
+                    else if (!string.IsNullOrEmpty(it.RightPanelDescription))
+                    {
+                        AddTextEntry("gallerytab_desc", it.RightPanelDescription);
+                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
+                        BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+                        BeginTextCommandScaleformString("gallerytab_desc");
+                        EndTextCommandScaleformString_2();
+                        EndScaleformMovieMethod();
+                    }
+                    else
+                    {
+                        _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+                        g.Minimap.Enabled = false;
+                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+                    }
+                    g.IndexChanged();
+                    return;
+                }
+            }
+
             int retVal = await _pause._pause.CallFunctionReturnValueInt("SET_INPUT_EVENT", 10);
             switch (FocusLevel)
             {
@@ -1076,8 +1425,117 @@ namespace ScaleformUI.PauseMenu
 
         public async void GoRight()
         {
-            int retVal = await _pause._pause.CallFunctionReturnValueInt("SET_INPUT_EVENT", 11);
+            if (FocusLevel == 1)
+            {
+                if (Tabs[Index] is GalleryTab g)
+                {
+                    int iPotentialIndex = g.currentIndex;
+                    int iPotentialIndexPerPage = g.CurrentSelection;
 
+                    if (g.currentIndex == g.GalleryItems.Count - 1)
+                    {
+                        g.currentIndex = 0;
+                        g.CurrentSelection = 0;
+                        g.CurPage = 0;
+                        if (g.MaxPages > 1)
+                        {
+                            _pause._pause.CallFunction("CLEAR_GALLERY");
+                            g.SetDescriptionLabels(g.maxItemsPerPage, g.titleLabel, g.dateLabel, g.locationLabel, g.trackLabel, g.labelsVisible);
+                            for (int i = 0; i < 12; i++)
+                            {
+                                int index = i + (g.CurPage * 12);
+                                if (index <= g.GalleryItems.Count - 1)
+                                {
+                                    GalleryItem item = g.GalleryItems[index];
+                                    _pause._pause.CallFunction("UPDATE_GALLERY_ITEM", i, i, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4);
+                                    if (item.Blip != null)
+                                        g.Minimap.MinimapBlips.Add(item.Blip);
+                                }
+                                else
+                                    _pause._pause.CallFunction("UPDATE_GALLERY_ITEM", i, i, 33, 0, 0, 1, "", "", "", "", 1, false);
+                            }
+                        }
+                        g.UpdateHighlight();
+                        g.UpdatePage();
+                    }
+                    else
+                    {
+                        if ((g.CurrentSelection % 4 < 4 - 1) || g.MaxPages <= 1 || (g.bigPic && g.CurrentSelection < 11))
+                        {
+                            iPotentialIndex++;
+                            iPotentialIndexPerPage++;
+                        }
+
+                        if (g.ShouldNavigateToNewPage(iPotentialIndexPerPage))
+                        {
+                            g.CurPage = g.CurPage == (g.MaxPages - 1) ? 0 : g.CurPage + 1;
+
+                            g.currentIndex = g.bigPic ? (g.CurPage * g.maxItemsPerPage) : (g.CurPage * g.maxItemsPerPage + iPotentialIndexPerPage - 3);
+                            g.CurrentSelection = g.bigPic ? 0 : iPotentialIndexPerPage - 3;
+                            if (g.currentIndex >= g.GalleryItems.Count || g.CurPage == 0)
+                                g.CurrentSelection = 0;
+
+                            _pause._pause.CallFunction("CLEAR_GALLERY");
+                            g.SetDescriptionLabels(g.maxItemsPerPage, g.titleLabel, g.dateLabel, g.locationLabel, g.trackLabel, g.labelsVisible);
+                            for (int i = 0; i < 12; i++)
+                            {
+                                int index = i + (g.CurPage * 12);
+                                if (index <= g.GalleryItems.Count - 1)
+                                {
+                                    GalleryItem item = g.GalleryItems[index];
+                                    _pause._pause.CallFunction("UPDATE_GALLERY_ITEM", i, i, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4);
+                                    if (item.Blip != null)
+                                        g.Minimap.MinimapBlips.Add(item.Blip);
+                                }
+                                else
+                                    _pause._pause.CallFunction("UPDATE_GALLERY_ITEM", i, i, 33, 0, 0, 1, "", "", "", "", 1, false);
+                            }
+
+                            g.UpdateHighlight();
+                            g.UpdatePage();
+                        }
+                        else
+                        {
+                            g.currentIndex = iPotentialIndex;
+                            g.CurrentSelection = iPotentialIndexPerPage;
+                            g.UpdateHighlight();
+                        }
+                    }
+
+                    GalleryItem it = g.GalleryItems[g.CurrentSelection];
+                    if (g.bigPic)
+                    {
+                        g.SetTitle(it.TextureDictionary, it.TextureName, GalleryState.LOADED);
+                    }
+
+                    if (it.Blip != null)
+                    {
+                        _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+                        g.Minimap.Enabled = true;
+                        g.Minimap.RefreshMapPosition(new Vector2(it.Blip.Position.X, it.Blip.Position.Y));
+                    }
+                    else if (!string.IsNullOrEmpty(it.RightPanelDescription))
+                    {
+                        AddTextEntry("gallerytab_desc", it.RightPanelDescription);
+                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
+                        BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+                        BeginTextCommandScaleformString("gallerytab_desc");
+                        EndTextCommandScaleformString_2();
+                        EndScaleformMovieMethod();
+                    }
+                    else
+                    {
+                        _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+                        g.Minimap.Enabled = false;
+                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+                    }
+                    g.IndexChanged();
+                    return;
+                }
+            }
+
+            int retVal = await _pause._pause.CallFunctionReturnValueInt("SET_INPUT_EVENT", 11);
             switch (FocusLevel)
             {
                 case 0:
@@ -1216,7 +1674,6 @@ namespace ScaleformUI.PauseMenu
                                 (rightItem as SettingsProgressItem).ProgressChanged();
                                 break;
                         }
-
                         break;
                     }
             }

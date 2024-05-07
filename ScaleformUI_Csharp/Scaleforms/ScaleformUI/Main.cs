@@ -60,6 +60,17 @@ namespace ScaleformUI
                     scaleformUI?.CallFunction("CLEAR_ALL");
                     scaleformUI?.Dispose();
                     PauseMenu?.Dispose();
+                    API.N_0x2de6c5e2e996f178(1);
+                    API.RaceGalleryFullscreen(false);
+                    API.ClearRaceGalleryBlips();
+                    API.SetRadarZoom(0);
+                    API.SetGpsCustomRouteRender(false, 18, 30);
+                    API.SetGpsMultiRouteRender(false);
+                    API.UnlockMinimapPosition();
+                    API.UnlockMinimapAngle();
+                    API.DeleteWaypoint();
+                    API.ClearGpsCustomRoute();
+                    API.ClearGpsFlags();
                 }
             });
         }

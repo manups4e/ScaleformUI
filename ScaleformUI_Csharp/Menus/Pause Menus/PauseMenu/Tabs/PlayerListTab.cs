@@ -9,7 +9,6 @@ namespace ScaleformUI.PauseMenu
     public delegate void ColumnFocusedEvent(Column column, int index);
     public class PlayerListTab : BaseTab
     {
-        private const int V = 2;
         private bool _focused;
         private int focus = 0;
         internal List<Column> listCol;
@@ -38,7 +37,7 @@ namespace ScaleformUI.PauseMenu
         public MinimapPanel Minimap { get; internal set; }
         public PlayerListTab(string name, SColor color, bool newStyle = true) : base(name, color)
         {
-            _type = V;
+            _type = 2;
             _newStyle = newStyle;
         }
 

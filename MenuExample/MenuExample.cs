@@ -1422,6 +1422,43 @@ public class MenuExample : BaseScript
         panel5.AddStat(new PlayerStatsPanelStatItem("Statistic 5", "Description 5", API.GetRandomIntInRange(30, 150)));
         friend5.AddPanel(panel5);
         */
+
+        GalleryTab gallerytab = new GalleryTab("GALLERY EXAMPLE", SColor.HUD_Freemode);
+        gallerytab.SetTitle("", "", GalleryState.EMPTY);
+        gallerytab.SetDescriptionLabels(12, "TITLE", "DATE", "LOCATION", "TRACK", true);
+        for (int i = 0; i < 14; i += 2)
+        {
+            GalleryItem item0 = new GalleryItem("scaleformui", "pausebigbg");
+            item0.SetLabels("ITEM " + i + " TITLE", "ITEM " + i + " DATE", "ITEM " + i + " LOCATION", "ITEM " + i + " TRACK");
+            FakeBlip blip0 = new FakeBlip(BlipSprite.Camera, new Vector3(API.GetRandomFloatInRange(-5, 5), API.GetRandomFloatInRange(-5, 5), 0));
+            blip0.Scale = 1f;
+            item0.Blip = blip0;
+            GalleryItem item1 = new GalleryItem("scaleformui", "lobby_panelbackground");
+            item1.SetLabels("ITEM " + (i + 1) + " TITLE", "ITEM " + (i + 1) + " DATE", "ITEM " + (i + 1) + " LOCATION", "ITEM " + (i + 1) + " TRACK");
+            item1.SetRightDescription("" +
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. \n" +
+                "<img src='img://scaleformui/lobby_panelbackground' height='128' width='200'/> \n" +
+                "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat");
+            gallerytab.AddItem(item0);
+            gallerytab.AddItem(item1);
+        }
+
+        gallerytab.OnGalleryIndexChanged += (tab, item, pictureIndex, gridIndex) =>
+        {
+            Debug.WriteLine($"Gallery Tab index changed. PictureIndex: {pictureIndex}, GridIndex: {gridIndex}");
+        };
+
+        gallerytab.OnGalleryModeChanged += (tab, item, bigPicture) =>
+        {
+            Debug.WriteLine($"Gallery Tab mode changed. Is BigPicture? {bigPicture}");
+        };
+
+        gallerytab.OnGalleryItemSelected += (tab, item, pictureIndex, gridIndex) =>
+        {
+            Debug.WriteLine($"Gallery Tab index changed. PictureIndex: {pictureIndex}, GridIndex: {gridIndex}");
+        };
+        pauseMenu.AddTab(gallerytab);
+
         pauseMenu.OnPauseMenuOpen += (menu) =>
         {
             Screen.ShowSubtitle(menu.Title + " Opened!");
