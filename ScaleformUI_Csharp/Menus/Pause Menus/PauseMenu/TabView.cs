@@ -669,17 +669,17 @@ namespace ScaleformUI.PauseMenu
                     }
                     else if (Tabs[Index] is GalleryTab gT)
                     {
-                        if (gT.GalleryItems[gT.CurrentSelection].Blip != null)
+                        if (gT.GalleryItems[gT.currentIndex].Blip != null)
                         {
                             _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
                             _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
                             gT.Minimap.Enabled = true;
-                            gT.Minimap.RefreshMapPosition(new Vector2(gT.GalleryItems[gT.CurrentSelection].Blip.Position.X, gT.GalleryItems[gT.CurrentSelection].Blip.Position.Y));
+                            gT.Minimap.RefreshMapPosition(new Vector2(gT.GalleryItems[gT.currentIndex].Blip.Position.X, gT.GalleryItems[gT.currentIndex].Blip.Position.Y));
                         }
-                        else if (!string.IsNullOrEmpty(gT.GalleryItems[gT.CurrentSelection].RightPanelDescription))
+                        else if (!string.IsNullOrEmpty(gT.GalleryItems[gT.currentIndex].RightPanelDescription))
                         {
                             gT.Minimap.Enabled = false;
-                            AddTextEntry("gallerytab_desc", gT.GalleryItems[gT.CurrentSelection].RightPanelDescription);
+                            AddTextEntry("gallerytab_desc", gT.GalleryItems[gT.currentIndex].RightPanelDescription);
                             _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
                             BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
                             BeginTextCommandScaleformString("gallerytab_desc");
@@ -733,19 +733,19 @@ namespace ScaleformUI.PauseMenu
                         {
                             if (!gT.bigPic)
                             {
-                                gT.SetTitle(gT.GalleryItems[gT.CurrentSelection].TextureDictionary, gT.GalleryItems[gT.CurrentSelection].TextureName, GalleryState.LOADED);
+                                gT.SetTitle(gT.GalleryItems[gT.currentIndex].TextureDictionary, gT.GalleryItems[gT.currentIndex].TextureName, GalleryState.LOADED);
 
-                                if (gT.GalleryItems[gT.CurrentSelection].Blip != null)
+                                if (gT.GalleryItems[gT.currentIndex].Blip != null)
                                 {
                                     _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
                                     _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
                                     gT.Minimap.Enabled = true;
-                                    gT.Minimap.RefreshMapPosition(new Vector2(gT.GalleryItems[gT.CurrentSelection].Blip.Position.X, gT.GalleryItems[gT.CurrentSelection].Blip.Position.Y));
+                                    gT.Minimap.RefreshMapPosition(new Vector2(gT.GalleryItems[gT.currentIndex].Blip.Position.X, gT.GalleryItems[gT.currentIndex].Blip.Position.Y));
                                 }
-                                else if (!string.IsNullOrEmpty(gT.GalleryItems[gT.CurrentSelection].RightPanelDescription))
+                                else if (!string.IsNullOrEmpty(gT.GalleryItems[gT.currentIndex].RightPanelDescription))
                                 {
                                     gT.Minimap.Enabled = false;
-                                    AddTextEntry("gallerytab_desc", gT.GalleryItems[gT.CurrentSelection].RightPanelDescription);
+                                    AddTextEntry("gallerytab_desc", gT.GalleryItems[gT.currentIndex].RightPanelDescription);
                                     _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
                                     BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
                                     BeginTextCommandScaleformString("gallerytab_desc");
@@ -763,7 +763,7 @@ namespace ScaleformUI.PauseMenu
                             else
                             {
                                 gT.ItemSelected();
-                                gT.GalleryItems[gT.CurrentSelection].ItemSelected(gT, gT.GalleryItems[gT.CurrentSelection], gT.currentIndex, gT.CurrentSelection);
+                                gT.GalleryItems[gT.currentIndex].ItemSelected(gT, gT.GalleryItems[gT.currentIndex], gT.currentIndex, gT.CurrentSelection);
                             }
                         }
                         else if (Tabs[Index] is PlayerListTab plTab)
@@ -874,17 +874,17 @@ namespace ScaleformUI.PauseMenu
                         if (gT.bigPic)
                         {
                             gT.SetTitle("", "", GalleryState.EMPTY);
-                            if (gT.GalleryItems[gT.CurrentSelection].Blip != null)
+                            if (gT.GalleryItems[gT.currentIndex].Blip != null)
                             {
                                 _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
                                 _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
                                 gT.Minimap.Enabled = true;
-                                gT.Minimap.RefreshMapPosition(new Vector2(gT.GalleryItems[gT.CurrentSelection].Blip.Position.X, gT.GalleryItems[gT.CurrentSelection].Blip.Position.Y));
+                                gT.Minimap.RefreshMapPosition(new Vector2(gT.GalleryItems[gT.currentIndex].Blip.Position.X, gT.GalleryItems[gT.currentIndex].Blip.Position.Y));
                             }
-                            else if (!string.IsNullOrEmpty(gT.GalleryItems[gT.CurrentSelection].RightPanelDescription))
+                            else if (!string.IsNullOrEmpty(gT.GalleryItems[gT.currentIndex].RightPanelDescription))
                             {
                                 gT.Minimap.Enabled = false;
-                                AddTextEntry("gallerytab_desc", gT.GalleryItems[gT.CurrentSelection].RightPanelDescription);
+                                AddTextEntry("gallerytab_desc", gT.GalleryItems[gT.currentIndex].RightPanelDescription);
                                 _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
                                 BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
                                 BeginTextCommandScaleformString("gallerytab_desc");
@@ -1016,7 +1016,7 @@ namespace ScaleformUI.PauseMenu
                     g.UpdatePage();
                     g.IndexChanged();
 
-                    GalleryItem it = g.GalleryItems[g.CurrentSelection];
+                    GalleryItem it = g.GalleryItems[g.currentIndex];
                     if (g.bigPic)
                     {
                         g.SetTitle(it.TextureDictionary, it.TextureName, GalleryState.LOADED);
@@ -1114,7 +1114,7 @@ namespace ScaleformUI.PauseMenu
                     g.UpdateHighlight();
                     g.UpdatePage();
 
-                    GalleryItem it = g.GalleryItems[g.CurrentSelection];
+                    GalleryItem it = g.GalleryItems[g.currentIndex];
                     if (g.bigPic)
                     {
                         g.SetTitle(it.TextureDictionary, it.TextureName, GalleryState.LOADED);
@@ -1242,7 +1242,7 @@ namespace ScaleformUI.PauseMenu
                         }
                     }
 
-                    GalleryItem it = g.GalleryItems[g.CurrentSelection];
+                    GalleryItem it = g.GalleryItems[g.currentIndex];
                     if (g.bigPic)
                     {
                         g.SetTitle(it.TextureDictionary, it.TextureName, GalleryState.LOADED);
@@ -1506,7 +1506,7 @@ namespace ScaleformUI.PauseMenu
                         }
                     }
 
-                    GalleryItem it = g.GalleryItems[g.CurrentSelection];
+                    GalleryItem it = g.GalleryItems[g.currentIndex];
                     if (g.bigPic)
                     {
                         g.SetTitle(it.TextureDictionary, it.TextureName, GalleryState.LOADED);
