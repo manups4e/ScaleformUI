@@ -116,15 +116,6 @@ namespace ScaleformUI.PauseMenu
             internal set
             {
                 currentSelection = value;
-                if (Parent != null && Parent.Visible && Visible)
-                {
-                    if (Parent.FocusLevel > 0)
-                    {
-                        Minimap.Enabled = GalleryItems[currentIndex].Blip != null;
-                    }
-                    else
-                        Minimap.Enabled = false;
-                }
             }
         }
 
