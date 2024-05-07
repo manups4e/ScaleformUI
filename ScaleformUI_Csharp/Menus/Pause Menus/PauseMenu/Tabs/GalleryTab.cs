@@ -45,7 +45,6 @@ namespace ScaleformUI.PauseMenu
         public GalleryTab(string name, SColor color) : base(name, color)
         {
             _type = 3;
-            Minimap = new MinimapPanel(Parent, this);
             this.GalleryItems = new List<GalleryItem>();
         }
 

@@ -201,6 +201,10 @@ namespace ScaleformUI.PauseMenu
             {
                 t.Minimap = new MinimapPanel(this, t);
             }
+            if (item is GalleryTab g)
+            {
+                g.Minimap = new MinimapPanel(this, g);
+            }
             item.Parent = this;
             Tabs.Add(item);
         }
