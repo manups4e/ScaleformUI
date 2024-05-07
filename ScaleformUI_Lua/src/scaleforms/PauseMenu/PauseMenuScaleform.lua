@@ -171,7 +171,6 @@ end
 ---@param _type number
 ---@param color SColor | nil Sets the color of the tab (default: 116)
 function PauseMenu:AddLobbyMenuTab(title, _type, color)
-    print(color)
     if color == nil then color = SColor.HUD_Freemode end
     self._header:CallFunction("ADD_HEADER_TAB", title, _type, color)
 end

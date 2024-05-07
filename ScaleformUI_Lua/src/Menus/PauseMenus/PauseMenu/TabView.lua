@@ -140,21 +140,14 @@ function TabView:Visible(visible)
                 self._isBuilding = true
                 self:ShowHeader()
                 for k, tab in pairs(self.Tabs) do
-                    local _, subtype = tab()
-                    if subtype == "TextTab" then
-                        ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 1, tab.Base.Type, tab.Base._color)
-                    elseif subtype == "SubmenuTab" then
-                        ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 1, tab.Base.Type, tab.Base._color)
-                    elseif subtype == "PlayerListTab" then
-                        ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 1, tab.Base.Type, tab.Base._color)
-                    end
+                    ScaleformUI.Scaleforms._pauseMenu:AddPauseMenuTab(tab.Base.Title, 1, tab.Base.Type, tab.Base._color)
                 end
                 self.Tabs[1].Visible = true
                 self:BuildPauseMenu()
             end
         else
             local type, subtype = self.Tabs[self.index]()
-            if subtype == "PlayerListTab" then
+            if subtype == "PlayerListTab" or subtype == "GalleryTab" then
                 self.Tabs[self.index].Minimap:Dispose()
             end
             MenuHandler.ableToDraw = false
@@ -179,8 +172,8 @@ end
 function TabView:AddTab(item)
     item.Base.Parent = self
     local type, subtype = item()
-    if subtype == "PlayerListTab" then
-        item.Minimap = MinimapPanel.New(self)
+    if subtype == "PlayerListTab" or subtype == "GalleryTab" then
+        item.Minimap = MinimapPanel.New(self, item)
     end
     self.Tabs[#self.Tabs + 1] = item
 end
@@ -353,8 +346,23 @@ function TabView:BuildPauseMenu()
             end
         end
         tab:updateFocus(1)
+    elseif subtype == "GalleryTab" then
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_TAB", 3)
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_DESCRIPTION_LABELS", tab.maxItemsPerPage, tab.titleLabel, tab.dateLabel, tab.locationLabel, tab.trackLabel, tab.labelsVisible)
+        for i=1, 12, 1 do
+            if i < #tab.GalleryItems then
+                local item = tab.GalleryItems[i]
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_GALLERY_ITEM", i-1, i-1, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4)
+                if item.Blip ~=nil then
+                    table.insert(tab.Minimap.MinimapBlips, item.Blip)
+                end
+            else
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_GALLERY_ITEM", i-1, i-1, 33, 0, 0, 1, "", "", "", "", 1, false)
+            end
+        end
+        tab:updatePage()
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("DISPLAY_GALLERY")
     end
-    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_DRAWING")
     --ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("FADE_IN")
     self._isBuilding = false
 end
@@ -544,7 +552,7 @@ function TabView:Draw()
     end
     local tab = self.Tabs[self.index]
     local type, subtype = tab()
-    if subtype == "PlayerListTab" then
+    if subtype == "PlayerListTab" or subtype == "GalleryTab" then
         tab.Minimap:MaintainMap()
     end
     DisableControlAction(0, 199, true)
@@ -585,12 +593,32 @@ function TabView:Select()
                     SetPauseMenuPedLighting(self:FocusLevel() ~= 0)
                 end
             end
+        elseif cur_sub_tab == "GalleryTab" then
+            if tab.GalleryItems[tab.currentIndex].Blip ~= nil then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "")
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", true)
+                tab.Minimap:Enabled(true)
+                tab.Minimap:RefreshMapPosition(vector2(tab.GalleryItems[tab.currentIndex].Blip.Position.x, tab.GalleryItems[tab.currentIndex].Blip.Position.y))
+            elseif tab.GalleryItems[tab.currentIndex].RightPanelDescription ~= nil and tab.GalleryItems[tab.currentIndex].RightPanelDescription ~= "" then
+                tab.Minimap:Enabled(false)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", false)
+                AddTextEntry("gallerytab_desc", tab.GalleryItems[tab.currentIndex].RightPanelDescription)
+                BeginScaleformMovieMethod(ScaleformUI.Scaleforms._pauseMenu._pause.handle, "SET_GALLERY_PANEL_DESCRIPTION")
+                BeginTextCommandScaleformString("gallerytab_desc")
+                EndTextCommandScaleformString_2()
+                EndScaleformMovieMethod()
+            else
+                tab.Minimap:Enabled(false)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "")
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", true)
+            end
+            tab:updatePage()
         elseif cur_sub_tab == "SubmenuTab" then
-            self.Tabs[self.index].LeftItemList[self.leftItemIndex]:Selected(true)
+            tab.LeftItemList[self.leftItemIndex]:Selected(true)
         end
         --[[ check if all disabled ]]
         local allDisabled = true
-        for _, v in ipairs(self.Tabs[self.index].LeftItemList) do
+        for _, v in ipairs(tab.LeftItemList) do
             if v:Enabled() then
                 allDisabled = false
                 break
@@ -599,7 +627,7 @@ function TabView:Select()
         if allDisabled then return end
         --[[ end check all disabled ]]
         --
-        while (not self.Tabs[self.index].LeftItemList[self.leftItemIndex]:Enabled()) do
+        while (not tab.LeftItemList[self.leftItemIndex]:Enabled()) do
             Citizen.Wait(0)
             self:LeftItemIndex(self.leftItemIndex + 1)
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_LEFT_ITEM_INDEX", self.leftItemIndex - 1)
@@ -662,6 +690,33 @@ function TabView:Select()
             elseif tab.listCol[tab:Focus()].Type == "missions" then
                 tab.MissionsColumn.Items[tab.MissionsColumn:CurrentSelection()].Activated(tab.MissionsColumn.Items[tab.MissionsColumn:CurrentSelection()])
             end
+        elseif cur_sub_tab == "GalleryTab" then
+            if not tab.bigPic then
+                tab:setTitle(tab.GalleryItems[tab.currentIndex].TextureDictionary, tab.GalleryItems[tab.currentIndex].TextureName, 4)
+                if tab.GalleryItems[tab.currentIndex].Blip ~= nil then
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "")
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", true)
+                    tab.Minimap:Enabled(true)
+                    tab.Minimap:RefreshMapPosition(vector2(tab.GalleryItems[tab.currentIndex].Blip.Position.x, tab.GalleryItems[tab.currentIndex].Blip.Position.y))
+                elseif tab.GalleryItems[tab.currentIndex].RightPanelDescription ~= nil and tab.GalleryItems[tab.currentIndex].RightPanelDescription ~= "" then
+                    tab.Minimap:Enabled(false)
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", false)
+                    AddTextEntry("gallerytab_desc", tab.GalleryItems[tab.currentIndex].RightPanelDescription)
+                    BeginScaleformMovieMethod(ScaleformUI.Scaleforms._pauseMenu._pause.handle, "SET_GALLERY_PANEL_DESCRIPTION")
+                    BeginTextCommandScaleformString("gallerytab_desc")
+                    EndTextCommandScaleformString_2()
+                    EndScaleformMovieMethod()
+                else
+                    tab.Minimap:Enabled(false)
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "")
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", true)
+                end
+                tab.OnGalleryModeChanged(tab, tab.GalleryItems[tab.currentIndex], tab.bigPic)
+                tab:updatePage()
+            else
+                tab.OnGalleryItemSelected(tab, tab.GalleryItems[tab.currentIndex], tab.currentIndex, tab.currentSelection)
+                tab.GalleryItems[tab.currentIndex].Activated(tab, tab.GalleryItems[tab.currentIndex], tab.currentIndex, tab.currentSelection)
+            end
         end
     elseif self:FocusLevel() == 2 then
         ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", 16)
@@ -696,10 +751,43 @@ function TabView:GoBack()
         local tab = self.Tabs[self.index]
         local _, subT = tab()
         if subT ~= "PlayerListTab" then
-            if subT ~= "TextTab" then
-                self:FocusLevel(self:FocusLevel() - 1)
+            if subT == "GalleryTab" then
+                if tab.bigPic then
+                    tab:setTitle("", "", 0)
+                    if tab.GalleryItems[tab.currentIndex].Blip ~= nil then
+                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "")
+                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", true)
+                        tab.Minimap:Enabled(true)
+                        tab.Minimap:RefreshMapPosition(vector2(tab.GalleryItems[tab.currentIndex].Blip.Position.x, tab.GalleryItems[tab.currentIndex].Blip.Position.y))
+                    elseif tab.GalleryItems[tab.currentIndex].RightPanelDescription ~= nil and tab.GalleryItems[tab.currentIndex].RightPanelDescription ~= "" then
+                        tab.Minimap:Enabled(false)
+                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", false)
+                        AddTextEntry("gallerytab_desc", tab.GalleryItems[tab.currentIndex].RightPanelDescription)
+                        BeginScaleformMovieMethod(ScaleformUI.Scaleforms._pauseMenu._pause.handle, "SET_GALLERY_PANEL_DESCRIPTION")
+                        BeginTextCommandScaleformString("gallerytab_desc")
+                        EndTextCommandScaleformString_2()
+                        EndScaleformMovieMethod()
+                    else
+                        tab.Minimap:Enabled(false)
+                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "")
+                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", true)
+                    end
+                    tab.OnGalleryModeChanged(tab, tab.GalleryItems[tab.currentIndex], tab.bigPic)
+                    tab:updatePage()
+                    return
+                else
+                    tab.currentIndex = 1
+                    tab:CurrentSelection(1)
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "")
+                    if tab.Minimap:Enabled() then
+                        tab.Minimap:Enabled(false)
+                    end
+                end
             end
-            tab.LeftItemList[self.leftItemIndex]:Selected(self:FocusLevel() == 1)
+            self:FocusLevel(self:FocusLevel() - 1)
+            if subT == "SubmenuTab" then
+                tab.LeftItemList[self.leftItemIndex]:Selected(self:FocusLevel() == 1)
+            end
         elseif subT == "PlayerListTab" then
             if tab._newStyle then
                 self:FocusLevel(self:FocusLevel() - 1)
@@ -726,11 +814,57 @@ end
 function TabView:GoUp()
     local tab = self.Tabs[self.index]
     local _, subT = tab()
-    if subT == "PlayerListTab" then
+    if subT == "PlayerListTab" and self:FocusLevel() == 1 then
         tab.listCol[tab:Focus()]:GoUp()
         return
     end
-    
+
+    if self:FocusLevel() == 1 then
+        if subT == "GalleryTab" then
+            local iPotentialIndex = tab.currentIndex
+            local iPotentialIndexPerPage = tab.currentSelection
+
+            if iPotentialIndexPerPage > 4 then
+                iPotentialIndex = iPotentialIndex - 4
+                iPotentialIndexPerPage = iPotentialIndexPerPage - 4
+            else
+                iPotentialIndex = iPotentialIndex + 8
+                iPotentialIndexPerPage = iPotentialIndexPerPage + 8
+            end
+
+            if iPotentialIndex >= #tab.GalleryItems then return end
+            tab.currentIndex = iPotentialIndex
+            tab:CurrentSelection(iPotentialIndexPerPage)
+
+            tab:updateHighLight()
+            tab:updatePage()
+            tab.OnGalleryIndexChanged(tab, tab.GalleryItems[tab.currentIndex], tab.currentIndex, tab.CurrentSelection)
+
+            if tab.bigPic then
+                tab:setTitle(tab.GalleryItems[tab.currentIndex].TextureDictionary, tab.GalleryItems[tab.currentIndex].TextureName, 4)
+            end
+            if tab.GalleryItems[tab.currentIndex].Blip ~= nil then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "")
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", true)
+                tab.Minimap:Enabled(true)
+                tab.Minimap:RefreshMapPosition(vector2(tab.GalleryItems[tab.currentIndex].Blip.Position.x, tab.GalleryItems[tab.currentIndex].Blip.Position.y))
+            elseif tab.GalleryItems[tab.currentIndex].RightPanelDescription ~= nil and tab.GalleryItems[tab.currentIndex].RightPanelDescription ~= "" then
+                tab.Minimap:Enabled(false)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", false)
+                AddTextEntry("gallerytab_desc", tab.GalleryItems[tab.currentIndex].RightPanelDescription)
+                BeginScaleformMovieMethod(ScaleformUI.Scaleforms._pauseMenu._pause.handle, "SET_GALLERY_PANEL_DESCRIPTION")
+                BeginTextCommandScaleformString("gallerytab_desc")
+                EndTextCommandScaleformString_2()
+                EndScaleformMovieMethod()
+            else
+                tab.Minimap:Enabled(false)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "")
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", true)
+            end
+            return
+        end
+    end
+
     local retVal = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunctionAsyncReturnInt("SET_INPUT_EVENT", 8)
     if retVal ~= -1 then
         if self:FocusLevel() == 1 then
@@ -744,10 +878,57 @@ end
 function TabView:GoDown()
     local tab = self.Tabs[self.index]
     local _, subT = tab()
-    if subT == "PlayerListTab" then
+    if subT == "PlayerListTab" and self:FocusLevel() == 1 then
         tab.listCol[tab:Focus()]:GoDown()
         return
     end
+    
+    if self:FocusLevel() == 1 then
+        if subT == "GalleryTab" then
+            local iPotentialIndex = tab.currentIndex
+            local iPotentialIndexPerPage = tab.currentSelection
+
+            if iPotentialIndexPerPage < 9 then
+                iPotentialIndex = iPotentialIndex + 4
+                iPotentialIndexPerPage = iPotentialIndexPerPage + 4
+            else
+                iPotentialIndex = iPotentialIndex - 8
+                iPotentialIndexPerPage = iPotentialIndexPerPage - 8
+            end
+
+            if iPotentialIndex >= #tab.GalleryItems then return end
+            tab.currentIndex = iPotentialIndex
+            tab:CurrentSelection(iPotentialIndexPerPage)
+
+            tab:updateHighLight()
+            tab:updatePage()
+            tab.OnGalleryIndexChanged(tab, tab.GalleryItems[tab.currentIndex], tab.currentIndex, tab.CurrentSelection)
+
+            if tab.bigPic then
+                tab:setTitle(tab.GalleryItems[tab.currentIndex].TextureDictionary, tab.GalleryItems[tab.currentIndex].TextureName, 4)
+            end
+            if tab.GalleryItems[tab.currentIndex].Blip ~= nil then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "")
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", true)
+                tab.Minimap:Enabled(true)
+                tab.Minimap:RefreshMapPosition(vector2(tab.GalleryItems[tab.currentIndex].Blip.Position.x, tab.GalleryItems[tab.currentIndex].Blip.Position.y))
+            elseif tab.GalleryItems[tab.currentIndex].RightPanelDescription ~= nil and tab.GalleryItems[tab.currentIndex].RightPanelDescription ~= "" then
+                tab.Minimap:Enabled(false)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", false)
+                AddTextEntry("gallerytab_desc", tab.GalleryItems[tab.currentIndex].RightPanelDescription)
+                BeginScaleformMovieMethod(ScaleformUI.Scaleforms._pauseMenu._pause.handle, "SET_GALLERY_PANEL_DESCRIPTION")
+                BeginTextCommandScaleformString("gallerytab_desc")
+                EndTextCommandScaleformString_2()
+                EndScaleformMovieMethod()
+            else
+                tab.Minimap:Enabled(false)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "")
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", true)
+            end
+            return
+        end
+    end
+
     local retVal = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunctionAsyncReturnInt("SET_INPUT_EVENT", 9)
     if retVal ~= -1 then
         if self:FocusLevel() == 1 then
@@ -759,6 +940,99 @@ function TabView:GoDown()
 end
 
 function TabView:GoLeft()
+
+    if self:FocusLevel() == 1 then
+        local tab = self.Tabs[self.index]
+        local _, subT = tab()
+        if subT == "GalleryTab" then
+            local iPotentialIndex = tab.currentIndex
+            local iPotentialIndexPerPage = tab.currentSelection
+            if tab.currentIndex == 1 then
+                
+                tab.currentIndex = #tab.GalleryItems
+                tab:CurrentSelection(tab.currentIndex % 12)
+                tab.CurPage = tab:MaxPages()
+
+                if tab:MaxPages() > 1 then
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_GALLERY")
+                    tab:SetDescriptionLabels(tab.maxItemsPerPage, tab.titleLabel, tab.dateLabel, tab.locationLabel, tab.trackLabel, tab.labelsVisible)
+                    for i=1, 12 do
+                        local idx = i + ((tab.CurPage-1) * 12)
+                        if idx <= #tab.GalleryItems then
+                            local item = tab.GalleryItems[idx]
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", i-1, i-1, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4)
+                        else
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", i-1, i-1, 33, 0, 0, 1, "", "", "", "", 1, false)
+                        end
+                    end
+                end
+                tab:updateHighLight()
+                tab:updatePage()
+            else
+                if (tab.currentSelection - 1) % 4 > 0 or tab:MaxPages() <= 1 or (tab.bigPic and tab.currentSelection > 0) then
+                    iPotentialIndex = iPotentialIndex - 1
+                    iPotentialIndexPerPage = iPotentialIndexPerPage - 1
+                end
+
+                if tab:shouldNavigateToNewPage(iPotentialIndexPerPage) then
+                    if tab.CurPage > 1 then
+                        tab.CurPage = tab.CurPage - 1
+                    else
+                        tab.CurPage = tab:MaxPages()
+                    end
+                    tab.currentIndex = (((tab.CurPage - 1) * tab.maxItemsPerPage) + 1) + 3
+                    tab:CurrentSelection(iPotentialIndexPerPage + 3)
+                    if tab.currentIndex >= #tab.GalleryItems or tab.CurPage == tab:MaxPages() then
+                        tab.currentIndex = #tab.GalleryItems
+                        tab:CurrentSelection(tab.currentIndex % 12)
+                    end
+
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_GALLERY")
+                    tab:SetDescriptionLabels(tab.maxItemsPerPage, tab.titleLabel, tab.dateLabel, tab.locationLabel, tab.trackLabel, tab.labelsVisible)
+                    for i=1, 12 do
+                        local idx = i + ((tab.CurPage-1) * 12)
+                        if idx <= #tab.GalleryItems then
+                            local item = tab.GalleryItems[idx]
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", i-1, i-1, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4)
+                        else
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", i-1, i-1, 33, 0, 0, 1, "", "", "", "", 1, false)
+                        end
+                    end
+                    tab:updateHighLight()
+                    tab:updatePage()
+                else
+                    tab.currentIndex = iPotentialIndex
+                    tab:CurrentSelection(iPotentialIndexPerPage)
+                    tab:updateHighLight()
+                end
+            end
+
+            if tab.bigPic then
+                tab:setTitle(tab.GalleryItems[tab.currentIndex].TextureDictionary, tab.GalleryItems[tab.currentIndex].TextureName, 4)
+            end
+            if tab.GalleryItems[tab.currentIndex].Blip ~= nil then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "")
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", true)
+                tab.Minimap:Enabled(true)
+                tab.Minimap:RefreshMapPosition(vector2(tab.GalleryItems[tab.currentIndex].Blip.Position.x, tab.GalleryItems[tab.currentIndex].Blip.Position.y))
+            elseif tab.GalleryItems[tab.currentIndex].RightPanelDescription ~= nil and tab.GalleryItems[tab.currentIndex].RightPanelDescription ~= "" then
+                tab.Minimap:Enabled(false)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", false)
+                AddTextEntry("gallerytab_desc", tab.GalleryItems[tab.currentIndex].RightPanelDescription)
+                BeginScaleformMovieMethod(ScaleformUI.Scaleforms._pauseMenu._pause.handle, "SET_GALLERY_PANEL_DESCRIPTION")
+                BeginTextCommandScaleformString("gallerytab_desc")
+                EndTextCommandScaleformString_2()
+                EndScaleformMovieMethod()
+            else
+                tab.Minimap:Enabled(false)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "")
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", true)
+            end
+            tab.OnGalleryIndexChanged(tab, tab.GalleryItems[tab.currentIndex], tab.currentIndex, tab.CurrentSelection)
+            return
+        end
+    end
+
     local retVal = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunctionAsyncReturnInt("SET_INPUT_EVENT", 10)
 
     if self:FocusLevel() == 0 then
@@ -877,6 +1151,104 @@ function TabView:GoLeft()
 end
 
 function TabView:GoRight()
+
+    if self:FocusLevel() == 1 then
+        local tab = self.Tabs[self.index]
+        local _, subT = tab()
+        if subT == "GalleryTab" then
+            local iPotentialIndex = tab.currentIndex
+            local iPotentialIndexPerPage = tab.currentSelection
+            if tab.currentIndex == #tab.GalleryItems then
+                
+                tab.currentIndex = 1
+                tab:CurrentSelection(1)
+                tab.CurPage = 1
+
+                if tab:MaxPages() > 1 then
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_GALLERY")
+                    tab:SetDescriptionLabels(tab.maxItemsPerPage, tab.titleLabel, tab.dateLabel, tab.locationLabel, tab.trackLabel, tab.labelsVisible)
+                    for i=1, 12 do
+                        local idx = i + ((tab.CurPage-1) * 12)
+                        if idx <= #tab.GalleryItems then
+                            local item = tab.GalleryItems[idx]
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", i-1, i-1, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4)
+                        else
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", i-1, i-1, 33, 0, 0, 1, "", "", "", "", 1, false)
+                        end
+                    end
+                end
+                tab:updateHighLight()
+                tab:updatePage()
+            else
+                if (tab.currentSelection - 1) % 4 < 3 or tab:MaxPages() <= 1 or (tab.bigPic and tab.currentSelection < 12) then
+                    iPotentialIndex = iPotentialIndex + 1
+                    iPotentialIndexPerPage = iPotentialIndexPerPage + 1
+                end
+
+                if tab:shouldNavigateToNewPage(iPotentialIndexPerPage) then
+                    if tab.CurPage < tab:MaxPages() then
+                        tab.CurPage = tab.CurPage + 1
+                    else
+                        tab.CurPage = 1
+                    end
+                    if tab.bigPic then
+                        tab.currentIndex = ((tab.CurPage - 1) * tab.maxItemsPerPage) + 1
+                        tab:CurrentSelection(1)
+                    else
+                        tab.currentIndex = (((tab.CurPage - 1) * tab.maxItemsPerPage) + 1) + iPotentialIndexPerPage - 3
+                        tab:CurrentSelection(iPotentialIndexPerPage - 4)
+                    end
+                    if tab.currentIndex >= #tab.GalleryItems or tab.CurPage == 1 then
+                        tab.currentIndex = ((tab.CurPage - 1) * tab.maxItemsPerPage) + 1
+                        tab:CurrentSelection(1)
+                    end
+
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_GALLERY")
+                    tab:SetDescriptionLabels(tab.maxItemsPerPage, tab.titleLabel, tab.dateLabel, tab.locationLabel, tab.trackLabel, tab.labelsVisible)
+                    for i=1, 12 do
+                        local idx = i + ((tab.CurPage-1) * 12)
+                        if idx <= #tab.GalleryItems then
+                            local item = tab.GalleryItems[idx]
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", i-1, i-1, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4)
+                        else
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", i-1, i-1, 33, 0, 0, 1, "", "", "", "", 1, false)
+                        end
+                    end
+                    tab:updateHighLight()
+                    tab:updatePage()
+                else
+                    tab.currentIndex = iPotentialIndex
+                    tab:CurrentSelection(iPotentialIndexPerPage)
+                    tab:updateHighLight()
+                end
+            end
+
+            if tab.bigPic then
+                tab:setTitle(tab.GalleryItems[tab.currentIndex].TextureDictionary, tab.GalleryItems[tab.currentIndex].TextureName, 4)
+            end
+            if tab.GalleryItems[tab.currentIndex].Blip ~= nil then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "")
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", true)
+                tab.Minimap:Enabled(true)
+                tab.Minimap:RefreshMapPosition(vector2(tab.GalleryItems[tab.currentIndex].Blip.Position.x, tab.GalleryItems[tab.currentIndex].Blip.Position.y))
+            elseif tab.GalleryItems[tab.currentIndex].RightPanelDescription ~= nil and tab.GalleryItems[tab.currentIndex].RightPanelDescription ~= "" then
+                tab.Minimap:Enabled(false)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", false)
+                AddTextEntry("gallerytab_desc", tab.GalleryItems[tab.currentIndex].RightPanelDescription)
+                BeginScaleformMovieMethod(ScaleformUI.Scaleforms._pauseMenu._pause.handle, "SET_GALLERY_PANEL_DESCRIPTION")
+                BeginTextCommandScaleformString("gallerytab_desc")
+                EndTextCommandScaleformString_2()
+                EndScaleformMovieMethod()
+            else
+                tab.Minimap:Enabled(false)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "")
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", true)
+            end
+            tab.OnGalleryIndexChanged(tab, tab.GalleryItems[tab.currentIndex], tab.currentIndex, tab.CurrentSelection)
+            return
+        end
+    end
+    
     local retVal = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunctionAsyncReturnInt("SET_INPUT_EVENT", 11)
 
     if self:FocusLevel() == 0 then
@@ -1011,8 +1383,8 @@ function TabView:ProcessMouse()
         if successHeader then
             if event_type_h == 5 then
                 if context_h == -1 then
-                    self:FocusLevel(1)
                     self:Index(item_id_h + 1)
+                    self:FocusLevel(1)
                     PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
                     local tab = self.Tabs[self.index]
                     local _, subT = tab()
@@ -1027,6 +1399,28 @@ function TabView:ProcessMouse()
                         end
                     else
                         ClearPedInPauseMenu()
+                    end
+                    if subT == "GalleryTab" then
+                        if tab.GalleryItems[tab.currentIndex].Blip ~= nil then
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "")
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", true)
+                            tab.Minimap:Enabled(true)
+                            tab.Minimap:RefreshMapPosition(vector2(tab.GalleryItems[tab.currentIndex].Blip.Position.x, tab.GalleryItems[tab.currentIndex].Blip.Position.y))
+                        elseif tab.GalleryItems[tab.currentIndex].RightPanelDescription ~= nil and tab.GalleryItems[tab.currentIndex].RightPanelDescription ~= "" then
+                            tab.Minimap:Enabled(false)
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", false)
+                            AddTextEntry("gallerytab_desc", tab.GalleryItems[tab.currentIndex].RightPanelDescription)
+                            BeginScaleformMovieMethod(ScaleformUI.Scaleforms._pauseMenu._pause.handle, "SET_GALLERY_PANEL_DESCRIPTION")
+                            BeginTextCommandScaleformString("gallerytab_desc")
+                            EndTextCommandScaleformString_2()
+                            EndScaleformMovieMethod()
+                        else
+                            tab.Minimap:Enabled(false)
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "")
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", true)
+                        end
+                        tab.updateHighLight()
+                        tab.updatePage()
                     end
                     local allDisabled = true
                     for k,v in pairs(tab.LeftItemList) do
@@ -1048,7 +1442,46 @@ function TabView:ProcessMouse()
             local tab = self.Tabs[self.index]
             local _, subT = tab()
             if event_type == 5 then
-                if self:FocusLevel() == 1 and subT == "PlayerListTab" then
+                if subT == "GalleryTab" then
+                    if self:FocusLevel() == 0 then
+                        self:FocusLevel(1)
+                    elseif self:FocusLevel() == 1 then
+                        if(tab:CurrentSelection() ~= item_id+1) then
+                            tab:CurrentSelection(item_id + 1)
+                            tab.currentIndex = ((tab.CurPage-1) * tab.maxItemsPerPage) + 1 + (item_id)
+                            tab.OnGalleryIndexChanged(tab, tab.GalleryItems[tab.currentIndex], tab.currentIndex, tab.CurrentSelection)
+                        else
+                            if not tab.bigPic then
+                                tab:setTitle(tab.GalleryItems[tab.currentIndex].TextureDictionary, tab.GalleryItems[tab.currentIndex].TextureName, 4)
+                                tab.OnGalleryModeChanged(tab, tab.GalleryItems[tab.currentIndex], tab.bigPic)
+                            else
+                                tab.OnGalleryItemSelected(tab, tab.GalleryItems[tab.currentIndex], tab.currentIndex, tab.currentSelection)
+                                tab.GalleryItems[tab.currentIndex].Activated(tab, tab.GalleryItems[tab.currentIndex], tab.currentIndex, tab.currentSelection)
+                            end
+                        end
+                    end
+                    if tab.GalleryItems[tab.currentIndex].Blip ~= nil then
+                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "")
+                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", true)
+                        tab.Minimap:Enabled(true)
+                        tab.Minimap:RefreshMapPosition(vector2(tab.GalleryItems[tab.currentIndex].Blip.Position.x, tab.GalleryItems[tab.currentIndex].Blip.Position.y))
+                    elseif tab.GalleryItems[tab.currentIndex].RightPanelDescription ~= nil and tab.GalleryItems[tab.currentIndex].RightPanelDescription ~= "" then
+                        tab.Minimap:Enabled(false)
+                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", false)
+                        AddTextEntry("gallerytab_desc", tab.GalleryItems[tab.currentIndex].RightPanelDescription)
+                        BeginScaleformMovieMethod(ScaleformUI.Scaleforms._pauseMenu._pause.handle, "SET_GALLERY_PANEL_DESCRIPTION")
+                        BeginTextCommandScaleformString("gallerytab_desc")
+                        EndTextCommandScaleformString_2()
+                        EndScaleformMovieMethod()
+                    else
+                        tab.Minimap:Enabled(false)
+                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "")
+                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", true)
+                    end
+                    tab:updateHighLight()
+                    tab:updatePage()
+                    return
+                elseif self:FocusLevel() == 1 and subT == "PlayerListTab" then
                     local foc = tab:Focus()
                     local curSel = 1
                     if tab._newStyle then

@@ -25,9 +25,10 @@ end
 ---@field private Dispose fun()
 ---@field public ClearMinimap fun()
 
-function MinimapPanel.New(parent)
+function MinimapPanel.New(parent, parentTab)
     local _data = {
         Parent = parent,
+        ParentTab = parentTab,
         MinimapBlips = {},
         MinimapRoute = MinimapRoute.New(),
         mapPosition = vector2(0,0),
@@ -43,7 +44,12 @@ function MinimapPanel:Enabled(_e)
         return self.enabled
     else
         if self.Parent ~= nil and self.Parent:Visible() then
-            local pSubT = self.Parent()
+            local pSubT
+            if self.ParentTab ~= nil then
+                pSubT = self.ParentTab.Base.Parent()
+            else
+                pSubT = self.Parent()
+            end
             if pSubT == "LobbyMenu" then
                 if self.Parent.listCol[self.Parent._focus].Type == "players" then
                     if self.Parent.PlayersColumn.Items[self.Parent.PlayersColumn:CurrentSelection()]:KeepPanelVisible() then
@@ -52,7 +58,7 @@ function MinimapPanel:Enabled(_e)
                     end
                 end
             elseif pSubT == "PauseMenu" then
-                local tab = self.Parent.Tabs[self.Parent.index]
+                local tab = self.ParentTab
                 local cur_tab, cur_sub_tab = tab()
                 if cur_sub_tab == "PlayerListTab" then
                     if tab.listCol[tab._focus].Type == "players" then
@@ -66,7 +72,9 @@ function MinimapPanel:Enabled(_e)
         end
         self.enabled = ToBool(_e)
         if _e == true then
-            self.localMapStage = 0
+            if self.localMapStage == -1 then
+                self.localMapStage = 0
+            end
         else
             self.localMapStage = -1
             if self.turnedOn then
@@ -123,9 +131,6 @@ function MinimapPanel:InitializeMapSize()
     -- Calculate our range and get the correct zoom.
     self.mapPosition = vector2((vNodeMax.x + vNodeMin.x) / 2, (vNodeMax.y + vNodeMin.y) / 2)
 
-    LockMinimapPosition(self.mapPosition.x, self.mapPosition.y)
-    LockMinimapAngle(0)
-
     local DistanceX = vNodeMax.x - vNodeMin.x
     local DistanceY = vNodeMax.y - vNodeMin.y
 
@@ -134,7 +139,26 @@ function MinimapPanel:InitializeMapSize()
     else
         self.zoomDistance = DistanceY / 1.5
     end
+
+    self:RefreshMapPosition(self.mapPosition)
+    LockMinimapAngle(0)
 end
+
+function MinimapPanel:RefreshMapPosition(position)
+    self.mapPosition = position
+    LockMinimapPosition(self.mapPosition.x, self.mapPosition.y)
+    if self.ParentTab ~= nil then
+        local cur_tab, cur_sub_tab = self.ParentTab()
+        if cur_sub_tab == "GalleryTab" then
+            if self.ParentTab.bigPic then
+                self.zoomDistance = 600.0
+            else
+                self.zoomDistance = 1200.0
+            end
+        end
+    end
+end
+
 function MinimapPanel:GetVectorToCheck(i)
     if i == 1 then
         return self.MinimapRoute.StartPoint.Position
