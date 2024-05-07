@@ -51,12 +51,9 @@ namespace ScaleformUI.PauseMenu
 
         internal bool ShouldNavigateToNewPage(int index)
         {
-            if (GalleryItems.Count <= 12 || MaxPages <= 1)
-                return false;
-
-            if (currentSelection is 0 or 4 or 8 && index is 0 or 4 or 8 || currentSelection is 3 or 7 or 11 && index is 3 or 7 or 11)
-                return true;
-            return false;
+            return (GalleryItems.Count <= 12 || MaxPages <= 1) ? false :
+                (currentSelection is 0 && index is 0) || (currentSelection is 4 && index is 4) || (currentSelection is 8 && index is 8) ||
+                (currentSelection is 3 && index is 3) || (currentSelection is 7 && index is 7) || (currentSelection is 11 && index is 11);
         }
 
         internal bool IsItemVisible(int index)
