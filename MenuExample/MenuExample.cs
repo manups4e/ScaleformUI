@@ -1424,7 +1424,7 @@ public class MenuExample : BaseScript
         */
 
         GalleryTab gallerytab = new GalleryTab("GALLERY EXAMPLE", SColor.HUD_Freemode);
-        gallerytab.SetTitle("", "", GalleryState.EMPTY);
+        pauseMenu.AddTab(gallerytab);
         gallerytab.SetDescriptionLabels(12, "TITLE", "DATE", "LOCATION", "TRACK", true);
         for (int i = 0; i < 14; i += 2)
         {
@@ -1457,7 +1457,6 @@ public class MenuExample : BaseScript
         {
             Debug.WriteLine($"Gallery Tab index changed. PictureIndex: {pictureIndex}, GridIndex: {gridIndex}");
         };
-        pauseMenu.AddTab(gallerytab);
 
         pauseMenu.OnPauseMenuOpen += (menu) =>
         {

@@ -66,7 +66,7 @@ namespace ScaleformUI.PauseMenu
         }
 
 
-        public void SetTitle(string txd, string txn, GalleryState state)
+        internal void SetTitle(string txd, string txn, GalleryState state)
         {
             this.txd = txd;
             this.txn = txn;

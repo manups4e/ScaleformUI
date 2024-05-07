@@ -1714,8 +1714,8 @@ namespace ScaleformUI.PauseMenu
                         {
                             case -1:
                                 _pause.SelectTab(itemId);
-                                FocusLevel = 1;
                                 Index = itemId;
+                                FocusLevel = 1;
                                 if (Tabs[Index] is PlayerListTab tab)
                                 {
                                     if (tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].ClonePed != null)
@@ -1725,6 +1725,34 @@ namespace ScaleformUI.PauseMenu
                                 }
                                 else
                                     ClearPedInPauseMenu();
+                                if (Tabs[Index] is GalleryTab g)
+                                {
+                                    GalleryItem it = g.GalleryItems[g.currentIndex];
+                                    if (it.Blip != null)
+                                    {
+                                        _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+                                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+                                        g.Minimap.Enabled = true;
+                                        g.Minimap.RefreshMapPosition(new Vector2(it.Blip.Position.X, it.Blip.Position.Y));
+                                    }
+                                    else if (!string.IsNullOrEmpty(it.RightPanelDescription))
+                                    {
+                                        AddTextEntry("gallerytab_desc", it.RightPanelDescription);
+                                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
+                                        BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+                                        BeginTextCommandScaleformString("gallerytab_desc");
+                                        EndTextCommandScaleformString_2();
+                                        EndScaleformMovieMethod();
+                                    }
+                                    else
+                                    {
+                                        _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+                                        g.Minimap.Enabled = false;
+                                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+                                    }
+                                    g.UpdateHighlight();
+                                    g.UpdatePage();
+                                }
                                 Game.PlaySound("SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET");
                                 if (Tabs[Index].LeftItemList.All(x => !x.Enabled)) break;
                                 Tabs[Index].LeftItemList[LeftItemIndex].Selected = true;
@@ -1759,7 +1787,61 @@ namespace ScaleformUI.PauseMenu
                 switch (eventType)
                 {
                     case 5: // on click pressed
-                        if (FocusLevel == 1 && Tabs[Index] is PlayerListTab tab)
+                        if (Tabs[Index] is GalleryTab g)
+                        {
+                            if (FocusLevel == 0)
+                                FocusLevel++;
+                            else if (FocusLevel == 1)
+                            {
+                                if (g.CurrentSelection != itemId)
+                                {
+                                    g.CurrentSelection = itemId;
+                                    g.currentIndex = g.CurPage * g.maxItemsPerPage + itemId;
+                                    g.IndexChanged();
+                                }
+                                else
+                                {
+                                    if (!g.bigPic)
+                                    {
+                                        g.SetTitle(g.GalleryItems[g.currentIndex].TextureDictionary, g.GalleryItems[g.currentIndex].TextureName, GalleryState.LOADED);
+                                        g.ModeChanged();
+                                    }
+                                    else
+                                    {
+                                        g.GalleryItems[g.currentIndex].ItemSelected(g, g.GalleryItems[g.currentIndex], g.currentIndex, g.CurrentSelection);
+                                        g.ItemSelected();
+                                    }
+                                }
+                            }
+                            GalleryItem it = g.GalleryItems[g.currentIndex];
+                            if (it.Blip != null)
+                            {
+                                _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+                                _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+                                g.Minimap.Enabled = true;
+                                g.Minimap.RefreshMapPosition(new Vector2(it.Blip.Position.X, it.Blip.Position.Y));
+                            }
+                            else if (!string.IsNullOrEmpty(it.RightPanelDescription))
+                            {
+                                g.Minimap.Enabled = false;
+                                AddTextEntry("gallerytab_desc", it.RightPanelDescription);
+                                _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
+                                BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+                                BeginTextCommandScaleformString("gallerytab_desc");
+                                EndTextCommandScaleformString_2();
+                                EndScaleformMovieMethod();
+                            }
+                            else
+                            {
+                                _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+                                g.Minimap.Enabled = false;
+                                _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+                            }
+                            g.UpdateHighlight();
+                            g.UpdatePage();
+                            return;
+                        }
+                        else if (FocusLevel == 1 && Tabs[Index] is PlayerListTab tab)
                         {
                             int foc = tab.Focus;
                             int curSel = 0;
