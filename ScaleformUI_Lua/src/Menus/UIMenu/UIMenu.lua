@@ -415,6 +415,15 @@ function UIMenu:RefreshMenu(keepIndex)
         for k,it in pairs (self.Items) do
              it:Selected(false)
         end
+
+        -- we want to keep the rebuild as clean as possible.. we disable all anims for the moment
+        local enableScrollingAnim = self:AnimationEnabled()
+        local enable3DAnim = self:Enabled3DAnimations()
+        local scrollingAnimation = self:AnimationType()
+        local buildingAnimation= self:BuildingAnimation()
+
+        self:SetMenuAnimations(false, false, MenuAnimationType.LINEAR, MenuBuildingAnimation.NONE)
+
         if (#self.Items > 0) then
             self.isBuilding = true
             local max = self.Pagination:ItemsPerPage()
@@ -444,6 +453,8 @@ function UIMenu:RefreshMenu(keepIndex)
             else
                 self:CurrentSelection(0)
             end
+
+            self:SetMenuAnimations(enableScrollingAnim, enable3DAnim, scrollingAnimation, buildingAnimation)
         end
     end
 end
@@ -468,6 +479,17 @@ function UIMenu:SetBannerColor(color)
     end
 end
 
+--- Handles all the menu animations in one place
+---@param enableScrollingAnim boolean 
+---@param enable3DAnim boolean 
+---@param scrollingAnimation MenuAnimationType 
+---@param buildingAnimation MenuBuildingAnimation
+function UIMenu:SetMenuAnimations(enableScrollingAnim, enable3DAnim, scrollingAnimation, buildingAnimation)
+    self:AnimationEnabled(enableScrollingAnim)
+    self:Enabled3DAnimations(enable3DAnim)
+    self:AnimationType(scrollingAnimation)
+    self:BuildingAnimation(buildingAnimation)
+end
 
 --- Enables or disabls the menu's animations while the menu is visible.
 ---@param enable boolean|nil
@@ -654,7 +676,7 @@ function UIMenu:AddItemAt(item, index)
 end
 
 ---RemoveItemAt
----@param Index number
+---@param index number
 function UIMenu:RemoveItemAt(index)
     if tonumber(index) then
         if self.Items[index] then

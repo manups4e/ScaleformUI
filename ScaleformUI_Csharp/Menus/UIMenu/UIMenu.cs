@@ -1253,6 +1253,14 @@ namespace ScaleformUI.Menu
                     if (MenuItems.Count < max)
                         max = MenuItems.Count;
 
+                    // we want to disable temporarily all the animations for a smooth refresh
+
+                    bool enableScrollingAnim = EnableAnimation;
+                    bool enable3DAnim = Enabled3DAnimations;
+                    MenuAnimationType scrollingAnim = AnimationType;
+                    MenuBuildingAnimation buildingAnim = BuildingAnimation;
+                    SetAnimations(false, false, MenuAnimationType.LINEAR, MenuBuildingAnimation.NONE);
+
                     Pagination.MinItem = Pagination.CurrentPageStartIndex;
                     if (Pagination.scrollType == ScrollingType.CLASSIC && Pagination.TotalPages > 1)
                     {
@@ -1274,6 +1282,8 @@ namespace ScaleformUI.Menu
                     Main.scaleformUI.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
                     isBuilding = false;
                     CurrentSelection = keepIndex ? index : 0;
+                    // restore the previous settings
+                    SetAnimations(enableScrollingAnim, enable3DAnim, scrollingAnim, buildingAnim);
                 }
             }
         }
@@ -2550,6 +2560,21 @@ namespace ScaleformUI.Menu
                 ResetKey(MenuControls.Select);
                 SetKey(MenuControls.Select, Control.FrontendAccept);
             }
+        }
+
+        /// <summary>
+        /// Handles all the menu animations in one place
+        /// </summary>
+        /// <param name="enableScrollingAnim">This will animate the menu when scrolling</param>
+        /// <param name="enable3DAnim">This will show a nice 3D animation when selecting items</param>
+        /// <param name="scrollingAnim">Desired scrolling animation</param>
+        /// <param name="buildingAnim">Desired building animation</param>
+        public void SetAnimations(bool enableScrollingAnim, bool enable3DAnim, MenuAnimationType scrollingAnim = MenuAnimationType.QUADRATIC_IN, MenuBuildingAnimation buildingAnim = MenuBuildingAnimation.LEFT_RIGHT)
+        {
+            EnableAnimation = enableScrollingAnim;
+            Enabled3DAnimations = enable3DAnim;
+            AnimationType = scrollingAnim;
+            BuildingAnimation = buildingAnim;
         }
 
         /// <summary>
