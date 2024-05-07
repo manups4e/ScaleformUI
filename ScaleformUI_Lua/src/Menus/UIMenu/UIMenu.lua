@@ -653,29 +653,18 @@ function UIMenu:AddItemAt(item, index)
     end
 end
 
-function UIMenu:DebugPrint()
-    print("ScaleformUI - UIMenu:DebugPrint - Items: " .. #self.Items)
-    for i, v in ipairs(self.Items) do
-        print("ScaleformUI - UIMenu:DebugPrint - Item[" .. i .. "]: " .. v:Label())
-    end
-end
-
 ---RemoveItemAt
 ---@param Index number
-function UIMenu:RemoveItemAt(Index)
-    if tonumber(Index) then
-        if self.Items[Index] then
-            local size = #self.Items
-            for i = Index, size - 1 do
-                self.Items[i] = self.Items[i + 1]
-            end
-            self.Items[size] = nil
+function UIMenu:RemoveItemAt(index)
+    if tonumber(index) then
+        if self.Items[index] then
+            table.remove(self.Items, index)
             self.Pagination:TotalItems(#self.Items)
             if self:Visible() then
                 self:RefreshMenu(true);
             end
         else
-            print("ScaleformUI - UIMenu:RemoveItemAt - Index out of range (Index: " .. Index .. ", Items: " .. #self.Items .. ")")
+            print("ScaleformUI - UIMenu:RemoveItemAt - Index out of range (Index: " .. index .. ", Items: " .. #self.Items .. ")")
         end
     end
 end

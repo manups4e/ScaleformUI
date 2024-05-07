@@ -1457,10 +1457,17 @@ namespace ScaleformUI.Menu
         public void RemoveItemAt(int index)
         {
             int selectedItem = CurrentSelection;
-            MenuItems.RemoveAt(index);
-            if (Visible) Main.scaleformUI.CallFunction("REMOVE_ITEM", index);
-            Pagination.TotalItems = MenuItems.Count;
-            CurrentSelection = selectedItem;
+            if (MenuItems.Count > index)
+            {
+                MenuItems.RemoveAt(index);
+                Pagination.TotalItems = MenuItems.Count;
+                RefreshMenu(true);
+                CurrentSelection = selectedItem;
+            }
+            else
+            {
+                throw new Exception("ScaleformUI - Cannot remove an index out of bounds!!");
+            }
         }
 
         public void RemoveItem(UIMenuItem item)
