@@ -813,6 +813,7 @@ namespace ScaleformUI.Menu
     public delegate void MenuOpenedEvent(UIMenu menu, dynamic data = null);
     public delegate void MenuClosedEvent(UIMenu menu);
     public delegate void ItemHighlightedEvent(UIMenu menu, UIMenuItem item);
+    public delegate void MenuFilteringFailedEvent(UIMenu menu);
 
     public enum MenuAnimationType
     {
@@ -1101,6 +1102,7 @@ namespace ScaleformUI.Menu
 
         public event MenuOpenedEvent OnMenuOpen;
         public event MenuClosedEvent OnMenuClose;
+        public event MenuFilteringFailedEvent OnFilteringFailed;
 
         /// <summary>
         /// Called every time a Stat item changes value
@@ -2622,6 +2624,7 @@ namespace ScaleformUI.Menu
             catch (Exception ex)
             {
                 Debug.WriteLine("^1ScaleformUI - " + ex.ToString());
+                OnFilteringFailed?.Invoke(this);
             }
         }
 
