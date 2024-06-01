@@ -270,51 +270,17 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
 
         public void SortMissions(Comparison<MissionItem> compare)
         {
-            Items[CurrentSelection].Selected = false;
-            if (_unfilteredItems == null || _unfilteredItems.Count == 0)
-            {
-                _unfilteredItems = Items.ToList();
-            }
-            Clear();
-            List<MissionItem> list = _unfilteredItems.ToList();
-            list.Sort(compare);
-            Items = list.ToList();
-            Pagination.TotalItems = Items.Count;
-            if (Parent != null && Parent.Visible)
-            {
-                if (Parent is MainView lobby)
-                    lobby.buildMissions();
-                else if (Parent is TabView pause && ParentTab.Visible)
-                    pause.buildMissions(ParentTab);
-            }
-        }
-
-        public void FilterMissions(Func<MissionItem, bool> predicate)
-        {
-            Items[CurrentSelection].Selected = false;
-            if (_unfilteredItems == null || _unfilteredItems.Count == 0)
-            {
-                _unfilteredItems = Items.ToList();
-            }
-            Clear();
-            Items = _unfilteredItems.Where(predicate.Invoke).ToList();
-            Pagination.TotalItems = Items.Count;
-            if (Parent != null && Parent.Visible)
-            {
-                if (Parent is MainView lobby)
-                    lobby.buildMissions();
-                else if (Parent is TabView pause && ParentTab.Visible)
-                    pause.buildMissions(ParentTab);
-            }
-        }
-
-        public void ResetFilter()
-        {
-            if (_unfilteredItems != null && _unfilteredItems.Count > 0)
+            try
             {
                 Items[CurrentSelection].Selected = false;
+                if (_unfilteredItems == null || _unfilteredItems.Count == 0)
+                {
+                    _unfilteredItems = Items.ToList();
+                }
                 Clear();
-                Items = _unfilteredItems.ToList();
+                List<MissionItem> list = _unfilteredItems.ToList();
+                list.Sort(compare);
+                Items = list.ToList();
                 Pagination.TotalItems = Items.Count;
                 if (Parent != null && Parent.Visible)
                 {
@@ -323,6 +289,62 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                     else if (Parent is TabView pause && ParentTab.Visible)
                         pause.buildMissions(ParentTab);
                 }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("ScaleformUI - " + ex.ToString());
+            }
+        }
+
+        public void FilterMissions(Func<MissionItem, bool> predicate)
+        {
+            try
+            {
+
+                Items[CurrentSelection].Selected = false;
+                if (_unfilteredItems == null || _unfilteredItems.Count == 0)
+                {
+                    _unfilteredItems = Items.ToList();
+                }
+                Clear();
+                Items = _unfilteredItems.Where(predicate.Invoke).ToList();
+                Pagination.TotalItems = Items.Count;
+                if (Parent != null && Parent.Visible)
+                {
+                    if (Parent is MainView lobby)
+                        lobby.buildMissions();
+                    else if (Parent is TabView pause && ParentTab.Visible)
+                        pause.buildMissions(ParentTab);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("ScaleformUI - " + ex.ToString());
+            }
+        }
+
+        public void ResetFilter()
+        {
+            try
+            {
+                if (_unfilteredItems != null && _unfilteredItems.Count > 0)
+                {
+                    Items[CurrentSelection].Selected = false;
+                    Clear();
+                    Items = _unfilteredItems.ToList();
+                    Pagination.TotalItems = Items.Count;
+                    if (Parent != null && Parent.Visible)
+                    {
+                        if (Parent is MainView lobby)
+                            lobby.buildMissions();
+                        else if (Parent is TabView pause && ParentTab.Visible)
+                            pause.buildMissions(ParentTab);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("ScaleformUI - " + ex.ToString());
             }
         }
 

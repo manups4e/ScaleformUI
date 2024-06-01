@@ -2584,14 +2584,21 @@ namespace ScaleformUI.Menu
         public void SortMenuItems(Comparison<UIMenuItem> compare)
         {
             if (itemless) throw new("ScaleformUI - You can't compare or sort an itemless menu");
-            MenuItems[CurrentSelection].Selected = false;
-            _unfilteredMenuItems = MenuItems.ToList();
-            Clear();
-            List<UIMenuItem> list = _unfilteredMenuItems.ToList();
-            list.Sort(compare);
-            MenuItems = list.ToList();
-            Pagination.TotalItems = MenuItems.Count;
-            BuildUpMenuAsync(true);
+            try
+            {
+                MenuItems[CurrentSelection].Selected = false;
+                _unfilteredMenuItems = MenuItems.ToList();
+                Clear();
+                List<UIMenuItem> list = _unfilteredMenuItems.ToList();
+                list.Sort(compare);
+                MenuItems = list.ToList();
+                Pagination.TotalItems = MenuItems.Count;
+                BuildUpMenuAsync(true);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("ScaleformUI - " + ex.ToString());
+            }
         }
 
         /// <summary>
@@ -2601,12 +2608,19 @@ namespace ScaleformUI.Menu
         public void FilterMenuItems(Func<UIMenuItem, bool> predicate)
         {
             if (itemless) throw new("ScaleformUI - You can't compare or sort an itemless menu");
-            MenuItems[CurrentSelection].Selected = false;
-            _unfilteredMenuItems = MenuItems.ToList();
-            Clear();
-            MenuItems = _unfilteredMenuItems.Where(predicate.Invoke).ToList();
-            Pagination.TotalItems = MenuItems.Count;
-            BuildUpMenuAsync(true);
+            try 
+            { 
+                MenuItems[CurrentSelection].Selected = false;
+                _unfilteredMenuItems = MenuItems.ToList();
+                Clear();
+                MenuItems = _unfilteredMenuItems.Where(predicate.Invoke).ToList();
+                Pagination.TotalItems = MenuItems.Count;
+                BuildUpMenuAsync(true);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("ScaleformUI - " + ex.ToString());
+            }
         }
 
         /// <summary>
@@ -2615,13 +2629,19 @@ namespace ScaleformUI.Menu
         public void ResetFilter()
         {
             if (itemless) throw new("ScaleformUI - You can't compare or sort an itemless menu");
-            MenuItems[CurrentSelection].Selected = false;
-            Clear();
-            MenuItems = _unfilteredMenuItems.ToList();
-            Pagination.TotalItems = MenuItems.Count;
-            BuildUpMenuAsync(true);
+            try 
+            {
+                MenuItems[CurrentSelection].Selected = false;
+                Clear();
+                MenuItems = _unfilteredMenuItems.ToList();
+                Pagination.TotalItems = MenuItems.Count;
+                BuildUpMenuAsync(true);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("ScaleformUI - " + ex.ToString());
+            }
         }
-
 
         private void _itemCreation(int page, int pageIndex, bool before, bool isOverflow = false)
         {
