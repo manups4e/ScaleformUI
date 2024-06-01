@@ -2608,18 +2608,20 @@ namespace ScaleformUI.Menu
         public void FilterMenuItems(Func<UIMenuItem, bool> predicate)
         {
             if (itemless) throw new("ScaleformUI - You can't compare or sort an itemless menu");
-            try 
+            try
             { 
                 MenuItems[CurrentSelection].Selected = false;
                 _unfilteredMenuItems = MenuItems.ToList();
                 Clear();
                 MenuItems = _unfilteredMenuItems.Where(predicate.Invoke).ToList();
+                if (MenuItems.Count == 0)
+                    throw new Exception("Predicate resulted in a filtering of 0 items.. menu cannot rebuild!");
                 Pagination.TotalItems = MenuItems.Count;
                 BuildUpMenuAsync(true);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("ScaleformUI - " + ex.ToString());
+                Debug.WriteLine("^1ScaleformUI - " + ex.ToString());
             }
         }
 

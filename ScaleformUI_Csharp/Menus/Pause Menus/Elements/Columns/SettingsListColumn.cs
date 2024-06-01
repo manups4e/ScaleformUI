@@ -590,6 +590,8 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                 }
                 Clear();
                 Items = _unfilteredItems.Where(predicate.Invoke).ToList();
+                if (Items.Count == 0)
+                    throw new Exception("Predicate resulted in a filtering of 0 items.. settings column cannot rebuild!");
                 Pagination.TotalItems = Items.Count;
                 if (Parent != null && Parent.Visible)
                 {
@@ -601,7 +603,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("ScaleformUI - " + ex.ToString());
+                Debug.WriteLine("^1ScaleformUI - " + ex.ToString());
             }
         }
 
