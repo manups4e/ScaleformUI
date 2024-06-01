@@ -1419,8 +1419,8 @@ function TabView:ProcessMouse()
                             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "")
                             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", true)
                         end
-                        tab.updateHighLight()
-                        tab.updatePage()
+                        tab:updateHighLight()
+                        tab:updatePage()
                     end
                     local allDisabled = true
                     for k,v in pairs(tab.LeftItemList) do
