@@ -41,6 +41,10 @@ If you didn't do that yet, join my discord server to talk about scripting, scale
 ![Lobby Menu Example](https://user-images.githubusercontent.com/4005518/175790747-7c80eb14-ca0b-431c-8e75-4aedac345a9f.png)
 ![Pause Menu Example](https://i.imgur.com/LMAHF4O.png)
 
+### Support
+If you like my work please consider supporting me via PayPal.
+You can [buy me a coffee or donut, some banana, a shirt, BMW i4 or Taycan, the stars or whatever you want here](https://www.paypal.com/donate/?hosted_button_id=A5FJK5M94EFQE).
+
 ### Made for CitizenFX
 This is a custom made version for CitizenFX. 
 Developers looking to create C# or Lua Resources for [FiveM](https://fivem.net/) can use this port to create custom menus and much more !
