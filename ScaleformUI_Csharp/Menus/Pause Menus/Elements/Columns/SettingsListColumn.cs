@@ -160,6 +160,15 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                         PushScaleformMovieFunctionParameterInt(slItem.SliderColor.ArgbValue);
                         EndScaleformMovieMethod();
                         break;
+                    case UIMenuSeparatorItem:
+                        UIMenuSeparatorItem separatorItem = (UIMenuSeparatorItem)item;
+                        PushScaleformMovieFunctionParameterBool(separatorItem.Jumpable);
+                        PushScaleformMovieFunctionParameterInt(item.MainColor.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(item.HighlightColor.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(item.TextColor.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(item.HighlightedTextColor.ArgbValue);
+                        EndScaleformMovieMethod();
+                        break;
                     default:
                         PushScaleformMovieFunctionParameterInt(item.MainColor.ArgbValue/**/);
                         PushScaleformMovieFunctionParameterInt(item.HighlightColor.ArgbValue/**/);
