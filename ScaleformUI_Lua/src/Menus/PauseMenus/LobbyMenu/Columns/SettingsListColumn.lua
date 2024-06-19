@@ -229,6 +229,12 @@ function SettingsListColumn:_itemCreation(page, pageIndex, before, overflow)
                 item:BlinkDescription(), item._Max, item._Multiplier, item:Index(), item.Base._mainColor:ToArgb(),
                 item.Base._highlightColor:ToArgb(), item.Base._textColor:ToArgb(), item.Base._highlightedTextColor:ToArgb(),
                 item.SliderColor:ToArgb())
+        elseif SubType == "UIMenuSeparatorItem" then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_SETTINGS_ITEM",
+                before, menuIndex, 6, item.Base._formatLeftLabel, descLabel, item:Enabled(),
+                item:BlinkDescription(), item.Jumpable, item.Base._mainColor:ToArgb(),
+                item.Base._highlightColor:ToArgb(), item.Base._textColor:ToArgb(), item.Base._highlightedTextColor:ToArgb(),
+                item.SliderColor:ToArgb())
         else
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_SETTINGS_ITEM",
                 before, menuIndex, 0, item._formatLeftLabel, descLabel, item:Enabled(),

@@ -145,9 +145,9 @@ function MissionListColumn:_itemCreation(page, pageIndex, before, overflow)
     local item = self.Items[menuIndex]
     local pSubT = self.Parent()
     if pSubT == "LobbyMenu" then
-        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_MISSIONS_ITEM", before, menuIndex, 0, item.Label, item.MainColor, item.HighlightColor, item.LeftIcon, item.LeftIconColor, item.RightIcon, item.RightIconColor, item.RightIconChecked, item.enabled)
+        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_MISSIONS_ITEM", before, menuIndex, item.type, item.Label, item.MainColor, item.HighlightColor, item.LeftIcon, item.LeftIconColor, item.RightIcon, item.RightIconColor, item.RightIconChecked, item.enabled)
     elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_MISSIONS_ITEM", before, menuIndex, 0, item.Label, item.MainColor, item.HighlightColor, item.LeftIcon, item.LeftIconColor, item.RightIcon, item.RightIconColor, item.RightIconChecked, item.enabled)
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_MISSIONS_ITEM", before, menuIndex, item.type, item.Label, item.MainColor, item.HighlightColor, item.LeftIcon, item.LeftIconColor, item.RightIcon, item.RightIconColor, item.RightIconChecked, item.enabled)
     end
 end
 
@@ -199,7 +199,7 @@ function MissionListColumn:GoUp()
                 end
             end
         end
-    until self.Items[self:CurrentSelection()].ItemId ~= 6 or (self.Items[self:CurrentSelection()].ItemId == 6 and not self.Items[self:CurrentSelection()].Jumpable)
+    until self.Items[self:CurrentSelection()].ItemId ~= 1 or (self.Items[self:CurrentSelection()].ItemId == 1 and not self.Items[self:CurrentSelection()].Jumpable)
     local pSubT = self.Parent()
     if pSubT == "LobbyMenu" then
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSIONS_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
@@ -240,7 +240,7 @@ function MissionListColumn:GoDown()
                 end
             end
         end
-    until self.Items[self:CurrentSelection()].ItemId ~= 6 or (self.Items[self:CurrentSelection()].ItemId == 6 and not self.Items[self:CurrentSelection()].Jumpable)
+    until self.Items[self:CurrentSelection()].ItemId ~= 1 or (self.Items[self:CurrentSelection()].ItemId == 1 and not self.Items[self:CurrentSelection()].Jumpable)
     local pSubT = self.Parent()
     if pSubT == "LobbyMenu" then
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSIONS_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]

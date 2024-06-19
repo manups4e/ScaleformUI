@@ -31,6 +31,7 @@ end
 ---@return table
 function MissionItem.New(label, mainColor, highlightColor)
     local _data = {
+        type = 0,
         Label = label,
         Handle = nil,
         ParentColumn = nil,
