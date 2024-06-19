@@ -11,7 +11,7 @@ namespace ScaleformUI.PauseMenus.Elements.Items
     public class MissionItem
     {
         private bool enabled = true;
-
+        internal int type = 0;
         public MissionsListColumn ParentColumn { get; internal set; }
         public string Label { get; private set; }
         public SColor MainColor { get; private set; } = SColor.FromHudColor(HudColor.HUD_COLOUR_PAUSE_BG);
@@ -55,9 +55,10 @@ namespace ScaleformUI.PauseMenus.Elements.Items
             Label = label;
             MainColor = mainColor;
             HighlightColor = highlightColor;
+            type = 0;
         }
 
-        public void SetLeftIcon(BadgeIcon icon, SColor color)
+        public virtual void SetLeftIcon(BadgeIcon icon, SColor color)
         {
             LeftIcon = icon;
             LeftIconColor = color;
@@ -73,7 +74,7 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                 }
             }
         }
-        public void SetRightIcon(BadgeIcon icon, SColor color, bool @checked = false)
+        public virtual void SetRightIcon(BadgeIcon icon, SColor color, bool @checked = false)
         {
             RightIcon = icon;
             RightIconColor = color;
@@ -89,6 +90,27 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                     pause._pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_ITEM_RIGHT_ICON", ParentColumn.Items.IndexOf(this), (int)icon, @checked, color);
                 }
             }
+        }
+    }
+    public class MissionSeparatorItem : MissionItem
+    {
+        public bool Jumpable = false;
+        /// <summary>
+        /// Use it to create an Empty item to separate Mission Items
+        /// </summary>
+        public MissionSeparatorItem(string title, bool jumpable) : base(title)
+        {
+            type = 1;
+            Jumpable = jumpable;
+        }
+
+        public override void SetLeftIcon(BadgeIcon badge, SColor color)
+        {
+            throw new Exception("MissionSeparatorItem cannot have a left badge.");
+        }
+        public override void SetRightIcon(BadgeIcon badge, SColor color, bool @checked = false)
+        {
+            throw new Exception("MissionSeparatorItem cannot have a right badge.");
         }
     }
 }

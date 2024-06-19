@@ -86,9 +86,9 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             MissionItem item = Items[menuIndex];
 
             if (Parent is MainView lobby)
-                lobby._pause._lobby.CallFunction("ADD_MISSIONS_ITEM", before, menuIndex, 0, item.Label, item.MainColor, item.HighlightColor, (int)item.LeftIcon, item.LeftIconColor, (int)item.RightIcon, item.RightIconColor, item.RightIconChecked, item.Enabled);
+                lobby._pause._lobby.CallFunction("ADD_MISSIONS_ITEM", before, menuIndex, item.type, item.Label, item.MainColor, item.HighlightColor, (int)item.LeftIcon, item.LeftIconColor, (int)item.RightIcon, item.RightIconColor, item.RightIconChecked, item.Enabled);
             else if (Parent is TabView pause && ParentTab.Visible)
-                pause._pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSIONS_ITEM", before, menuIndex, 0, item.Label, item.MainColor, item.HighlightColor, (int)item.LeftIcon, item.LeftIconColor, (int)item.RightIcon, item.RightIconColor, item.RightIconChecked, item.Enabled);
+                pause._pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSIONS_ITEM", before, menuIndex, item.type, item.Label, item.MainColor, item.HighlightColor, (int)item.LeftIcon, item.LeftIconColor, (int)item.RightIcon, item.RightIconColor, item.RightIconChecked, item.Enabled);
         }
 
 
@@ -119,34 +119,38 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             try
             {
                 Items[CurrentSelection].Selected = false;
-                await BaseScript.Delay(0);
-                bool overflow = CurrentSelection == 0 && Pagination.TotalPages > 1;
-                if (Pagination.GoUp())
+                do
                 {
-                    if (Pagination.scrollType == ScrollingType.ENDLESS || (Pagination.scrollType == ScrollingType.CLASSIC && !overflow))
+                    await BaseScript.Delay(0);
+                    bool overflow = CurrentSelection == 0 && Pagination.TotalPages > 1;
+                    if (Pagination.GoUp())
                     {
-                        _itemCreation(Pagination.GetPage(CurrentSelection), Pagination.CurrentPageIndex, true);
-                        if (Parent is MainView lobby)
-                            lobby._pause._lobby.CallFunction("SET_INPUT_EVENT", 8, 100);
-                        else if (Parent is TabView pause && ParentTab.Visible)
-                            pause._pause._pause.CallFunction("SET_INPUT_EVENT", 8, 100);
-                    }
-                    else if (Pagination.scrollType == ScrollingType.PAGINATED || (Pagination.scrollType == ScrollingType.CLASSIC && overflow))
-                    {
-                        if (Parent is MainView lobby)
-                            lobby._pause._lobby.CallFunction("CLEAR_MISSIONS_COLUMN");
-                        else if (Parent is TabView pause && ParentTab.Visible)
-                            pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_MISSIONS_COLUMN");
-                        int max = Pagination.ItemsPerPage;
-                        isBuilding = true;
-                        for (int i = 0; i < max; i++)
+                        if (Pagination.scrollType == ScrollingType.ENDLESS || (Pagination.scrollType == ScrollingType.CLASSIC && !overflow))
                         {
-                            if (!Parent.Visible) return;
-                            _itemCreation(Pagination.CurrentPage, i, false, true);
+                            _itemCreation(Pagination.GetPage(CurrentSelection), Pagination.CurrentPageIndex, true);
+                            if (Parent is MainView lobby)
+                                lobby._pause._lobby.CallFunction("SET_INPUT_EVENT", 8, 100);
+                            else if (Parent is TabView pause && ParentTab.Visible)
+                                pause._pause._pause.CallFunction("SET_INPUT_EVENT", 8, 100);
                         }
-                        isBuilding = false;
+                        else if (Pagination.scrollType == ScrollingType.PAGINATED || (Pagination.scrollType == ScrollingType.CLASSIC && overflow))
+                        {
+                            if (Parent is MainView lobby)
+                                lobby._pause._lobby.CallFunction("CLEAR_MISSIONS_COLUMN");
+                            else if (Parent is TabView pause && ParentTab.Visible)
+                                pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_MISSIONS_COLUMN");
+                            int max = Pagination.ItemsPerPage;
+                            isBuilding = true;
+                            for (int i = 0; i < max; i++)
+                            {
+                                if (!Parent.Visible) return;
+                                _itemCreation(Pagination.CurrentPage, i, false, true);
+                            }
+                            isBuilding = false;
+                        }
                     }
                 }
+                while (Items[CurrentSelection] is MissionSeparatorItem sp && sp.Jumpable);
                 if (Parent is MainView _lobby)
                 {
                     _lobby._pause._lobby.CallFunction("SET_MISSIONS_SELECTION", Pagination.ScaleformIndex);
@@ -172,34 +176,38 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             try
             {
                 Items[CurrentSelection].Selected = false;
-                await BaseScript.Delay(0);
-                bool overflow = CurrentSelection == Items.Count - 1 && Pagination.TotalPages > 1;
-                if (Pagination.GoDown())
+                do
                 {
-                    if (Pagination.scrollType == ScrollingType.ENDLESS || (Pagination.scrollType == ScrollingType.CLASSIC && !overflow))
+                    await BaseScript.Delay(0);
+                    bool overflow = CurrentSelection == Items.Count - 1 && Pagination.TotalPages > 1;
+                    if (Pagination.GoDown())
                     {
-                        _itemCreation(Pagination.GetPage(CurrentSelection), Pagination.CurrentPageIndex, false);
-                        if (Parent is MainView lobby)
-                            lobby._pause._lobby.CallFunction("SET_INPUT_EVENT", 9, 100);
-                        else if (Parent is TabView pause && ParentTab.Visible)
-                            pause._pause._pause.CallFunction("SET_INPUT_EVENT", 9, 100);
-                    }
-                    else if (Pagination.scrollType == ScrollingType.PAGINATED || (Pagination.scrollType == ScrollingType.CLASSIC && overflow))
-                    {
-                        if (Parent is MainView lobby)
-                            lobby._pause._lobby.CallFunction("CLEAR_MISSIONS_COLUMN");
-                        else if (Parent is TabView pause && ParentTab.Visible)
-                            pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_MISSIONS_COLUMN");
-                        int max = Pagination.ItemsPerPage;
-                        isBuilding = true;
-                        for (int i = 0; i < max; i++)
+                        if (Pagination.scrollType == ScrollingType.ENDLESS || (Pagination.scrollType == ScrollingType.CLASSIC && !overflow))
                         {
-                            if (!Parent.Visible) return;
-                            _itemCreation(Pagination.CurrentPage, i, false, true);
+                            _itemCreation(Pagination.GetPage(CurrentSelection), Pagination.CurrentPageIndex, false);
+                            if (Parent is MainView lobby)
+                                lobby._pause._lobby.CallFunction("SET_INPUT_EVENT", 9, 100);
+                            else if (Parent is TabView pause && ParentTab.Visible)
+                                pause._pause._pause.CallFunction("SET_INPUT_EVENT", 9, 100);
                         }
-                        isBuilding = false;
+                        else if (Pagination.scrollType == ScrollingType.PAGINATED || (Pagination.scrollType == ScrollingType.CLASSIC && overflow))
+                        {
+                            if (Parent is MainView lobby)
+                                lobby._pause._lobby.CallFunction("CLEAR_MISSIONS_COLUMN");
+                            else if (Parent is TabView pause && ParentTab.Visible)
+                                pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_MISSIONS_COLUMN");
+                            int max = Pagination.ItemsPerPage;
+                            isBuilding = true;
+                            for (int i = 0; i < max; i++)
+                            {
+                                if (!Parent.Visible) return;
+                                _itemCreation(Pagination.CurrentPage, i, false, true);
+                            }
+                            isBuilding = false;
+                        }
                     }
                 }
+                while (Items[CurrentSelection] is MissionSeparatorItem sp && sp.Jumpable);
                 if (Parent is MainView _lobby)
                 {
                     _lobby._pause._lobby.CallFunction("SET_MISSIONS_SELECTION", Pagination.ScaleformIndex);
