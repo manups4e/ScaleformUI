@@ -188,7 +188,18 @@ namespace ScaleformUI.Menu
         BRAND_WESTERNMOTORCYCLE,
         BRAND_WILLARD,
         BRAND_ZIRCONIUM,
-        INFO
+        INFO,
+        MISSION_YELLOW,
+        MISSION_BLUE,
+        MISSION_GREEN,
+        MISSION_PURPLE,
+        MISSION_ORANGE,
+        MISSION_RED,
+        MISSION_AQUA,
+        MISSION_LIGHTRED,
+        PLUS,
+        ARROW_LEFT,
+        ARROW_RIGHT,
     }
     /// <summary>
     /// Simple item with a label.
@@ -791,6 +802,7 @@ namespace ScaleformUI.Menu
                 case BadgeIcon.AUDIO_VOL1:
                 case BadgeIcon.AUDIO_VOL2:
                 case BadgeIcon.AUDIO_VOL3:
+                case BadgeIcon.PLUS:
                     return "mpleaderboard";
                 case BadgeIcon.INV_ARM_WRESTLING:
                 case BadgeIcon.INV_BASEJUMP:
