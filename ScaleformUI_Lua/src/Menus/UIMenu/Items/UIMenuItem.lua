@@ -196,8 +196,10 @@ function UIMenuItem:Enabled(bool, item)
         self._Enabled = ToBool(bool)
         if not self._Enabled then
             self._formatLeftLabel = ReplaceRstarColorsWith(self._formatLeftLabel, "~c~")
+            self._formatRightLabel = ReplaceRstarColorsWith(self._formatRightLabel, "~c~")
         else
             self:Label(self._label)
+            self:RightLabel(self._rightLabel)
         end
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, item)) then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABELS", self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)), self._formatLeftLabel, self._formatRightLabel)
@@ -307,6 +309,9 @@ function UIMenuItem:Label(Text, item)
         else
             self._formatLeftLabel = self._formatLeftLabel:gsub("~l~", "~s~")
         end
+        if not self:Enabled() then
+            self._formatLeftLabel = ReplaceRstarColorsWith(self._formatLeftLabel, "~c~")        
+        end
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, item)) then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_LABEL", self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)), self._formatLeftLabel)
         end
@@ -335,6 +340,9 @@ function UIMenuItem:RightLabel(Text)
             self._formatRightLabel = self._formatRightLabel:gsub("~s~", "~l~")
         else
             self._formatRightLabel = self._formatRightLabel:gsub("~l~", "~s~")
+        end
+        if not self:Enabled() then
+            self._formatRightLabel = ReplaceRstarColorsWith(self._formatRightLabel, "~c~")        
         end
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, self) - 1) then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_LABEL", self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, self)), self._formatRightLabel)

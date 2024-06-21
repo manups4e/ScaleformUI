@@ -91,6 +91,20 @@ end
 function UIMenuListItem:Selected(bool)
     if bool ~= nil then
         self.Base:Selected(ToBool(bool), self)
+        local commaSep = self:createListString()
+
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_LISTITEM_LIST",
+                self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)), commaSep, self._Index - 1)
+        end
+        if self.Base.ParentColumn ~= nil then
+            local pSubT = self.Base.ParentColumn.Parent()
+            if pSubT == "LobbyMenu" then
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_LISTITEM_LIST", self.Base.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentColumn.Items, self)), commaSep, self._Index - 1)
+            elseif pSubT == "PauseMenu" and self.Base.ParentColumn.ParentTab.Visible then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_LISTITEM_LIST", self.Base.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentColumn.Items, self)), commaSep, self._Index - 1)
+            end
+        end
     else
         return self.Base._Selected
     end
@@ -111,6 +125,20 @@ end
 function UIMenuListItem:Enabled(bool)
     if bool ~= nil then
         self.Base:Enabled(bool, self)
+        local commaSep = self:createListString()
+
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_LISTITEM_LIST",
+                self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)), commaSep, self._Index - 1)
+        end
+        if self.Base.ParentColumn ~= nil then
+            local pSubT = self.Base.ParentColumn.Parent()
+            if pSubT == "LobbyMenu" then
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_LISTITEM_LIST", self.Base.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentColumn.Items, self)), commaSep, self._Index - 1)
+            elseif pSubT == "PauseMenu" and self.Base.ParentColumn.ParentTab.Visible then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_LISTITEM_LIST", self.Base.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentColumn.Items, self)), commaSep, self._Index - 1)
+            end
+        end
     else
         return self.Base._Enabled
     end
@@ -306,9 +334,39 @@ function UIMenuListItem:ChangeList(list)
     if type(list) ~= "table" then return end
     self.Items = {}
     self.Items = list
-    if self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
+    local commaSep = self:createListString()
+
+    if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
         ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_LISTITEM_LIST",
-            self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
-            table.concat(self.Items, ","), self._Index - 1)
+            self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)), commaSep, self._Index - 1)
     end
+    if self.Base.ParentColumn ~= nil then
+        local pSubT = self.Base.ParentColumn.Parent()
+        if pSubT == "LobbyMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_LISTITEM_LIST", self.Base.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentColumn.Items, self)), commaSep, self._Index - 1)
+        elseif pSubT == "PauseMenu" and self.Base.ParentColumn.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_LISTITEM_LIST", self.Base.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentColumn.Items, self)), commaSep, self._Index - 1)
+        end
+    end
+end
+
+function UIMenuListItem:createListString()
+    local list = {}
+    for k,v in ipairs(self.Items) do
+        if not self:Enabled() then
+            v.ReplaceRstarColorsWith("~c~")
+        else
+            if not v:StartsWith("~") then
+                v = "~s~" .. v
+            end
+            if self:Selected() then
+                v = v:gsub("~w~", "~l~")
+                v = v:gsub("~s~", "~l~")
+            else
+                v = v:gsub("~l~", "~s~")
+            end
+        end
+        table.insert(list,v)
+    end
+    return table.concat(list, ",")
 end

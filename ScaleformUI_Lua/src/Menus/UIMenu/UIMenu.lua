@@ -956,7 +956,7 @@ function UIMenu:_itemCreation(page, pageIndex, before, overflow)
         PushScaleformMovieFunctionParameterInt(item.Base._highlightedTextColor:ToArgb())
         EndScaleformMovieMethod()
     elseif SubType == "UIMenuListItem" then
-        AddTextEntry("listitem_"..menuIndex.."_list", table.concat(item.Items, ","))
+        AddTextEntry("listitem_"..menuIndex.."_list", item:createListString())
         BeginTextCommandScaleformString("listitem_"..menuIndex.."_list")
         EndTextCommandScaleformString()
         PushScaleformMovieFunctionParameterInt(item:Index() - 1)

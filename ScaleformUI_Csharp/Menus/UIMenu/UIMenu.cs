@@ -2717,7 +2717,10 @@ namespace ScaleformUI.Menu
                     break;
                 case UIMenuListItem:
                     UIMenuListItem it = (UIMenuListItem)item;
-                    AddTextEntry($"listitem_{menuIndex}_list", string.Join(",", it.Items));
+                    string joinedList = string.Join(",", it.Items.Cast<string>().Select(x =>
+                        x = !it.Enabled ? x.ReplaceRstarColorsWith("~c~") : it.Selected ? (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~l~", "~s~")
+                    ));
+                    AddTextEntry($"listitem_{menuIndex}_list", joinedList);
                     BeginTextCommandScaleformString($"listitem_{menuIndex}_list");
                     EndTextCommandScaleformString();
                     PushScaleformMovieFunctionParameterInt(it.Index);

@@ -442,22 +442,16 @@ namespace ScaleformUI.Menu
                 _selected = value;
                 if (value)
                 {
-                    _formatLeftLabel = _formatLeftLabel.Replace("~w~", "~l~");
-                    _formatLeftLabel = _formatLeftLabel.Replace("~s~", "~l~");
+                    _formatLeftLabel = _formatLeftLabel.Replace("~w~", "~l~").Replace("~s~", "~l~");
                     if (!string.IsNullOrWhiteSpace(_formatRightLabel))
-                    {
-                        _formatRightLabel = _formatRightLabel.Replace("~w~", "~l~");
-                        _formatRightLabel = _formatRightLabel.Replace("~s~", "~l~");
-                    }
+                        _formatRightLabel = _formatRightLabel.Replace("~w~", "~l~").Replace("~s~", "~l~");
                     Highlighted?.Invoke(Parent, this);
                 }
                 else
                 {
                     _formatLeftLabel = _formatLeftLabel.Replace("~l~", "~s~");
                     if (!string.IsNullOrWhiteSpace(_formatRightLabel))
-                    {
                         _formatRightLabel = _formatRightLabel.Replace("~l~", "~s~");
-                    }
                 }
                 if (Parent != null && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
@@ -617,15 +611,7 @@ namespace ScaleformUI.Menu
             {
                 _label = value;
                 _formatLeftLabel = value.StartsWith("~") ? value : "~s~" + value;
-                if (_selected)
-                {
-                    _formatLeftLabel = _formatLeftLabel.Replace("~w~", "~l~");
-                    _formatLeftLabel = _formatLeftLabel.Replace("~s~", "~l~");
-                }
-                else
-                {
-                    _formatLeftLabel = _formatLeftLabel.Replace("~l~", "~s~");
-                }
+                _formatLeftLabel = !_enabled ? _formatLeftLabel.ReplaceRstarColorsWith("~c~") : _selected ? _formatLeftLabel.Replace("~w~", "~l~").Replace("~s~", "~l~") : _formatLeftLabel.Replace("~l~", "~s~");
                 if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
                     Main.scaleformUI.CallFunction("SET_LEFT_LABEL", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _formatLeftLabel);
@@ -700,16 +686,7 @@ namespace ScaleformUI.Menu
             private set
             {
                 _rightLabel = value;
-                _formatRightLabel = value.StartsWith("~") ? value : "~s~" + value;
-                if (_selected)
-                {
-                    _formatRightLabel = _formatRightLabel.Replace("~w~", "~l~");
-                    _formatRightLabel = _formatRightLabel.Replace("~s~", "~l~");
-                }
-                else
-                {
-                    _formatRightLabel = _formatRightLabel.Replace("~l~", "~s~");
-                }
+                _formatRightLabel = !_enabled ? _formatRightLabel.ReplaceRstarColorsWith("~c~") : _selected ? _formatRightLabel .Replace("~w~", "~l~").Replace("~s~", "~l~") : _formatRightLabel .Replace("~l~", "~s~");
                 if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
                     Main.scaleformUI.CallFunction("SET_RIGHT_LABEL", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _formatRightLabel);

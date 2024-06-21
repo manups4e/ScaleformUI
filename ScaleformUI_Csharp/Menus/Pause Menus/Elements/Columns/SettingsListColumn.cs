@@ -115,7 +115,10 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                 {
                     case UIMenuListItem:
                         UIMenuListItem it = (UIMenuListItem)item;
-                        AddTextEntry($"listitem_lobby_{menuIndex}_list", string.Join(",", it.Items));
+                        string joinedList = string.Join(",", it.Items.Cast<string>().Select(x =>
+                            x = !it.Enabled ? x.ReplaceRstarColorsWith("~c~") : it.Selected ? (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~l~", "~s~")
+                        ));
+                        AddTextEntry($"listitem_lobby_{menuIndex}_list", joinedList);
                         BeginTextCommandScaleformString($"listitem_lobby_{menuIndex}_list");
                         EndTextCommandScaleformString();
                         PushScaleformMovieFunctionParameterInt(it.Index);
@@ -212,7 +215,10 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                 {
                     case UIMenuListItem:
                         UIMenuListItem it = (UIMenuListItem)item;
-                        AddTextEntry($"listitem_menu_pause_playerTab[{pause.Index}]_{menuIndex}_list", string.Join(",", it.Items));
+                        string joinedList = string.Join(",", it.Items.Cast<string>().Select(x =>
+                            x = !it.Enabled ? x.ReplaceRstarColorsWith("~c~") : it.Selected ? (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~l~", "~s~")
+                        ));
+                        AddTextEntry($"listitem_menu_pause_playerTab[{pause.Index}]_{menuIndex}_list", joinedList);
                         BeginTextCommandScaleformString($"listitem_menu_pause_playerTab[{pause.Index}]_{menuIndex}_list");
                         EndTextCommandScaleformString();
                         PushScaleformMovieFunctionParameterInt(it.Index);

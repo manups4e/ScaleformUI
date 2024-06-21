@@ -154,7 +154,7 @@ function SettingsListColumn:_itemCreation(page, pageIndex, before, overflow)
         if SubType == "UIMenuListItem" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_LEFT_ITEM", before, menuIndex, 1, item.Base._formatLeftLabel,
                 descLabel, item:Enabled(), item:BlinkDescription(),
-                table.concat(item.Items, ","),
+                item:createListString(),
                 item:Index() - 1, item.Base._mainColor:ToArgb(), item.Base._highlightColor:ToArgb(), item.Base._textColor:ToArgb(),
                 item.Base._highlightedTextColor:ToArgb())
         elseif SubType == "UIMenuCheckboxItem" then
@@ -209,7 +209,7 @@ function SettingsListColumn:_itemCreation(page, pageIndex, before, overflow)
         if SubType == "UIMenuListItem" then
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_SETTINGS_ITEM",
                 before, menuIndex, 1, item.Base._formatLeftLabel, descLabel, item:Enabled(),
-                item:BlinkDescription(), table.concat(item.Items, ","), item:Index() - 1,
+                item:BlinkDescription(), item:createListString(), item:Index() - 1,
                 item.Base._mainColor:ToArgb(),
                 item.Base._highlightColor:ToArgb(), item.Base._textColor:ToArgb(), item.Base._highlightedTextColor:ToArgb())
         elseif SubType == "UIMenuCheckboxItem" then
