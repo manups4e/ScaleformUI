@@ -155,12 +155,12 @@ function StoreListColumn:GoUp()
         if self.Pagination:GoUp() then
             if self.scrollingType == MenuScrollingType.ENDLESS or (self.scrollingType == MenuScrollingType.CLASSIC and not overflow) then
                 self:_itemCreation(self.Pagination:GetPage(self:CurrentSelection()), self.Pagination:CurrentPageIndex(), true, false)
-                    local pSubT = self.Parent()
-                    if pSubT == "LobbyMenu" then
-                        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", 8, self._delay) --[[@as number]]
-                    elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
-                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", 8, self._delay) --[[@as number]]
-                    end
+                local pSubT = self.Parent()
+                if pSubT == "LobbyMenu" then
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", 8, self._delay) --[[@as number]]
+                elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", 8, self._delay) --[[@as number]]
+                end
             elseif self.scrollingType == MenuScrollingType.PAGINATED or (self.scrollingType == MenuScrollingType.CLASSIC and overflow) then
                 local pSubT = self.Parent()
                 if pSubT == "LobbyMenu" then
@@ -169,7 +169,7 @@ function StoreListColumn:GoUp()
                     ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_STORE_COLUMN") --[[@as number]]
                 end
                 local max = self.Pagination:ItemsPerPage()
-                for i=1, max, 1 do
+                for i = 1, max, 1 do
                     if not self.Parent:Visible() then return end
                     self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
                 end
@@ -196,12 +196,12 @@ function StoreListColumn:GoDown()
         if self.Pagination:GoDown() then
             if self.scrollingType == MenuScrollingType.ENDLESS or (self.scrollingType == MenuScrollingType.CLASSIC and not overflow) then
                 self:_itemCreation(self.Pagination:GetPage(self:CurrentSelection()), self.Pagination:CurrentPageIndex(), false, false)
-                    local pSubT = self.Parent()
-                    if pSubT == "LobbyMenu" then
-                        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", 9, self._delay) --[[@as number]]
-                    elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
-                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", 9, self._delay) --[[@as number]]
-                    end
+                local pSubT = self.Parent()
+                if pSubT == "LobbyMenu" then
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", 9, self._delay) --[[@as number]]
+                elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", 9, self._delay) --[[@as number]]
+                end
             elseif self.scrollingType == MenuScrollingType.PAGINATED or (self.scrollingType == MenuScrollingType.CLASSIC and overflow) then
                 local pSubT = self.Parent()
                 if pSubT == "LobbyMenu" then
@@ -210,7 +210,7 @@ function StoreListColumn:GoDown()
                     ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_STORE_COLUMN") --[[@as number]]
                 end
                 local max = self.Pagination:ItemsPerPage()
-                for i=1, max, 1 do
+                for i = 1, max, 1 do
                     if not self.Parent:Visible() then return end
                     self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
                 end
@@ -415,7 +415,7 @@ function StoreListColumn:refreshColumn()
 
         self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
 
-        for i=1, max, 1 do
+        for i = 1, max, 1 do
             if not self.Parent:Visible() then return end
             self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
         end

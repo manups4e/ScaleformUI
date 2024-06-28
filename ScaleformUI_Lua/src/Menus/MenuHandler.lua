@@ -24,7 +24,7 @@ function MenuHandler:SwitchTo(currentMenu, newMenu, newMenuCurrentSelection, inh
     assert(not newMenu:Visible(), "The menu you're switching to is already open!")
     if BreadcrumbsHandler.SwitchInProgress then return end
     BreadcrumbsHandler.SwitchInProgress = true
-    
+
     if newMenuCurrentSelection == nil then newMenuCurrentSelection = 1 end
     if current == "UIMenu" and new == "UIMenu" then
         if inheritOldMenuParams == nil then inheritOldMenuParams = false end
@@ -33,7 +33,7 @@ function MenuHandler:SwitchTo(currentMenu, newMenu, newMenuCurrentSelection, inh
                 newMenu.TxtDictionary = currentMenu.TxtDictionary
                 newMenu.TxtName = currentMenu.TxtName
             end
-                newMenu.Position = currentMenu.Position
+            newMenu.Position = currentMenu.Position
 
             if currentMenu.Logo ~= nil then
                 newMenu.Logo = currentMenu.Logo
@@ -56,16 +56,15 @@ function MenuHandler:SwitchTo(currentMenu, newMenu, newMenuCurrentSelection, inh
                 newMenu.Settings.MouseControlsEnabled = currentMenu.Settings.MouseControlsEnabled
                 newMenu.Settings.MouseEdgeEnabled = currentMenu.Settings.MouseEdgeEnabled
             ]]
-
         end
     end
     newMenu:CurrentSelection(newMenuCurrentSelection)
-    if(current == "UIMenu") then
+    if (current == "UIMenu") then
         currentMenu:FadeOutMenu()
     end
     currentMenu:Visible(false)
     newMenu:Visible(true)
-    if(new == "UIMenu") then
+    if (new == "UIMenu") then
         newMenu:FadeInMenu()
     end
     BreadcrumbsHandler:Forward(newMenu, data)

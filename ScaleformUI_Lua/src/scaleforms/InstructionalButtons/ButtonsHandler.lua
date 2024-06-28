@@ -194,14 +194,14 @@ function ButtonsHandler:Update()
     HideHudComponentThisFrame(7)
     HideHudComponentThisFrame(9)
 
-    for k,v in pairs(self.ControlButtons) do
+    for k, v in pairs(self.ControlButtons) do
         if IsUsingKeyboard(2) then
             if IsControlJustPressed(0, v.KeyboardButton) or IsDisabledControlJustPressed(0, v.KeyboardButton) then
                 v.OnControlSelected(v)
             end
             if v.KeyboardButtons ~= nil and #v.KeyboardButtons > 0 then
-                for i,j in pairs(v.KeyboardButtons) do
-                    if IsControlJustPressed(0, j)  or IsDisabledControlJustPressed(0, j) then
+                for i, j in pairs(v.KeyboardButtons) do
+                    if IsControlJustPressed(0, j) or IsDisabledControlJustPressed(0, j) then
                         v.OnControlSelected(v)
                     end
                 end
@@ -211,8 +211,8 @@ function ButtonsHandler:Update()
                 v.OnControlSelected(v)
             end
             if v.GamepadButtons ~= nil and #v.GamepadButtons > 0 then
-                for i,j in pairs(v.GamepadButtons) do
-                    if IsControlJustPressed(0, j)  or IsDisabledControlJustPressed(0, j) then
+                for i, j in pairs(v.GamepadButtons) do
+                    if IsControlJustPressed(0, j) or IsDisabledControlJustPressed(0, j) then
                         v.OnControlSelected(v)
                     end
                 end

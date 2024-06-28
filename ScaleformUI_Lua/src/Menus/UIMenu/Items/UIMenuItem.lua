@@ -226,7 +226,7 @@ function UIMenuItem:Description(str, item)
         self._Description = tostring(str)
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, item)) then
             local desc = "menu_" ..
-            BreadcrumbsHandler:CurrentDepth() .. "_desc_" .. (IndexOf(self.ParentMenu.Items, item) - 1)
+                BreadcrumbsHandler:CurrentDepth() .. "_desc_" .. (IndexOf(self.ParentMenu.Items, item) - 1)
             AddTextEntry(desc, str)
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_ITEM_DESCRIPTION", self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)), desc)
         end
@@ -237,7 +237,7 @@ function UIMenuItem:Description(str, item)
                 AddTextEntry(desc, str)
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_ITEM_DESCRIPTION", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), desc)
             elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
-                local desc = "menu_pause_playerTab_{".. self.ParentColumn.ParentTab .."}_{" .. item.ItemId .. "}"
+                local desc = "menu_pause_playerTab_{" .. self.ParentColumn.ParentTab .. "}_{" .. item.ItemId .. "}"
                 AddTextEntry(desc, str)
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_DESCRIPTION", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), desc)
             end
@@ -310,7 +310,7 @@ function UIMenuItem:Label(Text, item)
             self._formatLeftLabel = self._formatLeftLabel:gsub("~l~", "~s~")
         end
         if not self:Enabled() then
-            self._formatLeftLabel = ReplaceRstarColorsWith(self._formatLeftLabel, "~c~")        
+            self._formatLeftLabel = ReplaceRstarColorsWith(self._formatLeftLabel, "~c~")
         end
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, item)) then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_LABEL", self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)), self._formatLeftLabel)
@@ -342,7 +342,7 @@ function UIMenuItem:RightLabel(Text)
             self._formatRightLabel = self._formatRightLabel:gsub("~l~", "~s~")
         end
         if not self:Enabled() then
-            self._formatRightLabel = ReplaceRstarColorsWith(self._formatRightLabel, "~c~")        
+            self._formatRightLabel = ReplaceRstarColorsWith(self._formatRightLabel, "~c~")
         end
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, self) - 1) then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_LABEL", self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, self)), self._formatRightLabel)

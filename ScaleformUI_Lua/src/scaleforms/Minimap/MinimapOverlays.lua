@@ -51,9 +51,9 @@ function MinimapOverlays:AddSizedOverlayToMap(textureDict, textureName, x, y, ro
 
     SetStreamedTextureDictAsNoLongerNeeded(textureDict)
 
-    local overlay = MinimapOverlay.New(#self.minimaps+1, textureDict, textureName, x, y, rotation, width, height, alpha, centered)
+    local overlay = MinimapOverlay.New(#self.minimaps + 1, textureDict, textureName, x, y, rotation, width, height, alpha, centered)
     table.insert(self.minimaps, overlay)
-    return  overlay
+    return overlay
 end
 
 ---Adds a new overlay with variable size to the minimap
@@ -96,7 +96,7 @@ function MinimapOverlays:AddScaledOverlayToMap(textureDict, textureName, x, y, r
 
     SetStreamedTextureDictAsNoLongerNeeded(textureDict)
 
-    local overlay = MinimapOverlay.New(#self.minimaps+1, textureDict, textureName, x, y, rotation, xScale, yScale, alpha, centered)
+    local overlay = MinimapOverlay.New(#self.minimaps + 1, textureDict, textureName, x, y, rotation, xScale, yScale, alpha, centered)
     table.insert(self.minimaps, overlay)
     return overlay
 end
@@ -137,7 +137,7 @@ function MinimapOverlays:SetOverlayAlpha(overlayId, alpha)
     ScaleformMovieMethodAddParamInt(overlayId - 1);
     ScaleformMovieMethodAddParamFloat(alpha);
     EndScaleformMovieMethod();
-   self.minimaps[overlayId - 1].alpha = alpha;
+    self.minimaps[overlayId - 1].alpha = alpha;
 end
 
 ---Changes position of the overlay
@@ -164,7 +164,7 @@ function MinimapOverlays:SetOverlaySizeOrScale(overlayId, width, height)
     ScaleformMovieMethodAddParamFloat(width);
     ScaleformMovieMethodAddParamFloat(height);
     EndScaleformMovieMethod();
-    self.minimaps[overlayId - 1].size = {width, height};
+    self.minimaps[overlayId - 1].size = { width, height };
 end
 
 ---Removes the desired overlay from the minimap
@@ -173,9 +173,9 @@ function MinimapOverlays:RemoveOverlayFromMinimap(overlayId)
     if overlayId == nil then return end
     if self.overlay == 0 then self:Load() end
     CallMinimapScaleformFunction(self.overlay, "REM_OVERLAY");
-    ScaleformMovieMethodAddParamInt(overlayId-1)
+    ScaleformMovieMethodAddParamInt(overlayId - 1)
     EndScaleformMovieMethod()
-    for k,v in pairs(self.minimaps) do
+    for k, v in pairs(self.minimaps) do
         if k == overlayId then
             table.remove(self.minimaps, k)
         end

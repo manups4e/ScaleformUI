@@ -25,7 +25,7 @@ function GalleryItem.New(txd, txn, label1, label2, label3, label4)
         RightPanelDescription = "",
         Parent = nil,
         Blip = nil,
-        Activated = function (tab, item, totalIndex, gridIndex)
+        Activated = function(tab, item, totalIndex, gridIndex)
         end
     }
     return setmetatable(data, GalleryItem)
@@ -44,7 +44,7 @@ function GalleryItem:SetLabels(label1, label2, label3, label4)
     if self.Parent ~= nil and self.Parent.Base ~= nil and self.Parent.Base.Parent ~= nil and self.Parent.Base.Parent:Visible() and self.Parent.Visible then
         if self.Parent:isItemVisible(IndexOf(self.Parent.GalleryItems, self)) then
             local gridPosition = self.Parent:gridIndexFromItemIndex(IndexOf(self.Parent.GalleryItems, self))
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", gridPosition-1, gridPosition-1, 33, 4, 0, 1, self.Label1, self.Label2, self.TextureDictionary, self.TextureName, 1, false, self.Label3, self.Label4)
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", gridPosition - 1, gridPosition - 1, 33, 4, 0, 1, self.Label1, self.Label2, self.TextureDictionary, self.TextureName, 1, false, self.Label3, self.Label4)
         end
     end
 end

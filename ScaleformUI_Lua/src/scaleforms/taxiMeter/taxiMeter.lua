@@ -36,7 +36,6 @@ function TaxiMeterInstance.New(posX, posY, width, height)
 end
 
 function TaxiMeterInstance:AddDestination(index, sprite, color, destinationName, destinationZone, streetName)
-
   -- scaleform param layout:
   -- 1: index (starts at 0)
   -- 2: sprite (any blip sprite)
@@ -46,7 +45,7 @@ function TaxiMeterInstance:AddDestination(index, sprite, color, destinationName,
   -- 6: Destination Name (usually the name of the blip)
   -- 7: Destination Zone (usually uses `GetNameOfZone`)
   -- 8: Street Name (usually uses `GetStreetNameAtCoord`)
-  
+
   self._scaleform:CallFunction("ADD_TAXI_DESTINATION", index, sprite, color.r, color.g, color.b, destinationName, destinationZone, streetName)
   self._destinations[index + 1] = {
     index = index,

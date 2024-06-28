@@ -196,7 +196,7 @@ end
 function PauseMenu:AddLeftItem(_type, title, itemColor, highlightColor, enabled)
     if itemColor == nil then itemColor = SColor.HUD_Pause_bg end
     if highlightColor == nil then highlightColor = SColor.HUD_White end
-    
+
     if (itemColor ~= SColor.HUD_None and highlightColor ~= SColor.HUD_None) then
         self._pause:CallFunction("ADD_LEFT_ITEM", _type, title, enabled, itemColor, highlightColor)
     elseif itemColor ~= SColor.HUD_None and highlightColor == SColor.HUD_None then

@@ -63,7 +63,7 @@ function UIMissionDetailsPanel:AddItem(newitem)
     if self.ParentItem ~= nil then
         local item = IndexOf(self.ParentItem.Base.ParentMenu.Items, self.ParentItem) - 1
         ScaleformUI.Scaleforms._ui:CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", item, newitem.Type,
-            newitem.TextLeft, newitem.TextRight, newitem.Icon, newitem.IconColor, newitem.Tick, newitem._labelFont.FontName, newitem._labelFont.FontID, 
+            newitem.TextLeft, newitem.TextRight, newitem.Icon, newitem.IconColor, newitem.Tick, newitem._labelFont.FontName, newitem._labelFont.FontID,
             newitem._rightLabelFont.FontName, newitem._rightLabelFont.FontID)
     end
 end

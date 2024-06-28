@@ -49,8 +49,8 @@ end
 ---@param columns table
 function PlayerListTab:SetUpColumns(columns)
     assert(#columns <= 3, "You must have 3 columns!")
-    assert(not(#columns == 3 and columns[3].Type == "players"), "For panel designs reasons, you can't have Players list in 3rd column!")
-    for k,v in pairs (columns) do
+    assert(not (#columns == 3 and columns[3].Type == "players"), "For panel designs reasons, you can't have Players list in 3rd column!")
+    for k, v in pairs(columns) do
         if self.Base.Parent ~= nil then
             v.Parent = self.Base.Parent
         end
@@ -81,13 +81,12 @@ function PlayerListTab:SelectColumn(column)
         val = column
     end
     if val > #self.listCol then
-        val  = 1
-    elseif val  < 1 then
+        val = 1
+    elseif val < 1 then
         val = #self.listCol
     end
     self:updateFocus(val)
 end
-
 
 function PlayerListTab:updateFocus(_f, isMouse)
     if isMouse == nil then isMouse = false end
@@ -95,8 +94,8 @@ function PlayerListTab:updateFocus(_f, isMouse)
     local val = _f
 
     if val > #self.listCol then
-        val  = 1
-    elseif val  < 1 then
+        val = 1
+    elseif val < 1 then
         val = #self.listCol
     end
 
@@ -117,7 +116,7 @@ function PlayerListTab:updateFocus(_f, isMouse)
     end
 
     if self.Base.Parent ~= nil and self.Base.Parent:Visible() and self.Visible then
-        local idx = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunctionAsyncReturnInt("SET_PLAYERS_TAB_FOCUS", self._focus-1)
+        local idx = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunctionAsyncReturnInt("SET_PLAYERS_TAB_FOCUS", self._focus - 1)
         if not isMouse then
             local _id = self.listCol[self._focus].Pagination:GetMenuIndexFromScaleformIndex(idx)
             self.listCol[self._focus]:CurrentSelection(_id)

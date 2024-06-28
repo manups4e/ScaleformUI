@@ -169,8 +169,8 @@ function MainView:SelectColumn(column)
         val = column
     end
     if val > #self.listCol then
-        val  = 1
-    elseif val  < 1 then
+        val = 1
+    elseif val < 1 then
         val = #self.listCol
     end
     self:updateFocus(val)
@@ -183,8 +183,8 @@ function MainView:updateFocus(value, isMouse)
     local val = value
 
     if val > #self.listCol then
-        val  = 1
-    elseif val  < 1 then
+        val = 1
+    elseif val < 1 then
         val = #self.listCol
     end
 
@@ -205,7 +205,7 @@ function MainView:updateFocus(value, isMouse)
     end
 
     if self:Visible() then
-        local idx = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunctionAsyncReturnInt("SET_FOCUS", self._focus-1)
+        local idx = ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunctionAsyncReturnInt("SET_FOCUS", self._focus - 1)
         if not isMouse then
             local _id = self.listCol[self._focus].Pagination:GetMenuIndexFromScaleformIndex(idx)
             if not goingLeft or self._newStyle then
@@ -219,7 +219,7 @@ end
 function MainView:SetupColumns(columns)
     assert(type(columns) == "table", "^1ScaleformUI [ERROR]: SetupColumns, Table expected^7")
     assert(#columns <= 3, "^1ScaleformUI [ERROR]: SetupColumns, You must have max 3 columns^7")
-    assert(not(#columns == 3 and columns[3].Type == "players"), "For panel designs reasons, you can't have Players list in 3rd column!")
+    assert(not (#columns == 3 and columns[3].Type == "players"), "For panel designs reasons, you can't have Players list in 3rd column!")
 
     self.listCol = columns
     for k, v in ipairs(columns) do
@@ -289,7 +289,7 @@ function MainView:BuildPauseMenu()
     end
     ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_NEWSTYLE", self._newStyle)
 
-    for i,col in pairs(self.listCol) do
+    for i, col in pairs(self.listCol) do
         col.Parent = self
         if col.Type == "settings" then
             self:buildSettings()
@@ -318,7 +318,7 @@ function MainView:BuildPauseMenu()
     self:updateFocus(1)
     local containsPlayers = false
 
-    for i,col in pairs(self.listCol) do
+    for i, col in pairs(self.listCol) do
         if col.Type == "players" then
             containsPlayers = true
             break
@@ -526,7 +526,7 @@ function MainView:ProcessMouse()
             if self._newStyle then
                 curSel = self.listCol[foc]:CurrentSelection()
             end
-            for k,v in pairs(self.listCol) do
+            for k, v in pairs(self.listCol) do
                 if v.Type == "settings" then
                     curSel = self.SettingsColumn:CurrentSelection()
                 elseif v.Type == "missions" then
@@ -537,25 +537,25 @@ function MainView:ProcessMouse()
                     curSel = self.StoreColumn:CurrentSelection()
                 end
             end
-            if context+1 ~= foc then
+            if context + 1 ~= foc then
                 self.listCol[foc].Items[self.listCol[foc]:CurrentSelection()]:Selected(false)
-                self:updateFocus(context+1, true)
-                self.listCol[context+1]:CurrentSelection(self.listCol[context+1].Pagination:GetMenuIndexFromScaleformIndex(item_id-1))
-                self.listCol[context+1].OnIndexChanged(self.listCol[context+1]:CurrentSelection())
-                if curSel ~= self.listCol[context+1]:CurrentSelection() then
+                self:updateFocus(context + 1, true)
+                self.listCol[context + 1]:CurrentSelection(self.listCol[context + 1].Pagination:GetMenuIndexFromScaleformIndex(item_id - 1))
+                self.listCol[context + 1].OnIndexChanged(self.listCol[context + 1]:CurrentSelection())
+                if curSel ~= self.listCol[context + 1]:CurrentSelection() then
                     PlaySoundFrontend(-1, "NAV_UP_DOWN", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
                 end
             else
-                self.listCol[foc]:CurrentSelection(self.listCol[context+1].Pagination:GetMenuIndexFromScaleformIndex(item_id-1))
+                self.listCol[foc]:CurrentSelection(self.listCol[context + 1].Pagination:GetMenuIndexFromScaleformIndex(item_id - 1))
             end
-            if foc == self:Focus() and curSel == self.listCol[context+1]:CurrentSelection() then
+            if foc == self:Focus() and curSel == self.listCol[context + 1]:CurrentSelection() then
                 self:Select()
             end
             return
         elseif event_type == 8 then
-            self.listCol[context+1].Items[item_id]:Hovered(false)
+            self.listCol[context + 1].Items[item_id]:Hovered(false)
         elseif event_type == 9 then
-            self.listCol[context+1].Items[item_id]:Hovered(true)
+            self.listCol[context + 1].Items[item_id]:Hovered(true)
         end
     end
 end
@@ -716,7 +716,7 @@ function MainView:GoLeft()
     local splitted = Split(retVal, ",")
 
     if self._newStyle then
-        for k,v in pairs(self.listCol) do
+        for k, v in pairs(self.listCol) do
             if v.Type == "settings" then
                 local item = self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]
                 local type, subType = item()
@@ -802,7 +802,7 @@ function MainView:GoRight()
     local splitted = Split(retVal, ",")
 
     if self._newStyle then
-        for k,v in pairs(self.listCol) do
+        for k, v in pairs(self.listCol) do
             if v.Type == "settings" then
                 local item = self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]
                 local type, subType = item()
@@ -840,7 +840,7 @@ function MainView:GoRight()
             else
                 PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
             end
-           return
+            return
         end
         local type, subtype = item()
         if subtype == "UIMenuListItem" then
