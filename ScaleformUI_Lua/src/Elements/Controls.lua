@@ -15,20 +15,20 @@ Controls = setmetatable({
         240, -- CursorY
         237, -- CursorAccept
         238, -- CursorCancel
-        31, -- MoveUpDown
-        30, -- MoveLeftRight
-        21, -- Sprint
-        22, -- Jump
-        23, -- Enter
-        75, -- VehicleExit
-        71, -- VehicleAccelerate
-        72, -- VehicleBrake
-        59, -- VehicleMoveLeftRight
-        89, -- VehicleFlyYawLeft
-        9, -- FlyLeftRight
-        8, -- FlyUpDown
-        90, -- VehicleFlyYawRight
-        76 -- VehicleHandbrake   
+        31,  -- MoveUpDown
+        30,  -- MoveLeftRight
+        21,  -- Sprint
+        22,  -- Jump
+        23,  -- Enter
+        75,  -- VehicleExit
+        71,  -- VehicleAccelerate
+        72,  -- VehicleBrake
+        59,  -- VehicleMoveLeftRight
+        89,  -- VehicleFlyYawLeft
+        9,   -- FlyLeftRight
+        8,   -- FlyUpDown
+        90,  -- VehicleFlyYawRight
+        76   -- VehicleHandbrake
     },
 
     NecessaryControlsGamePad = {
@@ -47,30 +47,30 @@ Controls = setmetatable({
         240, -- CursorY
         237, -- CursorAccept
         238, -- CursorCancel
-        31, -- MoveUpDown
-        30, -- MoveLeftRight
-        21, -- Sprint
-        22, -- Jump
-        23, -- Enter
-        75, -- VehicleExit
-        71, -- VehicleAccelerate
-        72, -- VehicleBrake
-        59, -- VehicleMoveLeftRight
-        89, -- VehicleFlyYawLeft
-        9, -- FlyLeftRight
-        8, -- FlyUpDown
-        90, -- VehicleFlyYawRight
-        76, -- VehicleHandbrake
-        2, -- LookUpDown
-        1, -- LookLeftRight
-        25, -- Aim
-        24, -- Attack
-        71, -- VehicleAccelerate
-        72, -- VehicleBrake
-        59, -- VehicleMoveLeftRight
-        31, -- MoveUpDown
-        30, -- MoveLeftRight
-        75, -- VehicleExit
+        31,  -- MoveUpDown
+        30,  -- MoveLeftRight
+        21,  -- Sprint
+        22,  -- Jump
+        23,  -- Enter
+        75,  -- VehicleExit
+        71,  -- VehicleAccelerate
+        72,  -- VehicleBrake
+        59,  -- VehicleMoveLeftRight
+        89,  -- VehicleFlyYawLeft
+        9,   -- FlyLeftRight
+        8,   -- FlyUpDown
+        90,  -- VehicleFlyYawRight
+        76,  -- VehicleHandbrake
+        2,   -- LookUpDown
+        1,   -- LookLeftRight
+        25,  -- Aim
+        24,  -- Attack
+        71,  -- VehicleAccelerate
+        72,  -- VehicleBrake
+        59,  -- VehicleMoveLeftRight
+        31,  -- MoveUpDown
+        30,  -- MoveLeftRight
+        75,  -- VehicleExit
     }
 }, Controls)
 

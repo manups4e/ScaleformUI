@@ -134,7 +134,7 @@ function WarningInstance:Update()
             then
                 self.OnButtonPressed(v)
                 self:Dispose()
-                
+
                 ScaleformUI.Scaleforms.InstructionalButtons:ClearButtonList()
                 ScaleformUI.Scaleforms.InstructionalButtons.UseMouseButtons = false
                 if MenuHandler._currentMenu ~= nil then

@@ -323,7 +323,7 @@ function TabView:BuildPauseMenu()
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", 2, tab.listCol[3].Pagination:ItemsPerPage())
         end
         ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_NEWSTYLE", tab._newStyle)
-        for i,col in pairs(tab.listCol) do
+        for i, col in pairs(tab.listCol) do
             col.Parent = self
             col.ParentTab = tab
             if col.Type == "settings" then
@@ -338,9 +338,9 @@ function TabView:BuildPauseMenu()
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_PICTURE", tab.MissionPanel.TextureDict, tab.MissionPanel.TextureName)
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_MISSION_PANEL_TITLE", tab.MissionPanel:Title())
                 if #tab.MissionPanel.Items > 0 then
-                    for j,item in pairs(tab.MissionPanel.Items) do
+                    for j, item in pairs(tab.MissionPanel.Items) do
                         ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_ITEM", item.Type, item.TextLeft,
-                        item.TextRight, item.Icon or 0, item.IconColor or 0, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID)
+                            item.TextRight, item.Icon or 0, item.IconColor or 0, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID)
                     end
                 end
             end
@@ -349,15 +349,15 @@ function TabView:BuildPauseMenu()
     elseif subtype == "GalleryTab" then
         ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_TAB", 3)
         ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_DESCRIPTION_LABELS", tab.maxItemsPerPage, tab.titleLabel, tab.dateLabel, tab.locationLabel, tab.trackLabel, tab.labelsVisible)
-        for i=1, 12, 1 do
+        for i = 1, 12, 1 do
             if i < #tab.GalleryItems then
                 local item = tab.GalleryItems[i]
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_GALLERY_ITEM", i-1, i-1, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4)
-                if item.Blip ~=nil then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_GALLERY_ITEM", i - 1, i - 1, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4)
+                if item.Blip ~= nil then
                     table.insert(tab.Minimap.MinimapBlips, item.Blip)
                 end
             else
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_GALLERY_ITEM", i-1, i-1, 33, 0, 0, 1, "", "", "", "", 1, false)
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_GALLERY_ITEM", i - 1, i - 1, 33, 0, 0, 1, "", "", "", "", 1, false)
             end
         end
         tab:updatePage()
@@ -385,7 +385,7 @@ function TabView:buildSettings(tab)
 
     tab.SettingsColumn.Pagination:MaxItem(tab.SettingsColumn.Pagination:CurrentPageEndIndex())
 
-    for i=1, max, 1 do
+    for i = 1, max, 1 do
         tab.SettingsColumn:_itemCreation(tab.SettingsColumn.Pagination:CurrentPage(), i, false, true)
     end
 
@@ -425,7 +425,7 @@ function TabView:buildPlayers(tab)
 
     tab.PlayersColumn.Pagination:MaxItem(tab.PlayersColumn.Pagination:CurrentPageEndIndex())
 
-    for i=1, max, 1 do
+    for i = 1, max, 1 do
         tab.PlayersColumn:_itemCreation(tab.PlayersColumn.Pagination:CurrentPage(), i, false, true)
     end
 
@@ -457,7 +457,7 @@ function TabView:buildMissions(tab)
 
     tab.MissionsColumn.Pagination:MaxItem(tab.MissionsColumn.Pagination:CurrentPageEndIndex())
 
-    for i=1, max, 1 do
+    for i = 1, max, 1 do
         tab.MissionsColumn:_itemCreation(tab.MissionsColumn.Pagination:CurrentPage(), i, false, true)
     end
 
@@ -490,7 +490,7 @@ function TabView:buildStore(tab)
 
     tab.StoreColumn.Pagination:MaxItem(tab.StoreColumn.Pagination:CurrentPageEndIndex())
 
-    for i=1, max, 1 do
+    for i = 1, max, 1 do
         tab.StoreColumn:_itemCreation(tab.StoreColumn.Pagination:CurrentPage(), i, false, true)
     end
 
@@ -588,7 +588,7 @@ function TabView:Select()
             elseif tab.listCol[selection].Type == "store" then
                 tab.StoreColumn.Items[tab.StoreColumn:CurrentSelection()]:Selected(true)
             end
-            for k,v in pairs(tab.listCol) do
+            for k, v in pairs(tab.listCol) do
                 if v.Type == "players" then
                     SetPauseMenuPedLighting(self:FocusLevel() ~= 0)
                 end
@@ -882,7 +882,7 @@ function TabView:GoDown()
         tab.listCol[tab:Focus()]:GoDown()
         return
     end
-    
+
     if self:FocusLevel() == 1 then
         if subT == "GalleryTab" then
             local iPotentialIndex = tab.currentIndex
@@ -940,7 +940,6 @@ function TabView:GoDown()
 end
 
 function TabView:GoLeft()
-
     if self:FocusLevel() == 1 then
         local tab = self.Tabs[self.index]
         local _, subT = tab()
@@ -948,7 +947,6 @@ function TabView:GoLeft()
             local iPotentialIndex = tab.currentIndex
             local iPotentialIndexPerPage = tab.currentSelection
             if tab.currentIndex == 1 then
-                
                 tab.currentIndex = #tab.GalleryItems
                 tab:CurrentSelection(tab.currentIndex % 12)
                 tab.CurPage = tab:MaxPages()
@@ -956,13 +954,13 @@ function TabView:GoLeft()
                 if tab:MaxPages() > 1 then
                     ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_GALLERY")
                     tab:SetDescriptionLabels(tab.maxItemsPerPage, tab.titleLabel, tab.dateLabel, tab.locationLabel, tab.trackLabel, tab.labelsVisible)
-                    for i=1, 12 do
-                        local idx = i + ((tab.CurPage-1) * 12)
+                    for i = 1, 12 do
+                        local idx = i + ((tab.CurPage - 1) * 12)
                         if idx <= #tab.GalleryItems then
                             local item = tab.GalleryItems[idx]
-                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", i-1, i-1, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4)
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", i - 1, i - 1, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4)
                         else
-                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", i-1, i-1, 33, 0, 0, 1, "", "", "", "", 1, false)
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", i - 1, i - 1, 33, 0, 0, 1, "", "", "", "", 1, false)
                         end
                     end
                 end
@@ -989,13 +987,13 @@ function TabView:GoLeft()
 
                     ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_GALLERY")
                     tab:SetDescriptionLabels(tab.maxItemsPerPage, tab.titleLabel, tab.dateLabel, tab.locationLabel, tab.trackLabel, tab.labelsVisible)
-                    for i=1, 12 do
-                        local idx = i + ((tab.CurPage-1) * 12)
+                    for i = 1, 12 do
+                        local idx = i + ((tab.CurPage - 1) * 12)
                         if idx <= #tab.GalleryItems then
                             local item = tab.GalleryItems[idx]
-                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", i-1, i-1, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4)
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", i - 1, i - 1, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4)
                         else
-                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", i-1, i-1, 33, 0, 0, 1, "", "", "", "", 1, false)
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", i - 1, i - 1, 33, 0, 0, 1, "", "", "", "", 1, false)
                         end
                     end
                     tab:updateHighLight()
@@ -1043,11 +1041,11 @@ function TabView:GoLeft()
         if subT == "SubmenuTab" then
             tab.LeftItemList[self.leftItemIndex]:Selected(self:FocusLevel() == 1)
         end
-        self:Index(self.index-1)
+        self:Index(self.index - 1)
         tab = self.Tabs[self.index]
         _, subT = tab()
         if subT == "PlayerListTab" then
-            for k,v in pairs(tab.listCol) do
+            for k, v in pairs(tab.listCol) do
                 if v.Type == "settings" then
                     tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]:Selected(false)
                 elseif v.Type == "missions" then
@@ -1151,7 +1149,6 @@ function TabView:GoLeft()
 end
 
 function TabView:GoRight()
-
     if self:FocusLevel() == 1 then
         local tab = self.Tabs[self.index]
         local _, subT = tab()
@@ -1159,7 +1156,6 @@ function TabView:GoRight()
             local iPotentialIndex = tab.currentIndex
             local iPotentialIndexPerPage = tab.currentSelection
             if tab.currentIndex == #tab.GalleryItems then
-                
                 tab.currentIndex = 1
                 tab:CurrentSelection(1)
                 tab.CurPage = 1
@@ -1167,13 +1163,13 @@ function TabView:GoRight()
                 if tab:MaxPages() > 1 then
                     ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_GALLERY")
                     tab:SetDescriptionLabels(tab.maxItemsPerPage, tab.titleLabel, tab.dateLabel, tab.locationLabel, tab.trackLabel, tab.labelsVisible)
-                    for i=1, 12 do
-                        local idx = i + ((tab.CurPage-1) * 12)
+                    for i = 1, 12 do
+                        local idx = i + ((tab.CurPage - 1) * 12)
                         if idx <= #tab.GalleryItems then
                             local item = tab.GalleryItems[idx]
-                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", i-1, i-1, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4)
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", i - 1, i - 1, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4)
                         else
-                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", i-1, i-1, 33, 0, 0, 1, "", "", "", "", 1, false)
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", i - 1, i - 1, 33, 0, 0, 1, "", "", "", "", 1, false)
                         end
                     end
                 end
@@ -1205,13 +1201,13 @@ function TabView:GoRight()
 
                     ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_GALLERY")
                     tab:SetDescriptionLabels(tab.maxItemsPerPage, tab.titleLabel, tab.dateLabel, tab.locationLabel, tab.trackLabel, tab.labelsVisible)
-                    for i=1, 12 do
-                        local idx = i + ((tab.CurPage-1) * 12)
+                    for i = 1, 12 do
+                        local idx = i + ((tab.CurPage - 1) * 12)
                         if idx <= #tab.GalleryItems then
                             local item = tab.GalleryItems[idx]
-                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", i-1, i-1, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4)
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", i - 1, i - 1, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4)
                         else
-                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", i-1, i-1, 33, 0, 0, 1, "", "", "", "", 1, false)
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_ITEM", i - 1, i - 1, 33, 0, 0, 1, "", "", "", "", 1, false)
                         end
                     end
                     tab:updateHighLight()
@@ -1248,7 +1244,7 @@ function TabView:GoRight()
             return
         end
     end
-    
+
     local retVal = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunctionAsyncReturnInt("SET_INPUT_EVENT", 11)
 
     if self:FocusLevel() == 0 then
@@ -1263,7 +1259,7 @@ function TabView:GoRight()
         tab = self.Tabs[self.index]
         _, subT = tab()
         if subT == "PlayerListTab" then
-            for k,v in pairs(tab.listCol) do
+            for k, v in pairs(tab.listCol) do
                 if v.Type == "settings" then
                     tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]:Selected(false)
                 elseif v.Type == "missions" then
@@ -1423,14 +1419,17 @@ function TabView:ProcessMouse()
                         tab:updatePage()
                     end
                     local allDisabled = true
-                    for k,v in pairs(tab.LeftItemList) do
-                        if v:Enabled() then allDisabled = false break end
+                    for k, v in pairs(tab.LeftItemList) do
+                        if v:Enabled() then
+                            allDisabled = false
+                            break
+                        end
                     end
                     if not allDisabled then
                         while not tab.LeftItemList[self.leftItemIndex]:Enabled() do
                             Citizen.Wait(0)
                             self:LeftItemIndex(self:LeftItemIndex() + 1)
-                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_LEFT_ITEM_INDEX", self.leftItemIndex-1)
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_LEFT_ITEM_INDEX", self.leftItemIndex - 1)
                         end
                     end
                 end
@@ -1446,9 +1445,9 @@ function TabView:ProcessMouse()
                     if self:FocusLevel() == 0 then
                         self:FocusLevel(1)
                     elseif self:FocusLevel() == 1 then
-                        if(tab:CurrentSelection() ~= item_id+1) then
+                        if (tab:CurrentSelection() ~= item_id + 1) then
                             tab:CurrentSelection(item_id + 1)
-                            tab.currentIndex = ((tab.CurPage-1) * tab.maxItemsPerPage) + 1 + (item_id)
+                            tab.currentIndex = ((tab.CurPage - 1) * tab.maxItemsPerPage) + 1 + (item_id)
                             tab.OnGalleryIndexChanged(tab, tab.GalleryItems[tab.currentIndex], tab.currentIndex, tab.CurrentSelection)
                         else
                             if not tab.bigPic then
@@ -1487,18 +1486,18 @@ function TabView:ProcessMouse()
                     if tab._newStyle then
                         curSel = tab.listCol[foc]:CurrentSelection()
                     end
-                    if context+1 ~= foc then
+                    if context + 1 ~= foc then
                         tab.listCol[foc].Items[tab.listCol[foc]:CurrentSelection()]:Selected(false)
-                        tab:updateFocus(context+1, true)
-                        tab.listCol[context+1]:CurrentSelection(tab.listCol[context+1].Pagination:GetMenuIndexFromScaleformIndex(item_id-1))
-                        tab.listCol[context+1].OnIndexChanged(tab.listCol[context+1]:CurrentSelection())
-                        if curSel ~= tab.listCol[context+1]:CurrentSelection() then
+                        tab:updateFocus(context + 1, true)
+                        tab.listCol[context + 1]:CurrentSelection(tab.listCol[context + 1].Pagination:GetMenuIndexFromScaleformIndex(item_id - 1))
+                        tab.listCol[context + 1].OnIndexChanged(tab.listCol[context + 1]:CurrentSelection())
+                        if curSel ~= tab.listCol[context + 1]:CurrentSelection() then
                             PlaySoundFrontend(-1, "NAV_UP_DOWN", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
                         end
                     else
-                        tab.listCol[foc]:CurrentSelection(tab.listCol[context+1].Pagination:GetMenuIndexFromScaleformIndex(item_id-1))
+                        tab.listCol[foc]:CurrentSelection(tab.listCol[context + 1].Pagination:GetMenuIndexFromScaleformIndex(item_id - 1))
                     end
-                    if foc == tab:Focus() and curSel == tab.listCol[context+1]:CurrentSelection() then
+                    if foc == tab:Focus() and curSel == tab.listCol[context + 1]:CurrentSelection() then
                         self:Select()
                     end
                     return
@@ -1509,47 +1508,50 @@ function TabView:ProcessMouse()
                         if #tab.LeftItemList == 0 then return end
                         if not tab.LeftItemList[self.leftItemList] then return end
                         local allDisabled = true
-                        for k,v in pairs(tab.LeftItemList) do
-                            if v:Enabled() then allDisabled = false break end
+                        for k, v in pairs(tab.LeftItemList) do
+                            if v:Enabled() then
+                                allDisabled = false
+                                break
+                            end
                         end
                         if not allDisabled then
                             while not tab.LeftItemList[self.leftItemList]:Enabled() do
                                 Citizen.Wait(0)
                                 self:LeftItemIndex(self.leftItemIndex + 1)
-                                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_LEFT_ITEM_INDEX", self.leftItemIndex-1)
+                                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_LEFT_ITEM_INDEX", self.leftItemIndex - 1)
                             end
                         end
                     end
                 elseif context == 1 then
-                        if self:FocusLevel() ~= 1 then
-                            if not tab.LeftItemList[item_id + 1]:Enabled() then
-                                PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
-                                return
-                            end
-                            tab.LeftItemList[self.leftItemIndex]:Selected(false)
-                            self:LeftItemIndex(item_id + 1)
-                            tab.LeftItemList[self.leftItemIndex]:Selected(true)
-                            self:FocusLevel(1)
-                            PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
-                        elseif self:FocusLevel() == 1 then
-                            if not tab.LeftItemList[item_id + 1]:Enabled() then
-                                PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
-                                return
-                            end
-                            if tab.LeftItemList[self.leftItemIndex].ItemType == LeftItemType.Settings then
-                                self:FocusLevel(2)
-                                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_RIGHT_ITEM_INDEX", 0)
-                                self:RightItemIndex(1)
-                            end
-                            tab.LeftItemList[self.leftItemIndex]:Selected(false)
-                            self:LeftItemIndex(item_id + 1)
-                            tab.LeftItemList[self.leftItemIndex]:Selected(true)
-                            PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
+                    if self:FocusLevel() ~= 1 then
+                        if not tab.LeftItemList[item_id + 1]:Enabled() then
+                            PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
+                            return
                         end
-                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_LEFT_ITEM_INDEX", item_id)
-                        tab.LeftItemList[self.leftItemIndex].OnActivated(tab.LeftItemList[self.leftItemIndex],
-                            self.leftItemIndex)
-                        self.OnLeftItemSelect(self, tab.LeftItemList[self.leftItemIndex], self.leftItemIndex)
+                        tab.LeftItemList[self.leftItemIndex]:Selected(false)
+                        self:LeftItemIndex(item_id + 1)
+                        tab.LeftItemList[self.leftItemIndex]:Selected(true)
+                        self:FocusLevel(1)
+                        PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
+                    elseif self:FocusLevel() == 1 then
+                        if not tab.LeftItemList[item_id + 1]:Enabled() then
+                            PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
+                            return
+                        end
+                        if tab.LeftItemList[self.leftItemIndex].ItemType == LeftItemType.Settings then
+                            self:FocusLevel(2)
+                            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_RIGHT_ITEM_INDEX", 0)
+                            self:RightItemIndex(1)
+                        end
+                        tab.LeftItemList[self.leftItemIndex]:Selected(false)
+                        self:LeftItemIndex(item_id + 1)
+                        tab.LeftItemList[self.leftItemIndex]:Selected(true)
+                        PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
+                    end
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_LEFT_ITEM_INDEX", item_id)
+                    tab.LeftItemList[self.leftItemIndex].OnActivated(tab.LeftItemList[self.leftItemIndex],
+                        self.leftItemIndex)
+                    self.OnLeftItemSelect(self, tab.LeftItemList[self.leftItemIndex], self.leftItemIndex)
                     PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
                 elseif context == 2 then
                     local rightItem = tab.LeftItemList[self.leftItemIndex].ItemList[item_id + 1]
@@ -1585,8 +1587,8 @@ function TabView:ProcessMouse()
                 end
             elseif event_type == 9 then
                 if subT == "PlayerListTab" then
-                    local idx = tab.listCol[context+1].Pagination:GetMenuIndexFromScaleformIndex(item_id-1)
-                    tab.listCol[context+1].Items[idx]:Hovered(true)
+                    local idx = tab.listCol[context + 1].Pagination:GetMenuIndexFromScaleformIndex(item_id - 1)
+                    tab.listCol[context + 1].Items[idx]:Hovered(true)
                 else
                     if context == 1 then
                         for i, item in ipairs(tab.LeftItemList) do
@@ -1600,8 +1602,8 @@ function TabView:ProcessMouse()
                 end
             elseif event_type == 8 or event_type == 0 then
                 if subT == "PlayerListTab" then
-                    local idx = tab.listCol[context+1].Pagination:GetMenuIndexFromScaleformIndex(item_id-1)
-                    tab.listCol[context+1].Items[idx]:Hovered(false)
+                    local idx = tab.listCol[context + 1].Pagination:GetMenuIndexFromScaleformIndex(item_id - 1)
+                    tab.listCol[context + 1].Items[idx]:Hovered(false)
                 end
             end
         end

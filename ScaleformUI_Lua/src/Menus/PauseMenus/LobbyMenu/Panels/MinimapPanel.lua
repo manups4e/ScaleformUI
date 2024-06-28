@@ -31,7 +31,7 @@ function MinimapPanel.New(parent, parentTab)
         ParentTab = parentTab,
         MinimapBlips = {},
         MinimapRoute = MinimapRoute.New(),
-        mapPosition = vector2(0,0),
+        mapPosition = vector2(0, 0),
         enabled = false,
         turnedOn = false,
         localMapStage = 0
@@ -97,11 +97,11 @@ end
 
 function MinimapPanel:InitializeMapSize()
     local iMaxNodesToCheck = 202
-    local vNodeMax = vector3(0,0,0)
-    local vNodeMin = vector3(0,0,0)
+    local vNodeMax = vector3(0, 0, 0)
+    local vNodeMin = vector3(0, 0, 0)
 
-    for i = 1,iMaxNodesToCheck+1, 1 do
-        local vectorNode = self:    GetVectorToCheck(i)
+    for i = 1, iMaxNodesToCheck + 1, 1 do
+        local vectorNode = self:GetVectorToCheck(i)
 
         if (#self.MinimapBlips > i) then
             if (LengthSquared(self.MinimapBlips[i].Position) > LengthSquared(vectorNode)) then
@@ -164,14 +164,15 @@ function MinimapPanel:GetVectorToCheck(i)
         return self.MinimapRoute.StartPoint.Position
     elseif #self.MinimapRoute.CheckPoints >= i then
         return self.MinimapRoute.CheckPoints[i].Position
-    elseif i == #self.MinimapRoute.CheckPoints+1 then
+    elseif i == #self.MinimapRoute.CheckPoints + 1 then
         return self.MinimapRoute.EndPoint.Position
     else
         return vector3(0, 0, 0)
     end
 end
+
 function MinimapPanel:SetupBlips()
-    for _,blip in pairs (self.MinimapBlips) do
+    for _, blip in pairs(self.MinimapBlips) do
         RaceGalleryNextBlipSprite(blip.Sprite)
         local b = RaceGalleryAddBlip(blip.Position.x, blip.Position.y, blip.Position.z)
         if blip.Scale > 0 then
@@ -180,6 +181,7 @@ function MinimapPanel:SetupBlips()
         SetBlipColour(b, blip.Color)
     end
 end
+
 function MinimapPanel:MaintainMap()
     if self.localMapStage == 0 then
         self:InitializeMap()
@@ -187,6 +189,7 @@ function MinimapPanel:MaintainMap()
         self:ProcessMap()
     end
 end
+
 function MinimapPanel:ProcessMap()
     if self.enabled then
         if not self.turnedOn then
@@ -205,6 +208,7 @@ function MinimapPanel:ProcessMap()
     SetPlayerBlipPositionThisFrame(-5000.0, -5000.0)
     self:RefreshZoom()
 end
+
 function MinimapPanel:InitializeMapDisplay()
     DeleteWaypoint();
     SetWaypointOff();
@@ -215,6 +219,7 @@ function MinimapPanel:InitializeMapDisplay()
     self.MinimapRoute:SetupCustomRoute();
     self:SetupBlips();
 end
+
 function MinimapPanel:InitializeMap()
     -- Use the data to set up our map.
     self:InitializeMapSize();
@@ -224,6 +229,7 @@ function MinimapPanel:InitializeMap()
     self:RefreshZoom();
     self.localMapStage = 1;
 end
+
 function MinimapPanel:RefreshZoom()
     if self.zoomDistance ~= 0 then
         SetRadarZoomToDistance(self.zoomDistance);

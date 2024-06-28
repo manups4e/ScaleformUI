@@ -170,22 +170,22 @@ function AllFalse(t)
 end
 
 function IsMouseInBounds(X, Y, Width, Height)
-	local MX, MY = math.round(GetControlNormal(0, 239) * 1920), math.round(GetControlNormal(0, 240) * 1080)
+    local MX, MY = math.round(GetControlNormal(0, 239) * 1920), math.round(GetControlNormal(0, 240) * 1080)
     MX, MY = FormatXWYH(MX, MY)
     X, Y = FormatXWYH(X, Y)
     Width, Height = FormatXWYH(Width, Height)
-	return (MX >= X and MX <= X + Width) and (MY > Y and MY < Y + Height)
+    return (MX >= X and MX <= X + Width) and (MY > Y and MY < Y + Height)
 end
 
 function TableHasKey(table, key)
     local lowercaseKey = string.lower(key)
-    
+
     for k, _ in pairs(table) do
         if string.lower(k) == lowercaseKey then
             return true
         end
     end
-    
+
     return false
 end
 

@@ -84,7 +84,7 @@ function GalleryTab:shouldNavigateToNewPage(index)
     end
 
     return (self.currentSelection == 1 and index == 1) or (self.currentSelection == 5 and index == 5) or (self.currentSelection == 9 and index == 9) or
-    (self.currentSelection == 4 and index == 4) or (self.currentSelection == 8 and index == 8) or (self.currentSelection == 12 and index == 12)
+        (self.currentSelection == 4 and index == 4) or (self.currentSelection == 8 and index == 8) or (self.currentSelection == 12 and index == 12)
 end
 
 function GalleryTab:isItemVisible(index)
@@ -135,7 +135,7 @@ function GalleryTab:AddItem(item)
     end
     if self.Base.Parent ~= nil and self.Base.Parent:Visible() and self.Visible then
         if #self.GalleryItems < 12 then
-            local idx = IndexOf(self.GalleryItem, self) -1
+            local idx = IndexOf(self.GalleryItem, self) - 1
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_GALLERY_ITEM", idx, idx, 33, 0, 0, 1, "", item.TextureDictionary, item.TextureName, "", 1, false, item.Label1, item.Label2, item.Label3, item.Label4)
         end
     end
@@ -152,7 +152,7 @@ function GalleryTab:CurrentSelection(index)
 end
 
 function GalleryTab:updateHighLight()
-    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_HIGHLIGHT", self.currentSelection-1, true)
+    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_HIGHLIGHT", self.currentSelection - 1, true)
 end
 
 function GalleryTab:updatePage()
@@ -168,7 +168,7 @@ function GalleryTab:updatePage()
         EndScaleformMovieMethod()
     else
         BeginScaleformMovieMethod(ScaleformUI.Scaleforms._pauseMenu._pause.handle, "SET_GALLERY_SCROLL_LABEL")
-        ScaleformMovieMethodAddParamInt(self.currentIndex-1)
+        ScaleformMovieMethodAddParamInt(self.currentIndex - 1)
         ScaleformMovieMethodAddParamInt(#self.GalleryItems)
         ScaleformMovieMethodAddParamInt(self.maxItemsPerPage)
         EndScaleformMovieMethod()

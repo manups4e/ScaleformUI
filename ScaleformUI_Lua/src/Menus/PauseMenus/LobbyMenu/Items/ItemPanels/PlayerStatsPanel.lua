@@ -51,7 +51,7 @@ function PlayerStatsPanel.New(title, titleColor)
 end
 
 function PlayerStatsPanel:HardwareVisible(v)
-    if v == nil then 
+    if v == nil then
         return self._hardwareVisible
     else
         self._hardwareVisible = v
@@ -163,8 +163,8 @@ function PlayerStatsPanel:UpdatePanel(override)
             end
             if not self:Description():IsNullOrEmpty() then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_PANEL_DESCRIPTION", idx, self:Description(), 0, "", (self.ParentItem.ClonePed ~= nil and self.ParentItem.ClonePed ~= 0))
-            else 
-                for k, item in pairs (self.DetailsItems) do
+            else
+                for k, item in pairs(self.DetailsItems) do
                     ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_PANEL_DETAIL", idx, item.Type, item.TextLeft, item.TextRight, item.Icon, item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID)
                 end
             end
@@ -175,8 +175,8 @@ function PlayerStatsPanel:UpdatePanel(override)
             end
             if not self:Description():IsNullOrEmpty() then
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_DESCRIPTION", idx, self:Description(), 0, "", (self.ParentItem.ClonePed ~= nil and self.ParentItem.ClonePed ~= 0))
-            else 
-                for k, item in pairs (self.DetailsItems) do
+            else
+                for k, item in pairs(self.DetailsItems) do
                     ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_DETAIL", idx, item.Type, item.TextLeft, item.TextRight, item.Icon, item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID)
                 end
             end
