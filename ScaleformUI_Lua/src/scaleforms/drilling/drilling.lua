@@ -5,6 +5,26 @@ DrillingInstance.__call = function()
 end
 
 ---@class DrillingInstance
+---@field private _scaleform Scaleform
+---@field private _drillSound number
+---@field private active boolean
+---@field private success boolean
+---@field private pinsData table
+---@field private drillPosition number
+---@field private currentDepth number
+---@field private drillSpeed number
+---@field private temperature number
+---@field private SetSpeed fun(self: DrillingInstance, value: number):nil Sets the speed of the drill (private as it's only used internally)
+---@field private SetDrillPosition fun(self: DrillingInstance, value: number):nil Sets the position of the drill (private as it's only used internally)
+---@field private SetTemperature fun(self: DrillingInstance, value: number):nil Sets the temperature of the drill (private as it's only used internally)
+---@field private Process fun(self: DrillingInstance):nil Processes the drill (private as it's only used internally)
+---@field public Start fun(self: DrillingInstance, callback: fun(success: boolean):nil):nil Starts the drill asynchronously
+---@field public StartSync fun(self: DrillingInstance):boolean Starts the drill synchronously
+---@field public Cancel fun(self: DrillingInstance):nil Cancels the drill
+---@field private Draw fun(self: DrillingInstance):nil Draws the drill (private as it's only used internally)
+---@field private Load fun(self: DrillingInstance):nil Loads the drill (private as it's only used internally)
+---@field private Dispose fun(self: DrillingInstance):nil Disposes the drill (private as it's only used internally)
+---@field public New fun():DrillingInstance Creates a new instance of DrillingInstance
 
 function DrillingInstance.New()
     local _data = {
@@ -143,7 +163,7 @@ function DrillingInstance:Start(callback)
     callback(self.success)
 end
 
-function DrillingInstance:StartAsync()
+function DrillingInstance:StartSync()
     local prom = promise.new()
     self:Start(function(success)
         prom:resolve(success)
