@@ -143,6 +143,14 @@ function DrillingInstance:Start(callback)
     callback(self.success)
 end
 
+function DrillingInstance:StartAsync()
+    local prom = promise.new()
+    self:Start(function(success)
+        prom:resolve(success)
+    end)
+    return Citizen.Await(prom)
+end
+
 function DrillingInstance:Cancel()
     self.active = false
 end
