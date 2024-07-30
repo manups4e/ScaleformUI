@@ -39,11 +39,11 @@ end
 ---@return UIRadioMenu
 function UIRadioMenu.New()
     local data = {
-        visible=false,
-        isAnimating=false,
-        currentSelection=1,
-        oldAngle=0,
-        changed=false,
+        visible = false,
+        isAnimating = false,
+        currentSelection = 1,
+        oldAngle = 0,
+        changed = false,
         Stations = {},
         _AnimDirection = -1,
         _animDuration = 1.0,
@@ -148,7 +148,7 @@ end
 function UIRadioMenu:BuildMenu()
     Citizen.CreateThread(function()
         ScaleformUI.Scaleforms._radioMenu:CallFunction("CREATE_MENU", true, 0, 0)
-        for k,v in pairs(self.Stations) do
+        for k, v in pairs(self.Stations) do
             ScaleformUI.Scaleforms._radioMenu:CallFunction("ADD_ITEM", v.TextureDictionary, v.TextureName, v.StationName, v.Artist, v.Track)
         end
         ScaleformUI.Scaleforms._radioMenu:CallFunction("LOAD_MENU")
@@ -184,7 +184,7 @@ function UIRadioMenu:ProcessControl()
     if x > 400 or y > 400 or x < -400 or y < -400 then
         local step = 360 / #self.Stations
         angle = math.atan(y, x) * (180 / math.pi)
-        if angle == 0 then 
+        if angle == 0 then
             normalized_angle = 0
         else
             normalized_angle = (angle + 450) % 360

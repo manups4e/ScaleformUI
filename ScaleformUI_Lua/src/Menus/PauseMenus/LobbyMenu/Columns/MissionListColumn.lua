@@ -42,7 +42,7 @@ function MissionListColumn.New(label, color, scrollType, _maxItems)
         end,
         OnMissionItemActivated = function(index)
         end
-   }
+    }
     return setmetatable(_data, MissionListColumn)
 end
 
@@ -111,7 +111,7 @@ function MissionListColumn:AddMissionItem(item)
                     self.Pagination.minItem = self.Pagination:CurrentPageStartIndex() - missingItems
                 end
             end
-    
+
             self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
             self:_itemCreation(self.Pagination:CurrentPage(), #self.Items, false)
             local pSubT = self.Parent()
@@ -179,12 +179,12 @@ function MissionListColumn:GoUp()
         if self.Pagination:GoUp() then
             if self.scrollingType == MenuScrollingType.ENDLESS or (self.scrollingType == MenuScrollingType.CLASSIC and not overflow) then
                 self:_itemCreation(self.Pagination:GetPage(self:CurrentSelection()), self.Pagination:CurrentPageIndex(), true, false)
-                    local pSubT = self.Parent()
-                    if pSubT == "LobbyMenu" then
-                        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", 8, self._delay) --[[@as number]]
-                    elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
-                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", 8, self._delay) --[[@as number]]
-                    end
+                local pSubT = self.Parent()
+                if pSubT == "LobbyMenu" then
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", 8, self._delay) --[[@as number]]
+                elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", 8, self._delay) --[[@as number]]
+                end
             elseif self.scrollingType == MenuScrollingType.PAGINATED or (self.scrollingType == MenuScrollingType.CLASSIC and overflow) then
                 local pSubT = self.Parent()
                 if pSubT == "LobbyMenu" then
@@ -193,7 +193,7 @@ function MissionListColumn:GoUp()
                     ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_MISSIONS_COLUMN") --[[@as number]]
                 end
                 local max = self.Pagination:ItemsPerPage()
-                for i=1, max, 1 do
+                for i = 1, max, 1 do
                     if not self.Parent:Visible() then return end
                     self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
                 end
@@ -220,12 +220,12 @@ function MissionListColumn:GoDown()
         if self.Pagination:GoDown() then
             if self.scrollingType == MenuScrollingType.ENDLESS or (self.scrollingType == MenuScrollingType.CLASSIC and not overflow) then
                 self:_itemCreation(self.Pagination:GetPage(self:CurrentSelection()), self.Pagination:CurrentPageIndex(), false, false)
-                    local pSubT = self.Parent()
-                    if pSubT == "LobbyMenu" then
-                        ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", 9, self._delay) --[[@as number]]
-                    elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
-                        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", 9, self._delay) --[[@as number]]
-                    end
+                local pSubT = self.Parent()
+                if pSubT == "LobbyMenu" then
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_INPUT_EVENT", 9, self._delay) --[[@as number]]
+                elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_INPUT_EVENT", 9, self._delay) --[[@as number]]
+                end
             elseif self.scrollingType == MenuScrollingType.PAGINATED or (self.scrollingType == MenuScrollingType.CLASSIC and overflow) then
                 local pSubT = self.Parent()
                 if pSubT == "LobbyMenu" then
@@ -234,7 +234,7 @@ function MissionListColumn:GoDown()
                     ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("CLEAR_PLAYERS_TAB_MISSIONS_COLUMN") --[[@as number]]
                 end
                 local max = self.Pagination:ItemsPerPage()
-                for i=1, max, 1 do
+                for i = 1, max, 1 do
                     if not self.Parent:Visible() then return end
                     self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
                 end
@@ -252,7 +252,6 @@ function MissionListColumn:GoDown()
     self.Items[self:CurrentSelection()]:Selected(true)
     self.OnIndexChanged(self:CurrentSelection())
 end
-
 
 function MissionListColumn:Clear()
     if self.Parent ~= nil and self.Parent:Visible() then
@@ -357,7 +356,7 @@ function MissionListColumn:refreshColumn()
 
         self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
 
-        for i=1, max, 1 do
+        for i = 1, max, 1 do
             if not self.Parent:Visible() then return end
             self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
         end

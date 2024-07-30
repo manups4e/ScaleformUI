@@ -35,7 +35,7 @@ function UIMenuStatisticsPanel:AddStatistic(name, value) -- required
         elseif value < 0 then
             value = 0
         end
-        table.insert(self.Items, { ['name'] = name,['value'] = value })
+        table.insert(self.Items, { ['name'] = name, ['value'] = value })
         if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
             local it = IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem)
             local van = IndexOf(self.ParentItem.Panels, self)

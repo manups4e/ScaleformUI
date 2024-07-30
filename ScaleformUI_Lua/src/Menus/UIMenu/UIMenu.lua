@@ -273,10 +273,10 @@ function UIMenu:Title(title)
         if self:Visible() then
             if self.SubtitleColor == HudColours.NONE then
                 ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_TITLE_SUBTITLE", self._Title, self._Subtitle,
-                self.alternativeTitle)
+                    self.alternativeTitle)
             else
                 ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_TITLE_SUBTITLE", self._Title, "~HC_" .. self.SubtitleColor .. "~" .. self._Subtitle,
-                self.alternativeTitle)
+                    self.alternativeTitle)
             end
         end
     end
@@ -301,10 +301,10 @@ function UIMenu:Subtitle(sub)
         if self:Visible() then
             if self.SubtitleColor == HudColours.NONE then
                 ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_TITLE_SUBTITLE", self._Title, self._Subtitle,
-                self.alternativeTitle)
+                    self.alternativeTitle)
             else
                 ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_TITLE_SUBTITLE", self._Title, "~HC_" .. self.SubtitleColor .. "~" .. self._Subtitle,
-                self.alternativeTitle)
+                    self.alternativeTitle)
             end
         end
     end
@@ -412,15 +412,15 @@ function UIMenu:RefreshMenu(keepIndex)
         local index = self:CurrentSelection()
         self.BannerisBuilding = true
         ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ITEMS")
-        for k,it in pairs (self.Items) do
-             it:Selected(false)
+        for k, it in pairs(self.Items) do
+            it:Selected(false)
         end
 
         -- we want to keep the rebuild as clean as possible.. we disable all anims for the moment
         local enableScrollingAnim = self:AnimationEnabled()
         local enable3DAnim = self:Enabled3DAnimations()
         local scrollingAnimation = self:AnimationType()
-        local buildingAnimation= self:BuildingAnimation()
+        local buildingAnimation = self:BuildingAnimation()
 
         self:SetMenuAnimations(false, false, MenuAnimationType.LINEAR, MenuBuildingAnimation.NONE)
 
@@ -441,7 +441,7 @@ function UIMenu:RefreshMenu(keepIndex)
             end
             self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
 
-            for i = 1, max,1 do
+            for i = 1, max, 1 do
                 if (not self:Visible()) then return end
                 self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
             end
@@ -462,11 +462,11 @@ end
 ---SetBannerSprite
 ---@param txtDictionary string
 ---@param txtName string
-function UIMenu:SetBannerSprite(txtDictionary,txtName)
+function UIMenu:SetBannerSprite(txtDictionary, txtName)
     self.TxtDictionary = txtDictionary
     self.TxtName = txtName
     if self:Visible() then
-        ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_MENU_BANNER_TEXTURE", txtDictionary,txtName)
+        ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_MENU_BANNER_TEXTURE", txtDictionary, txtName)
     end
 end
 
@@ -480,9 +480,9 @@ function UIMenu:SetBannerColor(color)
 end
 
 --- Handles all the menu animations in one place
----@param enableScrollingAnim boolean 
----@param enable3DAnim boolean 
----@param scrollingAnimation MenuAnimationType 
+---@param enableScrollingAnim boolean
+---@param enable3DAnim boolean
+---@param scrollingAnimation MenuAnimationType
 ---@param buildingAnimation MenuBuildingAnimation
 function UIMenu:SetMenuAnimations(enableScrollingAnim, enable3DAnim, scrollingAnimation, buildingAnimation)
     self:AnimationEnabled(enableScrollingAnim)
@@ -613,7 +613,7 @@ function UIMenu:CurrentSelection(value)
             ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM",
                 self.Pagination:GetScaleformIndex(self.Pagination:CurrentMenuIndex()))
             ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", self:CurrentSelection(), #self.Items)
-            end
+        end
     else
         return self.Pagination:CurrentMenuIndex()
     end
@@ -751,7 +751,7 @@ function UIMenu:Visible(bool)
         if bool then
             if not self._itemless and #self.Items == 0 then
                 MenuHandler:CloseAndClearHistory()
-                assert(self._itemless or #self.Items == 0, "UIMenu ".. self:Title() .. " menu is empty... Closing and clearing history.")
+                assert(self._itemless or #self.Items == 0, "UIMenu " .. self:Title() .. " menu is empty... Closing and clearing history.")
             end
             ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
             MenuHandler._currentMenu = self
@@ -763,7 +763,6 @@ function UIMenu:Visible(bool)
             if BreadcrumbsHandler:Count() == 0 then
                 BreadcrumbsHandler:Forward(self)
             end
-
         else
             self:FadeOutMenu()
             ScaleformUI.Scaleforms.InstructionalButtons:ClearButtonList()
@@ -816,7 +815,6 @@ function UIMenu:BuildUpMenuAsync(itemsOnly)
         self:FadeInMenu()
         self._isBuilding = false
         return
-
     end
 
     if not itemsOnly then
@@ -847,7 +845,7 @@ function UIMenu:BuildUpMenuAsync(itemsOnly)
                     if window.StatWheelEnabled then
                         for key, value in pairs(window.DetailStats) do
                             ScaleformUI.Scaleforms._ui:CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL",
-                                w_id-1, value.Percentage, value.HudColor)
+                                w_id - 1, value.Percentage, value.HudColor)
                         end
                     end
                 end
@@ -882,7 +880,7 @@ function UIMenu:BuildUpMenuAsync(itemsOnly)
 
     self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
 
-    for i = 1, max,1 do
+    for i = 1, max, 1 do
         if (not self:Visible()) then return end
         self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
     end
@@ -956,8 +954,8 @@ function UIMenu:_itemCreation(page, pageIndex, before, overflow)
         PushScaleformMovieFunctionParameterInt(item.Base._highlightedTextColor:ToArgb())
         EndScaleformMovieMethod()
     elseif SubType == "UIMenuListItem" then
-        AddTextEntry("listitem_"..menuIndex.."_list", item:createListString())
-        BeginTextCommandScaleformString("listitem_"..menuIndex.."_list")
+        AddTextEntry("listitem_" .. menuIndex .. "_list", item:createListString())
+        BeginTextCommandScaleformString("listitem_" .. menuIndex .. "_list")
         EndTextCommandScaleformString()
         PushScaleformMovieFunctionParameterInt(item:Index() - 1)
         PushScaleformMovieFunctionParameterInt(item.Base._mainColor:ToArgb())
@@ -1063,7 +1061,7 @@ function UIMenu:_itemCreation(page, pageIndex, before, overflow)
             if pSubType == "UIMenuColorPanel" then
                 if panel.CustomColors ~= nil then
                     local colors = {}
-                    for l,m in pairs(panel.CustomColors) do
+                    for l, m in pairs(panel.CustomColors) do
                         table.insert(colors, m:ToArgb())
                     end
                     ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", scaleformIndex, 0, panel.Title,
@@ -1287,7 +1285,7 @@ function UIMenu:GoUp()
                 self.isFading = true
                 ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ITEMS")
                 local max = self.Pagination:ItemsPerPage()
-                for i = 1, max,1 do
+                for i = 1, max, 1 do
                     if (not self:Visible()) then return end
                     self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
                 end
@@ -1322,7 +1320,7 @@ function UIMenu:GoDown()
                 self.isFading = true
                 ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ITEMS")
                 local max = self.Pagination:ItemsPerPage()
-                for i = 1, max,1 do
+                for i = 1, max, 1 do
                     if (not self:Visible()) then return end
                     self:_itemCreation(self.Pagination:CurrentPage(), i, false, true)
                 end

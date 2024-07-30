@@ -100,7 +100,7 @@ function ProgressTimerBar:Draw(interval)
         self._percentage = 1.0 - (t / (self._maxTime / 1.0))
         if self._percentage < 0 then self._percentage = 0 end
     end
-    
+
     UIResText.New(self:Label(), resx - safex - 180, resy - safey - (30 + (4 * interval)), 0.3, 240, 240, 240, 255,
         self._labelFont, 2):Draw()
 

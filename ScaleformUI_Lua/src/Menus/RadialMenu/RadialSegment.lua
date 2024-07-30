@@ -25,7 +25,7 @@ function RadialSegment:AddItem(item)
     item.Parent = self
     table.insert(self.Items, item)
     if self.Parent ~= nil and self.Parent:Visible() then
-        ScaleformUI.Scaleforms._radialMenu:CallFunction("ADD_ITEM", self.Index-1, item:Label(), item:Description(), item:TextureDict(), item:TextureName(), item:TextureWidth(), item:TextureHeight(), item:Color(), item.qtty, item.max)
+        ScaleformUI.Scaleforms._radialMenu:CallFunction("ADD_ITEM", self.Index - 1, item:Label(), item:Description(), item:TextureDict(), item:TextureName(), item:TextureWidth(), item:TextureHeight(), item:Color(), item.qtty, item.max)
     end
 end
 

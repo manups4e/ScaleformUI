@@ -45,7 +45,7 @@ function SegmentItem:Label(lbl)
     if lbl ~= nil then
         self.label = lbl
         if self.Parent ~= nil and self.Parent.Parent ~= nil and self.Parent.Parent:Visible() then
-            ScaleformUI.Scaleforms._radialMenu:CallFunction("UPDATE_SUBITEM", self.Parent.index-1, IndexOf(self.Parent.Items, self)-1, self.label, self.description, self.textureName, self.textureDict, self.textureHeight, self.textureWidth, self.color, self.qtty, self.max);
+            ScaleformUI.Scaleforms._radialMenu:CallFunction("UPDATE_SUBITEM", self.Parent.index - 1, IndexOf(self.Parent.Items, self) - 1, self.label, self.description, self.textureName, self.textureDict, self.textureHeight, self.textureWidth, self.color, self.qtty, self.max);
         end
     else
         return self.label
@@ -56,7 +56,7 @@ function SegmentItem:Description(desc)
     if desc ~= nil then
         self.description = desc
         if self.Parent ~= nil and self.Parent.Parent ~= nil and self.Parent.Parent:Visible() then
-            ScaleformUI.Scaleforms._radialMenu:CallFunction("UPDATE_SUBITEM", self.Parent.index-1, IndexOf(self.Parent.Items, self)-1, self.label, self.description, self.textureName, self.textureDict, self.textureHeight, self.textureWidth, self.color, self.qtty, self.max);
+            ScaleformUI.Scaleforms._radialMenu:CallFunction("UPDATE_SUBITEM", self.Parent.index - 1, IndexOf(self.Parent.Items, self) - 1, self.label, self.description, self.textureName, self.textureDict, self.textureHeight, self.textureWidth, self.color, self.qtty, self.max);
         end
     else
         return self.description
@@ -67,7 +67,7 @@ function SegmentItem:TextureDict(txd)
     if txd ~= nil then
         self.textureDict = txd
         if self.Parent ~= nil and self.Parent.Parent ~= nil and self.Parent.Parent:Visible() then
-            ScaleformUI.Scaleforms._radialMenu:CallFunction("UPDATE_SUBITEM", self.Parent.index-1, IndexOf(self.Parent.Items, self)-1, self.label, self.description, self.textureName, self.textureDict, self.textureHeight, self.textureWidth, self.color, self.qtty, self.max);
+            ScaleformUI.Scaleforms._radialMenu:CallFunction("UPDATE_SUBITEM", self.Parent.index - 1, IndexOf(self.Parent.Items, self) - 1, self.label, self.description, self.textureName, self.textureDict, self.textureHeight, self.textureWidth, self.color, self.qtty, self.max);
         end
     else
         return self.textureDict
@@ -78,7 +78,7 @@ function SegmentItem:TextureName(txn)
     if txn ~= nil then
         self.textureName = txn
         if self.Parent ~= nil and self.Parent.Parent ~= nil and self.Parent.Parent:Visible() then
-            ScaleformUI.Scaleforms._radialMenu:CallFunction("UPDATE_SUBITEM", self.Parent.index-1, IndexOf(self.Parent.Items, self)-1, self.label, self.description, self.textureName, self.textureDict, self.textureHeight, self.textureWidth, self.color, self.qtty, self.max);
+            ScaleformUI.Scaleforms._radialMenu:CallFunction("UPDATE_SUBITEM", self.Parent.index - 1, IndexOf(self.Parent.Items, self) - 1, self.label, self.description, self.textureName, self.textureDict, self.textureHeight, self.textureWidth, self.color, self.qtty, self.max);
         end
     else
         return self.textureName
@@ -89,7 +89,7 @@ function SegmentItem:TextureWidth(width)
     if width ~= nil then
         self.textureWidth = width
         if self.Parent ~= nil and self.Parent.Parent ~= nil and self.Parent.Parent:Visible() then
-            ScaleformUI.Scaleforms._radialMenu:CallFunction("UPDATE_SUBITEM", self.Parent.index-1, IndexOf(self.Parent.Items, self)-1, self.label, self.description, self.textureName, self.textureDict, self.textureHeight, self.textureWidth, self.color, self.qtty, self.max);
+            ScaleformUI.Scaleforms._radialMenu:CallFunction("UPDATE_SUBITEM", self.Parent.index - 1, IndexOf(self.Parent.Items, self) - 1, self.label, self.description, self.textureName, self.textureDict, self.textureHeight, self.textureWidth, self.color, self.qtty, self.max);
         end
     else
         return self.textureWidth
@@ -100,7 +100,7 @@ function SegmentItem:TextureHeight(height)
     if height ~= nil then
         self.textureHeight = height
         if self.Parent ~= nil and self.Parent.Parent ~= nil and self.Parent.Parent:Visible() then
-            ScaleformUI.Scaleforms._radialMenu:CallFunction("UPDATE_SUBITEM", self.Parent.index-1, IndexOf(self.Parent.Items, self)-1, self.label, self.description, self.textureName, self.textureDict, self.textureHeight, self.textureWidth, self.color, self.qtty, self.max);
+            ScaleformUI.Scaleforms._radialMenu:CallFunction("UPDATE_SUBITEM", self.Parent.index - 1, IndexOf(self.Parent.Items, self) - 1, self.label, self.description, self.textureName, self.textureDict, self.textureHeight, self.textureWidth, self.color, self.qtty, self.max);
         end
     else
         return self.textureHeight
@@ -111,7 +111,7 @@ function SegmentItem:Color(color)
     if color ~= nil then
         self.color = color
         if self.Parent ~= nil and self.Parent.Parent ~= nil and self.Parent.Parent:Visible() then
-            ScaleformUI.Scaleforms._radialMenu:CallFunction("UPDATE_SUBITEM", self.Parent.index-1, IndexOf(self.Parent.Items, self)-1, self.label, self.description, self.textureName, self.textureDict, self.textureHeight, self.textureWidth, self.color, self.qtty, self.max);
+            ScaleformUI.Scaleforms._radialMenu:CallFunction("UPDATE_SUBITEM", self.Parent.index - 1, IndexOf(self.Parent.Items, self) - 1, self.label, self.description, self.textureName, self.textureDict, self.textureHeight, self.textureWidth, self.color, self.qtty, self.max);
         end
     else
         return self.color
@@ -122,6 +122,6 @@ function SegmentItem:SetQuantity(qtty, max)
     self.qtty = qtty
     self.max = max or 0
     if self.Parent ~= nil and self.Parent.Parent ~= nil and self.Parent.Parent:Visible() then
-        ScaleformUI.Scaleforms._radialMenu:CallFunction("UPDATE_SUBITEM", self.Parent.index-1, IndexOf(self.Parent.Items, self)-1, self.label, self.description, self.textureName, self.textureDict, self.textureHeight, self.textureWidth, self.color, self.qtty, self.max);
+        ScaleformUI.Scaleforms._radialMenu:CallFunction("UPDATE_SUBITEM", self.Parent.index - 1, IndexOf(self.Parent.Items, self) - 1, self.label, self.description, self.textureName, self.textureDict, self.textureHeight, self.textureWidth, self.color, self.qtty, self.max);
     end
 end

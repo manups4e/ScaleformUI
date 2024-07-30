@@ -1,4 +1,4 @@
-SColor = setmetatable({A=0, R=0, G=0, B=0}, SColor)
+SColor = setmetatable({ A = 0, R = 0, G = 0, B = 0 }, SColor)
 SColor.__index = SColor
 SColor.__call = function()
     return "SColor"
@@ -398,14 +398,14 @@ end
 ---@return table
 function SColor.FromHex(hexColor)
     assert(hexColor:sub(1, 1) == "#", "Invalid Hex value")
-    local color = {A=0, R=0, G=0, B=0}
+    local color = { A = 0, R = 0, G = 0, B = 0 }
     if hexColor:sub(1, 1) == "#" then
-        local hex = hexColor:gsub("#","") -- Remove "#" symbol if present
-        local a = tonumber("0x" .. hex:sub(1,2)) -- Convert first two characters to decimal (alpha channel)
-        local r = tonumber("0x" .. hex:sub(3,4)) -- Convert next two characters to decimal (red channel)
-        local g = tonumber("0x" .. hex:sub(5,6)) -- Convert next two characters to decimal (green channel)
-        local b = tonumber("0x" .. hex:sub(7,8)) -- Convert last two characters to decimal (blue channel)
-        
+        local hex = hexColor:gsub("#", "")       -- Remove "#" symbol if present
+        local a = tonumber("0x" .. hex:sub(1, 2)) -- Convert first two characters to decimal (alpha channel)
+        local r = tonumber("0x" .. hex:sub(3, 4)) -- Convert next two characters to decimal (red channel)
+        local g = tonumber("0x" .. hex:sub(5, 6)) -- Convert next two characters to decimal (green channel)
+        local b = tonumber("0x" .. hex:sub(7, 8)) -- Convert last two characters to decimal (blue channel)
+
         color = {
             A = a,
             R = r,
@@ -420,7 +420,7 @@ end
 ---@return table
 function SColor.FromHudColor(color)
     assert(color ~= nil, "Invalid HUD color value")
-    local _color = {A=0, R=0, G=0, B=0}
+    local _color = { A = 0, R = 0, G = 0, B = 0 }
     local r, g, b, a = GetHudColour(color)
     _color = {
         A = a,
@@ -434,8 +434,8 @@ end
 function SColor.FromRandomValues()
     local color = {
         A = 255,
-        R = GetRandomIntInRange(1, 255), 
-        G = GetRandomIntInRange(1, 255), 
+        R = GetRandomIntInRange(1, 255),
+        G = GetRandomIntInRange(1, 255),
         B = GetRandomIntInRange(1, 255)
     }
     return setmetatable(color, SColor)
@@ -445,7 +445,7 @@ end
 ---@param ... number
 ---@return table|unknown
 function SColor.FromArgb(...)
-    local args = {...}
+    local args = { ... }
     local color = {}
     assert(args ~= nil, "nil values are not accepted")
     assert(#args == 1 or #args == 4, "accepted args are ARGB Int value or Alpha, Red, Green, Blue values")
@@ -453,26 +453,26 @@ function SColor.FromArgb(...)
         local argb = args[1]
         local isNegative = false
         if argb < 0 then
-        isNegative = true
-        argb = math.abs(argb) -- Convert negative value to positive
+            isNegative = true
+            argb = math.abs(argb) -- Convert negative value to positive
         end
-    
+
         local a = (argb >> 24) & 255
         local r = (argb >> 16) & 255
         local g = (argb >> 8) & 255
         local b = argb & 255
-    
+
         if isNegative then
             a = 255 - a
             r = 255 - r
             g = 255 - g
             b = 255 - b
         end
-        
+
         color = { A = a, R = r, G = g, B = b }
     elseif #args == 4 then
         local alpha, red, green, blue = table.unpack(args)
-        assert(alpha ~= nil , "alpha cannot be nil")
+        assert(alpha ~= nil, "alpha cannot be nil")
         assert(red ~= nil, "red cannot be nil")
         assert(green ~= nil, "green cannot be nil")
         assert(blue ~= nil, "blue cannot be nil")
@@ -563,7 +563,7 @@ end
 function SColor:ToArgb()
     local result = (self.A << 24) | (self.R << 16) | (self.G << 8) | self.B
     if result > 2147483647 then
-        result = result  - 4294967296
+        result = result - 4294967296
     end
     return result
 end
@@ -577,7 +577,7 @@ end
 ---@comment Returns this color information as string
 ---@return string
 function SColor:ToString()
-    return "Color [A="..self.A..", R=:"..self.R..", G="..self.G..", B="..self.B.."] - INT="..self:ToArgb().." - HEX="..self:ToHex()
+    return "Color [A=" .. self.A .. ", R=:" .. self.R .. ", G=" .. self.G .. ", B=" .. self.B .. "] - INT=" .. self:ToArgb() .. " - HEX=" .. self:ToHex()
 end
 
 function SColor:__eq(other)

@@ -23,7 +23,7 @@ function MinimapOverlay.New(handle, textureDict, textureName, x, y, rotation, wi
         Color = SColor.HUD_None,
         Position = vector2(x or 0, y or 0),
         Rotation = rotation or 0,
-        Size = {width or 0, height or 0},
+        Size = { width or 0, height or 0 },
         Alpha = alpha or 0,
         Centered = centered or false,
     }

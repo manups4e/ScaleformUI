@@ -43,7 +43,7 @@ function RadialMenu.New(x, y)
         oldAngle = 0,
         changed = false,
         enable3D = true,
-        offset = {x=X, y=Y},
+        offset = { x = X, y = Y },
         Segments = {
             RadialSegment.New(1),
             RadialSegment.New(2),
@@ -114,7 +114,6 @@ function RadialMenu:RemoveInstructionButton(button)
     end
 end
 
-
 function RadialMenu:Enable3D(enable)
     if enable ~= nil then
         self.enable3D = enable
@@ -161,14 +160,14 @@ end
 
 function RadialMenu:BuildMenu()
     ScaleformUI.Scaleforms._radialMenu:CallFunction("CREATE_MENU", self:Enable3D(), (1280 / 2) + self.offset.x, ((720 / 2) - 60) + self.offset.y)
-    for i=1, 8 do
+    for i = 1, 8 do
         local seg = self.Segments[i]
-        for j=1, #seg.Items do
+        for j = 1, #seg.Items do
             local item = seg.Items[j]
-            ScaleformUI.Scaleforms._radialMenu:CallFunction("ADD_ITEM", i-1, item:Label(), item:Description(), item:TextureDict(), item:TextureName(), item:TextureWidth(), item:TextureHeight(), item:Color(), item.qtty, item.max)
+            ScaleformUI.Scaleforms._radialMenu:CallFunction("ADD_ITEM", i - 1, item:Label(), item:Description(), item:TextureDict(), item:TextureName(), item:TextureWidth(), item:TextureHeight(), item:Color(), item.qtty, item.max)
         end
     end
-    ScaleformUI.Scaleforms._radialMenu:CallFunction("LOAD_MENU", self.currentSelection-1, self.Segments[1]:CurrentSelection()-1, self.Segments[2]:CurrentSelection()-1, self.Segments[3]:CurrentSelection()-1, self.Segments[4]:CurrentSelection()-1, self.Segments[5]:CurrentSelection()-1, self.Segments[6]:CurrentSelection()-1, self.Segments[7]:CurrentSelection()-1, self.Segments[8]:CurrentSelection()-1)
+    ScaleformUI.Scaleforms._radialMenu:CallFunction("LOAD_MENU", self.currentSelection - 1, self.Segments[1]:CurrentSelection() - 1, self.Segments[2]:CurrentSelection() - 1, self.Segments[3]:CurrentSelection() - 1, self.Segments[4]:CurrentSelection() - 1, self.Segments[5]:CurrentSelection() - 1, self.Segments[6]:CurrentSelection() - 1, self.Segments[7]:CurrentSelection() - 1, self.Segments[8]:CurrentSelection() - 1)
 end
 
 function RadialMenu:ProcessMouse()
@@ -193,7 +192,7 @@ function RadialMenu:ProcessControl()
     local finalizedAngle = -1
     if x > 400 or y > 400 or x < -400 or y < -400 then
         angle = math.atan(y, x) * (180 / math.pi)
-        if angle == 0 then 
+        if angle == 0 then
             normalized_angle = 0
         else
             normalized_angle = (angle + 450) % 360
@@ -226,7 +225,6 @@ function RadialMenu:ProcessControl()
             local sel = self.Segments[self.currentSelection]:CycleItems(-1)
             self.OnSegmentIndexChange(self.Segments[self.currentSelection], sel)
         end)
-
     end
 
     if IsDisabledControlJustPressed(0, 14) then
@@ -248,7 +246,6 @@ end
 function RadialMenu:SwitchTo(newMenu, newMenuCurrentSelection, inheritOldMenuParams)
     MenuHandler:SwitchTo(self, newMenu, newMenuCurrentSelection, inheritOldMenuParams)
 end
-
 
 function RadialMenu:GoBack()
     if BreadcrumbsHandler:CurrentDepth() == 1 then

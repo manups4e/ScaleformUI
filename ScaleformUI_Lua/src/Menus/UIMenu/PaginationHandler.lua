@@ -48,11 +48,11 @@ function PaginationHandler:TotalPages()
 end
 
 function PaginationHandler:CurrentPageStartIndex()
-    return ((self.currentPage-1) * self.itemsPerPage) + 1
+    return ((self.currentPage - 1) * self.itemsPerPage) + 1
 end
 
 function PaginationHandler:CurrentPageEndIndex()
-    local idx = self:CurrentPageStartIndex() + self.itemsPerPage-1
+    local idx = self:CurrentPageStartIndex() + self.itemsPerPage - 1
     if idx > self.totalItems then
         idx = self.totalItems
     end
@@ -116,7 +116,6 @@ function PaginationHandler:GetScaleformIndex(menuIndex)
     return id
 end
 
-
 function PaginationHandler:GetMenuIndexFromScaleformIndex(scaleformIndex)
     local diff = 0
     if self.totalItems >= self.itemsPerPage then
@@ -143,13 +142,13 @@ end
 
 function PaginationHandler:GetPageIndexFromMenuIndex(menuIndex)
     local page = self:GetPage(menuIndex)
-    local startIndex = ((page-1) * self.itemsPerPage) + 1
+    local startIndex = ((page - 1) * self.itemsPerPage) + 1
     return menuIndex - startIndex + 1
 end
 
 function PaginationHandler:GetMenuIndexFromPageIndex(page, index)
-    local initialIndex =  ((page-1) * self.itemsPerPage) +1
-    return initialIndex + index -1
+    local initialIndex = ((page - 1) * self.itemsPerPage) + 1
+    return initialIndex + index - 1
 end
 
 function PaginationHandler:GetPage(menuIndex)
@@ -157,9 +156,9 @@ function PaginationHandler:GetPage(menuIndex)
 end
 
 function PaginationHandler:GetPageItemsCount(page)
-    local startIndex = ((page-1) * self.itemsPerPage) + 1
+    local startIndex = ((page - 1) * self.itemsPerPage) + 1
     local endIndex = startIndex + self.itemsPerPage - 1
-    if(endIndex > self.totalItems) then
+    if (endIndex > self.totalItems) then
         endIndex = self.totalItems
     end
     return (endIndex - startIndex) + 1
@@ -178,7 +177,7 @@ function PaginationHandler:GoUp()
         overflow = self:TotalPages() > 1
     end
     self:CurrentPageIndex(self._currentMenuIndex)
-    self.scaleformIndex = self.scaleformIndex-1
+    self.scaleformIndex = self.scaleformIndex - 1
     self:CurrentPage(self:GetPage(self._currentMenuIndex))
     if self.scaleformIndex < 0 then
         if self.totalItems <= self.itemsPerPage then
@@ -186,8 +185,8 @@ function PaginationHandler:GoUp()
             return false
         end
         if self.scrollType == MenuScrollingType.ENDLESS or (self.scrollType == MenuScrollingType.CLASSIC and not overflow) then
-            self.minItem = self.minItem-1
-            self.maxItem = self.maxItem-1
+            self.minItem = self.minItem - 1
+            self.maxItem = self.maxItem - 1
             if self.minItem < 1 then
                 self.minItem = self.totalItems
             end
@@ -199,12 +198,12 @@ function PaginationHandler:GoUp()
         elseif self.scrollType == MenuScrollingType.PAGINATED or (self.scrollType == MenuScrollingType.CLASSIC and overflow) then
             self.minItem = self:CurrentPageStartIndex()
             self.maxItem = self:CurrentPageEndIndex()
-            self:ScaleformIndex(self:GetPageIndexFromMenuIndex(self:CurrentPageEndIndex())-1)
+            self:ScaleformIndex(self:GetPageIndexFromMenuIndex(self:CurrentPageEndIndex()) - 1)
 
             if self.scrollType == MenuScrollingType.CLASSIC then
                 local missingItems = self:GetMissingItems()
                 if missingItems > 0 then
-                    self:ScaleformIndex(self:GetPageIndexFromMenuIndex(self:CurrentPageEndIndex()) + missingItems -1 )
+                    self:ScaleformIndex(self:GetPageIndexFromMenuIndex(self:CurrentPageEndIndex()) + missingItems - 1)
                     self.minItem = self:CurrentPageStartIndex() - missingItems
                 end
             end
@@ -223,7 +222,7 @@ function PaginationHandler:GoDown()
     end
     self:CurrentPageIndex(self._currentMenuIndex)
     self.scaleformIndex = self.scaleformIndex + 1
-    if self.scaleformIndex > self.totalItems - 1  then
+    if self.scaleformIndex > self.totalItems - 1 then
         self:CurrentPage(self:GetPage(self._currentMenuIndex))
         self.scaleformIndex = 0
         return false
@@ -231,8 +230,8 @@ function PaginationHandler:GoDown()
         if self.scrollType == MenuScrollingType.ENDLESS or (self.scrollType == MenuScrollingType.CLASSIC and not overflow) then
             self:CurrentPage(self:GetPage(self._currentMenuIndex))
             self.scaleformIndex = self.itemsPerPage - 1
-            self.minItem = self.minItem+1
-            self.maxItem = self.maxItem+1
+            self.minItem = self.minItem + 1
+            self.maxItem = self.maxItem + 1
             if self.minItem > self.totalItems then
                 self.minItem = 1
             end

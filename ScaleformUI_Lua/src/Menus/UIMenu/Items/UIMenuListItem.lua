@@ -352,7 +352,7 @@ end
 
 function UIMenuListItem:createListString()
     local list = {}
-    for k,v in ipairs(self.Items) do
+    for k, v in ipairs(self.Items) do
         if not self:Enabled() then
             v.ReplaceRstarColorsWith("~c~")
         else
@@ -366,7 +366,7 @@ function UIMenuListItem:createListString()
                 v = v:gsub("~l~", "~s~")
             end
         end
-        table.insert(list,v)
+        table.insert(list, v)
     end
     return table.concat(list, ",")
 end
