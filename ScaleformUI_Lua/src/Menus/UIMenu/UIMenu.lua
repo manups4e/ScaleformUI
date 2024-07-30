@@ -1539,7 +1539,7 @@ function UIMenu:Draw()
         self._menuGlare:CallFunction("SET_DATA_SLOT", GetGameplayCamRelativeHeading())
 
         local gx = self.Position.x / 1280 + 0.4499
-        local gy = self.Position.y / 720 + 0.449
+        local gy = self.Position.y / 720 + 0.454
 
         self._menuGlare:Render2DNormal(gx, gy, 1.0, 1.0)
     end

@@ -1659,8 +1659,8 @@ namespace ScaleformUI.Menu
             if (Glare)
             {
                 _menuGlare.CallFunction("SET_DATA_SLOT", GameplayCamera.RelativeHeading);
-                SizeF _glareSize = new SizeF(1.0f, 1f);
-                PointF gl = new PointF((Offset.X / Screen.Width) + 0.4499f, (Offset.Y / Screen.Height) + 0.449f);
+                SizeF _glareSize = new SizeF(1f, 1f);
+                PointF gl = new PointF((Offset.X / Screen.Width) + 0.4499f, (Offset.Y / Screen.Height) + 0.454f);
 
                 DrawScaleformMovie(_menuGlare.Handle, gl.X, gl.Y, _glareSize.Width, _glareSize.Height, 255, 255, 255, 255, 0);
             }
