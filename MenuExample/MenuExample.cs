@@ -47,7 +47,7 @@ public class MenuExample : BaseScript
 
         #region Big Message
 
-        UIMenuItem bigMessageItem = new UIMenuItem("~g~Big ~w~Message ~r~Examples", "Select me to switch to the BigMessage menu!");
+        UIMenuItem bigMessageItem = new UIMenuItem("~g~Big~s~ Message ~r~Examples~s~", "Select me to switch to the BigMessage menu!");
         UIMenu uiMenuBigMessage = new UIMenu("Big Message", "Big Message");
         exampleMenu.AddItem(bigMessageItem);
         UIMenuListItem uiListBigMessageTransition = new UIMenuListItem("Big Message", new List<dynamic>() { "TRANSITION_OUT", "TRANSITION_UP", "TRANSITION_DOWN" }, 0);
@@ -177,7 +177,7 @@ public class MenuExample : BaseScript
             sidePanelB.Title = ((VehicleColor)value).ToString();
         };
 
-        UIMenuListItem scrollType = new UIMenuListItem("Choose how this menu will scroll!", new List<dynamic>() { "CLASSIC", "PAGINATED", "ENDLESS" }, (int)exampleMenu.ScrollingType);
+        UIMenuListItem scrollType = new UIMenuListItem("Choose how this menu will scroll!", new List<dynamic>() { "~r~CLASSIC", "~g~PAGINATED", "~b~ENDLESS" }, (int)exampleMenu.ScrollingType);
         exampleMenu.AddItem(scrollType);
 
         scrollType.OnListChanged += (item, index) =>
@@ -1235,7 +1235,7 @@ public class MenuExample : BaseScript
         pauseMenu.AddTab(playersTab);
 
         UIMenuItem n1 = new("Base Item", "Basic Description");
-        UIMenuListItem n2 = new("List Item", new List<dynamic> { "item1", "item2", "item3" }, 0, "List Description");
+        UIMenuListItem n2 = new("List Item", new List<dynamic> { "~r~item1", "item2", "item3" }, 0, "List Description");
         UIMenuCheckboxItem n3 = new("Checkbox Item", UIMenuCheckboxStyle.Tick, true, "Checkbox Description");
         UIMenuSliderItem n4 = new("Slider Item", "Slider Description", 100, 10, 50, false);
         UIMenuProgressItem n5 = new("Progress Item", 100, 50, "Progress Description");
@@ -1618,7 +1618,7 @@ public class MenuExample : BaseScript
         pauseMenu.HeaderPicture = new(ped_txd, ped_txd);
 
         UIMenuItem item = new UIMenuItem("UIMenuItem", "UIMenuItem description");
-        UIMenuListItem item1 = new UIMenuListItem("~g~UIMenuListItem", new List<dynamic>() { "This", "is", "a", "Test" }, 0, "UIMenuListItem description");
+        UIMenuListItem item1 = new UIMenuListItem("~g~UIMenuListItem", new List<dynamic>() { "~r~This", "~g~is", "~b~a", "~o~Test" }, 0, "UIMenuListItem description");
         UIMenuCheckboxItem item2 = new UIMenuCheckboxItem("~b~UIMenuCheckboxItem", true, "UIMenuCheckboxItem description");
         UIMenuSliderItem item3 = new UIMenuSliderItem("~p~UIMenuSliderItem", "UIMenuSliderItem description", 100, 5, 50, false);
         UIMenuProgressItem item4 = new UIMenuProgressItem("~o~UIMenuProgressItem", 10, 5, "UIMenuProgressItem description");
