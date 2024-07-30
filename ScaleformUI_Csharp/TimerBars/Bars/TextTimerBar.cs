@@ -10,7 +10,7 @@ namespace ScaleformUI
         public string Caption { get; set; }
         public SColor CaptionColor { get; set; } = SColor.White;
         public Font CaptionFont { get; set; } = Font.ChaletLondon;
-        public bool Enabled;
+        public bool Enabled = true;
         public TextTimerBar(string label, string text) : base(label)
         {
             Caption = text;
