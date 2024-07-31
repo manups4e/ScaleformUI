@@ -19,8 +19,8 @@ function TimerBarPool:AddBar(timerBar)
     self.Bars[timerBar.Handle] = timerBar
 end
 
-function TimerBarPool:RemoveBar(timerBar)
-    table.remove(self.Bars, timerBar.Handle)
+function TimerBarPool:RemoveBar(timerBar)    
+    self.Bars[timerBar.Handle] = nil
 end
 
 function TimerBarPool:Draw()
