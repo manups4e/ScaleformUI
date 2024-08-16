@@ -76,7 +76,7 @@ namespace ScaleformUI
         {
             AddTextEntry("ScaleformUINotification", msg);
             BeginTextCommandThefeedPost("ScaleformUINotification");
-            return new ScaleformUINotification(EndTextCommandThefeedPostTicker(blink, showBriefing));
+            return new ScaleformUINotification(EndTextCommandThefeedPostTickerWithTokens(blink, showBriefing));
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace ScaleformUI
             AddTextEntry("ScaleformUINotification", msg);
             BeginTextCommandThefeedPost("ScaleformUINotification");
             ThefeedNextPostBackgroundColor((int)color);
-            return new ScaleformUINotification(EndTextCommandThefeedPostTicker(blink, showBriefing));
+            return new ScaleformUINotification(EndTextCommandThefeedPostTickerWithTokens(blink, showBriefing));
         }
 
         /// <summary>
