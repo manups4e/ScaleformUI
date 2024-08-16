@@ -134,10 +134,7 @@ function MainView:Visible(visible)
             AnimpostfxPlay("PauseMenuOut", 800, false)
             self.OnLobbyMenuClose(self)
             SetPlayerControl(PlayerId(), true, 0)
-            if IsPauseMenuActive() then
-                PlaySoundFrontend(self.SoundId, "Hit_Out", "PLAYER_SWITCH_CUSTOM_SOUNDSET", true)
-                ActivateFrontendMenu(`FE_MENU_VERSION_CORONA`, false, 0)
-            end
+            PlaySoundFrontend(self.SoundId, "Hit_Out", "PLAYER_SWITCH_CUSTOM_SOUNDSET", true)
             SetFrontendActive(false)
         end
     else

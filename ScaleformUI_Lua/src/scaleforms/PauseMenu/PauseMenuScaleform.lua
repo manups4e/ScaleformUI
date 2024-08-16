@@ -87,7 +87,6 @@ function PauseMenu:Load()
     self._pause = Scaleform.RequestWidescreen("pausemenu")
     self._lobby = Scaleform.RequestWidescreen("lobbymenu")
     self._pauseBG = Scaleform.RequestWidescreen("store_background")
-    self.Loaded = self._header:IsLoaded() and self._pause:IsLoaded() and self._lobby:IsLoaded() and self._pauseBG:IsLoaded()
 end
 
 function PauseMenu:FadeInMenus()
@@ -97,7 +96,7 @@ function PauseMenu:FadeInMenus()
 end
 
 function PauseMenu:IsLoaded()
-    return self._header:IsLoaded() and self._pause:IsLoaded() and self._lobby:IsLoaded() and self._pauseBG:IsLoaded()
+    return self._header ~= nil and self._header:IsLoaded() and self._pause ~= nil and self._pause:IsLoaded() and self._lobby ~= nil and self._lobby:IsLoaded() and self._pauseBG ~= nil and self._pauseBG:IsLoaded()
 end
 
 ---Set the header title and subtitle text of the pause menu header
@@ -439,14 +438,14 @@ end
 
 ---Dispose the pause menu
 function PauseMenu:Dispose()
+    self._visible = false
     self._pause:CallFunction("CLEAR_ALL")
     self._header:CallFunction("CLEAR_ALL")
     self._lobby:CallFunction("CLEAR_ALL")
-    self._pause:Dispose()
-    self._header:Dispose()
-    self._lobby:Dispose()
+    -- self._pause:Dispose()
+    -- self._header:Dispose()
+    -- self._lobby:Dispose()
     --self._pauseBG:Dispose()
-    self._visible = false
     self.firstTick = true;
 end
 
@@ -456,7 +455,7 @@ function PauseMenu:Draw(isLobby)
     if isLobby == nil then isLobby = false end
     if self._visible then
         if IsFrontendReadyForControl() then
-            SetScriptGfxDrawBehindPausemenu(true);
+            SetScriptGfxDrawBehindPausemenu(true)
             if IsUsingKeyboard(2) then
                 SetMouseCursorActiveThisFrame()
             end

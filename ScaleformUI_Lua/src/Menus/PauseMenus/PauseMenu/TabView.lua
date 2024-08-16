@@ -127,6 +127,7 @@ function TabView:Visible(visible)
         self._visible = visible
         ScaleformUI.Scaleforms._pauseMenu:Visible(visible)
         if visible == true then
+            while(not ScaleformUI.Scaleforms._pauseMenu:IsLoaded()) do Wait(0) end
             if not IsPauseMenuActive() then
                 PlaySoundFrontend(self.SoundId, "Hit_In", "PLAYER_SWITCH_CUSTOM_SOUNDSET", true)
                 ActivateFrontendMenu(`FE_MENU_VERSION_CORONA`, true, 0)
@@ -158,10 +159,7 @@ function TabView:Visible(visible)
             AnimpostfxPlay("PauseMenuOut", 0, false)
             self.OnPauseMenuClose(self)
             SetPlayerControl(PlayerId(), true, 0)
-            if IsPauseMenuActive() then
-                PlaySoundFrontend(self.SoundId, "Hit_Out", "PLAYER_SWITCH_CUSTOM_SOUNDSET", true)
-                ActivateFrontendMenu(`FE_MENU_VERSION_CORONA`, false, 0)
-            end
+            PlaySoundFrontend(self.SoundId, "Hit_Out", "PLAYER_SWITCH_CUSTOM_SOUNDSET", true)
             SetFrontendActive(false)
         end
     else
