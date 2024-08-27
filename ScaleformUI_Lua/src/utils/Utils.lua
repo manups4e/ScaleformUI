@@ -201,7 +201,8 @@ function Wrap(value, min, max)
         normalizedValue = normalizedValue + range
     end
 
-    if math.abs(normalizedValue - range) < math.eps then
+    local epsilon = 1e-12 -- A small number close to zero
+    if math.abs(normalizedValue - range) < epsilon then
         normalizedValue = range
     end
 
