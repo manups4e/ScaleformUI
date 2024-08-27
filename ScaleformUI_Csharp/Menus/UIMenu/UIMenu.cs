@@ -1661,7 +1661,6 @@ namespace ScaleformUI.Menu
                 _menuGlare.CallFunction("SET_DATA_SLOT", GameplayCamera.RelativeHeading);
                 SizeF _glareSize = new SizeF(1f, 1f);
                 PointF gl = new PointF((Offset.X / Screen.Width) + 0.4499f, (Offset.Y / Screen.Height) + 0.454f);
-
                 DrawScaleformMovie(_menuGlare.Handle, gl.X, gl.Y, _glareSize.Width, _glareSize.Height, 255, 255, 255, 255, 0);
             }
 
@@ -2894,6 +2893,17 @@ namespace ScaleformUI.Menu
         {
             get => MenuItems[CurrentSelection];
             set => CurrentSelection = MenuItems.Any(x => x.Label == value.Label && x.Description == value.Description) ? MenuItems.IndexOf(value) : 0;
+        }
+        
+        
+        /// <summary>
+        ///  Set's the menus offset after initialization.
+        /// </summary>
+        /// <param name="offset"></param>
+        public void SetMenuOffset(PointF offset)
+        {
+            Offset = offset;
+            Main.scaleformUI.CallFunction("SET_MENU_OFFSET", Offset.X, Offset.Y);
         }
 
         /// <summary>
