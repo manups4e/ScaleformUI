@@ -264,7 +264,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
     if (_UIMenu._menuGlare == 0) then
         _UIMenu._menuGlare = Scaleform.Request("mp_menu_glare")
     end
-    _UIMenu._glarePos ={x=_UIMenu.Position.x / 1280 + 0.4499, y = _UIMenu.Position.y / 720 + 0.492}
+    _UIMenu._glarePos ={x=_UIMenu.Position.x / 1280 + 0.4499, y = (_UIMenu.Position.y / 720) + 0.496}
 
     return setmetatable(_UIMenu, UIMenu)
 end
@@ -1806,7 +1806,7 @@ end
 
 function UIMenu:SetMenuOffset(x,y)
     self.Position = {x=x, y=y}
-    self._glarePos ={x=self.Position.x / 1280 + 0.4499, y = self.Position.y / 720 + 0.492}
+    self._glarePos ={x=self.Position.x / 1280 + 0.4499, y = self.Position.y / 720 + 0.496}
     if self:Visible() then
         ScaleformUI.Scaleforms._ui:CallFunction("SET_MENU_OFFSET", x,y)
     end
