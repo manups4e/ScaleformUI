@@ -892,6 +892,7 @@ namespace ScaleformUI.Menu
         private SColor counterColor = SColor.HUD_Freemode;
 
         public bool Glare { get; set; }
+        private float fSavedGlareDirection;
 
         internal readonly static string _selectTextLocalized = Game.GetGXTEntry("HUD_INPUT2");
         internal readonly static string _backTextLocalized = Game.GetGXTEntry("HUD_INPUT3");
@@ -1642,6 +1643,37 @@ namespace ScaleformUI.Menu
         #endregion
 
         #region Drawing & Processing
+
+        private float Wrap(float value, float min, float max)
+        {
+            // Calculate the range between min and max
+            float range = max - min;
+
+            // Check if the range is zero to avoid division by zero
+            if (range == 0)
+            {
+                throw new ArgumentException("Max must be greater than min.");
+            }
+
+            // Normalize the value to be within the range
+            float normalizedValue = (value - min) % range;
+
+            // Adjust for negative ranges
+            if (normalizedValue < 0)
+            {
+                normalizedValue += range;
+            }
+
+            // Handle edge cases where the value might exactly match one of the bounds
+            if (Math.Abs(normalizedValue - range) < float.Epsilon)
+            {
+                normalizedValue = range;
+            }
+
+            return min + normalizedValue;
+        }
+
+
         /// <summary>
         /// Draw the menu and all of it's components.
         /// </summary>
@@ -1658,7 +1690,14 @@ namespace ScaleformUI.Menu
 
             if (Glare)
             {
-                _menuGlare.CallFunction("SET_DATA_SLOT", GameplayCamera.RelativeHeading);
+                var fRotationTolerance = 0.5f;
+                var dir = GetFinalRenderedCamRot(2);
+                var fvar = Wrap(dir.Z, 0, 360);
+                if (fSavedGlareDirection == 0 || (fSavedGlareDirection - fvar) > fRotationTolerance || (fSavedGlareDirection - fvar) < -fRotationTolerance)
+                {
+                    fSavedGlareDirection = fvar;
+                    _menuGlare.CallFunction("SET_DATA_SLOT", fSavedGlareDirection);
+                }
                 SizeF _glareSize = new SizeF(1f, 1f);
                 PointF gl = new PointF((Offset.X / Screen.Width) + 0.4499f, (Offset.Y / Screen.Height) + 0.454f);
 
