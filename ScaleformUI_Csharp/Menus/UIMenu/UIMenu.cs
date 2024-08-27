@@ -893,6 +893,7 @@ namespace ScaleformUI.Menu
 
         public bool Glare { get; set; }
         private float fSavedGlareDirection;
+        private PointF glarePosition;
 
         internal readonly static string _selectTextLocalized = Game.GetGXTEntry("HUD_INPUT2");
         internal readonly static string _backTextLocalized = Game.GetGXTEntry("HUD_INPUT3");
@@ -1175,6 +1176,7 @@ namespace ScaleformUI.Menu
             Pagination = new PaginationHandler();
             Pagination.ItemsPerPage = 7;
             this.fadingTime = fadingTime;
+            glarePosition = new PointF((Offset.X / Screen.Width) + 0.4499f, (Offset.Y / Screen.Height) + 0.492f);
 
             SetKey(MenuControls.Up, Control.PhoneUp);
             SetKey(MenuControls.Down, Control.PhoneDown);
@@ -1646,25 +1648,14 @@ namespace ScaleformUI.Menu
 
         private float Wrap(float value, float min, float max)
         {
-            // Calculate the range between min and max
             float range = max - min;
-
-            // Check if the range is zero to avoid division by zero
-            if (range == 0)
-            {
-                throw new ArgumentException("Max must be greater than min.");
-            }
-
-            // Normalize the value to be within the range
             float normalizedValue = (value - min) % range;
 
-            // Adjust for negative ranges
             if (normalizedValue < 0)
             {
                 normalizedValue += range;
             }
 
-            // Handle edge cases where the value might exactly match one of the bounds
             if (Math.Abs(normalizedValue - range) < float.Epsilon)
             {
                 normalizedValue = range;
@@ -1698,9 +1689,7 @@ namespace ScaleformUI.Menu
                     fSavedGlareDirection = fvar;
                     _menuGlare.CallFunction("SET_DATA_SLOT", fSavedGlareDirection);
                 }
-                SizeF _glareSize = new SizeF(1f, 1f);
-                PointF gl = new PointF((Offset.X / Screen.Width) + 0.4499f, (Offset.Y / Screen.Height) + 0.454f);
-                DrawScaleformMovie(_menuGlare.Handle, gl.X, gl.Y, _glareSize.Width, _glareSize.Height, 255, 255, 255, 255, 0);
+                DrawScaleformMovie(_menuGlare.Handle, glarePosition.X, glarePosition.Y, 1, 1.1f, 255, 255, 255, 255, 0);
             }
 
             if (IsUsingController)
@@ -2942,7 +2931,9 @@ namespace ScaleformUI.Menu
         public void SetMenuOffset(PointF offset)
         {
             Offset = offset;
-            Main.scaleformUI.CallFunction("SET_MENU_OFFSET", Offset.X, Offset.Y);
+            glarePosition = new PointF((Offset.X / Screen.Width) + 0.4499f, (Offset.Y / Screen.Height) + 0.492f);
+            if (Visible) 
+                Main.scaleformUI.CallFunction("SET_MENU_OFFSET", Offset.X, Offset.Y);
         }
 
         /// <summary>

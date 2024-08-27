@@ -192,3 +192,53 @@ end
 function LengthSquared(vector)
     return math.sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z)
 end
+
+function Wrap(value, min, max)
+    local range = max - min
+    local normalizedValue = math.fmod(value - min, range)
+
+    if normalizedValue < 0 then
+        normalizedValue = normalizedValue + range
+    end
+
+    if math.abs(normalizedValue - range) < math.eps then
+        normalizedValue = range
+    end
+
+    return min + normalizedValue
+end
+
+---Converts player's current screen resolution coordinates into scaleform coordinates (1280 x 720)
+---@param realX number
+---@param realY number
+---@return vector2
+function ConvertResolutionCoordsToScaleformCoords(realX, realY)
+    local x,y = GetActiveScreenResolution()
+    return vector2(realX / x * 1280, realY / y * 720)
+end
+
+---Converts scaleform coordinates (1280 x 720) into player's current screen resolution coordinates
+---@param scaleformX number
+---@param scaleformY number
+---@return vector2
+function ConvertScaleformCoordsToResolutionCoords(scaleformX, scaleformY)
+    local x,y = GetActiveScreenResolution()
+    return vector2(scaleformX / 1280 * x,scaleformY / 720 * y)
+end
+
+---Converts screen coords (0.0 - 1.0) into scaleform coords (1280 x 720)
+---@param scX number
+---@param scY number
+---@return vector2
+function ConvertScreenCoordsToScaleformCoords(scX, scY)
+    return vector2(scX * 1280, scY * 720)
+end
+
+---Converts scaleform coords (1280 x 720) into screen coords (0.0 - 1.0)
+---@param scaleformX number
+---@param scaleformY number
+---@return vector2
+function ConvertScaleformCoordsToScreenCoords(scaleformX, scaleformY)
+    -- Normalize coordinates to 0.0 - 1.0 range
+    return vector2((scaleformX / 1280) * 2 - 1,(scaleformY / 720) * 2 - 1)
+end

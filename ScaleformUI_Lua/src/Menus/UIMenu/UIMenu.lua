@@ -175,6 +175,8 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         _timeBeforeOverflow = 0,
         _canHe = true,
         _scaledWidth = (720 * GetAspectRatio(false)),
+        _glarePos = {x=0,y=0},
+        fSavedGlareDirection = 0,
         enabled3DAnimations = true,
         isFading = false,
         fadingTime = fadeTime or 0.1,
@@ -262,6 +264,8 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
     if (_UIMenu._menuGlare == 0) then
         _UIMenu._menuGlare = Scaleform.Request("mp_menu_glare")
     end
+    _UIMenu._glarePos ={x=_UIMenu.Position.x / 1280 + 0.4499, y = _UIMenu.Position.y / 720 + 0.492}
+
     return setmetatable(_UIMenu, UIMenu)
 end
 
@@ -1534,12 +1538,14 @@ function UIMenu:Draw()
     ScaleformUI.Scaleforms._ui:Render2D()
 
     if self.Glare then
-        self._menuGlare:CallFunction("SET_DATA_SLOT", GetGameplayCamRelativeHeading())
-
-        local gx = self.Position.x / 1280 + 0.4499
-        local gy = self.Position.y / 720 + 0.454
-
-        self._menuGlare:Render2DNormal(gx, gy, 1.0, 1.0)
+        local fRotationTolerance = 0.5
+        local dir = GetFinalRenderedCamRot(2)
+        local fvar = Wrap(dir.z, 0, 360)
+        if self.fSavedGlareDirection == 0 or (self.fSavedGlareDirection - fvar) > fRotationTolerance or (self.fSavedGlareDirection - fvar) < -fRotationTolerance then
+            self.fSavedGlareDirection = fvar;
+            self._menuGlare:CallFunction("SET_DATA_SLOT", self.fSavedGlareDirection)
+        end
+        self._menuGlare:Render2DNormal(self._glarePos.x, self._glarePos.y, 1.0, 1.1)
     end
 
     if not IsUsingKeyboard(2) then
@@ -1795,5 +1801,13 @@ function UIMenu:RemoveEnabledControl(Inputgroup, Control, Controller)
             table.remove(self.Settings.EnabledControls[Type], Index)
             break
         end
+    end
+end
+
+function UIMenu:SetMenuOffset(x,y)
+    self.Position = {x=x, y=y}
+    self._glarePos ={x=self.Position.x / 1280 + 0.4499, y = self.Position.y / 720 + 0.492}
+    if self:Visible() then
+        ScaleformUI.Scaleforms._ui:CallFunction("SET_MENU_OFFSET", x,y)
     end
 end

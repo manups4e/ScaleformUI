@@ -34,7 +34,7 @@ public class MenuExample : BaseScript
 
         // first true means add menu Glare scaleform to the menu
         // last true means it's using the alternative title style
-        UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI ~o~SHOWCASE", new PointF(20, 20), "commonmenu", "interaction_bgd", true, true);
+        UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI ~o~SHOWCASE", new PointF(0, 0), "commonmenu", "interaction_bgd", true, true);
         exampleMenu.MaxItemsOnScreen = 7; // To decide max items on screen at time, default 7
         exampleMenu.BuildingAnimation = MenuBuildingAnimation.LEFT_RIGHT;
         exampleMenu.AnimationType = MenuAnimationType.BACK_INOUT;
@@ -400,8 +400,9 @@ public class MenuExample : BaseScript
         exampleMenu.AddItem(ResetFiltering);
 
         #endregion
-        
+
         #region Offset Changer
+
         UIMenuItem offsetItem = new UIMenuItem("Change Offset", "Change the offset of the menu");
         offsetItem.SetRightLabel(">>>");
         exampleMenu.AddItem(offsetItem);
@@ -409,17 +410,27 @@ public class MenuExample : BaseScript
         UIMenu offsetMenu = new UIMenu("Offset Menu", "Change the offset of the menu");
         UIMenuDynamicListItem offsetX = new UIMenuDynamicListItem("Offset X", "Change the X offset of the menu", exampleMenu.Offset.X.ToString("F3"), async (sender, direction) =>
         {
-            if (direction == ChangeDirection.Left) exampleMenu.SetMenuOffset(new PointF(exampleMenu.Offset.X - 1f, exampleMenu.Offset.Y));
-            else exampleMenu.SetMenuOffset(new PointF(exampleMenu.Offset.X + 1f, exampleMenu.Offset.Y));
-            exampleMenu.RefreshMenu();
+            var offset = exampleMenu.Offset.X;
+            if (direction == ChangeDirection.Left)
+                offset--;
+            else 
+                offset++;
+
+            sender.Parent.SetMenuOffset(new PointF(offset, exampleMenu.Offset.Y));
+            exampleMenu.SetMenuOffset(new PointF(offset, exampleMenu.Offset.Y));
             return exampleMenu.Offset.X.ToString("F3");
         });
         
         UIMenuDynamicListItem offsetY = new UIMenuDynamicListItem("Offset Y", "Change the Y offset of the menu", exampleMenu.Offset.Y.ToString("F3"), async (sender, direction) =>
         {
-            if (direction == ChangeDirection.Left) exampleMenu.SetMenuOffset(new PointF(exampleMenu.Offset.X, exampleMenu.Offset.Y - 1f));
-            else exampleMenu.SetMenuOffset(new PointF(exampleMenu.Offset.X, exampleMenu.Offset.Y + 1f));
-            exampleMenu.RefreshMenu();
+            var offset = exampleMenu.Offset.Y;
+            if (direction == ChangeDirection.Left)
+                offset--;
+            else
+                offset++;
+
+            sender.Parent.SetMenuOffset(new PointF(exampleMenu.Offset.X, offset));
+            exampleMenu.SetMenuOffset(new PointF(exampleMenu.Offset.X, offset));
             return exampleMenu.Offset.Y.ToString("F3");
         });
         

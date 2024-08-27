@@ -31,6 +31,53 @@ namespace ScaleformUI.Elements
         }
 
         /// <summary>
+        /// Convert resolution coords (es. 1920 x 1080) to scaleform coords.
+        /// </summary>
+        /// <param name="realX">The real X.</param>
+        /// <param name="realY">The real Y.</param>
+        /// <returns>A Vector2 with coordinates in 1280 x 720 scale</returns>
+        public static Vector2 ConvertResolutionCoordsToScaleformCoords(float realX, float realY)
+        {
+            Size screen = Screen.Resolution;
+            return new(realX / screen.Width * 1280, realY / screen.Height * 720);
+        }
+
+        /// <summary>
+        /// Convert scaleform coords to resolution coords (es. 1920 x 1080).
+        /// </summary>
+        /// <param name="scaleformX">The scaleform X.</param>
+        /// <param name="scaleformY">The scaleform Y.</param>
+        /// <returns>A Vector2 with coordinates in player's actual resolution</returns>
+        public static Vector2 ConvertScaleformCoordsToResolutionCoords(float scaleformX, float scaleformY)
+        {
+            Size screen = Screen.Resolution;
+            return new Vector2(scaleformX / 1280 * screen.Width, scaleformY / 720 * screen.Height);
+        }
+
+        /// <summary>
+        /// Convert screen coords (0.0 - 1.0) to scaleform coords.
+        /// </summary>
+        /// <param name="scX">The screen coord X.</param>
+        /// <param name="scY">The screen coord Y.</param>
+        /// <returns>A Vector2 with coordinates in 1280 x 720 scale</returns>
+        public static Vector2 ConvertScreenCoordsToScaleformCoords(float scX, float scY)
+        {
+            return new (scX * 1280, scY * 720);
+        }
+
+        /// <summary>
+        /// Convert scaleform coords to screen coords (0.0 - 1.0).
+        /// </summary>
+        /// <param name="scaleformX">The scaleform X.</param>
+        /// <param name="scaleformY">The scaleform Y.</param>
+        /// <returns>A Vector2 with coordinates in screen coords resolution (0.0 - 1.0)</returns>
+        public static Vector2 ConvertScaleformCoordsToScreenCoords(float scaleformX, float scaleformY)
+        {
+            // Normalize coordinates to 0.0 - 1.0 range
+            return new Vector2((scaleformX / 1280f) * 2f - 1f, (scaleformY / 720f) * 2f - 1f);
+        }
+
+        /// <summary>
         /// Chech whether the mouse is inside the specified rectangle.
         /// </summary>
         /// <param name="topLeft">Start point of the rectangle at the top left.</param>
