@@ -400,6 +400,38 @@ public class MenuExample : BaseScript
         exampleMenu.AddItem(ResetFiltering);
 
         #endregion
+        
+        #region Offset Changer
+        UIMenuItem offsetItem = new UIMenuItem("Change Offset", "Change the offset of the menu");
+        offsetItem.SetRightLabel(">>>");
+        exampleMenu.AddItem(offsetItem);
+        
+        UIMenu offsetMenu = new UIMenu("Offset Menu", "Change the offset of the menu");
+        UIMenuDynamicListItem offsetX = new UIMenuDynamicListItem("Offset X", "Change the X offset of the menu", exampleMenu.Offset.X.ToString("F3"), async (sender, direction) =>
+        {
+            if (direction == ChangeDirection.Left) exampleMenu.SetMenuOffset(new PointF(exampleMenu.Offset.X - 1f, exampleMenu.Offset.Y));
+            else exampleMenu.SetMenuOffset(new PointF(exampleMenu.Offset.X + 1f, exampleMenu.Offset.Y));
+            exampleMenu.RefreshMenu();
+            return exampleMenu.Offset.X.ToString("F3");
+        });
+        
+        UIMenuDynamicListItem offsetY = new UIMenuDynamicListItem("Offset Y", "Change the Y offset of the menu", exampleMenu.Offset.Y.ToString("F3"), async (sender, direction) =>
+        {
+            if (direction == ChangeDirection.Left) exampleMenu.SetMenuOffset(new PointF(exampleMenu.Offset.X, exampleMenu.Offset.Y - 1f));
+            else exampleMenu.SetMenuOffset(new PointF(exampleMenu.Offset.X, exampleMenu.Offset.Y + 1f));
+            exampleMenu.RefreshMenu();
+            return exampleMenu.Offset.Y.ToString("F3");
+        });
+        
+        offsetMenu.AddItem(offsetX);
+        offsetMenu.AddItem(offsetY);
+        
+        offsetItem.Activated += (sender, args) =>
+        {
+            sender.SwitchTo(offsetMenu, inheritOldMenuParams: true);
+        };
+        #endregion
+        
 
         #endregion
 
