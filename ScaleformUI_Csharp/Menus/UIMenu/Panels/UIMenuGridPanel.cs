@@ -77,12 +77,15 @@ namespace ScaleformUI.Menu
 
         private void _setValue(PointF value)
         {
-            int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(ParentItem));
-            int van = ParentItem.Panels.IndexOf(this);
-            Main.scaleformUI.CallFunction("SET_GRID_PANEL_VALUE_RETURN_VALUE", it, van, value.X, value.Y);
+            if (ParentItem != null && ParentItem.Parent != null && ParentItem.Parent.Visible && ParentItem.Parent.Pagination.IsItemVisible(ParentItem.Parent.MenuItems.IndexOf(ParentItem)))
+            {
+                int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(ParentItem));
+                int van = ParentItem.Panels.IndexOf(this);
+                Main.scaleformUI.CallFunction("SET_GRID_PANEL_VALUE_RETURN_VALUE", it, van, value.X, value.Y);
+            }
         }
 
-        public async void SetMousePosition(PointF mouse)
+        private async void SetMousePosition(PointF mouse)
         {
             int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(ParentItem));
             int van = ParentItem.Panels.IndexOf(this);

@@ -47,7 +47,7 @@ namespace ScaleformUI.Menu
 
         private void _setValue(float val)
         {
-            if (ParentItem != null && ParentItem.Parent != null && ParentItem.Parent.Visible)
+            if (ParentItem != null && ParentItem.Parent != null && ParentItem.Parent.Visible && ParentItem.Parent.Pagination.IsItemVisible(ParentItem.Parent.MenuItems.IndexOf(ParentItem)))
             {
                 int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(ParentItem));
                 int van = ParentItem.Panels.IndexOf(this);
@@ -55,7 +55,7 @@ namespace ScaleformUI.Menu
             }
         }
 
-        public async void SetMousePercentage(PointF mouse)
+        private async void SetMousePercentage(PointF mouse)
         {
             int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(ParentItem));
             int van = ParentItem.Panels.IndexOf(this);

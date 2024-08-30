@@ -36,10 +36,12 @@ function UIMenuStatisticsPanel:AddStatistic(name, value) -- required
             value = 0
         end
         table.insert(self.Items, { ['name'] = name, ['value'] = value })
-        if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
-            local it = IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem)
+        if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() 
+            and self.ParentItem:SetParentMenu().Pagination:IsItemVisible(IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem)) then
+
+            local it = self.ParentItem:SetParentMenu().Pagination:GetScaleformIndex(IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem))
             local van = IndexOf(self.ParentItem.Panels, self)
-            ScaleformUI.Scaleforms._ui:CallFunction("ADD_STATISTIC_TO_PANEL", it, van, name, value)
+            ScaleformUI.Scaleforms._ui:CallFunction("ADD_STATISTIC_TO_PANEL", it, van-1, name, value)
         end
     end
 end
@@ -70,10 +72,11 @@ function UIMenuStatisticsPanel:UpdateStatistic(index, value)
             value = 0
         end
         self.Items[index].value = value
-        if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
-            local it = IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem)
+        if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible()
+            and self.ParentItem:SetParentMenu().Pagination:IsItemVisible(IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem)) then
+            local it = self.ParentItem:SetParentMenu().Pagination:GetScaleformIndex(IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem))
             local pan = IndexOf(self.ParentItem.Panels, self)
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_PANEL_STATS_ITEM_VALUE", it - 1, pan - 1, index - 1, value)
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_PANEL_STATS_ITEM_VALUE", it, pan - 1, index - 1, value)
         end
     end
 end

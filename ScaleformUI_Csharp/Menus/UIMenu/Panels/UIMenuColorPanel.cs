@@ -69,7 +69,7 @@ namespace ScaleformUI.Menu
             }
         }*/
 
-        public async void _getValue()
+        private async void _getValue()
         {
             int it = this.ParentItem.Parent.Pagination.GetScaleformIndex(this.ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
             int van = this.ParentItem.Panels.IndexOf(this);
@@ -84,7 +84,7 @@ namespace ScaleformUI.Menu
         public void _setValue(int val)
         {
 
-            if (ParentItem != null && ParentItem.Parent != null && ParentItem.Parent.Visible)
+            if (ParentItem != null && ParentItem.Parent != null && ParentItem.Parent.Visible && ParentItem.Parent.Pagination.IsItemVisible(ParentItem.Parent.MenuItems.IndexOf(ParentItem)))
             {
                 int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
                 int van = ParentItem.Panels.IndexOf(this);

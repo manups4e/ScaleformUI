@@ -18,7 +18,7 @@
                 _value = 0;
             StatisticsForPanel item = new(Name, _value);
             Items.Add(item);
-            if (ParentItem != null && ParentItem.Parent != null && ParentItem.Parent.Visible)
+            if (ParentItem != null && ParentItem.Parent != null && ParentItem.Parent.Visible && ParentItem.Parent.Pagination.IsItemVisible(ParentItem.Parent.MenuItems.IndexOf(ParentItem)))
             {
                 int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(ParentItem));
                 int van = ParentItem.Panels.IndexOf(this);
@@ -38,9 +38,12 @@
                 Items[ItemId].Value = 100;
             if (Items[ItemId].Value < 0)
                 Items[ItemId].Value = 0;
-            int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(ParentItem));
-            int van = ParentItem.Panels.IndexOf(this);
-            Main.scaleformUI.CallFunction("SET_PANEL_STATS_ITEM_VALUE", it, van, ItemId, Items[ItemId].Value);
+            if (ParentItem != null && ParentItem.Parent != null && ParentItem.Parent.Visible && ParentItem.Parent.Pagination.IsItemVisible(ParentItem.Parent.MenuItems.IndexOf(ParentItem)))
+            {
+                int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(ParentItem));
+                int van = ParentItem.Panels.IndexOf(this);
+                Main.scaleformUI.CallFunction("SET_PANEL_STATS_ITEM_VALUE", it, van, ItemId, Items[ItemId].Value);
+            }
         }
     }
 
