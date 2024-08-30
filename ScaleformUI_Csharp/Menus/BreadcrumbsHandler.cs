@@ -4,7 +4,7 @@
     {
         private static readonly List<Tuple<MenuBase, dynamic>> breadcrumbs = new List<Tuple<MenuBase, dynamic>>();
         internal static int Count => breadcrumbs.Count;
-        internal static int CurrentDepth => breadcrumbs.Count - 1;
+        internal static int CurrentDepth => breadcrumbs.Count == 0 ? 0 : breadcrumbs.Count - 1;
         public static MenuBase PreviousMenu => breadcrumbs[CurrentDepth - 1].Item1;
         public static bool SwitchInProgress = false;
 
