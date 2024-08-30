@@ -774,12 +774,19 @@ function UIMenu:Visible(bool)
             MenuHandler._currentMenu = nil
             MenuHandler.ableToDraw = false
             self.OnMenuClose(self)
+            self:clearLabels()
         end
         if self.Settings.ResetCursorOnOpen then
             SetCursorLocation(0.5, 0.5)
         end
     else
         return self._Visible
+    end
+end
+
+function UIMenu:clearLabels()
+    for k,v in ipairs(self.Items) do
+        AddTextEntry("menu_" .. (BreadcrumbsHandler:CurrentDepth() + 1) .. "_desc_" .. k, "")
     end
 end
 
@@ -1076,7 +1083,7 @@ function UIMenu:_itemCreation(page, pageIndex, before, overflow)
                 end
             elseif pSubType == "UIMenuPercentagePanel" then
                 ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", scaleformIndex, 1, panel.Title, panel.Min,
-                    panel.Max, panel.Percentage)
+                    panel.Max, panel._percentage)
             elseif pSubType == "UIMenuGridPanel" then
                 ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", scaleformIndex, 2, panel.TopLabel,
                     panel.RightLabel, panel.LeftLabel, panel.BottomLabel, panel._CirclePosition.x,
@@ -1708,9 +1715,9 @@ function UIMenu:ProcessMouse()
                 self.OnGridPanelChanged(panel.ParentItem, panel, panel._CirclePosition)
                 panel.OnGridPanelChanged(panel.ParentItem, panel, panel._CirclePosition)
             elseif panel_subtype == "UIMenuPercentagePanel" then
-                panel.Percentage = tonumber(split[2])
-                self:OnPercentagePanelChanged(panel.ParentItem, panel, panel.Percentage)
-                panel.OnPercentagePanelChange(panel.ParentItem, panel, panel.Percentage)
+                panel._percentage = tonumber(split[2])
+                self:OnPercentagePanelChanged(panel.ParentItem, panel, panel._percentage)
+                panel.OnPercentagePanelChange(panel.ParentItem, panel, panel._percentage)
             end
         end)
     else
