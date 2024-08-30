@@ -291,9 +291,8 @@ end
 ---@param panel UIMenuStatisticsPanel|UIMenuPercentagePanel|UIMenuColorPanel|UIMenuGridPanel
 function UIMenuListItem:AddPanel(panel)
     if panel() == "UIMenuPanel" then
+        panel.ParentItem = self
         self.Panels[#self.Panels + 1] = panel
-        ---@diagnostic disable-next-line: param-type-mismatch
-        panel:SetParentItem(self)
     end
 end
 

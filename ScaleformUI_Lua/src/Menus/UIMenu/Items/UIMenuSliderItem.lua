@@ -214,6 +214,15 @@ function UIMenuSliderItem:Index(Index)
     end
 end
 
+---AddPanel
+---@param panel UIMenuStatisticsPanel|UIMenuPercentagePanel|UIMenuColorPanel|UIMenuGridPanel
+function UIMenuSliderItem:AddPanel(panel)
+    if panel() == "UIMenuPanel" then
+        panel.ParentItem = self
+        self.Panels[#self.Panels + 1] = panel
+    end
+end
+
 function UIMenuSliderItem:LeftBadge(Badge)
     if tonumber(Badge) then
         self.Base:LeftBadge(Badge, self)

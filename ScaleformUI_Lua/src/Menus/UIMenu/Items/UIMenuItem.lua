@@ -402,8 +402,8 @@ end
 
 function UIMenuItem:AddPanel(Panel)
     if Panel() == "UIMenuPanel" then
+        Panel.ParentItem = self
         self.Panels[#self.Panels + 1] = Panel
-        Panel:SetParentItem(self)
     end
 end
 

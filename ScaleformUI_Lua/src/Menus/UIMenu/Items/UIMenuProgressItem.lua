@@ -223,6 +223,15 @@ function UIMenuProgressItem:Index(Index)
     end
 end
 
+---AddPanel
+---@param panel UIMenuStatisticsPanel|UIMenuPercentagePanel|UIMenuColorPanel|UIMenuGridPanel
+function UIMenuProgressItem:AddPanel(panel)
+    if panel() == "UIMenuPanel" then
+        panel.ParentItem = self
+        self.Panels[#self.Panels + 1] = panel
+    end
+end
+
 ---LeftBadge
 function UIMenuProgressItem:LeftBadge(Badge)
     if tonumber(Badge) then
