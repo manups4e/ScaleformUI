@@ -88,7 +88,7 @@ function MultiplayerChat:Show()
 end
 
 function MultiplayerChat:StartTyping(scopeType, scopeText)
-  self:SetFocus(ChatVisible.Typing, scopeType, scopeText, GetPlayerName(PlayerId()), HudColours.White)
+  self:SetFocus(ChatVisible.Typing, scopeType, scopeText, GetPlayerName(PlayerId()), HudColours.HUD_COLOUR_WHITE)
 end
 
 ---Scroll the chat up
