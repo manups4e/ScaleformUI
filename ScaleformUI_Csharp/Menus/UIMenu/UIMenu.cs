@@ -1715,6 +1715,14 @@ namespace ScaleformUI.Menu
             }
         }
 
+        private void clearAllLabels()
+        {
+            for(int i=0; i<MenuItems.Count;i++)
+            {
+                AddTextEntry($"menu_{BreadcrumbsHandler.Count}_desc_{i}", "");
+            }
+        }
+
         int eventType = 0;
         int itemId = 0;
         int context = 0;
@@ -2435,6 +2443,7 @@ namespace ScaleformUI.Menu
                     MenuHandler.currentMenu = null;
                     _unfilteredMenuItems.Clear();
                     Main.scaleformUI.CallFunction("CLEAR_ALL");
+                    clearAllLabels();
                 }
                 if (!value) return;
                 if (!ResetCursorOnOpen) return;
