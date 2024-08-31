@@ -30,7 +30,6 @@ end
 ---@field public DisableGameControls fun(self: UIMenu, bool: boolean|nil):boolean -- Disable non menu controls
 ---@field public HasInstructionalButtons fun(self: UIMenu, enabled: boolean|nil):boolean -- If the menu has instructional buttons
 ---@field public CanPlayerCloseMenu fun(self: UIMenu, playerCanCloseMenu: boolean|nil):boolean -- If the player can close the menu
----@field public ControlDisablingEnabled fun(self: UIMenu, enabled: boolean|nil):boolean -- If the menu disables controls
 ---@field public MouseEdgeEnabled fun(self: UIMenu, enabled: boolean|nil):boolean -- If the mouse edge is enabled
 ---@field public MouseWheelControlEnabled fun(self: UIMenu, enabled: boolean|nil):boolean -- If the mouse wheel is enabled
 ---@field public MouseControlsEnabled fun(self: UIMenu, enabled: boolean|nil):boolean -- If the mouse controls are enabled
@@ -247,7 +246,6 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
             MouseControlsEnabled = true,
             MouseWheelEnabled = true,
             MouseEdgeEnabled = true,
-            ControlDisablingEnabled = true,
             Audio = {
                 Library = "HUD_FRONTEND_DEFAULT_SOUNDSET",
                 UpDown = "NAV_UP_DOWN",
@@ -398,17 +396,6 @@ function UIMenu:CanPlayerCloseMenu(playerCanCloseMenu)
         end
     end
     return self._canHe
-end
-
--- TODO: Refactor this method and process as its rather backwards.
----Sets if some controls (attack, game camera movement) are disabled when the menu is open. (Default: true) (set to false to disable default left click controls)
----@param enabled boolean|nil
----@return boolean
-function UIMenu:ControlDisablingEnabled(enabled)
-    if enabled ~= nil then
-        self.Settings.ControlDisablingEnabled = ToBool(enabled)
-    end
-    return self.Settings.ControlDisablingEnabled
 end
 
 ---Sets if the camera can be rotated when the mouse cursor is near the edges of the screen. (Default: true)
