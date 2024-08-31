@@ -26,6 +26,7 @@ end
 ---@field public DescriptionFont fun(self: UIMenu, fontTable: ScaleformFonts|nil):ScaleformFonts -- Menu description font
 ---@field public Subtitle fun(self: UIMenu, subTitle: string|nil):string -- Menu subtitle
 ---@field public CounterColor fun(self: UIMenu, color: SColor|nil):SColor -- Counter color
+---@field public SubtitleColor fun(self: UIMenu, color: HudColours|nil):SColor -- Description color
 ---@field public DisableGameControls fun(self: UIMenu, bool: boolean|nil):boolean -- Disable non menu controls
 ---@field public HasInstructionalButtons fun(self: UIMenu, enabled: boolean|nil):boolean -- If the menu has instructional buttons
 ---@field public CanPlayerCloseMenu fun(self: UIMenu, playerCanCloseMenu: boolean|nil):boolean -- If the player can close the menu
@@ -73,7 +74,7 @@ end
 ---@field private animationType MenuAnimationType -- Sets the menu animation type (default: MenuAnimationType.LINEAR)
 ---@field private buildingAnimation MenuBuildingAnimation -- Sets the menu building animation type (default: MenuBuildingAnimation.NONE)
 ---@field private descFont ScaleformFonts -- Sets the desctiption text font. (default: ScaleformFonts.CHALET_LONDON_NINETEENSIXTY)
----@field private SubtitleColor HudColours -- Sets the subtitle color (default: HudColours.NONE)
+---@field private subtitleColor HudColours -- Sets the subtitle color (default: HudColours.NONE)
 ---@field private leftClickEnabled boolean -- Enable or disable left click controls (default: false)
 ---@field private bannerColor SColor -- Sets the menu banner color (default: SColor.HUD_None)
 ---@field private _unfilteredMenuItems table -- {}
@@ -149,7 +150,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         buildingAnimation = MenuBuildingAnimation.NONE,
         scrollingType = MenuScrollingType.CLASSIC,
         descFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY,
-        SubtitleColor = HudColours.NONE,
+        subtitleColor = HudColours.NONE,
         leftClickEnabled = false,
         bannerColor = SColor.HUD_None,
         Extra = {},
@@ -275,11 +276,11 @@ function UIMenu:Title(title)
     else
         self._Title = title
         if self:Visible() then
-            if self.SubtitleColor == HudColours.NONE then
+            if self.subtitleColor == HudColours.NONE then
                 ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_TITLE_SUBTITLE", self._Title, self._Subtitle,
                     self.alternativeTitle)
             else
-                ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_TITLE_SUBTITLE", self._Title, "~HC_" .. self.SubtitleColor .. "~" .. self._Subtitle,
+                ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_TITLE_SUBTITLE", self._Title, "~HC_" .. self.subtitleColor .. "~" .. self._Subtitle,
                     self.alternativeTitle)
             end
         end
@@ -303,11 +304,11 @@ function UIMenu:Subtitle(sub)
     else
         self._Subtitle = sub
         if self:Visible() then
-            if self.SubtitleColor == HudColours.NONE then
+            if self.subtitleColor == HudColours.NONE then
                 ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_TITLE_SUBTITLE", self._Title, self._Subtitle,
                     self.alternativeTitle)
             else
-                ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_TITLE_SUBTITLE", self._Title, "~HC_" .. self.SubtitleColor .. "~" .. self._Subtitle,
+                ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_TITLE_SUBTITLE", self._Title, "~HC_" .. self.subtitleColor .. "~" .. self._Subtitle,
                     self.alternativeTitle)
             end
         end
@@ -321,6 +322,24 @@ function UIMenu:CounterColor(color)
         self.counterColor = color
         if self:Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_COLOR", self.counterColor)
+        end
+    end
+end
+
+---Getter / Setter for the subtitle color.
+---@param color HudColours
+---@return any
+function UIMenu:SubtitleColor(color)
+    if color == nil then
+        return self.subtitleColor
+    else
+        self.subtitleColor = color
+        if self:Visible() then
+            if color == HudColours.NONE then
+                ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_TITLE_SUBTITLE", self._Title, self._Subtitle, self.alternativeTitle)
+            else
+                ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_TITLE_SUBTITLE", self._Title, "~HC_" .. self.subtitleColor .. "~" .. self._Subtitle, self.alternativeTitle)
+            end
         end
     end
 end
@@ -799,10 +818,10 @@ function UIMenu:BuildUpMenuAsync(itemsOnly)
     if self._itemless then
         BeginScaleformMovieMethod(ScaleformUI.Scaleforms._ui.handle, "CREATE_MENU")
         PushScaleformMovieMethodParameterString(self._Title)
-        if self.SubtitleColor == HudColours.NONE then
+        if self.subtitleColor == HudColours.NONE then
             PushScaleformMovieMethodParameterString(self._Subtitle)
         else
-            PushScaleformMovieMethodParameterString("~HC_" .. self.SubtitleColor .. "~" .. self._Subtitle)
+            PushScaleformMovieMethodParameterString("~HC_" .. self.subtitleColor .. "~" .. self._Subtitle)
         end
         PushScaleformMovieMethodParameterFloat(self.Position.x)
         PushScaleformMovieMethodParameterFloat(self.Position.y)
@@ -830,14 +849,14 @@ function UIMenu:BuildUpMenuAsync(itemsOnly)
 
     if not itemsOnly then
         while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
-        if self.SubtitleColor == HudColours.NONE then
+        if self.subtitleColor == HudColours.NONE then
             ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", self._Title, self._Subtitle, self.Position.x,
                 self.Position.y,
                 self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, self:AnimationEnabled(),
                 self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName,
                 self.descFont.FontID, self.fadingTime, self.bannerColor:ToArgb(), false)
         else
-            ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", self._Title, "~HC_" .. self.SubtitleColor .. "~" .. self._Subtitle, self.Position.x,
+            ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", self._Title, "~HC_" .. self.subtitleColor .. "~" .. self._Subtitle, self.Position.x,
                 self.Position.y,
                 self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, self:AnimationEnabled(),
                 self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName,
