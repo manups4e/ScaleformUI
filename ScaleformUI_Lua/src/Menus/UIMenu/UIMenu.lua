@@ -270,6 +270,9 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
     return setmetatable(_UIMenu, UIMenu)
 end
 
+---Getter / Setter for the menu title.
+---@param title any
+---@return any
 function UIMenu:Title(title)
     if title == nil then
         return self._Title
@@ -287,6 +290,9 @@ function UIMenu:Title(title)
     end
 end
 
+---Getter / Setter for the description font.
+---@param fontTable any
+---@return any
 function UIMenu:DescriptionFont(fontTable)
     if fontTable == nil then
         return self.descFont
@@ -298,6 +304,9 @@ function UIMenu:DescriptionFont(fontTable)
     end
 end
 
+---Getter / Setter for the subtitle.
+---@param sub any
+---@return any
 function UIMenu:Subtitle(sub)
     if sub == nil then
         return self._Subtitle
@@ -315,6 +324,9 @@ function UIMenu:Subtitle(sub)
     end
 end
 
+---Getter / Setter for the counter color.
+---@param color SColor
+---@return any
 function UIMenu:CounterColor(color)
     if color == nil then
         return self.counterColor
