@@ -916,7 +916,7 @@ namespace ScaleformUI.Menu
         public string AUDIO_SELECT = "SELECT";
         public string AUDIO_BACK = "BACK";
         public string AUDIO_ERROR = "ERROR";
-        public HudColor SubtitleColor = HudColor.NONE;
+        private HudColor subtitleColor = HudColor.NONE;
         private SColor bannerColor = SColor.HUD_None;
 
         public List<UIMenuItem> MenuItems = new List<UIMenuItem>();
@@ -2462,7 +2462,7 @@ namespace ScaleformUI.Menu
                 while (!Main.scaleformUI.IsLoaded) await BaseScript.Delay(0);
                 BeginScaleformMovieMethod(Main.scaleformUI.Handle, "CREATE_MENU");
                 PushScaleformMovieMethodParameterString(Title);
-                PushScaleformMovieMethodParameterString(SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle);
+                PushScaleformMovieMethodParameterString(subtitleColor != HudColor.NONE ? "~" + subtitleColor + "~" + Subtitle : Subtitle);
                 PushScaleformMovieMethodParameterFloat(Offset.X);
                 PushScaleformMovieMethodParameterFloat(Offset.Y);
                 PushScaleformMovieMethodParameterBool(AlternativeTitle);
@@ -2490,7 +2490,7 @@ namespace ScaleformUI.Menu
             {
                 EnableAnimation = false;
                 while (!Main.scaleformUI.IsLoaded) await BaseScript.Delay(0);
-                Main.scaleformUI.CallFunction("CREATE_MENU", Title, SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, EnableAnimation, (int)AnimationType, (int)buildingAnimation, counterColor, descriptionFont.FontName, descriptionFont.FontID, fadingTime, bannerColor.ArgbValue, false);
+                Main.scaleformUI.CallFunction("CREATE_MENU", Title, subtitleColor != HudColor.NONE ? "~" + subtitleColor + "~" + Subtitle : Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, EnableAnimation, (int)AnimationType, (int)buildingAnimation, counterColor, descriptionFont.FontName, descriptionFont.FontID, fadingTime, bannerColor.ArgbValue, false);
                 if (Windows.Count > 0)
                 {
                     foreach (UIMenuWindow wind in Windows)
@@ -2968,7 +2968,24 @@ namespace ScaleformUI.Menu
                 title = value;
                 if (Visible)
                 {
-                    Main.scaleformUI.CallFunction("UPDATE_TITLE_SUBTITLE", title, SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle, AlternativeTitle);
+                    Main.scaleformUI.CallFunction("UPDATE_TITLE_SUBTITLE", title, subtitleColor != HudColor.NONE ? "~" + subtitleColor + "~" + Subtitle : Subtitle, AlternativeTitle);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the subtitle's color
+        /// </summary>
+        
+        public HudColor SubtitleColor
+        {
+            get => subtitleColor;
+            set
+            {
+                subtitleColor = value;
+                if (Visible)
+                {
+                    Main.scaleformUI.CallFunction("UPDATE_TITLE_SUBTITLE", title, subtitleColor != HudColor.NONE ? "~" + subtitleColor + "~" + Subtitle : Subtitle, AlternativeTitle);
                 }
             }
         }
@@ -2985,7 +3002,7 @@ namespace ScaleformUI.Menu
                 subtitle = value;
                 if (Visible)
                 {
-                    Main.scaleformUI.CallFunction("UPDATE_TITLE_SUBTITLE", title, SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle, AlternativeTitle);
+                    Main.scaleformUI.CallFunction("UPDATE_TITLE_SUBTITLE", title, subtitleColor != HudColor.NONE ? "~" + subtitleColor + "~" + Subtitle : Subtitle, AlternativeTitle);
                 }
             }
         }
