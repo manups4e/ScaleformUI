@@ -255,10 +255,7 @@ function UIRadioMenu:animateIn()
     ScaleformUI.Scaleforms._radioMenu:CallFunction("ANIMATE_IN", self._animDuration, self._AnimDirection, "zoom")
     repeat
         Citizen.Wait(0)
-        local return_value = ScaleformUI.Scaleforms._radioMenu:CallFunction("GET_IS_ANIMATING", true) --[[@as number]]
-        while not IsScaleformMovieMethodReturnValueReady(return_value) do
-            Citizen.Wait(0)
-        end
+        local return_value = ScaleformUI.Scaleforms._radioMenu:CallFunctionAsyncReturnBool("GET_IS_ANIMATING", true) --[[@as number]]
         self.isAnimating = GetScaleformMovieMethodReturnValueBool(return_value)
     until not self.isAnimating
 end
@@ -267,10 +264,7 @@ function UIRadioMenu:animateOut()
     ScaleformUI.Scaleforms._radioMenu:CallFunction("ANIMATE_OUT", self._animDuration, self._AnimDirection, "zoom")
     repeat
         Citizen.Wait(0)
-        local return_value = ScaleformUI.Scaleforms._radioMenu:CallFunction("GET_IS_ANIMATING", true) --[[@as number]]
-        while not IsScaleformMovieMethodReturnValueReady(return_value) do
-            Citizen.Wait(0)
-        end
+        local return_value = ScaleformUI.Scaleforms._radioMenu:CallFunctionAsyncReturnBool("GET_IS_ANIMATING", true) --[[@as number]]
         self.isAnimating = GetScaleformMovieMethodReturnValueBool(return_value)
     until not self.isAnimating
 end
