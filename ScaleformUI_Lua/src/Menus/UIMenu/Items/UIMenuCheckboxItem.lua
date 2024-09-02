@@ -122,7 +122,8 @@ function UIMenuCheckboxItem:Label(Text)
 end
 
 function UIMenuCheckboxItem:MainColor(color)
-    if (color) then
+    if color then
+        assert(type(color) == "table", "Color must be SColor type")
         self.Base._mainColor = color
         if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
@@ -134,7 +135,8 @@ function UIMenuCheckboxItem:MainColor(color)
 end
 
 function UIMenuCheckboxItem:TextColor(color)
-    if (color) then
+    if color then
+        assert(type(color) == "table", "Color must be SColor type")
         self.Base._textColor = color
         if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
@@ -146,7 +148,8 @@ function UIMenuCheckboxItem:TextColor(color)
 end
 
 function UIMenuCheckboxItem:HighlightColor(color)
-    if (color) then
+    if color then
+        assert(type(color) == "table", "Color must be SColor type")
         self.Base._highlightColor = color
         if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
@@ -158,7 +161,8 @@ function UIMenuCheckboxItem:HighlightColor(color)
 end
 
 function UIMenuCheckboxItem:HighlightedTextColor(color)
-    if (color) then
+    if color then
+        assert(type(color) == "table", "Color must be SColor type")
         self.Base._highlightedTextColor = color
         if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
