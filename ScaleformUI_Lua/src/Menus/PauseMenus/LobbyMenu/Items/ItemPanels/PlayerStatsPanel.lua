@@ -159,7 +159,7 @@ function PlayerStatsPanel:UpdatePanel(override)
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_PANEL", idx, 0, (self.ParentItem.ClonePed ~= nil and self.ParentItem.ClonePed ~= 0), self:Title(), self:Description(), self:TitleColor(), self.RankInfo:RankLevel(), self:HasPlane(), self:HasHeli(), self:HasBoat(), self:HasVehicle(), 0, self.RankInfo:LowLabel(), 0, 0, self.RankInfo:MidLabel(), 0, 0, self.RankInfo:UpLabel(), 0, 0, self._hardwareVisible)
             for k, stat in pairs(self.Items) do
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_PANEL_STAT", idx, stat._idx, 0, stat:Label(), stat:Description(), stat:Value())
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_PANEL_STAT", idx, stat.idx, 0, stat:Label(), stat:Description(), stat:Value())
             end
             if not self:Description():IsNullOrEmpty() then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYER_ITEM_PANEL_DESCRIPTION", idx, self:Description(), 0, "", (self.ParentItem.ClonePed ~= nil and self.ParentItem.ClonePed ~= 0))
@@ -171,7 +171,7 @@ function PlayerStatsPanel:UpdatePanel(override)
         elseif pSubT == "PauseMenu" and self.ParentItem.ParentColumn.ParentTab.Visible then
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL", idx, 0, (self.ParentItem.ClonePed ~= nil and self.ParentItem.ClonePed ~= 0), self:Title(), self:Description(), self:TitleColor(), self.RankInfo:RankLevel(), self:HasPlane(), self:HasHeli(), self:HasBoat(), self:HasVehicle(), 0, self.RankInfo:LowLabel(), 0, 0, self.RankInfo:MidLabel(), 0, 0, self.RankInfo:UpLabel(), 0, 0, self._hardwareVisible)
             for k, stat in pairs(self.Items) do
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_STAT", idx, stat._idx, 0, stat:Label(), stat:Description(), stat:Value())
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_STAT", idx, stat.idx, 0, stat:Label(), stat:Description(), stat:Value())
             end
             if not self:Description():IsNullOrEmpty() then
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYER_ITEM_PANEL_DESCRIPTION", idx, self:Description(), 0, "", (self.ParentItem.ClonePed ~= nil and self.ParentItem.ClonePed ~= 0))
