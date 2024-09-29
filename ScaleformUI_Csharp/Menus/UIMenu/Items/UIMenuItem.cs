@@ -686,6 +686,7 @@ namespace ScaleformUI.Menu
             private set
             {
                 _rightLabel = value;
+                _formatRightLabel = value.StartsWith("~") ? value : "~s~" + value;
                 _formatRightLabel = !_enabled ? _formatRightLabel.ReplaceRstarColorsWith("~c~") : _selected ? _formatRightLabel .Replace("~w~", "~l~").Replace("~s~", "~l~") : _formatRightLabel .Replace("~l~", "~s~");
                 if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
