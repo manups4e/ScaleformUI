@@ -106,28 +106,24 @@ function PlayerListColumn:AddPlayer(item)
     self.Items[item.Handle] = item
     self.Pagination:TotalItems(#self.Items)
     if self.Parent ~= nil and self.Parent:Visible() then
-        self.Items[#self.Items + 1] = item
-        self.Pagination:TotalItems(#self.Items)
-        if self.Parent ~= nil and self.Parent:Visible() then
-            if self.Pagination:TotalItems() < self.Pagination:ItemsPerPage() then
-                local sel = self:CurrentSelection()
-                self.Pagination:MinItem(self.Pagination:CurrentPageStartIndex())
+        if self.Pagination:TotalItems() < self.Pagination:ItemsPerPage() then
+            local sel = self:CurrentSelection()
+            self.Pagination:MinItem(self.Pagination:CurrentPageStartIndex())
 
-                if self.scrollingType == MenuScrollingType.CLASSIC and self.Pagination:TotalPages() > 1 then
-                    local missingItems = self.Pagination:GetMissingItems()
-                    if missingItems > 0 then
-                        self.Pagination:ScaleformIndex(self.Pagination:GetPageIndexFromMenuIndex(self.Pagination:CurrentPageEndIndex()) + missingItems - 1)
-                        self.Pagination.minItem = self.Pagination:CurrentPageStartIndex() - missingItems
-                    end
+            if self.scrollingType == MenuScrollingType.CLASSIC and self.Pagination:TotalPages() > 1 then
+                local missingItems = self.Pagination:GetMissingItems()
+                if missingItems > 0 then
+                    self.Pagination:ScaleformIndex(self.Pagination:GetPageIndexFromMenuIndex(self.Pagination:CurrentPageEndIndex()) + missingItems - 1)
+                    self.Pagination.minItem = self.Pagination:CurrentPageStartIndex() - missingItems
                 end
+            end
 
-                self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
-                self:_itemCreation(self.Pagination:CurrentPage(), #self.Items, false)
-                local pSubT = self.Parent()
-                if pSubT == "PauseMenu" and self.ParentTab.Visible then
-                    if self.ParentTab.listCol[self.ParentTab:Focus()] == self then
-                        self:CurrentSelection(sel)
-                    end
+            self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
+            self:_itemCreation(self.Pagination:CurrentPage(), #self.Items, false)
+            local pSubT = self.Parent()
+            if pSubT == "PauseMenu" and self.ParentTab.Visible then
+                if self.ParentTab.listCol[self.ParentTab:Focus()] == self then
+                    self:CurrentSelection(sel)
                 end
             end
         end

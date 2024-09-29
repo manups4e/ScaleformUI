@@ -51,7 +51,7 @@ function MenuHandler:SwitchTo(currentMenu, newMenu, newMenuCurrentSelection, inh
             newMenu:MouseSettings(currentMenu:MouseControlsEnabled(), currentMenu:MouseEdgeEnabled(), currentMenu:MouseWheelControlEnabled(), currentMenu.Settings.ResetCursorOnOpen, currentMenu.leftClickEnabled)
             newMenu.enabled3DAnimations = currentMenu.enabled3DAnimations
             newMenu.fadingTime = currentMenu.fadingTime
-            newMenu.SubtitleColor = currentMenu.SubtitleColor
+            newMenu:SubtitleColor(currentMenu:SubtitleColor())
             --[[
                 newMenu.Settings.MouseControlsEnabled = currentMenu.Settings.MouseControlsEnabled
                 newMenu.Settings.MouseEdgeEnabled = currentMenu.Settings.MouseEdgeEnabled
