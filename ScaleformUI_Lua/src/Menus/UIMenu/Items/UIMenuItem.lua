@@ -248,7 +248,8 @@ function UIMenuItem:Description(str, item)
 end
 
 function UIMenuItem:MainColor(color, item)
-    if (color) then
+    if color then
+        assert(type(color) == "table", "Color must be SColor type")
         if item == nil then item = self end
         self._mainColor = color
         if (self.ParentMenu ~= nil and self.ParentMenu:Visible()) and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, item)) then
@@ -260,7 +261,8 @@ function UIMenuItem:MainColor(color, item)
 end
 
 function UIMenuItem:TextColor(color, item)
-    if (color) then
+    if color then
+        assert(type(color) == "table", "Color must be SColor type")
         if item == nil then item = self end
         self._textColor = color
         if (self.ParentMenu ~= nil and self.ParentMenu:Visible()) and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, item)) then
@@ -272,7 +274,8 @@ function UIMenuItem:TextColor(color, item)
 end
 
 function UIMenuItem:HighlightColor(color, item)
-    if (color) then
+    if color then
+        assert(type(color) == "table", "Color must be SColor type")
         if item == nil then item = self end
         self._highlightColor = color
         if (self.ParentMenu ~= nil and self.ParentMenu:Visible()) and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, item)) then
@@ -284,7 +287,8 @@ function UIMenuItem:HighlightColor(color, item)
 end
 
 function UIMenuItem:HighlightedTextColor(color, item)
-    if (color) then
+    if color then
+        assert(type(color) == "table", "Color must be SColor type")
         if item == nil then item = self end
         self._highlightedTextColor = color
         if (self.ParentMenu ~= nil and self.ParentMenu:Visible()) and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, item)) then
