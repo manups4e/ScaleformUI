@@ -1718,8 +1718,13 @@ namespace ScaleformUI.PauseMenu
                                 FocusLevel = 1;
                                 if (Tabs[Index] is PlayerListTab tab)
                                 {
-                                    if (tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].ClonePed != null)
-                                        tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].CreateClonedPed();
+                                    if (tab.listCol.Any(x => x.Type == "players"))
+                                    {
+                                        if (tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].ClonePed != null)
+                                            tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].CreateClonedPed();
+                                        else
+                                            ClearPedInPauseMenu();
+                                    }
                                     else
                                         ClearPedInPauseMenu();
                                 }
@@ -1845,27 +1850,28 @@ namespace ScaleformUI.PauseMenu
                         {
                             int foc = tab.Focus;
                             int curSel = 0;
-                            if (tab._newStyle)
+                            switch (tab.listCol[foc].Type)
                             {
-                                switch (tab.listCol[foc].Type)
-                                {
-                                    case "settings":
-                                        curSel = tab.SettingsColumn.CurrentSelection;
+                                case "settings":
+                                    curSel = tab.SettingsColumn.CurrentSelection;
+                                    if (tab._newStyle)
                                         tab.SettingsColumn.Items[tab.SettingsColumn.CurrentSelection].Selected = false;
-                                        break;
-                                    case "players":
-                                        curSel = tab.PlayersColumn.CurrentSelection;
+                                    break;
+                                case "players":
+                                    curSel = tab.PlayersColumn.CurrentSelection;
+                                    if (tab._newStyle)
                                         tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection].Selected = false;
-                                        break;
-                                    case "missions":
-                                        curSel = tab.MissionsColumn.CurrentSelection;
+                                    break;
+                                case "missions":
+                                    curSel = tab.MissionsColumn.CurrentSelection;
+                                    if (tab._newStyle)
                                         tab.MissionsColumn.Items[tab.MissionsColumn.CurrentSelection].Selected = false;
-                                        break;
-                                    case "store":
-                                        curSel = tab.StoreColumn.CurrentSelection;
+                                    break;
+                                case "store":
+                                    curSel = tab.StoreColumn.CurrentSelection;
+                                    if (tab._newStyle)
                                         tab.StoreColumn.Items[tab.StoreColumn.CurrentSelection].Selected = false;
-                                        break;
-                                }
+                                    break;
                             }
                             tab.updateFocus(context, true);
                             int index = tab.listCol[tab.Focus].Pagination.GetMenuIndexFromScaleformIndex(itemId);

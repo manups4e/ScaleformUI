@@ -233,7 +233,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             get { return Items.Count == 0 ? 0 : Pagination.CurrentMenuIndex; }
             set
             {
-                if (value == CurrentSelection) return;
+                if (value == Pagination.CurrentMenuIndex) return;
                 if (value < 0)
                 {
                     Pagination.CurrentMenuIndex = 0;

@@ -95,7 +95,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                 AddTextEntry($"menu_lobby_desc_{menuIndex}", item.Description);
                 BeginScaleformMovieMethod(lobby._pause._lobby.Handle, "ADD_LEFT_ITEM");
                 PushScaleformMovieFunctionParameterBool(before);
-                PushScaleformMovieFunctionParameterInt(menuIndex);
+                PushScaleformMovieFunctionParameterInt(scaleformIndex);
                 PushScaleformMovieFunctionParameterInt(item._itemId);
                 PushScaleformMovieMethodParameterString(item._formatLeftLabel);
                 if (item.DescriptionHash != 0 && string.IsNullOrWhiteSpace(item.Description))
@@ -195,7 +195,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                 AddTextEntry($"menu_pause_playerTab[{pause.Index}]_desc_{menuIndex}", item.Description);
                 BeginScaleformMovieMethod(pause._pause._pause.Handle, "ADD_PLAYERS_TAB_SETTINGS_ITEM");
                 PushScaleformMovieFunctionParameterBool(before);
-                PushScaleformMovieFunctionParameterInt(menuIndex);
+                PushScaleformMovieFunctionParameterInt(scaleformIndex);
                 PushScaleformMovieFunctionParameterInt(item._itemId);
                 PushScaleformMovieMethodParameterString(item._formatLeftLabel);
                 if (item.DescriptionHash != 0 && string.IsNullOrWhiteSpace(item.Description))
@@ -415,7 +415,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             get { return Items.Count == 0 ? 0 : Pagination.CurrentMenuIndex; }
             set
             {
-                if (value == CurrentSelection)
+                if (value == Pagination.CurrentMenuIndex)
                 {
                     if (Parent != null && Parent.Visible)
                     {

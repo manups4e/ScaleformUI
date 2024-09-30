@@ -240,7 +240,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             get { return Items.Count == 0 ? 0 : Pagination.CurrentMenuIndex; }
             set
             {
-                if (value == CurrentSelection) return;
+                if (value == Pagination.CurrentMenuIndex) return;
                 API.ClearPedInPauseMenu();
                 if (value < 0)
                 {
@@ -268,9 +268,9 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                         {
                             lobby._pause._lobby.CallFunction("SET_PLAYERS_SELECTION", Pagination.GetScaleformIndex(Pagination.CurrentMenuIndex));
                             lobby._pause._lobby.CallFunction("SET_PLAYERS_QTTY", CurrentSelection + 1, Items.Count);
-                            Items[CurrentSelection].Selected = true;
-                            if (lobby.listCol[0].Type == "players" || (lobby.listCol.Any(x => x.Type == "players") && Items.Count > 0 && Items[0].KeepPanelVisible))
+                            if (lobby.listCol[lobby.FocusLevel].Type == "players")
                             {
+                                Items[CurrentSelection].Selected = true;
                                 if (Items[CurrentSelection].ClonePed != null)
                                     Items[CurrentSelection].CreateClonedPed();
                             }

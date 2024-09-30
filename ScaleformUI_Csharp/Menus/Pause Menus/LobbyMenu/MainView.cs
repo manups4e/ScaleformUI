@@ -520,27 +520,28 @@ namespace ScaleformUI.LobbyMenu
                         {
                             int foc = FocusLevel;
                             int curSel = 0;
-                            if (_newStyle)
+                            switch (listCol[foc].Type)
                             {
-                                switch (listCol[foc].Type)
-                                {
-                                    case "settings":
-                                        curSel = SettingsColumn.CurrentSelection;
+                                case "settings":
+                                    curSel = SettingsColumn.CurrentSelection;
+                                    if (_newStyle)
                                         SettingsColumn.Items[SettingsColumn.CurrentSelection].Selected = false;
-                                        break;
-                                    case "players":
-                                        curSel = PlayersColumn.CurrentSelection;
+                                    break;
+                                case "players":
+                                    curSel = PlayersColumn.CurrentSelection;
+                                    if (_newStyle)
                                         PlayersColumn.Items[PlayersColumn.CurrentSelection].Selected = false;
-                                        break;
-                                    case "missions":
-                                        curSel = MissionsColumn.CurrentSelection;
+                                    break;
+                                case "missions":
+                                    curSel = MissionsColumn.CurrentSelection;
+                                    if (_newStyle)
                                         MissionsColumn.Items[MissionsColumn.CurrentSelection].Selected = false;
-                                        break;
-                                    case "store":
-                                        curSel = StoreColumn.CurrentSelection;
+                                    break;
+                                case "store":
+                                    curSel = StoreColumn.CurrentSelection;
+                                    if (_newStyle)
                                         StoreColumn.Items[StoreColumn.CurrentSelection].Selected = false;
-                                        break;
-                                }
+                                    break;
                             }
                             updateFocus(context, true);
                             int index = listCol[FocusLevel].Pagination.GetMenuIndexFromScaleformIndex(itemId);
@@ -675,9 +676,6 @@ namespace ScaleformUI.LobbyMenu
 
         public async void Select()
         {
-            string result = await _pause._lobby.CallFunctionReturnValueString("SET_INPUT_EVENT", 16);
-
-            int[] split = result.Split(',').Select(int.Parse).ToArray();
             switch (listCol[FocusLevel].Type)
             {
                 case "settings":
