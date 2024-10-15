@@ -352,12 +352,12 @@ end
 function UIMenuListItem:createListString()
     local list = {}
     for k, v in ipairs(self.Items) do
+        if type(v) ~= "string" then
+            v = tostring(v)
+        end
         if not self:Enabled() then
             v.ReplaceRstarColorsWith("~c~")
         else
-            if type(v) ~= "string" then
-                v = tostring(v)
-            end
             if not v:StartsWith("~") then
                 v = "~s~" .. v
             end
