@@ -352,23 +352,24 @@ end
 function UIMenuListItem:createListString()
     local list = {}
     for k, v in ipairs(self.Items) do
-        if type(v) ~= "string" then
-            v = tostring(v)
+        local value = v
+        if type(value) ~= "string" then
+            value = tostring(v)
         end
         if not self:Enabled() then
-            v.ReplaceRstarColorsWith("~c~")
+            value.ReplaceRstarColorsWith("~c~")
         else
-            if not v:StartsWith("~") then
-                v = "~s~" .. v
+            if not value:StartsWith("~") then
+                value = "~s~" .. value
             end
             if self:Selected() then
-                v = v:gsub("~w~", "~l~")
-                v = v:gsub("~s~", "~l~")
+                value = value:gsub("~w~", "~l~")
+                value = value:gsub("~s~", "~l~")
             else
-                v = v:gsub("~l~", "~s~")
+                value = value:gsub("~l~", "~s~")
             end
         end
-        table.insert(list, v)
+        table.insert(list, value)
     end
     return table.concat(list, ",")
 end
