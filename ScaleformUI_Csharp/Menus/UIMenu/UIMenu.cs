@@ -2829,13 +2829,23 @@ namespace ScaleformUI.Menu
                     EndScaleformMovieMethod();
                     Main.scaleformUI.CallFunction("SET_RIGHT_LABEL", scaleformIndex, item._formatRightLabel);
                     if (item.RightBadge != BadgeIcon.NONE)
-                        Main.scaleformUI.CallFunction("SET_RIGHT_BADGE", scaleformIndex, (int)item.RightBadge);
+                    {
+                        if(item.RightBadge == BadgeIcon.CUSTOM)
+                            Main.scaleformUI.CallFunction("SET_CUSTOM_RIGHT_BADGE", scaleformIndex, item.customRightBadge.Key, item.customRightBadge.Value);
+                        else
+                            Main.scaleformUI.CallFunction("SET_RIGHT_BADGE", scaleformIndex, (int)item.RightBadge);
+                    }
                     break;
             }
             Main.scaleformUI.CallFunction("SET_ITEM_LABEL_FONT", scaleformIndex, item.labelFont.FontName, item.labelFont.FontID);
             Main.scaleformUI.CallFunction("SET_ITEM_RIGHT_LABEL_FONT", scaleformIndex, item.rightLabelFont.FontName, item.rightLabelFont.FontID);
             if (item.LeftBadge != BadgeIcon.NONE)
-                Main.scaleformUI.CallFunction("SET_LEFT_BADGE", scaleformIndex, (int)item.LeftBadge);
+            {
+                if(item.LeftBadge == BadgeIcon.CUSTOM)
+                    Main.scaleformUI.CallFunction("SET_CUSTOM_LEFT_BADGE", scaleformIndex, item.customLeftBadge.Key, item.customLeftBadge.Value);
+                else
+                    Main.scaleformUI.CallFunction("SET_LEFT_BADGE", scaleformIndex, (int)item.LeftBadge);
+            }
             if (item.SidePanel != null)
             {
                 switch (item.SidePanel)

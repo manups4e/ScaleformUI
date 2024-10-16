@@ -45,6 +45,8 @@ function MissionItem.New(label, mainColor, highlightColor)
         RightIconChecked = false,
         _Selected = false,
         hovered = false,
+        customLeftIcon = {TXD="",TXN=""},
+        customRightIcon = {TXD="",TXN=""},
         Activated = function(item)
         end
     }
@@ -101,6 +103,34 @@ function MissionItem:SetRightIcon(icon, color, checked)
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSION_ITEM_RIGHT_ICON", idx, icon, checked, color)
         elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_MISSION_ITEM_RIGHT_ICON", idx, icon, checked or false, color)
+        end
+    end
+end
+
+function MissionItem:SetCustomLeftIcon(txd, txn)
+    self.LeftIcon = BadgeStyle.CUSTOM
+    self.customLeftIcon = {TXD=txd, TXN=txn}
+    if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
+        local idx = self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self))
+        local pSubT = self.ParentColumn.Parent()
+        if pSubT == "LobbyMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSION_ITEM_CUSTOM_LEFT_ICON", idx, txd, txn)
+        elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_MISSION_ITEM_CUSTOM_LEFT_ICON", idx, txd, txn)
+        end
+    end
+end
+function MissionItem:SetCustomRightIcon(txd, txn, checked)
+    self.RightIcon = BadgeStyle.CUSTOM
+    self.RightIconChecked = checked or false
+    self.customRightIcon = {TXD=txd, TXN=txn}
+    if self.ParentColumn ~= nil and self.ParentColumn.Parent ~= nil and self.ParentColumn.Parent:Visible() then
+        local idx = self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, self))
+        local pSubT = self.ParentColumn.Parent()
+        if pSubT == "LobbyMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSION_ITEM_CUSTOM_RIGHT_ICON", idx, txd, txn, checked)
+        elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_MISSION_ITEM_CUSTOM_RIGHT_ICON", idx, txd, txn, checked or false)
         end
     end
 end

@@ -143,12 +143,30 @@ function MissionListColumn:_itemCreation(page, pageIndex, before, overflow)
     end
 
     local item = self.Items[menuIndex]
+    local scIndex = self.Pagination:GetScaleformIndex(menuIndex)
     local pSubT = self.Parent()
     if pSubT == "LobbyMenu" then
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("ADD_MISSIONS_ITEM", before, menuIndex, item.type, item.Label, item.MainColor, item.HighlightColor, item.LeftIcon, item.LeftIconColor, item.RightIcon, item.RightIconColor, item.RightIconChecked, item.enabled)
     elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
         ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_PLAYERS_TAB_MISSIONS_ITEM", before, menuIndex, item.type, item.Label, item.MainColor, item.HighlightColor, item.LeftIcon, item.LeftIconColor, item.RightIcon, item.RightIconColor, item.RightIconChecked, item.enabled)
     end
+
+    if item.LeftIcon == BadgeStyle.CUSTOM then
+        if pSubT == "LobbyMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSION_ITEM_CUSTOM_LEFT_ICON", scIndex, item.customLeftIcon.TXD, item.customLeftIcon.TXN)
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_MISSION_ITEM_CUSTOM_LEFT_ICON", scIndex, item.customLeftIcon.TXD, item.customLeftIcon.TXN)
+        end
+    end
+
+    if item.RightIcon == BadgeStyle.CUSTOM then
+        if pSubT == "LobbyMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSION_ITEM_CUSTOM_RIGHT_ICON", scIndex, item.customRightIcon.TXD, item.customRightIcon.TXN)
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_MISSION_ITEM_CUSTOM_RIGHT_ICON", scIndex, item.customRightIcon.TXD, item.customRightIcon.TXN)
+        end
+    end
+
 end
 
 ---Removes a player from the column.

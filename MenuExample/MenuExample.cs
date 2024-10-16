@@ -32,6 +32,9 @@ public class MenuExample : BaseScript
         long _titledui = API.CreateDui("https://i.imgur.com/3yrFYbF.gif", 288, 130);
         API.CreateRuntimeTextureFromDuiHandle(txd, "bannerbackground", API.GetDuiHandle(_titledui));
 
+        long _kitten = API.CreateDui("https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExczA0dXhscDRqbHBmb3I2bmk4dDVzd25uNmhhbHNmMnE5N3hkYTM0MiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/tY27Dk0H8IisGidQv6/giphy.gif", 480, 480);
+        API.CreateRuntimeTextureFromDuiHandle(txd, "kitty", API.GetDuiHandle(_kitten));
+
         // first true means add menu Glare scaleform to the menu
         // last true means it's using the alternative title style
         UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI ~o~SHOWCASE", new PointF(20, 20), "commonmenu", "interaction_bgd", true, true);
@@ -48,6 +51,9 @@ public class MenuExample : BaseScript
         #region Big Message
 
         UIMenuItem bigMessageItem = new UIMenuItem("~g~Big~s~ Message ~r~Examples~s~", "Select me to switch to the BigMessage menu!");
+        bigMessageItem.SetCustomLeftBadge("scaleformui", "kitty");
+        bigMessageItem.SetCustomRightBadge("scaleformui", "kitty");
+
         UIMenu uiMenuBigMessage = new UIMenu("Big Message", "Big Message");
         exampleMenu.AddItem(bigMessageItem);
         UIMenuListItem uiListBigMessageTransition = new UIMenuListItem("Big Message", new List<dynamic>() { "TRANSITION_OUT", "TRANSITION_UP", "TRANSITION_DOWN" }, 0);
@@ -1298,16 +1304,27 @@ public class MenuExample : BaseScript
         MissionItem mission4 = new MissionItem("Mission 4");
         MissionItem mission5 = new MissionItem("Mission 5");
 
-        mission1.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
-        mission1.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
-        mission2.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
-        mission2.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
-        mission3.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
-        mission3.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
-        mission4.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
-        mission4.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
-        mission5.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
-        mission5.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues(), true);
+        //mission1.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+        //mission1.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+        //mission2.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+        //mission2.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+        //mission3.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+        //mission3.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+        //mission4.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+        //mission4.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+        //mission5.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
+        //mission5.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues(), true);
+
+        mission1.SetCustomLeftIcon("scaleformui", "kitty");
+        mission1.SetCustomRightIcon("scaleformui", "kitty");
+        mission2.SetCustomLeftIcon("scaleformui", "kitty");
+        mission2.SetCustomRightIcon("scaleformui", "kitty");
+        mission3.SetCustomLeftIcon("scaleformui", "kitty");
+        mission3.SetCustomRightIcon("scaleformui", "kitty");
+        mission4.SetCustomLeftIcon("scaleformui", "kitty");
+        mission4.SetCustomRightIcon("scaleformui", "kitty");
+        mission5.SetCustomLeftIcon("scaleformui", "kitty");
+        mission5.SetCustomRightIcon("scaleformui", "kitty", true);
 
         playersTab.MissionsColumn.AddMissionItem(mission1);
         playersTab.MissionsColumn.AddMissionItem(mission2);
@@ -1661,17 +1678,26 @@ public class MenuExample : BaseScript
 
         UIMenuItem item = new UIMenuItem("UIMenuItem", "UIMenuItem description");
         UIMenuListItem item1 = new UIMenuListItem("~g~UIMenuListItem", new List<dynamic>() { "~r~This", "~g~is", "~b~a", "~o~Test" }, 0, "UIMenuListItem description");
+        UIMenuListItem item6 = new UIMenuListItem("~g~UIMenuListItem", new List<dynamic>() { "~r~This", "~g~is", "~b~a", "~o~Test" }, 0, "UIMenuListItem description");
+        UIMenuListItem item7 = new UIMenuListItem("~g~UIMenuListItem", new List<dynamic>() { "~r~This", "~g~is", "~b~a", "~o~Test" }, 0, "UIMenuListItem description");
+        UIMenuListItem item8 = new UIMenuListItem("~g~UIMenuListItem", new List<dynamic>() { "~r~This", "~g~is", "~b~a", "~o~Test" }, 0, "UIMenuListItem description");
+        UIMenuListItem item9 = new UIMenuListItem("~g~UIMenuListItem", new List<dynamic>() { "~r~This", "~g~is", "~b~a", "~o~Test" }, 0, "UIMenuListItem description");
         UIMenuCheckboxItem item2 = new UIMenuCheckboxItem("~b~UIMenuCheckboxItem", true, "UIMenuCheckboxItem description");
         UIMenuSliderItem item3 = new UIMenuSliderItem("~p~UIMenuSliderItem", "UIMenuSliderItem description", 100, 5, 50, false);
         UIMenuProgressItem item4 = new UIMenuProgressItem("~o~UIMenuProgressItem", 10, 5, "UIMenuProgressItem description");
         item.LabelFont = ScaleformFonts.ENGRAVERS_OLD_ENGLISH_MT_STD;
         item.BlinkDescription = true;
-        item1.Enabled = false;
+        //item1.Enabled = false;
         pauseMenu.SettingsColumn.AddSettings(item);
         pauseMenu.SettingsColumn.AddSettings(item1);
         pauseMenu.SettingsColumn.AddSettings(item2);
         pauseMenu.SettingsColumn.AddSettings(item3);
         pauseMenu.SettingsColumn.AddSettings(item4);
+        pauseMenu.SettingsColumn.AddSettings(item6);
+        pauseMenu.SettingsColumn.AddSettings(item7);
+        pauseMenu.SettingsColumn.AddSettings(item8);
+        pauseMenu.SettingsColumn.AddSettings(item9);
+
 
         item1.OnListChanged += (item, idx) =>
         {

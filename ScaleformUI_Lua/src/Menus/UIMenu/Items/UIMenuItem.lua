@@ -74,6 +74,8 @@ function UIMenuItem.New(text, description, color, highlightColor, textColor, hig
         Panels = {},
         SidePanel = nil,
         ItemId = 0,
+        customLeftIcon = {TXD="",TXN=""},
+        customRightIcon = {TXD="",TXN=""},
         Activated = function(menu, item)
         end,
         Highlighted = function(menu, item)
@@ -399,6 +401,41 @@ function UIMenuItem:LeftBadge(Badge, item)
         return self._leftBadge
     end
 end
+
+function UIMenuItem:CustomRightBadge(txd,txn, item)
+    if item == nil then item = self end
+    self._rightBadge = -1
+    self.customRightIcon = {TXD=txd, TXN=txn}
+    if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, item)) then
+        ScaleformUI.Scaleforms._ui:CallFunction("SET_CUSTOM_RIGHT_BADGE", self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)), txd, txn)
+    end
+    if self.ParentColumn ~= nil then
+        local pSubT = self.ParentColumn.Parent()
+        if pSubT == "LobbyMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_CUSTOM_RIGHT_BADGE", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), txd, txn)
+        elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_CUSTOM_RIGHT_BADGE", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)), txd, txn)
+        end
+    end
+end
+
+function UIMenuItem:CustomLeftBadge(txd,txn, item)
+    if item == nil then item = self end
+    self._leftBadge = -1
+    self.customLeftIcon = {TXD=txd, TXN=txn}
+    if self.ParentMenu ~= nil and self.ParentMenu:Visible() and self.ParentMenu.Pagination:IsItemVisible(IndexOf(self.ParentMenu.Items, item)) then
+        ScaleformUI.Scaleforms._ui:CallFunction("SET_CUSTOM_LEFT_BADGE", self.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.ParentMenu.Items, item)), txd, txn)
+    end
+    if self.ParentColumn ~= nil then
+        local pSubT = self.ParentColumn.Parent()
+        if pSubT == "LobbyMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_CUSTOM_LEFT_BADGE", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)),  txd, txn)
+        elseif pSubT == "PauseMenu" and self.ParentColumn.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_CUSTOM_LEFT_BADGE", self.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.ParentColumn.Items, item)),  txd, txn)
+        end
+    end
+end
+
 
 function UIMenuItem:AddPanel(Panel)
     if Panel() == "UIMenuPanel" then

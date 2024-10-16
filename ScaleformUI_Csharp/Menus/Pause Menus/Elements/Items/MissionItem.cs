@@ -4,6 +4,7 @@ using ScaleformUI.Menu;
 using ScaleformUI.PauseMenu;
 using ScaleformUI.PauseMenus.Elements.Columns;
 using ScaleformUI.Scaleforms;
+using System.Drawing;
 
 namespace ScaleformUI.PauseMenus.Elements.Items
 {
@@ -12,6 +13,9 @@ namespace ScaleformUI.PauseMenus.Elements.Items
     {
         private bool enabled = true;
         internal int type = 0;
+        internal KeyValuePair<string, string> customLeftBadge;
+        internal KeyValuePair<string, string> customRightBadge;
+        internal bool rIcChecked;
         public MissionsListColumn ParentColumn { get; internal set; }
         public string Label { get; private set; }
         public SColor MainColor { get; private set; } = SColor.FromHudColor(HudColor.HUD_COLOUR_PAUSE_BG);
@@ -32,11 +36,11 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                 {
                     if (ParentColumn.Parent is MainView lobby)
                     {
-                        lobby._pause._lobby.CallFunction("SET_MISSION_ITEM_ENABLED", ParentColumn.Items.IndexOf(this), value);
+                        lobby._pause._lobby.CallFunction("SET_MISSION_ITEM_ENABLED", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), value);
                     }
                     else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
                     {
-                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_ITEM_ENABLED", ParentColumn.Items.IndexOf(this), value);
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_ITEM_ENABLED", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), value);
                     }
                 }
             }
@@ -66,11 +70,11 @@ namespace ScaleformUI.PauseMenus.Elements.Items
             {
                 if (ParentColumn.Parent is MainView lobby)
                 {
-                    lobby._pause._lobby.CallFunction("SET_MISSION_ITEM_LEFT_ICON", ParentColumn.Items.IndexOf(this), (int)icon, color);
+                    lobby._pause._lobby.CallFunction("SET_MISSION_ITEM_LEFT_ICON", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), (int)icon, color);
                 }
                 else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
                 {
-                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_ITEM_LEFT_ICON", ParentColumn.Items.IndexOf(this), (int)icon, color);
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_ITEM_LEFT_ICON", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), (int)icon, color);
                 }
             }
         }
@@ -83,11 +87,46 @@ namespace ScaleformUI.PauseMenus.Elements.Items
             {
                 if (ParentColumn.Parent is MainView lobby)
                 {
-                    lobby._pause._lobby.CallFunction("SET_MISSION_ITEM_RIGHT_ICON", ParentColumn.Items.IndexOf(this), (int)icon, @checked, color);
+                    lobby._pause._lobby.CallFunction("SET_MISSION_ITEM_RIGHT_ICON", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), (int)icon, @checked, color);
                 }
                 else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
                 {
-                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_ITEM_RIGHT_ICON", ParentColumn.Items.IndexOf(this), (int)icon, @checked, color);
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_ITEM_RIGHT_ICON", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), (int)icon, @checked, color);
+                }
+            }
+        }
+
+        public virtual void SetCustomLeftIcon(string txd, string txn)
+        {
+            LeftIcon = BadgeIcon.CUSTOM;
+            customLeftBadge = new KeyValuePair<string, string>(txd, txn);
+            if (ParentColumn != null)
+            {
+                if (ParentColumn.Parent is MainView lobby)
+                {
+                    lobby._pause._lobby.CallFunction("SET_MISSION_ITEM_CUSTOM_LEFT_ICON", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), txd, txn);
+                }
+                else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                {
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_ITEM_CUSTOM_LEFT_ICON", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), txd, txn);
+                }
+            }
+        }
+
+        public virtual void SetCustomRightIcon(string txd, string txn, bool @checked = false)
+        {
+            RightIcon = BadgeIcon.CUSTOM;
+            customRightBadge = new KeyValuePair<string, string>(txd, txn);
+            rIcChecked = @checked;
+            if (ParentColumn != null)
+            {
+                if (ParentColumn.Parent is MainView lobby)
+                {
+                    lobby._pause._lobby.CallFunction("SET_MISSION_ITEM_CUSTOM_RIGHT_ICON", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), txd, txn, @checked);
+                }
+                else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                {
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_ITEM_CUSTOM_RIGHT_ICON", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), txd, txn, @checked);
                 }
             }
         }

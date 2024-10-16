@@ -685,7 +685,7 @@ function UIMenu:AddItemAt(item, index)
     self.Pagination:TotalItems(#self.Items)
     if self:Visible() then
         if self.Pagination:IsItemVisible(index) then
-            self:RefreshMenu();
+            self:RefreshMenu()
         end
         local it = self.Items[self:CurrentSelection()]
         local t, subt = it()
@@ -1045,7 +1045,11 @@ function UIMenu:_itemCreation(page, pageIndex, before, overflow)
         EndScaleformMovieMethod()
         ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_LABEL", scaleformIndex, item._formatRightLabel)
         if item._rightBadge ~= BadgeStyle.NONE then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_BADGE", scaleformIndex, item._rightBadge)
+            if item._rightBadge == -1 then
+                ScaleformUI.Scaleforms._ui:CallFunction("SET_CUSTOM_RIGHT_BADGE", scaleformIndex, item.customRightIcon.TXD, item.customRightIcon.TXN)
+            else
+                ScaleformUI.Scaleforms._ui:CallFunction("SET_RIGHT_BADGE", scaleformIndex, item._rightBadge)
+            end
         end
     end
 
@@ -1055,7 +1059,11 @@ function UIMenu:_itemCreation(page, pageIndex, before, overflow)
         ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_RIGHT_LABEL_FONT", scaleformIndex,
             item.Base._rightLabelFont.FontName, item.Base._rightLabelFont.FontID)
         if item.Base._leftBadge ~= BadgeStyle.NONE then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_BADGE", scaleformIndex, item.Base._leftBadge)
+            if item.Base._leftBadge == -1 then
+                ScaleformUI.Scaleforms._ui:CallFunction("SET_CUSTOM_LEFT_BADGE", scaleformIndex, item.Base.customLeftIcon.TXD, item.Base.customLeftIcon.TXN)
+            else
+                ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_BADGE", scaleformIndex, item.Base._leftBadge)
+            end
         end
     else
         ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_LABEL_FONT", scaleformIndex, item._labelFont.FontName,
@@ -1063,7 +1071,11 @@ function UIMenu:_itemCreation(page, pageIndex, before, overflow)
         ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_RIGHT_LABEL_FONT", scaleformIndex,
             item._rightLabelFont.FontName, item._rightLabelFont.FontID)
         if item._leftBadge ~= BadgeStyle.NONE then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_BADGE", scaleformIndex, item._leftBadge)
+            if item._leftBadge == -1 then
+                ScaleformUI.Scaleforms._ui:CallFunction("SET_CUSTOM_LEFT_BADGE", scaleformIndex, item.customLeftIcon.TXD, item.customLeftIcon.TXN)
+            else
+                ScaleformUI.Scaleforms._ui:CallFunction("SET_LEFT_BADGE", scaleformIndex, item._leftBadge)
+            end
         end
     end
     if item.SidePanel ~= nil then

@@ -1,5 +1,6 @@
 ---@enum BadgeStyle
 BadgeStyle = {
+    CUSTOM = -1,
     NONE = 0,
     LOCK = 1,
     STAR = 2,

@@ -84,11 +84,27 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             }
 
             MissionItem item = Items[menuIndex];
+            int scIndex = Pagination.GetScaleformIndex(menuIndex);
 
             if (Parent is MainView lobby)
                 lobby._pause._lobby.CallFunction("ADD_MISSIONS_ITEM", before, menuIndex, item.type, item.Label, item.MainColor, item.HighlightColor, (int)item.LeftIcon, item.LeftIconColor, (int)item.RightIcon, item.RightIconColor, item.RightIconChecked, item.Enabled);
             else if (Parent is TabView pause && ParentTab.Visible)
                 pause._pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSIONS_ITEM", before, menuIndex, item.type, item.Label, item.MainColor, item.HighlightColor, (int)item.LeftIcon, item.LeftIconColor, (int)item.RightIcon, item.RightIconColor, item.RightIconChecked, item.Enabled);
+
+            if (item.LeftIcon == BadgeIcon.CUSTOM)
+            {
+                if (Parent is MainView _lobby)
+                    _lobby._pause._lobby.CallFunction("SET_MISSION_ITEM_CUSTOM_LEFT_ICON", scIndex, item.customLeftBadge.Key, item.customLeftBadge.Value);
+                else if (Parent is TabView _pause && ParentTab.Visible)
+                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_ITEM_CUSTOM_LEFT_ICON", scIndex, item.customLeftBadge.Key, item.customLeftBadge.Value);
+            }
+            if (item.RightIcon == BadgeIcon.CUSTOM)
+            {
+                if (Parent is MainView _lobby)
+                    _lobby._pause._lobby.CallFunction("SET_MISSION_ITEM_CUSTOM_RIGHT_ICON", scIndex, item.customLeftBadge.Key, item.customLeftBadge.Value, item.rIcChecked);
+                else if (Parent is TabView _pause && ParentTab.Visible)
+                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_MISSION_ITEM_CUSTOM_RIGHT_ICON", scIndex, item.customLeftBadge.Key, item.customLeftBadge.Value, item.rIcChecked);
+            }
         }
 
 

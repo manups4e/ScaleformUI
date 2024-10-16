@@ -186,18 +186,31 @@ function SettingsListColumn:_itemCreation(page, pageIndex, before, overflow)
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_ITEM_LABEL_RIGHT", scaleformIndex,
                 item._formatRightLabel)
             if item._rightBadge ~= BadgeStyle.NONE then
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_RIGHT_BADGE", scaleformIndex,
+                if item._rightBadge == BadgeStyle.CUSTOM then
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_CUSTOM_RIGHT_BADGE", scaleformIndex,
+                    item.customRightIcon.TXD, item.customRightIcon.TXN)
+                else
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_RIGHT_BADGE", scaleformIndex,
                     item._rightBadge)
+                end
             end
         end
 
         if (SubType == "UIMenuItem" and item._leftBadge ~= BadgeStyle.NONE) or (SubType ~= "UIMenuItem" and item.Base._leftBadge ~= BadgeStyle.NONE) then
             if SubType ~= "UIMenuItem" then
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", scaleformIndex, item.Base._leftBadge)
+                if item.Base._leftBadge == BadgeStyle.CUSTOM then
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_CUSTOM_LEFT_BADGE", scaleformIndex, item.Base.customLeftIcon.TXD, item.Base.customLeftIcon.TXN)
+                else
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", scaleformIndex, item.Base._leftBadge)
+                end
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LABEL_FONT", scaleformIndex, item.Base._labelFont.FontName, item.Base._labelFont.FontID)
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LABEL_FONT", scaleformIndex, item.Base._rightLabelFont.FontName, item.Base._rightLabelFont.FontID)
             else
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", scaleformIndex, item._leftBadge)
+                if item.Base._leftBadge == BadgeStyle.CUSTOM then
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_CUSTOM_LEFT_BADGE", scaleformIndex, item.customLeftIcon.TXD, item.customLeftIcon.TXN)
+                else
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", scaleformIndex, item._leftBadge)
+                end
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LABEL_FONT", scaleformIndex, item._labelFont.FontName, item._labelFont.FontID)
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_ITEM_LABEL_FONT", scaleformIndex, item._rightLabelFont.FontName, item._rightLabelFont.FontID)
             end
@@ -242,16 +255,29 @@ function SettingsListColumn:_itemCreation(page, pageIndex, before, overflow)
                 item._highlightedTextColor:ToArgb())
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL_RIGHT", scaleformIndex, item._formatRightLabel)
             if item._rightBadge ~= BadgeStyle.NONE then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_BADGE", scaleformIndex, item._rightBadge)
+                if item._rightBadge == BadgeStyle.CUSTOM then
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_CUSTOM_RIGHT_BADGE", scaleformIndex,
+                    item.customRightIcon.TXD, item.customRightIcon.TXN)
+                else
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_BADGE", scaleformIndex, item._rightBadge)
+                end
             end
         end
         if (SubType == "UIMenuItem" and item._leftBadge ~= BadgeStyle.NONE) or (SubType ~= "UIMenuItem" and item.Base._leftBadge ~= BadgeStyle.NONE) then
             if SubType ~= "UIMenuItem" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", scaleformIndex, item.Base._leftBadge)
+                if item.Base._leftBadge == BadgeStyle.CUSTOM then
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_CUSTOM_LEFT_BADGE", scaleformIndex, item.Base.customLeftIcon.TXD, item.Base.customLeftIcon.TXN)
+                else
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", scaleformIndex, item.Base._leftBadge)
+                end
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LABEL_FONT", scaleformIndex, item.Base._labelFont.FontName, item.Base._labelFont.FontID)
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_LABEL_FONT", scaleformIndex, item.Base._labelFont.FontName, item.Base._labelFont.FontID)
             else
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", scaleformIndex, item._leftBadge)
+                if item.Base._leftBadge == BadgeStyle.CUSTOM then
+                    ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_CUSTOM_LEFT_BADGE", scaleformIndex, item.customLeftIcon.TXD, item.customLeftIcon.TXN)
+                else
+                    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", scaleformIndex, item._leftBadge)
+                end
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LABEL_FONT", scaleformIndex, item._labelFont.FontName, item._labelFont.FontID)
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_LABEL_FONT", scaleformIndex, item._labelFont.FontName, item._labelFont.FontID)
             end
