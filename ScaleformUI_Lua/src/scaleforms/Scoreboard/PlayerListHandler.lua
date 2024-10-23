@@ -96,7 +96,7 @@ end
 function PlayerListScoreboard:SetTitle(title, label, icon)
     self.TitleLeftText = title or ""
     self.TitleRightText = label or ""
-    self.TitleIcon = icon or 0
+    self.TitleIcon = icon or ""
 end
 
 ---Set the position of the scoreboard
