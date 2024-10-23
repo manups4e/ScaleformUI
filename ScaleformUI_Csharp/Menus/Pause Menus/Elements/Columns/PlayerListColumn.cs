@@ -240,7 +240,31 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             get { return Items.Count == 0 ? 0 : Pagination.CurrentMenuIndex; }
             set
             {
-                if (value == Pagination.CurrentMenuIndex) return;
+                if (value == Pagination.CurrentMenuIndex)
+                {
+                    if (Parent != null && Parent.Visible)
+                    {
+                        if (Parent is MainView lobby)
+                        {
+                            if (lobby.listCol[lobby.FocusLevel].Type == "players")
+                            {
+                                Items[CurrentSelection].Selected = true;
+                                if (Items[CurrentSelection].ClonePed != null)
+                                    Items[CurrentSelection].CreateClonedPed();
+                            }
+                        }
+                        else if (Parent is TabView pause && ParentTab.Visible)
+                        {
+                            if (pause.Index == pause.Tabs.IndexOf(ParentTab) && pause.FocusLevel == 1)
+                            {
+                                Items[CurrentSelection].Selected = true;
+                                if (Items[CurrentSelection].ClonePed != null)
+                                    Items[CurrentSelection].CreateClonedPed();
+                            }
+                        }
+                    }
+                    return;
+                }
                 API.ClearPedInPauseMenu();
                 if (value < 0)
                 {
