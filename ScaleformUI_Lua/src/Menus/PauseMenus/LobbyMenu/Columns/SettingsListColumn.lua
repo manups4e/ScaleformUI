@@ -56,6 +56,9 @@ function SettingsListColumn:CurrentSelection(value)
     if value == nil then
         return self.Pagination:CurrentMenuIndex()
     else
+        if value == self.Pagination:CurrentMenuIndex() then
+            return
+        end
         if value < 1 then
             self.Pagination:CurrentMenuIndex(1)
         elseif value > #self.Items then
@@ -89,6 +92,7 @@ end
 ---Add a new item to the column.
 ---@param item UIMenuItem|UIMenuListItem|UIMenuCheckboxItem|UIMenuSliderItem|UIMenuProgressItem
 function SettingsListColumn:AddSettings(item)
+    local pSubT = self.Parent()
     local a, b = item()
     if b == "UIMenuItem" then
         item.ParentColumn = self
@@ -112,12 +116,18 @@ function SettingsListColumn:AddSettings(item)
 
             self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
             self:_itemCreation(self.Pagination:CurrentPage(), #self.Items, false)
-            local pSubT = self.Parent()
             if pSubT == "PauseMenu" and self.ParentTab.Visible then
                 if self.ParentTab.listCol[self.ParentTab:Focus()] == self then
                     self:CurrentSelection(sel)
                 end
             end
+        end
+        if pSubT == "LobbyMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
         end
     end
 end

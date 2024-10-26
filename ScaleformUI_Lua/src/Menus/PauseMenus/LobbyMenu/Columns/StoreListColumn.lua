@@ -56,6 +56,9 @@ function StoreListColumn:CurrentSelection(value)
     if value == nil then
         return self.Pagination:CurrentMenuIndex()
     else
+        if value == self.Pagination:CurrentMenuIndex() then
+            return
+        end
         if value < 1 then
             self.Pagination:CurrentMenuIndex(1)
         elseif value > #self.Items then
@@ -89,6 +92,7 @@ end
 ---Add a new item to the column.
 ---@param item StoreItem
 function StoreListColumn:AddStoreItem(item)
+    local pSubT = self.Parent()
     item.ParentColumn = self
     item.Handle = #self.Items + 1
     self.Items[#self.Items + 1] = item
@@ -108,12 +112,18 @@ function StoreListColumn:AddStoreItem(item)
 
             self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
             self:_itemCreation(self.Pagination:CurrentPage(), #self.Items, false)
-            local pSubT = self.Parent()
             if pSubT == "PauseMenu" and self.ParentTab.Visible then
                 if self.ParentTab.listCol[self.ParentTab:Focus()] == self then
                     self:CurrentSelection(sel)
                 end
             end
+        end
+        if pSubT == "LobbyMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_STORE_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_STORE_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_STORE_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
         end
     end
 end

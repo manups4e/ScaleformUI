@@ -61,6 +61,25 @@ function PlayerListColumn:CurrentSelection(value)
     if value == nil then
         return self.Pagination:CurrentMenuIndex()
     else
+        if value == self.Pagination:CurrentMenuIndex() then
+            if self.Parent ~= nil and self.Parent:Visible() then
+                local pSubT = self.Parent()
+                if pSubT == "LobbyMenu" then
+                    self.Items[self:CurrentSelection()]:Selected(true)
+                    if self.Items[self:CurrentSelection()].ClonePed ~= nil and self.Items[self:CurrentSelection()].ClonePed ~= 0 then
+                        self.Items[self:CurrentSelection()]:AddPedToPauseMenu()
+                    end
+                elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+                    if self.Parent:Index() == IndexOf(self.Parent.Tabs, self.ParentTab) and self.Parent:FocusLevel() == 1 then
+                        self.Items[self:CurrentSelection()]:Selected(true)
+                        if self.Items[self:CurrentSelection()].ClonePed ~= nil and self.Items[self:CurrentSelection()].ClonePed ~= 0 then
+                            self.Items[self:CurrentSelection()]:AddPedToPauseMenu()
+                        end
+                    end
+                end
+            end
+            return
+        end
         ClearPedInPauseMenu()
         if value < 1 then
             self.Pagination:CurrentMenuIndex(1)
@@ -101,6 +120,7 @@ end
 ---Adds a new player to the column.
 ---@param item FriendItem
 function PlayerListColumn:AddPlayer(item)
+    local pSubT = self.Parent()
     item.ParentColumn = self
     item.Handle = #self.Items + 1
     self.Items[item.Handle] = item
@@ -120,12 +140,18 @@ function PlayerListColumn:AddPlayer(item)
 
             self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
             self:_itemCreation(self.Pagination:CurrentPage(), #self.Items, false)
-            local pSubT = self.Parent()
             if pSubT == "PauseMenu" and self.ParentTab.Visible then
                 if self.ParentTab.listCol[self.ParentTab:Focus()] == self then
                     self:CurrentSelection(sel)
                 end
             end
+        end
+        if pSubT == "LobbyMenu" then
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
+            ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_PLAYERS_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
+        elseif pSubT == "PauseMenu" and self.ParentTab.Visible then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_PLAYERS_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
         end
     end
 end
