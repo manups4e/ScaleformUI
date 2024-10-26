@@ -128,11 +128,16 @@ function MinimapPanel:InitializeMapSize()
     -- Calculate our range and get the correct zoom.
     local DistanceX = math.abs(left - right)
     local DistanceY = math.abs(top - bottom)
+    local Diagonal = math.sqrt(DistanceX ^ 2 + DistanceY ^ 2)
 
-    if (DistanceX > DistanceY) then
-        self.zoomDistance = DistanceX / 1.5
-    else
-        self.zoomDistance = DistanceY / 2.0
+    if DistanceX == DistanceY then -- Square
+        self.zoomDistance = Diagonal / 2.4
+    elseif (DistanceX > DistanceY) then -- Horizontal
+        local mul = 1.7
+        self.zoomDistance = math.min(DistanceX / mul, Diagonal / mul)
+    else -- Vertical
+        local mul = 2.4
+        self.zoomDistance = math.max(DistanceY / mul, Diagonal / mul)
     end
 
     self:RefreshMapPosition(self.mapPosition)
