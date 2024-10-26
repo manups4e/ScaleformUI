@@ -108,6 +108,16 @@ function MinimapPanel:InitializeMapSize()
         right = math.max(right, data.Position.x)
     end
 
+    top = math.max(top, self.MinimapRoute.StartPoint.Position.y)
+    bottom = math.min(bottom, self.MinimapRoute.StartPoint.Position.y)
+    left = math.min(left, self.MinimapRoute.StartPoint.Position.x)
+    right = math.max(right, self.MinimapRoute.StartPoint.Position.x)
+
+    top = math.max(top, self.MinimapRoute.EndPoint.Position.y)
+    bottom = math.min(bottom, self.MinimapRoute.EndPoint.Position.y)
+    left = math.min(left, self.MinimapRoute.EndPoint.Position.x)
+    right = math.max(right, self.MinimapRoute.EndPoint.Position.x)
+
     local topLeft = vector3(left, top, 0)
     local bottomRight = vector3(right, bottom, 0)
 

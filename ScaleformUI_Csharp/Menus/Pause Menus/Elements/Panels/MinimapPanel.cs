@@ -103,6 +103,16 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
                 right = Math.Max(right, data.Position.X);
             }
 
+            top = Math.Max(top, MinimapRoute.StartPoint.Position.Y)
+            bottom = Math.Min(bottom, MinimapRoute.StartPoint.Position.Y)
+            left = Math.Min(left, MinimapRoute.StartPoint.Position.X)
+            right = Math.Max(right, MinimapRoute.StartPoint.Position.X)
+
+            top = Math.Max(top, MinimapRoute.EndPoint.Position.Y)
+            bottom = Math.Min(bottom, MinimapRoute.EndPoint.Position.Y)
+            left = Math.Min(left, MinimapRoute.EndPoint.Position.X)
+            right = Math.Max(right, MinimapRoute.EndPoint.Position.X)
+
             Vector3 topLeft = new Vector3(left, top, 0);
             Vector3 bottomRight = new Vector3(right, bottom, 0);
 
