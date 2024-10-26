@@ -58,6 +58,16 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                             CurrentSelection = sel;
                     }
                 }
+                if (Parent is TabView _pause && ParentTab.Visible)
+                {
+                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYERS_SELECTION", Pagination.ScaleformIndex);
+                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_PLAYERS_QTTY", CurrentSelection + 1, Items.Count);
+                }
+                else if (Parent is MainView _lobby)
+                {
+                    _lobby._pause._lobby.CallFunction("SET_PLAYERS_SELECTION", Pagination.ScaleformIndex);
+                    _lobby._pause._lobby.CallFunction("SET_PLAYERS_QTTY", CurrentSelection + 1, Items.Count);
+                }
             }
         }
 
