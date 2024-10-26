@@ -725,10 +725,12 @@ function MainView:GoBack()
 end
 
 function MainView:GoUp()
+    PlaySoundFrontend(-1, "NAV_UP_DOWN", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
     self.listCol[self._focus]:GoUp()
 end
 
 function MainView:GoDown()
+    PlaySoundFrontend(-1, "NAV_UP_DOWN", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
     self.listCol[self._focus]:GoDown()
 end
 
