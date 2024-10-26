@@ -91,6 +91,8 @@ function MinimapPanel:Enabled(_e)
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("HIDE_PLAYERS_TAB_MISSION_PANEL", show)
             end
         end
+
+        PlaySoundFrontend(-1, "NAV_UP_DOWN", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
     end
 end
 
