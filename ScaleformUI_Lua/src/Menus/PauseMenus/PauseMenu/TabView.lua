@@ -611,7 +611,7 @@ function TabView:Select()
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_PANEL_HIDDEN", true)
             end
             tab:updatePage()
-        elseif cur_sub_tab == "SubmenuTab" then
+        elseif cur_sub_tab == "SubmenuTab" and tab.LeftItemList[self.leftItemIndex] then
             tab.LeftItemList[self.leftItemIndex]:Selected(true)
         end
         --[[ check if all disabled ]]
@@ -625,7 +625,7 @@ function TabView:Select()
         if allDisabled then return end
         --[[ end check all disabled ]]
         --
-        while (not tab.LeftItemList[self.leftItemIndex]:Enabled()) do
+        while (not tab.LeftItemList?[self.leftItemIndex]:Enabled()) do
             Citizen.Wait(0)
             self:LeftItemIndex(self.leftItemIndex + 1)
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_LEFT_ITEM_INDEX", self.leftItemIndex - 1)
@@ -1594,11 +1594,11 @@ function TabView:ProcessMouse()
                     tab.listCol[context + 1].Items[idx]:Hovered(true)
                 else
                     if context == 1 then
-                        for i, item in ipairs(tab.LeftItemList) do
+                        for i, item in ipairs(tab.LeftItemList or {}) do
                             item:Hovered(item:Enabled() and i == item_id + 1)
                         end
                     elseif context == 2 then
-                        for i, item in ipairs(tab.LeftItemList[self.leftItemIndex].ItemList) do
+                        for i, item in ipairs(tab.LeftItemList?[self.leftItemIndex].ItemList or {}) do
                             item:Hovered(item:Enabled() and i == item_id + 1)
                         end
                     end
