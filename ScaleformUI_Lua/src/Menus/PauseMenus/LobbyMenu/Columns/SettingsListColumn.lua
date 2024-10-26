@@ -92,7 +92,6 @@ end
 ---Add a new item to the column.
 ---@param item UIMenuItem|UIMenuListItem|UIMenuCheckboxItem|UIMenuSliderItem|UIMenuProgressItem
 function SettingsListColumn:AddSettings(item)
-    local pSubT = self.Parent()
     local a, b = item()
     if b == "UIMenuItem" then
         item.ParentColumn = self
@@ -116,12 +115,14 @@ function SettingsListColumn:AddSettings(item)
 
             self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
             self:_itemCreation(self.Pagination:CurrentPage(), #self.Items, false)
+            local pSubT = self.Parent()
             if pSubT == "PauseMenu" and self.ParentTab.Visible then
                 if self.ParentTab.listCol[self.ParentTab:Focus()] == self then
                     self:CurrentSelection(sel)
                 end
             end
         end
+        local pSubT = self.Parent()
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]

@@ -98,7 +98,6 @@ end
 ---Adds a new player to the column.
 ---@param item MissionItem
 function MissionListColumn:AddMissionItem(item)
-    local pSubT = self.Parent()
     item.ParentColumn = self
     item.Handle = #self.Items + 1
     self.Items[item.Handle] = item
@@ -118,12 +117,14 @@ function MissionListColumn:AddMissionItem(item)
 
             self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
             self:_itemCreation(self.Pagination:CurrentPage(), #self.Items, false)
+            local pSubT = self.Parent()
             if pSubT == "PauseMenu" and self.ParentTab.Visible then
                 if self.ParentTab.listCol[self.ParentTab:Focus()] == self then
                     self:CurrentSelection(sel)
                 end
             end
         end
+        local pSubT = self.Parent()
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSIONS_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_MISSIONS_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]

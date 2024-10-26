@@ -92,7 +92,6 @@ end
 ---Add a new item to the column.
 ---@param item StoreItem
 function StoreListColumn:AddStoreItem(item)
-    local pSubT = self.Parent()
     item.ParentColumn = self
     item.Handle = #self.Items + 1
     self.Items[#self.Items + 1] = item
@@ -112,12 +111,14 @@ function StoreListColumn:AddStoreItem(item)
 
             self.Pagination:MaxItem(self.Pagination:CurrentPageEndIndex())
             self:_itemCreation(self.Pagination:CurrentPage(), #self.Items, false)
+            local pSubT = self.Parent()
             if pSubT == "PauseMenu" and self.ParentTab.Visible then
                 if self.ParentTab.listCol[self.ParentTab:Focus()] == self then
                     self:CurrentSelection(sel)
                 end
             end
         end
+        local pSubT = self.Parent()
         if pSubT == "LobbyMenu" then
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_STORE_SELECTION", self.Pagination:ScaleformIndex()) --[[@as number]]
             ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_STORE_QTTY", self:CurrentSelection(), #self.Items) --[[@as number]]
