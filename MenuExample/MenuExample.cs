@@ -1678,10 +1678,6 @@ public class MenuExample : BaseScript
 
         UIMenuItem item = new UIMenuItem("UIMenuItem", "UIMenuItem description");
         UIMenuListItem item1 = new UIMenuListItem("~g~UIMenuListItem", new List<dynamic>() { "~r~This", "~g~is", "~b~a", "~o~Test" }, 0, "UIMenuListItem description");
-        UIMenuListItem item6 = new UIMenuListItem("~g~UIMenuListItem", new List<dynamic>() { "~r~This", "~g~is", "~b~a", "~o~Test" }, 0, "UIMenuListItem description");
-        UIMenuListItem item7 = new UIMenuListItem("~g~UIMenuListItem", new List<dynamic>() { "~r~This", "~g~is", "~b~a", "~o~Test" }, 0, "UIMenuListItem description");
-        UIMenuListItem item8 = new UIMenuListItem("~g~UIMenuListItem", new List<dynamic>() { "~r~This", "~g~is", "~b~a", "~o~Test" }, 0, "UIMenuListItem description");
-        UIMenuListItem item9 = new UIMenuListItem("~g~UIMenuListItem", new List<dynamic>() { "~r~This", "~g~is", "~b~a", "~o~Test" }, 0, "UIMenuListItem description");
         UIMenuCheckboxItem item2 = new UIMenuCheckboxItem("~b~UIMenuCheckboxItem", true, "UIMenuCheckboxItem description");
         UIMenuSliderItem item3 = new UIMenuSliderItem("~p~UIMenuSliderItem", "UIMenuSliderItem description", 100, 5, 50, false);
         UIMenuProgressItem item4 = new UIMenuProgressItem("~o~UIMenuProgressItem", 10, 5, "UIMenuProgressItem description");
@@ -1693,10 +1689,6 @@ public class MenuExample : BaseScript
         pauseMenu.SettingsColumn.AddSettings(item2);
         pauseMenu.SettingsColumn.AddSettings(item3);
         pauseMenu.SettingsColumn.AddSettings(item4);
-        pauseMenu.SettingsColumn.AddSettings(item6);
-        pauseMenu.SettingsColumn.AddSettings(item7);
-        pauseMenu.SettingsColumn.AddSettings(item8);
-        pauseMenu.SettingsColumn.AddSettings(item9);
 
 
         item1.OnListChanged += (item, idx) =>
@@ -1708,7 +1700,7 @@ public class MenuExample : BaseScript
         {
             Screen.ShowSubtitle($"~y~ {item.Label} ~s~~w~ has been selected!");
         };
-
+            
         CrewTag crew1 = new CrewTag("hello", false, false, CrewHierarchy.Leader, SColor.HUD_Green);
         CrewTag crew2 = new CrewTag("evry1", false, false, CrewHierarchy.Commissioner, SColor.HUD_Pink);
         CrewTag crew3 = new CrewTag("look", false, false, CrewHierarchy.Liutenant, SColor.HUD_Blue);
@@ -1859,9 +1851,6 @@ public class MenuExample : BaseScript
         pauseMenu.MissionPanel.AddItem(missionItem4);
 
         pauseMenu.Visible = true;
-        await BaseScript.Delay(1000);
-        item1.Label = "Pippo";
-        pauseMenu.SettingsColumn.CurrentSelection = 1;
         //API.UnregisterPedheadshot(mugshot);
     }
 
