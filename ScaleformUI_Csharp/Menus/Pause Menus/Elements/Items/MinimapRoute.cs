@@ -45,8 +45,11 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                 int blip = RaceGalleryAddBlip(checkPoint.Position.X, checkPoint.Position.Y, checkPoint.Position.Z);
                 if (checkPoint.Scale > 0)
                     SetBlipScale(blip, checkPoint.Scale);
-                SetBlipColour(blip, (int)checkPoint.Color);
-                ShowNumberOnBlip(blip, i)
+                if (checkPoint.Number) {
+                    SetBlipColour(blip, (int)checkPoint.Color);
+                } else{
+                    HideNumberOnBlip(blip)
+                }
                 AddPointToGpsCustomRoute(checkPoint.Position.X, checkPoint.Position.Y, checkPoint.Position.Z);
             }
 
