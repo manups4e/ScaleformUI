@@ -46,6 +46,7 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                 if (checkPoint.Scale > 0)
                     SetBlipScale(blip, checkPoint.Scale);
                 SetBlipColour(blip, (int)checkPoint.Color);
+                ShowNumberOnBlip(blip, i)
                 AddPointToGpsCustomRoute(checkPoint.Position.X, checkPoint.Position.Y, checkPoint.Position.Z);
             }
 

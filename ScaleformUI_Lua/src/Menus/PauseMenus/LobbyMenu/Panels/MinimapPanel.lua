@@ -96,52 +96,46 @@ function MinimapPanel:Enabled(_e)
 end
 
 function MinimapPanel:InitializeMapSize()
-    local iMaxNodesToCheck = 202
-    local vNodeMax = vector3(0, 0, 0)
-    local vNodeMin = vector3(0, 0, 0)
+    local top = -math.huge
+    local bottom = math.huge
+    local left = math.huge
+    local right = -math.huge
 
-    for i = 1, iMaxNodesToCheck + 1, 1 do
-        local vectorNode = self:GetVectorToCheck(i)
-
-        if (#self.MinimapBlips > i) then
-            if (LengthSquared(self.MinimapBlips[i].Position) > LengthSquared(vectorNode)) then
-                vectorNode = self.MinimapBlips[i].Position
-            end
-        end
-
-        if i == 1 then
-            vNodeMax = vectorNode
-            vNodeMin = vectorNode
-        else
-            if (vectorNode.x > vNodeMax.x) then
-                vNodeMax = vector3(vectorNode.x, vNodeMax.y, vNodeMax.z)
-            end
-            if (vectorNode.x < vNodeMin.x) then
-                vNodeMin = vector3(vectorNode.x, vNodeMax.y, vNodeMax.z)
-            end
-            if (vectorNode.y > vNodeMax.y) then
-                vNodeMax = vector3(vNodeMax.x, vectorNode.y, vNodeMax.z)
-            end
-            if (vectorNode.y < vNodeMin.y) then
-                vNodeMin = vector3(vNodeMax.x, vectorNode.y, vNodeMax.z)
-            end
-        end
+    for k, data in pairs(self.MinimapRoute.CheckPoints) do
+        top = math.max(top, data.Position.y)
+        bottom = math.min(bottom, data.Position.y)
+        left = math.min(left, data.Position.x)
+        right = math.max(right, data.Position.x)
     end
 
-    -- Calculate our range and get the correct zoom.
-    self.mapPosition = vector2((vNodeMax.x + vNodeMin.x) / 2, (vNodeMax.y + vNodeMin.y) / 2)
+    local topLeft = vector3(left, top, 0)
+    local bottomRight = vector3(right, bottom, 0)
 
-    local DistanceX = vNodeMax.x - vNodeMin.x
-    local DistanceY = vNodeMax.y - vNodeMin.y
+    -- Center of square area
+    self.mapPosition = vector2((topLeft.x + bottomRight.x) / 2, (topLeft.y + bottomRight.y) / 2)
+    
+    -- Calculate our range and get the correct zoom.
+    local DistanceX = math.abs(left - right)
+    local DistanceY = math.abs(top - bottom)
 
     if (DistanceX > DistanceY) then
         self.zoomDistance = DistanceX / 1.5
     else
-        self.zoomDistance = DistanceY / 1.5
+        self.zoomDistance = DistanceY / 2.0
     end
 
     self:RefreshMapPosition(self.mapPosition)
     LockMinimapAngle(0)
+
+    --!! Draw Debug
+    -- local blipArea = AddBlipForArea(self.mapPosition.x, self.mapPosition.y, 0.0, DistanceX, DistanceY)
+    -- SetBlipAlpha(blipArea, 150)
+    -- RaceGalleryNextBlipSprite(1)
+    -- local blipTop = RaceGalleryAddBlip(topLeft.x, topLeft.y, 0.0)
+    -- RaceGalleryNextBlipSprite(1)
+    -- local blipBottom = RaceGalleryAddBlip(bottomRight.x, bottomRight.y, 0.0)
+    -- ShowNumberOnBlip(blipTop, 1)
+    -- ShowNumberOnBlip(blipBottom, 2)
 end
 
 function MinimapPanel:RefreshMapPosition(position)

@@ -47,6 +47,7 @@ function MinimapRoute:SetupCustomRoute()
             SetBlipScale(b, checkPoint.Scale)
         end
         SetBlipColour(b, checkPoint.Color)
+        ShowNumberOnBlip(b, i)
         AddPointToGpsCustomRoute(checkPoint.Position.x, checkPoint.Position.y, checkPoint.Position.z)
     end
 
