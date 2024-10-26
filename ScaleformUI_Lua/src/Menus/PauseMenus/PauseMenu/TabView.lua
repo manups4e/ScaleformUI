@@ -802,6 +802,7 @@ function TabView:GoBack()
                 end
             end
         end
+        PlaySoundFrontend(-1, "NAV_UP_DOWN", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
     else
         if self:CanPlayerCloseMenu() then
             self:Visible(false)
@@ -866,8 +867,10 @@ function TabView:GoUp()
     local retVal = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunctionAsyncReturnInt("SET_INPUT_EVENT", 8)
     if retVal ~= -1 then
         if self:FocusLevel() == 1 then
+            PlaySoundFrontend(-1, "NAV_UP_DOWN", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
             self:LeftItemIndex(retVal + 1)
         elseif self:FocusLevel() == 2 then
+            PlaySoundFrontend(-1, "NAV_UP_DOWN", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
             self:RightItemIndex(retVal + 1)
         end
     end
@@ -930,8 +933,10 @@ function TabView:GoDown()
     local retVal = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunctionAsyncReturnInt("SET_INPUT_EVENT", 9)
     if retVal ~= -1 then
         if self:FocusLevel() == 1 then
+            PlaySoundFrontend(-1, "NAV_UP_DOWN", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
             self:LeftItemIndex(retVal + 1)
         elseif self:FocusLevel() == 2 then
+            PlaySoundFrontend(-1, "NAV_UP_DOWN", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
             self:RightItemIndex(retVal + 1)
         end
     end
@@ -1613,24 +1618,56 @@ function TabView:ProcessControl()
         return
     end
     EnableControlAction(2, 177, true)
-    if (IsControlJustPressed(2, 172)) then
+    if (IsDisabledControlJustPressed(2, 172)) then
         Citizen.CreateThread(function()
             self:GoUp()
+            local timer = GetGameTimer()
+            while IsDisabledControlPressed(2, 172) do
+                if GetTimeDifference(GetGameTimer(), timer) > 300 then
+                    self:GoUp()
+                end
+                Citizen.Wait(50)
+            end
+            return
         end)
     end
-    if (IsControlJustPressed(2, 173)) then
+    if (IsDisabledControlJustPressed(2, 173)) then
         Citizen.CreateThread(function()
             self:GoDown()
+            local timer = GetGameTimer()
+            while IsDisabledControlPressed(2, 173) do
+                if GetTimeDifference(GetGameTimer(), timer) > 300 then
+                    self:GoDown()
+                end
+                Citizen.Wait(50)
+            end
+            return
         end)
     end
-    if (IsControlJustPressed(2, 174)) then
+    if (IsDisabledControlJustPressed(2, 174)) then
         Citizen.CreateThread(function()
             self:GoLeft()
+            local timer = GetGameTimer()
+            while IsDisabledControlPressed(2, 174) do
+                if GetTimeDifference(GetGameTimer(), timer) > 300 then
+                    self:GoLeft()
+                end
+                Citizen.Wait(50)
+            end
+            return
         end)
     end
-    if (IsControlJustPressed(2, 175)) then
+    if (IsDisabledControlJustPressed(2, 175)) then
         Citizen.CreateThread(function()
             self:GoRight()
+            local timer = GetGameTimer()
+            while IsDisabledControlPressed(2, 175) do
+                if GetTimeDifference(GetGameTimer(), timer) > 300 then
+                    self:GoRight()
+                end
+                Citizen.Wait(50)
+            end
+            return
         end)
     end
     if (IsControlJustPressed(2, 205) or (IsUsingKeyboard(2) and IsControlJustPressed(2, 192) and IsControlPressed(2, 21))) then

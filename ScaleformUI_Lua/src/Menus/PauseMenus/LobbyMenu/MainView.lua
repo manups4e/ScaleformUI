@@ -609,7 +609,6 @@ function MainView:ProcessControl()
     end
     if (IsDisabledControlJustPressed(2, 175)) then
         if GlobalGameTimer - self._time > self._delay then
-            self:ButtonDelay()
             Citizen.CreateThread(function()
                 self:GoRight()
                 local timer = GetGameTimer()
@@ -654,17 +653,6 @@ function MainView:ProcessControl()
         self._times = 0
         self._delay = 150
     end
-end
-
-function MainView:ButtonDelay()
-    self._times = self._times + 1
-    if self._times % 5 == 0 then
-        self._delay = self._delay - 10
-        if self._delay < 50 then
-            self._delay = 50
-        end
-    end
-    self._time = GlobalGameTimer
 end
 
 function MainView:Select()
