@@ -88,56 +88,52 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             }
         }
 
-        internal void InitializeMapSize()
+         internal void InitializeMapSize()
         {
-            int iMaxNodesToCheck = 202;
-            Vector3 vNodeMax = new Vector3();
-            Vector3 vNodeMin = new Vector3();
+            float top = float.NegativeInfinity;
+            float bottom = float.PositiveInfinity;
+            float left = float.PositiveInfinity;
+            float right = float.NegativeInfinity;
 
-            for (int i = 0; i < iMaxNodesToCheck; i++)
+            foreach (var data in MinimapRoute.CheckPoints)
             {
-                Vector3 vectorNode = GetVectorToCheck(i);
-
-                if (MinimapBlips.Count > i)
-                {
-                    if (MinimapBlips[i].Position.LengthSquared() > vectorNode.LengthSquared())
-                    {
-                        vectorNode = MinimapBlips[i].Position;
-                    }
-                }
-
-                if (i == 0)
-                {
-
-                    vNodeMax = vectorNode;
-                    vNodeMin = vectorNode;
-                }
-                else
-                {
-                    if (vectorNode.X > vNodeMax.X)
-                        vNodeMax.X = vectorNode.X;
-                    if (vectorNode.X < vNodeMin.X)
-                        vNodeMin.X = vectorNode.X;
-                    if (vectorNode.Y > vNodeMax.Y)
-                        vNodeMax.Y = vectorNode.Y;
-                    if (vectorNode.Y < vNodeMin.Y)
-                        vNodeMin.Y = vectorNode.Y;
-                }
+                top = Math.Max(top, data.Position.Y);
+                bottom = Math.Min(bottom, data.Position.Y);
+                left = Math.Min(left, data.Position.X);
+                right = Math.Max(right, data.Position.X);
             }
 
-            // Calculate our range and get the correct zoom.
-            mapPosition = new Vector2((vNodeMax.X + vNodeMin.X) / 2f, (vNodeMax.Y + vNodeMin.Y) / 2f);
+            Vector3 topLeft = new Vector3(left, top, 0);
+            Vector3 bottomRight = new Vector3(right, bottom, 0);
 
-            float DistanceX = vNodeMax.X - vNodeMin.X;
-            float DistanceY = vNodeMax.Y - vNodeMin.Y;
+            // Center of square area
+            mapPosition = new Vector2((topLeft.X + bottomRight.X) / 2, (topLeft.Y + bottomRight.Y) / 2);
+
+            // Calculate our range and get the correct zoom.
+            float DistanceX = Math.Abs(left - right);
+            float DistanceY = Math.Abs(top - bottom);
 
             if (DistanceX > DistanceY)
+            {
                 zoomDistance = DistanceX / 1.5f;
+            }
             else
-                zoomDistance = DistanceY / 1.5f;
+            {
+                zoomDistance = DistanceY / 2.0f;
+            }
 
             RefreshMapPosition(mapPosition);
             LockMinimapAngle(0);
+
+            //!! Draw Debug
+            // var blipArea = AddBlipForArea(mapPosition.X, mapPosition.Y, 0.0f, DistanceX, DistanceY);
+            // SetBlipAlpha(blipArea, 150);
+            // RaceGalleryNextBlipSprite(1);
+            // var blipTop = RaceGalleryAddBlip(topLeft.X, topLeft.Y, 0.0f);
+            // RaceGalleryNextBlipSprite(1);
+            // var blipBottom = RaceGalleryAddBlip(bottomRight.X, bottomRight.Y, 0.0f);
+            // ShowNumberOnBlip(blipTop, 1);
+            // ShowNumberOnBlip(blipBottom, 2);
         }
 
         public void RefreshMapPosition(Vector2 position)
