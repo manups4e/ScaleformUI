@@ -238,8 +238,8 @@ end
 function MinimapPanel:Dispose()
     self.localMapStage = -1;
     self.enabled = false;
-    PauseToggleFullscreenMap(1);
-    DisplayRadar(false);
+    PauseToggleFullscreenMap(true);
+    DisplayRadar(true);
     RaceGalleryFullscreen(false);
     ClearRaceGalleryBlips();
     self.zoomDistance = 0;

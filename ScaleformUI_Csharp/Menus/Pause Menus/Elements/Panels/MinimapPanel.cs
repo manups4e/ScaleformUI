@@ -240,7 +240,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             localCoronaMapStage = 0;
             enabled = false;
             N_0x2de6c5e2e996f178(1);
-            DisplayRadar(false);
+            DisplayRadar(true);
             RaceGalleryFullscreen(false);
             ClearRaceGalleryBlips();
             zoomDistance = 0;
