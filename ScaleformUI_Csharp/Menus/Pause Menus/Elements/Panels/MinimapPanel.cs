@@ -14,6 +14,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
         internal float zoomDistance = 0;
         internal bool enabled;
         private bool turnedOn = false;
+        private bool IsRadarVisible = !IsRadarHidden();
         internal int localCoronaMapStage = 0;
 
         public MinimapRoute MinimapRoute;
@@ -69,6 +70,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
                     localCoronaMapStage = -1;
                     if (turnedOn)
                     {
+                        IsRadarVisible = !IsRadarHidden()
                         DisplayRadar(false);
                         SetMapFullScreen(false);
                         turnedOn = false;
@@ -183,7 +185,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             {
                 if (!turnedOn)
                 {
-                    DisplayRadar(true);
+                    DisplayRadar(IsRadarVisible);
                     SetMapFullScreen(true);
                     turnedOn = true;
                 }
@@ -192,6 +194,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             {
                 if (turnedOn)
                 {
+                    IsRadarVisible = !IsRadarHidden()
                     DisplayRadar(false);
                     SetMapFullScreen(false);
                     turnedOn = false;
@@ -240,7 +243,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             localCoronaMapStage = 0;
             enabled = false;
             N_0x2de6c5e2e996f178(1);
-            DisplayRadar(true);
+            DisplayRadar(IsRadarVisible);
             RaceGalleryFullscreen(false);
             ClearRaceGalleryBlips();
             zoomDistance = 0;

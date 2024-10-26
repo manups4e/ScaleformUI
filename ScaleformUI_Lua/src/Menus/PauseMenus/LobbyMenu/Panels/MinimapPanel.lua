@@ -9,6 +9,7 @@ end
 ---@field private turnedOn boolean
 ---@field private mapPosition vector2
 ---@field private localMapStage number
+---@field private IsRadarVisible boolean
 ---@field private New fun(parent:BaseTab)
 ---@field public Parent BaseTab
 ---@field public MinimapBlips FakeBlip[]
@@ -33,7 +34,8 @@ function MinimapPanel.New(parent, parentTab)
         mapPosition = vector2(0, 0),
         enabled = false,
         turnedOn = false,
-        localMapStage = 0
+        localMapStage = 0,
+        IsRadarVisible = not IsRadarHidden(),
     }
     return setmetatable(_data, MinimapPanel)
 end
@@ -77,6 +79,7 @@ function MinimapPanel:Enabled(_e)
         else
             self.localMapStage = -1
             if self.turnedOn then
+                self.IsRadarVisible = not IsRadarHidden()
                 DisplayRadar(false);
                 SetMapFullScreen(false);
                 self.turnedOn = false;
@@ -191,12 +194,13 @@ end
 function MinimapPanel:ProcessMap()
     if self.enabled then
         if not self.turnedOn then
-            DisplayRadar(true)
+            DisplayRadar(self.IsRadarVisible)
             SetMapFullScreen(true)
             self.turnedOn = true
         end
     else
         if self.turnedOn then
+            self.IsRadarVisible = not IsRadarHidden()
             DisplayRadar(false)
             SetMapFullScreen(false)
             self.turnedOn = false
@@ -239,7 +243,7 @@ function MinimapPanel:Dispose()
     self.localMapStage = -1;
     self.enabled = false;
     PauseToggleFullscreenMap(true);
-    DisplayRadar(true);
+    DisplayRadar(self.IsRadarVisible);
     RaceGalleryFullscreen(false);
     ClearRaceGalleryBlips();
     self.zoomDistance = 0;
