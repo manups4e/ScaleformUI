@@ -221,6 +221,14 @@ function UIMenuStatsItem:RightBadge()
     error("This item does not support badges")
 end
 
+function UIMenuStatsItem:CustomLeftBadge()
+    error("This item does not support badges")
+end
+
+function UIMenuStatsItem:CustomRightBadge()
+    error("This item does not support badges")
+end
+
 ---RightLabel
 function UIMenuStatsItem:RightLabel()
     error("This item does not support a right label")

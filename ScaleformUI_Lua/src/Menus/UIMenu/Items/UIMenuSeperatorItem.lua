@@ -166,6 +166,15 @@ function UIMenuSeparatorItem:RightBadge()
     error("This item does not support badges")
 end
 
+function UIMenuSeparatorItem:CustomLeftBadge()
+    error("This item does not support badges")
+end
+
+---RightBadge
+function UIMenuSeparatorItem:CustomRightBadge()
+    error("This item does not support badges")
+end
+
 ---RightLabel
 function UIMenuSeparatorItem:RightLabel()
     error("This item does not support a right label")

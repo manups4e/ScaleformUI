@@ -277,9 +277,23 @@ function UIMenuListItem:LeftBadge(Badge)
     end
 end
 
+--- CustomLeftBadge
+function UIMenuListItem:CustomLeftBadge(txd,txn)
+    if txd ~= nil and txd ~= "" and txn ~= nil and txn ~= "" then
+        self.Base:CustomLeftBadge(txd,txn, self)
+    else
+        return self.Base:LeftBadge()
+    end
+end
+
+
 ---RightBadge
 function UIMenuListItem:RightBadge()
-    error("This item does not support badges")
+    error("This item does not support right badges")
+end
+
+function UIMenuListItem:CustomRightBadge()
+    error("This item does not support right badges")
 end
 
 ---RightLabel
