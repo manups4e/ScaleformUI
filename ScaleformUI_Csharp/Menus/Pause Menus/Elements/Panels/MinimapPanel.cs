@@ -153,17 +153,6 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
                 zoomDistance = g.bigPic ? 600 : 1200;
         }
 
-        internal Vector3 GetVectorToCheck(int i)
-        {
-            if (i == 0)
-                return MinimapRoute.StartPoint.Position;
-            else if (MinimapRoute.CheckPoints.Count > i)
-                return MinimapRoute.CheckPoints[i].Position;
-            else if (i == MinimapRoute.CheckPoints.Count)
-                return MinimapRoute.EndPoint.Position;
-            else return Vector3.Zero;
-        }
-
         internal void SetupBlips()
         {
             foreach (FakeBlip blip in MinimapBlips)

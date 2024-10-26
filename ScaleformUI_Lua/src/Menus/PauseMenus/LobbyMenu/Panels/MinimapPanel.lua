@@ -15,7 +15,6 @@ end
 ---@field public MinimapRoute MinimapRoute
 ---@field public Enabled fun(_e: boolean|nil)
 ---@field private InitializeMapSize fun()
----@field private GetVectorToCheck fun(i:number)
 ---@field private SetupBlips fun()
 ---@field private MaintainMap fun()
 ---@field private ProcessMap fun()
@@ -160,18 +159,6 @@ function MinimapPanel:RefreshMapPosition(position)
                 self.zoomDistance = 1200.0
             end
         end
-    end
-end
-
-function MinimapPanel:GetVectorToCheck(i)
-    if i == 1 then
-        return self.MinimapRoute.StartPoint.Position
-    elseif #self.MinimapRoute.CheckPoints >= i then
-        return self.MinimapRoute.CheckPoints[i].Position
-    elseif i == #self.MinimapRoute.CheckPoints + 1 then
-        return self.MinimapRoute.EndPoint.Position
-    else
-        return vector3(0, 0, 0)
     end
 end
 
