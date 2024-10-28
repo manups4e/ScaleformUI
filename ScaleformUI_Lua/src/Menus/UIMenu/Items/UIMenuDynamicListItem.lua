@@ -166,7 +166,7 @@ end
 
 function UIMenuDynamicListItem:MainColor(color)
     if color then
-        assert(type(color) == "table", "Color must be SColor type")
+        assert(color() == "SColor", "Color must be SColor type")
         self.Base._mainColor = color
         if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS",
@@ -180,7 +180,7 @@ end
 
 function UIMenuDynamicListItem:TextColor(color)
     if color then
-        assert(type(color) == "table", "Color must be SColor type")
+        assert(color() == "SColor", "Color must be SColor type")
         self.Base._textColor = color
         if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS",
@@ -194,7 +194,7 @@ end
 
 function UIMenuDynamicListItem:HighlightColor(color)
     if color then
-        assert(type(color) == "table", "Color must be SColor type")
+        assert(color() == "SColor", "Color must be SColor type")
         self.Base._highlightColor = color
         if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS",
@@ -208,7 +208,7 @@ end
 
 function UIMenuDynamicListItem:HighlightedTextColor(color)
     if color then
-        assert(type(color) == "table", "Color must be SColor type")
+        assert(color() == "SColor", "Color must be SColor type")
         self.Base._highlightedTextColor = color
         if (self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible()) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS",

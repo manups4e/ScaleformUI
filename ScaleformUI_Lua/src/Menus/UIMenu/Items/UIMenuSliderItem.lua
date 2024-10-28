@@ -127,7 +127,7 @@ end
 
 function UIMenuSliderItem:MainColor(color)
     if color then
-        assert(type(color) == "table", "Color must be SColor type")
+        assert(color() == "SColor", "Color must be SColor type")
         self.Base._mainColor = color
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
@@ -140,7 +140,7 @@ end
 
 function UIMenuSliderItem:TextColor(color)
     if color then
-        assert(type(color) == "table", "Color must be SColor type")
+        assert(color() == "SColor", "Color must be SColor type")
         self.Base._textColor = color
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
@@ -153,7 +153,7 @@ end
 
 function UIMenuSliderItem:HighlightColor(color)
     if color then
-        assert(type(color) == "table", "Color must be SColor type")
+        assert(color() == "SColor", "Color must be SColor type")
         self.Base._highlightColor = color
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
@@ -166,7 +166,7 @@ end
 
 function UIMenuSliderItem:HighlightedTextColor(color)
     if color then
-        assert(type(color) == "table", "Color must be SColor type")
+        assert(color() == "SColor", "Color must be SColor type")
         self.Base._highlightedTextColor = color
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
@@ -179,7 +179,7 @@ end
 
 function UIMenuSliderItem:SliderColor(color)
     if color then
-        assert(type(color) == "table", "Color must be SColor type")
+        assert(color() == "SColor", "Color must be SColor type")
         self.SliderColor = color
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
             ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
