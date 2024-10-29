@@ -478,14 +478,14 @@ AddEventHandler("ScaleformUI:lobbymenu:MapPanel", function(data)
 	while not LobbyMenu do
 		Citizen.Wait(0)
 	end
-	if LobbyMenu:Visible() then
-		Citizen.Wait(300)
-	end
+
+	LobbyMenu.MinimapButton = nil
+	LobbyMenu.hasMapPanel = true
 
 	minimapLobbyEnabled = false
 	LobbyMenu.Minimap:Enabled(false) -- Force refresh map position
-	local button = InstructionalButton.New("Open/Close Map Panel", -1, 203, 203, -1)
-	button.OnControlSelected = function(control)
+	LobbyMenu.MinimapButton = InstructionalButton.New("Toggle Map Panel", -1, 203, 203, -1)
+	LobbyMenu.MinimapButton.OnControlSelected = function(control)
 		minimapLobbyEnabled = not minimapLobbyEnabled
 		if minimapLobbyEnabled then
 			LobbyMenu.Minimap.MinimapRoute.RouteColor = HudColours.HUD_COLOUR_YELLOW
@@ -516,8 +516,6 @@ AddEventHandler("ScaleformUI:lobbymenu:MapPanel", function(data)
 		end
 		LobbyMenu.Minimap:Enabled(minimapLobbyEnabled)
 	end
-	
-	table.insert(LobbyMenu.InstructionalButtons, button)
 end)
 
 AddEventHandler("ScaleformUI:lobbymenu:Show", function(focusColume, canClose, onClose)
@@ -542,6 +540,13 @@ AddEventHandler("ScaleformUI:lobbymenu:Show", function(focusColume, canClose, on
 		table.insert(LobbyMenu.InstructionalButtons, InstructionalButton.New(GetLabelText("HUD_INPUT3"), -1, 194, 194, -1))
 	end
 	table.insert(LobbyMenu.InstructionalButtons, InstructionalButton.New(GetLabelText("HUD_INPUT8"), -1, -1, -1, "INPUTGROUP_FRONTEND_DPAD_ALL"))
+
+	if LobbyMenu.hasMapPanel then
+		while not LobbyMenu.MinimapButton do
+			Citizen.Wait(0)
+		end
+		table.insert(LobbyMenu.InstructionalButtons, LobbyMenu.MinimapButton)
+	end
 
 	selectRowID = 1
 	selectColumnID = 1

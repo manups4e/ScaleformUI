@@ -34,11 +34,22 @@ function MinimapRoute:SetupCustomRoute()
     SetGpsFlags(8, 0.0)
     StartGpsCustomRoute(self.RouteColor, true, true)
 
-    RaceGalleryNextBlipSprite(self.StartPoint.Sprite)
-    RaceGalleryAddBlip(self.StartPoint.Position.x, self.StartPoint.Position.y, self.StartPoint.Position.z)
+    -- Start Point
+    local startPoint = self.StartPoint
+    RaceGalleryNextBlipSprite(startPoint.Sprite)
+    local bStart = RaceGalleryAddBlip(startPoint.Position.x, startPoint.Position.y, startPoint.Position.z)
+    if startPoint.Scale > 0 then
+        SetBlipScale(bStart, startPoint.Scale)
+    end
+    SetBlipColour(bStart, startPoint.Color)
+    if startPoint.Number then
+        ShowNumberOnBlip(bStart, startPoint.Number)
+    else
+        HideNumberOnBlip(bStart)
+    end
+    AddPointToGpsCustomRoute(startPoint.Position.x, startPoint.Position.y, startPoint.Position.z)
 
-    AddPointToGpsCustomRoute(self.StartPoint.Position.x, self.StartPoint.Position.y, self.StartPoint.Position.z)
-
+    -- CheckPoints
     for i = 1, #self.CheckPoints, 1 do
         local checkPoint = self.CheckPoints[i]
         RaceGalleryNextBlipSprite(checkPoint.Sprite)
@@ -47,12 +58,28 @@ function MinimapRoute:SetupCustomRoute()
             SetBlipScale(b, checkPoint.Scale)
         end
         SetBlipColour(b, checkPoint.Color)
+        if checkPoint.Number then
+            ShowNumberOnBlip(b, checkPoint.Number)
+        else
+            HideNumberOnBlip(b)
+        end
         AddPointToGpsCustomRoute(checkPoint.Position.x, checkPoint.Position.y, checkPoint.Position.z)
     end
 
-    RaceGalleryNextBlipSprite(self.EndPoint.Sprite)
-    RaceGalleryAddBlip(self.EndPoint.Position.x, self.EndPoint.Position.y, self.EndPoint.Position.z)
-    AddPointToGpsCustomRoute(self.EndPoint.Position.x, self.EndPoint.Position.y, self.EndPoint.Position.z)
+    -- End Point
+    local endPoint = self.EndPoint
+    RaceGalleryNextBlipSprite(endPoint.Sprite)
+    local bEnd = RaceGalleryAddBlip(endPoint.Position.x, endPoint.Position.y, endPoint.Position.z)
+    if startPoint.Scale > 0 then
+        SetBlipScale(bEnd, endPoint.Scale)
+    end
+    SetBlipColour(bEnd, endPoint.Color)
+    if endPoint.Number then
+        ShowNumberOnBlip(bEnd, endPoint.Number)
+    else
+        HideNumberOnBlip(bEnd)
+    end
+    AddPointToGpsCustomRoute(endPoint.Position.x, endPoint.Position.y, endPoint.Position.z)
 
     SetGpsCustomRouteRender(true, 18, self.MapThickness)
 end

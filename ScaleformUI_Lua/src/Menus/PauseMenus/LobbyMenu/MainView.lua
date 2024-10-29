@@ -562,38 +562,62 @@ function MainView:ProcessControl()
         return
     end
 
-    if (IsControlPressed(2, 172)) then
+    if (IsDisabledControlJustPressed(2, 172)) then
         if GlobalGameTimer - self._time > self._delay then
-            self:ButtonDelay()
             Citizen.CreateThread(function()
                 self:GoUp()
+                local timer = GetGameTimer()
+                while IsDisabledControlPressed(2, 172) do
+                    if GetTimeDifference(GetGameTimer(), timer) > 300 then
+                        self:GoUp()
+                    end
+                    Citizen.Wait(50)
+                end
                 return
             end)
         end
     end
-    if (IsControlPressed(2, 173)) then
+    if (IsDisabledControlJustPressed(2, 173)) then
         if GlobalGameTimer - self._time > self._delay then
-            self:ButtonDelay()
             Citizen.CreateThread(function()
                 self:GoDown()
+                local timer = GetGameTimer()
+                while IsDisabledControlPressed(2, 173) do
+                    if GetTimeDifference(GetGameTimer(), timer) > 300 then
+                        self:GoDown()
+                    end
+                    Citizen.Wait(50)
+                end
                 return
             end)
         end
     end
-    if (IsControlPressed(2, 174)) then
+    if (IsDisabledControlJustPressed(2, 174)) then
         if GlobalGameTimer - self._time > self._delay then
-            self:ButtonDelay()
             Citizen.CreateThread(function()
                 self:GoLeft()
+                local timer = GetGameTimer()
+                while IsDisabledControlPressed(2, 174) do
+                    if GetTimeDifference(GetGameTimer(), timer) > 300 then
+                        self:GoLeft()
+                    end
+                    Citizen.Wait(50)
+                end
                 return
             end)
         end
     end
-    if (IsControlPressed(2, 175)) then
+    if (IsDisabledControlJustPressed(2, 175)) then
         if GlobalGameTimer - self._time > self._delay then
-            self:ButtonDelay()
             Citizen.CreateThread(function()
                 self:GoRight()
+                local timer = GetGameTimer()
+                while IsDisabledControlPressed(2, 175) do
+                    if GetTimeDifference(GetGameTimer(), timer) > 300 then
+                        self:GoRight()
+                    end
+                    Citizen.Wait(50)
+                end
                 return
             end)
         end
@@ -609,7 +633,7 @@ function MainView:ProcessControl()
             self:GoBack()
         end)
     end
-
+    
     if (IsControlJustPressed(1, 241)) then
         Citizen.CreateThread(function()
             ScaleformUI.Scaleforms._pauseMenu:SendScrollEvent(-1)
@@ -629,17 +653,6 @@ function MainView:ProcessControl()
         self._times = 0
         self._delay = 150
     end
-end
-
-function MainView:ButtonDelay()
-    self._times = self._times + 1
-    if self._times % 5 == 0 then
-        self._delay = self._delay - 10
-        if self._delay < 50 then
-            self._delay = 50
-        end
-    end
-    self._time = GlobalGameTimer
 end
 
 function MainView:Select()
@@ -700,10 +713,12 @@ function MainView:GoBack()
 end
 
 function MainView:GoUp()
+    PlaySoundFrontend(-1, "NAV_UP_DOWN", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
     self.listCol[self._focus]:GoUp()
 end
 
 function MainView:GoDown()
+    PlaySoundFrontend(-1, "NAV_UP_DOWN", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
     self.listCol[self._focus]:GoDown()
 end
 

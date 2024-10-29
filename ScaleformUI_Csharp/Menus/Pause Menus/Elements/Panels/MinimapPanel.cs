@@ -14,6 +14,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
         internal float zoomDistance = 0;
         internal bool enabled;
         private bool turnedOn = false;
+        private bool IsRadarVisible = !IsRadarHidden();
         internal int localCoronaMapStage = 0;
 
         public MinimapRoute MinimapRoute;
@@ -69,6 +70,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
                     localCoronaMapStage = -1;
                     if (turnedOn)
                     {
+                        IsRadarVisible = !IsRadarHidden()
                         DisplayRadar(false);
                         SetMapFullScreen(false);
                         turnedOn = false;
@@ -88,56 +90,62 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             }
         }
 
-        internal void InitializeMapSize()
+         internal void InitializeMapSize()
         {
-            int iMaxNodesToCheck = 202;
-            Vector3 vNodeMax = new Vector3();
-            Vector3 vNodeMin = new Vector3();
+            float top = float.NegativeInfinity;
+            float bottom = float.PositiveInfinity;
+            float left = float.PositiveInfinity;
+            float right = float.NegativeInfinity;
 
-            for (int i = 0; i < iMaxNodesToCheck; i++)
+            foreach (var data in MinimapRoute.CheckPoints)
             {
-                Vector3 vectorNode = GetVectorToCheck(i);
-
-                if (MinimapBlips.Count > i)
-                {
-                    if (MinimapBlips[i].Position.LengthSquared() > vectorNode.LengthSquared())
-                    {
-                        vectorNode = MinimapBlips[i].Position;
-                    }
-                }
-
-                if (i == 0)
-                {
-
-                    vNodeMax = vectorNode;
-                    vNodeMin = vectorNode;
-                }
-                else
-                {
-                    if (vectorNode.X > vNodeMax.X)
-                        vNodeMax.X = vectorNode.X;
-                    if (vectorNode.X < vNodeMin.X)
-                        vNodeMin.X = vectorNode.X;
-                    if (vectorNode.Y > vNodeMax.Y)
-                        vNodeMax.Y = vectorNode.Y;
-                    if (vectorNode.Y < vNodeMin.Y)
-                        vNodeMin.Y = vectorNode.Y;
-                }
+                top = Math.Max(top, data.Position.Y);
+                bottom = Math.Min(bottom, data.Position.Y);
+                left = Math.Min(left, data.Position.X);
+                right = Math.Max(right, data.Position.X);
             }
 
-            // Calculate our range and get the correct zoom.
-            mapPosition = new Vector2((vNodeMax.X + vNodeMin.X) / 2f, (vNodeMax.Y + vNodeMin.Y) / 2f);
+            top = Math.Max(top, MinimapRoute.StartPoint.Position.Y)
+            bottom = Math.Min(bottom, MinimapRoute.StartPoint.Position.Y)
+            left = Math.Min(left, MinimapRoute.StartPoint.Position.X)
+            right = Math.Max(right, MinimapRoute.StartPoint.Position.X)
 
-            float DistanceX = vNodeMax.X - vNodeMin.X;
-            float DistanceY = vNodeMax.Y - vNodeMin.Y;
+            top = Math.Max(top, MinimapRoute.EndPoint.Position.Y)
+            bottom = Math.Min(bottom, MinimapRoute.EndPoint.Position.Y)
+            left = Math.Min(left, MinimapRoute.EndPoint.Position.X)
+            right = Math.Max(right, MinimapRoute.EndPoint.Position.X)
+
+            Vector3 topLeft = new Vector3(left, top, 0);
+            Vector3 bottomRight = new Vector3(right, bottom, 0);
+
+            // Center of square area
+            mapPosition = new Vector2((topLeft.X + bottomRight.X) / 2, (topLeft.Y + bottomRight.Y) / 2);
+
+            // Calculate our range and get the correct zoom.
+            float DistanceX = Math.Abs(left - right);
+            float DistanceY = Math.Abs(top - bottom);
 
             if (DistanceX > DistanceY)
+            {
                 zoomDistance = DistanceX / 1.5f;
+            }
             else
-                zoomDistance = DistanceY / 1.5f;
+            {
+                zoomDistance = DistanceY / 2.0f;
+            }
 
             RefreshMapPosition(mapPosition);
             LockMinimapAngle(0);
+
+            //!! Draw Debug
+            // var blipArea = AddBlipForArea(mapPosition.X, mapPosition.Y, 0.0f, DistanceX, DistanceY);
+            // SetBlipAlpha(blipArea, 150);
+            // RaceGalleryNextBlipSprite(1);
+            // var blipTop = RaceGalleryAddBlip(topLeft.X, topLeft.Y, 0.0f);
+            // RaceGalleryNextBlipSprite(1);
+            // var blipBottom = RaceGalleryAddBlip(bottomRight.X, bottomRight.Y, 0.0f);
+            // ShowNumberOnBlip(blipTop, 1);
+            // ShowNumberOnBlip(blipBottom, 2);
         }
 
         public void RefreshMapPosition(Vector2 position)
@@ -145,17 +153,6 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             mapPosition = new Vector2(position);
             if (ParentTab is GalleryTab g)
                 zoomDistance = g.bigPic ? 600 : 1200;
-        }
-
-        internal Vector3 GetVectorToCheck(int i)
-        {
-            if (i == 0)
-                return MinimapRoute.StartPoint.Position;
-            else if (MinimapRoute.CheckPoints.Count > i)
-                return MinimapRoute.CheckPoints[i].Position;
-            else if (i == MinimapRoute.CheckPoints.Count)
-                return MinimapRoute.EndPoint.Position;
-            else return Vector3.Zero;
         }
 
         internal void SetupBlips()
@@ -188,7 +185,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             {
                 if (!turnedOn)
                 {
-                    DisplayRadar(true);
+                    DisplayRadar(IsRadarVisible);
                     SetMapFullScreen(true);
                     turnedOn = true;
                 }
@@ -197,6 +194,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             {
                 if (turnedOn)
                 {
+                    IsRadarVisible = !IsRadarHidden()
                     DisplayRadar(false);
                     SetMapFullScreen(false);
                     turnedOn = false;
@@ -245,7 +243,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             localCoronaMapStage = 0;
             enabled = false;
             N_0x2de6c5e2e996f178(1);
-            DisplayRadar(false);
+            DisplayRadar(IsRadarVisible);
             RaceGalleryFullscreen(false);
             ClearRaceGalleryBlips();
             zoomDistance = 0;
