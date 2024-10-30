@@ -59,8 +59,10 @@ namespace ScaleformUI.Menu
             {
                 base.Enabled = value;
                 string joinedList = string.Join(",", Items.Cast<string>().Select(x =>
-                    x = !Enabled ? x.ReplaceRstarColorsWith("~c~") : value ? (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~l~", "~s~")
+                    x = Selected ? (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~l~", "~s~")
                 ));
+                if (!Enabled)
+                    joinedList = joinedList.ReplaceRstarColorsWith("~c~");
                 if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
                     Main.scaleformUI.CallFunction("UPDATE_LISTITEM_LIST", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), joinedList, this.Index);
@@ -86,8 +88,10 @@ namespace ScaleformUI.Menu
             {
                 base.Selected = value;
                 string joinedList = string.Join(",", Items.Cast<string>().Select(x =>
-                    x = !Enabled ? x.ReplaceRstarColorsWith("~c~") : value ? (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~l~", "~s~")
+                    x = Selected ? (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~l~", "~s~")
                 ));
+                if (!Enabled)
+                    joinedList = joinedList.ReplaceRstarColorsWith("~c~");
                 if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
                     Main.scaleformUI.CallFunction("UPDATE_LISTITEM_LIST", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), joinedList, Index);
@@ -193,8 +197,10 @@ namespace ScaleformUI.Menu
             _items = list;
             _index = index;
             string joinedList = string.Join(",", Items.Cast<string>().Select(x =>
-                x = !Enabled ? x.ReplaceRstarColorsWith("~c~") : Selected ? (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~l~", "~s~")
+                x = Selected ? (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~l~", "~s~")
             ));
+            if (!Enabled)
+                joinedList = joinedList.ReplaceRstarColorsWith("~c~");
             if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
             {
                 Main.scaleformUI.CallFunction("UPDATE_LISTITEM_LIST", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), joinedList, Index);
