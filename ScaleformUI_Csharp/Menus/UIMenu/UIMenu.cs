@@ -814,6 +814,7 @@ namespace ScaleformUI.Menu
     public delegate void MenuClosedEvent(UIMenu menu);
     public delegate void ItemHighlightedEvent(UIMenu menu, UIMenuItem item);
     public delegate void MenuFilteringFailedEvent(UIMenu menu);
+    public delegate void ExtensionMethodEvent(UIMenu menu);
 
     public enum MenuAnimationType
     {
@@ -1032,6 +1033,9 @@ namespace ScaleformUI.Menu
             }
         }
 
+        private bool _mouseOnMenu;
+        public bool IsMouseOverTheMenu => _mouseOnMenu;
+
         public bool ResetCursorOnOpen = true;
         private bool mouseControlsEnabled = true;
         public bool AlternativeTitle = false;
@@ -1105,6 +1109,7 @@ namespace ScaleformUI.Menu
         public event MenuOpenedEvent OnMenuOpen;
         public event MenuClosedEvent OnMenuClose;
         public event MenuFilteringFailedEvent OnFilteringFailed;
+        public event ExtensionMethodEvent ExtensionMethod;
 
         /// <summary>
         /// Called every time a Stat item changes value
@@ -1713,6 +1718,13 @@ namespace ScaleformUI.Menu
                 UpdateDescription();
                 _changed = false;
             }
+            mouseCheck();
+            ExtensionMethod?.Invoke(this);
+        }
+
+        private async void mouseCheck()
+        {
+            _mouseOnMenu = MouseControlsEnabled && await Main.scaleformUI.CallFunctionReturnValueBool("IS_MOUSE_ON_MENU");
         }
 
         private void clearAllLabels()
