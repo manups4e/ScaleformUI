@@ -9,13 +9,13 @@ end
 ---@field private turnedOn boolean
 ---@field private mapPosition vector2
 ---@field private localMapStage number
+---@field private IsRadarVisible boolean
 ---@field private New fun(parent:BaseTab)
 ---@field public Parent BaseTab
 ---@field public MinimapBlips FakeBlip[]
 ---@field public MinimapRoute MinimapRoute
 ---@field public Enabled fun(_e: boolean|nil)
 ---@field private InitializeMapSize fun()
----@field private GetVectorToCheck fun(i:number)
 ---@field private SetupBlips fun()
 ---@field private MaintainMap fun()
 ---@field private ProcessMap fun()
@@ -34,7 +34,8 @@ function MinimapPanel.New(parent, parentTab)
         mapPosition = vector2(0, 0),
         enabled = false,
         turnedOn = false,
-        localMapStage = 0
+        localMapStage = 0,
+        IsRadarVisible = not IsRadarHidden(),
     }
     return setmetatable(_data, MinimapPanel)
 end
@@ -78,6 +79,7 @@ function MinimapPanel:Enabled(_e)
         else
             self.localMapStage = -1
             if self.turnedOn then
+                self.IsRadarVisible = not IsRadarHidden()
                 DisplayRadar(false);
                 SetMapFullScreen(false);
                 self.turnedOn = false;
@@ -92,56 +94,67 @@ function MinimapPanel:Enabled(_e)
                 ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("HIDE_PLAYERS_TAB_MISSION_PANEL", show)
             end
         end
+
+        PlaySoundFrontend(-1, "NAV_UP_DOWN", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
     end
 end
 
 function MinimapPanel:InitializeMapSize()
-    local iMaxNodesToCheck = 202
-    local vNodeMax = vector3(0, 0, 0)
-    local vNodeMin = vector3(0, 0, 0)
+    local top = -math.huge
+    local bottom = math.huge
+    local left = math.huge
+    local right = -math.huge
 
-    for i = 1, iMaxNodesToCheck + 1, 1 do
-        local vectorNode = self:GetVectorToCheck(i)
-
-        if (#self.MinimapBlips > i) then
-            if (LengthSquared(self.MinimapBlips[i].Position) > LengthSquared(vectorNode)) then
-                vectorNode = self.MinimapBlips[i].Position
-            end
-        end
-
-        if i == 1 then
-            vNodeMax = vectorNode
-            vNodeMin = vectorNode
-        else
-            if (vectorNode.x > vNodeMax.x) then
-                vNodeMax = vector3(vectorNode.x, vNodeMax.y, vNodeMax.z)
-            end
-            if (vectorNode.x < vNodeMin.x) then
-                vNodeMin = vector3(vectorNode.x, vNodeMax.y, vNodeMax.z)
-            end
-            if (vectorNode.y > vNodeMax.y) then
-                vNodeMax = vector3(vNodeMax.x, vectorNode.y, vNodeMax.z)
-            end
-            if (vectorNode.y < vNodeMin.y) then
-                vNodeMin = vector3(vNodeMax.x, vectorNode.y, vNodeMax.z)
-            end
-        end
+    for k, data in pairs(self.MinimapRoute.CheckPoints) do
+        top = math.max(top, data.Position.y)
+        bottom = math.min(bottom, data.Position.y)
+        left = math.min(left, data.Position.x)
+        right = math.max(right, data.Position.x)
     end
 
+    top = math.max(top, self.MinimapRoute.StartPoint.Position.y)
+    bottom = math.min(bottom, self.MinimapRoute.StartPoint.Position.y)
+    left = math.min(left, self.MinimapRoute.StartPoint.Position.x)
+    right = math.max(right, self.MinimapRoute.StartPoint.Position.x)
+
+    top = math.max(top, self.MinimapRoute.EndPoint.Position.y)
+    bottom = math.min(bottom, self.MinimapRoute.EndPoint.Position.y)
+    left = math.min(left, self.MinimapRoute.EndPoint.Position.x)
+    right = math.max(right, self.MinimapRoute.EndPoint.Position.x)
+
+    local topLeft = vector3(left, top, 0)
+    local bottomRight = vector3(right, bottom, 0)
+
+    -- Center of square area
+    self.mapPosition = vector2((topLeft.x + bottomRight.x) / 2, (topLeft.y + bottomRight.y) / 2)
+    
     -- Calculate our range and get the correct zoom.
-    self.mapPosition = vector2((vNodeMax.x + vNodeMin.x) / 2, (vNodeMax.y + vNodeMin.y) / 2)
+    local DistanceX = math.abs(left - right)
+    local DistanceY = math.abs(top - bottom)
+    local Diagonal = math.sqrt(DistanceX ^ 2 + DistanceY ^ 2)
 
-    local DistanceX = vNodeMax.x - vNodeMin.x
-    local DistanceY = vNodeMax.y - vNodeMin.y
-
-    if (DistanceX > DistanceY) then
-        self.zoomDistance = DistanceX / 1.5
-    else
-        self.zoomDistance = DistanceY / 1.5
+    if DistanceX == DistanceY then -- Square
+        self.zoomDistance = Diagonal / 2.4
+    elseif (DistanceX > DistanceY) then -- Horizontal
+        local mul = 1.7
+        self.zoomDistance = math.min(DistanceX / mul, Diagonal / mul)
+    else -- Vertical
+        local mul = 2.4
+        self.zoomDistance = math.max(DistanceY / mul, Diagonal / mul)
     end
 
     self:RefreshMapPosition(self.mapPosition)
     LockMinimapAngle(0)
+
+    --!! Draw Debug
+    -- local blipArea = AddBlipForArea(self.mapPosition.x, self.mapPosition.y, 0.0, DistanceX, DistanceY)
+    -- SetBlipAlpha(blipArea, 150)
+    -- RaceGalleryNextBlipSprite(1)
+    -- local blipTop = RaceGalleryAddBlip(topLeft.x, topLeft.y, 0.0)
+    -- RaceGalleryNextBlipSprite(1)
+    -- local blipBottom = RaceGalleryAddBlip(bottomRight.x, bottomRight.y, 0.0)
+    -- ShowNumberOnBlip(blipTop, 1)
+    -- ShowNumberOnBlip(blipBottom, 2)
 end
 
 function MinimapPanel:RefreshMapPosition(position)
@@ -156,18 +169,6 @@ function MinimapPanel:RefreshMapPosition(position)
                 self.zoomDistance = 1200.0
             end
         end
-    end
-end
-
-function MinimapPanel:GetVectorToCheck(i)
-    if i == 1 then
-        return self.MinimapRoute.StartPoint.Position
-    elseif #self.MinimapRoute.CheckPoints >= i then
-        return self.MinimapRoute.CheckPoints[i].Position
-    elseif i == #self.MinimapRoute.CheckPoints + 1 then
-        return self.MinimapRoute.EndPoint.Position
-    else
-        return vector3(0, 0, 0)
     end
 end
 
@@ -193,12 +194,13 @@ end
 function MinimapPanel:ProcessMap()
     if self.enabled then
         if not self.turnedOn then
-            DisplayRadar(true)
+            DisplayRadar(self.IsRadarVisible)
             SetMapFullScreen(true)
             self.turnedOn = true
         end
     else
         if self.turnedOn then
+            self.IsRadarVisible = not IsRadarHidden()
             DisplayRadar(false)
             SetMapFullScreen(false)
             self.turnedOn = false
@@ -240,8 +242,8 @@ end
 function MinimapPanel:Dispose()
     self.localMapStage = -1;
     self.enabled = false;
-    PauseToggleFullscreenMap(1);
-    DisplayRadar(false);
+    PauseToggleFullscreenMap(true);
+    DisplayRadar(self.IsRadarVisible);
     RaceGalleryFullscreen(false);
     ClearRaceGalleryBlips();
     self.zoomDistance = 0;
