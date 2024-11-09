@@ -8,6 +8,7 @@ namespace ScaleformUI.PauseMenus.Elements.Items
         public int BlipSprite;
         public float Scale = 0;
         public BlipColor Color = BlipColor.White;
+        public bool Number;
 
         public MinimapRaceCheckpoint() { }
         public MinimapRaceCheckpoint(Vector3 position, int blipSprite)

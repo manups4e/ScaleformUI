@@ -70,7 +70,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
                     localCoronaMapStage = -1;
                     if (turnedOn)
                     {
-                        IsRadarVisible = !IsRadarHidden()
+                        IsRadarVisible = !IsRadarHidden();
                         DisplayRadar(false);
                         SetMapFullScreen(false);
                         turnedOn = false;
@@ -105,15 +105,15 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
                 right = Math.Max(right, data.Position.X);
             }
 
-            top = Math.Max(top, MinimapRoute.StartPoint.Position.Y)
-            bottom = Math.Min(bottom, MinimapRoute.StartPoint.Position.Y)
-            left = Math.Min(left, MinimapRoute.StartPoint.Position.X)
-            right = Math.Max(right, MinimapRoute.StartPoint.Position.X)
+            top = Math.Max(top, MinimapRoute.StartPoint.Position.Y);
+            bottom = Math.Min(bottom, MinimapRoute.StartPoint.Position.Y);
+            left = Math.Min(left, MinimapRoute.StartPoint.Position.X);
+            right = Math.Max(right, MinimapRoute.StartPoint.Position.X);
 
-            top = Math.Max(top, MinimapRoute.EndPoint.Position.Y)
-            bottom = Math.Min(bottom, MinimapRoute.EndPoint.Position.Y)
-            left = Math.Min(left, MinimapRoute.EndPoint.Position.X)
-            right = Math.Max(right, MinimapRoute.EndPoint.Position.X)
+            top = Math.Max(top, MinimapRoute.EndPoint.Position.Y);
+            bottom = Math.Min(bottom, MinimapRoute.EndPoint.Position.Y);
+            left = Math.Min(left, MinimapRoute.EndPoint.Position.X);
+            right = Math.Max(right, MinimapRoute.EndPoint.Position.X);
 
             Vector3 topLeft = new Vector3(left, top, 0);
             Vector3 bottomRight = new Vector3(right, bottom, 0);
@@ -194,7 +194,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             {
                 if (turnedOn)
                 {
-                    IsRadarVisible = !IsRadarHidden()
+                    IsRadarVisible = !IsRadarHidden();
                     DisplayRadar(false);
                     SetMapFullScreen(false);
                     turnedOn = false;
