@@ -3,7 +3,13 @@ using CitizenFX.Core.UI;
 using ScaleformUI.Elements;
 using ScaleformUI.Menus;
 using ScaleformUI.Scaleforms;
+using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Dynamic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
 using static CitizenFX.Core.Native.API;
 using Control = CitizenFX.Core.Control;
 
@@ -808,6 +814,7 @@ namespace ScaleformUI.Menu
     public delegate void StatItemProgressChange(UIMenu menu, UIMenuStatsItem item, int value);
     public delegate void ColorPanelChangedEvent(UIMenuItem menu, UIMenuColorPanel panel, int index);
     public delegate void VehicleColorPickerSelectEvent(UIMenuItem menu, UIVehicleColourPickerPanel panel, int index, SColor color);
+    public delegate void VehicleColorPickerHoverEvent(int index, SColor color);
     public delegate void PercentagePanelChangedEvent(UIMenuItem menu, UIMenuPercentagePanel panel, float value);
     public delegate void GridPanelChangedEvent(UIMenuItem menu, UIMenuGridPanel panel, PointF value);
     public delegate void MenuOpenedEvent(UIMenu menu, dynamic data = null);
@@ -868,6 +875,10 @@ namespace ScaleformUI.Menu
         internal PaginationHandler Pagination;
 
         internal KeyValuePair<string, string> _customTexture;
+        internal KeyValuePair<string, string> _customBGTexture = new KeyValuePair<string, string>("", "");
+
+        internal UIMenuItem ParentItem { get; set; }
+        internal bool _buttonsEnabled = true;
 
         /// <summary>
         /// Players won't be able to close the menu if this is false! Make sure players can close the menu in some way!!!!!!
@@ -895,6 +906,7 @@ namespace ScaleformUI.Menu
         public bool Glare { get; set; }
         private float fSavedGlareDirection;
         private PointF glarePosition;
+        private SizeF glareSize;
 
         internal readonly static string _selectTextLocalized = Game.GetGXTEntry("HUD_INPUT2");
         internal readonly static string _backTextLocalized = Game.GetGXTEntry("HUD_INPUT3");
@@ -917,8 +929,9 @@ namespace ScaleformUI.Menu
         public string AUDIO_SELECT = "SELECT";
         public string AUDIO_BACK = "BACK";
         public string AUDIO_ERROR = "ERROR";
-        private HudColor subtitleColor = HudColor.NONE;
-        private SColor bannerColor = SColor.HUD_None;
+        public HudColor SubtitleColor = HudColor.NONE;
+        internal SColor bannerColor = SColor.HUD_None;
+        internal SColor bannerBGColor = SColor.HUD_None;
 
         public List<UIMenuItem> MenuItems = new List<UIMenuItem>();
         public List<UIMenuItem> _unfilteredMenuItems = new List<UIMenuItem>();
@@ -998,7 +1011,6 @@ namespace ScaleformUI.Menu
             }
         }
 
-
         public bool MouseWheelControlEnabled
         {
             get => mouseWheelControlEnabled;
@@ -1041,7 +1053,8 @@ namespace ScaleformUI.Menu
         public bool AlternativeTitle = false;
         private bool canBuild = true;
         private bool isFading;
-        internal float fadingTime = 0.1f;
+        internal float fadingTime = 0f; /*0.1f;*/
+        internal bool differentBanner = false;
         internal bool itemless = false;
         public PointF Offset { get; internal set; }
 
@@ -1181,22 +1194,26 @@ namespace ScaleformUI.Menu
             Pagination = new PaginationHandler();
             Pagination.ItemsPerPage = 7;
             this.fadingTime = fadingTime;
-            glarePosition = new PointF((Offset.X / Screen.Width) + 0.4499f, (Offset.Y / Screen.Height) + 0.492f);
 
-            SetKey(MenuControls.Up, Control.PhoneUp);
-            SetKey(MenuControls.Down, Control.PhoneDown);
+            SetMenuOffset(offset);
 
-            SetKey(MenuControls.Left, Control.PhoneLeft);
-            SetKey(MenuControls.Right, Control.PhoneRight);
+            SetKey(MenuControls.Up, Control.FrontendUp);
+            SetKey(MenuControls.Down, Control.FrontendDown);
+
+            SetKey(MenuControls.Left, Control.FrontendLeft);
+            SetKey(MenuControls.Right, Control.FrontendRight);
             SetKey(MenuControls.Select, Control.FrontendAccept);
 
-            SetKey(MenuControls.Back, Control.PhoneCancel);
+            SetKey(MenuControls.Back, Control.FrontendCancel);
             SetKey(MenuControls.Back, Control.FrontendPause);
+
+            SetKey(MenuControls.PageUp, Control.ScriptedFlyZUp);
+            SetKey(MenuControls.PageDown, Control.ScriptedFlyZDown);
 
             InstructionalButtons = new List<InstructionalButton>()
             {
-                new InstructionalButton(Control.PhoneSelect, _selectTextLocalized),
-                new InstructionalButton(Control.PhoneCancel, _backTextLocalized)
+                new InstructionalButton(Control.FrontendCancel, _backTextLocalized),
+                new InstructionalButton(Control.FrontendAccept, _selectTextLocalized),
             };
         }
         /// <summary>
@@ -1224,38 +1241,43 @@ namespace ScaleformUI.Menu
             Pagination = new PaginationHandler();
             Pagination.ItemsPerPage = 7;
             this.fadingTime = fadingTime;
+            SetMenuOffset(offset);
 
-            SetKey(MenuControls.Up, Control.PhoneUp);
-            SetKey(MenuControls.Down, Control.PhoneDown);
+            SetKey(MenuControls.Up, Control.FrontendUp);
+            SetKey(MenuControls.Down, Control.FrontendDown);
 
-            SetKey(MenuControls.Left, Control.PhoneLeft);
-            SetKey(MenuControls.Right, Control.PhoneRight);
+            SetKey(MenuControls.Left, Control.FrontendLeft);
+            SetKey(MenuControls.Right, Control.FrontendRight);
             SetKey(MenuControls.Select, Control.FrontendAccept);
 
-            SetKey(MenuControls.Back, Control.PhoneCancel);
+            SetKey(MenuControls.Back, Control.FrontendCancel);
             SetKey(MenuControls.Back, Control.FrontendPause);
 
-            InstructionalButtons = new List<InstructionalButton>()
-            {
-                new InstructionalButton(Control.PhoneSelect, _selectTextLocalized),
-                new InstructionalButton(Control.PhoneCancel, _backTextLocalized)
-            };
             itemless = true;
             AddTextEntry("ScaleformUILongDesc", description);
+            InstructionalButtons = new List<InstructionalButton>()
+            {
+                new InstructionalButton(Control.FrontendCancel, _backTextLocalized),
+                new InstructionalButton(Control.FrontendAccept, _selectTextLocalized),
+            };
         }
 
         #endregion
 
         #region Public Methods
 
+        /// <summary>
+        /// Extension method that is run on tick every frame while this menu is drawing.
+        /// </summary>
+        /// <param name="menu">The menu.</param>
         public void RefreshMenu(bool keepIndex = false)
         {
+            foreach (UIMenuItem it in MenuItems) it.Selected = false;
             if (Visible)
             {
                 int index = CurrentSelection;
                 isBuilding = true;
                 Main.scaleformUI.CallFunction("CLEAR_ITEMS");
-                foreach (UIMenuItem it in MenuItems) it.Selected = false;
                 if (MenuItems.Count > 0)
                 {
                     isBuilding = true;
@@ -1356,6 +1378,12 @@ namespace ScaleformUI.Menu
                 throw new ArgumentOutOfRangeException("ScaleformUI: Cannot remove with an index less than 0 or more than the count of actual instructional buttons");
             RemoveInstructionalButton(InstructionalButtons[index]);
         }
+
+        public void ClearInstructionalButtons()
+        {
+            this.InstructionalButtons.Clear();
+        }
+
         /// <summary>
         /// Change the menu's width. The width is calculated as DefaultWidth + WidthOffset, so a width offset of 10 would enlarge the menu by 10 pixels.
         /// </summary>
@@ -1378,12 +1406,31 @@ namespace ScaleformUI.Menu
             }
         }
 
+        internal void SetUnderBannerType(KeyValuePair<string, string> pathToCustomSprite)
+        {
+            _customBGTexture = pathToCustomSprite;
+            if (Visible)
+            {
+                Main.scaleformUI.CallFunction("UPDATE_MENU_UNDERBANNER_TEXTURE", _customBGTexture.Key, _customBGTexture.Value);
+            }
+        }
+
         public void SetBannerColor(SColor color)
         {
             bannerColor = color;
             if (Visible)
             {
                 Main.scaleformUI.CallFunction("SET_MENU_BANNER_COLOR", bannerColor.ArgbValue);
+            }
+        }
+
+
+        public void SetUnderBannerColor(SColor color)
+        {
+            bannerBGColor = color;
+            if (Visible)
+            {
+                Main.scaleformUI.CallFunction("SET_MENU_UNDERBANNER_COLOR", bannerBGColor.ArgbValue);
             }
         }
 
@@ -1395,12 +1442,31 @@ namespace ScaleformUI.Menu
         {
             if (!itemless)
             {
-                int selectedItem = CurrentSelection;
                 item.Parent = this;
                 MenuItems.Add(item);
-                if (Visible)
-                    CurrentSelection = selectedItem;
                 Pagination.TotalItems = MenuItems.Count;
+                if (Visible)
+                {
+                    if (Pagination.TotalItems <= Pagination.ItemsPerPage)
+                    {
+                        int sel = CurrentSelection;
+                        Pagination.MinItem = Pagination.CurrentPageStartIndex;
+                        if (Pagination.scrollType == ScrollingType.CLASSIC && Pagination.TotalPages > 1)
+                        {
+                            int missingItems = Pagination.GetMissingItems();
+                            if (missingItems > 0)
+                            {
+                                Pagination.ScaleformIndex = Pagination.GetPageIndexFromMenuIndex(Pagination.CurrentPageEndIndex) + missingItems;
+                                Pagination.MinItem = Pagination.CurrentPageStartIndex - missingItems;
+                            }
+                        }
+                        Pagination.MaxItem = Pagination.CurrentPageEndIndex;
+                        _itemCreation(0, MenuItems.Count - 1, false);
+                        CurrentSelection = sel;
+                        Main.scaleformUI.CallFunction("SET_CURRENT_ITEM", Pagination.ScaleformIndex);
+                        Main.scaleformUI.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
+                    }
+                }
             }
             else throw new Exception("ScaleformUI - You cannot add items to an itemless menu, only a long description");
         }
@@ -1481,8 +1547,9 @@ namespace ScaleformUI.Menu
             {
                 MenuItems.RemoveAt(index);
                 Pagination.TotalItems = MenuItems.Count;
-                RefreshMenu(true);
-                CurrentSelection = selectedItem;
+                RefreshMenu();
+                if (selectedItem < MenuItems.Count)
+                    CurrentSelection = selectedItem;
             }
             else
             {
@@ -1694,7 +1761,8 @@ namespace ScaleformUI.Menu
                     fSavedGlareDirection = fvar;
                     _menuGlare.CallFunction("SET_DATA_SLOT", fSavedGlareDirection);
                 }
-                DrawScaleformMovie(_menuGlare.Handle, glarePosition.X, glarePosition.Y, 1, 1.1f, 255, 255, 255, 255, 0);
+                DrawScaleformMovie(_menuGlare.Handle, glarePosition.X, glarePosition.Y, glareSize.Width, glareSize.Height, 255, 255, 255, 255, 0);
+                //_menuGlare.Render2D();
             }
 
             if (IsUsingController)
@@ -1719,6 +1787,10 @@ namespace ScaleformUI.Menu
                 _changed = false;
             }
             mouseCheck();
+        }
+
+        internal void CallExtensionMethod()
+        {
             ExtensionMethod?.Invoke(this);
         }
 
@@ -1729,19 +1801,21 @@ namespace ScaleformUI.Menu
 
         private void clearAllLabels()
         {
-            for(int i=0; i<MenuItems.Count;i++)
+            for (int i = 0; i < MenuItems.Count; i++)
             {
                 AddTextEntry($"menu_{BreadcrumbsHandler.Count}_desc_{i}", "");
             }
         }
 
-        int eventType = 0;
-        int itemId = 0;
-        int context = 0;
-        int unused = 0;
+        internal int eventType = 0;
+        internal int itemId = 0;
+        internal int context = 0;
+        internal int unused = 0;
+        internal bool success;
         bool cursorPressed;
         private ItemFont descriptionFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
         private ScrollingType scrollingType = ScrollingType.CLASSIC;
+        private bool mouseReset = false;
 
         /// <summary>
         /// Process the mouse's position and check if it's hovering over any UI element. Call this in OnTick
@@ -1770,7 +1844,7 @@ namespace ScaleformUI.Menu
             SetInputExclusive(2, 237);
             SetInputExclusive(2, 238);
 
-            bool success = GetScaleformMovieCursorSelection(Main.scaleformUI.Handle, ref eventType, ref context, ref itemId, ref unused);
+            success = GetScaleformMovieCursorSelection(Main.scaleformUI.Handle, ref eventType, ref context, ref itemId, ref unused);
 
             if (success && !isBuilding)
             {
@@ -1916,21 +1990,60 @@ namespace ScaleformUI.Menu
                     case 7: // on click released ouside
                         cursorPressed = false;
                         SetMouseCursorSprite(1);
+                        if (mouseReset)
+                            mouseReset = false;
                         break;
                     case 8: // on not hover
                         cursorPressed = false;
-                        if (context == 0)
+                        switch (context)
                         {
-                            MenuItems[itemId].Hovered = false;
+                            case 0:
+                                MenuItems[itemId].Hovered = false;
+                                break;
+                            case 2:
+                                UIVehicleColourPickerPanel panel = (UIVehicleColourPickerPanel)MenuItems[CurrentSelection].SidePanel;
+                                panel.PickerRollout();
+                                break;
+                            case 14:
+                                int res = await Main.scaleformUI.CallFunctionReturnValueInt("SELECT_PANEL", CurrentSelection);
+                                UIMenuColourPickePanel picker = (UIMenuColourPickePanel)MenuItems[CurrentSelection].Panels[res];
+                                picker.PickerRollout();
+                                break;
                         }
+                        if (!IsMouseOverTheMenu) return;
                         SetMouseCursorSprite(1);
+                        if (mouseReset)
+                            mouseReset = false;
                         break;
                     case 9: // on hovered
-                        if (context == 0)
+                        switch (context)
                         {
-                            MenuItems[itemId].Hovered = true;
+                            case 0:
+                                MenuItems[itemId].Hovered = true;
+                                break;
+                            case 2:
+                                UIVehicleColourPickerPanel panel = (UIVehicleColourPickerPanel)MenuItems[CurrentSelection].SidePanel;
+                                if (itemId != -1)
+                                {
+                                    panel.PickerHovered(itemId, VehicleColors.GetColorById(itemId));
+                                }
+                                break;
+                            case 14:
+                                int res = await Main.scaleformUI.CallFunctionReturnValueInt("SELECT_PANEL", CurrentSelection);
+                                UIMenuColourPickePanel picker = (UIMenuColourPickePanel)MenuItems[CurrentSelection].Panels[res];
+                                if (picker != null)
+                                {
+                                    if (itemId != -1)
+                                    {
+                                        picker.PickerHovered(itemId, VehicleColors.GetColorById(itemId));
+                                    }
+                                }
+                                break;
+
                         }
                         SetMouseCursorSprite(5);
+                        if (mouseReset)
+                            mouseReset = false;
                         break;
                     case 0: // dragged outside
                         cursorPressed = false;
@@ -1990,6 +2103,8 @@ namespace ScaleformUI.Menu
                         float mouseSpeed = 0.05f - mouseVariance;
                         if (mouseSpeed > 0.05f) mouseSpeed = 0.05f;
                         GameplayCamera.RelativeHeading += 70 * mouseSpeed;
+                        if (mouseReset)
+                            mouseReset = false;
                     }
                 }
                 else if (ScreenTools.IsMouseInBounds(new PointF(Convert.ToInt32(Resolution.Width - 30f), 0), new SizeF(30, 1080)))
@@ -2000,16 +2115,28 @@ namespace ScaleformUI.Menu
                         if (mouseSpeed > 0.05f) mouseSpeed = 0.05f;
                         GameplayCamera.RelativeHeading -= 70 * mouseSpeed;
                         SetMouseCursorSprite(7);
+                        if (mouseReset)
+                            mouseReset = false;
                     }
                 }
                 else
                 {
-                    if (!MenuItems.Any(x => x.Hovered)) SetMouseCursorSprite(1);
+                    if (!IsMouseOverTheMenu)
+                    {
+                        if (!mouseReset)
+                            SetMouseCursorSprite(1);
+                        mouseReset = true;
+                    }
                 }
             }
             else
             {
-                if (!MenuItems.Any(x => x.Hovered)) SetMouseCursorSprite(1);
+                if (!IsMouseOverTheMenu)
+                {
+                    if (!mouseReset)
+                        SetMouseCursorSprite(1);
+                    mouseReset = true;
+                }
             }
         }
 
@@ -2022,7 +2149,7 @@ namespace ScaleformUI.Menu
                 await FadeOutMenu();
                 if (BreadcrumbsHandler.CurrentDepth == 0)
                 {
-                    Visible = false;
+                    MenuHandler.CloseAndClearHistory();
                     BreadcrumbsHandler.Clear();
                     Main.InstructionalButtons.ClearButtonList();
                 }
@@ -2045,7 +2172,15 @@ namespace ScaleformUI.Menu
                     }
                     Visible = false;
                     if (prevMenu != null)
-                        prevMenu.Visible = true;
+                    {
+                        if (prevMenu is UIMenu menu)
+                        {
+                            menu.differentBanner = _customTexture.Key != menu._customTexture.Key && _customTexture.Value != menu._customTexture.Value;
+                            menu.Visible = true;
+                        }
+                        else
+                            prevMenu.Visible = true;
+                    }
                     BreadcrumbsHandler.SwitchInProgress = false;
                 }
             }
@@ -2374,6 +2509,39 @@ namespace ScaleformUI.Menu
                 Select(true);
             }
 
+            if (HasControlJustBeenPressed(MenuControls.PageUp, key))
+            {
+                var index = CurrentSelection - Pagination.ItemsPerPage;
+                if (index < 0)
+                {
+                    var pagIndex = Pagination.GetPageIndexFromMenuIndex(CurrentSelection);
+                    var newPage = Pagination.TotalPages - 1;
+                    index = Pagination.GetMenuIndexFromPageIndex(newPage, pagIndex);
+                    var menuMaxItem = MenuItems.Count - 1;
+                    if (index > menuMaxItem)
+                        index = menuMaxItem;
+                }
+                CurrentSelection = index;
+                IndexChange(CurrentSelection);
+            }
+            else if (HasControlJustBeenPressed(MenuControls.PageDown, key))
+            {
+                var index = CurrentSelection + Pagination.ItemsPerPage;
+                if (index >= MenuItems.Count && Pagination.CurrentPage < Pagination.TotalPages - 1)
+                {
+                    index = MenuItems.Count - 1;
+                }
+                else if (index >= MenuItems.Count && Pagination.CurrentPage == Pagination.TotalPages - 1)
+                {
+                    var pagIndex = Pagination.GetPageIndexFromMenuIndex(CurrentSelection);
+                    var newPage = 0;
+                    index = Pagination.GetMenuIndexFromPageIndex(newPage, pagIndex);
+                }
+                CurrentSelection = index;
+                IndexChange(CurrentSelection);
+            }
+
+
             // IsControlBeingPressed doesn't run every frame so I had to use this
             if (HasControlJustBeenReleased(MenuControls.Up) || HasControlJustBeenReleased(MenuControls.Down) || HasControlJustBeenReleased(MenuControls.Left) || HasControlJustBeenReleased(MenuControls.Right))
             {
@@ -2425,11 +2593,12 @@ namespace ScaleformUI.Menu
             get { return _visible; }
             set
             {
-                _visible = value;
                 _justOpened = value;
                 _itemsDirty = value;
                 if (value)
                 {
+                    if (_visible) return;
+                    _visible = value;
                     if (!itemless && this.MenuItems.Count == 0)
                     {
                         MenuHandler.CloseAndClearHistory();
@@ -2448,13 +2617,17 @@ namespace ScaleformUI.Menu
                 }
                 else
                 {
+                    _visible = value;
                     Main.InstructionalButtons.ClearButtonList();
                     canBuild = false;
                     MenuCloseEv(this);
                     MenuHandler.ableToDraw = false;
                     MenuHandler.currentMenu = null;
                     _unfilteredMenuItems.Clear();
-                    Main.scaleformUI.CallFunction("CLEAR_ALL");
+                    if (BreadcrumbsHandler.SwitchInProgress && !differentBanner)
+                        Main.scaleformUI.CallFunction("CLEAR_ITEMS");
+                    else
+                        Main.scaleformUI.CallFunction("CLEAR_ALL");
                     clearAllLabels();
                 }
                 if (!value) return;
@@ -2467,6 +2640,7 @@ namespace ScaleformUI.Menu
         internal async void BuildUpMenuAsync(bool itemsOnly = false)
         {
             isBuilding = true;
+            while (!Main.scaleformUI.IsLoaded) await BaseScript.Delay(0);
             bool _animEnabled = EnableAnimation;
             if (itemless)
             {
@@ -2474,7 +2648,7 @@ namespace ScaleformUI.Menu
                 while (!Main.scaleformUI.IsLoaded) await BaseScript.Delay(0);
                 BeginScaleformMovieMethod(Main.scaleformUI.Handle, "CREATE_MENU");
                 PushScaleformMovieMethodParameterString(Title);
-                PushScaleformMovieMethodParameterString(subtitleColor != HudColor.NONE ? "~" + subtitleColor + "~" + Subtitle : Subtitle);
+                PushScaleformMovieMethodParameterString(SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle);
                 PushScaleformMovieMethodParameterFloat(Offset.X);
                 PushScaleformMovieMethodParameterFloat(Offset.Y);
                 PushScaleformMovieMethodParameterBool(AlternativeTitle);
@@ -2493,6 +2667,8 @@ namespace ScaleformUI.Menu
                 PushScaleformMovieFunctionParameterBool(true);
                 BeginTextCommandScaleformString("ScaleformUILongDesc");
                 EndTextCommandScaleformString_2();
+                PushScaleformMovieMethodParameterString(_customBGTexture.Key);
+                PushScaleformMovieMethodParameterString(_customBGTexture.Value);
                 EndScaleformMovieMethod();
                 await FadeInMenu();
                 isBuilding = false;
@@ -2501,8 +2677,11 @@ namespace ScaleformUI.Menu
             if (!itemsOnly)
             {
                 EnableAnimation = false;
-                while (!Main.scaleformUI.IsLoaded) await BaseScript.Delay(0);
-                Main.scaleformUI.CallFunction("CREATE_MENU", Title, subtitleColor != HudColor.NONE ? "~" + subtitleColor + "~" + Subtitle : Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, EnableAnimation, (int)AnimationType, (int)buildingAnimation, counterColor, descriptionFont.FontName, descriptionFont.FontID, fadingTime, bannerColor.ArgbValue, false);
+
+                if (!BreadcrumbsHandler.SwitchInProgress || differentBanner)
+                    Main.scaleformUI.CallFunction("CREATE_MENU", Title, SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, EnableAnimation, (int)AnimationType, (int)buildingAnimation, counterColor, descriptionFont.FontName, descriptionFont.FontID, fadingTime, bannerColor.ArgbValue, false, "", _customBGTexture.Key, _customBGTexture.Value);
+                else
+                    Main.scaleformUI.CallFunction("RE_CREATE_MENU", Title, SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, EnableAnimation, (int)AnimationType, (int)buildingAnimation, counterColor, descriptionFont.FontName, descriptionFont.FontID, fadingTime, bannerColor.ArgbValue, false, "", _customBGTexture.Key, _customBGTexture.Value);
                 if (Windows.Count > 0)
                 {
                     foreach (UIMenuWindow wind in Windows)
@@ -2619,12 +2798,13 @@ namespace ScaleformUI.Menu
         /// <param name="enable3DAnim">This will show a nice 3D animation when selecting items</param>
         /// <param name="scrollingAnim">Desired scrolling animation</param>
         /// <param name="buildingAnim">Desired building animation</param>
-        public void SetAnimations(bool enableScrollingAnim, bool enable3DAnim, MenuAnimationType scrollingAnim = MenuAnimationType.QUADRATIC_IN, MenuBuildingAnimation buildingAnim = MenuBuildingAnimation.LEFT_RIGHT)
+        public void SetAnimations(bool enableScrollingAnim, bool enable3DAnim, MenuAnimationType scrollingAnim = MenuAnimationType.QUADRATIC_IN, MenuBuildingAnimation buildingAnim = MenuBuildingAnimation.LEFT_RIGHT, float fadingTime = 0.1f)
         {
             EnableAnimation = enableScrollingAnim;
             Enabled3DAnimations = enable3DAnim;
             AnimationType = scrollingAnim;
             BuildingAnimation = buildingAnim;
+            this.fadingTime = fadingTime;
         }
 
         /// <summary>
@@ -2659,7 +2839,7 @@ namespace ScaleformUI.Menu
         {
             if (itemless) throw new("ScaleformUI - You can't compare or sort an itemless menu");
             try
-            { 
+            {
                 MenuItems[CurrentSelection].Selected = false;
                 _unfilteredMenuItems = MenuItems.ToList();
                 Clear();
@@ -2682,7 +2862,7 @@ namespace ScaleformUI.Menu
         public void ResetFilter()
         {
             if (itemless) throw new("ScaleformUI - You can't compare or sort an itemless menu");
-            try 
+            try
             {
                 MenuItems[CurrentSelection].Selected = false;
                 Clear();
@@ -2731,8 +2911,10 @@ namespace ScaleformUI.Menu
             }
 
             UIMenuItem item = MenuItems[menuIndex];
-            AddTextEntry($"menu_{BreadcrumbsHandler.Count}_desc_{menuIndex}", item.Description);
-
+            if (!string.IsNullOrEmpty(item.Description))
+            {
+                AddTextEntry($"menu_{BreadcrumbsHandler.Count}_desc_{menuIndex}", item.Description);
+            }
             BeginScaleformMovieMethod(Main.scaleformUI.Handle, "ADD_ITEM");
             PushScaleformMovieFunctionParameterBool(before);
             PushScaleformMovieFunctionParameterInt(item._itemId);
@@ -2744,10 +2926,14 @@ namespace ScaleformUI.Menu
                 AddTextComponentSubstringTextLabelHashKey(item.DescriptionHash);
                 EndTextCommandScaleformString_2();
             }
-            else
+            else if (!string.IsNullOrEmpty(item.Description))
             {
                 BeginTextCommandScaleformString($"menu_{BreadcrumbsHandler.Count}_desc_{menuIndex}");
                 EndTextCommandScaleformString_2();
+            }
+            else
+            {
+                PushScaleformMovieMethodParameterString("");
             }
             PushScaleformMovieFunctionParameterBool(item.Enabled);
             PushScaleformMovieFunctionParameterBool(item.BlinkDescription);
@@ -2755,7 +2941,8 @@ namespace ScaleformUI.Menu
             {
                 case UIMenuDynamicListItem:
                     UIMenuDynamicListItem dit = (UIMenuDynamicListItem)item;
-                    PushScaleformMovieMethodParameterString(dit.CurrentListItem);
+                    var curString = dit.Selected ? (dit.CurrentListItem.StartsWith("~") ? dit.CurrentListItem : "~s~" + dit.CurrentListItem).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (dit.CurrentListItem.StartsWith("~") ? dit.CurrentListItem : "~s~" + dit.CurrentListItem).ToString().Replace("~l~", "~s~");
+                    PushScaleformMovieMethodParameterString(curString);
                     PushScaleformMovieFunctionParameterInt(0);
                     PushScaleformMovieFunctionParameterInt(dit.MainColor.ArgbValue);
                     PushScaleformMovieFunctionParameterInt(dit.HighlightColor.ArgbValue);
@@ -2766,8 +2953,10 @@ namespace ScaleformUI.Menu
                 case UIMenuListItem:
                     UIMenuListItem it = (UIMenuListItem)item;
                     string joinedList = string.Join(",", it.Items.Cast<string>().Select(x =>
-                        x = !it.Enabled ? x.ReplaceRstarColorsWith("~c~") : it.Selected ? (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~l~", "~s~")
+                        x = it.Selected ? (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~l~", "~s~")
                     ));
+                    if (!it.Enabled)
+                        joinedList = joinedList.ReplaceRstarColorsWith("~c~");
                     AddTextEntry($"listitem_{menuIndex}_list", joinedList);
                     BeginTextCommandScaleformString($"listitem_{menuIndex}_list");
                     EndTextCommandScaleformString();
@@ -2842,7 +3031,7 @@ namespace ScaleformUI.Menu
                     Main.scaleformUI.CallFunction("SET_RIGHT_LABEL", scaleformIndex, item._formatRightLabel);
                     if (item.RightBadge != BadgeIcon.NONE)
                     {
-                        if(item.RightBadge == BadgeIcon.CUSTOM)
+                        if (item.RightBadge == BadgeIcon.CUSTOM)
                             Main.scaleformUI.CallFunction("SET_CUSTOM_RIGHT_BADGE", scaleformIndex, item.customRightBadge.Key, item.customRightBadge.Value);
                         else
                             Main.scaleformUI.CallFunction("SET_RIGHT_BADGE", scaleformIndex, (int)item.RightBadge);
@@ -2853,7 +3042,7 @@ namespace ScaleformUI.Menu
             Main.scaleformUI.CallFunction("SET_ITEM_RIGHT_LABEL_FONT", scaleformIndex, item.rightLabelFont.FontName, item.rightLabelFont.FontID);
             if (item.LeftBadge != BadgeIcon.NONE)
             {
-                if(item.LeftBadge == BadgeIcon.CUSTOM)
+                if (item.LeftBadge == BadgeIcon.CUSTOM)
                     Main.scaleformUI.CallFunction("SET_CUSTOM_LEFT_BADGE", scaleformIndex, item.customLeftBadge.Key, item.customLeftBadge.Value);
                 else
                     Main.scaleformUI.CallFunction("SET_LEFT_BADGE", scaleformIndex, (int)item.LeftBadge);
@@ -2931,19 +3120,25 @@ namespace ScaleformUI.Menu
                 {
                     Pagination.CurrentMenuIndex = MenuItems.Count - 1;
                 }
-                MenuItems[CurrentSelection].Selected = false;
+                if (CurrentSelection < MenuItems.Count)
+                    MenuItems[CurrentSelection].Selected = false;
 
                 Pagination.CurrentMenuIndex = value;
                 Pagination.CurrentPage = Pagination.GetPage(Pagination.CurrentMenuIndex);
                 Pagination.CurrentPageIndex = value;
                 Pagination.ScaleformIndex = Pagination.GetScaleformIndex(value);
+                if (value > Pagination.MaxItem || value < Pagination.MinItem)
+                {
+                    RefreshMenu(true);
+                }
+
 
                 if (_visible)
                 {
                     Main.scaleformUI.CallFunction("SET_CURRENT_ITEM", Pagination.GetScaleformIndex(Pagination.CurrentMenuIndex));
                     Main.scaleformUI.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
                 }
-                MenuItems[CurrentSelection].Selected = true;
+                MenuItems[value].Selected = true;
                 //ScaleformUI._ui.CallFunction("SET_CURRENT_ITEM", _activeItem);
             }
         }
@@ -2953,8 +3148,8 @@ namespace ScaleformUI.Menu
             get => MenuItems[CurrentSelection];
             set => CurrentSelection = MenuItems.Any(x => x.Label == value.Label && x.Description == value.Description) ? MenuItems.IndexOf(value) : 0;
         }
-        
-        
+
+
         /// <summary>
         ///  Set's the menus offset after initialization.
         /// </summary>
@@ -2962,8 +3157,17 @@ namespace ScaleformUI.Menu
         public void SetMenuOffset(PointF offset)
         {
             Offset = offset;
-            glarePosition = new PointF((Offset.X / Screen.Width) + 0.4499f, (Offset.Y / Screen.Height) + 0.492f);
-            if (Visible) 
+            float safezone = (1.0f - (float)decimal.Round(Convert.ToDecimal(GetSafeZoneSize()), 2)) * 100f * 0.005f;
+            int w = 0, h = 0;
+            GetActiveScreenResolution(ref w, ref h);
+            glarePosition = new PointF(
+                (Offset.X / Screen.Width) + (GetIsWidescreen() ? 0.45f: 0.585f) + safezone,
+                (Offset.Y / Screen.Height) + 0.45f + safezone);
+            glareSize = new SizeF(
+                (GetIsWidescreen()?1f:1.35f),
+                (1));
+
+            if (Visible)
                 Main.scaleformUI.CallFunction("SET_MENU_OFFSET", Offset.X, Offset.Y);
         }
 
@@ -2990,24 +3194,7 @@ namespace ScaleformUI.Menu
                 title = value;
                 if (Visible)
                 {
-                    Main.scaleformUI.CallFunction("UPDATE_TITLE_SUBTITLE", title, subtitleColor != HudColor.NONE ? "~" + subtitleColor + "~" + Subtitle : Subtitle, AlternativeTitle);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Returns the subtitle's color
-        /// </summary>
-        
-        public HudColor SubtitleColor
-        {
-            get => subtitleColor;
-            set
-            {
-                subtitleColor = value;
-                if (Visible)
-                {
-                    Main.scaleformUI.CallFunction("UPDATE_TITLE_SUBTITLE", title, subtitleColor != HudColor.NONE ? "~" + subtitleColor + "~" + Subtitle : Subtitle, AlternativeTitle);
+                    Main.scaleformUI.CallFunction("UPDATE_TITLE_SUBTITLE", title, SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle, AlternativeTitle);
                 }
             }
         }
@@ -3024,7 +3211,7 @@ namespace ScaleformUI.Menu
                 subtitle = value;
                 if (Visible)
                 {
-                    Main.scaleformUI.CallFunction("UPDATE_TITLE_SUBTITLE", title, subtitleColor != HudColor.NONE ? "~" + subtitleColor + "~" + Subtitle : Subtitle, AlternativeTitle);
+                    Main.scaleformUI.CallFunction("UPDATE_TITLE_SUBTITLE", title, SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle, AlternativeTitle);
                 }
             }
         }
@@ -3070,22 +3257,11 @@ namespace ScaleformUI.Menu
                 canPlayerCloseMenu = value;
                 if (value)
                 {
-                    InstructionalButtons = new List<InstructionalButton>()
-                    {
-                        new InstructionalButton(Control.PhoneSelect, _selectTextLocalized),
-                        new InstructionalButton(Control.PhoneCancel, _backTextLocalized)
-                    };
+                    InstructionalButtons.Insert(1, new InstructionalButton(Control.FrontendCancel, _backTextLocalized));
                 }
                 else
                 {
-                    InstructionalButtons = new List<InstructionalButton>()
-                    {
-                        new InstructionalButton(Control.PhoneSelect, _selectTextLocalized),
-                    };
-                }
-                if (Visible)
-                {
-                    Main.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
+                    InstructionalButtons.RemoveAt(1);
                 }
             }
         }
@@ -3165,7 +3341,14 @@ namespace ScaleformUI.Menu
             Left,
             Right,
             Select,
-            Back
+            Back,
+            PageUp,
+            PageDown
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is UIMenu menu && menu.Title == Title && menu.Subtitle == Subtitle;
         }
 
     }

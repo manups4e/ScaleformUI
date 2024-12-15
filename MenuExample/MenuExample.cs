@@ -37,11 +37,9 @@ public class MenuExample : BaseScript
 
         // first true means add menu Glare scaleform to the menu
         // last true means it's using the alternative title style
-        UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI ~o~SHOWCASE", new PointF(20, 20), "commonmenu", "interaction_bgd", true, true);
+        UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI ~o~SHOWCASE", new PointF(0, 0), "commonmenu", "interaction_bgd", true, true, 0f);
         exampleMenu.MaxItemsOnScreen = 7; // To decide max items on screen at time, default 7
-        exampleMenu.BuildingAnimation = MenuBuildingAnimation.LEFT_RIGHT;
-        exampleMenu.AnimationType = MenuAnimationType.BACK_INOUT;
-        exampleMenu.ScrollingType = ScrollingType.CLASSIC;
+        exampleMenu.SetAnimations(true, true, MenuAnimationType.LINEAR, MenuBuildingAnimation.LEFT_RIGHT);
         exampleMenu.SetMouse(false, false, false, false, false);
 
         //exampleMenu.CounterColor = HudColor.HUD_COLOUR_PINK;

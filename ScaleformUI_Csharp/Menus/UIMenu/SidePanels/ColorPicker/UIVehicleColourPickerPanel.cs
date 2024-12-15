@@ -1,4 +1,5 @@
 ﻿using ScaleformUI.Elements;
+using System.Drawing;
 
 namespace ScaleformUI.Menu
 {
@@ -19,11 +20,14 @@ namespace ScaleformUI.Menu
             }
         }
         public SColor TitleColor;
+        internal SColor color;
         internal SidePanelsTitleType _titleType;
         internal int _value;
 
         public int Value => _value;
+        public SColor Color => color;
         public event VehicleColorPickerSelectEvent OnVehicleColorPickerSelect;
+        public event VehicleColorPickerHoverEvent OnColorHover;
 
         /// <summary>
         /// Adds a Mission Details panel as side menu panel
@@ -57,7 +61,16 @@ namespace ScaleformUI.Menu
 
         internal void PickerSelect(SColor color)
         {
+            this.color = color;
             OnVehicleColorPickerSelect?.Invoke(ParentItem, this, _value, color);
+        }
+        internal void PickerHovered(int colorId, SColor color)
+        {
+            OnColorHover?.Invoke(colorId, color);
+        }
+        internal void PickerRollout()
+        {
+            OnColorHover?.Invoke(_value, color);
         }
     }
 }

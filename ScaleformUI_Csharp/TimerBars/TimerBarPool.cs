@@ -1,4 +1,6 @@
-﻿namespace ScaleformUI
+﻿using CitizenFX.Core.Native;
+
+namespace ScaleformUI
 {
     public class TimerBarPool
     {
@@ -9,10 +11,8 @@
             _bars = new List<TimerBarBase>();
         }
 
-        public List<TimerBarBase> ToList()
-        {
-            return _bars;
-        }
+        public int Count => _bars.Count;
+        public List<TimerBarBase> ToList => _bars;
 
         public void Add(TimerBarBase timer)
         {

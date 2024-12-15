@@ -126,8 +126,10 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                     case UIMenuListItem:
                         UIMenuListItem it = (UIMenuListItem)item;
                         string joinedList = string.Join(",", it.Items.Cast<string>().Select(x =>
-                            x = !it.Enabled ? x.ReplaceRstarColorsWith("~c~") : it.Selected ? (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~l~", "~s~")
+                            x = it.Selected ? (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~l~", "~s~")
                         ));
+                        if (!it.Enabled)
+                            joinedList = joinedList.ReplaceRstarColorsWith("~c~");
                         AddTextEntry($"listitem_lobby_{menuIndex}_list", joinedList);
                         BeginTextCommandScaleformString($"listitem_lobby_{menuIndex}_list");
                         EndTextCommandScaleformString();
@@ -234,8 +236,10 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                     case UIMenuListItem:
                         UIMenuListItem it = (UIMenuListItem)item;
                         string joinedList = string.Join(",", it.Items.Cast<string>().Select(x =>
-                            x = !it.Enabled ? x.ReplaceRstarColorsWith("~c~") : it.Selected ? (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~l~", "~s~")
+                            x = it.Selected ? (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~l~", "~s~")
                         ));
+                        if (!it.Enabled)
+                            joinedList = joinedList.ReplaceRstarColorsWith("~c~");
                         AddTextEntry($"listitem_menu_pause_playerTab[{pause.Index}]_{menuIndex}_list", joinedList);
                         BeginTextCommandScaleformString($"listitem_menu_pause_playerTab[{pause.Index}]_{menuIndex}_list");
                         EndTextCommandScaleformString();
@@ -682,8 +686,10 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             }
         }
 
-        private void RefreshColumn()
+        internal void RefreshColumn(bool keepIndex = false, bool keepScroll = false)
         {
+            var index = CurrentSelection;
+            var position = Pagination.GetScaleformIndex(index);
             if (Parent is MainView lobby)
                 lobby._pause._lobby.CallFunction("CLEAR_SETTINGS_COLUMN");
             else if (Parent is TabView pause && ParentTab.Visible)
@@ -724,9 +730,23 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                     _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", CurrentSelection + 1, Items.Count);
                 }
                 isBuilding = false;
+                if (keepIndex)
+                    CurrentSelection = index;
             }
         }
 
+        internal void RestoreScrollPosition(int index, int position)
+        {
+            CurrentSelection = 0;
+            for (int i = 0; i < Items.Count; i++)
+            {
+                if (position == Pagination.GetScaleformIndex(index))
+                    break;
+                else
+                    GoDown();
+            }
+            CurrentSelection = index;
+        }
 
         public void SelectItem()
         {

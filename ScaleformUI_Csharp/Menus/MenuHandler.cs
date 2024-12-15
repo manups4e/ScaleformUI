@@ -72,17 +72,15 @@ namespace ScaleformUI
                     {
                         if (old._customTexture.Key != null && old._customTexture.Value != null)
                             newer.SetBannerType(old._customTexture);
-                        newer.Offset = old.Offset;
+                        newer.differentBanner = old._customTexture.Key != newer._customTexture.Key && old._customTexture.Value != newer._customTexture.Value;
+                        newer.SetMenuOffset(old.Offset);
                         newer.AlternativeTitle = old.AlternativeTitle;
                         newer.MaxItemsOnScreen = old.MaxItemsOnScreen;
-                        newer.AnimationType = old.AnimationType;
-                        newer.BuildingAnimation = old.BuildingAnimation;
                         newer.ScrollingType = old.ScrollingType;
                         newer.Glare = old.Glare;
-                        newer.EnableAnimation = old.EnableAnimation;
-                        newer.Enabled3DAnimations = old.Enabled3DAnimations;
                         newer.fadingTime = old.fadingTime;
                         newer.SetMouse(old.MouseControlsEnabled, old.MouseEdgeEnabled, old.MouseWheelControlEnabled, old.ResetCursorOnOpen, old.leftClickEnabled);
+                        newer.SetAnimations(old.EnableAnimation, old.Enabled3DAnimations, old.AnimationType, old.BuildingAnimation);
                         newer.SubtitleColor = old.SubtitleColor;
                     }
                     newer.CurrentSelection = newMenuCurrentSelection != 0 ? newMenuCurrentSelection : 0;
@@ -92,8 +90,6 @@ namespace ScaleformUI
                 else if (newMenu is UIRadioMenu radio)
                     radio.CurrentSelection = newMenuCurrentSelection != 0 ? newMenuCurrentSelection : 0;
             }
-
-
             newMenu.Visible = true;
             BreadcrumbsHandler.Forward(newMenu, data);
             BreadcrumbsHandler.SwitchInProgress = false;
@@ -151,6 +147,17 @@ namespace ScaleformUI
             Draw();
             ProcessControl();
             ProcessMouse();
+            ProcessMenuExtensionMethod();
+        }
+        private static void ProcessMenuExtensionMethod()
+        {
+            if (CurrentMenu != null && currentBase == null)
+            {
+                if (currentMenu is UIMenu menu)
+                {
+                    menu.CallExtensionMethod();
+                }
+            }
         }
 
         /// <summary>

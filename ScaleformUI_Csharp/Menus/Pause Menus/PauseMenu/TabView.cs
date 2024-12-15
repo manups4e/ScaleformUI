@@ -34,6 +34,7 @@ namespace ScaleformUI.PauseMenu
         public string SideStringTop { get; set; }
         public string SideStringMiddle { get; set; }
         public string SideStringBottom { get; set; }
+        public bool ShowBlur = true;
         public Tuple<string, string> HeaderPicture
         {
             internal get => headerPicture;
@@ -135,7 +136,8 @@ namespace ScaleformUI.PauseMenu
                 if (value)
                 {
                     ActivateFrontendMenu((uint)Game.GenerateHash("FE_MENU_VERSION_CORONA"), true, -1);
-                    doScreenBlur();
+                    if (ShowBlur)
+                        doScreenBlur();
                     Main.InstructionalButtons.SetInstructionalButtons(InstructionalButtons);
                     SetPlayerControl(Game.Player.Handle, false, 0);
                     isBuilding = true;
@@ -155,8 +157,11 @@ namespace ScaleformUI.PauseMenu
                         t.Minimap?.Dispose();
                     else if (Tabs[Index] is GalleryTab g)
                         g.Minimap?.Dispose();
-                    AnimpostfxStop("PauseMenuIn");
-                    AnimpostfxPlay("PauseMenuOut", 0, false);
+                    if (ShowBlur || AnimpostfxIsRunning("PauseMenuIn"))
+                    {
+                        AnimpostfxStop("PauseMenuIn");
+                        AnimpostfxPlay("PauseMenuOut", 0, false);
+                    }
                     SendPauseMenuClose();
                     SetPlayerControl(Game.Player.Handle, true, 0);
                     MenuHandler.currentBase = null;
@@ -189,8 +194,11 @@ namespace ScaleformUI.PauseMenu
                     index = 0;
                 if (index < 0)
                     index = Tabs.Count - 1;
-                Tabs[Index].Visible = true;
-                BuildPauseMenu();
+                if (Visible)
+                {
+                    BuildPauseMenu();
+                    _pause.SelectTab(index);
+                }
                 SendPauseMenuTabChange();
             }
         }
@@ -587,6 +595,7 @@ namespace ScaleformUI.PauseMenu
             }
             base.Draw();
             _pause.Draw();
+            _pause._header.CallFunction("SHOW_ARROWS");
             UpdateKeymapItems();
         }
 
@@ -1283,7 +1292,7 @@ namespace ScaleformUI.PauseMenu
             {
                 case 0:
                     ClearPedInPauseMenu();
-                    _pause.HeaderGoLeft();
+                    //_pause.HeaderGoLeft();
                     if (Tabs[Index] is SubmenuTab)
                     {
                         Tabs[Index].LeftItemList[LeftItemIndex].Selected = false;
@@ -1547,7 +1556,7 @@ namespace ScaleformUI.PauseMenu
             {
                 case 0:
                     ClearPedInPauseMenu();
-                    _pause.HeaderGoRight();
+                    //_pause.HeaderGoRight();
                     if (Tabs[Index] is SubmenuTab)
                     {
                         Tabs[Index].LeftItemList[LeftItemIndex].Selected = false;
@@ -1716,7 +1725,7 @@ namespace ScaleformUI.PauseMenu
                         switch (context)
                         {
                             case -1:
-                                _pause.SelectTab(itemId);
+                                //_pause.SelectTab(itemId);
                                 Index = itemId;
                                 FocusLevel = 1;
                                 if (Tabs[Index] is PlayerListTab tab)
@@ -1784,6 +1793,17 @@ namespace ScaleformUI.PauseMenu
                                 }
                                 break;
                                 */
+                        }
+                        break;
+                    case 6:
+                        switch (context)
+                        {
+                            case 1000:
+                                if (itemId == -1)
+                                    Index--;
+                                if (itemId == 1)
+                                    Index++;
+                                break;
                         }
                         break;
                 }

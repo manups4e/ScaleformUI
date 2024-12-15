@@ -456,7 +456,7 @@ namespace ScaleformUI.Menu
                     if (!string.IsNullOrWhiteSpace(_formatRightLabel))
                         _formatRightLabel = _formatRightLabel.Replace("~l~", "~s~");
                 }
-                if (Parent != null && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
+                if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
                     Main.scaleformUI.CallFunction("SET_ITEM_LABELS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _formatLeftLabel, _formatRightLabel);
                 }
