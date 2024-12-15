@@ -878,7 +878,6 @@ namespace ScaleformUI.Menu
         internal KeyValuePair<string, string> _customBGTexture = new KeyValuePair<string, string>("", "");
 
         internal UIMenuItem ParentItem { get; set; }
-        internal bool _buttonsEnabled = true;
 
         /// <summary>
         /// Players won't be able to close the menu if this is false! Make sure players can close the menu in some way!!!!!!

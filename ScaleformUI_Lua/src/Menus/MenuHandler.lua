@@ -33,24 +33,22 @@ function MenuHandler:SwitchTo(currentMenu, newMenu, newMenuCurrentSelection, inh
                 newMenu.TxtDictionary = currentMenu.TxtDictionary
                 newMenu.TxtName = currentMenu.TxtName
             end
-            newMenu.Position = currentMenu.Position
 
+            newMenu:SetMenuOffset(currentMenu.Position.x, currentMenu.Position.y)
+            
             if currentMenu.Logo ~= nil then
                 newMenu.Logo = currentMenu.Logo
             else
                 newMenu.Logo = nil
                 newMenu.Banner = currentMenu.Banner
             end
-
+            newMenu._differentBanner = currentMenu.TxtDictionary ~= newMenu.TxtDictionary and currentMenu.TxtName ~= newMenu.TxtName;
             newMenu.Glare = currentMenu.Glare
+            newMenu.AlternativeTitle = currentMenu.AlternativeTitle
             newMenu:MaxItemsOnScreen(currentMenu:MaxItemsOnScreen())
-            newMenu:AnimationEnabled(currentMenu:AnimationEnabled())
-            newMenu:AnimationType(currentMenu:AnimationType())
-            newMenu:BuildingAnimation(currentMenu:BuildingAnimation())
             newMenu:ScrollingType(currentMenu:ScrollingType())
+            newMenu:SetMenuAnimations(currentMenu:AnimationEnabled(), currentMenu:Enabled3DAnimations(), currentMenu:AnimationType(), currentMenu:BuildingAnimation(), currentMenu.fadingTime)
             newMenu:MouseSettings(currentMenu:MouseControlsEnabled(), currentMenu:MouseEdgeEnabled(), currentMenu:MouseWheelControlEnabled(), currentMenu.Settings.ResetCursorOnOpen, currentMenu.leftClickEnabled)
-            newMenu.enabled3DAnimations = currentMenu.enabled3DAnimations
-            newMenu.fadingTime = currentMenu.fadingTime
             newMenu:SubtitleColor(currentMenu:SubtitleColor())
             --[[
                 newMenu.Settings.MouseControlsEnabled = currentMenu.Settings.MouseControlsEnabled
@@ -74,6 +72,15 @@ end
 function MenuHandler:ProcessMenus()
     self:Draw()
     self:ProcessControl()
+    self:ProcessMenuExtensionMethod()
+end
+
+function MenuHandler:ProcessMenuExtensionMethod()
+    if self._currentMenu ~= nil then
+        if self._currentMenu() == "UIMenu" then
+            self._currentMenu:CallExtensionMethod()
+        end
+    end
 end
 
 ---ProcessControl

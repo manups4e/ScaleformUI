@@ -66,10 +66,17 @@ function UIMenuDynamicListItem:CurrentListItem(item)
         return tostring(self._currentItem)
     else
         self._currentItem = item
+        local str = self:createListString()
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_LISTITEM_LIST",
-                self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
-                tostring(self._currentItem), 0)
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_LISTITEM_LIST", self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)), str, 0)
+        end
+        if self.Base.ParentColumn ~= nil then
+            local pSubT = self.Base.ParentColumn.Parent()
+            if pSubT == "LobbyMenu" then
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_LISTITEM_LIST", self.Base.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentColumn.Items, self)), str, self._Index - 1)
+            elseif pSubT == "PauseMenu" and self.Base.ParentColumn.ParentTab.Visible then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_LISTITEM_LIST", self.Base.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentColumn.Items, self)), str, self._Index - 1)
+            end
         end
     end
 end
@@ -100,7 +107,7 @@ function UIMenuDynamicListItem:AddSidePanel(sidePanel)
         self.SidePanel = sidePanel
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
             ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM",
-                IndexOf(self.Base.ParentMenu.Items, self), 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title,
+            IndexOf(self.Base.ParentMenu.Items, self), 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title,
                 sidePanel.TitleColor)
         end
     end
@@ -111,6 +118,18 @@ end
 function UIMenuDynamicListItem:Selected(bool)
     if bool ~= nil then
         self.Base:Selected(ToBool(bool), self)
+        local str = self:createListString()
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_LISTITEM_LIST", self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)), str, 0)
+        end
+        if self.Base.ParentColumn ~= nil then
+            local pSubT = self.Base.ParentColumn.Parent()
+            if pSubT == "LobbyMenu" then
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_LISTITEM_LIST", self.Base.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentColumn.Items, self)), str, self._Index - 1)
+            elseif pSubT == "PauseMenu" and self.Base.ParentColumn.ParentTab.Visible then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_LISTITEM_LIST", self.Base.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentColumn.Items, self)), str, self._Index - 1)
+            end
+        end
     else
         return self.Base._Selected
     end
@@ -131,6 +150,18 @@ end
 function UIMenuDynamicListItem:Enabled(bool)
     if bool ~= nil then
         self.Base:Enabled(bool, self)
+        local str = self:createListString()
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
+            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_LISTITEM_LIST", self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)), str, 0)
+        end
+        if self.Base.ParentColumn ~= nil then
+            local pSubT = self.Base.ParentColumn.Parent()
+            if pSubT == "LobbyMenu" then
+                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_LISTITEM_LIST", self.Base.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentColumn.Items, self)), str, self._Index - 1)
+            elseif pSubT == "PauseMenu" and self.Base.ParentColumn.ParentTab.Visible then
+                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_LISTITEM_LIST", self.Base.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentColumn.Items, self)), str, self._Index - 1)
+            end
+        end
     else
         return self.Base._Enabled
     end
@@ -291,4 +322,26 @@ function UIMenuDynamicListItem:FindPanelItem()
         end
     end
     return nil
+end
+
+function UIMenuDynamicListItem:createListString()
+    local list = {}
+    local value = self._currentItem
+    if type(value) ~= "string" then
+        value = tostring(v)
+    end
+    if not self:Enabled() then
+        value.ReplaceRstarColorsWith("~c~")
+    else
+        if not value:StartsWith("~") then
+            value = "~s~" .. value
+        end
+        if self:Selected() then
+            value = value:gsub("~w~", "~l~")
+            value = value:gsub("~s~", "~l~")
+        else
+            value = value:gsub("~l~", "~s~")
+        end
+    end
+    return value
 end

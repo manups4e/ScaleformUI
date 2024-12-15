@@ -17,14 +17,18 @@ function UIVehicleColorPickerPanel.New(side, title, color)
         TitleType = 0,
         Value = 1,
         ParentItem = nil,
-        PickerSelect = function(menu, item, newindex)
+        Color = SColor.HUD_None,
+        PickerSelect = function(menu, item, newindex, color)
+        end,
+        PickerHovered = function(menu, item, index, color)
         end
     }
     return setmetatable(_UIVehicleColorPickerPanel, UIVehicleColorPickerPanel)
 end
 
 function UIVehicleColorPickerPanel:SetParentItem(Item) -- required
-    if not Item() == nil then
+    print(Item())
+    if Item() ~= nil then
         self.ParentItem = Item
     else
         return self.ParentItem
@@ -37,4 +41,18 @@ function UIVehicleColorPickerPanel:UpdatePanelTitle(title)
         local item = IndexOf(self.ParentItem.Base.ParentMenu.Items, self.ParentItem) - 1
         ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_SIDE_PANEL_TITLE", item, title)
     end
+end
+
+function UIVehicleColorPickerPanel:_PickerSelect(color)
+    self.Color = color
+    self.PickerSelect(self.ParentItem.ParentMenu, self.ParentItem, self.Value, self.Color)
+end
+
+function UIVehicleColorPickerPanel:_PickerHovered(colorId, color)
+
+    self.PickerHovered(self:SetParentItem():SetParentMenu(), colorId, color)
+end
+
+function UIVehicleColorPickerPanel:_PickerRollout()
+    self.PickerHovered(self:SetParentItem():SetParentMenu(), self.ParentItem, self.Value, self.Color)
 end

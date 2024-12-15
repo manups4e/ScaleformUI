@@ -38,6 +38,7 @@ function TabView.New(title, subtitle, sideTop, sideMiddle, sideBottom)
         setHeaderDynamicWidth = false,
         _firstDrawTick = false,
         timer = 100,
+        ShowBlur = true,
         InstructionalButtons = {
             InstructionalButton.New(GetLabelText("HUD_INPUT2"), -1, 176, 176, -1),
             InstructionalButton.New(GetLabelText("HUD_INPUT3"), -1, 177, 177, -1),
@@ -114,8 +115,10 @@ function TabView:Index(idx)
         if self.index < 1 then
             self.index = #self.Tabs
         end
-        self.Tabs[self.index].Visible = true
-        self:BuildPauseMenu()
+        if self:Visible() then
+            self.Tabs[self.index].Visible = true
+            self:BuildPauseMenu()
+        end
         self.OnPauseMenuTabChanged(self, self.Tabs[self.index], self.index)
     else
         return self.index
@@ -132,7 +135,9 @@ function TabView:Visible(visible)
                 PlaySoundFrontend(self.SoundId, "Hit_In", "PLAYER_SWITCH_CUSTOM_SOUNDSET", true)
                 ActivateFrontendMenu(`FE_MENU_VERSION_CORONA`, true, 0)
                 self.OnPauseMenuOpen(self)
-                AnimpostfxPlay("PauseMenuIn", 0, true)
+                if self.ShowBlur then
+                    AnimpostfxPlay("PauseMenuIn", 0, true)
+                end
                 self._firstDrawTick = true
                 ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
                 SetPlayerControl(PlayerId(), false, 0)
@@ -155,8 +160,10 @@ function TabView:Visible(visible)
             MenuHandler._currentPauseMenu = nil
             ScaleformUI.Scaleforms._pauseMenu:Dispose()
             ScaleformUI.Scaleforms.InstructionalButtons:ClearButtonList()
-            AnimpostfxStop("PauseMenuIn")
-            AnimpostfxPlay("PauseMenuOut", 0, false)
+            if self.ShowBlur or AnimpostfxIsRunning("PauseMenuIn") then
+                AnimpostfxStop("PauseMenuIn")
+                AnimpostfxPlay("PauseMenuOut", 0, false)
+            end
             self.OnPauseMenuClose(self)
             SetPlayerControl(PlayerId(), true, 0)
             PlaySoundFrontend(self.SoundId, "Hit_Out", "PLAYER_SWITCH_CUSTOM_SOUNDSET", true)
@@ -560,6 +567,7 @@ function TabView:Draw()
     DisableControlAction(2, 199, true)
     DisableControlAction(2, 200, true)
     ScaleformUI.Scaleforms._pauseMenu:Draw(false)
+    ScaleformUI.Scaleforms._pauseMenu._header:CallFunction("SHOW_ARROWS")
     self:UpdateKeymapItems()
 end
 
@@ -625,7 +633,7 @@ function TabView:Select()
         if allDisabled then return end
         --[[ end check all disabled ]]
         --
-        while (not tab.LeftItemList?[self.leftItemIndex]:Enabled()) do
+        while (not tab.LeftItemList[self.leftItemIndex]:Enabled()) do
             Citizen.Wait(0)
             self:LeftItemIndex(self.leftItemIndex + 1)
             ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SELECT_LEFT_ITEM_INDEX", self.leftItemIndex - 1)
@@ -1038,7 +1046,7 @@ function TabView:GoLeft()
 
     if self:FocusLevel() == 0 then
         ClearPedInPauseMenu()
-        ScaleformUI.Scaleforms._pauseMenu:HeaderGoLeft()
+        --ScaleformUI.Scaleforms._pauseMenu:HeaderGoLeft()
         local tab = self.Tabs[self.index]
         local _, subT = tab()
         if subT == "SubmenuTab" then
@@ -1252,7 +1260,7 @@ function TabView:GoRight()
 
     if self:FocusLevel() == 0 then
         ClearPedInPauseMenu()
-        ScaleformUI.Scaleforms._pauseMenu:HeaderGoRight()
+        --ScaleformUI.Scaleforms._pauseMenu:HeaderGoRight()
         local tab = self.Tabs[self.index]
         local _, subT = tab()
         if subT == "SubmenuTab" then
@@ -1436,6 +1444,14 @@ function TabView:ProcessMouse()
                         end
                     end
                 end
+            elseif event_type_h == 6 then
+                if context_h == 1000 then
+                    if item_id == -1 then
+                        self:Index(self:Index() - 1)
+                    elseif item_id == 1 then
+                        self:Index(self:Index() + 1)
+                    end
+                end
             end
         end
 
@@ -1598,7 +1614,7 @@ function TabView:ProcessMouse()
                             item:Hovered(item:Enabled() and i == item_id + 1)
                         end
                     elseif context == 2 then
-                        for i, item in ipairs(tab.LeftItemList?[self.leftItemIndex].ItemList or {}) do
+                        for i, item in ipairs(tab.LeftItemList[self.leftItemIndex].ItemList or {}) do
                             item:Hovered(item:Enabled() and i == item_id + 1)
                         end
                     end

@@ -142,7 +142,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         _Subtitle = subTitle,
         AlternativeTitle = alternativeTitleStyle,
         counterColor = SColor.HUD_Freemode,
-        Position = { x = X, y = Y },
+        Position = vector2(X,Y),
         Pagination = PaginationHandler.New(),
         enableAnimation = true,
         animationType = MenuAnimationType.LINEAR,
@@ -155,7 +155,9 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         Extra = {},
         Description = {},
         Items = {},
+        ParentItem = nil,
         _unfilteredMenuItems = {},
+        mouseReset = false,
         Windows = {},
         TxtDictionary = txtDictionary,
         TxtName = txtName,
@@ -173,9 +175,12 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         _delay = 100,
         _delayBeforeOverflow = 350,
         _timeBeforeOverflow = 0,
+        _differentBanner = false,
         _canHe = true,
         _scaledWidth = (720 * GetAspectRatio(false)),
         _glarePos = {x=0,y=0},
+        _glareSize = {w=1.0,h=1.0},
+        _mouseOnMenu = false,
         fSavedGlareDirection = 0,
         enabled3DAnimations = true,
         isFading = false,
@@ -238,6 +243,8 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         end,
         OnGridPanelChanged = function(menu, item, index)
         end,
+        ExtensionMethod = function(menu)
+        end,
         Settings = {
             InstructionalButtons = true,
             MultilineFormats = true,
@@ -263,7 +270,19 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
     if (_UIMenu._menuGlare == 0) then
         _UIMenu._menuGlare = Scaleform.Request("mp_menu_glare")
     end
-    _UIMenu._glarePos ={x=_UIMenu.Position.x / 1280 + 0.4499, y = (_UIMenu.Position.y / 720) + 0.496}
+
+    _UIMenu.Position = vector2(X,Y)
+    local glareX = 0.45
+    local glareW = 1.0
+    if not GetIsWidescreen() then
+        glareX = 0.58
+        glareW = 1.35
+    end
+    local safezone = (1.0 - math.round(GetSafeZoneSize(), 2)) * 100 * 0.005;
+    _UIMenu._glarePos = vector2(
+        (_UIMenu.Position.x / 1280) + glareX + safezone,
+        _UIMenu.Position.y / 720 + 0.45 + safezone)
+    _UIMenu._glareSize = {w=glareW, h=1.0}
 
     return setmetatable(_UIMenu, UIMenu)
 end
@@ -506,11 +525,23 @@ end
 ---@param enable3DAnim boolean
 ---@param scrollingAnimation MenuAnimationType
 ---@param buildingAnimation MenuBuildingAnimation
-function UIMenu:SetMenuAnimations(enableScrollingAnim, enable3DAnim, scrollingAnimation, buildingAnimation)
+---@param fadingTime number
+function UIMenu:SetMenuAnimations(enableScrollingAnim, enable3DAnim, scrollingAnimation, buildingAnimation, fadingTime)
+    if scrollingAnimation == nil then
+        scrollingAnimation =  MenuAnimationType.QUADRATIC_IN
+    end
+    if buildingAnimation == nil then
+        buildingAnimation = MenuBuildingAnimation.LEFT_RIGHT
+    end
+    if fadingTime == nil then
+        fadingTime = 0.1
+    end
+
     self:AnimationEnabled(enableScrollingAnim)
     self:Enabled3DAnimations(enable3DAnim)
     self:AnimationType(scrollingAnimation)
     self:BuildingAnimation(buildingAnimation)
+    self.fadingTime = fadingTime
 end
 
 --- Enables or disabls the menu's animations while the menu is visible.
@@ -624,18 +655,23 @@ function UIMenu:CurrentSelection(value)
             self.Pagination:CurrentMenuIndex(#self.Items)
             value = #self.Items
         end
-
-        self.Items[self:CurrentSelection()]:Selected(false)
+        if self:CurrentSelection() < #self.Items then
+            self.Items[self:CurrentSelection()]:Selected(false)
+        end
         self.Pagination:CurrentMenuIndex(value)
         self.Pagination:CurrentPage(self.Pagination:GetPage(self.Pagination:CurrentMenuIndex()))
         self.Pagination:CurrentPageIndex(value)
         self.Pagination:ScaleformIndex(self.Pagination:GetScaleformIndex(self.Pagination:CurrentMenuIndex()))
-        self.Items[self:CurrentSelection()]:Selected(true)
+        if (value > self.Pagination:MaxItem() or value < self.Pagination:MinItem()) then
+            self:RefreshMenu(true)
+        end
+
         if self:Visible() then
             ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM",
                 self.Pagination:GetScaleformIndex(self.Pagination:CurrentMenuIndex()))
             ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", self:CurrentSelection(), #self.Items)
         end
+        self.Items[value]:Selected(true)
     else
         return self.Pagination:CurrentMenuIndex()
     end
@@ -766,11 +802,14 @@ end
 ---@param bool boolean|nil
 function UIMenu:Visible(bool)
     if bool ~= nil then
-        self._Visible = ToBool(bool)
         self.JustOpened = ToBool(bool)
         self.Dirty = ToBool(bool)
 
         if bool then
+            if self._Visible then 
+                return
+            end
+            self._Visible = bool;
             if not self._itemless and #self.Items == 0 then
                 MenuHandler:CloseAndClearHistory()
                 assert(self._itemless or #self.Items == 0, "UIMenu " .. self:Title() .. " menu is empty... Closing and clearing history.")
@@ -778,17 +817,20 @@ function UIMenu:Visible(bool)
             ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
             MenuHandler._currentMenu = self
             MenuHandler.ableToDraw = true
-            Citizen.CreateThread(function()
-                self:BuildUpMenuAsync()
-            end)
+            self:BuildUpMenuAsync()
             self.OnMenuOpen(self)
             if BreadcrumbsHandler:Count() == 0 then
                 BreadcrumbsHandler:Forward(self)
             end
         else
+            self._Visible = bool;
             self:FadeOutMenu()
             ScaleformUI.Scaleforms.InstructionalButtons:ClearButtonList()
-            ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL")
+            if BreadcrumbsHandler.SwitchInProgress and not self._differentBanner then
+                ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ITEMS")
+            else
+                ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL")
+            end
             MenuHandler._currentMenu = nil
             MenuHandler.ableToDraw = false
             self.OnMenuClose(self)
@@ -848,18 +890,34 @@ function UIMenu:BuildUpMenuAsync(itemsOnly)
 
     if not itemsOnly then
         while not ScaleformUI.Scaleforms._ui:IsLoaded() do Citizen.Wait(0) end
-        if self.subtitleColor == HudColours.NONE then
-            ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", self._Title, self._Subtitle, self.Position.x,
-                self.Position.y,
-                self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, self:AnimationEnabled(),
-                self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName,
-                self.descFont.FontID, self.fadingTime, self.bannerColor:ToArgb(), false)
+        if not BreadcrumbsHandler.SwitchInProgress or self._differentBanner then
+            if self.subtitleColor == HudColours.NONE then
+                ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", self._Title, self._Subtitle, self.Position.x,
+                    self.Position.y,
+                    self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, self:AnimationEnabled(),
+                    self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName,
+                    self.descFont.FontID, self.fadingTime, self.bannerColor:ToArgb(), false)
+            else
+                ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", self._Title, "~HC_" .. self.subtitleColor .. "~" .. self._Subtitle, self.Position.x,
+                    self.Position.y,
+                    self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, self:AnimationEnabled(),
+                    self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName,
+                    self.descFont.FontID, self.fadingTime, self.bannerColor:ToArgb(), false)
+            end
         else
-            ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", self._Title, "~HC_" .. self.subtitleColor .. "~" .. self._Subtitle, self.Position.x,
-                self.Position.y,
-                self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, self:AnimationEnabled(),
-                self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName,
-                self.descFont.FontID, self.fadingTime, self.bannerColor:ToArgb(), false)
+            if self.subtitleColor == HudColours.NONE then
+                ScaleformUI.Scaleforms._ui:CallFunction("RE_CREATE_MENU", self._Title, self._Subtitle, self.Position.x,
+                    self.Position.y,
+                    self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, self:AnimationEnabled(),
+                    self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName,
+                    self.descFont.FontID, self.fadingTime, self.bannerColor:ToArgb(), false)
+            else
+                ScaleformUI.Scaleforms._ui:CallFunction("RE_CREATE_MENU", self._Title, "~HC_" .. self.subtitleColor .. "~" .. self._Subtitle, self.Position.x,
+                    self.Position.y,
+                    self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, self:AnimationEnabled(),
+                    self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName,
+                    self.descFont.FontID, self.fadingTime, self.bannerColor:ToArgb(), false)
+            end
         end
         if #self.Windows > 0 then
             for w_id, window in pairs(self.Windows) do
@@ -969,13 +1027,18 @@ function UIMenu:_itemCreation(page, pageIndex, before, overflow)
     else
         PushScaleformMovieMethodParameterString(item._formatLeftLabel)
     end
-    BeginTextCommandScaleformString(textEntry)
-    EndTextCommandScaleformString_2()
+    if string.IsNullOrEmpty(item:Description()) then
+        PushScaleformMovieMethodParameterString("")
+    else
+        BeginTextCommandScaleformString(textEntry)
+        EndTextCommandScaleformString_2()
+    end
     PushScaleformMovieFunctionParameterBool(item:Enabled())
     PushScaleformMovieFunctionParameterBool(item:BlinkDescription())
 
     if SubType == "UIMenuDynamicListItem" then -- dynamic list item are handled like list items in the scaleform.. so the type remains 1
-        PushScaleformMovieMethodParameterString(item:CurrentListItem())
+        local str = item:createListString()
+        PushScaleformMovieMethodParameterString(str)
         PushScaleformMovieFunctionParameterInt(0)
         PushScaleformMovieFunctionParameterInt(item.Base._mainColor:ToArgb())
         PushScaleformMovieFunctionParameterInt(item.Base._highlightColor:ToArgb())
@@ -1125,6 +1188,8 @@ function UIMenu:_itemCreation(page, pageIndex, before, overflow)
                         ScaleformUI.Scaleforms._ui:CallFunction("ADD_STATISTIC_TO_PANEL", scaleformIndex, pan - 1, stat['name'], stat['value'])
                     end
                 end
+            elseif pSubType == "UIMenuVehicleColourPickerPanel" then
+                ScaleformUI.Scaleforms._ui:CallFunction("ADD_PANEL", scaleformIndex, 4)
             end
         end
     end
@@ -1278,6 +1343,33 @@ function UIMenu:ProcessControl()
                 end
             end
         end
+    end
+
+    if IsDisabledControlJustPressed(0, 10) then
+        local index = self:CurrentSelection() - self.Pagination:ItemsPerPage()
+        if index < 0 then
+            local pagIndex = self.Pagination:GetPageIndexFromMenuIndex(self:CurrentSelection())
+            local newPage = self.Pagination:TotalPages()
+            index = self.Pagination:GetMenuIndexFromPageIndex(newPage, pageIndex)
+            local menuMaxItem = #self.Items
+            if index > menuMaxItem then
+                index = menuMaxItem
+            end
+        end
+        self:CurrentSelection(index)
+        self.OnIndexChange(self, self:CurrentSelection())
+    end
+    if IsDisabledControlJustPressed(0, 11) then
+        local index = self:CurrentSelection() + self.Pagination:ItemsPerPage()
+        if index >= #self.Items and self.Pagination:CurrentPage() < self.Pagination:TotalPages() then
+            index = #self.Items
+        elseif index >= #self.Items and self.Pagination:CurrentPage() == self.Pagination:TotalPages() then
+            local pagIndex = self.Pagination:GetPageIndexFromMenuIndex(self:CurrentSelection())
+            local newPage = 0
+            index = self.Pagination:GetMenuIndexFromPageIndex(newPage, pagIndex)
+        end
+        self:CurrentSelection(index)
+        self.OnIndexChange(self, self:CurrentSelection())
     end
 
     if self.Controls.Select.Enabled and ((IsDisabledControlJustPressed(0, 201) or IsDisabledControlJustPressed(1, 201) or IsDisabledControlJustPressed(2, 201)) or (self.leftClickEnabled and IsDisabledControlJustPressed(0, 24))) then
@@ -1519,14 +1611,21 @@ function UIMenu:GoBack(boolean, bypass)
             PlaySoundFrontend(-1, self.Settings.Audio.Back, self.Settings.Audio.Library, true)
         end
         if BreadcrumbsHandler:CurrentDepth() == 1 then
-            self:Visible(false)
+            MenuHandler:CloseAndClearHistory()
             BreadcrumbsHandler:Clear()
         else
             BreadcrumbsHandler.SwitchInProgress = true
             local prevMenu = BreadcrumbsHandler:PreviousMenu()
             BreadcrumbsHandler:Backwards()
             self:Visible(false)
-            prevMenu.menu:Visible(true)
+            if prevMenu ~= nil then
+                if prevMenu.menu() == "UIMenu" then
+                    prevMenu.menu.differentBanner = self.TxtDictionary ~= prevMenu.menu.TxtDictionary and self.TxtName ~= prevMenu.menu.TxtName;
+                    prevMenu.menu:Visible(true)
+                else
+                    prevMenu.menu:Visible(true)
+                end
+            end
             BreadcrumbsHandler.SwitchInProgress = false
         end
     end
@@ -1582,7 +1681,7 @@ function UIMenu:Draw()
             self.fSavedGlareDirection = fvar;
             self._menuGlare:CallFunction("SET_DATA_SLOT", self.fSavedGlareDirection)
         end
-        self._menuGlare:Render2DNormal(self._glarePos.x, self._glarePos.y, 1.0, 1.1)
+        DrawScaleformMovie(self._menuGlare.handle, self._glarePos.x, self._glarePos.y, self._glareSize.w, self._glareSize.h, 255, 255, 255, 255, 0)
     end
 
     if not IsUsingKeyboard(2) then
@@ -1600,6 +1699,27 @@ function UIMenu:Draw()
         self:UpdateDescription()
         self._changed = false
     end
+    Citizen.CreateThread(function()
+        self:mouseCheck()
+    end)
+end
+
+function UIMenu:CallExtensionMethod()
+    self.ExtensionMethod(self)
+end
+
+function UIMenu:mouseCheck()
+    self._mouseOnMenu = self:MouseControlsEnabled() and ScaleformUI.Scaleforms._ui:CallFunctionAsyncReturnBool("IS_MOUSE_ON_MENU");
+end
+
+function UIMenu:clearAllLabels()
+    for k,v in pairs(self.Items) do
+        AddTextEntry("menu_" .. (BreadcrumbsHandler:CurrentDepth() + 1) .. "_desc_" .. k, "")
+    end
+end
+
+function UIMenu:IsMouseOverTheMenu()
+    return self._mouseOnMenu
 end
 
 local cursor_pressed = false
@@ -1693,6 +1813,17 @@ function UIMenu:ProcessMouse()
                     self.OnColorPanelChanged(panel.ParentItem, panel, panel:CurrentSelection())
                     panel.OnColorPanelChanged(panel.ParentItem, panel, panel:CurrentSelection())
                 end)
+            elseif context == 14 then
+                Citizen.CreateThread(function()
+                    local res = ScaleformUI.Scaleforms._ui:CallFunctionAsyncReturnInt("SELECT_PANEL", CurrentSelection);
+                    local picker = self.Items[self:CurrentSelection()].Panels[res]
+                    if item_id ~= -1 then
+                        local colString = ScaleformUI.Scaleforms._ui:CallFunctionAsyncReturnString("GET_PICKER_COLOR", item_id)
+                        local split = Split(colString, ",")
+                        picker._value = item_id
+                        picker:_pickerSelect(SColor.FromArgb(tonumber(split[1]), tonumber(split[2]), tonumber(split[3])))
+                    end
+                end)
             elseif context == 11 then -- panels (11 => context 1, panel_type 1) // PercentagePanel
                 cursor_pressed = true
             elseif context == 12 then -- panels (12 => context 1, panel_type 2) // GridPanel
@@ -1709,15 +1840,45 @@ function UIMenu:ProcessMouse()
         elseif event_type == 7 then -- ON CLICK RELEASED OUTSIDE
             cursor_pressed = false
             SetMouseCursorSprite(1)
+            if (self.mouseReset) then
+                self.mouseReset = false;
+            end
         elseif event_type == 8 then -- ON NOT HOVER
             cursor_pressed = false
             if context == 0 then
                 self.Items[item_id]:Hovered(false)
+            elseif context == 2 then
+                local panel = self.Items[self:CurrentSelection()].SidePanel
+                panel:_PickerRollout()
+            elseif context == 14 then
+                local res = ScaleformUI.Scaleforms._ui:CallFunctionAsyncReturnInt("SELECT_PANEL", CurrentSelection);
+                local picker = self.Items[self:CurrentSelection()].Panels[res]
+                picker:_PickerRollout();
+            end
+            if not self:IsMouseOverTheMenu() then
+                return
             end
             SetMouseCursorSprite(1)
+            if (self.mouseReset) then
+                self.mouseReset = false;
+            end
         elseif event_type == 9 then -- ON HOVERED
             if context == 0 then
                 self.Items[item_id]:Hovered(true)
+            elseif context == 2 then
+                local panel = self.Items[self:CurrentSelection()].SidePanel
+                if item_id ~= -1 then
+                    panel:_PickerHovered(item_id, VehicleColors:GetColorById(item_id))
+                end
+            elseif context == 14 then
+                if item_id ~= -1 then
+                    local res = ScaleformUI.Scaleforms._ui:CallFunctionAsyncReturnInt("SELECT_PANEL", CurrentSelection);
+                    local picker = self.Items[self:CurrentSelection()].Panels[res]
+                    picker:_PickerHovered(item_id, VehicleColors:GetColorById(item_id))
+                end
+            end
+            if self.mouseReset then
+                self.mouseReset = true
             end
             SetMouseCursorSprite(5)
         elseif event_type == 0 then -- DRAGGED OUTSIDE
@@ -1766,6 +1927,9 @@ function UIMenu:ProcessMouse()
                 end
                 SetGameplayCamRelativeHeading(GetGameplayCamRelativeHeading() + (70 * mouseSpeed))
                 SetCursorSprite(6)
+                if self.mouseReset then
+                    self.mouseReset = false
+                end
             end
         elseif IsMouseInBounds(1920 - 30, 0, 30, 1080) then
             if mouseVariance > (1 - (0.05 * 0.75)) then
@@ -1775,12 +1939,25 @@ function UIMenu:ProcessMouse()
                 end
                 SetGameplayCamRelativeHeading(GetGameplayCamRelativeHeading() - (70 * mouseSpeed))
                 SetCursorSprite(7)
+                if self.mouseReset then
+                    self.mouseReset = false
+                end
             end
         else
-            SetCursorSprite(1)
+            if not self:IsMouseOverTheMenu() then
+                if not self.mouseReset then
+                    SetCursorSprite(1)
+                end
+                self.mouseReset = true
+            end
         end
     else
-        SetCursorSprite(1)
+        if not self:IsMouseOverTheMenu() then
+            if not self.mouseReset then
+                SetCursorSprite(1)
+            end
+            self.mouseReset = true
+        end
     end
 end
 
@@ -1842,8 +2019,19 @@ function UIMenu:RemoveEnabledControl(Inputgroup, Control, Controller)
 end
 
 function UIMenu:SetMenuOffset(x,y)
-    self.Position = {x=x, y=y}
-    self._glarePos ={x=self.Position.x / 1280 + 0.4499, y = self.Position.y / 720 + 0.496}
+    self.Position = vector2(x,y)
+    local glareX = 0.45
+    local glareW = 1.0
+    if not GetIsWidescreen() then
+        glareX = 0.58
+        glareW = 1.35
+    end
+    local safezone = (1.0 - math.round(GetSafeZoneSize(), 2)) * 100 * 0.005;
+    self._glarePos = vector2(
+        (self.Position.x / 1280) + glareX + safezone,
+        self.Position.y / 720 + 0.45 + safezone)
+    self._glareSize = {w=glareW, h=1.0}
+        
     if self:Visible() then
         ScaleformUI.Scaleforms._ui:CallFunction("SET_MENU_OFFSET", x,y)
     end
