@@ -74,7 +74,17 @@ namespace ScaleformUI.Elements
         public static Vector2 ConvertScaleformCoordsToScreenCoords(float scaleformX, float scaleformY)
         {
             // Normalize coordinates to 0.0 - 1.0 range
-            return new Vector2((scaleformX / 1280f) * 2f - 1f, (scaleformY / 720f) * 2f - 1f);
+            int w = 0, h = 0;
+            GetActiveScreenResolution(ref w, ref h);
+            return new Vector2((scaleformX / w) * 2f - 1f, (scaleformY / h) * 2f - 1f);
+        }
+
+        public static Vector2 ConvertResolutionCoordsToScreenCoords(float x, float y)
+        {
+            float normalizedX = Math.Max(0.0f, Math.Min(1.0f, (float)x / 1920.0f));
+            float normalizedY = Math.Max(0.0f, Math.Min(1.0f, (float)y / 1080.0f));
+
+            return new Vector2(normalizedX, normalizedY);
         }
 
         /// <summary>

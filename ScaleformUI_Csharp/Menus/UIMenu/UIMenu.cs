@@ -861,6 +861,12 @@ namespace ScaleformUI.Menu
         ENDLESS
     }
 
+    public enum MenuAlignment
+    {
+        LEFT,
+        RIGHT
+    }
+
     #endregion
 
     /// <summary>
@@ -939,6 +945,19 @@ namespace ScaleformUI.Menu
         public bool ControlDisablingEnabled = true;
         private bool enabled3DAnimations;
         internal bool leftClickEnabled;
+        public MenuAlignment MenuAlignment
+        {
+            get => menuAlignment;
+            set
+            {
+                menuAlignment = value;
+                SetMenuOffset(Offset);
+                if (Visible)
+                {
+                    Main.scaleformUI.CallFunction("SET_MENU_ORIENTATION", (int)menuAlignment);
+                }
+            }
+        }
         public int MaxItemsOnScreen
         {
             get => Pagination.ItemsPerPage;
@@ -1137,7 +1156,7 @@ namespace ScaleformUI.Menu
         /// <param name="title">Title that appears on the big banner.</param>
         /// <param name="subtitle">Subtitle that appears in capital letters in a small black bar.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
-        public UIMenu(string title, string subtitle, bool glare = false, bool alternativeTitle = false, float fadingTime = 0.1f) : this(title, subtitle, new PointF(0, 0), "", "", glare, alternativeTitle, fadingTime)
+        public UIMenu(string title, string subtitle, bool glare = false, bool alternativeTitle = false, float fadingTime = 0.1f, MenuAlignment menuAlignment = MenuAlignment.LEFT) : this(title, subtitle, new PointF(0, 0), "", "", glare, alternativeTitle, fadingTime, menuAlignment)
         {
         }
 
@@ -1150,7 +1169,7 @@ namespace ScaleformUI.Menu
         /// <param name="offset">PointF object with X and Y data for offsets. Applied to all menu elements.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
         /// <param name="alternativeTitle">Set the alternative type to the title?.</param>
-        public UIMenu(string title, string subtitle, PointF offset, bool glare = false, bool alternativeTitle = false, float fadingTime = 0.1f) : this(title, subtitle, offset, "", "", glare, alternativeTitle, fadingTime)
+        public UIMenu(string title, string subtitle, PointF offset, bool glare = false, bool alternativeTitle = false, float fadingTime = 0.1f, MenuAlignment menuAlignment = MenuAlignment.LEFT) : this(title, subtitle, offset, "", "", glare, alternativeTitle, fadingTime, menuAlignment)
         {
         }
 
@@ -1163,7 +1182,7 @@ namespace ScaleformUI.Menu
         /// <param name="customBanner">Path to your custom texture.</param>
         /// <param name="glare">Add menu Glare scaleform?.</param>
         /// <param name="alternativeTitle">Set the alternative type to the title?.</param>
-        public UIMenu(string title, string subtitle, PointF offset, KeyValuePair<string, string> customBanner, bool glare = false, bool alternativeTitle = false, float fadingTime = 0.1f) : this(title, subtitle, offset, customBanner.Key, customBanner.Value, glare, alternativeTitle, fadingTime)
+        public UIMenu(string title, string subtitle, PointF offset, KeyValuePair<string, string> customBanner, bool glare = false, bool alternativeTitle = false, float fadingTime = 0.1f, MenuAlignment menuAlignment = MenuAlignment.LEFT) : this(title, subtitle, offset, customBanner.Key, customBanner.Value, glare, alternativeTitle, fadingTime, menuAlignment)
         {
         }
 
@@ -1179,7 +1198,7 @@ namespace ScaleformUI.Menu
         /// <param name="glare">Add menu Glare scaleform?.</param>
         /// <param name="alternativeTitle">Set the alternative type to the title?.</param>
         /// <param name="fadingTime">Set fading time for the menu and the items, set it to 0.0 to disable it.</param>
-        public UIMenu(string title, string subtitle, PointF offset, string spriteLibrary, string spriteName, bool glare = false, bool alternativeTitle = false, float fadingTime = 0.1f)
+        public UIMenu(string title, string subtitle, PointF offset, string spriteLibrary, string spriteName, bool glare = false, bool alternativeTitle = false, float fadingTime = 0.1f, MenuAlignment menuAlignment = MenuAlignment.LEFT)
         {
             _customTexture = new KeyValuePair<string, string>(spriteLibrary, spriteName);
             Offset = offset;
@@ -1193,6 +1212,7 @@ namespace ScaleformUI.Menu
             Pagination = new PaginationHandler();
             Pagination.ItemsPerPage = 7;
             this.fadingTime = fadingTime;
+            MenuAlignment = menuAlignment;
 
             SetMenuOffset(offset);
 
@@ -1226,7 +1246,7 @@ namespace ScaleformUI.Menu
         /// <param name="glare">Add menu Glare scaleform?.</param>
         /// <param name="alternativeTitle">Set the alternative type to the title?.</param>
         /// <param name="fadingTime">Set fading time for the menu and the items, set it to 0.0 to disable it.</param>
-        public UIMenu(string title, string subtitle, string description, PointF offset, string spriteLibrary, string spriteName, bool glare = false, bool alternativeTitle = false, float fadingTime = 0.1f)
+        public UIMenu(string title, string subtitle, string description, PointF offset, string spriteLibrary, string spriteName, bool glare = false, bool alternativeTitle = false, float fadingTime = 0.1f, MenuAlignment menuAlignment = MenuAlignment.LEFT)
         {
             _customTexture = new KeyValuePair<string, string>(spriteLibrary, spriteName);
             Offset = offset;
@@ -1241,6 +1261,7 @@ namespace ScaleformUI.Menu
             Pagination.ItemsPerPage = 7;
             this.fadingTime = fadingTime;
             SetMenuOffset(offset);
+            MenuAlignment = menuAlignment;
 
             SetKey(MenuControls.Up, Control.FrontendUp);
             SetKey(MenuControls.Down, Control.FrontendDown);
@@ -1815,6 +1836,7 @@ namespace ScaleformUI.Menu
         private ItemFont descriptionFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
         private ScrollingType scrollingType = ScrollingType.CLASSIC;
         private bool mouseReset = false;
+        private MenuAlignment menuAlignment;
 
         /// <summary>
         /// Process the mouse's position and check if it's hovering over any UI element. Call this in OnTick
@@ -2668,6 +2690,7 @@ namespace ScaleformUI.Menu
                 EndTextCommandScaleformString_2();
                 PushScaleformMovieMethodParameterString(_customBGTexture.Key);
                 PushScaleformMovieMethodParameterString(_customBGTexture.Value);
+                PushScaleformMovieFunctionParameterInt((int)menuAlignment);
                 EndScaleformMovieMethod();
                 await FadeInMenu();
                 isBuilding = false;
@@ -2678,9 +2701,9 @@ namespace ScaleformUI.Menu
                 EnableAnimation = false;
 
                 if (!BreadcrumbsHandler.SwitchInProgress || differentBanner)
-                    Main.scaleformUI.CallFunction("CREATE_MENU", Title, SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, EnableAnimation, (int)AnimationType, (int)buildingAnimation, counterColor, descriptionFont.FontName, descriptionFont.FontID, fadingTime, bannerColor.ArgbValue, false, "", _customBGTexture.Key, _customBGTexture.Value);
+                    Main.scaleformUI.CallFunction("CREATE_MENU", Title, SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, EnableAnimation, (int)AnimationType, (int)buildingAnimation, counterColor, descriptionFont.FontName, descriptionFont.FontID, fadingTime, bannerColor.ArgbValue, false, "", _customBGTexture.Key, _customBGTexture.Value, (int)menuAlignment);
                 else
-                    Main.scaleformUI.CallFunction("RE_CREATE_MENU", Title, SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, EnableAnimation, (int)AnimationType, (int)buildingAnimation, counterColor, descriptionFont.FontName, descriptionFont.FontID, fadingTime, bannerColor.ArgbValue, false, "", _customBGTexture.Key, _customBGTexture.Value);
+                    Main.scaleformUI.CallFunction("RE_CREATE_MENU", Title, SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, EnableAnimation, (int)AnimationType, (int)buildingAnimation, counterColor, descriptionFont.FontName, descriptionFont.FontID, fadingTime, bannerColor.ArgbValue, false, "", _customBGTexture.Key, _customBGTexture.Value, (int)menuAlignment);
                 if (Windows.Count > 0)
                 {
                     foreach (UIMenuWindow wind in Windows)
@@ -3158,13 +3181,19 @@ namespace ScaleformUI.Menu
             Offset = offset;
             float safezone = (1.0f - (float)decimal.Round(Convert.ToDecimal(GetSafeZoneSize()), 2)) * 100f * 0.005f;
             int w = 0, h = 0;
-            GetActiveScreenResolution(ref w, ref h);
-            glarePosition = new PointF(
-                (Offset.X / Screen.Width) + (GetIsWidescreen() ? 0.45f: 0.585f) + safezone,
-                (Offset.Y / Screen.Height) + 0.45f + safezone);
-            glareSize = new SizeF(
-                (GetIsWidescreen()?1f:1.35f),
-                (1));
+            bool rightAlign = MenuAlignment == MenuAlignment.RIGHT;
+
+            var pos1080 = ScreenTools.ConvertScaleformCoordsToResolutionCoords(Offset.X, Offset.Y);
+            var screenCoords = ScreenTools.ConvertResolutionCoordsToScreenCoords(pos1080.X, pos1080.Y);
+            glarePosition = new PointF(screenCoords.X + (GetIsWidescreen() ? 0.45f : 0.585f) + safezone, screenCoords.Y + 0.45f + safezone);
+
+            if (rightAlign)
+            {
+                screenCoords = ScreenTools.ConvertResolutionCoordsToScreenCoords(w - pos1080.X, pos1080.Y);
+                glarePosition = new PointF(screenCoords.X + (GetIsWidescreen() ? 0.225f : 0.36f) - safezone, screenCoords.Y + 0.45f + safezone);
+            }
+
+            glareSize = new SizeF(GetIsWidescreen() ? 1f : 1.35f, 1f);
 
             if (Visible)
                 Main.scaleformUI.CallFunction("SET_MENU_OFFSET", Offset.X, Offset.Y);

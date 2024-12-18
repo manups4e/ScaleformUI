@@ -66,12 +66,12 @@ function KeyOf(tbl, value)
 end
 
 function math.round(num, numDecimalPlaces)
-	if numDecimalPlaces then
-		local power = 10^numDecimalPlaces
-		return math.floor((num * power) + 0.5) / (power)
-	else
-		return math.floor(num + 0.5)
-	end
+    if numDecimalPlaces then
+        local power = 10 ^ numDecimalPlaces
+        return math.floor((num * power) + 0.5) / (power)
+    else
+        return math.floor(num + 0.5)
+    end
 end
 
 function ToBool(input)
@@ -219,7 +219,7 @@ end
 ---@param realY number
 ---@return vector2
 function ConvertResolutionCoordsToScaleformCoords(realX, realY)
-    local x,y = GetActiveScreenResolution()
+    local x, y = GetActiveScreenResolution()
     return vector2(realX / x * 1280, realY / y * 720)
 end
 
@@ -228,8 +228,8 @@ end
 ---@param scaleformY number
 ---@return vector2
 function ConvertScaleformCoordsToResolutionCoords(scaleformX, scaleformY)
-    local x,y = GetActiveScreenResolution()
-    return vector2(scaleformX / 1280 * x,scaleformY / 720 * y)
+    local x, y = GetActiveScreenResolution()
+    return vector2(scaleformX / 1280 * x, scaleformY / 720 * y)
 end
 
 ---Converts screen coords (0.0 - 1.0) into scaleform coords (1280 x 720)
@@ -246,5 +246,13 @@ end
 ---@return vector2
 function ConvertScaleformCoordsToScreenCoords(scaleformX, scaleformY)
     -- Normalize coordinates to 0.0 - 1.0 range
-    return vector2((scaleformX / 1280) * 2 - 1,(scaleformY / 720) * 2 - 1)
+    local w, h = GetActualScreenResolution()
+    return vector2((scaleformX / w) * 2.0 - 1.0, (scaleformY / h) * 2.0 - 1.0)
+end
+
+function ConvertResolutionCoordsToScreenCoords(x, y)
+    local w, h = GetActualScreenResolution()
+    local normalizedX = math.max(0.0, math.min(1.0, x / w))
+    local normalizedY = math.max(0.0, math.min(1.0, y / h))
+    return vector2(normalizedX, normalizedY)
 end

@@ -33,7 +33,7 @@ function MenuHandler:SwitchTo(currentMenu, newMenu, newMenuCurrentSelection, inh
                 newMenu.TxtDictionary = currentMenu.TxtDictionary
                 newMenu.TxtName = currentMenu.TxtName
             end
-
+            newMenu:MenuAlignment(currentMenu:MenuAlignment())
             newMenu:SetMenuOffset(currentMenu.Position.x, currentMenu.Position.y)
             
             if currentMenu.Logo ~= nil then

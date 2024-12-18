@@ -27,7 +27,6 @@ function UIVehicleColorPickerPanel.New(side, title, color)
 end
 
 function UIVehicleColorPickerPanel:SetParentItem(Item) -- required
-    print(Item())
     if Item() ~= nil then
         self.ParentItem = Item
     else

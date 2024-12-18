@@ -37,7 +37,7 @@ public class MenuExample : BaseScript
 
         // first true means add menu Glare scaleform to the menu
         // last true means it's using the alternative title style
-        UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI ~o~SHOWCASE", new PointF(0, 0), "commonmenu", "interaction_bgd", true, true, 0f);
+        UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI ~o~SHOWCASE", new PointF(0, 0), "commonmenu", "interaction_bgd", true, true, 0f, MenuAlignment.RIGHT);
         exampleMenu.MaxItemsOnScreen = 7; // To decide max items on screen at time, default 7
         exampleMenu.SetAnimations(true, true, MenuAnimationType.LINEAR, MenuBuildingAnimation.LEFT_RIGHT);
         exampleMenu.SetMouse(false, false, false, false, false);
@@ -411,6 +411,14 @@ public class MenuExample : BaseScript
         exampleMenu.AddItem(offsetItem);
         
         UIMenu offsetMenu = new UIMenu("Offset Menu", "Change the offset of the menu");
+
+        UIMenuListItem align = new UIMenuListItem("Align Menu", new List<dynamic>() { "Left", "Right" }, (int)exampleMenu.MenuAlignment, "Aligns the menu Left or Right side while still be dependant to SafeZone and offsets");
+
+        align.OnListChanged += (item, index) => 
+        { 
+            item.Parent.MenuAlignment = (MenuAlignment)index; 
+        };
+
         UIMenuDynamicListItem offsetX = new UIMenuDynamicListItem("Offset X", "Change the X offset of the menu", exampleMenu.Offset.X.ToString("F3"), async (sender, direction) =>
         {
             var offset = exampleMenu.Offset.X;
@@ -436,10 +444,11 @@ public class MenuExample : BaseScript
             exampleMenu.SetMenuOffset(new PointF(exampleMenu.Offset.X, offset));
             return exampleMenu.Offset.Y.ToString("F3");
         });
-        
+
+        offsetMenu.AddItem(align);
         offsetMenu.AddItem(offsetX);
         offsetMenu.AddItem(offsetY);
-        
+
         offsetItem.Activated += (sender, args) =>
         {
             sender.SwitchTo(offsetMenu, inheritOldMenuParams: true);

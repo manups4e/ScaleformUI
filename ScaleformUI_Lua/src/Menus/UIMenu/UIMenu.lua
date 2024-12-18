@@ -109,7 +109,7 @@ end
 ---@param txtDictionary string|nil -- Custom texture dictionary for the menu banner background (default: commonmenu)
 ---@param txtName string|nil -- Custom texture name for the menu banner background (default: interaction_bgd)
 ---@param alternativeTitleStyle boolean|nil -- Use alternative title style (default: false)
-function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, alternativeTitleStyle, fadeTime, longdesc)
+function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, alternativeTitleStyle, fadeTime, longdesc, align)
     local X, Y = tonumber(x) or 0, tonumber(y) or 0
     if title ~= nil then
         title = tostring(title) or ""
@@ -134,7 +134,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
     if alternativeTitleStyle == nil then
         alternativeTitleStyle = false
     end
-    if longdesc ~= nil then
+    if longdesc ~= nil and string.IsNullOrEmpty(longdesc) then
         AddTextEntry("ScaleformUILongDesc", longdesc)
     end
     local _UIMenu = {
@@ -180,6 +180,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         _scaledWidth = (720 * GetAspectRatio(false)),
         _glarePos = {x=0,y=0},
         _glareSize = {w=1.0,h=1.0},
+        menuAlignment = align or 0,
         _mouseOnMenu = false,
         fSavedGlareDirection = 0,
         enabled3DAnimations = true,
@@ -272,16 +273,28 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
     end
 
     _UIMenu.Position = vector2(X,Y)
+    local safezone = (1.0 - math.round(GetSafeZoneSize(), 2)) * 100 * 0.005;
+    local rightAlign = _UIMenu.menuAlignment == MenuAlignment.RIGHT
     local glareX = 0.45
     local glareW = 1.0
     if not GetIsWidescreen() then
-        glareX = 0.58
+        glareX = 0.585
         glareW = 1.35
     end
-    local safezone = (1.0 - math.round(GetSafeZoneSize(), 2)) * 100 * 0.005;
-    _UIMenu._glarePos = vector2(
-        (_UIMenu.Position.x / 1280) + glareX + safezone,
-        _UIMenu.Position.y / 720 + 0.45 + safezone)
+
+    local pos1080 = ConvertScaleformCoordsToResolutionCoords(X,Y)
+    local screenCoords = ConvertResolutionCoordsToScreenCoords(pos1080.x,pos1080.y)
+    _UIMenu._glarePos = vector2(screenCoords.x + glareX + safezone, screenCoords.y + 0.45 + safezone)
+    if rightAlign then
+        local w,h = GetActualScreenResolution()
+        screenCoords = ConvertResolutionCoordsToScreenCoords(w - pos1080.x,pos1080.y)
+        glareX = 0.225
+        if not GetIsWidescreen() then
+            glareX = 0.36
+        end
+        _UIMenu._glarePos = vector2(screenCoords.x + glareX - safezone, screenCoords.y + 0.45 + safezone)
+    end
+
     _UIMenu._glareSize = {w=glareW, h=1.0}
 
     return setmetatable(_UIMenu, UIMenu)
@@ -369,6 +382,21 @@ function UIMenu:SubtitleColor(color)
             else
                 ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_TITLE_SUBTITLE", self._Title, "~HC_" .. self.subtitleColor .. "~" .. self._Subtitle, self.alternativeTitle)
             end
+        end
+    end
+end
+
+---Getter / Setter for the Menu Alignment.
+---@param align MenuAlignment
+---@return MenuAlignment | nil
+function UIMenu:MenuAlignment(align)
+    if align == nil then
+        return self.menuAlignment
+    else
+        self.menuAlignment = align
+        self:SetMenuOffset(self.Position.x, self.Position.y)
+        if self:Visible() then
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_MENU_ORIENTATION", align) 
         end
     end
 end
@@ -882,6 +910,7 @@ function UIMenu:BuildUpMenuAsync(itemsOnly)
         PushScaleformMovieFunctionParameterBool(true)
         BeginTextCommandScaleformString("ScaleformUILongDesc")
         EndTextCommandScaleformString_2()
+        PushScaleformMovieFunctionParameterInt(self.menuAlignment);
         EndScaleformMovieMethod()
         self:FadeInMenu()
         self._isBuilding = false
@@ -896,13 +925,13 @@ function UIMenu:BuildUpMenuAsync(itemsOnly)
                     self.Position.y,
                     self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, self:AnimationEnabled(),
                     self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName,
-                    self.descFont.FontID, self.fadingTime, self.bannerColor:ToArgb(), false)
+                    self.descFont.FontID, self.fadingTime, self.bannerColor:ToArgb(), false, "", "", "", self.menuAlignment)
             else
                 ScaleformUI.Scaleforms._ui:CallFunction("CREATE_MENU", self._Title, "~HC_" .. self.subtitleColor .. "~" .. self._Subtitle, self.Position.x,
                     self.Position.y,
                     self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, self:AnimationEnabled(),
                     self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName,
-                    self.descFont.FontID, self.fadingTime, self.bannerColor:ToArgb(), false)
+                    self.descFont.FontID, self.fadingTime, self.bannerColor:ToArgb(), false, "", "", "", self.menuAlignment)
             end
         else
             if self.subtitleColor == HudColours.NONE then
@@ -910,13 +939,13 @@ function UIMenu:BuildUpMenuAsync(itemsOnly)
                     self.Position.y,
                     self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, self:AnimationEnabled(),
                     self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName,
-                    self.descFont.FontID, self.fadingTime, self.bannerColor:ToArgb(), false)
+                    self.descFont.FontID, self.fadingTime, self.bannerColor:ToArgb(), false, "", "", "", self.menuAlignment)
             else
                 ScaleformUI.Scaleforms._ui:CallFunction("RE_CREATE_MENU", self._Title, "~HC_" .. self.subtitleColor .. "~" .. self._Subtitle, self.Position.x,
                     self.Position.y,
                     self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, self:AnimationEnabled(),
                     self:AnimationType(), self:BuildingAnimation(), self.counterColor, self.descFont.FontName,
-                    self.descFont.FontID, self.fadingTime, self.bannerColor:ToArgb(), false)
+                    self.descFont.FontID, self.fadingTime, self.bannerColor:ToArgb(), false, "", "", "", self.menuAlignment)
             end
         end
         if #self.Windows > 0 then
@@ -2020,16 +2049,28 @@ end
 
 function UIMenu:SetMenuOffset(x,y)
     self.Position = vector2(x,y)
+    local safezone = (1.0 - math.round(GetSafeZoneSize(), 2)) * 100 * 0.005;
+    local rightAlign = self.menuAlignment == MenuAlignment.RIGHT
     local glareX = 0.45
     local glareW = 1.0
     if not GetIsWidescreen() then
-        glareX = 0.58
+        glareX = 0.585
         glareW = 1.35
     end
-    local safezone = (1.0 - math.round(GetSafeZoneSize(), 2)) * 100 * 0.005;
-    self._glarePos = vector2(
-        (self.Position.x / 1280) + glareX + safezone,
-        self.Position.y / 720 + 0.45 + safezone)
+
+    local pos1080 = ConvertScaleformCoordsToResolutionCoords(x,y)
+    local screenCoords = ConvertResolutionCoordsToScreenCoords(pos1080.x,pos1080.y)
+    self._glarePos = vector2(screenCoords.x + glareX + safezone, screenCoords.y + 0.45 + safezone)
+    if rightAlign then
+        local w,h = GetActualScreenResolution()
+        screenCoords = ConvertResolutionCoordsToScreenCoords(w - pos1080.x,pos1080.y)
+        glareX = 0.225
+        if not GetIsWidescreen() then
+            glareX = 0.36
+        end
+        self._glarePos = vector2(screenCoords.x + glareX - safezone, screenCoords.y + 0.45 + safezone)
+    end
+
     self._glareSize = {w=glareW, h=1.0}
         
     if self:Visible() then

@@ -73,6 +73,7 @@ namespace ScaleformUI
                         if (old._customTexture.Key != null && old._customTexture.Value != null)
                             newer.SetBannerType(old._customTexture);
                         newer.differentBanner = old._customTexture.Key != newer._customTexture.Key && old._customTexture.Value != newer._customTexture.Value;
+                        newer.MenuAlignment = old.MenuAlignment;
                         newer.SetMenuOffset(old.Offset);
                         newer.AlternativeTitle = old.AlternativeTitle;
                         newer.MaxItemsOnScreen = old.MaxItemsOnScreen;
