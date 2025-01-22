@@ -256,3 +256,46 @@ function ConvertResolutionCoordsToScreenCoords(x, y)
     local normalizedY = math.max(0.0, math.min(1.0, y / h))
     return vector2(normalizedX, normalizedY)
 end
+
+---Converts player's current screen resolution size into scaleform size (1280 x 720)
+---@param realWidth number
+---@param realHeight number
+---@return vector2
+function ConvertResolutionSizeToScaleformSize(realWidth, realHeight)
+    local x, y = GetActiveScreenResolution()
+    return vector2(realWidth / x * 1280, realHeight / y * 720)
+end
+
+---Converts scaleform size (1280 x 720) into player's current screen resolution size
+---@param scaleformWidth number
+---@param scaleformHeight number
+---@return vector2
+function ConvertScaleformSizeToResolutionSize(scaleformWidth, scaleformHeight)
+    local x, y = GetActiveScreenResolution()
+    return vector2(scaleformWidth / 1280 * x, scaleformHeight / 720 * y)
+end
+
+---Converts screen size (0.0 - 1.0) into scaleform size (1280 x 720)
+---@param scWidth number
+---@param scHeight number
+---@return vector2
+function ConvertScreenSizeToScaleformSize(scWidth, scHeight)
+    return vector2(scWidth * 1280, scHeight * 720)
+end
+
+---Converts scaleform size (1280 x 720) into screen size (0.0 - 1.0)
+---@param scaleformWidth number
+---@param scaleformHeight number
+---@return vector2
+function ConvertScaleformSizeToScreenSize(scaleformWidth, scaleformHeight)
+    -- Normalize size to 0.0 - 1.0 range
+    local w, h = GetActualScreenResolution()
+    return vector2((scaleformWidth / w) * 2.0 - 1.0, (scaleformHeight / h) * 2.0 - 1.0)
+end
+
+function ConvertResolutionSizeToScreenSize(width, height)
+    local w, h = GetActualScreenResolution()
+    local normalizedWidth = math.max(0.0, math.min(1.0, width / w))
+    local normalizedHeight = math.max(0.0, math.min(1.0, height / h))
+    return vector2(normalizedWidth, normalizedHeight)
+end
