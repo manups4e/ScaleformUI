@@ -103,7 +103,7 @@ function BigMessageInstance:ShowColoredShard(msg, desc, textColor, bgColor, dura
     self:Load()
     self._start = GlobalGameTimer
     self._manualDispose = manualDispose or false
-    self._sc:CallFunction("SHOW_SHARD_CENTERED_MP_MESSAGE", msg, desc, bgColor, textColor)
+    self._sc:CallFunction("SHOW_SHARD_CENTERED_MP_MESSAGE", msg, desc, textColor, bgColor)
     self._duration = duration
 end
 
