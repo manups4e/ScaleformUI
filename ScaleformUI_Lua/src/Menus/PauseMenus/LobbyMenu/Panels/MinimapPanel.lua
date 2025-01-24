@@ -35,7 +35,7 @@ function MinimapPanel.New(parent, parentTab)
         enabled = false,
         turnedOn = false,
         localMapStage = 0,
-        IsRadarVisible = not IsRadarHidden(),
+        IsRadarVisible = IsMinimapRendering(),
     }
     return setmetatable(_data, MinimapPanel)
 end
@@ -79,7 +79,7 @@ function MinimapPanel:Enabled(_e)
         else
             self.localMapStage = -1
             if self.turnedOn then
-                self.IsRadarVisible = not IsRadarHidden()
+                self.IsRadarVisible = IsMinimapRendering()
                 DisplayRadar(false);
                 SetMapFullScreen(false);
                 self.turnedOn = false;
@@ -200,7 +200,7 @@ function MinimapPanel:ProcessMap()
         end
     else
         if self.turnedOn then
-            self.IsRadarVisible = not IsRadarHidden()
+            self.IsRadarVisible = IsMinimapRendering()
             DisplayRadar(false)
             SetMapFullScreen(false)
             self.turnedOn = false
