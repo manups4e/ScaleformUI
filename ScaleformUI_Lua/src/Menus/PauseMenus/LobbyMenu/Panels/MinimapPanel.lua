@@ -81,7 +81,7 @@ function MinimapPanel:Enabled(_e)
             if self.turnedOn then
                 self.IsRadarVisible = IsMinimapRendering()
                 DisplayRadar(false);
-                SetMapFullScreen(false);
+                RaceGalleryFullscreen(false);
                 self.turnedOn = false;
             end
         end
@@ -195,14 +195,14 @@ function MinimapPanel:ProcessMap()
     if self.enabled then
         if not self.turnedOn then
             DisplayRadar(self.IsRadarVisible)
-            SetMapFullScreen(true)
+            RaceGalleryFullscreen(true)
             self.turnedOn = true
         end
     else
         if self.turnedOn then
             self.IsRadarVisible = IsMinimapRendering()
             DisplayRadar(false)
-            SetMapFullScreen(false)
+            RaceGalleryFullscreen(false)
             self.turnedOn = false
             self:Dispose()
         end
@@ -242,7 +242,7 @@ end
 function MinimapPanel:Dispose()
     self.localMapStage = -1;
     self.enabled = false;
-    PauseToggleFullscreenMap(true);
+    PauseToggleFullscreenMap(false);
     DisplayRadar(self.IsRadarVisible);
     RaceGalleryFullscreen(false);
     ClearRaceGalleryBlips();
