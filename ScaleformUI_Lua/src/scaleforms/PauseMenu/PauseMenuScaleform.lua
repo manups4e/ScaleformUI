@@ -466,11 +466,16 @@ function PauseMenu:Draw(isLobby)
             if self.BGEnabled then
                 self._pauseBG:Render2D()
             end
-            self._header:Render2DNormal(0.501, 0.162, 0.6782, 0.145)
+
+
+            local headx, heady, headw, headh = AdjustNormalized16_9ValuesForCurrentAspectRatio(0.501, 0.162, 0.6782, 0.145)
+            local pausex, pausey, pausew, pauseh = AdjustNormalized16_9ValuesForCurrentAspectRatio(0.6617187, 0.7226667, 1.0, 1.0)
+
+            self._header:Render2DNormal(headx, heady, headw, headh)
             if isLobby then
-                self._lobby:Render2DNormal(0.6617187, 0.7226667, 1.0, 1.0)
+                self._lobby:Render2DNormal(pausex, pausey, pausew, pauseh)
             else
-                self._pause:Render2DNormal(0.6617187, 0.7226667, 1.0, 1.0)
+                self._pause:Render2DNormal(pausex, pausey, pausew, pauseh)
             end
         end
     end

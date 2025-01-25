@@ -299,3 +299,52 @@ function ConvertResolutionSizeToScreenSize(width, height)
     local normalizedHeight = math.max(0.0, math.min(1.0, height / h))
     return vector2(normalizedWidth, normalizedHeight)
 end
+
+---Adjust 1080p values to any aspect ratio
+---@param x number
+---@param y number
+---@param w number
+---@param h number
+---@return number
+---@return number
+---@return number
+---@return number
+function AdjustNormalized16_9ValuesForCurrentAspectRatio(x,y,w,h)
+    local fPhysicalAspect = GetAspectRatio(false)
+    if IsSuperWideScreen() then
+        fPhysicalAspect = 16.0 / 9.0
+    end
+
+    local fScalar = (16.0 / 9.0) / fPhysicalAspect
+    local fAdjustPos = 1.0 - fScalar
+    
+    w = w * fScalar
+
+    local newX = x * fScalar
+    x = newX + fAdjustPos * 0.5
+    x,w = AdjustForSuperWidescreen(x,w)
+    return x,y,w,h
+end
+
+---Adjusts normalized values to SuperWidescreen resolutions
+---@param x number
+---@param w number
+---@return number
+---@return number
+function AdjustForSuperWidescreen(x,w)
+    if not IsSuperWideScreen() then
+        return x,w
+    end
+
+    local difference = ((16.0 / 9.0) / GetAspectRatio(false))
+    
+    x = 0.5 - ((0.5 - x) * difference)
+    w = w * difference
+
+    return x,w
+end
+
+function IsSuperWideScreen()
+    local aspRat = GetAspectRatio(false)
+    return aspRat > (16.0 / 9.0)
+end

@@ -1159,7 +1159,7 @@ public class MenuExample : BaseScript
     {
         UIMenu mainMenu = _menu;
         // tabview is the main menu.. the container of all the tabs.
-        TabView pauseMenu = new TabView("PauseMenu example", "Look there's a subtitle too!", "Detail 1", "Detail 2", "Detail 3");
+        TabView pauseMenu = new TabView("PauseMenu example", "Look there's a subtitle too! It can be veeeeery long or not so long it depends on you!! (one line only)", "Detail 1", "Detail 2", "Detail 3");
         int mugshot = API.RegisterPedheadshot(Game.PlayerPed.Handle);
         while (!API.IsPedheadshotReady(mugshot)) await BaseScript.Delay(1);
         string mugtxd = API.GetPedheadshotTxdString(mugshot);

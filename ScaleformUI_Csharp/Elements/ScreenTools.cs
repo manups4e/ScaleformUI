@@ -87,6 +87,78 @@ namespace ScaleformUI.Elements
             return new Vector2(normalizedX, normalizedY);
         }
 
+        public static void AdjustNormalized16_9ValuesForCurrentAspectRatio(int widescreen, ref Vector2 pos, ref SizeF size)
+        {
+            if (widescreen == 0)
+            {
+                float oldPosX = pos != null ? pos.X : 0.5f;
+                if (oldPosX > 0.5f)
+                    widescreen = 2;
+                else if (oldPosX < 0.5f)
+                    widescreen = 1;
+                else
+                    widescreen = 3;
+            }
+
+            float fPhysicalAspect = GetAspectRatio(false);
+            if (IsSuperWideScreen())
+            {
+                fPhysicalAspect = 16f / 9f;
+            }
+
+            float fScalar = (16f / 9f) / fPhysicalAspect, fAdjustPos = 1.0f - fScalar;
+            switch (widescreen)
+            {
+                case 1:
+                    if (size != null)
+                        size.Width *= fScalar;
+
+                    if (pos != null)
+                        pos = new Vector2(pos.X *= fScalar, pos.Y);
+                    break;
+                case 2:
+                    if (size != null)
+                        size.Width *= fScalar;
+
+                    if (pos != null)
+                        pos = new Vector2((pos.X *= fScalar) + fAdjustPos, pos.Y);
+                    break;
+                case 3:
+                    if (size != null)
+                        size.Width *= fScalar;
+
+                    if (pos != null)
+                        pos = new Vector2((pos.X *= fScalar) + fAdjustPos * 0.5f, pos.Y);
+                    break;
+                case 4:
+                    if (size != null)
+                        size.Width *= fScalar;
+                    break;
+            }
+            AdjustForSuperWidescreen(ref pos, ref size);
+        }
+
+        private static void AdjustForSuperWidescreen(ref Vector2 pos, ref SizeF size)
+        {
+            if (!IsSuperWideScreen())
+            {
+                return;
+            }
+
+            float fDifference = ((16f/9f) / GetAspectRatio(false));
+            if (pos != null)
+                pos = new Vector2(0.5f - ((0.5f - pos.X) * fDifference));
+
+            if (size != null)
+                size.Width *= fDifference;
+        }
+
+        private static bool IsSuperWideScreen()
+        {
+            float fAspectRatio = GetAspectRatio(false);
+            return fAspectRatio > (16f / 9f);
+
+        }
         /// <summary>
         /// Chech whether the mouse is inside the specified rectangle.
         /// </summary>
