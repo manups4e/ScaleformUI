@@ -1,4 +1,4 @@
-import {ItemFont} from "./item-font";
+import {ItemFont} from "./ItemFont";
 
 export class ScaleformFonts {
     public static CHALET_LONDON_NINETEENSIXTY = new ItemFont("$Font2")

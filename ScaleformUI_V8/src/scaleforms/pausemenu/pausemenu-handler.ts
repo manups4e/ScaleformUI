@@ -1,4 +1,4 @@
-import { ItemFont } from "elements/item-font";
+import { ItemFont } from "elements/ItemFont";
 import { SColor } from "elements/scolor";
 import { Scaleform } from "scaleforms/scaleform"
 

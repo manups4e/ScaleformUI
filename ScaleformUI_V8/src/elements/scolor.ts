@@ -62,7 +62,7 @@ export class SColor {
         return new SColor(a,r,g,b);
     }
 
-    public static FromArgb(argb: number): SColor {
+    public static FromArgbInt(argb: number): SColor {
         let isNegative = false;
         if (argb < 0) {
             isNegative = true;
@@ -87,7 +87,7 @@ export class SColor {
         return new SColor(alpha,red,green,blue);
     }
 
-    public static FromArgb(red: number, green: number, blue: number): SColor {
+    public static FromRgb(red: number, green: number, blue: number): SColor {
         return SColor.FromArgb(255, red, green, blue);
     }
 

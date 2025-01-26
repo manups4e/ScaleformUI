@@ -26,3 +26,8 @@ export enum MenuBuildingAnimation {
     RIGHT,
     LEFT_RIGHT,
 }
+
+export enum MenuAlignment {
+    LEFT = 0,
+    RIGHT = 1
+}

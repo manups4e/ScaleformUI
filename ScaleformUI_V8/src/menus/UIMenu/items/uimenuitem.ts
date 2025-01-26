@@ -1,4 +1,4 @@
-import { ItemFont } from "elements/item-font";
+import { ItemFont } from "elements/ItemFont";
 import { ScaleformFonts } from "elements/scaleform-fonts";
 import { SColor } from "elements/scolor";
 import { ScaleformUI } from "scaleforms/scaleformui/main";

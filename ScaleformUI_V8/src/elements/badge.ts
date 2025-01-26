@@ -180,7 +180,18 @@ export enum BadgeStyle {
     BRAND_WESTERNMOTORCYCLE = 176,
     BRAND_WILLARD = 177,
     BRAND_ZIRCONIUM = 178,
-    INFO = 179
+    INFO = 179,
+	MISSION_YELLOW = 180,
+	MISSION_BLUE = 181,
+	MISSION_GREEN = 182,
+	MISSION_PURPLE = 183,
+	MISSION_ORANGE = 184,
+	MISSION_RED = 185,
+	MISSION_AQUA = 186,
+	MISSION_LIGHTRED = 187,
+	PLUS = 188,
+	ARROW_LEFT = 189,
+	ARROW_RIGHT = 190
 }
 export function getSpriteDictionary(icon: BadgeStyle): string {
     if (isOneOfEnum(icon, [BadgeStyle.MALE, BadgeStyle.FEMALE, BadgeStyle.AUDIO_MUTE, BadgeStyle.AUDIO_INACTIVE, BadgeStyle.AUDIO_VOL1, BadgeStyle.AUDIO_VOL2, BadgeStyle.AUDIO_VOL3])) {
