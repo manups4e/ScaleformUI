@@ -118,6 +118,7 @@ function TabView:Index(idx)
         if self:Visible() then
             self.Tabs[self.index].Visible = true
             self:BuildPauseMenu()
+            ScaleformUI.Scaleforms._pauseMenu:SelectTab(self.index-1)
         end
         self.OnPauseMenuTabChanged(self, self.Tabs[self.index], self.index)
     else
