@@ -293,29 +293,6 @@ namespace ScaleformUI.Scaleforms
                         DrawScaleformMovie(_pause.Handle, pausePos.X, pausePos.Y, pauseSize.Width, pauseSize.Height, 255, 255, 255, 255, 0);
                     else
                         DrawScaleformMovie(_lobby.Handle, pausePos.X, pausePos.Y, pauseSize.Width, pauseSize.Height, 255, 255, 255, 255, 0);
-
-
-                    /*
-                     
-                    Vector2 headerPos = new Vector2(0.501f, 0.162f);
-                    SizeF headerSize = new SizeF(0.6782f, 0.145f);
-
-                    Vector2 pausePos = new Vector2(0.6617187f, 0.7226667f);
-                    SizeF pauseSize = new SizeF(1, 1);
-
-                    ScreenTools.AdjustNormalized16_9ValuesForCurrentAspectRatio(3, ref headerPos, ref headerSize);
-                    ScreenTools.AdjustNormalized16_9ValuesForCurrentAspectRatio(3, ref pausePos, ref pauseSize);
-
-                    if (BGEnabled)
-                        _pauseBG.Render2D();
-                    DrawScaleformMovie(_header.Handle, headerPos.X, headerPos.Y, 0.6782f, 0.145f, 255, 255, 255, 255, 0);
-                    if (!isLobby)
-                        DrawScaleformMovie(_pause.Handle, pausePos.X, pausePos.Y, pauseSize.Width, pauseSize.Height, 255, 255, 255, 255, 0);
-                    else
-                        DrawScaleformMovie(_lobby.Handle, pausePos.X, pausePos.Y, pauseSize.Width, pauseSize.Height, 255, 255, 255, 255, 0);
-
-                     
-                     */
                 }
             }
         }
