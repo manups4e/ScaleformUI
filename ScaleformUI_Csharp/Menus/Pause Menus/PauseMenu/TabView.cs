@@ -194,6 +194,7 @@ namespace ScaleformUI.PauseMenu
                     index = 0;
                 if (index < 0)
                     index = Tabs.Count - 1;
+                Tabs[Index].Visible = true;
                 if (Visible)
                 {
                     BuildPauseMenu();
