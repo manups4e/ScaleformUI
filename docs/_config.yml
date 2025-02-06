@@ -29,8 +29,8 @@ twitter_username: jekyllrb
 github_username:  jekyll
 
 # Build settings
-#remote_theme: just-the-docs/just-the-docs@v0.10.1
-theme: just-the-docs
+remote_theme: just-the-docs/just-the-docs@v0.10.1
+#theme: just-the-docs
 plugins:
   - jekyll-feed
 
