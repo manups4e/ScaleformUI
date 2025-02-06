@@ -19,7 +19,7 @@ permalink: /
 > In Lua many functions return a value when no parameter is given or sent nil, so make sure to check the source code too when in doubt!
 
 ## Where do I begin?
-Take a look at our [Getting Started](/getting-started) page. (add permalink to getting started)
+Take a look at our [Getting Started](./getting-started.markdown) page.
 
 ## Features
 - Support for simple buttons, checkboxes and lists.
