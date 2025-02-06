@@ -399,6 +399,7 @@ function TabView:buildSettings(tab)
     tab.SettingsColumn.Pagination:ScaleformIndex(tab.SettingsColumn.Pagination:GetScaleformIndex(tab.SettingsColumn:CurrentSelection()))
     tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]:Selected(false)
 
+    AddTextEntry("PAUSEMENU_Current_Description", tab.SettingsColumn.Items[tab.SettingsColumn:CurrentSelection()]:Description());
     ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", tab.SettingsColumn.Pagination:GetScaleformIndex(tab.SettingsColumn.Pagination:CurrentMenuIndex()))
     ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", tab.SettingsColumn:CurrentSelection(), #tab.SettingsColumn.Items)
 

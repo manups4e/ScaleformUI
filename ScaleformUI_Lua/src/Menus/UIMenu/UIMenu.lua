@@ -321,8 +321,8 @@ function UIMenu:Title(title)
 end
 
 ---Getter / Setter for the description font.
----@param fontTable any
----@return any
+---@param fontTable ItemFont
+---@return ItemFont
 function UIMenu:DescriptionFont(fontTable)
     if fontTable == nil then
         return self.descFont
@@ -335,8 +335,8 @@ function UIMenu:DescriptionFont(fontTable)
 end
 
 ---Getter / Setter for the subtitle.
----@param sub any
----@return any
+---@param sub string
+---@return string | nil
 function UIMenu:Subtitle(sub)
     if sub == nil then
         return self._Subtitle
@@ -695,6 +695,7 @@ function UIMenu:CurrentSelection(value)
         end
 
         if self:Visible() then
+            AddTextEntry("UIMenu_Current_Description", self:CurrentItem():Description());
             ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM",
                 self.Pagination:GetScaleformIndex(self.Pagination:CurrentMenuIndex()))
             ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", self:CurrentSelection(), #self.Items)
@@ -1004,6 +1005,7 @@ function UIMenu:BuildUpMenuAsync(itemsOnly)
     self.Pagination:ScaleformIndex(self.Pagination:GetScaleformIndex(self:CurrentSelection()))
     self.Items[self:CurrentSelection()]:Selected(true)
 
+    AddTextEntry("UIMenu_Current_Description", self:CurrentItem():Description());
     ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM",
         self.Pagination:GetScaleformIndex(self.Pagination:CurrentMenuIndex()))
     ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", self:CurrentSelection(), #self.Items)
@@ -1044,9 +1046,6 @@ function UIMenu:_itemCreation(page, pageIndex, before, overflow)
 
     local item = self.Items[menuIndex]
     local Type, SubType = item()
-    local textEntry = "menu_" .. (BreadcrumbsHandler:CurrentDepth() + 1) .. "_desc_" .. menuIndex
-    AddTextEntry(textEntry, item:Description())
-
     BeginScaleformMovieMethod(ScaleformUI.Scaleforms._ui.handle, "ADD_ITEM")
     PushScaleformMovieFunctionParameterBool(before)
     PushScaleformMovieFunctionParameterInt(item.ItemId)
@@ -1055,12 +1054,6 @@ function UIMenu:_itemCreation(page, pageIndex, before, overflow)
         PushScaleformMovieMethodParameterString(item.Base._formatLeftLabel)
     else
         PushScaleformMovieMethodParameterString(item._formatLeftLabel)
-    end
-    if string.IsNullOrEmpty(item:Description()) then
-        PushScaleformMovieMethodParameterString("")
-    else
-        BeginTextCommandScaleformString(textEntry)
-        EndTextCommandScaleformString_2()
     end
     PushScaleformMovieFunctionParameterBool(item:Enabled())
     PushScaleformMovieFunctionParameterBool(item:BlinkDescription())
@@ -1430,6 +1423,10 @@ function UIMenu:ButtonDelay()
     self._time = GlobalGameTimer
 end
 
+function UIMenu:CurrentItem()
+    return self.Items[self:CurrentSelection()]
+end
+
 ---GoUp
 function UIMenu:GoUp()
     self.Items[self:CurrentSelection()]:Selected(false)
@@ -1456,6 +1453,7 @@ function UIMenu:GoUp()
         end
     until self.Items[self:CurrentSelection()].ItemId ~= 6 or (self.Items[self:CurrentSelection()].ItemId == 6 and not self.Items[self:CurrentSelection()].Jumpable)
     PlaySoundFrontend(-1, self.Settings.Audio.UpDown, self.Settings.Audio.Library, true)
+    AddTextEntry("UIMenu_Current_Description", self:CurrentItem():Description());
     ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", self.Pagination:ScaleformIndex())
     ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", self:CurrentSelection(), #self.Items)
     self.Items[self:CurrentSelection()]:Selected(true)
@@ -1491,6 +1489,7 @@ function UIMenu:GoDown()
         end
     until self.Items[self:CurrentSelection()].ItemId ~= 6 or (self.Items[self:CurrentSelection()].ItemId == 6 and not self.Items[self:CurrentSelection()].Jumpable)
     PlaySoundFrontend(-1, self.Settings.Audio.UpDown, self.Settings.Audio.Library, true)
+    AddTextEntry("UIMenu_Current_Description", self:CurrentItem():Description());
     ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_ITEM", self.Pagination:ScaleformIndex())
     ScaleformUI.Scaleforms._ui:CallFunction("SET_COUNTER_QTTY", self:CurrentSelection(), #self.Items)
     self.Items[self:CurrentSelection()]:Selected(true)
@@ -1685,10 +1684,9 @@ function UIMenu:ReleaseMenuFromItem(Item)
     end
 end
 
+---Refreshes the menu description
 function UIMenu:UpdateDescription()
-    ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_ITEM_DESCRIPTION",
-        self.Pagination:GetScaleformIndex(self:CurrentSelection()),
-        "menu_" .. BreadcrumbsHandler:CurrentDepth() .. "_desc_" .. self:CurrentSelection())
+    ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_ITEM_DESCRIPTION")
 end
 
 ---Draw
@@ -1739,12 +1737,6 @@ end
 
 function UIMenu:mouseCheck()
     self._mouseOnMenu = self:MouseControlsEnabled() and ScaleformUI.Scaleforms._ui:CallFunctionAsyncReturnBool("IS_MOUSE_ON_MENU");
-end
-
-function UIMenu:clearAllLabels()
-    for k,v in pairs(self.Items) do
-        AddTextEntry("menu_" .. (BreadcrumbsHandler:CurrentDepth() + 1) .. "_desc_" .. k, "")
-    end
 end
 
 function UIMenu:IsMouseOverTheMenu()

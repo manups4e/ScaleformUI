@@ -363,6 +363,7 @@ namespace ScaleformUI.LobbyMenu
                 SettingsColumn.CurrentSelection = 0;
                 SettingsColumn.Pagination.ScaleformIndex = SettingsColumn.Pagination.GetScaleformIndex(SettingsColumn.CurrentSelection);
                 SettingsColumn.Items[0].Selected = true;
+                API.AddTextEntry("PAUSEMENU_Current_Description", SettingsColumn.Items[SettingsColumn.CurrentSelection].Description);
                 _pause._lobby.CallFunction("SET_SETTINGS_SELECTION", SettingsColumn.Pagination.ScaleformIndex);
                 _pause._lobby.CallFunction("SET_SETTINGS_QTTY", SettingsColumn.CurrentSelection + 1, SettingsColumn.Items.Count);
                 SettingsColumn.isBuilding = false;

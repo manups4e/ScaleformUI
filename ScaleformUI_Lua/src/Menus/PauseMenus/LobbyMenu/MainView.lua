@@ -360,6 +360,7 @@ function MainView:buildSettings(tab, tabIndex)
         self.SettingsColumn.Pagination:ScaleformIndex(self.SettingsColumn.Pagination:GetScaleformIndex(self.SettingsColumn:CurrentSelection()))
         self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]:Selected(true)
 
+        AddTextEntry("PAUSEMENU_Current_Description", self.SettingsColumn.Items[self.SettingsColumn:CurrentSelection()]:Description());
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_SELECTION", self.SettingsColumn.Pagination:GetScaleformIndex(self.SettingsColumn.Pagination:CurrentMenuIndex()))
         ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("SET_SETTINGS_QTTY", self.SettingsColumn:CurrentSelection(), #self.SettingsColumn.Items)
 

@@ -1,4 +1,5 @@
 ﻿using CitizenFX.Core;
+using CitizenFX.Core.Native;
 using ScaleformUI.Elements;
 using ScaleformUI.LobbyMenu;
 using ScaleformUI.Menu;
@@ -102,23 +103,11 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                 item.MainColor = SColor.HUD_Pause_bg;
             if (Parent is MainView lobby)
             {
-                AddTextEntry($"menu_lobby_desc_{menuIndex}", item.Description);
                 BeginScaleformMovieMethod(lobby._pause._lobby.Handle, "ADD_LEFT_ITEM");
                 PushScaleformMovieFunctionParameterBool(before);
                 PushScaleformMovieFunctionParameterInt(scaleformIndex);
                 PushScaleformMovieFunctionParameterInt(item._itemId);
                 PushScaleformMovieMethodParameterString(item._formatLeftLabel);
-                if (item.DescriptionHash != 0 && string.IsNullOrWhiteSpace(item.Description))
-                {
-                    BeginTextCommandScaleformString("STRTNM1");
-                    AddTextComponentSubstringTextLabelHashKey(item.DescriptionHash);
-                    EndTextCommandScaleformString_2();
-                }
-                else
-                {
-                    BeginTextCommandScaleformString($"menu_lobby_desc_{menuIndex}");
-                    EndTextCommandScaleformString_2();
-                }
                 PushScaleformMovieFunctionParameterBool(item.Enabled);
                 PushScaleformMovieFunctionParameterBool(item.BlinkDescription);
                 switch (item)
@@ -212,23 +201,11 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             }
             else if (Parent is TabView pause && ParentTab.Visible)
             {
-                AddTextEntry($"menu_pause_playerTab[{pause.Index}]_desc_{menuIndex}", item.Description);
                 BeginScaleformMovieMethod(pause._pause._pause.Handle, "ADD_PLAYERS_TAB_SETTINGS_ITEM");
                 PushScaleformMovieFunctionParameterBool(before);
                 PushScaleformMovieFunctionParameterInt(scaleformIndex);
                 PushScaleformMovieFunctionParameterInt(item._itemId);
                 PushScaleformMovieMethodParameterString(item._formatLeftLabel);
-                if (item.DescriptionHash != 0 && string.IsNullOrWhiteSpace(item.Description))
-                {
-                    BeginTextCommandScaleformString("STRTNM1");
-                    AddTextComponentSubstringTextLabelHashKey(item.DescriptionHash);
-                    EndTextCommandScaleformString_2();
-                }
-                else
-                {
-                    BeginTextCommandScaleformString($"menu_pause_playerTab[{pause.Index}]_desc_{menuIndex}");
-                    EndTextCommandScaleformString_2();
-                }
                 PushScaleformMovieFunctionParameterBool(item.Enabled);
                 PushScaleformMovieFunctionParameterBool(item.BlinkDescription);
                 switch (item)
@@ -323,6 +300,14 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             }
         }
 
+        public void UpdateDescription()
+        {
+            if (Parent is MainView _lobby)
+                _lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_DESCRIPTION");
+            else if (Parent is TabView _pause && ParentTab.Visible)
+                _pause._pause._lobby.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_DESCRIPTION");
+        }
+
         internal async void GoUp()
         {
             try
@@ -361,6 +346,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                 }
                 while (Items[CurrentSelection] is UIMenuSeparatorItem sp && sp.Jumpable);
 
+                API.AddTextEntry("PAUSEMENU_Current_Description", Items[CurrentSelection].Description);
                 if (Parent is MainView _lobby)
                 {
                     _lobby._pause._lobby.CallFunction("SET_SETTINGS_SELECTION", Pagination.ScaleformIndex);
@@ -420,6 +406,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                 }
                 while (Items[CurrentSelection] is UIMenuSeparatorItem sp && sp.Jumpable);
 
+                API.AddTextEntry("PAUSEMENU_Current_Description", Items[CurrentSelection].Description);
                 if (Parent is MainView _lobby)
                 {
                     _lobby._pause._lobby.CallFunction("SET_SETTINGS_SELECTION", Pagination.ScaleformIndex);
@@ -485,6 +472,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
 
                     if (Parent != null && Parent.Visible)
                     {
+                        API.AddTextEntry("PAUSEMENU_Current_Description", Items[CurrentSelection].Description);
                         if (Parent is MainView lobby)
                         {
                             lobby._pause._lobby.CallFunction("SET_SETTINGS_SELECTION", Pagination.GetScaleformIndex(Pagination.CurrentMenuIndex));

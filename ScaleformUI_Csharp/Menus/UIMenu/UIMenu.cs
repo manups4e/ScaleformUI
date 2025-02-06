@@ -1549,11 +1549,7 @@ namespace ScaleformUI.Menu
         /// </summary>
         public void UpdateDescription()
         {
-            BeginScaleformMovieMethod(Main.scaleformUI.Handle, "UPDATE_ITEM_DESCRIPTION");
-            ScaleformMovieMethodAddParamInt(Pagination.GetScaleformIndex(CurrentSelection));
-            BeginTextCommandScaleformString($"menu_{BreadcrumbsHandler.CurrentDepth}_desc_{CurrentSelection}");
-            EndTextCommandScaleformString_2();
-            EndScaleformMovieMethod();
+            Main.scaleformUI.CallFunction("UPDATE_ITEM_DESCRIPTION");
         }
 
         /// <summary>
@@ -1817,14 +1813,6 @@ namespace ScaleformUI.Menu
         private async void mouseCheck()
         {
             _mouseOnMenu = MouseControlsEnabled && await Main.scaleformUI.CallFunctionReturnValueBool("IS_MOUSE_ON_MENU");
-        }
-
-        private void clearAllLabels()
-        {
-            for (int i = 0; i < MenuItems.Count; i++)
-            {
-                AddTextEntry($"menu_{BreadcrumbsHandler.Count}_desc_{i}", "");
-            }
         }
 
         internal int eventType = 0;
@@ -2242,6 +2230,7 @@ namespace ScaleformUI.Menu
                 }
                 while (MenuItems[CurrentSelection] is UIMenuSeparatorItem sp && sp.Jumpable);
                 Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
+                AddTextEntry("UIMenu_Current_Description", CurrentItem.Description);
                 Main.scaleformUI.CallFunction("SET_CURRENT_ITEM", Pagination.ScaleformIndex);
                 Main.scaleformUI.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
                 MenuItems[CurrentSelection].Selected = true;
@@ -2289,6 +2278,7 @@ namespace ScaleformUI.Menu
                 }
                 while (MenuItems[CurrentSelection] is UIMenuSeparatorItem sp && sp.Jumpable);
                 Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
+                AddTextEntry("UIMenu_Current_Description", CurrentItem.Description);
                 Main.scaleformUI.CallFunction("SET_CURRENT_ITEM", Pagination.ScaleformIndex);
                 Main.scaleformUI.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
                 MenuItems[CurrentSelection].Selected = true;
@@ -2649,7 +2639,7 @@ namespace ScaleformUI.Menu
                         Main.scaleformUI.CallFunction("CLEAR_ITEMS");
                     else
                         Main.scaleformUI.CallFunction("CLEAR_ALL");
-                    clearAllLabels();
+                    AddTextEntry("UIMenu_Current_Description", "");
                 }
                 if (!value) return;
                 if (!ResetCursorOnOpen) return;
@@ -2769,6 +2759,7 @@ namespace ScaleformUI.Menu
             Pagination.ScaleformIndex = Pagination.GetScaleformIndex(CurrentSelection);
 
             MenuItems[CurrentSelection].Selected = true;
+            AddTextEntry("UIMenu_Current_Description", CurrentItem.Description);
             Main.scaleformUI.CallFunction("SET_CURRENT_ITEM", Pagination.ScaleformIndex);
             Main.scaleformUI.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
 
@@ -2933,30 +2924,11 @@ namespace ScaleformUI.Menu
             }
 
             UIMenuItem item = MenuItems[menuIndex];
-            if (!string.IsNullOrEmpty(item.Description))
-            {
-                AddTextEntry($"menu_{BreadcrumbsHandler.Count}_desc_{menuIndex}", item.Description);
-            }
             BeginScaleformMovieMethod(Main.scaleformUI.Handle, "ADD_ITEM");
             PushScaleformMovieFunctionParameterBool(before);
             PushScaleformMovieFunctionParameterInt(item._itemId);
             PushScaleformMovieFunctionParameterInt(menuIndex);
             PushScaleformMovieMethodParameterString(item._formatLeftLabel);
-            if (item.DescriptionHash != 0 && string.IsNullOrWhiteSpace(item.Description))
-            {
-                BeginTextCommandScaleformString("STRTNM1");
-                AddTextComponentSubstringTextLabelHashKey(item.DescriptionHash);
-                EndTextCommandScaleformString_2();
-            }
-            else if (!string.IsNullOrEmpty(item.Description))
-            {
-                BeginTextCommandScaleformString($"menu_{BreadcrumbsHandler.Count}_desc_{menuIndex}");
-                EndTextCommandScaleformString_2();
-            }
-            else
-            {
-                PushScaleformMovieMethodParameterString("");
-            }
             PushScaleformMovieFunctionParameterBool(item.Enabled);
             PushScaleformMovieFunctionParameterBool(item.BlinkDescription);
             switch (item)
@@ -3154,9 +3126,9 @@ namespace ScaleformUI.Menu
                     RefreshMenu(true);
                 }
 
-
                 if (_visible)
                 {
+                    AddTextEntry("UIMenu_Current_Description", CurrentItem.Description);
                     Main.scaleformUI.CallFunction("SET_CURRENT_ITEM", Pagination.GetScaleformIndex(Pagination.CurrentMenuIndex));
                     Main.scaleformUI.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
                 }

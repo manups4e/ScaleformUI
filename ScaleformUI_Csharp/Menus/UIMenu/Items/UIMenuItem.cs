@@ -365,10 +365,8 @@ namespace ScaleformUI.Menu
         /// </summary>
         /// <param name="text">Button label.</param>
         /// <param name="descriptionHash">Description label hash.</param>
-        public UIMenuItem(string text, uint descriptionHash) : this(text, descriptionHash, SColor.HUD_Panel_light, SColor.HUD_White, SColor.HUD_White, SColor.HUD_Black) { }
 
         public UIMenuItem(string text, string description, SColor mainColor, SColor highlightColor) : this(text, description, mainColor, highlightColor, SColor.HUD_White, SColor.HUD_Black) { }
-        public UIMenuItem(string text, uint descriptionHash, SColor mainColor, SColor highlightColor) : this(text, descriptionHash, mainColor, highlightColor, SColor.HUD_White, SColor.HUD_Black) { }
 
         /// <summary>
         /// Basic menu item with description and colors.
@@ -390,26 +388,6 @@ namespace ScaleformUI.Menu
             Description = description;
         }
 
-        /// <summary>
-        /// Basic menu item with description and colors.
-        /// </summary>
-        /// <param name="text">Item's label.</param>
-        /// <param name="descriptionHash">Item's description label hash obtained with (uint)GetHashKey(label)</param>
-        /// <param name="color">Main Color</param>
-        /// <param name="highlightColor">Highlighted Color</param>
-        /// <param name="textColor">Text's main color</param>
-        /// <param name="highlightedTextColor">Highlighted text color</param>
-        public UIMenuItem(string text, uint descriptionHash, SColor color, SColor highlightColor, SColor textColor, SColor highlightedTextColor)
-        {
-            _enabled = true;
-            MainColor = color;
-            HighlightColor = highlightColor;
-            TextColor = textColor;
-            HighlightedTextColor = highlightedTextColor;
-            Label = text;
-            this.description = string.Empty;
-            DescriptionHash = descriptionHash;
-        }
 
         /// <summary>
         /// Should the Info symbol blink?
@@ -485,42 +463,22 @@ namespace ScaleformUI.Menu
             set
             {
                 description = value;
-                if (descriptionHash != 0) descriptionHash = 0;
                 if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
                 {
-                    API.AddTextEntry($"menu_{BreadcrumbsHandler.CurrentDepth}_desc_{Parent.MenuItems.IndexOf(this)}", description);
-                    API.BeginScaleformMovieMethod(Main.scaleformUI.Handle, "UPDATE_ITEM_DESCRIPTION");
-                    API.ScaleformMovieMethodAddParamInt(Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)));
-                    API.BeginTextCommandScaleformString($"menu_{BreadcrumbsHandler.CurrentDepth}_desc_{Parent.MenuItems.IndexOf(this)}");
-                    API.EndTextCommandScaleformString_2();
-                    API.EndScaleformMovieMethod();
+                    API.AddTextEntry("UIMenu_Current_Description", value);
+                    Parent.UpdateDescription();
                 }
                 if (ParentColumn != null && ParentColumn.Parent.Visible)
                 {
-                    if (ParentColumn.Parent is MainView lobby)
-                    {
-                        API.AddTextEntry($"lobbymenu_desc_{ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this))}", description);
-                        API.BeginScaleformMovieMethod(lobby._pause._lobby.Handle, "UPDATE_SETTINGS_ITEM_DESCRIPTION");
-                        API.ScaleformMovieMethodAddParamInt(ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)));
-                        API.BeginTextCommandScaleformString($"lobbymenu_desc_{ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this))}");
-                        API.EndTextCommandScaleformString_2();
-                        API.EndScaleformMovieMethod();
-                    }
-                    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
-                    {
-                        API.AddTextEntry($"pausemenu__desc_{ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this))}", description);
-                        API.BeginScaleformMovieMethod(pause._pause._pause.Handle, "UPDATE_PLAYERS_TAB_SETTINGS_ITEM_DESCRIPTION");
-                        API.ScaleformMovieMethodAddParamInt(ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)));
-                        API.BeginTextCommandScaleformString($"pausemenu_desc_{ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this))}");
-                        API.EndTextCommandScaleformString_2();
-                        API.EndScaleformMovieMethod();
-                    }
+                    API.AddTextEntry("PAUSEMENU_Current_Description", value);
+                    ParentColumn.UpdateDescription();
                 }
             }
         }
         /// <summary>
         /// Sets the item's description by a label's hash (used by (uint)GetHashKey(label))
         /// </summary>
+        [Obsolete("Deprecated because unused.")]
         public virtual uint DescriptionHash
         {
             get => descriptionHash;

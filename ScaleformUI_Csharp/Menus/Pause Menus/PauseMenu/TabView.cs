@@ -1,4 +1,5 @@
 ﻿using CitizenFX.Core;
+using CitizenFX.Core.Native;
 using ScaleformUI.Elements;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenus;
@@ -473,6 +474,7 @@ namespace ScaleformUI.PauseMenu
             tab.SettingsColumn.CurrentSelection = 0;
             tab.SettingsColumn.Pagination.ScaleformIndex = tab.SettingsColumn.Pagination.GetScaleformIndex(tab.SettingsColumn.CurrentSelection);
             tab.SettingsColumn.Items[0].Selected = false;
+            API.AddTextEntry("PAUSEMENU_Current_Description", tab.SettingsColumn.Items[tab.SettingsColumn.CurrentSelection].Description);
             _pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", tab.SettingsColumn.Pagination.ScaleformIndex);
             _pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", tab.SettingsColumn.CurrentSelection + 1, tab.SettingsColumn.Items.Count);
             tab.SettingsColumn.isBuilding = false;

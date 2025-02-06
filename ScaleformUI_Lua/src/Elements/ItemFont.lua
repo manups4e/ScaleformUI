@@ -1,5 +1,7 @@
 ItemFont = setmetatable({}, ItemFont)
 
+---@class ItemFont
+
 ---@comment Creates a new ItemFont
 ---@param fontName string
 ---@param fontId? number

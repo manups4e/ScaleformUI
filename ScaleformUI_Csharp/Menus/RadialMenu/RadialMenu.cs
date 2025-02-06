@@ -24,11 +24,11 @@ namespace ScaleformUI.Radial
         public RadialSegment[] Segments { get; private set; }
         private PointF _offset = new PointF(0, 0);
 
-        public MenuOpenedEvent OnMenuOpen;
-        public MenuClosedEvent OnMenuClose;
-        public SegmentChanged OnSegmentHighlight;
-        public IndexChanged OnSegmentIndexChange;
-        public SegmentSelected OnSegmentSelect;
+        public event MenuOpenedEvent OnMenuOpen;
+        public event MenuClosedEvent OnMenuClose;
+        public event SegmentChanged OnSegmentHighlight;
+        public event IndexChanged OnSegmentIndexChange;
+        public event SegmentSelected OnSegmentSelect;
         private bool enable3D = true;
 
         public bool Enable3D

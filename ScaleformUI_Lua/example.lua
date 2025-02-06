@@ -27,7 +27,7 @@ function CreateMenu()
 	bigMessageExampleMenu:AddItem(uiItemTransitionList)
 
 	local uiItemBigMessageManualDispose = UIMenuCheckboxItem.New("Manual Dispose", false,
-		"Manually dispose the big message")
+		"Manually dispose the big message")e
 	bigMessageExampleMenu:AddItem(uiItemBigMessageManualDispose)
 
 	local uiItemMessageType = UIMenuListItem.New("Message Type",
