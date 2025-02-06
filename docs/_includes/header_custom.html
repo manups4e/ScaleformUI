@@ -1,0 +1,75 @@
+<div class="language-selector">
+    <button class="btn btn-blue" data-lang='c#'>C#</button>
+    <button class="btn btn-purple" data-lang="lua">Lua</button>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const languageButtons = document.querySelectorAll('[data-lang]');
+    const savedLang = localStorage.getItem('selectedLanguage') || 'c#';
+        
+    const showButtons = {{ page.show_buttons | json }};
+    const showAllCode = {{ page.show_all_code | json }};
+
+    
+    if (!showButtons) {
+        languageButtons.forEach(button => {
+            button.style.display = 'none'; 
+        });
+    }
+
+    
+    if (showAllCode) {
+        
+        document.querySelectorAll('.language-c\\#, .language-lua').forEach(block => {
+            block.style.display = 'block';  
+        });
+    }
+
+    
+    function hideAllCodeBlocks() {
+        const allCodeBlocks = document.querySelectorAll('.language-c\\#, .language-lua');
+        allCodeBlocks.forEach(block => {
+            block.style.display = 'none';  
+        });
+    }
+
+    
+    function showCodeBlocks(language) {
+        hideAllCodeBlocks();  
+
+        let selector = `.language-${language}`;
+
+        
+        if (language === 'c#') {
+            selector = '.language-c\\#'; 
+        }
+
+        const blocks = document.querySelectorAll(selector);
+        blocks.forEach(block => {
+            block.style.display = 'block';  
+        });
+    }
+
+    
+    languageButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const selectedLanguage = button.getAttribute('data-lang');
+            localStorage.setItem('selectedLanguage', selectedLanguage);
+            const savedLang = localStorage.getItem('selectedLanguage') || 'c#';
+                                    showCodeBlocks(selectedLanguage);
+        });
+    });
+
+    
+    if (showAllCode) {
+        
+        document.querySelectorAll('.language-c\\#, .language-lua').forEach(block => {
+            block.style.display = 'block';
+        });
+    } else {
+        
+        showCodeBlocks(savedLang);
+    }
+  });
+</script>

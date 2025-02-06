@@ -1,0 +1,35 @@
+<div class="code-container">
+    <div class="language-selector">
+      <!-- Bottoni per selezionare il linguaggio -->
+      <button data-lang="csharp">C#</button>
+      <button data-lang="lua">Lua</button>
+    </div>
+  
+    <div class="code-snippets">
+      {% assign code_blocks = page.content | split: "\n\n" %}
+      {% assign snippets = "" %}
+      
+      {% for block in code_blocks %}
+        {% if block contains "```c#" %}
+          {% capture snippet %}
+          {{ block | remove: "```c#" | remove: "```" }}
+          {% endcapture %}
+          {% assign snippets = snippets | push: { lang: "c#", code: snippet } %}
+        {% elsif block contains "```lua" %}
+          {% capture snippet %}
+          {{ block | remove: "```lua" | remove: "```" }}
+          {% endcapture %}
+          {% assign snippets = snippets | push: { lang: "lua", code: snippet } %}
+        {% endif %}
+      {% endfor %}
+  
+      {% for snippet in snippets %}
+        <div class="code-snippet code-{{ snippet.lang }}" style="display: none;">
+          {% highlight {{ snippet.lang }} %}
+            {{ snippet.code }}
+          {% endhighlight %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  
