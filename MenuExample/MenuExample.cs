@@ -280,6 +280,8 @@ public class MenuExample : BaseScript
 
         #region Windows SubMenu
         UIMenuItem windowsItem = new UIMenuItem("Windows SubMenu item label", "this is the submenu binded item description");
+        UIMenuColourPickePanel p = new UIMenuColourPickePanel(ColorPickerType.Classic);
+        windowsItem.AddPanel(p);
         windowsItem.SetRightLabel(">>>");
         exampleMenu.AddItem(windowsItem);
         UIMenu windowSubmenu = new UIMenu("Windows Menu", "submenu description");
@@ -1159,7 +1161,7 @@ public class MenuExample : BaseScript
     {
         UIMenu mainMenu = _menu;
         // tabview is the main menu.. the container of all the tabs.
-        TabView pauseMenu = new TabView("PauseMenu example", "Look there's a subtitle too! It can be veeeeery long or not so long it depends on you!! (one line only)", "Detail 1", "Detail 2", "Detail 3");
+        TabView pauseMenu = new TabView("PauseMenu example", "Look there's a subtitle too! It can be veeeeery long or not so long it depends on you!! (2 lines max)", "Detail 1", "Detail 2", "Detail 3");
         int mugshot = API.RegisterPedheadshot(Game.PlayerPed.Handle);
         while (!API.IsPedheadshotReady(mugshot)) await BaseScript.Delay(1);
         string mugtxd = API.GetPedheadshotTxdString(mugshot);
