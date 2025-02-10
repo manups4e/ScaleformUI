@@ -1765,6 +1765,7 @@ namespace ScaleformUI.Menu
 
             Controls.Toggle(!ControlDisablingEnabled);
 
+            SetMenuOffset(Offset);
             Main.scaleformUI.Render2D();
 
             if (Glare)
@@ -3152,24 +3153,22 @@ namespace ScaleformUI.Menu
         {
             Offset = offset;
             float safezone = (1.0f - (float)decimal.Round(Convert.ToDecimal(GetSafeZoneSize()), 2)) * 100f * 0.005f;
-            int w = 0, h = 0;
             bool rightAlign = MenuAlignment == MenuAlignment.RIGHT;
-
             var pos1080 = ScreenTools.ConvertScaleformCoordsToResolutionCoords(Offset.X, Offset.Y);
             var screenCoords = ScreenTools.ConvertResolutionCoordsToScreenCoords(pos1080.X, pos1080.Y);
-            glarePosition = new PointF(screenCoords.X + (GetIsWidescreen() ? 0.45f : 0.585f) + safezone, screenCoords.Y + 0.45f + safezone);
-
+            glarePosition = new PointF(screenCoords.X + (ScreenTools.GetWideScreen() ? 0.585f : 0.45f) + safezone, screenCoords.Y + 0.45f + safezone);
             if (rightAlign)
             {
+                int w = 0, h = 0;
                 screenCoords = ScreenTools.ConvertResolutionCoordsToScreenCoords(w - pos1080.X, pos1080.Y);
-                glarePosition = new PointF(screenCoords.X + (GetIsWidescreen() ? 0.225f : 0.36f) - safezone, screenCoords.Y + 0.45f + safezone);
+                glarePosition = new PointF(screenCoords.X + (ScreenTools.GetWideScreen() ? 0.36f : 0.225f) - safezone, screenCoords.Y + 0.45f + safezone);
             }
-
-            glareSize = new SizeF(GetIsWidescreen() ? 1f : 1.35f, 1f);
+            glareSize = new SizeF(ScreenTools.GetWideScreen() ? 1.35f : 1f, 1f);
 
             if (Visible)
                 Main.scaleformUI.CallFunction("SET_MENU_OFFSET", Offset.X, Offset.Y);
         }
+
 
         /// <summary>
         /// Returns false if last input was made with mouse and keyboard, true if it was made with a controller.

@@ -153,12 +153,24 @@ namespace ScaleformUI.Elements
                 size.Width *= fDifference;
         }
 
-        private static bool IsSuperWideScreen()
+        public static bool IsSuperWideScreen()
         {
             float fAspectRatio = GetAspectRatio(false);
             return fAspectRatio > (16f / 9f);
 
         }
+
+        public static bool GetWideScreen()
+        {
+            float WIDESCREEN_ASPECT = 1.5f;
+            float fLogicalAspectRatio = GetAspectRatio(false);
+            float fPhysicalAspectRatio = Screen.Resolution.Width / Screen.Resolution.Height;
+            if (fPhysicalAspectRatio <= WIDESCREEN_ASPECT)
+                return false;
+
+            return fLogicalAspectRatio > WIDESCREEN_ASPECT;
+        }
+
         /// <summary>
         /// Chech whether the mouse is inside the specified rectangle.
         /// </summary>

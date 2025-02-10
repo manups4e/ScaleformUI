@@ -277,7 +277,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
     local rightAlign = _UIMenu.menuAlignment == MenuAlignment.RIGHT
     local glareX = 0.45
     local glareW = 1.0
-    if not GetIsWidescreen() then
+    if not GetWideScreen() then
         glareX = 0.585
         glareW = 1.35
     end
@@ -289,7 +289,7 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         local w,h = GetActualScreenResolution()
         screenCoords = ConvertResolutionCoordsToScreenCoords(w - pos1080.x,pos1080.y)
         glareX = 0.225
-        if not GetIsWidescreen() then
+        if not GetWideScreen() then
             glareX = 0.36
         end
         _UIMenu._glarePos = vector2(screenCoords.x + glareX - safezone, screenCoords.y + 0.45 + safezone)
@@ -1698,6 +1698,7 @@ function UIMenu:Draw()
 
     Controls:ToggleAll(not self:DisableGameControls())
 
+    self:SetMenuOffset(self.Position.x, self.Position.y)
     ScaleformUI.Scaleforms._ui:Render2D()
 
     if self.Glare then
@@ -2043,11 +2044,11 @@ function UIMenu:SetMenuOffset(x,y)
     self.Position = vector2(x,y)
     local safezone = (1.0 - math.round(GetSafeZoneSize(), 2)) * 100 * 0.005;
     local rightAlign = self.menuAlignment == MenuAlignment.RIGHT
-    local glareX = 0.45
-    local glareW = 1.0
-    if not GetIsWidescreen() then
-        glareX = 0.585
-        glareW = 1.35
+    local glareX = 0.585
+    local glareW = 1.35
+    if not GetWideScreen() then
+         glareX = 0.45
+         glareW = 1.0
     end
 
     local pos1080 = ConvertScaleformCoordsToResolutionCoords(x,y)
@@ -2056,9 +2057,9 @@ function UIMenu:SetMenuOffset(x,y)
     if rightAlign then
         local w,h = GetActualScreenResolution()
         screenCoords = ConvertResolutionCoordsToScreenCoords(w - pos1080.x,pos1080.y)
-        glareX = 0.225
-        if not GetIsWidescreen() then
-            glareX = 0.36
+        glareX = 0.36
+        if not GetWideScreen() then
+            glareX = 0.225
         end
         self._glarePos = vector2(screenCoords.x + glareX - safezone, screenCoords.y + 0.45 + safezone)
     end

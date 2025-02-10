@@ -326,6 +326,17 @@ function AdjustNormalized16_9ValuesForCurrentAspectRatio(x,y,w,h)
     return x,y,w,h
 end
 
+function GetWideScreen()
+    local WIDESCREEN_ASPECT = 1.5
+    local fLogicalAspectRatio = GetAspectRatio(false)
+    local w, h = GetActualScreenResolution()
+    local fPhysicalAspectRatio = w / h
+    if fPhysicalAspectRatio <= WIDESCREEN_ASPECT then
+        return false
+    end
+    return fLogicalAspectRatio > WIDESCREEN_ASPECT;
+end
+
 ---Adjusts normalized values to SuperWidescreen resolutions
 ---@param x number
 ---@param w number
