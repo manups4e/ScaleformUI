@@ -47,25 +47,25 @@ namespace ScaleformUI.Menu
 
         private void _setValue(float val)
         {
-            if (ParentItem != null && ParentItem.Parent != null && ParentItem.Parent.Visible && ParentItem.Parent.Pagination.IsItemVisible(ParentItem.Parent.MenuItems.IndexOf(ParentItem)))
-            {
-                int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(ParentItem));
-                int van = ParentItem.Panels.IndexOf(this);
-                Main.scaleformUI.CallFunction("SET_PERCENT_PANEL_RETURN_VALUE", it, van, val);
-            }
+            //if (ParentItem != null && ParentItem.Parent != null && ParentItem.Parent.Visible && ParentItem.Parent.Pagination.IsItemVisible(ParentItem.Parent.MenuItems.IndexOf(ParentItem)))
+            //{
+            //    int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(ParentItem));
+            //    int van = ParentItem.Panels.IndexOf(this);
+            //    Main.scaleformUI.CallFunction("SET_PERCENT_PANEL_RETURN_VALUE", it, van, val);
+            //}
         }
 
         private async void SetMousePercentage(PointF mouse)
         {
-            int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(ParentItem));
-            int van = ParentItem.Panels.IndexOf(this);
-            API.BeginScaleformMovieMethod(Main.scaleformUI.Handle, "SET_PERCENT_PANEL_POSITION_RETURN_VALUE");
-            API.ScaleformMovieMethodAddParamInt(it);
-            API.ScaleformMovieMethodAddParamInt(van);
-            API.ScaleformMovieMethodAddParamFloat(mouse.X);
-            int ret = API.EndScaleformMovieMethodReturnValue();
-            while (!API.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            _value = Convert.ToSingle(API.GetScaleformMovieMethodReturnValueString(ret));
+            //int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(ParentItem));
+            //int van = ParentItem.Panels.IndexOf(this);
+            //API.BeginScaleformMovieMethod(Main.scaleformUI.Handle, "SET_PERCENT_PANEL_POSITION_RETURN_VALUE");
+            //API.ScaleformMovieMethodAddParamInt(it);
+            //API.ScaleformMovieMethodAddParamInt(van);
+            //API.ScaleformMovieMethodAddParamFloat(mouse.X);
+            //int ret = API.EndScaleformMovieMethodReturnValue();
+            //while (!API.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
+            //_value = Convert.ToSingle(API.GetScaleformMovieMethodReturnValueString(ret));
         }
 
         internal void PercentagePanelChange()

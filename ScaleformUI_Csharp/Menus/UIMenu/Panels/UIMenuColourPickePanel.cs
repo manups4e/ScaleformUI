@@ -47,12 +47,12 @@ namespace ScaleformUI.Menu
 
         internal void _setValue(int val)
         {
-            if (ParentItem != null && ParentItem.Parent != null && ParentItem.Parent.Visible && ParentItem.Parent.Pagination.IsItemVisible(ParentItem.Parent.MenuItems.IndexOf(ParentItem)))
-            {
-                int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
-                int van = ParentItem.Panels.IndexOf(this);
-                Main.scaleformUI.CallFunction("SET_COLOR_PICKER_PANEL_VALUE", it, van, val);
-            }
+            //if (ParentItem != null && ParentItem.Parent != null && ParentItem.Parent.Visible && ParentItem.Parent.Pagination.IsItemVisible(ParentItem.Parent.MenuItems.IndexOf(ParentItem)))
+            //{
+            //    int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
+            //    int van = ParentItem.Panels.IndexOf(this);
+            //    Main.scaleformUI.CallFunction("SET_COLOR_PICKER_PANEL_VALUE", it, van, val);
+            //}
         }
 
         internal void PickerHovered(int colorId, SColor color)

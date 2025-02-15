@@ -37,9 +37,8 @@ public class MenuExample : BaseScript
 
         // first true means add menu Glare scaleform to the menu
         // last true means it's using the alternative title style
-        UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI ~o~SHOWCASE", new PointF(0, 0), "commonmenu", "interaction_bgd", true, true, 0f, MenuAlignment.RIGHT);
+        UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI ~o~SHOWCASE", new PointF(0, 0), "commonmenu", "interaction_bgd", true, true, MenuAlignment.RIGHT);
         exampleMenu.MaxItemsOnScreen = 7; // To decide max items on screen at time, default 7
-        exampleMenu.SetAnimations(true, true, MenuAnimationType.LINEAR, MenuBuildingAnimation.LEFT_RIGHT);
         exampleMenu.SetMouse(false, false, false, false, false);
 
         //exampleMenu.CounterColor = HudColor.HUD_COLOUR_PINK;
@@ -49,6 +48,7 @@ public class MenuExample : BaseScript
         #region Big Message
 
         UIMenuItem bigMessageItem = new UIMenuItem("~g~Big~s~ Message ~r~Examples~s~", "Select me to switch to the BigMessage menu!");
+        bigMessageItem.SetRightLabel("test");
         bigMessageItem.SetCustomLeftBadge("scaleformui", "kitty");
         bigMessageItem.SetCustomRightBadge("scaleformui", "kitty");
 
@@ -229,10 +229,6 @@ public class MenuExample : BaseScript
         UIMenuSeparatorItem BlankItem_2 = new UIMenuSeparatorItem("Separator (not Jumped)", false);
         exampleMenu.AddItem(BlankItem);
         exampleMenu.AddItem(BlankItem_2);
-
-        UIMenuListItem colorListItem = new UIMenuListItem("Choose the scrolling animation", foodsList, (int)exampleMenu.AnimationType, "~BLIP_BARBER~ ~BLIP_INFO_ICON~ ~BLIP_TANK~ ~BLIP_OFFICE~ ~BLIP_CRIM_DRUGS~ ~BLIP_WAYPOINT~ ~INPUTGROUP_MOVE~~n~You can use Blips and Inputs in description as you prefer!~n~⚠ 🐌 ❤️ 🥺 💪🏻 You can use Emojis too!", SColor.HUD_Freemode_dark, SColor.HUD_Freemode);
-        colorListItem.BlinkDescription = true;
-        exampleMenu.AddItem(colorListItem);
 
         UIMenuSliderItem slider = new UIMenuSliderItem("Slider Item", "Cool!", true); // by default max is 100 and multipler 5 = 20 steps.
         exampleMenu.AddItem(slider);
@@ -995,8 +991,6 @@ public class MenuExample : BaseScript
             if (item == ketchupItem)
             {
                 enabled = checked_;
-                sender.EnableAnimation = enabled;
-                colorListItem.Enabled = enabled;
                 Notifications.ShowNotification("~r~Menu animation: ~b~" + (enabled ? "Enabled" : "Disabled"));
             }
         };
@@ -1014,12 +1008,6 @@ public class MenuExample : BaseScript
         {
             //if (sender.MenuItems[index] == cookItem)
             //cookItem.SetLeftBadge(BadgeIcon.NONE);
-        };
-
-        exampleMenu.OnListChange += (sender, item, index) =>
-        {
-            if (item == colorListItem)
-                sender.AnimationType = (MenuAnimationType)index;
         };
 
         exampleMenu.OnMenuOpen += (menu, data) =>

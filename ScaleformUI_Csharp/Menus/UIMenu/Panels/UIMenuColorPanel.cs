@@ -71,10 +71,10 @@ namespace ScaleformUI.Menu
 
         private async void _getValue()
         {
-            int it = this.ParentItem.Parent.Pagination.GetScaleformIndex(this.ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
+            //int it = this.ParentItem.Parent.Pagination.GetScaleformIndex(this.ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
             int van = this.ParentItem.Panels.IndexOf(this);
             API.BeginScaleformMovieMethod(Main.scaleformUI.Handle, "GET_VALUE_FROM_PANEL");
-            API.ScaleformMovieMethodAddParamInt(it);
+            //API.ScaleformMovieMethodAddParamInt(it);
             API.ScaleformMovieMethodAddParamInt(van);
             int ret = API.EndScaleformMovieMethodReturnValue();
             while (!API.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
@@ -84,12 +84,12 @@ namespace ScaleformUI.Menu
         public void _setValue(int val)
         {
 
-            if (ParentItem != null && ParentItem.Parent != null && ParentItem.Parent.Visible && ParentItem.Parent.Pagination.IsItemVisible(ParentItem.Parent.MenuItems.IndexOf(ParentItem)))
-            {
-                int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
-                int van = ParentItem.Panels.IndexOf(this);
-                Main.scaleformUI.CallFunction("SET_COLOR_PANEL_VALUE", it, van, val);
-            }
+            //if (ParentItem != null && ParentItem.Parent != null && ParentItem.Parent.Visible && ParentItem.Parent.Pagination.IsItemVisible(ParentItem.Parent.MenuItems.IndexOf(ParentItem)))
+            //{
+            //    int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
+            //    int van = ParentItem.Panels.IndexOf(this);
+            //    Main.scaleformUI.CallFunction("SET_COLOR_PANEL_VALUE", it, van, val);
+            //}
         }
     }
 }

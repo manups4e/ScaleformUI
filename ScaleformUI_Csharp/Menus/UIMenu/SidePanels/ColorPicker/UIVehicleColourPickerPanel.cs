@@ -15,7 +15,7 @@ namespace ScaleformUI.Menu
                 title = value;
                 if (ParentItem is not null && ParentItem.Parent != null && ParentItem.Parent.Visible)
                 {
-                    Main.scaleformUI.CallFunction("UPDATE_SIDE_PANEL_TITLE", ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(this.ParentItem)), title);
+                    //Main.scaleformUI.CallFunction("UPDATE_SIDE_PANEL_TITLE", ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(this.ParentItem)), title);
                 }
             }
         }
