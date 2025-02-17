@@ -36,7 +36,11 @@ namespace ScaleformUI.Menu
                     if (value < 0)
                         _value += CustomColors.Count - 1;
                 }
-                _setValue(_value);
+                if (ParentItem != null && ParentItem.Parent != null)
+                {
+                    int it = ParentItem.Parent.MenuItems.IndexOf(ParentItem);
+                    ParentItem.Parent.SendPanelsToItemScaleform(it, true);
+                }
             }
         }
         public UIMenuColorPanel(string title, ColorPanelType ColorType, int startIndex = 0)
@@ -79,17 +83,6 @@ namespace ScaleformUI.Menu
             int ret = API.EndScaleformMovieMethodReturnValue();
             while (!API.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
             _value = API.GetScaleformMovieMethodReturnValueInt(ret);
-        }
-
-        public void _setValue(int val)
-        {
-
-            //if (ParentItem != null && ParentItem.Parent != null && ParentItem.Parent.Visible && ParentItem.Parent.Pagination.IsItemVisible(ParentItem.Parent.MenuItems.IndexOf(ParentItem)))
-            //{
-            //    int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
-            //    int van = ParentItem.Panels.IndexOf(this);
-            //    Main.scaleformUI.CallFunction("SET_COLOR_PANEL_VALUE", it, van, val);
-            //}
         }
     }
 }

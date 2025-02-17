@@ -882,6 +882,7 @@ namespace ScaleformUI.Menu
         //internal PaginationHandler Pagination;
         private int _maxItemsOnScreen = 7;
         private int _currentSelection = 0;
+        private int topEdge = 0;
 
         internal KeyValuePair<string, string> _customTexture;
         internal KeyValuePair<string, string> _customBGTexture = new KeyValuePair<string, string>("", "");
@@ -1688,7 +1689,6 @@ namespace ScaleformUI.Menu
             SetInputExclusive(2, 238);
 
             success = GetScaleformMovieCursorSelection(Main.scaleformUI.Handle, ref eventType, ref context, ref itemId, ref unused);
-
             if (success && !isBuilding)
             {
                 switch (eventType)
@@ -1800,7 +1800,7 @@ namespace ScaleformUI.Menu
                                             string colString = await Main.scaleformUI.CallFunctionReturnValueString("GET_PICKER_COLOR", itemId);
                                             string[] split = colString.Split(',');
                                             picker._value = itemId;
-                                            picker.PickerSelect(SColor.FromArgb(Convert.ToInt32(split[1]), Convert.ToInt32(split[2]), Convert.ToInt32(split[3])));
+                                            picker.PickerSelect(SColor.FromArgb(Convert.ToInt32(split[0]), Convert.ToInt32(split[1]), Convert.ToInt32(split[2])));
                                             Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
                                         }
                                     }
@@ -1820,7 +1820,7 @@ namespace ScaleformUI.Menu
                                         string colString = await Main.scaleformUI.CallFunctionReturnValueString("GET_PICKER_COLOR", itemId);
                                         string[] split = colString.Split(',');
                                         panel._value = itemId;
-                                        panel.PickerSelect(SColor.FromArgb(Convert.ToInt32(split[1]), Convert.ToInt32(split[2]), Convert.ToInt32(split[3])));
+                                        panel.PickerSelect(SColor.FromArgb(Convert.ToInt32(split[0]), Convert.ToInt32(split[1]), Convert.ToInt32(split[2])));
                                         Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
                                     }
                                 }
@@ -2034,14 +2034,21 @@ namespace ScaleformUI.Menu
             {
                 await BaseScript.Delay(0);
                 CurrentItem.Selected = false;
-                Main.scaleformUI.CallFunction("SET_INPUT_EVENT", 8);
                 _currentSelection--;
+                if (_currentSelection < topEdge)
+                    topEdge--;
                 if (_currentSelection < 0)
+                {
                     _currentSelection = MenuItems.Count - 1;
+                    topEdge = MenuItems.Count - MaxItemsOnScreen; 
+                }
                 AddTextEntry("UIMenu_Current_Description", CurrentItem.Description);
+                Main.scaleformUI.CallFunction("SET_INPUT_EVENT", 8);
             }
             while (CurrentItem._itemId == 6 && ((UIMenuSeparatorItem)CurrentItem).Jumpable);
             CurrentItem.Selected = true;
+            SendPanelsToItemScaleform(_currentSelection);
+            SendSidePanelToScaleform(_currentSelection);
             Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
         }
         public async void GoDown()
@@ -2050,14 +2057,21 @@ namespace ScaleformUI.Menu
             {
                 await BaseScript.Delay(0);
                 CurrentItem.Selected = false;
-                Main.scaleformUI.CallFunction("SET_INPUT_EVENT", 9);
                 _currentSelection++;
+                if (_currentSelection > topEdge + MaxItemsOnScreen)
+                    topEdge++;
                 if (_currentSelection >= MenuItems.Count)
+                {
                     _currentSelection = 0;
+                    topEdge = 0;
+                }
                 AddTextEntry("UIMenu_Current_Description", CurrentItem.Description);
+                Main.scaleformUI.CallFunction("SET_INPUT_EVENT", 9);
             }
             while (CurrentItem._itemId == 6 && ((UIMenuSeparatorItem)CurrentItem).Jumpable);
             CurrentItem.Selected = true;
+            SendPanelsToItemScaleform(_currentSelection);
+            SendSidePanelToScaleform(_currentSelection);
             Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
         }
 
@@ -2384,6 +2398,7 @@ namespace ScaleformUI.Menu
                     timeBeforeOverflow = Main.GameTime;
                     if (BreadcrumbsHandler.Count == 0)
                         BreadcrumbsHandler.Forward(this, null);
+                    AddTextEntry("UIMenu_Current_Description", CurrentItem.Description);
                 }
                 else
                 {
@@ -2400,8 +2415,9 @@ namespace ScaleformUI.Menu
                         Main.scaleformUI.CallFunction("CLEAR_ALL");
                     AddTextEntry("UIMenu_Current_Description", "");
                 }
-                Main.scaleformUI.CallFunction("SET_VISIBLE", _visible);
-                Main.scaleformUI.CallFunction("SET_CURRENT_SELECTION", 0);
+                Main.scaleformUI.CallFunction("SET_VISIBLE", _visible, CurrentSelection, topEdge);
+                SendPanelsToItemScaleform(CurrentSelection);
+                SendSidePanelToScaleform(CurrentSelection);
                 if (!value) return;
                 if (!ResetCursorOnOpen) return;
                 SetCursorLocation(0.5f, 0.5f);
@@ -2415,7 +2431,7 @@ namespace ScaleformUI.Menu
             while (!Main.scaleformUI.IsLoaded) await BaseScript.Delay(0);
             if (itemless)
             {
-                BeginScaleformMovieMethod(Main.scaleformUI.Handle, "CREATE_MENU");
+                BeginScaleformMovieMethod(Main.scaleformUI.Handle, "SET_MENU_DATA");
                 PushScaleformMovieMethodParameterString(Title);
                 PushScaleformMovieMethodParameterString(SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle);
                 PushScaleformMovieMethodParameterFloat(Offset.X);
@@ -2481,38 +2497,11 @@ namespace ScaleformUI.Menu
                 //}
             }
 
-            //int max = Pagination.ItemsPerPage;
-            //if (MenuItems.Count < max)
-            //    max = MenuItems.Count;
-            //Pagination.MinItem = Pagination.CurrentPageStartIndex;
-
-            //if (scrollingType == ScrollingType.CLASSIC && Pagination.TotalPages > 1)
-            //{
-            //    int missingItems = Pagination.GetMissingItems();
-            //    if (missingItems > 0)
-            //    {
-            //        Pagination.ScaleformIndex = Pagination.GetPageIndexFromMenuIndex(Pagination.CurrentPageEndIndex) + missingItems;
-            //        Pagination.MinItem = Pagination.CurrentPageStartIndex - missingItems;
-            //    }
-            //}
-
-            //Pagination.MaxItem = Pagination.CurrentPageEndIndex;
             if (!Visible) return;
             _itemCreation();
 
             //Pagination.ScaleformIndex = Pagination.GetScaleformIndex(CurrentSelection);
 
-            MenuItems[CurrentSelection].Selected = true;
-            AddTextEntry("UIMenu_Current_Description", CurrentItem.Description);
-            Main.scaleformUI.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
-
-            if (MenuItems[CurrentSelection] is UIMenuSeparatorItem)
-            {
-                if ((MenuItems[CurrentSelection] as UIMenuSeparatorItem).Jumpable)
-                {
-                    GoDown();
-                }
-            }
             Main.scaleformUI.CallFunction("ENABLE_MOUSE", MouseControlsEnabled);
             isBuilding = false;
         }
@@ -2617,83 +2606,80 @@ namespace ScaleformUI.Menu
             for (int i = 0; i < MenuItems.Count; i++)
             {
                 SendItemToScaleform(i);
-                //if (item.SidePanel != null)
-                //{
-                //    switch (item.SidePanel)
-                //    {
-                //        case UIMissionDetailsPanel:
-                //            UIMissionDetailsPanel mis = (UIMissionDetailsPanel)item.SidePanel;
-                //            Main.scaleformUI.CallFunction("ADD_SIDE_PANEL_TO_ITEM", scaleformIndex, 0, (int)mis.PanelSide, (int)mis._titleType, mis.Title, mis.TitleColor, mis.TextureDict, mis.TextureName);
-                //            foreach (UIFreemodeDetailsItem _it in mis.Items)
-                //            {
-                //                Main.scaleformUI.CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", scaleformIndex, _it.Type, _it.TextLeft, _it.TextRight, (int)_it.Icon, _it.IconColor, _it.Tick, _it._labelFont.FontName, _it._labelFont.FontID, _it._rightLabelFont.FontName, _it._rightLabelFont.FontID);
-                //            }
-                //            break;
-                //        case UIVehicleColourPickerPanel:
-                //            UIVehicleColourPickerPanel cp = (UIVehicleColourPickerPanel)item.SidePanel;
-                //            Main.scaleformUI.CallFunction("ADD_SIDE_PANEL_TO_ITEM", scaleformIndex, 1, (int)cp.PanelSide, (int)cp._titleType, cp.Title, cp.TitleColor);
-                //            break;
-                //    }
-                //}
-                //if (item.Panels.Count == 0) return;
-
-                //foreach (UIMenuPanel panel in item.Panels)
-                //{
-                //    int pan = item.Panels.IndexOf(panel);
-                //    switch (panel)
-                //    {
-                //        case UIMenuColorPanel:
-                //            UIMenuColorPanel cp = (UIMenuColorPanel)panel;
-                //            Main.scaleformUI.CallFunction("ADD_PANEL", scaleformIndex, 0, cp.Title, (int)cp.ColorPanelColorType, cp.CurrentSelection, cp.CustomColors is not null ? string.Join(",", cp.CustomColors.Select(x => x.ArgbValue)) : "");
-                //            break;
-                //        case UIMenuPercentagePanel:
-                //            UIMenuPercentagePanel pp = (UIMenuPercentagePanel)panel;
-                //            Main.scaleformUI.CallFunction("ADD_PANEL", scaleformIndex, 1, pp.Title, pp.Min, pp.Max, pp.Percentage);
-                //            break;
-                //        case UIMenuGridPanel:
-                //            UIMenuGridPanel gp = (UIMenuGridPanel)panel;
-                //            Main.scaleformUI.CallFunction("ADD_PANEL", scaleformIndex, 2, gp.TopLabel, gp.RightLabel, gp.LeftLabel, gp.BottomLabel, gp.CirclePosition.X, gp.CirclePosition.Y, true, (int)gp.GridType);
-                //            break;
-                //        case UIMenuStatisticsPanel:
-                //            UIMenuStatisticsPanel sp = (UIMenuStatisticsPanel)panel;
-                //            Main.scaleformUI.CallFunction("ADD_PANEL", scaleformIndex, 3);
-                //            if (sp.Items.Count > 0)
-                //            {
-                //                foreach (StatisticsForPanel stat in sp.Items)
-                //                {
-                //                    Main.scaleformUI.CallFunction("ADD_STATISTIC_TO_PANEL", scaleformIndex, pan, stat.Text, stat.Value);
-                //                }
-                //            }
-                //            break;
-                //        case UIMenuColourPickePanel:
-                //            Main.scaleformUI.CallFunction("ADD_PANEL", scaleformIndex, 4);
-                //            break;
-                //    }
-                //}
             }
         }
 
-
-        /// <summary>
-        /// Returns the current selected item's index.
-        /// Change the current selected item to index. Use this after you add or remove items dynamically.
-        /// </summary>
-        public int CurrentSelection
+        internal void SendSidePanelToScaleform(int i, bool update = false)
         {
-            get { return MenuItems.Count == 0 ? 0 : _currentSelection; }
-            set
+            int index = i - topEdge;
+            var item = MenuItems[i];
+            if (item.SidePanel == null || !item.Enabled || index < 0 || index > MaxItemsOnScreen)
             {
-
-                if (CurrentSelection < MenuItems.Count)
-                    MenuItems[_currentSelection].Selected = false;
-                _currentSelection = Math.Max(0, Math.Min(value, MenuItems.Count - 1));
-                if (_visible)
-                {
-                    AddTextEntry("UIMenu_Current_Description", CurrentItem.Description);
-                    Main.scaleformUI.CallFunction("SET_CURRENT_SELECTION", _currentSelection);
-                }
-                MenuItems[value].Selected = true;
+                Main.scaleformUI.CallFunction("SET_SIDE_PANEL_DATA_SLOT_EMPTY");
+                return;
             }
+            if (!update) Main.scaleformUI.CallFunction("SET_SIDE_PANEL_DATA_SLOT_EMPTY");
+
+            var str = update ? "UPDATE_SIDE_PANEL_DATA_SLOT" : "SET_SIDE_PANEL_DATA_SLOT";
+
+            switch (item.SidePanel)
+            {
+                case UIMissionDetailsPanel:
+                    UIMissionDetailsPanel mis = (UIMissionDetailsPanel)item.SidePanel;
+                    Main.scaleformUI.CallFunction(str, index, 0, (int)mis.PanelSide, (int)mis._titleType, mis.Title, mis.TitleColor, mis.TextureDict, mis.TextureName);
+                    foreach (UIFreemodeDetailsItem _it in mis.Items)
+                    {
+                        Main.scaleformUI.CallFunction("SET_SIDE_PANEL_SLOT", index, _it.Type, _it.TextLeft, _it.TextRight, (int)_it.Icon, _it.IconColor, _it.Tick, _it._labelFont.FontName, _it._labelFont.FontID, _it._rightLabelFont.FontName, _it._rightLabelFont.FontID);
+                    }
+                    break;
+                case UIVehicleColourPickerPanel:
+                    UIVehicleColourPickerPanel cp = (UIVehicleColourPickerPanel)item.SidePanel;
+                    Main.scaleformUI.CallFunction(str, index, 1, (int)cp.PanelSide, (int)cp._titleType, cp.Title, cp.TitleColor);
+                    break;
+            }
+            Main.scaleformUI.CallFunction("SHOW_SIDE_PANEL");
+        }
+
+        internal void SendPanelsToItemScaleform(int i, bool update = false)
+        {
+            int index = i - topEdge;
+            var item = MenuItems[i];
+
+            if (item.Panels.Count == 0 || !item.Enabled || index < 0 || index > MaxItemsOnScreen)
+            {
+                Main.scaleformUI.CallFunction("SET_PANEL_DATA_SLOT_EMPTY");
+                return; 
+            }
+            if (!update) Main.scaleformUI.CallFunction("SET_PANEL_DATA_SLOT_EMPTY");
+
+            var str = update ? "UPDATE_PANEL_DATA_SLOT" : "SET_PANEL_DATA_SLOT";
+            foreach (UIMenuPanel panel in item.Panels)
+            {
+                int pan = item.Panels.IndexOf(panel);
+                switch (panel)
+                {
+                    case UIMenuColorPanel:
+                        UIMenuColorPanel cp = (UIMenuColorPanel)panel;
+                        Main.scaleformUI.CallFunction(str, index, pan, 0, cp.Title, (int)cp.ColorPanelColorType, cp.CurrentSelection, cp.CustomColors is not null ? string.Join(",", cp.CustomColors.Select(x => x.ArgbValue)) : "");
+                        break;
+                    case UIMenuPercentagePanel:
+                        UIMenuPercentagePanel pp = (UIMenuPercentagePanel)panel;
+                        Main.scaleformUI.CallFunction(str, index, pan, 1, pp.Title, pp.Min, pp.Max, pp.Percentage);
+                        break;
+                    case UIMenuGridPanel:
+                        UIMenuGridPanel gp = (UIMenuGridPanel)panel;
+                        Main.scaleformUI.CallFunction(str, index, pan, 2, gp.TopLabel, gp.RightLabel, gp.LeftLabel, gp.BottomLabel, gp.CirclePosition.X, gp.CirclePosition.Y, true, (int)gp.GridType);
+                        break;
+                    case UIMenuStatisticsPanel:
+                        UIMenuStatisticsPanel sp = (UIMenuStatisticsPanel)panel;
+                        Main.scaleformUI.CallFunction(str, index, pan, 3, string.Join(",", sp.Items));
+                        break;
+                    case UIMenuColourPickePanel:
+                        Main.scaleformUI.CallFunction(str, index, pan, 4);
+                        break;
+                }
+            }
+            Main.scaleformUI.CallFunction("SHOW_PANELS");
         }
 
         internal void SendItemToScaleform(int i, bool update = false)
@@ -2805,6 +2791,37 @@ namespace ScaleformUI.Menu
 
             if (Visible)
                 Main.scaleformUI.CallFunction("SET_MENU_OFFSET", Offset.X, Offset.Y);
+        }
+
+
+        /// <summary>
+        /// Returns the current selected item's index.
+        /// Change the current selected item to index. Use this after you add or remove items dynamically.
+        /// </summary>
+        public int CurrentSelection
+        {
+            get { return MenuItems.Count == 0 ? 0 : _currentSelection; }
+            set
+            {
+
+                if (CurrentSelection < MenuItems.Count)
+                    MenuItems[CurrentSelection].Selected = false;
+                _currentSelection = Math.Max(0, Math.Min(value, MenuItems.Count - 1));
+
+                if (_currentSelection > topEdge + MaxItemsOnScreen)
+                    topEdge = Math.Max(0, Math.Min(_currentSelection, MenuItems.Count - MaxItemsOnScreen));
+                else if (_currentSelection < topEdge)
+                    topEdge = _currentSelection;
+
+                if (_visible)
+                {
+                    AddTextEntry("UIMenu_Current_Description", CurrentItem.Description);
+                    Main.scaleformUI.CallFunction("SET_CURRENT_SELECTION", _currentSelection, topEdge);
+                    SendPanelsToItemScaleform(_currentSelection);
+                    SendSidePanelToScaleform(_currentSelection);
+                }
+                MenuItems[value].Selected = true;
+            }
         }
 
 

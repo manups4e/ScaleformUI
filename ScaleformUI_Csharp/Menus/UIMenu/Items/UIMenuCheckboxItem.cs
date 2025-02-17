@@ -75,10 +75,8 @@ namespace ScaleformUI.Menu
             set
             {
                 _checked = value;
-                //if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
-                //{
-                //    Main.scaleformUI.CallFunction("SET_INPUT_EVENT", 16, Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), value);
-                //}
+                if (Parent != null && Parent.Visible)
+                    Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
             }
         }
 

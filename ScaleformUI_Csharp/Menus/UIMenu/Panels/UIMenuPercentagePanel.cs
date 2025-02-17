@@ -24,7 +24,11 @@ namespace ScaleformUI.Menu
             set
             {
                 _value = value;
-                _setValue(value);
+                if (ParentItem != null && ParentItem.Parent != null)
+                {
+                    int it = ParentItem.Parent.MenuItems.IndexOf(ParentItem);
+                    ParentItem.Parent.SendPanelsToItemScaleform(it, true);
+                }
             }
         }
 
@@ -44,16 +48,6 @@ namespace ScaleformUI.Menu
             ParentItem.ListChangedTrigger(ParentItem.Index);
         }
         */
-
-        private void _setValue(float val)
-        {
-            //if (ParentItem != null && ParentItem.Parent != null && ParentItem.Parent.Visible && ParentItem.Parent.Pagination.IsItemVisible(ParentItem.Parent.MenuItems.IndexOf(ParentItem)))
-            //{
-            //    int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(ParentItem));
-            //    int van = ParentItem.Panels.IndexOf(this);
-            //    Main.scaleformUI.CallFunction("SET_PERCENT_PANEL_RETURN_VALUE", it, van, val);
-            //}
-        }
 
         private async void SetMousePercentage(PointF mouse)
         {
