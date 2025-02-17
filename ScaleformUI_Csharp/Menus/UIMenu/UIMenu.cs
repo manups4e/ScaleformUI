@@ -956,7 +956,8 @@ namespace ScaleformUI.Menu
                 SetMenuOffset(Offset);
                 if (Visible)
                 {
-                    Main.scaleformUI.CallFunction("SET_MENU_ORIENTATION", (int)menuAlignment);
+                    //Main.scaleformUI.CallFunction("SET_MENU_ORIENTATION", (int)menuAlignment);
+                    SetMenuData(true);
                 }
             }
         }
@@ -969,14 +970,29 @@ namespace ScaleformUI.Menu
             }
         }
 
-        public ScrollingType ScrollingType
+
+        public bool EnableAnimation
         {
-            get => scrollingType;
+            get => enableAnimation;
             set
             {
-                scrollingType = value;
+                enableAnimation = value;
+                if (Visible)
+                {
+                    Main.scaleformUI.CallFunction("ENABLE_SCROLLING_ANIMATION", enableAnimation);
+                }
             }
         }
+
+        [Obsolete("Not used anymore")]
+        public bool Enabled3DAnimations;
+        [Obsolete("Not used anymore")]
+        public MenuAnimationType AnimationType;
+        [Obsolete("Not used anymore")]
+        public MenuBuildingAnimation BuildingAnimation;
+
+        [Obsolete("Not used anymore")]
+        public ScrollingType ScrollingType;
 
         public bool MouseWheelControlEnabled
         {
@@ -1007,7 +1023,8 @@ namespace ScaleformUI.Menu
                 descriptionFont = value;
                 if (Visible)
                 {
-                    Main.scaleformUI.CallFunction("SET_DESC_FONT", descriptionFont.FontName, descriptionFont.FontID);
+                    //Main.scaleformUI.CallFunction("SET_DESC_FONT", descriptionFont.FontName, descriptionFont.FontID);
+                    SetMenuData(true);
                 }
             }
         }
@@ -1290,7 +1307,8 @@ namespace ScaleformUI.Menu
             _customTexture = pathToCustomSprite;
             if (Visible)
             {
-                Main.scaleformUI.CallFunction("UPDATE_MENU_BANNER_TEXTURE", _customTexture.Key, _customTexture.Value);
+                //Main.scaleformUI.CallFunction("UPDATE_MENU_BANNER_TEXTURE", _customTexture.Key, _customTexture.Value);
+                SetMenuData(true);
             }
         }
 
@@ -1299,7 +1317,8 @@ namespace ScaleformUI.Menu
             _customBGTexture = pathToCustomSprite;
             if (Visible)
             {
-                Main.scaleformUI.CallFunction("UPDATE_MENU_UNDERBANNER_TEXTURE", _customBGTexture.Key, _customBGTexture.Value);
+                //Main.scaleformUI.CallFunction("UPDATE_MENU_UNDERBANNER_TEXTURE", _customBGTexture.Key, _customBGTexture.Value);
+                SetMenuData(true);
             }
         }
 
@@ -1308,7 +1327,8 @@ namespace ScaleformUI.Menu
             bannerColor = color;
             if (Visible)
             {
-                Main.scaleformUI.CallFunction("SET_MENU_BANNER_COLOR", bannerColor.ArgbValue);
+                //Main.scaleformUI.CallFunction("SET_MENU_BANNER_COLOR", bannerColor.ArgbValue);
+                SetMenuData(true);
             }
         }
 
@@ -1318,7 +1338,8 @@ namespace ScaleformUI.Menu
             bannerBGColor = color;
             if (Visible)
             {
-                Main.scaleformUI.CallFunction("SET_MENU_UNDERBANNER_COLOR", bannerBGColor.ArgbValue);
+                //Main.scaleformUI.CallFunction("SET_MENU_UNDERBANNER_COLOR", bannerBGColor.ArgbValue);
+                SetMenuData(true);
             }
         }
 
@@ -1385,7 +1406,8 @@ namespace ScaleformUI.Menu
         /// </summary>
         public void UpdateDescription()
         {
-            Main.scaleformUI.CallFunction("UPDATE_ITEM_DESCRIPTION");
+            //Main.scaleformUI.CallFunction("UPDATE_ITEM_DESCRIPTION");
+            SetMenuData(true);
         }
 
         /// <summary>
@@ -1657,7 +1679,6 @@ namespace ScaleformUI.Menu
         internal bool success;
         bool cursorPressed;
         private ItemFont descriptionFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
-        private ScrollingType scrollingType = ScrollingType.CLASSIC;
         private bool mouseReset = false;
         private MenuAlignment menuAlignment;
 
@@ -1775,7 +1796,6 @@ namespace ScaleformUI.Menu
                                         return;
                                     }
                                     CurrentSelection = itemId;
-                                    Main.scaleformUI.CallFunction("SET_COUNTER_QTTY", CurrentSelection + 1, MenuItems.Count);
                                     Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
                                 }
                                 break;
@@ -2043,9 +2063,9 @@ namespace ScaleformUI.Menu
                     topEdge = MenuItems.Count - MaxItemsOnScreen; 
                 }
                 AddTextEntry("UIMenu_Current_Description", CurrentItem.Description);
-                Main.scaleformUI.CallFunction("SET_INPUT_EVENT", 8);
             }
             while (CurrentItem._itemId == 6 && ((UIMenuSeparatorItem)CurrentItem).Jumpable);
+            Main.scaleformUI.CallFunction("SET_INPUT_EVENT", 8);
             CurrentItem.Selected = true;
             SendPanelsToItemScaleform(_currentSelection);
             SendSidePanelToScaleform(_currentSelection);
@@ -2066,9 +2086,9 @@ namespace ScaleformUI.Menu
                     topEdge = 0;
                 }
                 AddTextEntry("UIMenu_Current_Description", CurrentItem.Description);
-                Main.scaleformUI.CallFunction("SET_INPUT_EVENT", 9);
             }
             while (CurrentItem._itemId == 6 && ((UIMenuSeparatorItem)CurrentItem).Jumpable);
+            Main.scaleformUI.CallFunction("SET_INPUT_EVENT", 9);
             CurrentItem.Selected = true;
             SendPanelsToItemScaleform(_currentSelection);
             SendSidePanelToScaleform(_currentSelection);
@@ -2409,10 +2429,6 @@ namespace ScaleformUI.Menu
                     MenuHandler.ableToDraw = false;
                     MenuHandler.currentMenu = null;
                     _unfilteredMenuItems.Clear();
-                    if (BreadcrumbsHandler.SwitchInProgress && !differentBanner)
-                        Main.scaleformUI.CallFunction("CLEAR_ITEMS");
-                    else
-                        Main.scaleformUI.CallFunction("CLEAR_ALL");
                     AddTextEntry("UIMenu_Current_Description", "");
                 }
                 Main.scaleformUI.CallFunction("SET_VISIBLE", _visible, CurrentSelection, topEdge);
@@ -2425,39 +2441,14 @@ namespace ScaleformUI.Menu
             }
         }
 
-        internal async void BuildUpMenuAsync(bool itemsOnly = false)
+        internal async void BuildUpMenuAsync(bool itemsOnly = false, bool skipViewInitialization = false)
         {
             isBuilding = true;
             while (!Main.scaleformUI.IsLoaded) await BaseScript.Delay(0);
-            if (itemless)
-            {
-                BeginScaleformMovieMethod(Main.scaleformUI.Handle, "SET_MENU_DATA");
-                PushScaleformMovieMethodParameterString(Title);
-                PushScaleformMovieMethodParameterString(SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle);
-                PushScaleformMovieMethodParameterFloat(Offset.X);
-                PushScaleformMovieMethodParameterFloat(Offset.Y);
-                PushScaleformMovieMethodParameterBool(AlternativeTitle);
-                PushScaleformMovieMethodParameterString(_customTexture.Key);
-                PushScaleformMovieMethodParameterString(_customTexture.Value);
-                PushScaleformMovieFunctionParameterInt(MaxItemsOnScreen);
-                PushScaleformMovieFunctionParameterInt(MenuItems.Count);
-                PushScaleformMovieFunctionParameterInt(counterColor.ArgbValue);
-                PushScaleformMovieMethodParameterString(descriptionFont.FontName);
-                PushScaleformMovieFunctionParameterInt(descriptionFont.FontID);
-                PushScaleformMovieFunctionParameterInt(bannerColor.ArgbValue);
-                PushScaleformMovieFunctionParameterBool(true);
-                BeginTextCommandScaleformString("ScaleformUILongDesc");
-                EndTextCommandScaleformString_2();
-                PushScaleformMovieMethodParameterString(_customBGTexture.Key);
-                PushScaleformMovieMethodParameterString(_customBGTexture.Value);
-                PushScaleformMovieFunctionParameterInt((int)menuAlignment);
-                EndScaleformMovieMethod();
-                isBuilding = false;
-                return;
-            }
             if (!itemsOnly)
             {
-                Main.scaleformUI.CallFunction("SET_MENU_DATA", Title, SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, counterColor, descriptionFont.FontName, descriptionFont.FontID, bannerColor.ArgbValue, false, "", _customBGTexture.Key, _customBGTexture.Value, (int)menuAlignment);
+                SetMenuData(skipViewInitialization);
+            }
                 //if (Windows.Count > 0)
                 //{
                 //    foreach (UIMenuWindow wind in Windows)
@@ -2495,7 +2486,6 @@ namespace ScaleformUI.Menu
                 //        }
                 //    }
                 //}
-            }
 
             if (!Visible) return;
             _itemCreation();
@@ -2504,6 +2494,38 @@ namespace ScaleformUI.Menu
 
             Main.scaleformUI.CallFunction("ENABLE_MOUSE", MouseControlsEnabled);
             isBuilding = false;
+        }
+
+        private void SetMenuData(bool skipViewInitialization)
+        {
+            if (itemless)
+            {
+                BeginScaleformMovieMethod(Main.scaleformUI.Handle, "SET_MENU_DATA");
+                PushScaleformMovieMethodParameterString(Title);
+                PushScaleformMovieMethodParameterString(SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle);
+                PushScaleformMovieMethodParameterFloat(Offset.X);
+                PushScaleformMovieMethodParameterFloat(Offset.Y);
+                PushScaleformMovieMethodParameterBool(AlternativeTitle);
+                PushScaleformMovieMethodParameterString(_customTexture.Key);
+                PushScaleformMovieMethodParameterString(_customTexture.Value);
+                PushScaleformMovieFunctionParameterInt(MaxItemsOnScreen);
+                PushScaleformMovieFunctionParameterInt(MenuItems.Count);
+                PushScaleformMovieFunctionParameterInt(counterColor.ArgbValue);
+                PushScaleformMovieMethodParameterString(descriptionFont.FontName);
+                PushScaleformMovieFunctionParameterInt(descriptionFont.FontID);
+                PushScaleformMovieFunctionParameterInt(bannerColor.ArgbValue);
+                PushScaleformMovieFunctionParameterBool(true);
+                BeginTextCommandScaleformString("ScaleformUILongDesc");
+                EndTextCommandScaleformString_2();
+                PushScaleformMovieMethodParameterString(_customBGTexture.Key);
+                PushScaleformMovieMethodParameterString(_customBGTexture.Value);
+                PushScaleformMovieFunctionParameterInt((int)menuAlignment);
+                PushScaleformMovieFunctionParameterBool(true);
+                EndScaleformMovieMethod();
+                isBuilding = false;
+                return;
+            }
+            Main.scaleformUI.CallFunction("SET_MENU_DATA", Title, SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, counterColor, descriptionFont.FontName, descriptionFont.FontID, bannerColor.ArgbValue, false, "", _customBGTexture.Key, _customBGTexture.Value, (int)menuAlignment, skipViewInitialization);
         }
 
         /// <summary>
@@ -2531,6 +2553,14 @@ namespace ScaleformUI.Menu
                 ResetKey(MenuControls.Select);
                 SetKey(MenuControls.Select, Control.FrontendAccept);
             }
+        }
+
+        /// <summary>
+        /// This function is obsolete and will be removed soon
+        /// </summary>
+        [Obsolete("Not used anymore")]
+        public void SetAnimations(bool enableScrollingAnim, bool enable3DAnim, MenuAnimationType scrollingAnim = MenuAnimationType.QUADRATIC_IN, MenuBuildingAnimation buildingAnim = MenuBuildingAnimation.LEFT_RIGHT, float fadingTime = 0.1f)
+        {
         }
 
         /// <summary>
@@ -2790,8 +2820,12 @@ namespace ScaleformUI.Menu
             glareSize = new SizeF(ScreenTools.GetWideScreen() ? 1.35f : 1f, 1f);
 
             if (Visible)
-                Main.scaleformUI.CallFunction("SET_MENU_OFFSET", Offset.X, Offset.Y);
+            {
+                SetMenuData(true);
+            }
         }
+
+
 
 
         /// <summary>
@@ -2848,7 +2882,8 @@ namespace ScaleformUI.Menu
                 title = value;
                 if (Visible)
                 {
-                    Main.scaleformUI.CallFunction("UPDATE_TITLE_SUBTITLE", title, SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle, AlternativeTitle);
+                    //Main.scaleformUI.CallFunction("UPDATE_TITLE_SUBTITLE", title, SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle, AlternativeTitle);
+                    SetMenuData(true);
                 }
             }
         }
@@ -2865,7 +2900,8 @@ namespace ScaleformUI.Menu
                 subtitle = value;
                 if (Visible)
                 {
-                    Main.scaleformUI.CallFunction("UPDATE_TITLE_SUBTITLE", title, SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle, AlternativeTitle);
+                    //Main.scaleformUI.CallFunction("UPDATE_TITLE_SUBTITLE", title, SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle, AlternativeTitle);
+                    SetMenuData(true);
                 }
             }
         }
@@ -2881,7 +2917,8 @@ namespace ScaleformUI.Menu
                 counterColor = value;
                 if (Visible)
                 {
-                    Main.scaleformUI.CallFunction("SET_COUNTER_COLOR", counterColor);
+                    //Main.scaleformUI.CallFunction("SET_COUNTER_COLOR", counterColor);
+                    SetMenuData(true);
                 }
             }
         }
@@ -2898,7 +2935,8 @@ namespace ScaleformUI.Menu
                 mouseControlsEnabled = value;
                 if (Visible)
                 {
-                    Main.scaleformUI.CallFunction("ENABLE_MOUSE", value);
+                    //Main.scaleformUI.CallFunction("ENABLE_MOUSE", value);
+                    SetMenuData(true);
                 }
             }
         }
