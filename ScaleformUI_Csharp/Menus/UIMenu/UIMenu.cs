@@ -2833,12 +2833,6 @@ namespace ScaleformUI.Menu
                 glarePosition = new Vector2(screenCoords.X - 1 + startPoint, screenCoords.Y + 0.45f + safezone);
             }
             glareSize = new SizeF(ScreenTools.GetWideScreen() ? 1.35f : 1f, 1f);
-
-
-            Notifications.DrawText(0.35f, 0.7f, "safezone: " + safezone);
-            Notifications.DrawText(0.35f, 0.725f, "GetSafeZoneSize: " + GetSafeZoneSize());
-            Notifications.DrawText(0.35f, 0.75f, "screenCoords: " + screenCoords);
-            Notifications.DrawText(0.35f, 0.775f, "glarePosition: " + glarePosition);
             SetMenuData(true);
         }
 
