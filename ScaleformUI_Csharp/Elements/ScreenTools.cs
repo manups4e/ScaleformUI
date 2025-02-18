@@ -76,7 +76,7 @@ namespace ScaleformUI.Elements
             // Normalize coordinates to 0.0 - 1.0 range
             int w = 0, h = 0;
             GetActiveScreenResolution(ref w, ref h);
-            return new Vector2((scaleformX / w) * 2f - 1f, (scaleformY / h) * 2f - 1f);
+            return new Vector2(scaleformX / w, scaleformY / h);
         }
 
         public static Vector2 ConvertResolutionCoordsToScreenCoords(float x, float y)
@@ -85,6 +85,21 @@ namespace ScaleformUI.Elements
             float normalizedY = Math.Max(0.0f, Math.Min(1.0f, (float)y / 1080.0f));
 
             return new Vector2(normalizedX, normalizedY);
+        }
+
+
+        /// <summary>
+        /// Converts scaleform size(1280 x 720) into screen size(0.0 - 1.0)
+        /// </summary>
+        /// <param name="scaleformWidth"></param>
+        /// <param name="scaleformHeight"></param>
+        /// <returns></returns>
+        public static SizeF ConvertScaleformSizeToScreenSize(float scaleformWidth, float scaleformHeight)
+        {
+            //Normalize size to 0.0 - 1.0 range
+            int w = 0, h = 0;
+            GetActiveScreenResolution(ref w, ref h);
+            return new SizeF(scaleformWidth / w, scaleformHeight / h);
         }
 
         public static void AdjustNormalized16_9ValuesForCurrentAspectRatio(int widescreen, ref Vector2 pos, ref SizeF size)

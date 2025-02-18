@@ -29,7 +29,7 @@ namespace ScaleformUI.Menu
                 await BaseScript.Delay(0);
                 API.RequestStreamedTextureDict("char_creator_portraits", true);
             }
-            Main.scaleformUI.CallFunction("UPDATE_HERITAGE_WINDOW", wid, Mom, Dad);
+            ParentMenu?.SetWindows(true);
             API.SetStreamedTextureDictAsNoLongerNeeded("char_creator_portraits");
         }
     }

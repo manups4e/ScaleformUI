@@ -882,6 +882,7 @@ namespace ScaleformUI.Menu
         //internal PaginationHandler Pagination;
         private int _maxItemsOnScreen = 7;
         private int _currentSelection = 0;
+        private int _visibleItems = 0;
         private int topEdge = 0;
 
         internal KeyValuePair<string, string> _customTexture;
@@ -913,7 +914,7 @@ namespace ScaleformUI.Menu
 
         public bool Glare { get; set; }
         private float fSavedGlareDirection;
-        private PointF glarePosition;
+        private Vector2 glarePosition;
         private SizeF glareSize;
 
         internal readonly static string _selectTextLocalized = Game.GetGXTEntry("HUD_INPUT2");
@@ -1009,8 +1010,8 @@ namespace ScaleformUI.Menu
                 {
                     ResetKey(MenuControls.Up);
                     ResetKey(MenuControls.Down);
-                    SetKey(MenuControls.Up, Control.PhoneUp);
-                    SetKey(MenuControls.Down, Control.PhoneDown);
+                    SetKey(MenuControls.Up, Control.FrontendUp);
+                    SetKey(MenuControls.Down, Control.FrontendDown);
                 }
             }
         }
@@ -1187,6 +1188,7 @@ namespace ScaleformUI.Menu
 
             SetKey(MenuControls.Back, Control.FrontendCancel);
             SetKey(MenuControls.Back, Control.FrontendPause);
+            SetKey(MenuControls.Back, Control.CursorCancel);
 
             SetKey(MenuControls.PageUp, Control.ScriptedFlyZUp);
             SetKey(MenuControls.PageDown, Control.ScriptedFlyZDown);
@@ -1254,7 +1256,7 @@ namespace ScaleformUI.Menu
             foreach (UIMenuItem it in MenuItems) it.Selected = false;
             if (Visible)
             {
-                _itemCreation();
+                SendItems();
                 int index = CurrentSelection;
                 isBuilding = false;
                 CurrentSelection = keepIndex ? index : 0;
@@ -2060,7 +2062,7 @@ namespace ScaleformUI.Menu
                 if (_currentSelection < 0)
                 {
                     _currentSelection = MenuItems.Count - 1;
-                    topEdge = MenuItems.Count - MaxItemsOnScreen; 
+                    topEdge = MenuItems.Count - _visibleItems;
                 }
                 AddTextEntry("UIMenu_Current_Description", CurrentItem.Description);
             }
@@ -2078,7 +2080,7 @@ namespace ScaleformUI.Menu
                 await BaseScript.Delay(0);
                 CurrentItem.Selected = false;
                 _currentSelection++;
-                if (_currentSelection > topEdge + MaxItemsOnScreen)
+                if (_currentSelection > topEdge + _visibleItems)
                     topEdge++;
                 if (_currentSelection >= MenuItems.Count)
                 {
@@ -2448,47 +2450,10 @@ namespace ScaleformUI.Menu
             if (!itemsOnly)
             {
                 SetMenuData(skipViewInitialization);
+                SetWindows();
             }
-                //if (Windows.Count > 0)
-                //{
-                //    foreach (UIMenuWindow wind in Windows)
-                //    {
-                //        switch (wind)
-                //        {
-                //            case UIMenuHeritageWindow:
-                //                UIMenuHeritageWindow her = (UIMenuHeritageWindow)wind;
-                //                Main.scaleformUI.CallFunction("ADD_WINDOW", her.id, her.Mom, her.Dad);
-                //                break;
-                //            case UIMenuDetailsWindow:
-                //                UIMenuDetailsWindow det = (UIMenuDetailsWindow)wind;
-                //                Main.scaleformUI.CallFunction("ADD_WINDOW", det.id, det.DetailBottom, det.DetailMid, det.DetailTop, det.DetailLeft.Txd, det.DetailLeft.Txn, det.DetailLeft.Pos.X, det.DetailLeft.Pos.Y, det.DetailLeft.Size.Width, det.DetailLeft.Size.Height);
-                //                if (det.StatWheelEnabled)
-                //                {
-                //                    foreach (UIDetailStat stat in det.DetailStats)
-                //                        Main.scaleformUI.CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", Windows.IndexOf(det), stat.Percentage, stat.HudColor);
-                //                }
-                //                break;
-                //        }
-
-                //    }
-                //}
-                //int timer = Main.GameTime;
-
-                //if (MenuItems.Count == 0)
-                //{
-                //    while (MenuItems.Count == 0)
-                //    {
-                //        await BaseScript.Delay(0);
-                //        if (Main.GameTime - timer > 150)
-                //        {
-                //            Main.scaleformUI.CallFunction("SET_CURRENT_ITEM", Pagination.GetPageIndexFromMenuIndex(CurrentSelection));
-                //            return;
-                //        }
-                //    }
-                //}
-
             if (!Visible) return;
-            _itemCreation();
+            SendItems();
 
             //Pagination.ScaleformIndex = Pagination.GetScaleformIndex(CurrentSelection);
 
@@ -2528,114 +2493,56 @@ namespace ScaleformUI.Menu
             Main.scaleformUI.CallFunction("SET_MENU_DATA", Title, SubtitleColor != HudColor.NONE ? "~" + SubtitleColor + "~" + Subtitle : Subtitle, Offset.X, Offset.Y, AlternativeTitle, _customTexture.Key, _customTexture.Value, MaxItemsOnScreen, MenuItems.Count, counterColor, descriptionFont.FontName, descriptionFont.FontID, bannerColor.ArgbValue, false, "", _customBGTexture.Key, _customBGTexture.Value, (int)menuAlignment, skipViewInitialization);
         }
 
-        /// <summary>
-        /// Allows controlling all mouse aspects of the Menu.
-        /// </summary>
-        /// <param name="enableMouseControls">Enable mouse control</param>
-        /// <param name="enableEdge">Enables edge camera rotation</param>
-        /// <param name="isWheelEnabled">Enables mouse wheel to scroll items</param>
-        /// <param name="resetCursorOnOpen">Resets cursor's position on menu open</param>
-        /// <param name="leftClickSelect">If MouseControls are not enabled and this is true, left click selects the current item without pointing</param>
-        public void SetMouse(bool enableMouseControls, bool enableEdge, bool isWheelEnabled, bool resetCursorOnOpen, bool leftClickSelect)
+        internal void SetWindows(bool update = false)
         {
-            MouseControlsEnabled = enableMouseControls;
-            MouseEdgeEnabled = enableEdge;
-            MouseWheelControlEnabled = isWheelEnabled;
-            ResetCursorOnOpen = resetCursorOnOpen;
-            leftClickEnabled = leftClickSelect;
-            if (leftClickSelect && !MouseControlsEnabled)
+            if (Windows.Count == 0)
             {
-                SetKey(MenuControls.Select, Control.Attack);
+                Main.scaleformUI.CallFunction("SET_WINDOWS_SLOT_DATA_EMPTY");
+                return;
+            }
+            if(!update)
+            Main.scaleformUI.CallFunction("SET_WINDOWS_SLOT_DATA_EMPTY");
+            var str = update ? "UPDATE_WINDOWS_SLOT_DATA" : "SET_WINDOWS_SLOT_DATA";
+            for (int i = 0; i < Windows.Count; i++)
+            {
+                UIMenuWindow wind = Windows[i];
+                switch (wind)
+                {
+                    case UIMenuHeritageWindow:
+                        UIMenuHeritageWindow her = (UIMenuHeritageWindow)wind;
+                        Main.scaleformUI.CallFunction(str, i, her.id, her.Mom, her.Dad);
+                        break;
+                    case UIMenuDetailsWindow:
+                        UIMenuDetailsWindow det = (UIMenuDetailsWindow)wind;
+                        Main.scaleformUI.CallFunction(str, i, det.id, det.DetailBottom, det.DetailMid, det.DetailTop, det.DetailLeft.Txd, det.DetailLeft.Txn, det.DetailLeft.Pos.X, det.DetailLeft.Pos.Y, det.DetailLeft.Size.Width, det.DetailLeft.Size.Height);
+                        if (det.StatWheelEnabled)
+                        {
+                            for (var j = 0; j < det.DetailStats.Count; j++)
+                            {
+                                UIDetailStat stat = det.DetailStats[j];
+                                Main.scaleformUI.CallFunction("SET_WINDOWS_SLOT_EXTRA_DATA", i, j, stat.Percentage, stat.HudColor);
+                            }
+                        }
+                        break;
+                }
+            }
+            if(!update)
+            Main.scaleformUI.CallFunction("SHOW_WINDOWS");
 
-            }
-            else
-            {
-                ResetKey(MenuControls.Select);
-                SetKey(MenuControls.Select, Control.FrontendAccept);
-            }
+            //if (Windows.Count > 0)
+            //{
+            //}
         }
 
-        /// <summary>
-        /// This function is obsolete and will be removed soon
-        /// </summary>
-        [Obsolete("Not used anymore")]
-        public void SetAnimations(bool enableScrollingAnim, bool enable3DAnim, MenuAnimationType scrollingAnim = MenuAnimationType.QUADRATIC_IN, MenuBuildingAnimation buildingAnim = MenuBuildingAnimation.LEFT_RIGHT, float fadingTime = 0.1f)
-        {
-        }
-
-        /// <summary>
-        /// Sorts menu items based on the desired predicated
-        /// </summary>
-        /// <param name="compare"></param>
-        public void SortMenuItems(Comparison<UIMenuItem> compare)
-        {
-            if (itemless) throw new("ScaleformUI - You can't compare or sort an itemless menu");
-            try
-            {
-                MenuItems[CurrentSelection].Selected = false;
-                _unfilteredMenuItems = MenuItems.ToList();
-                Clear();
-                List<UIMenuItem> list = _unfilteredMenuItems.ToList();
-                list.Sort(compare);
-                MenuItems = list.ToList();
-                BuildUpMenuAsync(true);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("ScaleformUI - " + ex.ToString());
-            }
-        }
-
-        /// <summary>
-        /// Filters menu items based on the desired predicate
-        /// </summary>
-        /// <param name="predicate"></param>
-        public void FilterMenuItems(Func<UIMenuItem, bool> predicate)
-        {
-            if (itemless) throw new("ScaleformUI - You can't compare or sort an itemless menu");
-            try
-            {
-                MenuItems[CurrentSelection].Selected = false;
-                _unfilteredMenuItems = MenuItems.ToList();
-                Clear();
-                MenuItems = _unfilteredMenuItems.Where(predicate.Invoke).ToList();
-                if (MenuItems.Count == 0)
-                    throw new Exception("Predicate resulted in a filtering of 0 items.. menu cannot rebuild!");
-                BuildUpMenuAsync(true);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("^1ScaleformUI - " + ex.ToString());
-                OnFilteringFailed?.Invoke(this);
-            }
-        }
-
-        /// <summary>
-        /// Resets filtering/ordering of items going back to the original order.
-        /// </summary>
-        public void ResetFilter()
-        {
-            if (itemless) throw new("ScaleformUI - You can't compare or sort an itemless menu");
-            try
-            {
-                MenuItems[CurrentSelection].Selected = false;
-                Clear();
-                MenuItems = _unfilteredMenuItems.ToList();
-                BuildUpMenuAsync(true);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("ScaleformUI - " + ex.ToString());
-            }
-        }
-
-        private void _itemCreation()
+        private void SendItems()
         {
             Main.scaleformUI.CallFunction("SET_DATA_SLOT_EMPTY");
             // try a while to see if perf fixes.. also it happens only on first open...
             for (int i = 0; i < MenuItems.Count; i++)
             {
                 SendItemToScaleform(i);
+                if (_visibleItems < MaxItemsOnScreen)
+                    _visibleItems++;
             }
         }
 
@@ -2678,7 +2585,7 @@ namespace ScaleformUI.Menu
             if (item.Panels.Count == 0 || !item.Enabled || index < 0 || index > MaxItemsOnScreen)
             {
                 Main.scaleformUI.CallFunction("SET_PANEL_DATA_SLOT_EMPTY");
-                return; 
+                return;
             }
             if (!update) Main.scaleformUI.CallFunction("SET_PANEL_DATA_SLOT_EMPTY");
 
@@ -2792,6 +2699,107 @@ namespace ScaleformUI.Menu
             EndScaleformMovieMethod();
         }
 
+        /// <summary>
+        /// Allows controlling all mouse aspects of the Menu.
+        /// </summary>
+        /// <param name="enableMouseControls">Enable mouse control</param>
+        /// <param name="enableEdge">Enables edge camera rotation</param>
+        /// <param name="isWheelEnabled">Enables mouse wheel to scroll items</param>
+        /// <param name="resetCursorOnOpen">Resets cursor's position on menu open</param>
+        /// <param name="leftClickSelect">If MouseControls are not enabled and this is true, left click selects the current item without pointing</param>
+        public void SetMouse(bool enableMouseControls, bool enableEdge, bool isWheelEnabled, bool resetCursorOnOpen, bool leftClickSelect)
+        {
+            MouseControlsEnabled = enableMouseControls;
+            MouseEdgeEnabled = enableEdge;
+            MouseWheelControlEnabled = isWheelEnabled;
+            ResetCursorOnOpen = resetCursorOnOpen;
+            leftClickEnabled = leftClickSelect;
+            if (leftClickSelect && !MouseControlsEnabled)
+            {
+                SetKey(MenuControls.Select, Control.CursorAccept);
+
+            }
+            else
+            {
+                ResetKey(MenuControls.Select);
+                SetKey(MenuControls.Select, Control.FrontendAccept);
+            }
+        }
+
+        /// <summary>
+        /// This function is obsolete and will be removed soon
+        /// </summary>
+        [Obsolete("Not used anymore")]
+        public void SetAnimations(bool enableScrollingAnim, bool enable3DAnim, MenuAnimationType scrollingAnim = MenuAnimationType.QUADRATIC_IN, MenuBuildingAnimation buildingAnim = MenuBuildingAnimation.LEFT_RIGHT, float fadingTime = 0.1f)
+        {
+        }
+
+        /// <summary>
+        /// Sorts menu items based on the desired predicated
+        /// </summary>
+        /// <param name="compare"></param>
+        public void SortMenuItems(Comparison<UIMenuItem> compare)
+        {
+            if (itemless) throw new("ScaleformUI - You can't compare or sort an itemless menu");
+            try
+            {
+                MenuItems[CurrentSelection].Selected = false;
+                _unfilteredMenuItems = MenuItems.ToList();
+                Clear();
+                List<UIMenuItem> list = _unfilteredMenuItems.ToList();
+                list.Sort(compare);
+                MenuItems = list.ToList();
+                BuildUpMenuAsync(true);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("ScaleformUI - " + ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Filters menu items based on the desired predicate
+        /// </summary>
+        /// <param name="predicate"></param>
+        public void FilterMenuItems(Func<UIMenuItem, bool> predicate)
+        {
+            if (itemless) throw new("ScaleformUI - You can't compare or sort an itemless menu");
+            try
+            {
+                MenuItems[CurrentSelection].Selected = false;
+                _unfilteredMenuItems = MenuItems.ToList();
+                Clear();
+                MenuItems = _unfilteredMenuItems.Where(predicate.Invoke).ToList();
+                if (MenuItems.Count == 0)
+                    throw new Exception("Predicate resulted in a filtering of 0 items.. menu cannot rebuild!");
+                BuildUpMenuAsync(true);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("^1ScaleformUI - " + ex.ToString());
+                OnFilteringFailed?.Invoke(this);
+            }
+        }
+
+        /// <summary>
+        /// Resets filtering/ordering of items going back to the original order.
+        /// </summary>
+        public void ResetFilter()
+        {
+            if (itemless) throw new("ScaleformUI - You can't compare or sort an itemless menu");
+            try
+            {
+                MenuItems[CurrentSelection].Selected = false;
+                Clear();
+                MenuItems = _unfilteredMenuItems.ToList();
+                BuildUpMenuAsync(true);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("ScaleformUI - " + ex.ToString());
+            }
+        }
+
         public UIMenuItem CurrentItem
         {
             get => MenuItems[CurrentSelection];
@@ -2803,26 +2811,35 @@ namespace ScaleformUI.Menu
         ///  Set's the menus offset after initialization.
         /// </summary>
         /// <param name="offset"></param>
-        public void SetMenuOffset(PointF offset)
+        public async void SetMenuOffset(PointF offset)
         {
             Offset = offset;
+            if (!Visible) return;
             float safezone = (1.0f - (float)decimal.Round(Convert.ToDecimal(GetSafeZoneSize()), 2)) * 100f * 0.005f;
             bool rightAlign = MenuAlignment == MenuAlignment.RIGHT;
             var pos1080 = ScreenTools.ConvertScaleformCoordsToResolutionCoords(Offset.X, Offset.Y);
             var screenCoords = ScreenTools.ConvertResolutionCoordsToScreenCoords(pos1080.X, pos1080.Y);
-            glarePosition = new PointF(screenCoords.X + (ScreenTools.GetWideScreen() ? 0.585f : 0.45f) + safezone, screenCoords.Y + 0.45f + safezone);
+
+            var startPoint = 0.45f + safezone;
+            if (rightAlign)
+                startPoint = 1.225f - safezone;
+            
+            glarePosition = new Vector2(screenCoords.X + startPoint, screenCoords.Y + 0.45f + safezone);
             if (rightAlign)
             {
                 int w = 0, h = 0;
-                screenCoords = ScreenTools.ConvertResolutionCoordsToScreenCoords(w - pos1080.X, pos1080.Y);
-                glarePosition = new PointF(screenCoords.X + (ScreenTools.GetWideScreen() ? 0.36f : 0.225f) - safezone, screenCoords.Y + 0.45f + safezone);
+                GetScreenActiveResolution(ref w, ref h);
+                screenCoords = ScreenTools.ConvertResolutionCoordsToScreenCoords(1920 - pos1080.X, pos1080.Y);
+                glarePosition = new Vector2(screenCoords.X - 1 + startPoint, screenCoords.Y + 0.45f + safezone);
             }
             glareSize = new SizeF(ScreenTools.GetWideScreen() ? 1.35f : 1f, 1f);
 
-            if (Visible)
-            {
-                SetMenuData(true);
-            }
+
+            Notifications.DrawText(0.35f, 0.7f, "safezone: " + safezone);
+            Notifications.DrawText(0.35f, 0.725f, "GetSafeZoneSize: " + GetSafeZoneSize());
+            Notifications.DrawText(0.35f, 0.75f, "screenCoords: " + screenCoords);
+            Notifications.DrawText(0.35f, 0.775f, "glarePosition: " + glarePosition);
+            SetMenuData(true);
         }
 
 
@@ -2837,15 +2854,15 @@ namespace ScaleformUI.Menu
             get { return MenuItems.Count == 0 ? 0 : _currentSelection; }
             set
             {
-
                 if (CurrentSelection < MenuItems.Count)
                     MenuItems[CurrentSelection].Selected = false;
                 _currentSelection = Math.Max(0, Math.Min(value, MenuItems.Count - 1));
 
-                if (_currentSelection > topEdge + MaxItemsOnScreen)
-                    topEdge = Math.Max(0, Math.Min(_currentSelection, MenuItems.Count - MaxItemsOnScreen));
+                if (_currentSelection > topEdge + _visibleItems)
+                    topEdge = Math.Max(0, Math.Min(_currentSelection, MenuItems.Count - _visibleItems));
                 else if (_currentSelection < topEdge)
                     topEdge = _currentSelection;
+
 
                 if (_visible)
                 {
