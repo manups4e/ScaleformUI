@@ -415,6 +415,7 @@ public class MenuExample : BaseScript
         align.OnListChanged += (item, index) => 
         { 
             item.Parent.MenuAlignment = (MenuAlignment)index; 
+            exampleMenu.MenuAlignment = (MenuAlignment)index;
         };
 
         UIMenuDynamicListItem offsetX = new UIMenuDynamicListItem("Offset X", "Change the X offset of the menu", exampleMenu.Offset.X.ToString("F3"), async (sender, direction) =>
