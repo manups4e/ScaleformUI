@@ -11,14 +11,12 @@ function CreateMenu()
 	local exampleMenu = UIMenu.New("ScaleformUI", "ScaleformUI SHOWCASE", 50, 50, true, "scaleformui", "menubanner", true)
 	exampleMenu:MaxItemsOnScreen(7)
 	exampleMenu:BuildingAnimation(MenuBuildingAnimation.LEFT_RIGHT)
-	exampleMenu:AnimationType(MenuAnimationType.CUBIC_INOUT)
-	exampleMenu:ScrollingType(MenuScrollingType.CLASSIC)
 	exampleMenu:CounterColor(SColor.HUD_Yellow)
 
 	local currentTransition = "TRANSITION_OUT"
 	local bigMessageItem = UIMenuItem.New("Big Message Example", "Big Message Examples")
 	exampleMenu:AddItem(bigMessageItem)
-	local bigMessageExampleMenu = UIMenu.New("Big Message Example", "Big Message Examples", 50, 50, true, nil, nil, true)
+	local bigMessageExampleMenu = UIMenu.New("Big Message Example", "Big Message Examples", 50, 50, true, "", "", true)
 
 	local uiItemTransitionList = UIMenuListItem.New("Transition",
 		{ "TRANSITION_OUT", "TRANSITION_UP", "TRANSITION_DOWN" },
@@ -26,8 +24,8 @@ function CreateMenu()
 		"Transition type for the big message")
 	bigMessageExampleMenu:AddItem(uiItemTransitionList)
 
-	local uiItemBigMessageManualDispose = UIMenuCheckboxItem.New("Manual Dispose", false,
-		"Manually dispose the big message")e
+	local uiItemBigMessageManualDispose = UIMenuCheckboxItem.New("Manual Dispose", false, 1,
+		"Manually dispose the big message")
 	bigMessageExampleMenu:AddItem(uiItemBigMessageManualDispose)
 
 	local uiItemMessageType = UIMenuListItem.New("Message Type",

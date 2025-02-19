@@ -45,11 +45,9 @@ end
 function UIMenuColorPanel:CurrentSelection(new_value)
     if new_value ~= nil then
         self.value = new_value
-        if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() 
-            and self.ParentItem:SetParentMenu().Pagination:IsItemVisible(IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem)) then
-            local it = self.ParentItem:SetParentMenu().Pagination:GetScaleformIndex(IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem))
-            local van = IndexOf(self.ParentItem.Panels, self)
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_COLOR_PANEL_VALUE", it, van-1, new_value)
+        if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
+            local it = IndexOf(self.ParentMenu.Items, self)
+            self.ParentMenu:SendPanelsToItemScaleform(it, true)
         end
     else
         return self.value

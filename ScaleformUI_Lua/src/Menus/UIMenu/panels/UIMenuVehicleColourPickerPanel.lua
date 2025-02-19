@@ -43,9 +43,8 @@ function UIMenuVehicleColourPickerPanel:Value(val)
 end
 
 function UIMenuVehicleColourPickerPanel:_setValue(val)
-    if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() 
-    and self.ParentItem:SetParentMenu().Pagination:IsItemVisible(IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem)) then
-        local it = self.ParentItem:SetParentMenu().Pagination:GetScaleformIndex(IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem))
+    if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
+        local it = IndexOf(self.ParentMenu.Items, self)
         local van = IndexOf(self.ParentItem.Panels, self)
         ScaleformUI.Scaleforms._ui:CallFunction("SET_COLOR_PICKER_PANEL_VALUE", it, van-1, val)
     end

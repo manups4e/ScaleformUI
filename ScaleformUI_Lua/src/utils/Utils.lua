@@ -13,6 +13,65 @@ Citizen.CreateThread(function()
     end
 end)
 
+function Delegate(klass, methodName, memberName)
+    -- Validate inputs
+    assert(type(klass) == 'table', "klass must be a table")
+    assert(type(methodName) == 'string', "methodName must be a string")
+    assert(type(memberName) == 'string', "memberName must be a string")
+    
+    -- Cache the member access for better performance
+    local function getMember(self)
+        local member = self[memberName]
+        if not member then
+            error(string.format("Member '%s' not found in object", memberName))
+        end
+        if type(member) == 'function' then
+            member = member(self)
+            if not member then
+                error(string.format("Member '%s' returned nil", memberName))
+            end
+        end
+        return member
+    end
+    
+    -- Create the delegate method with error handling
+    klass[methodName] = function(self, ...)
+        local member = getMember(self)
+        local method = member[methodName]
+        
+        if not method then
+            error(string.format("Method '%s' not found in member '%s'", 
+                methodName, memberName))
+        end
+        
+        if type(method) ~= 'function' then
+            error(string.format("'%s' is not a function in member '%s'", 
+                methodName, memberName))
+        end
+        
+        return method(member, ...)
+    end
+end
+
+--- Enhanced delegate many function with batch validation
+function DelegateMany(klass, methodNames, memberName)
+    -- Validate inputs
+    assert(type(klass) == 'table', "klass must be a table")
+    assert(type(methodNames) == 'table', "methodNames must be a table")
+    assert(type(memberName) == 'string', "memberName must be a string")
+    
+    -- Validate method names array
+    for i, name in ipairs(methodNames) do
+        assert(type(name) == 'string', 
+            string.format("Method name at index %d must be a string", i))
+    end
+    
+    -- Delegate each method
+    for _, methodName in ipairs(methodNames) do
+        Delegate(klass, methodName, memberName)
+    end
+end
+
 ---starts
 ---@param Str string
 ---@param Start string
@@ -247,7 +306,7 @@ end
 function ConvertScaleformCoordsToScreenCoords(scaleformX, scaleformY)
     -- Normalize coordinates to 0.0 - 1.0 range
     local w, h = GetActualScreenResolution()
-    return vector2((scaleformX / w) * 2.0 - 1.0, (scaleformY / h) * 2.0 - 1.0)
+    return vector2((scaleformX / w), (scaleformY / h))
 end
 
 function ConvertResolutionCoordsToScreenCoords(x, y)
@@ -290,7 +349,7 @@ end
 function ConvertScaleformSizeToScreenSize(scaleformWidth, scaleformHeight)
     -- Normalize size to 0.0 - 1.0 range
     local w, h = GetActualScreenResolution()
-    return vector2((scaleformWidth / w) * 2.0 - 1.0, (scaleformHeight / h) * 2.0 - 1.0)
+    return vector2((scaleformWidth / w), (scaleformHeight / h))
 end
 
 function ConvertResolutionSizeToScreenSize(width, height)
@@ -309,7 +368,7 @@ end
 ---@return number
 ---@return number
 ---@return number
-function AdjustNormalized16_9ValuesForCurrentAspectRatio(x,y,w,h)
+function AdjustNormalized16_9ValuesForCurrentAspectRatio(x, y, w, h)
     local fPhysicalAspect = GetAspectRatio(false)
     if IsSuperWideScreen() then
         fPhysicalAspect = 16.0 / 9.0
@@ -317,13 +376,13 @@ function AdjustNormalized16_9ValuesForCurrentAspectRatio(x,y,w,h)
 
     local fScalar = (16.0 / 9.0) / fPhysicalAspect
     local fAdjustPos = 1.0 - fScalar
-    
+
     w = w * fScalar
 
     local newX = x * fScalar
     x = newX + fAdjustPos * 0.5
-    x,w = AdjustForSuperWidescreen(x,w)
-    return x,y,w,h
+    x, w = AdjustForSuperWidescreen(x, w)
+    return x, y, w, h
 end
 
 function GetWideScreen()
@@ -342,17 +401,17 @@ end
 ---@param w number
 ---@return number
 ---@return number
-function AdjustForSuperWidescreen(x,w)
+function AdjustForSuperWidescreen(x, w)
     if not IsSuperWideScreen() then
-        return x,w
+        return x, w
     end
 
     local difference = ((16.0 / 9.0) / GetAspectRatio(false))
-    
+
     x = 0.5 - ((0.5 - x) * difference)
     w = w * difference
 
-    return x,w
+    return x, w
 end
 
 function IsSuperWideScreen()

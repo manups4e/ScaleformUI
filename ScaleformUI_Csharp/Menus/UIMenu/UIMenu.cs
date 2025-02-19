@@ -2836,9 +2836,6 @@ namespace ScaleformUI.Menu
             SetMenuData(true);
         }
 
-
-
-
         /// <summary>
         /// Returns the current selected item's index.
         /// Change the current selected item to index. Use this after you add or remove items dynamically.

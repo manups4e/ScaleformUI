@@ -37,7 +37,7 @@ public class MenuExample : BaseScript
 
         // first true means add menu Glare scaleform to the menu
         // last true means it's using the alternative title style
-        UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI ~o~SHOWCASE", new PointF(0, 0), "commonmenu", "interaction_bgd", true, true, MenuAlignment.RIGHT);
+        UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI ~o~SHOWCASE", new PointF(20, 20), "commonmenu", "interaction_bgd", true, true, MenuAlignment.RIGHT);
         exampleMenu.MaxItemsOnScreen = 7; // To decide max items on screen at time, default 7
         exampleMenu.SetMouse(true, false, true, false, false);
 
@@ -992,6 +992,8 @@ public class MenuExample : BaseScript
             if (item == ketchupItem)
             {
                 enabled = checked_;
+                scrollType.Enabled = checked_;
+                scrollType.SetLeftBadge(checked_ ? BadgeIcon.NONE : BadgeIcon.LOCK);
                 Notifications.ShowNotification("~r~Menu animation: ~b~" + (enabled ? "Enabled" : "Disabled"));
             }
         };

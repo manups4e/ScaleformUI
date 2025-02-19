@@ -42,6 +42,7 @@ function UIMenuHeritageWindow:Index(Mom, Dad)
     self.Mom = Mom - 1
     self.Dad = Dad - 1
 
-    local wid = IndexOf(self.ParentMenu.Windows, self) - 1
-    ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_HERITAGE_WINDOW", wid, self.Mom, self.Dad)
+    if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+        self.ParentMenu:SetWindows(true)
+    end
 end
