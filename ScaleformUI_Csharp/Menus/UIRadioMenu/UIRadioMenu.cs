@@ -121,7 +121,7 @@ namespace ScaleformUI.Radio
             Stations.Add(station);
         }
 
-        internal override async void ProcessControl(Keys key = Keys.None)
+        internal override async void ProcessControl()
         {
             Controls.Toggle(false);
             // block camera movements

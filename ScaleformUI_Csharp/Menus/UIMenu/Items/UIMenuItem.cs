@@ -217,8 +217,6 @@ namespace ScaleformUI.Menu
         private bool blinkDescription;
         private SColor mainColor;
         private SColor highlightColor;
-        private SColor textColor = SColor.HUD_White;
-        private SColor highlightedTextColor = SColor.HUD_Black;
         private string description;
         internal ItemFont labelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
         internal ItemFont rightLabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
@@ -263,16 +261,13 @@ namespace ScaleformUI.Menu
                 labelFont = value;
                 if (Parent != null && Parent.Visible)
                     Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
-                //{
-                //    Main.scaleformUI.CallFunction("SET_ITEM_LABEL_FONT", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), labelFont.FontName, labelFont.FontID);
-                //}
-                //if (ParentColumn != null && ParentColumn.Parent.Visible)
-                //{
-                //    if (ParentColumn.Parent is MainView lobby)
-                //        lobby._pause._lobby.CallFunction("SET_SETTINGS_ITEM_LABEL_FONT", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), labelFont.FontName, labelFont.FontID);
-                //    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
-                //        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LABEL_FONT", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), labelFont.FontName, labelFont.FontID);
-                //}
+                if (ParentColumn != null && ParentColumn.Parent.Visible)
+                {
+                    if (ParentColumn.Parent is MainView lobby)
+                        lobby._pause._lobby.CallFunction("SET_SETTINGS_ITEM_LABEL_FONT", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), labelFont.FontName, labelFont.FontID);
+                    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LABEL_FONT", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), labelFont.FontName, labelFont.FontID);
+                }
             }
         }
 
@@ -284,16 +279,13 @@ namespace ScaleformUI.Menu
                 rightLabelFont = value;
                 if (Parent != null && Parent.Visible)
                     Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
-                //{
-                //    Main.scaleformUI.CallFunction("SET_ITEM_RIGHT_LABEL_FONT", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), rightLabelFont.FontName, rightLabelFont.FontID);
-                //}
-                //if (ParentColumn != null && ParentColumn.Parent.Visible)
-                //{
-                //    if (ParentColumn.Parent is MainView lobby)
-                //        lobby._pause._lobby.CallFunction("SET_SETTINGS_ITEM_RIGHT_LABEL_FONT", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), labelFont.FontName, labelFont.FontID);
-                //    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
-                //        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_LABEL_FONT", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), labelFont.FontName, labelFont.FontID);
-                //}
+                if (ParentColumn != null && ParentColumn.Parent.Visible)
+                {
+                    if (ParentColumn.Parent is MainView lobby)
+                        lobby._pause._lobby.CallFunction("SET_SETTINGS_ITEM_RIGHT_LABEL_FONT", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), labelFont.FontName, labelFont.FontID);
+                    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_LABEL_FONT", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), labelFont.FontName, labelFont.FontID);
+                }
             }
         }
 
@@ -357,16 +349,13 @@ namespace ScaleformUI.Menu
                 blinkDescription = value;
                 if (Parent != null && Parent.Visible)
                     Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
-                //{
-                //    Main.scaleformUI.CallFunction("SET_BLINK_DESC", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), blinkDescription);
-                //}
-                //if (ParentColumn != null && ParentColumn.Parent.Visible)
-                //{
-                //    if (ParentColumn.Parent is MainView lobby)
-                //        lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_ITEM_BLINK_DESC", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), blinkDescription);
-                //    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
-                //        pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_BLINK_DESC", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), blinkDescription);
-                //}
+                if (ParentColumn != null && ParentColumn.Parent.Visible)
+                {
+                    if (ParentColumn.Parent is MainView lobby)
+                        lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_ITEM_BLINK_DESC", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), blinkDescription);
+                    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                        pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_BLINK_DESC", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), blinkDescription);
+                }
             }
         }
 
@@ -394,16 +383,13 @@ namespace ScaleformUI.Menu
                 }
                 if (Parent != null && Parent.Visible)
                     Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
-                //{
-                //    Main.scaleformUI.CallFunction("SET_ITEM_LABELS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _formatLeftLabel, _formatRightLabel);
-                //}
-                //if (ParentColumn != null && ParentColumn.Parent != null && ParentColumn.Parent.Visible)
-                //{
-                //    if (ParentColumn.Parent is MainView lobby)
-                //        lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_ITEM_LABELS", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), _formatLeftLabel, _formatRightLabel);
-                //    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
-                //        pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABELS", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), _formatLeftLabel, _formatRightLabel);
-                //}
+                if (ParentColumn != null && ParentColumn.Parent != null && ParentColumn.Parent.Visible)
+                {
+                    if (ParentColumn.Parent is MainView lobby)
+                        lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_ITEM_LABELS", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), _formatLeftLabel, _formatRightLabel);
+                    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                        pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABELS", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), _formatLeftLabel, _formatRightLabel);
+                }
             }
         }
 
@@ -424,15 +410,11 @@ namespace ScaleformUI.Menu
                 description = value;
                 if (Parent != null && Parent.Visible)
                     Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
-                //{
-                //    API.AddTextEntry("UIMenu_Current_Description", value);
-                //    Parent.UpdateDescription();
-                //}
-                //if (ParentColumn != null && ParentColumn.Parent.Visible)
-                //{
-                //    API.AddTextEntry("PAUSEMENU_Current_Description", value);
-                //    ParentColumn.UpdateDescription();
-                //}
+                if (ParentColumn != null && ParentColumn.Parent.Visible)
+                {
+                    API.AddTextEntry("PAUSEMENU_Current_Description", value);
+                    ParentColumn.UpdateDescription();
+                }
             }
         }
 
@@ -452,23 +434,19 @@ namespace ScaleformUI.Menu
                     Label = _label;
                 if (Parent != null && Parent.Visible)
                     Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
-                //{
-                //    Main.scaleformUI.CallFunction("SET_ITEM_LABELS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _formatLeftLabel, _formatRightLabel);
-                //    Main.scaleformUI.CallFunction("ENABLE_ITEM", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _enabled);
-                //}
-                //if (ParentColumn != null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
-                //{
-                //    if (ParentColumn.Parent is MainView lobby)
-                //    {
-                //        lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_ITEM_LABELS", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), _formatLeftLabel, _formatRightLabel);
-                //        lobby._pause._lobby.CallFunction("ENABLE_SETTINGS_ITEM", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), _enabled);
-                //    }
-                //    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
-                //    {
-                //        pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABELS", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), _formatLeftLabel, _formatRightLabel);
-                //        pause._pause._pause.CallFunction("ENABLE_PLAYERS_TAB_SETTINGS_ITEM", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), _enabled);
-                //    }
-                //}
+                if (ParentColumn != null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
+                {
+                    if (ParentColumn.Parent is MainView lobby)
+                    {
+                        lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_ITEM_LABELS", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), _formatLeftLabel, _formatRightLabel);
+                        lobby._pause._lobby.CallFunction("ENABLE_SETTINGS_ITEM", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), _enabled);
+                    }
+                    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                    {
+                        pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABELS", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), _formatLeftLabel, _formatRightLabel);
+                        pause._pause._pause.CallFunction("ENABLE_PLAYERS_TAB_SETTINGS_ITEM", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), _enabled);
+                    }
+                }
             }
         }
 
@@ -492,16 +470,13 @@ namespace ScaleformUI.Menu
                 _formatLeftLabel = !_enabled ? _formatLeftLabel.ReplaceRstarColorsWith("~c~") : _selected ? _formatLeftLabel.Replace("~w~", "~l~").Replace("~s~", "~l~") : _formatLeftLabel.Replace("~l~", "~s~");
                 if (Parent != null && Parent.Visible)
                     Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
-                //{
-                //    Main.scaleformUI.CallFunction("SET_LEFT_LABEL", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _formatLeftLabel);
-                //}
-                //if (ParentColumn != null && ParentColumn.Parent.Visible)
-                //{
-                //    if (ParentColumn.Parent is MainView lobby)
-                //        lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_ITEM_LABEL", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), _formatLeftLabel);
-                //    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
-                //        pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), _formatLeftLabel);
-                //}
+                if (ParentColumn != null && ParentColumn.Parent.Visible)
+                {
+                    if (ParentColumn.Parent is MainView lobby)
+                        lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_ITEM_LABEL", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), _formatLeftLabel);
+                    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                        pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), _formatLeftLabel);
+                }
             }
         }
 
@@ -515,16 +490,13 @@ namespace ScaleformUI.Menu
             LeftBadge = badge;
             if (Parent != null && Parent.Visible)
                 Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
-            //{
-            //    Main.scaleformUI.CallFunction("SET_LEFT_BADGE", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), (int)badge);
-            //}
-            //if (ParentColumn != null && ParentColumn.Parent.Visible)
-            //{
-            //    if (ParentColumn.Parent is MainView lobby)
-            //        lobby._pause._lobby.CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), (int)badge);
-            //    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
-            //        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), (int)badge);
-            //}
+            if (ParentColumn != null && ParentColumn.Parent.Visible)
+            {
+                if (ParentColumn.Parent is MainView lobby)
+                    lobby._pause._lobby.CallFunction("SET_SETTINGS_ITEM_LEFT_BADGE", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), (int)badge);
+                else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_LEFT_BADGE", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), (int)badge);
+            }
         }
 
         /// <summary>
@@ -536,16 +508,13 @@ namespace ScaleformUI.Menu
             RightBadge = badge;
             if (Parent != null && Parent.Visible)
                 Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
-            //{
-            //    Main.scaleformUI.CallFunction("SET_RIGHT_BADGE", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), (int)badge);
-            //}
-            //if (ParentColumn != null && ParentColumn.Parent.Visible)
-            //{
-            //    if (ParentColumn.Parent is MainView lobby)
-            //        lobby._pause._lobby.CallFunction("SET_SETTINGS_ITEM_RIGHT_BADGE", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), (int)badge);
-            //    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
-            //        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_BADGE", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), (int)badge);
-            //}
+            if (ParentColumn != null && ParentColumn.Parent.Visible)
+            {
+                if (ParentColumn.Parent is MainView lobby)
+                    lobby._pause._lobby.CallFunction("SET_SETTINGS_ITEM_RIGHT_BADGE", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), (int)badge);
+                else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_RIGHT_BADGE", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), (int)badge);
+            }
         }
 
         /// <summary>
@@ -560,16 +529,13 @@ namespace ScaleformUI.Menu
             customRightBadge = new KeyValuePair<string, string>(txd, txn);
             if (Parent != null && Parent.Visible)
                 Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
-            //{
-            //    Main.scaleformUI.CallFunction("SET_CUSTOM_RIGHT_BADGE", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), txd,txn);
-            //}
-            //if (ParentColumn != null && ParentColumn.Parent.Visible)
-            //{
-            //    if (ParentColumn.Parent is MainView lobby)
-            //        lobby._pause._lobby.CallFunction("SET_SETTINGS_ITEM_CUSTOM_RIGHT_BADGE", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), txd, txn);
-            //    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
-            //        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_CUSTOM_RIGHT_BADGE", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), txd, txn);
-            //}
+            if (ParentColumn != null && ParentColumn.Parent.Visible)
+            {
+                if (ParentColumn.Parent is MainView lobby)
+                    lobby._pause._lobby.CallFunction("SET_SETTINGS_ITEM_CUSTOM_RIGHT_BADGE", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), txd, txn);
+                else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_CUSTOM_RIGHT_BADGE", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), txd, txn);
+            }
         }
 
         /// <summary>
@@ -584,16 +550,13 @@ namespace ScaleformUI.Menu
             customLeftBadge = new KeyValuePair<string, string>(txd, txn);
             if (Parent != null && Parent.Visible)
                 Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
-            //{
-            //    Main.scaleformUI.CallFunction("SET_CUSTOM_LEFT_BADGE", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), txd, txn);
-            //}
-            //if (ParentColumn != null && ParentColumn.Parent.Visible)
-            //{
-            //    if (ParentColumn.Parent is MainView lobby)
-            //        lobby._pause._lobby.CallFunction("SET_SETTINGS_ITEM_CUSTOM_LEFT_BADGE", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), txd, txn);
-            //    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
-            //        pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_CUSTOM_LEFT_BADGE", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), txd, txn);
-            //}
+            if (ParentColumn != null && ParentColumn.Parent.Visible)
+            {
+                if (ParentColumn.Parent is MainView lobby)
+                    lobby._pause._lobby.CallFunction("SET_SETTINGS_ITEM_CUSTOM_LEFT_BADGE", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), txd, txn);
+                else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                    pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_ITEM_CUSTOM_LEFT_BADGE", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), txd, txn);
+            }
         }
 
 
@@ -619,16 +582,13 @@ namespace ScaleformUI.Menu
                 _formatRightLabel = !_enabled ? _formatRightLabel.ReplaceRstarColorsWith("~c~") : _selected ? _formatRightLabel .Replace("~w~", "~l~").Replace("~s~", "~l~") : _formatRightLabel .Replace("~l~", "~s~");
                 if (Parent != null && Parent.Visible)
                     Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
-                //{
-                //    Main.scaleformUI.CallFunction("SET_RIGHT_LABEL", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _formatRightLabel);
-                //}
-                //if (ParentColumn != null && ParentColumn.Parent.Visible)
-                //{
-                //    if (ParentColumn.Parent is MainView lobby)
-                //        lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_ITEM_LABEL_RIGHT", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), _formatRightLabel);
-                //    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
-                //        pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL_RIGHT", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), _formatRightLabel);
-                //}
+                if (ParentColumn != null && ParentColumn.Parent.Visible)
+                {
+                    if (ParentColumn.Parent is MainView lobby)
+                        lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_ITEM_LABEL_RIGHT", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), _formatRightLabel);
+                    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                        pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL_RIGHT", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), _formatRightLabel);
+                }
             }
         }
 
@@ -656,9 +616,6 @@ namespace ScaleformUI.Menu
             Panels.RemoveAt(Index);
             if (Parent != null && Parent.Visible)
                 Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
-            //{
-            //    Main.scaleformUI.CallFunction("REMOVE_PANEL", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), Index);
-            //}
         }
 
         /// <summary>
@@ -671,17 +628,6 @@ namespace ScaleformUI.Menu
             SidePanel = panel;
             if (Parent != null && Parent.Visible)
                 Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
-            //{
-            //    switch (panel)
-            //    {
-            //        case UIMissionDetailsPanel:
-            //            UIMissionDetailsPanel mis = (UIMissionDetailsPanel)panel;
-            //            Main.scaleformUI.CallFunction("ADD_SIDE_PANEL_TO_ITEM", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), 0, (int)mis.PanelSide, (int)mis._titleType, mis.Title, mis.TitleColor, mis.TextureDict, mis.TextureName);
-            //            foreach (UIFreemodeDetailsItem _it in mis.Items)
-            //                Main.scaleformUI.CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), _it.Type, _it.TextLeft, _it.TextRight, (int)_it.Icon, _it.IconColor, _it.Tick);
-            //            break;
-            //    }
-            //}
         }
 
         /// <summary>
@@ -692,9 +638,6 @@ namespace ScaleformUI.Menu
             SidePanel = null;
             if (Parent != null && Parent.Visible)
                 Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
-            //{
-            //    Main.scaleformUI.CallFunction("REMOVE_SIDE_PANEL_TO_ITEM", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)));
-            //}
         }
 
         /// <summary>

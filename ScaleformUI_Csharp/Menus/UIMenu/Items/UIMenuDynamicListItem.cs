@@ -28,20 +28,18 @@ namespace ScaleformUI.Menu
                 if (!Enabled)
                     str = str.ReplaceRstarColorsWith("~c~");
                 if (Parent is not null && Parent.Visible)
-                {
                     Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
+                if (ParentColumn != null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
+                {
+                    if (ParentColumn.Parent is MainView lobby)
+                    {
+                        lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_LISTITEM_LIST", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), str, 0);
+                    }
+                    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                    {
+                        pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_LISTITEM_LIST", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), str, 0);
+                    }
                 }
-                //if (ParentColumn != null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
-                //{
-                //    if (ParentColumn.Parent is MainView lobby)
-                //    {
-                //        lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_LISTITEM_LIST", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), str, 0);
-                //    }
-                //    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
-                //    {
-                //        pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_LISTITEM_LIST", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), str, 0);
-                //    }
-                //}
             }
         }
 
@@ -54,21 +52,17 @@ namespace ScaleformUI.Menu
                 var str = Selected ? (CurrentListItem.StartsWith("~") ? CurrentListItem : "~s~" + CurrentListItem).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (CurrentListItem.StartsWith("~") ? CurrentListItem : "~s~" + CurrentListItem).ToString().Replace("~l~", "~s~");
                 if (!Enabled)
                     str = str.ReplaceRstarColorsWith("~c~");
-                //if (Parent is not null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
-                //{
-                //    Main.scaleformUI.CallFunction("UPDATE_LISTITEM_LIST", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), str, 0);
-                //}
-                //if (ParentColumn != null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
-                //{
-                //    if (ParentColumn.Parent is MainView lobby)
-                //    {
-                //        lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_LISTITEM_LIST", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), str, 0);
-                //    }
-                //    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
-                //    {
-                //        pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_LISTITEM_LIST", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), str, 0);
-                //    }
-                //}
+                if (ParentColumn != null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
+                {
+                    if (ParentColumn.Parent is MainView lobby)
+                    {
+                        lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_LISTITEM_LIST", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), str, 0);
+                    }
+                    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                    {
+                        pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_LISTITEM_LIST", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), str, 0);
+                    }
+                }
             }
         }
 
@@ -81,21 +75,17 @@ namespace ScaleformUI.Menu
                 var str = Selected ? (CurrentListItem.StartsWith("~") ? CurrentListItem : "~s~" + CurrentListItem).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (CurrentListItem.StartsWith("~") ? CurrentListItem : "~s~" + CurrentListItem).ToString().Replace("~l~", "~s~");
                 if (!Enabled)
                     str = str.ReplaceRstarColorsWith("~c~");
-                //if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
-                //{
-                //    Main.scaleformUI.CallFunction("UPDATE_LISTITEM_LIST", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), str, 0);
-                //}
-                //if (ParentColumn != null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
-                //{
-                //    if (ParentColumn.Parent is MainView lobby)
-                //    {
-                //        lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_LISTITEM_LIST", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), str, 0);
-                //    }
-                //    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
-                //    {
-                //        pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_LISTITEM_LIST", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), str, 0);
-                //    }
-                //}
+                if (ParentColumn != null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
+                {
+                    if (ParentColumn.Parent is MainView lobby)
+                    {
+                        lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_LISTITEM_LIST", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), str, 0);
+                    }
+                    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                    {
+                        pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_LISTITEM_LIST", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), str, 0);
+                    }
+                }
             }
         }
 

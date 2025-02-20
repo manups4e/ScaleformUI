@@ -900,8 +900,7 @@ namespace ScaleformUI.Menu
         private bool _changed = true;
         private bool keyboard = false;
         //Keys
-        private readonly Dictionary<MenuControls, Tuple<List<Keys>, List<Tuple<Control, int>>>> _keyDictionary =
-            new Dictionary<MenuControls, Tuple<List<Keys>, List<Tuple<Control, int>>>>();
+        private readonly Dictionary<MenuControls, List<Tuple<Control, int>>> _keyDictionary = new Dictionary<MenuControls, List<Tuple<Control, int>>>();
 
         private readonly ScaleformWideScreen _menuGlare;
 
@@ -972,19 +971,8 @@ namespace ScaleformUI.Menu
         }
 
 
-        public bool EnableAnimation
-        {
-            get => enableAnimation;
-            set
-            {
-                enableAnimation = value;
-                if (Visible)
-                {
-                    Main.scaleformUI.CallFunction("ENABLE_SCROLLING_ANIMATION", enableAnimation);
-                }
-            }
-        }
-
+        [Obsolete("Not used anymore")]
+        public bool EnableAnimation;
         [Obsolete("Not used anymore")]
         public bool Enabled3DAnimations;
         [Obsolete("Not used anymore")]
@@ -1356,6 +1344,11 @@ namespace ScaleformUI.Menu
                 item.Parent = this;
                 MenuItems.Add(item);
                 //TODO: add a builditem method
+                if (Visible)
+                {
+                    //TODO: add a real additemAt via slots
+                    RefreshMenu();
+                }
             }
             else throw new Exception("ScaleformUI - You cannot add items to an itemless menu, only a long description");
         }
@@ -1465,24 +1458,6 @@ namespace ScaleformUI.Menu
         }
 
         /// <summary>
-        /// Set a key to control a menu. Can be multiple keys for each control.
-        /// </summary>
-        /// <param name="control"></param>
-        /// <param name="keyToSet"></param>
-        public void SetKey(MenuControls control, Keys keyToSet)
-        {
-            if (_keyDictionary.ContainsKey(control))
-                _keyDictionary[control].Item1.Add(keyToSet);
-            else
-            {
-                _keyDictionary.Add(control,
-                    new Tuple<List<Keys>, List<Tuple<Control, int>>>(new List<Keys>(), new List<Tuple<Control, int>>()));
-                _keyDictionary[control].Item1.Add(keyToSet);
-            }
-        }
-
-
-        /// <summary>
         /// Set a GTA.Control to control a menu. Can be multiple controls. This applies it to all indexes.
         /// </summary>
         /// <param name="control"></param>
@@ -1504,12 +1479,11 @@ namespace ScaleformUI.Menu
         public void SetKey(MenuControls control, Control gtaControl, int controlIndex)
         {
             if (_keyDictionary.ContainsKey(control))
-                _keyDictionary[control].Item2.Add(new Tuple<Control, int>(gtaControl, controlIndex));
+                _keyDictionary[control].Add(new Tuple<Control, int>(gtaControl, controlIndex));
             else
             {
-                _keyDictionary.Add(control,
-                    new Tuple<List<Keys>, List<Tuple<Control, int>>>(new List<Keys>(), new List<Tuple<Control, int>>()));
-                _keyDictionary[control].Item2.Add(new Tuple<Control, int>(gtaControl, controlIndex));
+                _keyDictionary.Add(control, new List<Tuple<Control, int>>(new List<Tuple<Control, int>>()));
+                _keyDictionary[control].Add(new Tuple<Control, int>(gtaControl, controlIndex));
             }
 
         }
@@ -1521,8 +1495,7 @@ namespace ScaleformUI.Menu
         /// <param name="control"></param>
         public void ResetKey(MenuControls control)
         {
-            _keyDictionary[control].Item1.Clear();
-            _keyDictionary[control].Item2.Clear();
+            _keyDictionary[control].Clear();
         }
 
         /// <summary>
@@ -1531,19 +1504,10 @@ namespace ScaleformUI.Menu
         /// <param name="control">Control to check for.</param>
         /// <param name="key">Key if you're using keys.</param>
         /// <returns></returns>
-        public bool HasControlJustBeenPressed(MenuControls control, Keys key = Keys.None)
+        public bool HasControlJustBeenPressed(MenuControls control)
         {
-            List<Keys> tmpKeys = new List<Keys>(_keyDictionary[control].Item1);
-            List<Tuple<Control, int>> tmpControls = new List<Tuple<Control, int>>(_keyDictionary[control].Item2);
-
-            if (key != Keys.None)
-            {
-                //if (tmpKeys.Any(Game.IsKeyPressed))
-                //    return true;
-            }
-            if (tmpControls.Any(tuple => Game.IsControlJustPressed(tuple.Item2, tuple.Item1)))
-                return true;
-            return false;
+            List<Tuple<Control, int>> tmpControls = new List<Tuple<Control, int>>(_keyDictionary[control]);
+            return tmpControls.Any(tuple => IsDisabledControlJustPressed(2, (int)tuple.Item1));
         }
 
 
@@ -1553,19 +1517,10 @@ namespace ScaleformUI.Menu
         /// <param name="control">Control to check for.</param>
         /// <param name="key">Key if you're using keys.</param>
         /// <returns></returns>
-        public bool HasControlJustBeenReleased(MenuControls control, Keys key = Keys.None)
+        public bool HasControlJustBeenReleased(MenuControls control)
         {
-            List<Keys> tmpKeys = new List<Keys>(_keyDictionary[control].Item1);
-            List<Tuple<Control, int>> tmpControls = new List<Tuple<Control, int>>(_keyDictionary[control].Item2);
-
-            if (key != Keys.None)
-            {
-                //if (tmpKeys.Any(Game.IsKeyPressed))
-                //    return true;
-            }
-            if (tmpControls.Any(tuple => Game.IsControlJustReleased(tuple.Item2, tuple.Item1)))
-                return true;
-            return false;
+            List<Tuple<Control, int>> tmpControls = new List<Tuple<Control, int>>(_keyDictionary[control]);
+            return tmpControls.Any(tuple => IsDisabledControlJustReleased(2, (int)tuple.Item1));
         }
 
         private int _controlCounter;
@@ -1578,14 +1533,11 @@ namespace ScaleformUI.Menu
         /// <param name="control"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        public bool IsControlBeingPressed(MenuControls control, Keys key = Keys.None)
+        public bool IsControlBeingPressed(MenuControls control)
         {
-            List<Keys> tmpKeys = new List<Keys>(_keyDictionary[control].Item1);
-            List<Tuple<Control, int>> tmpControls = new List<Tuple<Control, int>>(_keyDictionary[control].Item2);
-            if (HasControlJustBeenReleased(control, key)) _controlCounter = 0;
-            if (tmpControls.Any(tuple => Game.IsControlPressed(tuple.Item2, tuple.Item1)))
-                return true;
-            return false;
+            List<Tuple<Control, int>> tmpControls = new List<Tuple<Control, int>>(_keyDictionary[control]);
+            if (HasControlJustBeenReleased(control)) _controlCounter = 0;
+            return tmpControls.Any(tuple => IsDisabledControlPressed(tuple.Item2, (int)tuple.Item1));
         }
 
         #endregion
@@ -1680,6 +1632,7 @@ namespace ScaleformUI.Menu
         internal int unused = 0;
         internal bool success;
         bool cursorPressed;
+        bool cursorPressedItem;
         private ItemFont descriptionFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
         private bool mouseReset = false;
         private MenuAlignment menuAlignment;
@@ -1801,6 +1754,57 @@ namespace ScaleformUI.Menu
                                     Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
                                 }
                                 break;
+                            case 1:
+                                {
+                                    UIMenuItem item = MenuItems[itemId];
+                                    if ((MenuItems[itemId] is UIMenuSeparatorItem && (MenuItems[itemId] as UIMenuSeparatorItem).Jumpable) || !MenuItems[itemId].Enabled)
+                                    {
+                                        Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
+                                        return;
+                                    }
+                                    if (item.Selected)
+                                    {
+                                        if (item._itemId == 1 || item._itemId == 3 || item._itemId == 4)
+                                            cursorPressedItem = true;
+                                        return;
+                                    }
+                                    CurrentSelection = itemId;
+                                }
+                                break;
+                            case 2:
+                                {
+                                    UIMenuItem item = MenuItems[itemId];
+                                    if ((MenuItems[itemId] is UIMenuSeparatorItem && (MenuItems[itemId] as UIMenuSeparatorItem).Jumpable) || !MenuItems[itemId].Enabled)
+                                    {
+                                        Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
+                                        return;
+                                    }
+                                    if (item.Selected)
+                                    {
+                                        if (item._itemId == 1 || item._itemId == 3 || item._itemId == 4)
+                                            GoLeft();
+                                        return;
+                                    }
+                                    CurrentSelection = itemId;
+                                }
+                                break;
+                            case 3:
+                                {
+                                    UIMenuItem item = MenuItems[itemId];
+                                    if ((MenuItems[itemId] is UIMenuSeparatorItem && (MenuItems[itemId] as UIMenuSeparatorItem).Jumpable) || !MenuItems[itemId].Enabled)
+                                    {
+                                        Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
+                                        return;
+                                    }
+                                    if (item.Selected)
+                                    {
+                                        if (item._itemId == 1 || item._itemId == 3 || item._itemId == 4)
+                                            GoRight();
+                                        return;
+                                    }
+                                    CurrentSelection = itemId;
+                                }
+                                break;
                             case 10: // panels (10 => context 1, panel_type 0) // ColorPanel
                                 {
                                     string res = await Main.scaleformUI.CallFunctionReturnValueString("SELECT_PANEL", CurrentSelection);
@@ -1834,7 +1838,7 @@ namespace ScaleformUI.Menu
                             case 12: // panels (12 => context 1, panel_type 2) // GridPanel
                                 cursorPressed = true;
                                 break;
-                            case 2: // side panel
+                            case 20: // side panel
                                 {
                                     UIVehicleColourPickerPanel panel = (UIVehicleColourPickerPanel)MenuItems[CurrentSelection].SidePanel;
                                     if (itemId != -1)
@@ -1851,21 +1855,24 @@ namespace ScaleformUI.Menu
                         break;
                     case 6: // on click released
                         cursorPressed = false;
+                        cursorPressedItem = false;
                         break;
                     case 7: // on click released ouside
                         cursorPressed = false;
+                        cursorPressedItem = false;
                         SetMouseCursorSprite(1);
                         if (mouseReset)
                             mouseReset = false;
                         break;
                     case 8: // on not hover
                         cursorPressed = false;
+                        cursorPressedItem = false;
                         switch (context)
                         {
                             case 0:
                                 MenuItems[itemId].Hovered = false;
                                 break;
-                            case 2:
+                            case 20:
                                 UIVehicleColourPickerPanel panel = (UIVehicleColourPickerPanel)MenuItems[CurrentSelection].SidePanel;
                                 panel.PickerRollout();
                                 break;
@@ -1886,7 +1893,7 @@ namespace ScaleformUI.Menu
                             case 0:
                                 MenuItems[itemId].Hovered = true;
                                 break;
-                            case 2:
+                            case 20:
                                 UIVehicleColourPickerPanel panel = (UIVehicleColourPickerPanel)MenuItems[CurrentSelection].SidePanel;
                                 if (itemId != -1)
                                 {
@@ -1912,10 +1919,44 @@ namespace ScaleformUI.Menu
                         break;
                     case 0: // dragged outside
                         cursorPressed = false;
+                        cursorPressedItem = false;
                         break;
                     case 1: // dragged inside
                         cursorPressed = true;
+                        cursorPressedItem = true;
                         break;
+                }
+            }
+
+            if (cursorPressedItem)
+            {
+                if (HasSoundFinished(menuSound))
+                {
+                    menuSound = GetSoundId();
+                    PlaySoundFrontend(menuSound, "CONTINUOUS_SLIDER", "HUD_FRONTEND_DEFAULT_SOUNDSET", true);
+                }
+                int value = await Main.scaleformUI.CallFunctionReturnValueInt("SELECT_ITEM", CurrentSelection);
+                switch (CurrentItem)
+                {
+                    case UIMenuProgressItem pr:
+                        pr._value = value;
+                        pr.ProgressChanged(value);
+                        ProgressChange(pr, pr.Value);
+                        break;
+                    case UIMenuSliderItem sl:
+                        sl._value = value;
+                        sl.SliderChanged(value);
+                        SliderChange(sl, sl.Value);
+                        break;
+                }
+            }
+            else
+            {
+                if (!HasSoundFinished(menuSound))
+                {
+                    await BaseScript.Delay(1);
+                    StopSound(menuSound);
+                    ReleaseSoundId(menuSound);
                 }
             }
 
@@ -2080,7 +2121,7 @@ namespace ScaleformUI.Menu
                 await BaseScript.Delay(0);
                 CurrentItem.Selected = false;
                 _currentSelection++;
-                if (_currentSelection > topEdge + _visibleItems)
+                if (_currentSelection >= topEdge + _visibleItems)
                     topEdge++;
                 if (_currentSelection >= MenuItems.Count)
                 {
@@ -2232,7 +2273,7 @@ namespace ScaleformUI.Menu
         /// <summary>
         /// Process control-stroke. Call this in the OnTick event.
         /// </summary>
-        internal override void ProcessControl(Keys key = Keys.None)
+        internal override void ProcessControl()
         {
             if (!Main.scaleformUI.IsLoaded) return;
             if (!Visible || Main.Warning.IsShowing) return;
@@ -2244,7 +2285,7 @@ namespace ScaleformUI.Menu
 
             if (UpdateOnscreenKeyboard() == 0 || IsWarningMessageActive() || BreadcrumbsHandler.SwitchInProgress || isFading) return;
 
-            if (HasControlJustBeenReleased(MenuControls.Back, key))
+            if (HasControlJustBeenReleased(MenuControls.Back))
             {
                 GoBack();
             }
@@ -2254,12 +2295,12 @@ namespace ScaleformUI.Menu
                 return;
             }
 
-            if (HasControlJustBeenPressed(MenuControls.Up, key))
+            if (HasControlJustBeenPressed(MenuControls.Up))
             {
                 GoUp();
                 timeBeforeOverflow = Main.GameTime;
             }
-            else if (IsControlBeingPressed(MenuControls.Up, key) && Main.GameTime - timeBeforeOverflow > delayBeforeOverflow)
+            else if (IsControlBeingPressed(MenuControls.Up) && Main.GameTime - timeBeforeOverflow > delayBeforeOverflow)
             {
                 if (Main.GameTime - time > delay)
                 {
@@ -2268,12 +2309,12 @@ namespace ScaleformUI.Menu
                 }
             }
 
-            if (HasControlJustBeenPressed(MenuControls.Down, key))
+            if (HasControlJustBeenPressed(MenuControls.Down))
             {
                 GoDown();
                 timeBeforeOverflow = Main.GameTime;
             }
-            else if (IsControlBeingPressed(MenuControls.Down, key) && Main.GameTime - timeBeforeOverflow > delayBeforeOverflow)
+            else if (IsControlBeingPressed(MenuControls.Down) && Main.GameTime - timeBeforeOverflow > delayBeforeOverflow)
             {
                 if (Main.GameTime - time > delay)
                 {
@@ -2282,12 +2323,12 @@ namespace ScaleformUI.Menu
                 }
             }
 
-            if (HasControlJustBeenPressed(MenuControls.Left, key))
+            if (HasControlJustBeenPressed(MenuControls.Left))
             {
                 GoLeft();
                 timeBeforeOverflow = Main.GameTime;
             }
-            else if (IsControlBeingPressed(MenuControls.Left, key) && Main.GameTime - timeBeforeOverflow > delayBeforeOverflow)
+            else if (IsControlBeingPressed(MenuControls.Left) && Main.GameTime - timeBeforeOverflow > delayBeforeOverflow)
             {
                 if (Main.GameTime - time > delay)
                 {
@@ -2296,12 +2337,12 @@ namespace ScaleformUI.Menu
                 }
             }
 
-            if (HasControlJustBeenPressed(MenuControls.Right, key))
+            if (HasControlJustBeenPressed(MenuControls.Right))
             {
                 GoRight();
                 timeBeforeOverflow = Main.GameTime;
             }
-            else if (IsControlBeingPressed(MenuControls.Right, key) && Main.GameTime - timeBeforeOverflow > delayBeforeOverflow)
+            else if (IsControlBeingPressed(MenuControls.Right) && Main.GameTime - timeBeforeOverflow > delayBeforeOverflow)
             {
                 if (Main.GameTime - time > delay)
                 {
@@ -2310,12 +2351,12 @@ namespace ScaleformUI.Menu
                 }
             }
 
-            if (HasControlJustBeenPressed(MenuControls.Select, key))
+            if (HasControlJustBeenPressed(MenuControls.Select))
             {
                 Select(true);
             }
 
-            //if (HasControlJustBeenPressed(MenuControls.PageUp, key))
+            //if (HasControlJustBeenPressed(MenuControls.PageUp))
             //{
             //    var index = CurrentSelection - Pagination.ItemsPerPage;
             //    if (index < 0)
@@ -2330,7 +2371,7 @@ namespace ScaleformUI.Menu
             //    CurrentSelection = index;
             //    IndexChange(CurrentSelection);
             //}
-            //else if (HasControlJustBeenPressed(MenuControls.PageDown, key))
+            //else if (HasControlJustBeenPressed(MenuControls.PageDown))
             //{
             //    var index = CurrentSelection + Pagination.ItemsPerPage;
             //    if (index >= MenuItems.Count && Pagination.CurrentPage < Pagination.TotalPages - 1)
@@ -2372,21 +2413,6 @@ namespace ScaleformUI.Menu
             // Reset the time to the current game timer.
             time = Main.GameTime;
         }
-
-        /// <summary>
-        /// Process keystroke. Call this in the OnKeyDown event.
-        /// </summary>
-        /// <param name="key"></param>
-        public void ProcessKey(Keys key)
-        {
-            if ((from MenuControls menuControl in _menuControls
-                 select new List<Keys>(_keyDictionary[menuControl].Item1))
-                .Any(tmpKeys => tmpKeys.Any(k => k == key)))
-            {
-                ProcessControl(key);
-            }
-        }
-
         #endregion
 
         #region Properties
@@ -2528,16 +2554,11 @@ namespace ScaleformUI.Menu
             }
             if(!update)
             Main.scaleformUI.CallFunction("SHOW_WINDOWS");
-
-            //if (Windows.Count > 0)
-            //{
-            //}
         }
 
         private void SendItems()
         {
             Main.scaleformUI.CallFunction("SET_DATA_SLOT_EMPTY");
-            // try a while to see if perf fixes.. also it happens only on first open...
             for (int i = 0; i < MenuItems.Count; i++)
             {
                 SendItemToScaleform(i);
@@ -2850,7 +2871,7 @@ namespace ScaleformUI.Menu
                 _currentSelection = Math.Max(0, Math.Min(value, MenuItems.Count - 1));
 
                 if (_currentSelection > topEdge + _visibleItems)
-                    topEdge = Math.Max(0, Math.Min(_currentSelection, MenuItems.Count - _visibleItems));
+                    topEdge = Math.Max(0, Math.Min(_currentSelection, MenuItems.Count - 1 - _visibleItems));
                 else if (_currentSelection < topEdge)
                     topEdge = _currentSelection;
 

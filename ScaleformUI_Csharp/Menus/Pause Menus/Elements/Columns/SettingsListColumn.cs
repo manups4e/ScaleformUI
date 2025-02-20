@@ -125,8 +125,8 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                         PushScaleformMovieFunctionParameterInt(it.Index);
                         PushScaleformMovieFunctionParameterInt(it.MainColor.ArgbValue/**/);
                         PushScaleformMovieFunctionParameterInt(it.HighlightColor.ArgbValue/**/);
-                        //PushScaleformMovieFunctionParameterInt(it.TextColor.ArgbValue);
-                        //PushScaleformMovieFunctionParameterInt(it.HighlightedTextColor.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(SColor.HUD_White.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(SColor.HUD_Black.ArgbValue);
                         EndScaleformMovieMethod();
                         break;
                     case UIMenuCheckboxItem:
@@ -135,8 +135,8 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                         PushScaleformMovieMethodParameterBool(check.Checked);
                         PushScaleformMovieFunctionParameterInt(check.MainColor.ArgbValue/**/);
                         PushScaleformMovieFunctionParameterInt(check.HighlightColor.ArgbValue/**/);
-                        //PushScaleformMovieFunctionParameterInt(check.TextColor.ArgbValue);
-                        //PushScaleformMovieFunctionParameterInt(check.HighlightedTextColor.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(SColor.HUD_White.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(SColor.HUD_Black.ArgbValue);
                         EndScaleformMovieMethod();
                         break;
                     case UIMenuSliderItem:
@@ -146,8 +146,8 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                         PushScaleformMovieFunctionParameterInt(prItem.Value);
                         PushScaleformMovieFunctionParameterInt(prItem.MainColor.ArgbValue/**/);
                         PushScaleformMovieFunctionParameterInt(prItem.HighlightColor.ArgbValue/**/);
-                        //PushScaleformMovieFunctionParameterInt(prItem.TextColor.ArgbValue);
-                        //PushScaleformMovieFunctionParameterInt(prItem.HighlightedTextColor.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(SColor.HUD_White.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(SColor.HUD_Black.ArgbValue);
                         PushScaleformMovieFunctionParameterInt(prItem.SliderColor.ArgbValue);
                         PushScaleformMovieFunctionParameterBool(prItem._heritage);
                         EndScaleformMovieMethod();
@@ -159,8 +159,8 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                         PushScaleformMovieFunctionParameterInt(slItem.Value);
                         PushScaleformMovieFunctionParameterInt(slItem.MainColor.ArgbValue/**/);
                         PushScaleformMovieFunctionParameterInt(slItem.HighlightColor.ArgbValue/**/);
-                        //PushScaleformMovieFunctionParameterInt(slItem.TextColor.ArgbValue);
-                        //PushScaleformMovieFunctionParameterInt(slItem.HighlightedTextColor.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(SColor.HUD_White.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(SColor.HUD_Black.ArgbValue);
                         PushScaleformMovieFunctionParameterInt(slItem.SliderColor.ArgbValue);
                         EndScaleformMovieMethod();
                         break;
@@ -169,15 +169,15 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                         PushScaleformMovieFunctionParameterBool(separatorItem.Jumpable);
                         PushScaleformMovieFunctionParameterInt(item.MainColor.ArgbValue);
                         PushScaleformMovieFunctionParameterInt(item.HighlightColor.ArgbValue);
-                        //PushScaleformMovieFunctionParameterInt(item.TextColor.ArgbValue);
-                        //PushScaleformMovieFunctionParameterInt(item.HighlightedTextColor.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(SColor.HUD_White.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(SColor.HUD_Black.ArgbValue);
                         EndScaleformMovieMethod();
                         break;
                     default:
                         PushScaleformMovieFunctionParameterInt(item.MainColor.ArgbValue/**/);
                         PushScaleformMovieFunctionParameterInt(item.HighlightColor.ArgbValue/**/);
-                        //PushScaleformMovieFunctionParameterInt(item.TextColor.ArgbValue);
-                        //PushScaleformMovieFunctionParameterInt(item.HighlightedTextColor.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(SColor.HUD_White.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(SColor.HUD_Black.ArgbValue);
                         EndScaleformMovieMethod();
                         lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_ITEM_LABEL_RIGHT", scaleformIndex, item._formatRightLabel);
                         if (item.RightBadge != BadgeIcon.NONE)
@@ -223,8 +223,8 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                         PushScaleformMovieFunctionParameterInt(it.Index);
                         PushScaleformMovieFunctionParameterInt(it.MainColor.ArgbValue/**/);
                         PushScaleformMovieFunctionParameterInt(it.HighlightColor.ArgbValue/**/);
-                        //PushScaleformMovieFunctionParameterInt(it.TextColor.ArgbValue);
-                        //PushScaleformMovieFunctionParameterInt(it.HighlightedTextColor.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(SColor.HUD_White.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(SColor.HUD_Black.ArgbValue);
                         EndScaleformMovieMethod();
                         break;
                     case UIMenuCheckboxItem:
@@ -233,8 +233,8 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                         PushScaleformMovieMethodParameterBool(check.Checked);
                         PushScaleformMovieFunctionParameterInt(check.MainColor.ArgbValue/**/);
                         PushScaleformMovieFunctionParameterInt(check.HighlightColor.ArgbValue/**/);
-                        //PushScaleformMovieFunctionParameterInt(check.TextColor.ArgbValue);
-                        //PushScaleformMovieFunctionParameterInt(check.HighlightedTextColor.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(SColor.HUD_White.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(SColor.HUD_Black.ArgbValue);
                         EndScaleformMovieMethod();
                         break;
                     case UIMenuSliderItem:
@@ -244,8 +244,8 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                         PushScaleformMovieFunctionParameterInt(prItem.Value);
                         PushScaleformMovieFunctionParameterInt(prItem.MainColor.ArgbValue/**/);
                         PushScaleformMovieFunctionParameterInt(prItem.HighlightColor.ArgbValue/**/);
-                        //PushScaleformMovieFunctionParameterInt(prItem.TextColor.ArgbValue);
-                        //PushScaleformMovieFunctionParameterInt(prItem.HighlightedTextColor.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(SColor.HUD_White.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(SColor.HUD_Black.ArgbValue);
                         PushScaleformMovieFunctionParameterInt(prItem.SliderColor.ArgbValue);
                         PushScaleformMovieFunctionParameterBool(prItem._heritage);
                         EndScaleformMovieMethod();
@@ -257,8 +257,8 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                         PushScaleformMovieFunctionParameterInt(slItem.Value);
                         PushScaleformMovieFunctionParameterInt(slItem.MainColor.ArgbValue/**/);
                         PushScaleformMovieFunctionParameterInt(slItem.HighlightColor.ArgbValue/**/);
-                        //PushScaleformMovieFunctionParameterInt(slItem.TextColor.ArgbValue);
-                        //PushScaleformMovieFunctionParameterInt(slItem.HighlightedTextColor.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(SColor.HUD_White.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(SColor.HUD_Black.ArgbValue);
                         PushScaleformMovieFunctionParameterInt(slItem.SliderColor.ArgbValue);
                         EndScaleformMovieMethod();
                         break;
@@ -267,15 +267,15 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                         PushScaleformMovieFunctionParameterBool(separatorItem.Jumpable);
                         PushScaleformMovieFunctionParameterInt(item.MainColor.ArgbValue);
                         PushScaleformMovieFunctionParameterInt(item.HighlightColor.ArgbValue);
-                        //PushScaleformMovieFunctionParameterInt(item.TextColor.ArgbValue);
-                        //PushScaleformMovieFunctionParameterInt(item.HighlightedTextColor.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(SColor.HUD_White.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(SColor.HUD_Black.ArgbValue);
                         EndScaleformMovieMethod();
                         break;
                     default:
                         PushScaleformMovieFunctionParameterInt(item.MainColor.ArgbValue/**/);
                         PushScaleformMovieFunctionParameterInt(item.HighlightColor.ArgbValue/**/);
-                        //PushScaleformMovieFunctionParameterInt(item.TextColor.ArgbValue);
-                        //PushScaleformMovieFunctionParameterInt(item.HighlightedTextColor.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(SColor.HUD_White.ArgbValue);
+                        PushScaleformMovieFunctionParameterInt(SColor.HUD_Black.ArgbValue);
                         EndScaleformMovieMethod();
                         pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_ITEM_LABEL_RIGHT", scaleformIndex, item._formatRightLabel);
                         if (item.RightBadge != BadgeIcon.NONE)

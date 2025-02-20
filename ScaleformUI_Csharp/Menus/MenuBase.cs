@@ -16,7 +16,7 @@ namespace ScaleformUI.Menus
             }
         }
         public List<InstructionalButton> InstructionalButtons { get; set; }
-        internal virtual void ProcessControl(Keys key = Keys.None)
+        internal virtual void ProcessControl()
         {
 
         }

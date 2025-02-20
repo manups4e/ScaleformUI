@@ -24,10 +24,6 @@ namespace ScaleformUI.Menu
             set
             {
                 sliderColor = value;
-                //if (Parent is not null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
-                //{
-                //    Main.scaleformUI.CallFunction("UPDATE_COLORS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), MainColor, HighlightColor, TextColor, HighlightedTextColor, value);
-                //}
             }
         }
 
