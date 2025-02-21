@@ -1343,11 +1343,10 @@ namespace ScaleformUI.Menu
             {
                 item.Parent = this;
                 MenuItems.Add(item);
-                //TODO: add a builditem method
                 if (Visible)
                 {
-                    //TODO: add a real additemAt via slots
-                    RefreshMenu();
+                    var idx = MenuItems.Count - 1;
+                    SendItemToScaleform(idx);
                 }
             }
             else throw new Exception("ScaleformUI - You cannot add items to an itemless menu, only a long description");
@@ -1367,8 +1366,7 @@ namespace ScaleformUI.Menu
                 MenuItems.Insert(index, item);
                 if (Visible)
                 {
-                    //TODO: add a real additemAt via slots
-                    RefreshMenu();
+                    SendItemToScaleform(index, false, true);
                 }
             }
             else throw new Exception("ScaleformUI - You cannot add items to an itemless menu, only a long description");
@@ -2113,6 +2111,7 @@ namespace ScaleformUI.Menu
             SendPanelsToItemScaleform(_currentSelection);
             SendSidePanelToScaleform(_currentSelection);
             Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
+            IndexChange(_currentSelection);
         }
         public async void GoDown()
         {
@@ -2136,6 +2135,7 @@ namespace ScaleformUI.Menu
             SendPanelsToItemScaleform(_currentSelection);
             SendSidePanelToScaleform(_currentSelection);
             Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
+            IndexChange(_currentSelection);
         }
 
         public async void GoLeft()
@@ -2561,6 +2561,8 @@ namespace ScaleformUI.Menu
             Main.scaleformUI.CallFunction("SET_DATA_SLOT_EMPTY");
             for (int i = 0; i < MenuItems.Count; i++)
             {
+                if (MenuItems.Count <= i)
+                    break;
                 SendItemToScaleform(i);
                 if (_visibleItems < MaxItemsOnScreen)
                     _visibleItems++;
@@ -2640,13 +2642,16 @@ namespace ScaleformUI.Menu
             Main.scaleformUI.CallFunction("SHOW_PANELS");
         }
 
-        internal void SendItemToScaleform(int i, bool update = false)
+        internal void SendItemToScaleform(int i, bool update = false, bool newItem = false)
         {
             UIMenuItem item = MenuItems[i];
+            string str = "SET_DATA_SLOT";
             if (update)
-                BeginScaleformMovieMethod(Main.scaleformUI.Handle, "UPDATE_DATA_SLOT");
-            else
-                BeginScaleformMovieMethod(Main.scaleformUI.Handle, "SET_DATA_SLOT");
+                str = "UPDATE_DATA_SLOT";
+            if (newItem)
+                str = "SET_DATA_SLOT_SPLICE";
+
+            BeginScaleformMovieMethod(Main.scaleformUI.Handle, str);
             // here start
             PushScaleformMovieFunctionParameterInt(i); // slot, menuIndex
             PushScaleformMovieFunctionParameterInt(item._itemId);//id
@@ -2658,6 +2663,8 @@ namespace ScaleformUI.Menu
                 case UIMenuDynamicListItem:
                     UIMenuDynamicListItem dit = (UIMenuDynamicListItem)item;
                     var curString = dit.Selected ? (dit.CurrentListItem.StartsWith("~") ? dit.CurrentListItem : "~s~" + dit.CurrentListItem).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (dit.CurrentListItem.StartsWith("~") ? dit.CurrentListItem : "~s~" + dit.CurrentListItem).ToString().Replace("~l~", "~s~");
+                    if (!dit.Enabled)
+                       curString = curString.ReplaceRstarColorsWith("~c~");
                     PushScaleformMovieMethodParameterString(curString);
                     PushScaleformMovieFunctionParameterInt(0);
                     PushScaleformMovieFunctionParameterInt(dit.MainColor.ArgbValue);

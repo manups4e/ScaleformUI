@@ -48,7 +48,6 @@ public class MenuExample : BaseScript
         #region Big Message
 
         UIMenuItem bigMessageItem = new UIMenuItem("~g~Big~s~ Message ~r~Examples~s~", "Select me to switch to the BigMessage menu!");
-        bigMessageItem.SetRightLabel("test");
         bigMessageItem.SetCustomLeftBadge("scaleformui", "kitty");
         bigMessageItem.SetCustomRightBadge("scaleformui", "kitty");
 

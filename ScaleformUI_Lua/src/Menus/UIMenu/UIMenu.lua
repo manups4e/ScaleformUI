@@ -588,7 +588,8 @@ function UIMenu:AddItem(item)
     item:SetParentMenu(self)
     self.Items[#self.Items + 1] = item
     if self:Visible() then
-        self:RefreshMenu(true)
+        local idx = #self.Items - 1
+        self:SendItemToScaleform(idx)
     end
     -- add build new item (sent slot)
 end
@@ -601,7 +602,7 @@ function UIMenu:AddItemAt(item, index)
     item:SetParentMenu(self)
     table.insert(self.Items, index, item)
     if self:Visible() then
-        self:RefreshMenu(true)
+        self:SendItemToScaleform(index, false, true)
     end
 end
 
@@ -807,6 +808,9 @@ end
 function UIMenu:SendItems()
     ScaleformUI.Scaleforms._ui:CallFunction("SET_DATA_SLOT_EMPTY")
     for k,v in pairs(self.Items) do
+        if(#self.Items < k) then
+            break
+        end
         self:SendItemToScaleform(k, false)
         if self._visibleItems < self:MaxItemsOnScreen() then
             self._visibleItems = self._visibleItems + 1
@@ -898,12 +902,16 @@ function UIMenu:SendPanelsToItemScaleform(i, update)
     ScaleformUI.Scaleforms._ui:CallFunction("SHOW_PANELS")
 end
 
-function UIMenu:SendItemToScaleform(i, update)
+function UIMenu:SendItemToScaleform(i, update, newItem)
     if update == nil then update = false end
+    if newItem == nil then newItem = false end
     local item = self.Items[i]
-    local str = "UPDATE_DATA_SLOT"
-    if not update then
-        str = "SET_DATA_SLOT"
+    local str = "SET_DATA_SLOT"
+    if update then
+        str = "UPDATE_DATA_SLOT"
+    end
+    if newItem then
+        str = "SET_DATA_SLOT_SPLICE"
     end
     local Type, SubType = item()
     local it = item

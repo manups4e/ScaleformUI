@@ -4,6 +4,7 @@ using ScaleformUI.PauseMenu;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ScaleformUI.Menu
 {
@@ -38,8 +39,10 @@ namespace ScaleformUI.Menu
                     _index = 0;
                 else
                     _index = value;
-                if(Parent != null && Parent.Visible)
+                if (_items.Count > 0)
                     CurrentListItem = Items[_index].ToString();
+                else
+                    CurrentListItem = "";
                 if (ParentColumn != null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
                 {
                     string joinedList = string.Join(",", Items.Cast<string>().Select(x =>
@@ -67,64 +70,12 @@ namespace ScaleformUI.Menu
             set
             {
                 _items = new(value);
-                CurrentListItem = Items[_index].ToString();
+                if (_items.Count > 0)
+                    CurrentListItem = Items[_index].ToString();
+                else
+                    CurrentListItem = "";
             }
         }
-
-        public override bool Enabled
-        {
-            get => base.Enabled;
-            set
-            {
-                base.Enabled = value;
-                if (Parent != null && Parent.Visible)
-                    Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
-                if (ParentColumn != null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
-                {
-                    string joinedList = string.Join(",", Items.Cast<string>().Select(x =>
-                        x = Selected ? (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~l~", "~s~")
-                    ));
-                    if (!Enabled)
-                        joinedList = joinedList.ReplaceRstarColorsWith("~c~");
-                    if (ParentColumn.Parent is MainView lobby)
-                    {
-                        lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_LISTITEM_LIST", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), joinedList, Index);
-                    }
-                    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
-                    {
-                        pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_LISTITEM_LIST", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), joinedList, Index);
-                    }
-                }
-            }
-        }
-
-        public override bool Selected
-        {
-            get => base.Selected;
-            internal set
-            {
-                base.Selected = value;
-                if (Parent != null && Parent.Visible)
-                    Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
-                if (ParentColumn != null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
-                {
-                    string joinedList = string.Join(",", Items.Cast<string>().Select(x =>
-                        x = Selected ? (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~l~", "~s~")
-                    ));
-                    if (!Enabled)
-                        joinedList = joinedList.ReplaceRstarColorsWith("~c~");
-                    if (ParentColumn.Parent is MainView lobby)
-                    {
-                        lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_LISTITEM_LIST", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), joinedList, Index);
-                    }
-                    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
-                    {
-                        pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_LISTITEM_LIST", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), joinedList, Index);
-                    }
-                }
-            }
-        }
-
 
         /// <summary>
         /// List item, with left/right arrows.
@@ -152,11 +103,18 @@ namespace ScaleformUI.Menu
             return await ((UIMenuListItem)sender).getIndex(direction);
         };
 
-        public UIMenuListItem(string text, List<object> items, int index, string description, SColor mainColor, SColor higlightColor) : base(text, description, "" + items[index])
+        public UIMenuListItem(string text, List<object> items, int index, string description, SColor mainColor, SColor higlightColor) : base(text, description, "")
         {
             _items = new(items);
-            Index = index;
+            if (index > items.Count)
+                Index = 0;
+            else
+                Index = index;
             Callback = _callback;
+            if (items.Count > 0)
+            {
+                CurrentListItem = items[Index].ToString();
+            }
         }
 
         private async Task<string> getIndex(ChangeDirection d)
@@ -164,7 +122,7 @@ namespace ScaleformUI.Menu
             if (d == ChangeDirection.Left)
             {
                 _index--;
-                if(_index < 0)
+                if (_index < 0)
                     _index = Items.Count - 1;
             }
             else
@@ -259,7 +217,7 @@ namespace ScaleformUI.Menu
         [Obsolete("Use CurrentListItem instead.")]
         public string CurrentItem()
         {
-            return _items[Index].ToString();
+            return CurrentListItem;
         }
     }
 }

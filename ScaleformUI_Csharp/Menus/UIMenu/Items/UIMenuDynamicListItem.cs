@@ -24,13 +24,13 @@ namespace ScaleformUI.Menu
             set
             {
                 currentListItem = value;
-                var str = Selected ? (value.StartsWith("~") ? value : "~s~" + value).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (value.StartsWith("~") ? value : "~s~" + value).ToString().Replace("~l~", "~s~");
-                if (!Enabled)
-                    str = str.ReplaceRstarColorsWith("~c~");
                 if (Parent is not null && Parent.Visible)
                     Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
                 if (ParentColumn != null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
                 {
+                    var str = Selected ? (value.StartsWith("~") ? value : "~s~" + value).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (value.StartsWith("~") ? value : "~s~" + value).ToString().Replace("~l~", "~s~");
+                    if (!Enabled)
+                        str = str.ReplaceRstarColorsWith("~c~");
                     if (ParentColumn.Parent is MainView lobby)
                     {
                         lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_LISTITEM_LIST", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), str, 0);
@@ -43,6 +43,7 @@ namespace ScaleformUI.Menu
             }
         }
 
+
         public override bool Enabled
         {
             get => base.Enabled;
@@ -52,6 +53,8 @@ namespace ScaleformUI.Menu
                 var str = Selected ? (CurrentListItem.StartsWith("~") ? CurrentListItem : "~s~" + CurrentListItem).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (CurrentListItem.StartsWith("~") ? CurrentListItem : "~s~" + CurrentListItem).ToString().Replace("~l~", "~s~");
                 if (!Enabled)
                     str = str.ReplaceRstarColorsWith("~c~");
+                if (Parent is not null && Parent.Visible)
+                    Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
                 if (ParentColumn != null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
                 {
                     if (ParentColumn.Parent is MainView lobby)
@@ -75,6 +78,8 @@ namespace ScaleformUI.Menu
                 var str = Selected ? (CurrentListItem.StartsWith("~") ? CurrentListItem : "~s~" + CurrentListItem).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (CurrentListItem.StartsWith("~") ? CurrentListItem : "~s~" + CurrentListItem).ToString().Replace("~l~", "~s~");
                 if (!Enabled)
                     str = str.ReplaceRstarColorsWith("~c~");
+                if (Parent is not null && Parent.Visible)
+                    Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
                 if (ParentColumn != null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
                 {
                     if (ParentColumn.Parent is MainView lobby)
@@ -99,7 +104,6 @@ namespace ScaleformUI.Menu
         public UIMenuDynamicListItem(string text, string startingItem, DynamicListItemChangeCallback changeCallback) : this(text, null, startingItem, changeCallback)
         {
         }
-
 
         /// <summary>
         /// List item with items generated at runtime

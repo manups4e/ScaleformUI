@@ -195,12 +195,12 @@ function UIMenuDynamicListItem:CurrentListItem(item, _item)
     else
         self._currentItem = item
         if _item == nil then _item = self end
-        local str = self:createListString()
         if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
             local it = IndexOf(self.Base.ParentMenu.Items, _item)
             self.Base.ParentMenu:SendItemToScaleform(it, true)
         end
         if self.Base.ParentColumn ~= nil then
+            local str = self:createListString()
             local pSubT = self.Base.ParentColumn.Parent()
             if pSubT == "LobbyMenu" then
                 ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("UPDATE_SETTINGS_LISTITEM_LIST", self.Base.ParentColumn.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentColumn.Items, self)), str, self._Index - 1)
