@@ -702,9 +702,6 @@ function UIMenu:Visible(bool)
             MenuHandler.ableToDraw = false
             self.OnMenuClose(self)
         end
-        ScaleformUI.Scaleforms._ui:CallFunction("SET_VISIBLE", self._Visible, self:CurrentSelection() - 1, self.topEdge - 1)
-        self:SendPanelsToItemScaleform(self:CurrentSelection())
-        self:SendSidePanelToScaleform(self:CurrentSelection())
         if self.Settings.ResetCursorOnOpen then
             SetCursorLocation(0.5, 0.5)
             SetCursorSprite(1)
@@ -727,6 +724,15 @@ function UIMenu:BuildUpMenuAsync(itemsOnly)
         return
     end
     self:SendItems()
+    ScaleformUI.Scaleforms._ui:CallFunction("SET_VISIBLE", self._Visible, self:CurrentSelection() - 1, self.topEdge - 1)
+    self:SendPanelsToItemScaleform(self:CurrentSelection())
+    self:SendSidePanelToScaleform(self:CurrentSelection())
+    if self._Visible then
+        while self:CurrentItem().ItemId == 6 and self:CurrentItem().Jumpable do
+            Wait(0)
+            self:GoDown()
+        end
+    end
     ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_MOUSE", self.Settings.MouseControlsEnabled)
     self._isBuilding = false
 end
@@ -768,7 +774,8 @@ function UIMenu:SetMenuData(skipViewInitialization)
 
     ScaleformUI.Scaleforms._ui:CallFunction("SET_MENU_DATA", self._Title, subtitle, self.Position.x, self.Position.y,
         self.AlternativeTitle, self.TxtDictionary, self.TxtName, self:MaxItemsOnScreen(), #self.Items, self.counterColor,
-        self.descFont.FontName, self.descFont.FontID, self.bannerColor:ToArgb(), false, "", "", "", self.menuAlignment, skipViewInitialization)
+        self.descFont.FontName, self.descFont.FontID, self.bannerColor:ToArgb(), false, "", "", "", self.menuAlignment,
+        skipViewInitialization)
 end
 
 function UIMenu:SetWindows(update)
@@ -807,8 +814,8 @@ end
 
 function UIMenu:SendItems()
     ScaleformUI.Scaleforms._ui:CallFunction("SET_DATA_SLOT_EMPTY")
-    for k,v in pairs(self.Items) do
-        if(#self.Items < k) then
+    for k, v in pairs(self.Items) do
+        if (#self.Items < k) then
             break
         end
         self:SendItemToScaleform(k, false)
@@ -851,7 +858,9 @@ function UIMenu:SendSidePanelToScaleform(i, update)
             item.SidePanel.PanelSide, item.SidePanel.TitleType, item.SidePanel.Title,
             item.SidePanel.TitleColor)
     end
-    ScaleformUI.Scaleforms._ui:CallFunction("SHOW_SIDE_PANEL")
+    if not update then
+        ScaleformUI.Scaleforms._ui:CallFunction("SHOW_SIDE_PANEL")
+    end
 end
 
 function UIMenu:SendPanelsToItemScaleform(i, update)
@@ -889,17 +898,19 @@ function UIMenu:SendPanelsToItemScaleform(i, update)
             ScaleformUI.Scaleforms._ui:CallFunction(str, index - 1, pan - 1, 2, panel.TopLabel,
                 panel.RightLabel, panel.LeftLabel, panel.BottomLabel, panel._CirclePosition.x,
                 panel._CirclePosition.y, true, panel.GridType)
-            elseif pSubType == "UIMenuStatisticsPanel" then
-                local arr = {}
-                for k,v in pairs(panel.Items) do
-                    table.insert(arr, v['name'] ..":".. v['value'])
-                end
-                ScaleformUI.Scaleforms._ui:CallFunction(str, index - 1, pan - 1, 3, table.concat(arr, ","))
-            elseif pSubType == "UIMenuVehicleColourPickerPanel" then
+        elseif pSubType == "UIMenuStatisticsPanel" then
+            local arr = {}
+            for k, v in pairs(panel.Items) do
+                table.insert(arr, v['name'] .. ":" .. v['value'])
+            end
+            ScaleformUI.Scaleforms._ui:CallFunction(str, index - 1, pan - 1, 3, table.concat(arr, ","))
+        elseif pSubType == "UIMenuVehicleColourPickerPanel" then
             ScaleformUI.Scaleforms._ui:CallFunction(str, index - 1, pan - 1, 4)
         end
     end
-    ScaleformUI.Scaleforms._ui:CallFunction("SHOW_PANELS")
+    if not update then
+        ScaleformUI.Scaleforms._ui:CallFunction("SHOW_PANELS")
+    end
 end
 
 function UIMenu:SendItemToScaleform(i, update, newItem)
@@ -993,11 +1004,11 @@ function UIMenu:FilterMenuItems(predicate, fail)
     if #self.Items == 0 then
         self:Clear()
         self.Items = self._unfilteredMenuItems
-        self:BuildUpMenuAsync(true)
+        self:SendItems()
         fail()
         return
     end
-    self:BuildUpMenuAsync(true)
+    self:SendItems()
 end
 
 function UIMenu:SortMenuItems(compare)
@@ -1010,7 +1021,7 @@ function UIMenu:SortMenuItems(compare)
     local list = self._unfilteredMenuItems
     table.sort(list, compare)
     self.Items = list
-    self:BuildUpMenuAsync(true)
+    self:SendItems()
 end
 
 function UIMenu:ResetFilter()
@@ -1019,7 +1030,7 @@ function UIMenu:ResetFilter()
         self:CurrentItem():Selected(false)
         self:Clear()
         self.Items = self._unfilteredMenuItems
-        self:BuildUpMenuAsync(true)
+        self:SendItems()
     end
 end
 
@@ -1181,7 +1192,11 @@ function UIMenu:ButtonDelay()
 end
 
 function UIMenu:CurrentItem()
-    return self.Items[self._currentSelection]
+    if self:CurrentSelection() > #self.Items then
+        self:CurrentSelection(1)
+        self.topEdge = 1
+    end
+    return self.Items[self:CurrentSelection()]
 end
 
 ---GoUp
@@ -1423,7 +1438,8 @@ function UIMenu:Draw()
             self.fSavedGlareDirection = fvar
             self._menuGlare:CallFunction("SET_DATA_SLOT", self.fSavedGlareDirection)
         end
-        DrawScaleformMovie(self._menuGlare.handle, self._glarePos.x, self._glarePos.y, self._glareSize.w, self._glareSize.h, 255, 255, 255, 255, 0)
+        DrawScaleformMovie(self._menuGlare.handle, self._glarePos.x, self._glarePos.y, self._glareSize.w,
+            self._glareSize.h, 255, 255, 255, 255, 0)
     end
 
     if not IsUsingKeyboard(2) then
@@ -1452,14 +1468,17 @@ end
 
 function UIMenu:mouseCheck()
     self._mouseOnMenu = self:MouseControlsEnabled() and
-    ScaleformUI.Scaleforms._ui:CallFunctionAsyncReturnBool("IS_MOUSE_ON_MENU")
+        ScaleformUI.Scaleforms._ui:CallFunctionAsyncReturnBool("IS_MOUSE_ON_MENU")
 end
 
 function UIMenu:IsMouseOverTheMenu()
     return self._mouseOnMenu
 end
 
+local pressedInsidePanel = false
 local cursor_pressed = false
+local pressedInsideItem = false
+local cursorPressedItem = false
 local menuSound = -1
 local success, event_type, context, item_id
 
@@ -1491,8 +1510,14 @@ function UIMenu:ProcessMouse()
     success, event_type, context, item_id = GetScaleformMovieCursorSelection(ScaleformUI.Scaleforms._ui.handle)
 
     if success == 1 then
-        if event_type == 5 then  --ON CLICK
-            if context == 0 then -- normal menu items
+        if event_type == 5 then --ON CLICK
+            if context == -1 then
+                if itemId == 2 then
+                    self:GoUp()
+                elseif itemId == 2 then
+                    self:GoDown()
+                end
+            elseif context == 0 then -- normal menu items
                 local item = self.Items[item_id + 1]
                 if (item == nil) then return end
                 if item:Selected() then
@@ -1505,12 +1530,14 @@ function UIMenu:ProcessMouse()
                             local curr_select_item = self:CurrentItem()
                             local item_type_curr, item_subtype_curr = curr_select_item()
                             if item.ItemId == 1 then
-                                if curr_select_item:Index() ~= value then
-                                    curr_select_item:Index(value)
-                                    self.OnListChange(self, curr_select_item, curr_select_item:Index())
-                                    curr_select_item.OnListChanged(self, curr_select_item, curr_select_item:Index())
-                                else
-                                    self:SelectItem(false)
+                                if item_subtype_curr == "UIMenuListItem" then
+                                    if curr_select_item:Index() ~= value then
+                                        curr_select_item:Index(value)
+                                        self.OnListChange(self, curr_select_item, curr_select_item:Index())
+                                        curr_select_item.OnListChanged(self, curr_select_item, curr_select_item:Index())
+                                    else
+                                        self:SelectItem(false)
+                                    end
                                 end
                             elseif item.ItemId == 3 then
                                 if (value ~= curr_select_item:Index()) then
@@ -1537,11 +1564,49 @@ function UIMenu:ProcessMouse()
                     PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
                     return
                 end
-                self:CurrentSelection(item_id+1)
+                self:CurrentSelection(item_id + 1)
                 PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
+            elseif context == 1 then
+                local item = self.Items[item_id + 1]
+                if (item == nil) then return end
+                if (item.ItemId == 6 and item.Jumpable == true) or not item:Enabled() then
+                    PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
+                    return
+                end
+                if item:Selected() then
+                    if item.ItemId == 1 or item.ItemId == 3 or item.ItemId == 4 then
+                        cursorPressedItem = true
+                        pressedInsideItem = true
+                    end
+                end
+            elseif context == 2 then
+                local item = self.Items[item_id + 1]
+                if (item == nil) then return end
+                if (item.ItemId == 6 and item.Jumpable == true) or not item:Enabled() then
+                    PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
+                    return
+                end
+                if item:Selected() then
+                    if item.ItemId == 1 or item.ItemId == 3 or item.ItemId == 4 then
+                        self:GoLeft()
+                    end
+                end
+            elseif context == 3 then
+                local item = self.Items[item_id + 1]
+                if (item == nil) then return end
+                if (item.ItemId == 6 and item.Jumpable == true) or not item:Enabled() then
+                    PlaySoundFrontend(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
+                    return
+                end
+                if item:Selected() then
+                    if item.ItemId == 1 or item.ItemId == 3 or item.ItemId == 4 then
+                        self:GoRight()
+                    end
+                end
             elseif context == 10 then -- panels (10 => context 1, panel_type 0) // ColorPanel
                 Citizen.CreateThread(function()
-                    local res = ScaleformUI.Scaleforms._ui:CallFunctionAsyncReturnString("SELECT_PANEL", self._currentSelection - 1) --[[@as number]]
+                    local res = ScaleformUI.Scaleforms._ui:CallFunctionAsyncReturnString("SELECT_PANEL",
+                        self._currentSelection - 1) --[[@as number]]
                     local split = Split(res, ",")
                     local panel = self:CurrentItem().Panels[tonumber(split[1]) + 1]
                     panel.value = tonumber(split[2]) + 1
@@ -1550,7 +1615,8 @@ function UIMenu:ProcessMouse()
                 end)
             elseif context == 14 then
                 Citizen.CreateThread(function()
-                    local res = ScaleformUI.Scaleforms._ui:CallFunctionAsyncReturnInt("SELECT_PANEL", self:CurrentSelection() - 1)
+                    local res = ScaleformUI.Scaleforms._ui:CallFunctionAsyncReturnInt("SELECT_PANEL",
+                        self:CurrentSelection() - 1)
                     local picker = self:CurrentItem().Panels[res]
                     if item_id ~= -1 then
                         local colString = ScaleformUI.Scaleforms._ui:CallFunctionAsyncReturnString("GET_PICKER_COLOR",
@@ -1561,10 +1627,12 @@ function UIMenu:ProcessMouse()
                     end
                 end)
             elseif context == 11 then -- panels (11 => context 1, panel_type 1) // PercentagePanel
+                pressedInsidePanel = true
                 cursor_pressed = true
             elseif context == 12 then -- panels (12 => context 1, panel_type 2) // GridPanel
+                pressedInsidePanel = true
                 cursor_pressed = true
-            elseif context == 2 then  -- sidepanel
+            elseif context == 20 then -- sidepanel
                 local panel = self:CurrentItem().SidePanel
                 if item_id ~= -1 then
                     panel.Value = item_id - 1
@@ -1572,22 +1640,30 @@ function UIMenu:ProcessMouse()
                 end
             end
         elseif event_type == 6 then -- ON CLICK RELEASED
+            pressedInsidePanel = false
             cursor_pressed = false
+            pressedInsideItem = false
+            cursorPressedItem = false
         elseif event_type == 7 then -- ON CLICK RELEASED OUTSIDE
+            pressedInsidePanel = false
             cursor_pressed = false
+            pressedInsideItem = false
+            cursorPressedItem = false
             SetMouseCursorSprite(1)
             if (self.mouseReset) then
                 self.mouseReset = false
             end
         elseif event_type == 8 then -- ON NOT HOVER
             cursor_pressed = false
+            cursorPressedItem = false
             if context == 0 then
                 self.Items[item_id + 1]:Hovered(false)
-            elseif context == 2 then
+            elseif context == 20 then
                 local panel = self:CurrentItem().SidePanel
                 panel:_PickerRollout()
             elseif context == 14 then
-                local res = ScaleformUI.Scaleforms._ui:CallFunctionAsyncReturnInt("SELECT_PANEL", self:CurrentSelection() - 1)
+                local res = ScaleformUI.Scaleforms._ui:CallFunctionAsyncReturnInt("SELECT_PANEL",
+                    self:CurrentSelection() - 1)
                 local picker = self:CurrentItem().Panels[res]
                 picker:_PickerRollout()
             end
@@ -1608,7 +1684,8 @@ function UIMenu:ProcessMouse()
                 end
             elseif context == 14 then
                 if item_id ~= -1 then
-                    local res = ScaleformUI.Scaleforms._ui:CallFunctionAsyncReturnInt("SELECT_PANEL", self:CurrentSelection() - 1)
+                    local res = ScaleformUI.Scaleforms._ui:CallFunctionAsyncReturnInt("SELECT_PANEL",
+                        self:CurrentSelection() - 1)
                     local picker = self:CurrentItem().Panels[res]
                     picker:_PickerHovered(item_id, VehicleColors:GetColorById(item_id))
                 end
@@ -1619,10 +1696,42 @@ function UIMenu:ProcessMouse()
             SetMouseCursorSprite(5)
         elseif event_type == 0 then -- DRAGGED OUTSIDE
             cursor_pressed = false
+            cursorPressedItem = false
         elseif event_type == 1 then -- DRAGGED INSIDE
-            cursor_pressed = true
+            if pressedInsidePanel then
+                cursor_pressed = true
+            end
+            if pressedInsideItem then
+                cursorPressedItem = true
+            end
         end
     end
+
+    if cursorPressedItem == true then
+        if HasSoundFinished(menuSound) then
+            menuSound = GetSoundId()
+            PlaySoundFrontend(menuSound, "CONTINUOUS_SLIDER", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
+        end
+        Citizen.CreateThread(function()
+            local value = ScaleformUI.Scaleforms._ui:CallFunctionAsyncReturnInt("SELECT_ITEM", item_id) --[[@as number]]
+            local item = self:CurrentItem()
+            if item.ItemId == 3 then
+                item._Index = value
+                item.OnSliderChanged(self, item, value)
+                self.OnSliderChange(self, item, value)
+            elseif item.ItemId == 4 then
+                item._Index = value
+                item.OnProgressChanged(self, item, value)
+                self.OnProgressChange(self, item, value)
+            end
+        end)
+    else
+        if not HasSoundFinished(menuSound) then
+            StopSound(menuSound)
+            ReleaseSoundId(menuSound)
+        end
+    end
+
 
     if cursor_pressed == true then
         if HasSoundFinished(menuSound) then
@@ -1757,20 +1866,20 @@ end
 function UIMenu:SetMenuOffset(x, y)
     self.Position = vector2(x, y)
     if self:Visible() then
-    local safezone = (1.0 - math.round(GetSafeZoneSize(), 2)) * 100 * 0.005
-    local rightAlign = self.menuAlignment == MenuAlignment.RIGHT
-    local glareX = 0.45 + safezone
+        local safezone = (1.0 - math.round(GetSafeZoneSize(), 2)) * 100 * 0.005
+        local rightAlign = self.menuAlignment == MenuAlignment.RIGHT
+        local glareX = 0.45 + safezone
 
-    local pos1080 = ConvertScaleformCoordsToResolutionCoords(x, y)
-    local screenCoords = ConvertResolutionCoordsToScreenCoords(pos1080.x, pos1080.y)
-    self._glarePos = vector2(screenCoords.x + glareX, screenCoords.y + 0.45 + safezone)
-    if rightAlign then
-        glareX = 1.225 - safezone
-        local w, h = GetActualScreenResolution()
-        screenCoords = ConvertResolutionCoordsToScreenCoords(1920 - pos1080.x, pos1080.y)
-        self._glarePos = vector2(screenCoords.x - 1 + glareX, screenCoords.y + 0.45 + safezone)
-    end
-    self._glareSize = { w = 1.0, h = 1.0 }
-    self:SetMenuData(true)
+        local pos1080 = ConvertScaleformCoordsToResolutionCoords(x, y)
+        local screenCoords = ConvertResolutionCoordsToScreenCoords(pos1080.x, pos1080.y)
+        self._glarePos = vector2(screenCoords.x + glareX, screenCoords.y + 0.45 + safezone)
+        if rightAlign then
+            glareX = 1.225 - safezone
+            local w, h = GetActualScreenResolution()
+            screenCoords = ConvertResolutionCoordsToScreenCoords(1920 - pos1080.x, pos1080.y)
+            self._glarePos = vector2(screenCoords.x - 1 + glareX, screenCoords.y + 0.45 + safezone)
+        end
+        self._glareSize = { w = 1.0, h = 1.0 }
+        self:SetMenuData(true)
     end
 end

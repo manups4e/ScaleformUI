@@ -409,7 +409,10 @@ namespace ScaleformUI.Menu
             {
                 description = value;
                 if (Parent != null && Parent.Visible)
+                {
+                    API.AddTextEntry("UIMenu_Current_Description", value);
                     Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
+                }
                 if (ParentColumn != null && ParentColumn.Parent.Visible)
                 {
                     API.AddTextEntry("PAUSEMENU_Current_Description", value);

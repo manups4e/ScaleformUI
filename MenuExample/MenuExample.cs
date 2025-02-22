@@ -38,13 +38,15 @@ public class MenuExample : BaseScript
         // first true means add menu Glare scaleform to the menu
         // last true means it's using the alternative title style
         UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI ~o~SHOWCASE", new PointF(20, 20), "commonmenu", "interaction_bgd", true, true, MenuAlignment.RIGHT);
-        exampleMenu.MaxItemsOnScreen = 7; // To decide max items on screen at time, default 7
+        exampleMenu.MaxItemsOnScreen = 15; // To decide max items on screen at time, default 7
         exampleMenu.SetMouse(true, false, true, false, false);
 
         //exampleMenu.CounterColor = HudColor.HUD_COLOUR_PINK;
         // let's add the menu to the Pool
         #region Menu Declaration
 
+        UIMenuSeparatorItem separatorJ = new UIMenuSeparatorItem("separator 1", true);
+        exampleMenu.AddItem(separatorJ);
         #region Big Message
 
         UIMenuItem bigMessageItem = new UIMenuItem("~g~Big~s~ Message ~r~Examples~s~", "Select me to switch to the BigMessage menu!");
@@ -147,6 +149,9 @@ public class MenuExample : BaseScript
         };
 
         #endregion
+
+        UIMenuSeparatorItem separatorJ2 = new UIMenuSeparatorItem("separator 2", true);
+        exampleMenu.AddItem(separatorJ2);
 
         UIMenuCheckboxItem ketchupItem = new UIMenuCheckboxItem("~g~Scrolling animation enabled? ~b~in a very long label to ~o~test the text scrolling feature!", UIMenuCheckboxStyle.Tick, enabled, "Do you wish to enable the scrolling animation?");
         long _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
@@ -287,12 +292,13 @@ public class MenuExample : BaseScript
         windowSubmenu.AddWindow(statsWindow);
         List<dynamic> momfaces = new List<dynamic>() { "Hannah", "Audrey", "Jasmine", "Giselle", "Amelia", "Isabella", "Zoe", "Ava", "Camilla", "Violet", "Sophia", "Eveline", "Nicole", "Ashley", "Grace", "Brianna", "Natalie", "Olivia", "Elizabeth", "Charlotte", "Emma", "Misty" };
         List<dynamic> dadfaces = new List<dynamic>() { "Benjamin", "Daniel", "Joshua", "Noah", "Andrew", "Joan", "Alex", "Isaac", "Evan", "Ethan", "Vincent", "Angel", "Diego", "Adrian", "Gabriel", "Michael", "Santiago", "Kevin", "Louis", "Samuel", "Anthony", "Claude", "Niko", "John" };
-        UIMenuListItem mom = new UIMenuListItem("Mamma", momfaces, 0);
-        UIMenuListItem dad = new UIMenuListItem("Papà", dadfaces, 0);
+        UIMenuListItem mom = new UIMenuListItem("Mom", momfaces, 0);
+        UIMenuListItem dad = new UIMenuListItem("Dad", dadfaces, 0);
         UIMenuSliderItem newItem = new UIMenuSliderItem("Heritage Slider", "This is Useful on heritage", 100, 5, 50, true);
         windowSubmenu.AddItem(mom);
         windowSubmenu.AddItem(dad);
         windowSubmenu.AddItem(newItem);
+
         statsWindow.DetailMid = "Dad: " + newItem.Value + "%";
         statsWindow.DetailBottom = "Mom: " + (100 - newItem.Value) + "%";
         statsWindow.DetailStats = new List<UIDetailStat>()
