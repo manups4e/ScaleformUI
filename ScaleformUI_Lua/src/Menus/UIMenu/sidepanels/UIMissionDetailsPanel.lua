@@ -41,10 +41,9 @@ end
 
 function UIMissionDetailsPanel:UpdatePanelTitle(title)
     self.Title = title
-
-    if self.ParentItem ~= nil then
-        local item = IndexOf(self.ParentItem.Base.ParentMenu.Items, self.ParentItem) - 1
-        ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_SIDE_PANEL_TITLE", item, title)
+    if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
+        local it = IndexOf(self.ParentMenu.Items, self)
+        self.ParentMenu:SendSidePanelToScaleform(it, true)
     end
 end
 
@@ -52,26 +51,24 @@ function UIMissionDetailsPanel:UpdatePanelPicture(txd, txn)
     self.TextureDict = txd
     self.TextureName = txn
 
-    if self.ParentItem ~= nil then
-        local item = IndexOf(self.ParentItem.Base.ParentMenu.Items, self.ParentItem) - 1
-        ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_MISSION_DETAILS_PANEL_IMG", item, txd, txn)
+    if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
+        local it = IndexOf(self.ParentMenu.Items, self)
+        self.ParentMenu:SendSidePanelToScaleform(it, true)
     end
 end
 
 function UIMissionDetailsPanel:AddItem(newitem)
     self.Items[#self.Items + 1] = newitem
-    if self.ParentItem ~= nil then
-        local item = IndexOf(self.ParentItem.Base.ParentMenu.Items, self.ParentItem) - 1
-        ScaleformUI.Scaleforms._ui:CallFunction("ADD_MISSION_DETAILS_DESC_ITEM", item, newitem.Type,
-            newitem.TextLeft, newitem.TextRight, newitem.Icon, newitem.IconColor, newitem.Tick, newitem._labelFont.FontName, newitem._labelFont.FontID,
-            newitem._rightLabelFont.FontName, newitem._rightLabelFont.FontID)
+    if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
+        local it = IndexOf(self.ParentMenu.Items, self)
+        self.ParentMenu:SendSidePanelToScaleform(it, true)
     end
 end
 
 function UIMissionDetailsPanel:RemoveItemAt(index)
     table.remove(self.Items, index)
-    if self.ParentItem ~= nil then
-        local item = IndexOf(self.ParentItem.Base.ParentMenu.Items, self.ParentItem) - 1
-        ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_MISSION_DETAILS_DESC_ITEM", item, index - 1)
+    if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
+        local it = IndexOf(self.ParentMenu.Items, self)
+        self.ParentMenu:SendSidePanelToScaleform(it, true)
     end
 end

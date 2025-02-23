@@ -64,7 +64,6 @@ namespace ScaleformUI
 
             if (currentMenu is UIMenu old)
             {
-                await old.FadeOutMenu();
                 currentMenu.Visible = false;
                 if (newMenu is UIMenu newer)
                 {
@@ -79,9 +78,7 @@ namespace ScaleformUI
                         newer.MaxItemsOnScreen = old.MaxItemsOnScreen;
                         newer.ScrollingType = old.ScrollingType;
                         newer.Glare = old.Glare;
-                        newer.fadingTime = old.fadingTime;
                         newer.SetMouse(old.MouseControlsEnabled, old.MouseEdgeEnabled, old.MouseWheelControlEnabled, old.ResetCursorOnOpen, old.leftClickEnabled);
-                        newer.SetAnimations(old.EnableAnimation, old.Enabled3DAnimations, old.AnimationType, old.BuildingAnimation);
                         newer.SubtitleColor = old.SubtitleColor;
                     }
                     newer.CurrentSelection = newMenuCurrentSelection != 0 ? newMenuCurrentSelection : 0;

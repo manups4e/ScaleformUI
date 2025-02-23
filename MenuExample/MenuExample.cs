@@ -29,7 +29,7 @@ public class MenuExample : BaseScript
     #region UIMenu
     public async void ExampleMenu()
     {
-        long _titledui = API.CreateDui("https://i.imgur.com/3yrFYbF.gif", 288, 130);
+        long _titledui = API.CreateDui("https://media.tenor.com/-sL5lSwzQSkAAAAi/rolling-cute.gif", 288, 130);
         API.CreateRuntimeTextureFromDuiHandle(txd, "bannerbackground", API.GetDuiHandle(_titledui));
 
         long _kitten = API.CreateDui("https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExczA0dXhscDRqbHBmb3I2bmk4dDVzd25uNmhhbHNmMnE5N3hkYTM0MiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/tY27Dk0H8IisGidQv6/giphy.gif", 480, 480);
@@ -37,10 +37,9 @@ public class MenuExample : BaseScript
 
         // first true means add menu Glare scaleform to the menu
         // last true means it's using the alternative title style
-        UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI ~o~SHOWCASE", new PointF(0, 0), "commonmenu", "interaction_bgd", true, true, 0f, MenuAlignment.RIGHT);
+        UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI ~o~SHOWCASE", new PointF(376, 50), "commonmenu", "interaction_bgd", true, true, MenuAlignment.RIGHT);
         exampleMenu.MaxItemsOnScreen = 7; // To decide max items on screen at time, default 7
-        exampleMenu.SetAnimations(true, true, MenuAnimationType.LINEAR, MenuBuildingAnimation.LEFT_RIGHT);
-        exampleMenu.SetMouse(false, false, false, false, false);
+        exampleMenu.SetMouse(true, false, true, false, false);
 
         //exampleMenu.CounterColor = HudColor.HUD_COLOUR_PINK;
         // let's add the menu to the Pool
@@ -152,7 +151,7 @@ public class MenuExample : BaseScript
         UIMenuCheckboxItem ketchupItem = new UIMenuCheckboxItem("~g~Scrolling animation enabled? ~b~in a very long label to ~o~test the text scrolling feature!", UIMenuCheckboxStyle.Tick, enabled, "Do you wish to enable the scrolling animation?");
         long _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
         API.CreateRuntimeTextureFromDuiHandle(txd, "panelbackground", API.GetDuiHandle(_paneldui));
-        UIMissionDetailsPanel sidePanel = new UIMissionDetailsPanel(PanelSide.Right, "Side Panel", true, "scaleformui", "panelbackground");
+        UIMissionDetailsPanel sidePanel = new UIMissionDetailsPanel(PanelSide.Right, "Side Panel", true, "scaleformui", "bannerbackground");
         UIFreemodeDetailsItem detailItem1 = new UIFreemodeDetailsItem("Left Label", "RIGHT LABEL", ScaleformFonts.SIGNPAINTER_HOUSESCRIPT, ScaleformFonts.GTAV_TAXI_DIGITAL, BadgeIcon.BRIEFCASE, SColor.FromRandomValues());
         UIFreemodeDetailsItem detailItem2 = new UIFreemodeDetailsItem("Left Label", "RIGHT LABEL", ScaleformFonts.SIGNPAINTER_HOUSESCRIPT, ScaleformFonts.GTAV_TAXI_DIGITAL, BadgeIcon.MISSION_STAR, SColor.FromRandomValues());
         UIFreemodeDetailsItem detailItem3 = new UIFreemodeDetailsItem("Left Label", "RIGHT LABEL", ScaleformFonts.SIGNPAINTER_HOUSESCRIPT, ScaleformFonts.GTAV_TAXI_DIGITAL, BadgeIcon.ARMOR, SColor.FromRandomValues());
@@ -230,10 +229,6 @@ public class MenuExample : BaseScript
         exampleMenu.AddItem(BlankItem);
         exampleMenu.AddItem(BlankItem_2);
 
-        UIMenuListItem colorListItem = new UIMenuListItem("Choose the scrolling animation", foodsList, (int)exampleMenu.AnimationType, "~BLIP_BARBER~ ~BLIP_INFO_ICON~ ~BLIP_TANK~ ~BLIP_OFFICE~ ~BLIP_CRIM_DRUGS~ ~BLIP_WAYPOINT~ ~INPUTGROUP_MOVE~~n~You can use Blips and Inputs in description as you prefer!~n~⚠ 🐌 ❤️ 🥺 💪🏻 You can use Emojis too!", SColor.HUD_Freemode_dark, SColor.HUD_Freemode);
-        colorListItem.BlinkDescription = true;
-        exampleMenu.AddItem(colorListItem);
-
         UIMenuSliderItem slider = new UIMenuSliderItem("Slider Item", "Cool!", true); // by default max is 100 and multipler 5 = 20 steps.
         exampleMenu.AddItem(slider);
         UIMenuProgressItem progress = new UIMenuProgressItem("Slider Progress Item", 10, 0);
@@ -275,6 +270,22 @@ public class MenuExample : BaseScript
         statistics.UpdateStatistic(0, 10f);
         statistics.UpdateStatistic(1, 50f);
         statistics.UpdateStatistic(2, 100f);
+        listPanelItem4.OnListChanged += (a, b) =>
+        {
+            switch (b)
+            {
+                case 0:
+                    statistics.UpdateStatistic(0, 10f);
+                    statistics.UpdateStatistic(1, 50f);
+                    statistics.UpdateStatistic(2, 100f);
+                    break;
+                case 1:
+                    statistics.UpdateStatistic(0, 100f);
+                    statistics.UpdateStatistic(1, 50f);
+                    statistics.UpdateStatistic(2, 10f);
+                    break;
+            }
+        };
         //and you can get / set their percentage
 
 
@@ -292,12 +303,13 @@ public class MenuExample : BaseScript
         windowSubmenu.AddWindow(statsWindow);
         List<dynamic> momfaces = new List<dynamic>() { "Hannah", "Audrey", "Jasmine", "Giselle", "Amelia", "Isabella", "Zoe", "Ava", "Camilla", "Violet", "Sophia", "Eveline", "Nicole", "Ashley", "Grace", "Brianna", "Natalie", "Olivia", "Elizabeth", "Charlotte", "Emma", "Misty" };
         List<dynamic> dadfaces = new List<dynamic>() { "Benjamin", "Daniel", "Joshua", "Noah", "Andrew", "Joan", "Alex", "Isaac", "Evan", "Ethan", "Vincent", "Angel", "Diego", "Adrian", "Gabriel", "Michael", "Santiago", "Kevin", "Louis", "Samuel", "Anthony", "Claude", "Niko", "John" };
-        UIMenuListItem mom = new UIMenuListItem("Mamma", momfaces, 0);
-        UIMenuListItem dad = new UIMenuListItem("Papà", dadfaces, 0);
+        UIMenuListItem mom = new UIMenuListItem("Mom", momfaces, 0);
+        UIMenuListItem dad = new UIMenuListItem("Dad", dadfaces, 0);
         UIMenuSliderItem newItem = new UIMenuSliderItem("Heritage Slider", "This is Useful on heritage", 100, 5, 50, true);
         windowSubmenu.AddItem(mom);
         windowSubmenu.AddItem(dad);
         windowSubmenu.AddItem(newItem);
+
         statsWindow.DetailMid = "Dad: " + newItem.Value + "%";
         statsWindow.DetailBottom = "Mom: " + (100 - newItem.Value) + "%";
         statsWindow.DetailStats = new List<UIDetailStat>()
@@ -419,6 +431,7 @@ public class MenuExample : BaseScript
         align.OnListChanged += (item, index) => 
         { 
             item.Parent.MenuAlignment = (MenuAlignment)index; 
+            exampleMenu.MenuAlignment = (MenuAlignment)index;
         };
 
         UIMenuDynamicListItem offsetX = new UIMenuDynamicListItem("Offset X", "Change the X offset of the menu", exampleMenu.Offset.X.ToString("F3"), async (sender, direction) =>
@@ -995,8 +1008,8 @@ public class MenuExample : BaseScript
             if (item == ketchupItem)
             {
                 enabled = checked_;
-                sender.EnableAnimation = enabled;
-                colorListItem.Enabled = enabled;
+                scrollType.Enabled = checked_;
+                scrollType.SetLeftBadge(checked_ ? BadgeIcon.NONE : BadgeIcon.LOCK);
                 Notifications.ShowNotification("~r~Menu animation: ~b~" + (enabled ? "Enabled" : "Disabled"));
             }
         };
@@ -1014,12 +1027,6 @@ public class MenuExample : BaseScript
         {
             //if (sender.MenuItems[index] == cookItem)
             //cookItem.SetLeftBadge(BadgeIcon.NONE);
-        };
-
-        exampleMenu.OnListChange += (sender, item, index) =>
-        {
-            if (item == colorListItem)
-                sender.AnimationType = (MenuAnimationType)index;
         };
 
         exampleMenu.OnMenuOpen += (menu, data) =>

@@ -58,7 +58,7 @@ namespace ScaleformUI.Menu
         /// <param name="description">Description for this item.</param>
         /// <param name="mainColor">Main item color.</param>
         /// <param name="highlightColor">Highlight item color.</param>
-        public UIMenuCheckboxItem(string text, UIMenuCheckboxStyle style, bool check, string description, SColor mainColor, SColor highlightColor) : base(text, description, mainColor, highlightColor, SColor.HUD_White, SColor.HUD_Black)
+        public UIMenuCheckboxItem(string text, UIMenuCheckboxStyle style, bool check, string description, SColor mainColor, SColor highlightColor) : base(text, description, mainColor, highlightColor)
         {
             Style = style;
             _checked = check;
@@ -75,10 +75,8 @@ namespace ScaleformUI.Menu
             set
             {
                 _checked = value;
-                if (Parent != null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
-                {
-                    Main.scaleformUI.CallFunction("SET_INPUT_EVENT", 16, Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), value);
-                }
+                if (Parent != null && Parent.Visible)
+                    Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
             }
         }
 

@@ -46,8 +46,6 @@ function MenuHandler:SwitchTo(currentMenu, newMenu, newMenuCurrentSelection, inh
             newMenu.Glare = currentMenu.Glare
             newMenu.AlternativeTitle = currentMenu.AlternativeTitle
             newMenu:MaxItemsOnScreen(currentMenu:MaxItemsOnScreen())
-            newMenu:ScrollingType(currentMenu:ScrollingType())
-            newMenu:SetMenuAnimations(currentMenu:AnimationEnabled(), currentMenu:Enabled3DAnimations(), currentMenu:AnimationType(), currentMenu:BuildingAnimation(), currentMenu.fadingTime)
             newMenu:MouseSettings(currentMenu:MouseControlsEnabled(), currentMenu:MouseEdgeEnabled(), currentMenu:MouseWheelControlEnabled(), currentMenu.Settings.ResetCursorOnOpen, currentMenu.leftClickEnabled)
             newMenu:SubtitleColor(currentMenu:SubtitleColor())
             --[[
@@ -57,14 +55,8 @@ function MenuHandler:SwitchTo(currentMenu, newMenu, newMenuCurrentSelection, inh
         end
     end
     newMenu:CurrentSelection(newMenuCurrentSelection)
-    if (current == "UIMenu") then
-        currentMenu:FadeOutMenu()
-    end
     currentMenu:Visible(false)
     newMenu:Visible(true)
-    if (new == "UIMenu") then
-        newMenu:FadeInMenu()
-    end
     BreadcrumbsHandler:Forward(newMenu, data)
     BreadcrumbsHandler.SwitchInProgress = false
 end

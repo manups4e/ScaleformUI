@@ -13,18 +13,16 @@ UIMenuProgressItem.__call = function() return "UIMenuItem", "UIMenuProgressItem"
 ---@param sliderColor SColor
 ---@param color SColor
 ---@param highlightColor SColor
----@param textColor SColor
----@param highlightedTextColor SColor
 ---@param backgroundSliderColor SColor
-function UIMenuProgressItem.New(Text, Max, Index, Description, sliderColor, color, highlightColor, textColor, highlightedTextColor, backgroundSliderColor)
+function UIMenuProgressItem.New(Text, Max, Index, Description, sliderColor, color, highlightColor, backgroundSliderColor)
     local _UIMenuProgressItem = {
-        Base = UIMenuItem.New(Text or "", Description or "", color or SColor.HUD_Panel_light, highlightColor or SColor.HUD_White, textColor or SColor.HUD_White, highlightedTextColor or SColor.HUD_Black),
+        Base = UIMenuItem.New(Text or "", Description or "", color or SColor.HUD_Panel_light, highlightColor or SColor.HUD_White),
         _Max = Max or 100,
         _Multiplier = 5,
         _Index = Index or 0,
         Panels = {},
         SidePanel = nil,
-        SliderColor = sliderColor or SColor.HUD_Freemode,
+        _sliderColor = sliderColor or SColor.HUD_Freemode,
         BackgroundSliderColor = backgroundSliderColor or SColor.HUD_Pause_bg,
         ItemId = 4,
         OnProgressChanged = function(menu, item, newindex)
@@ -38,172 +36,184 @@ end
 
 function UIMenuProgressItem:ItemData(data)
     if data == nil then
-        return self.Base._itemData
+        return self.Base:ItemData(data)
     else
-        self.Base._itemData = data
+        self.Base:ItemData()
     end
 end
 
----SetParentMenu
----@param Menu table
-function UIMenuProgressItem:SetParentMenu(Menu)
-    if Menu() == "UIMenu" then
-        self.Base.ParentMenu = Menu
-    else
-        return self.Base.ParentMenu
+-- not supported on Lobby and Pause menu yet
+function UIMenuProgressItem:LabelFont(itemFont)
+    if itemFont == nil then
+        return self.Base:LabelFont()
+    end
+    self.Base:LabelFont(itemFont, self)
+end
+
+-- not supported on Lobby and Pause menu yet
+function UIMenuProgressItem:RightLabelFont(itemFont)
+    if itemFont == nil then
+        return self.Base:RightLabelFont()
+    end
+    self.Base:RightLabelFont(itemFont, self)
+end
+
+---Set the Parent Menu of the Item
+---@param menu UIMenu
+---@return UIMenu? -- returns the parent menu if no menu is passed, if a menu is passed it returns the menu if it was set successfully
+function UIMenuProgressItem:SetParentMenu(menu)
+    if menu == nil then
+        return self.Base:SetParentMenu()
+    end
+    self.Base:SetParentMenu(menu)
+end
+
+function UIMenuProgressItem:Selected(bool)
+    if bool == nil then
+        return self.Base:Selected()
+    end
+    self.Base:Selected(bool, self)
+end
+
+function UIMenuProgressItem:Hovered(bool)
+    if bool == nil then
+        return self.Base:Hovered()
+    end
+    self.Base:Hovered(bool)
+end
+
+function UIMenuProgressItem:Enabled(bool)
+    if bool == nil then
+        return self.Base:Enabled()
+    end
+    self.Base:Hovered(bool, self)
+end
+
+function UIMenuProgressItem:Description(str)
+    if str == nil then
+        return self.Base:Description()
+    end
+    self.Base:Description(str, self)
+end
+
+function UIMenuProgressItem:MainColor(color)
+    if color == nil then
+        return self.Base:MainColor()
+    end
+    self.Base:MainColor(color, self)
+end
+
+function UIMenuProgressItem:HighlightColor(color)
+    if color == nil then
+        return self.Base:HighlightColor()
+    end
+    self.Base:HighlightColor(color, self)
+end
+
+function UIMenuProgressItem:Label(Text)
+    if Text == nil then
+        return self.Base:Label()
+    end
+    self.Base:Label(Text, self)
+end
+
+function UIMenuProgressItem:BlinkDescription(bool)
+    if bool == nil then
+        return self.Base:BlinkDescription()
+    end
+    self.Base:BlinkDescription(bool, self)
+end
+
+function UIMenuProgressItem:LeftBadge(Badge)
+    if Badge == nil then
+        return self.Base:LeftBadge()
+    end
+    self.Base:LeftBadge(Badge, self)
+end
+
+function UIMenuProgressItem:CustomLeftBadge(txd,txn)
+    self.Base:CustomLeftBadge(txd,txn, self)
+end
+
+---RightBadge
+function UIMenuProgressItem:RightBadge()
+    error("This item does not support right badges")
+end
+
+function UIMenuProgressItem:CustomRightBadge()
+    error("This item does not support right badges")
+end
+
+---RightLabel
+function UIMenuProgressItem:RightLabel()
+    error("This item does not support a right label")
+end
+
+
+function UIMenuProgressItem:AddPanel(Panel)
+    if Panel() == "UIMenuPanel" then
+        Panel.ParentItem = self
+        self.Panels[#self.Panels + 1] = Panel
     end
 end
 
 function UIMenuProgressItem:AddSidePanel(sidePanel)
-    if sidePanel() == "UIMissionDetailsPanel" then
-        sidePanel:SetParentItem(self)
-        self.SidePanel = sidePanel
-        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM",
-                self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)), 0, sidePanel.PanelSide, sidePanel.TitleType,
-                sidePanel.Title,
-                sidePanel.TitleColor, sidePanel.TextureDict, sidePanel.TextureName)
+    sidePanel:SetParentItem(self)
+    self.SidePanel = sidePanel
+    if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+        local it = IndexOf(self.ParentMenu.Items, self)
+        self.ParentMenu:SendSidePanelToScaleform(it)
+    end
+end
+
+function UIMenuProgressItem:RemoveSidePanel()
+    self.SidePanel = nil
+    if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+        local it = IndexOf(self.ParentMenu.Items, self)
+        self.ParentMenu:SendSidePanelToScaleform(it)
+    end
+end
+
+function UIMenuProgressItem:RemovePanelAt(Index)
+    if tonumber(Index) then
+        if self.Panels[Index] then
+            table.remove(self.Panels, tonumber(Index))
+            local it = IndexOf(self.ParentMenu.Items, self)
+            self.ParentMenu:SendPanelsToItemScaleform(it)
         end
-    elseif sidePanel() == "UIVehicleColorPickerPanel" then
-        sidePanel:SetParentItem(self)
-        self.SidePanel = sidePanel
-        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("ADD_SIDE_PANEL_TO_ITEM",
-                IndexOf(self.Base.ParentMenu.Items, self), 1, sidePanel.PanelSide, sidePanel.TitleType, sidePanel.Title,
-                sidePanel.TitleColor)
+    end
+end
+
+function UIMenuProgressItem:FindPanelIndex(Panel)
+    if Panel() == "UIMenuPanel" then
+        for Index = 1, #self.Panels do
+            if self.Panels[Index] == Panel then
+                return Index
+            end
         end
     end
+    return nil
 end
 
----Selected
----@param bool number
-function UIMenuProgressItem:Selected(bool)
-    if bool ~= nil then
-        self.Base:Selected(ToBool(bool), self)
-    else
-        return self.Base._Selected
-    end
-end
-
----Hovered
----@param bool boolean
-function UIMenuProgressItem:Hovered(bool)
-    if bool ~= nil then
-        self.Base._Hovered = ToBool(bool)
-    else
-        return self.Base._Hovered
-    end
-end
-
----Enabled
----@param bool boolean
-function UIMenuProgressItem:Enabled(bool)
-    if bool ~= nil then
-        self.Base:Enabled(bool, self)
-    else
-        return self.Base._Enabled
-    end
-end
-
----Description
----@param str string
-function UIMenuProgressItem:Description(str)
-    if tostring(str) and str ~= nil then
-        self.Base:Description(tostring(str), self)
-    else
-        return self.Base._Description
-    end
-end
-
----Text
----@param Text string
-function UIMenuProgressItem:Label(Text)
-    if tostring(Text) and Text ~= nil then
-        self.Base:Label(tostring(Text), self)
-    else
-        return self.Base:Label()
-    end
-end
-
-function UIMenuProgressItem:MainColor(color)
-    if color then
-        assert(color() == "SColor", "Color must be SColor type")
-        self.Base._mainColor = color
-        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
-                self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
+function UIMenuProgressItem:FindPanelItem()
+    for Index = #self.Items, 1, -1 do
+        if self.Items[Index].Panel then
+            return Index
         end
-    else
-        return self.Base._mainColor
     end
-end
-
-function UIMenuProgressItem:TextColor(color)
-    if color then
-        assert(color() == "SColor", "Color must be SColor type")
-        self.Base._textColor = color
-        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
-                self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
-        end
-    else
-        return self.Base._textColor
-    end
-end
-
-function UIMenuProgressItem:HighlightColor(color)
-    if color then
-        assert(color() == "SColor", "Color must be SColor type")
-        self.Base._highlightColor = color
-        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
-                self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
-        end
-    else
-        return self.Base._highlightColor
-    end
-end
-
-function UIMenuProgressItem:HighlightedTextColor(color)
-    if color then
-        assert(color() == "SColor", "Color must be SColor type")
-        self.Base._highlightedTextColor = color
-        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
-                self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor)
-        end
-    else
-        return self.Base._highlightedTextColor
-    end
+    return nil
 end
 
 function UIMenuProgressItem:SliderColor(color)
     if color then
         assert(color() == "SColor", "Color must be SColor type")
-        self.SliderColor = color
-        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("UPDATE_COLORS", self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)),
-                self.Base._mainColor, self.Base._highlightColor, self.Base._textColor, self.Base._highlightedTextColor,
-                self.SliderColor)
+        self._sliderColor = color
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
+            local it = IndexOf(self.Base.ParentMenu.Items, self)
+            self.Base.ParentMenu:SendItemToScaleform(it, true)
         end
     else
-        return self.SliderColor
-    end
-end
-
-function UIMenuProgressItem:LabelFont(fontTable)
-    if fontTable == nil then
-        return self.Base:LabelFont()
-    else
-        self.Base:LabelFont(fontTable)
-    end
-end
-
-function UIMenuProgressItem:BlinkDescription(bool)
-    if bool ~= nil then
-        self.Base:BlinkDescription(bool, self)
-    else
-        return self.Base:BlinkDescription()
+        return self._sliderColor
     end
 end
 
@@ -219,51 +229,11 @@ function UIMenuProgressItem:Index(Index)
             self._Index = Index
         end
         self.OnProgressChanged(self._Index)
-        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() and self.Base.ParentMenu:Visible() and self.Base.ParentMenu.Pagination:IsItemVisible(IndexOf(self.Base.ParentMenu.Items, self)) then
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_ITEM_VALUE",
-                self.Base.ParentMenu.Pagination:GetScaleformIndex(IndexOf(self.Base.ParentMenu.Items, self)), self._Index)
+        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
+            local it = IndexOf(self.Base.ParentMenu.Items, self)
+            self.Base.ParentMenu:SendItemToScaleform(it, true)
         end
     else
         return self._Index
     end
-end
-
----AddPanel
----@param panel UIMenuStatisticsPanel|UIMenuPercentagePanel|UIMenuColorPanel|UIMenuGridPanel
-function UIMenuProgressItem:AddPanel(panel)
-    if panel() == "UIMenuPanel" then
-        panel.ParentItem = self
-        self.Panels[#self.Panels + 1] = panel
-    end
-end
-
----LeftBadge
-function UIMenuProgressItem:LeftBadge(Badge)
-    if tonumber(Badge) then
-        self.Base:LeftBadge(Badge, self)
-    else
-        return self.Base:LeftBadge()
-    end
-end
-
-function UIMenuProgressItem:CustomLeftBadge(txd,txn)
-    if txd ~= nil and txd ~= "" and txn ~= nil and txn ~= "" then
-        self.Base:CustomLeftBadge(txd,txn, self)
-    else
-        return self.Base:LeftBadge()
-    end
-end
-
----RightBadge
-function UIMenuProgressItem:RightBadge()
-    error("This item does not support right badges")
-end
-
-function UIMenuProgressItem:CustomRightBadge()
-    error("This item does not support right badges")
-end
-
----RightLabel
-function UIMenuProgressItem:RightLabel()
-    error("This item does not support a right label")
 end

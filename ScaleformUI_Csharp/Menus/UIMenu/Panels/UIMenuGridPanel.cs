@@ -30,7 +30,13 @@ namespace ScaleformUI.Menu
             set
             {
                 _value = value;
-                _setValue(value);
+                if (ParentItem != null && ParentItem.Parent != null && ParentItem.Parent.Visible)
+                {
+                    int it = ParentItem.Parent.MenuItems.IndexOf(ParentItem);
+                    ParentItem.Parent.SendPanelsToItemScaleform(it, true);
+                    OnGridChange();
+                    ParentItem.Parent.GridPanelChange(ParentItem, this, _value);
+                }
             }
         }
 
@@ -66,39 +72,6 @@ namespace ScaleformUI.Menu
             RightLabel = RightText ?? "Right";
             GridType = GridType.Horizontal;
             _value = circlePosition;
-        }
-
-        /*
-        internal void UpdateParent( float X, float Y)
-        {
-            ParentItem.Parent.ListChange(ParentItem, ParentItem.Index);
-            ParentItem.ListChangedTrigger(ParentItem.Index);
-        }*/
-
-        private void _setValue(PointF value)
-        {
-            if (ParentItem != null && ParentItem.Parent != null && ParentItem.Parent.Visible && ParentItem.Parent.Pagination.IsItemVisible(ParentItem.Parent.MenuItems.IndexOf(ParentItem)))
-            {
-                int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(ParentItem));
-                int van = ParentItem.Panels.IndexOf(this);
-                Main.scaleformUI.CallFunction("SET_GRID_PANEL_VALUE_RETURN_VALUE", it, van, value.X, value.Y);
-            }
-        }
-
-        private async void SetMousePosition(PointF mouse)
-        {
-            int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(ParentItem));
-            int van = ParentItem.Panels.IndexOf(this);
-            API.BeginScaleformMovieMethod(Main.scaleformUI.Handle, "SET_GRID_PANEL_POSITION_RETURN_VALUE");
-            API.ScaleformMovieMethodAddParamInt(0);
-            API.ScaleformMovieMethodAddParamInt(1);
-            API.ScaleformMovieMethodAddParamFloat(mouse.X);
-            API.ScaleformMovieMethodAddParamFloat(mouse.Y);
-            int ret = API.EndScaleformMovieMethodReturnValue();
-            while (!API.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            string res = API.GetScaleformMovieMethodReturnValueString(ret);
-            string[] returned = res.Split(',');
-            _value = new PointF(Convert.ToSingle(returned[0]), Convert.ToSingle(returned[1]));
         }
 
         internal void OnGridChange()

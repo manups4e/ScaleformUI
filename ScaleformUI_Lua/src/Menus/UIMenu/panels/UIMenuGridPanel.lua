@@ -47,13 +47,11 @@ end
 function UIMenuGridPanel:CirclePosition(position)
     if position ~= nil then
         self._CirclePosition = position
-        if (self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil) and self.ParentItem:SetParentMenu():Visible() 
-            and self.ParentItem:SetParentMenu().Pagination:IsItemVisible(IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem)) then
-
-            local it = self.ParentItem:SetParentMenu().Pagination:GetScaleformIndex(IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem))
-            local van = IndexOf(self.ParentItem.Panels, self)
-            ScaleformUI.Scaleforms._ui:CallFunction("SET_GRID_PANEL_VALUE_RETURN_VALUE", it, van - 1,
-                position.x, position.y)
+        if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
+            local it = IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem)
+            self.ParentItem:SetParentMenu():SendPanelsToItemScaleform(it, true)
+            self.OnGridPanelChanged(self.ParentItem, self, self._CirclePosition)
+            self.ParentItem:SetParentMenu().OnGridPanelChanged(self.ParentItem, self, self._CirclePosition)
         end
     else
         return self._CirclePosition

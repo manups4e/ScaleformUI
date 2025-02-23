@@ -132,7 +132,7 @@ namespace ScaleformUI.Radial
             Main.radialMenu.CallFunction("LOAD_MENU", currentSelection, Segments[0].CurrentSelection, Segments[1].CurrentSelection, Segments[2].CurrentSelection, Segments[3].CurrentSelection, Segments[4].CurrentSelection, Segments[5].CurrentSelection, Segments[6].CurrentSelection, Segments[7].CurrentSelection);
         }
 
-        internal override async void ProcessControl(Keys key = Keys.None)
+        internal override async void ProcessControl()
         {
             Controls.Toggle(false);
             // block camera movements

@@ -36,7 +36,13 @@ namespace ScaleformUI.Menu
                     if (value < 0)
                         _value += CustomColors.Count - 1;
                 }
-                _setValue(_value);
+                if (ParentItem != null && ParentItem.Parent != null && ParentItem.Parent.Visible)
+                {
+                    int it = ParentItem.Parent.MenuItems.IndexOf(ParentItem);
+                    ParentItem.Parent.SendPanelsToItemScaleform(it, true);
+                    PanelChanged();
+                    ParentItem.Parent.ColorPanelChange(ParentItem, this, _value);
+                }
             }
         }
         public UIMenuColorPanel(string title, ColorPanelType ColorType, int startIndex = 0)
@@ -57,39 +63,6 @@ namespace ScaleformUI.Menu
         internal void PanelChanged()
         {
             OnColorPanelChange?.Invoke(ParentItem, this, CurrentSelection);
-        }
-
-        /*
-        private void //UpdateSelection(bool update)
-        {
-            if (update)
-            {
-                ParentItem.Parent.ListChange(ParentItem, ParentItem.Index);
-                ParentItem.ListChangedTrigger(ParentItem.Index);
-            }
-        }*/
-
-        private async void _getValue()
-        {
-            int it = this.ParentItem.Parent.Pagination.GetScaleformIndex(this.ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
-            int van = this.ParentItem.Panels.IndexOf(this);
-            API.BeginScaleformMovieMethod(Main.scaleformUI.Handle, "GET_VALUE_FROM_PANEL");
-            API.ScaleformMovieMethodAddParamInt(it);
-            API.ScaleformMovieMethodAddParamInt(van);
-            int ret = API.EndScaleformMovieMethodReturnValue();
-            while (!API.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            _value = API.GetScaleformMovieMethodReturnValueInt(ret);
-        }
-
-        public void _setValue(int val)
-        {
-
-            if (ParentItem != null && ParentItem.Parent != null && ParentItem.Parent.Visible && ParentItem.Parent.Pagination.IsItemVisible(ParentItem.Parent.MenuItems.IndexOf(ParentItem)))
-            {
-                int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
-                int van = ParentItem.Panels.IndexOf(this);
-                Main.scaleformUI.CallFunction("SET_COLOR_PANEL_VALUE", it, van, val);
-            }
         }
     }
 }

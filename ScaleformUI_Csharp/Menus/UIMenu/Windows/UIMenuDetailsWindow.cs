@@ -18,7 +18,10 @@ namespace ScaleformUI.Menu
             DetailMid = mid;
             DetailBottom = bot;
             StatWheelEnabled = false;
-            DetailLeft = leftDetail ?? new();
+            DetailLeft = leftDetail ?? new()
+            {
+                Txd = "statWheel"
+            };
         }
 
         public UIMenuDetailsWindow(string top, string mid, string bot, bool statWheelEnabled, List<UIDetailStat> details)
@@ -40,15 +43,11 @@ namespace ScaleformUI.Menu
             DetailTop = top;
             DetailMid = mid;
             DetailBottom = bot;
-            DetailLeft = leftDetail ?? new();
-            if (ParentMenu is not null)
+            DetailLeft = leftDetail ?? new()
             {
-                int wid = ParentMenu.Windows.IndexOf(this);
-                if (!StatWheelEnabled)
-                    Main.scaleformUI.CallFunction("UPDATE_DETAILS_WINDOW_VALUES", wid, DetailBottom, DetailMid, DetailTop, DetailLeft.Txd, DetailLeft.Txn, DetailLeft.Pos.X, DetailLeft.Pos.Y, DetailLeft.Size.Width, DetailLeft.Size.Height);
-                else
-                    Main.scaleformUI.CallFunction("UPDATE_DETAILS_WINDOW_VALUES", wid, DetailBottom, DetailMid, DetailTop, "statWheel");
-            }
+                Txd = "statWheel"
+            };
+            ParentMenu?.SetWindows(true);
         }
 
         public void AddStatsListToWheel(List<UIDetailStat> stats)
@@ -56,14 +55,7 @@ namespace ScaleformUI.Menu
             if (StatWheelEnabled)
             {
                 DetailStats = stats;
-                if (ParentMenu is not null)
-                {
-                    int wid = ParentMenu.Windows.IndexOf(this);
-                    foreach (UIDetailStat value in stats)
-                    {
-                        Main.scaleformUI.CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", wid, value.Percentage, value.HudColor);
-                    }
-                }
+                ParentMenu?.SetWindows(true);
             }
         }
 
@@ -72,11 +64,7 @@ namespace ScaleformUI.Menu
             if (StatWheelEnabled)
             {
                 DetailStats.Add(stat);
-                if (ParentMenu is not null)
-                {
-                    int wid = ParentMenu.Windows.IndexOf(this);
-                    Main.scaleformUI.CallFunction("ADD_STATS_DETAILS_WINDOW_STATWHEEL", wid, stat.Percentage, stat.HudColor);
-                }
+                ParentMenu?.SetWindows(true);
             }
         }
 
@@ -93,20 +81,13 @@ namespace ScaleformUI.Menu
                     throw new Exception("You cannot add items using this function");
                 }
                 DetailStats = stats;
-                if (ParentMenu is not null)
-                {
-                    int wid = ParentMenu.Windows.IndexOf(this);
-                    foreach (UIDetailStat value in DetailStats)
-                    {
-                        Main.scaleformUI.CallFunction("UPDATE_STATS_DETAILS_WINDOW_STATWHEEL", wid, DetailStats.IndexOf(value), value.Percentage, value.HudColor);
-                    }
-                }
+                ParentMenu?.SetWindows(true);
             }
         }
         public void RemoveStatToWheel(UIDetailStat stat)
         {
             UIDetailStat s = DetailStats.FirstOrDefault(x => x.Percentage == stat.Percentage && x.HudColor == stat.HudColor);
-            if (s is not null)
+            if (s != null)
             {
                 RemoveStatToWheel(DetailStats.IndexOf(s));
             }
@@ -115,11 +96,7 @@ namespace ScaleformUI.Menu
         {
             if (id < 0 || id >= DetailStats.Count) return;
             DetailStats.RemoveAt(id);
-            if (ParentMenu is not null)
-            {
-                int wid = ParentMenu.Windows.IndexOf(this);
-                Main.scaleformUI.CallFunction("REMOVE_STATS_DETAILS_WINDOW_STATWHEEL", wid, id);
-            }
+            ParentMenu?.SetWindows(true);
         }
     }
 

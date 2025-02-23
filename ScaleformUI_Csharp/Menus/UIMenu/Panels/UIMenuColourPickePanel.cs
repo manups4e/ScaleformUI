@@ -47,11 +47,10 @@ namespace ScaleformUI.Menu
 
         internal void _setValue(int val)
         {
-            if (ParentItem != null && ParentItem.Parent != null && ParentItem.Parent.Visible && ParentItem.Parent.Pagination.IsItemVisible(ParentItem.Parent.MenuItems.IndexOf(ParentItem)))
+            if (ParentItem != null && ParentItem.Parent != null && ParentItem.Parent.Visible)
             {
-                int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(this.ParentItem));
-                int van = ParentItem.Panels.IndexOf(this);
-                Main.scaleformUI.CallFunction("SET_COLOR_PICKER_PANEL_VALUE", it, van, val);
+                int it = ParentItem.Parent.MenuItems.IndexOf(ParentItem);
+                ParentItem.Parent.SendPanelsToItemScaleform(it, true);
             }
         }
 
