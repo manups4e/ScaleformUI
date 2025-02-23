@@ -24,10 +24,12 @@ namespace ScaleformUI.Menu
             set
             {
                 _value = value;
-                if (ParentItem != null && ParentItem.Parent != null)
+                if (ParentItem != null && ParentItem.Parent != null && ParentItem.Parent.Visible)
                 {
                     int it = ParentItem.Parent.MenuItems.IndexOf(ParentItem);
                     ParentItem.Parent.SendPanelsToItemScaleform(it, true);
+                    PercentagePanelChange();
+                    ParentItem.Parent.PercentagePanelChange(ParentItem, this, _value);
                 }
             }
         }
@@ -39,27 +41,6 @@ namespace ScaleformUI.Menu
             Max = MaxText;
             Title = !string.IsNullOrWhiteSpace(title) ? title : "Opacity";
             _value = initialValue;
-        }
-
-        /*
-        public void UpdateParent(float Percentage)
-        {
-            ParentItem.Parent.ListChange(ParentItem, ParentItem.Index);
-            ParentItem.ListChangedTrigger(ParentItem.Index);
-        }
-        */
-
-        private async void SetMousePercentage(PointF mouse)
-        {
-            //int it = ParentItem.Parent.Pagination.GetScaleformIndex(ParentItem.Parent.MenuItems.IndexOf(ParentItem));
-            //int van = ParentItem.Panels.IndexOf(this);
-            //API.BeginScaleformMovieMethod(Main.scaleformUI.Handle, "SET_PERCENT_PANEL_POSITION_RETURN_VALUE");
-            //API.ScaleformMovieMethodAddParamInt(it);
-            //API.ScaleformMovieMethodAddParamInt(van);
-            //API.ScaleformMovieMethodAddParamFloat(mouse.X);
-            //int ret = API.EndScaleformMovieMethodReturnValue();
-            //while (!API.IsScaleformMovieMethodReturnValueReady(ret)) await BaseScript.Delay(0);
-            //_value = Convert.ToSingle(API.GetScaleformMovieMethodReturnValueString(ret));
         }
 
         internal void PercentagePanelChange()

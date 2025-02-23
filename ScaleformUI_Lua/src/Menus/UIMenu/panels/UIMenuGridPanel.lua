@@ -48,8 +48,10 @@ function UIMenuGridPanel:CirclePosition(position)
     if position ~= nil then
         self._CirclePosition = position
         if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
-            local it = IndexOf(self.ParentMenu.Items, self)
-            self.ParentMenu:SendPanelsToItemScaleform(it, true)
+            local it = IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem)
+            self.ParentItem:SetParentMenu():SendPanelsToItemScaleform(it, true)
+            self.OnGridPanelChanged(self.ParentItem, self, self._CirclePosition)
+            self.ParentItem:SetParentMenu().OnGridPanelChanged(self.ParentItem, self, self._CirclePosition)
         end
     else
         return self._CirclePosition

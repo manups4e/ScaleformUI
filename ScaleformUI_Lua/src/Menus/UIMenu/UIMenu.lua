@@ -908,7 +908,7 @@ function UIMenu:SendPanelsToItemScaleform(i, update)
             ScaleformUI.Scaleforms._ui:CallFunction(str, index - 1, pan - 1, 4)
         end
     end
-    if not update then
+    if (not update) then
         ScaleformUI.Scaleforms._ui:CallFunction("SHOW_PANELS")
     end
 end
@@ -1752,7 +1752,7 @@ function UIMenu:ProcessMouse()
                 panel.OnGridPanelChanged(panel.ParentItem, panel, panel._CirclePosition)
             elseif panel_subtype == "UIMenuPercentagePanel" then
                 panel._percentage = tonumber(split[2])
-                self:OnPercentagePanelChanged(panel.ParentItem, panel, panel._percentage)
+                self.OnPercentagePanelChanged(panel.ParentItem, panel, panel._percentage)
                 panel.OnPercentagePanelChange(panel.ParentItem, panel, panel._percentage)
             end
         end)

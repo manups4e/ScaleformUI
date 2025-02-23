@@ -2290,15 +2290,15 @@ namespace ScaleformUI.Menu
             OnMenuClose?.Invoke(menu);
         }
 
-        protected virtual void ColorPanelChange(UIMenuItem item, UIMenuColorPanel panel, int index)
+        internal virtual void ColorPanelChange(UIMenuItem item, UIMenuColorPanel panel, int index)
         {
             OnColorPanelChange?.Invoke(item, panel, index);
         }
-        protected virtual void PercentagePanelChange(UIMenuItem item, UIMenuPercentagePanel panel, float index)
+        internal virtual void PercentagePanelChange(UIMenuItem item, UIMenuPercentagePanel panel, float index)
         {
             OnPercentagePanelChange?.Invoke(item, panel, index);
         }
-        protected virtual void GridPanelChange(UIMenuItem item, UIMenuGridPanel panel, PointF index)
+        internal virtual void GridPanelChange(UIMenuItem item, UIMenuGridPanel panel, PointF index)
         {
             OnGridPanelChange?.Invoke(item, panel, index);
         }

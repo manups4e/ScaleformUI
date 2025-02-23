@@ -47,7 +47,7 @@ namespace ScaleformUI.Menu
 
         internal void _setValue(int val)
         {
-            if (ParentItem != null && ParentItem.Parent != null)
+            if (ParentItem != null && ParentItem.Parent != null && ParentItem.Parent.Visible)
             {
                 int it = ParentItem.Parent.MenuItems.IndexOf(ParentItem);
                 ParentItem.Parent.SendPanelsToItemScaleform(it, true);

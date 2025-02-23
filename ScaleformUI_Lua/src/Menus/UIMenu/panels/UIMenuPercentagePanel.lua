@@ -33,8 +33,10 @@ function UIMenuPercentagePanel:Percentage(value)
     if value ~= nil then
         self._percentage = value
         if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
-            local it = IndexOf(self.ParentMenu.Items, self)
-            self.ParentMenu:SendPanelsToItemScaleform(it, true)
+            local it = IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem)
+            self.ParentItem:SetParentMenu():SendPanelsToItemScaleform(it, true)
+            self.OnPercentagePanelChanged(self.ParentItem, self, self._percentage)
+            self.ParentItem:SetParentMenu().OnPercentagePanelChange(self.ParentItem, self, self._percentage)
         end
     else
         return self._percentage

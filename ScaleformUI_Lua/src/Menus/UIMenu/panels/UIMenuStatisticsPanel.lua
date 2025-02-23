@@ -37,7 +37,7 @@ function UIMenuStatisticsPanel:AddStatistic(name, value) -- required
         end
         table.insert(self.Items, { ['name'] = name, ['value'] = value })
         if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
-            local it = IndexOf(self.ParentItem:SetParentMenu().Items, self)
+            local it = IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem)
             self.ParentItem:SetParentMenu():SendPanelsToItemScaleform(it, true)
         end
     end
@@ -70,7 +70,7 @@ function UIMenuStatisticsPanel:UpdateStatistic(index, value)
         end
         self.Items[index].value = value
         if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
-            local it = IndexOf(self.ParentItem:SetParentMenu().Items, self)
+            local it = IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem)
             self.ParentItem:SetParentMenu():SendPanelsToItemScaleform(it, true)
         end
     end

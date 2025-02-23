@@ -46,8 +46,10 @@ function UIMenuColorPanel:CurrentSelection(new_value)
     if new_value ~= nil then
         self.value = new_value
         if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
-            local it = IndexOf(self.ParentMenu.Items, self)
-            self.ParentMenu:SendPanelsToItemScaleform(it, true)
+            local it = IndexOf(self.ParentItem:SetParentMenu().Items, self.ParentItem)
+            self.ParentItem:SetParentMenu():SendPanelsToItemScaleform(it, true)
+            self.OnColorPanelChanged(self.ParentItem, self, self.value)
+            self.ParentItem:SetParentMenu().OnColorPanelChanged(self.ParentItem, self, self.value)
         end
     else
         return self.value

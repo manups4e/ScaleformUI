@@ -37,16 +37,14 @@ public class MenuExample : BaseScript
 
         // first true means add menu Glare scaleform to the menu
         // last true means it's using the alternative title style
-        UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI ~o~SHOWCASE", new PointF(20, 20), "commonmenu", "interaction_bgd", true, true, MenuAlignment.RIGHT);
-        exampleMenu.MaxItemsOnScreen = 15; // To decide max items on screen at time, default 7
+        UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI ~o~SHOWCASE", new PointF(376, 50), "commonmenu", "interaction_bgd", true, true, MenuAlignment.RIGHT);
+        exampleMenu.MaxItemsOnScreen = 7; // To decide max items on screen at time, default 7
         exampleMenu.SetMouse(true, false, true, false, false);
 
         //exampleMenu.CounterColor = HudColor.HUD_COLOUR_PINK;
         // let's add the menu to the Pool
         #region Menu Declaration
 
-        UIMenuSeparatorItem separatorJ = new UIMenuSeparatorItem("separator 1", true);
-        exampleMenu.AddItem(separatorJ);
         #region Big Message
 
         UIMenuItem bigMessageItem = new UIMenuItem("~g~Big~s~ Message ~r~Examples~s~", "Select me to switch to the BigMessage menu!");
@@ -149,9 +147,6 @@ public class MenuExample : BaseScript
         };
 
         #endregion
-
-        UIMenuSeparatorItem separatorJ2 = new UIMenuSeparatorItem("separator 2", true);
-        exampleMenu.AddItem(separatorJ2);
 
         UIMenuCheckboxItem ketchupItem = new UIMenuCheckboxItem("~g~Scrolling animation enabled? ~b~in a very long label to ~o~test the text scrolling feature!", UIMenuCheckboxStyle.Tick, enabled, "Do you wish to enable the scrolling animation?");
         long _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
@@ -275,6 +270,22 @@ public class MenuExample : BaseScript
         statistics.UpdateStatistic(0, 10f);
         statistics.UpdateStatistic(1, 50f);
         statistics.UpdateStatistic(2, 100f);
+        listPanelItem4.OnListChanged += (a, b) =>
+        {
+            switch (b)
+            {
+                case 0:
+                    statistics.UpdateStatistic(0, 10f);
+                    statistics.UpdateStatistic(1, 50f);
+                    statistics.UpdateStatistic(2, 100f);
+                    break;
+                case 1:
+                    statistics.UpdateStatistic(0, 100f);
+                    statistics.UpdateStatistic(1, 50f);
+                    statistics.UpdateStatistic(2, 10f);
+                    break;
+            }
+        };
         //and you can get / set their percentage
 
 
