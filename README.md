@@ -49,3 +49,9 @@ You can [buy me a coffee or donut, some banana, a shirt, BMW i4 or Taycan, the s
 This is a custom made version for CitizenFX. 
 Developers looking to create C# or Lua Resources for [FiveM](https://fivem.net/) can use this port to create custom menus and much more !
 Note that not all features are documented yet.
+
+Created by Manups4e. Special thanks to the FiveM community for continued support and inspiration.
+If you like my work and would like to help me and to motivate me into continue developing, you can donate anything you want on
+- [ko-fi](https://ko-fi.com/manups4e)
+- [PayPal](https://www.paypal.com/donate/?hosted_button_id=A5FJK5M94EFQE)
+Any help is always highly appreciated to help me and motivate me ❤️
