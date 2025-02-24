@@ -99,9 +99,9 @@ namespace ScaleformUI.Menu
         private bool _itemsDirty = false;
         //internal PaginationHandler Pagination;
         private int _maxItemsOnScreen = 7;
-        private int _currentSelection = 0;
+        internal int _currentSelection = 0;
         private int _visibleItems = 0;
-        private int topEdge = 0;
+        internal int topEdge = 0;
 
         internal KeyValuePair<string, string> _customTexture;
         internal KeyValuePair<string, string> _customBGTexture = new KeyValuePair<string, string>("", "");
@@ -161,6 +161,8 @@ namespace ScaleformUI.Menu
 
         public List<UIMenuItem> MenuItems = new List<UIMenuItem>();
         public List<UIMenuItem> _unfilteredMenuItems = new List<UIMenuItem>();
+        public int _unfilteredSelection = 0;
+        public int _unfilteredTopEdge = 0;
 
         public bool MouseEdgeEnabled = true;
         public bool ControlDisablingEnabled = true;
@@ -399,6 +401,8 @@ namespace ScaleformUI.Menu
             SetKey(MenuControls.PageUp, Control.ScriptedFlyZUp);
             SetKey(MenuControls.PageDown, Control.ScriptedFlyZDown);
 
+            SetKey(MenuControls.Tab, Control.FrontendY);
+
             InstructionalButtons = new List<InstructionalButton>()
             {
                 new InstructionalButton(Control.FrontendCancel, _backTextLocalized),
@@ -462,11 +466,11 @@ namespace ScaleformUI.Menu
             foreach (UIMenuItem it in MenuItems) it.Selected = false;
             if (Visible)
             {
-                BuildUpMenuAsync(true);
                 int index = CurrentSelection;
                 isBuilding = false;
-                CurrentSelection = keepIndex ? index : 0;
-                    // restore the previous settings
+                _currentSelection = keepIndex ? index : 0;
+                BuildUpMenuAsync(true);
+                // restore the previous settings
             }
         }
 
@@ -654,6 +658,8 @@ namespace ScaleformUI.Menu
             if (Visible)
                 Main.scaleformUI.CallFunction("SET_DATA_SLOT_EMPTY");
             MenuItems.Clear();
+            _currentSelection = 0;
+            topEdge = 0;
             //Pagination.TotalItems = 0;
         }
 
@@ -723,7 +729,7 @@ namespace ScaleformUI.Menu
         public bool HasControlJustBeenPressed(MenuControls control)
         {
             List<Tuple<Control, int>> tmpControls = new List<Tuple<Control, int>>(_keyDictionary[control]);
-            return tmpControls.Any(tuple => IsDisabledControlJustPressed(2, (int)tuple.Item1));
+            return tmpControls.Any(tuple => IsDisabledControlJustPressed(0, (int)tuple.Item1));
         }
 
 
@@ -1315,13 +1321,7 @@ namespace ScaleformUI.Menu
                     Visible = false;
                     if (prevMenu != null)
                     {
-                        if (prevMenu is UIMenu menu)
-                        {
-                            menu.differentBanner = _customTexture.Key != menu._customTexture.Key && _customTexture.Value != menu._customTexture.Value;
-                            menu.Visible = true;
-                        }
-                        else
-                            prevMenu.Visible = true;
+                        prevMenu.Visible = true;
                     }
                     BreadcrumbsHandler.SwitchInProgress = false;
                 }
@@ -1522,7 +1522,7 @@ namespace ScaleformUI.Menu
                 return;
             }
 
-            if (UpdateOnscreenKeyboard() == 0 || IsWarningMessageActive() || BreadcrumbsHandler.SwitchInProgress || isFading) return;
+            if (isBuilding || UpdateOnscreenKeyboard() == 0 || IsWarningMessageActive() || BreadcrumbsHandler.SwitchInProgress || isFading) return;
 
             if (HasControlJustBeenReleased(MenuControls.Back))
             {
@@ -1593,6 +1593,11 @@ namespace ScaleformUI.Menu
             if (HasControlJustBeenPressed(MenuControls.Select))
             {
                 Select(true);
+            }
+
+            if (HasControlJustBeenPressed(MenuControls.Tab))
+            {
+                TabPressed();
             }
 
             //if (HasControlJustBeenPressed(MenuControls.PageUp))
@@ -1695,7 +1700,17 @@ namespace ScaleformUI.Menu
                     MenuCloseEv(this);
                     MenuHandler.ableToDraw = false;
                     MenuHandler.currentMenu = null;
-                    _unfilteredMenuItems.Clear();
+                    if (_unfilteredMenuItems.Count > 0)
+                    {
+                        MenuItems[CurrentSelection].Selected = false;
+                        Clear();
+                        MenuItems = _unfilteredMenuItems.ToList();
+                        _currentSelection = _unfilteredSelection;
+                        topEdge = _unfilteredTopEdge;
+                        _unfilteredMenuItems.Clear();
+                        _unfilteredSelection = 0;
+                        _unfilteredTopEdge = 0;
+                    }
                     AddTextEntry("UIMenu_Current_Description", "");
                 }
                 if (!value) return;
@@ -1800,6 +1815,7 @@ namespace ScaleformUI.Menu
         private void SendItems()
         {
             Main.scaleformUI.CallFunction("SET_DATA_SLOT_EMPTY");
+            _visibleItems = 0;
             for (int i = 0; i < MenuItems.Count; i++)
             {
                 if (MenuItems.Count <= i)
@@ -2016,6 +2032,8 @@ namespace ScaleformUI.Menu
             {
                 MenuItems[CurrentSelection].Selected = false;
                 _unfilteredMenuItems = MenuItems.ToList();
+                _unfilteredSelection = CurrentSelection;
+                _unfilteredTopEdge = topEdge;
                 Clear();
                 List<UIMenuItem> list = _unfilteredMenuItems.ToList();
                 list.Sort(compare);
@@ -2034,24 +2052,46 @@ namespace ScaleformUI.Menu
         /// <param name="predicate"></param>
         public void FilterMenuItems(Func<UIMenuItem, bool> predicate)
         {
-            if (itemless) throw new("ScaleformUI - You can't compare or sort an itemless menu");
+            // Input validation
+            if (predicate == null)
+                throw new ArgumentNullException(nameof(predicate));
+
+            if (itemless)
+                throw new InvalidOperationException("ScaleformUI - You can't compare or sort an itemless menu");
+
             try
             {
-                MenuItems[CurrentSelection].Selected = false;
                 _unfilteredMenuItems = MenuItems.ToList();
+                _unfilteredSelection = CurrentSelection;
+                _unfilteredTopEdge = topEdge;
+
+                var filteredItems = MenuItems.Where(predicate).ToList();
+
+                if (!filteredItems.Any())
+                {
+                    Debug.WriteLine("^1ScaleformUI - No items were found, resetting the filter");
+                    _unfilteredMenuItems.Clear();
+                    _unfilteredSelection = 0;
+                    _unfilteredTopEdge = 0;
+                    return;
+                }
+
+                MenuItems[CurrentSelection].Selected = false;
                 Clear();
-                MenuItems = _unfilteredMenuItems.Where(predicate.Invoke).ToList();
-                if (MenuItems.Count == 0)
-                    throw new Exception("Predicate resulted in a filtering of 0 items.. menu cannot rebuild!");
+
+                MenuItems = filteredItems;
+                CurrentSelection = 0;
+                topEdge = 0;
+
                 BuildUpMenuAsync(true);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("^1ScaleformUI - " + ex.ToString());
+                Debug.WriteLine($"^1ScaleformUI - Error filtering menu items: {ex}");
                 OnFilteringFailed?.Invoke(this);
+                throw;
             }
         }
-
         /// <summary>
         /// Resets filtering/ordering of items going back to the original order.
         /// </summary>
@@ -2063,6 +2103,11 @@ namespace ScaleformUI.Menu
                 MenuItems[CurrentSelection].Selected = false;
                 Clear();
                 MenuItems = _unfilteredMenuItems.ToList();
+                _currentSelection = _unfilteredSelection;
+                topEdge = _unfilteredTopEdge;
+                _unfilteredMenuItems.Clear();
+                _unfilteredSelection = 0;
+                _unfilteredTopEdge = 0;
                 BuildUpMenuAsync(true);
             }
             catch (Exception ex)
@@ -2124,7 +2169,6 @@ namespace ScaleformUI.Menu
                     topEdge = Math.Max(0, Math.Min(_currentSelection, MenuItems.Count - 1 - _visibleItems));
                 else if (_currentSelection < topEdge)
                     topEdge = _currentSelection;
-
 
                 if (_visible)
                 {
@@ -2303,6 +2347,11 @@ namespace ScaleformUI.Menu
             OnGridPanelChange?.Invoke(item, panel, index);
         }
 
+        internal virtual void TabPressed()
+        {
+            MenuItems[CurrentSelection].TabItemActivate(this);
+        }
+
         #endregion
 
         public enum MenuControls
@@ -2313,6 +2362,7 @@ namespace ScaleformUI.Menu
             Right,
             Select,
             Back,
+            Tab,
             PageUp,
             PageDown
         }

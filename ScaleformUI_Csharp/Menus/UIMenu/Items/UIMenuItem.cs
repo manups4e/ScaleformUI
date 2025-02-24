@@ -302,6 +302,7 @@ namespace ScaleformUI.Menu
         /// Called when user selects the current item.
         /// </summary>
         public event ItemActivatedEvent Activated;
+        public event ItemActivatedEvent OnTabPressed;
 
         /// <summary>
         /// Called when user "highlights" the current item.
@@ -657,5 +658,11 @@ namespace ScaleformUI.Menu
         /// Returns the lobby this item is in.
         /// </summary>
         public SettingsListColumn ParentColumn { get; internal set; }
+
+        internal virtual void TabItemActivate(UIMenu sender)
+        {
+            OnTabPressed?.Invoke(sender, this);
+        }
+
     }
 }

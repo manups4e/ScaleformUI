@@ -54,7 +54,23 @@ function MenuHandler:SwitchTo(currentMenu, newMenu, newMenuCurrentSelection, inh
             ]]
         end
     end
-    newMenu:CurrentSelection(newMenuCurrentSelection)
+    if newMenuCurrentSelection > 1 then
+
+        local max = #newer.Items;
+
+        if max >= newer._maxItemsOnScreen then
+            max = newer._maxItemsOnScreen
+        end
+
+        newer._currentSelection = math.max(1, math.min(newMenuCurrentSelection, #newer.Items));
+        if newMenuCurrentSelection >= newer.topEdge + newer._visibleItems then
+            newer.topEdge = math.max(1, math.min(newMenuCurrentSelection, #newer.Items - newer._visibleItems))
+        elseif newMenuCurrentSelection < newer.topEdge then
+            newer.topEdge = newMenuCurrentSelection
+        end
+    end
+
+
     currentMenu:Visible(false)
     newMenu:Visible(true)
     BreadcrumbsHandler:Forward(newMenu, data)

@@ -76,6 +76,8 @@ function UIMenuItem.New(text, description, color, highlightColor)
         end,
         Highlighted = function(menu, item)
         end,
+        OnTabPressed = function(menu)
+        end
     }
     return setmetatable(_UIMenuItem, UIMenuItem)
 end
@@ -227,12 +229,12 @@ function UIMenuItem:Description(str, item)
         if item == nil then item = self end
         self._Description = tostring(str)
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
-            AddTextEntry("UIMenu_Current_Description", value);
+            AddTextEntry("UIMenu_Current_Description", str);
             local it = IndexOf(self.ParentMenu.Items, item)
             self.ParentMenu:SendItemToScaleform(it, true)
         end
         if self.ParentColumn ~= nil then
-            AddTextEntry("PAUSEMENU_Current_Description", value);
+            AddTextEntry("PAUSEMENU_Current_Description", str);
             self.ParentColumn:UpdateDescription();
         end
     else

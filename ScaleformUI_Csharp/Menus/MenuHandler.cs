@@ -81,7 +81,20 @@ namespace ScaleformUI
                         newer.SetMouse(old.MouseControlsEnabled, old.MouseEdgeEnabled, old.MouseWheelControlEnabled, old.ResetCursorOnOpen, old.leftClickEnabled);
                         newer.SubtitleColor = old.SubtitleColor;
                     }
-                    newer.CurrentSelection = newMenuCurrentSelection != 0 ? newMenuCurrentSelection : 0;
+                    if (newMenuCurrentSelection != 0)
+                    {
+                        var max = newer.MenuItems.Count;
+
+                        if(max >= newer.MaxItemsOnScreen)
+                            max = newer.MaxItemsOnScreen;
+
+                        newer._currentSelection = Math.Max(0, Math.Min(newMenuCurrentSelection, newer.MenuItems.Count - 1));
+
+                        if (newMenuCurrentSelection < newer.topEdge)
+                            newer.topEdge = newMenuCurrentSelection;
+                        else if (newMenuCurrentSelection >= newer.topEdge + max)
+                            newer.topEdge = Math.Max(0, Math.Min(newMenuCurrentSelection, newer.MenuItems.Count - 1 - max)); ;
+                    }
                 }
                 else if (newMenu is RadialMenu rad)
                     rad.CurrentSegment = newMenuCurrentSelection != 0 ? newMenuCurrentSelection : 0;

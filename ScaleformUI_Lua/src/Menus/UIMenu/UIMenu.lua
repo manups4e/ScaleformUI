@@ -156,6 +156,8 @@ function UIMenu.New(title, subTitle, x, y, glare, txtDictionary, txtName, altern
         Items = {},
         ParentItem = nil,
         _unfilteredMenuItems = {},
+        _unfilteredSelection = 1,
+        _unfilteredTopEdge = 1,
         mouseReset = false,
         Windows = {},
         TxtDictionary = txtDictionary,
@@ -538,7 +540,7 @@ function UIMenu:CurrentSelection(value)
         if self._currentSelection >= self.topEdge + self._visibleItems then
             self.topEdge = math.max(1, math.min(self._currentSelection, #self.Items - self._visibleItems))
         elseif self._currentSelection < self.topEdge then
-            self.topEdge = self._currentSelection;
+            self.topEdge = self._currentSelection
         end
 
         if self:Visible() then
@@ -638,6 +640,8 @@ end
 ---Clear
 function UIMenu:Clear()
     self.Items = {}
+    self._currentSelection = 1
+    self.topEdge = 1
     if self:Visible() then
         ScaleformUI.Scaleforms._ui:CallFunction("SET_DATA_SLOT_EMPTY")
     end
@@ -700,6 +704,15 @@ function UIMenu:Visible(bool)
             ScaleformUI.Scaleforms.InstructionalButtons:ClearButtonList()
             MenuHandler._currentMenu = nil
             MenuHandler.ableToDraw = false
+            if #self._unfilteredMenuItems > 0 then
+                self:Clear()
+                self.Items = _unfilteredMenuItems.ToList()
+                self._currentSelection = _unfilteredSelection
+                self.topEdge = _unfilteredTopEdge
+                self._unfilteredMenuItems.Clear()
+                self._unfilteredSelection = 1
+                self._unfilteredTopEdge = 1
+            end
             self.OnMenuClose(self)
         end
         if self.Settings.ResetCursorOnOpen then
@@ -814,6 +827,7 @@ end
 
 function UIMenu:SendItems()
     ScaleformUI.Scaleforms._ui:CallFunction("SET_DATA_SLOT_EMPTY")
+    self._visibleItems = 0
     for k, v in pairs(self.Items) do
         if (#self.Items < k) then
             break
@@ -994,6 +1008,8 @@ function UIMenu:FilterMenuItems(predicate, fail)
     self:CurrentItem():Selected(false)
     if self._unfilteredMenuItems == nil or #self._unfilteredMenuItems == 0 then
         self._unfilteredMenuItems = self.Items
+        self._unfilteredSelection = self._currentSelection
+        self._unfilteredTopEdge = self.topEdge
     end
     self:Clear()
     for i, item in ipairs(self._unfilteredMenuItems) do
@@ -1004,10 +1020,14 @@ function UIMenu:FilterMenuItems(predicate, fail)
     if #self.Items == 0 then
         self:Clear()
         self.Items = self._unfilteredMenuItems
+        self:CurrentSelection(self._unfilteredSelection)
+        self.topEdge = self._unfilteredTopEdge
         self:SendItems()
         fail()
         return
     end
+    self:CurrentSelection(1)
+    self.topEdge = 1
     self:SendItems()
 end
 
@@ -1016,11 +1036,15 @@ function UIMenu:SortMenuItems(compare)
     self:CurrentItem():Selected(false)
     if self._unfilteredMenuItems == nil or #self._unfilteredMenuItems == 0 then
         self._unfilteredMenuItems = self.Items
+        self._unfilteredSelection = self._currentSelection
+        self._unfilteredTopEdge = self.topEdge
     end
     self:Clear()
     local list = self._unfilteredMenuItems
     table.sort(list, compare)
     self.Items = list
+    self:CurrentSelection(1)
+    self.topEdge = 1
     self:SendItems()
 end
 
@@ -1030,6 +1054,8 @@ function UIMenu:ResetFilter()
         self:CurrentItem():Selected(false)
         self:Clear()
         self.Items = self._unfilteredMenuItems
+        self:CurrentSelection(self._unfilteredSelection)
+        self.topEdge = self._unfilteredTopEdge
         self:SendItems()
     end
 end
@@ -1058,6 +1084,10 @@ function UIMenu:ProcessControl()
     end
 
     if #self.Items == 0 or self._isBuilding then return end
+
+    if (IsDisabledControlJustPressed(0, 37)) then
+        self.Items[self:CurrentSelection()].OnTabPressed(this);
+    end
 
     if self.Controls.Up.Enabled then
         if IsDisabledControlJustPressed(0, 172) or IsDisabledControlJustPressed(1, 172) or IsDisabledControlJustPressed(2, 172) or (self.Settings.MouseWheelEnabled and (IsDisabledControlJustPressed(0, 241) or IsDisabledControlJustPressed(1, 241) or IsDisabledControlJustPressed(2, 241) or IsDisabledControlJustPressed(2, 241))) then
