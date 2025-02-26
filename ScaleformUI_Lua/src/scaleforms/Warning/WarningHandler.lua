@@ -38,7 +38,7 @@ function WarningInstance:Load()
         return p
     end
 
-    self._sc = Scaleform.Request("POPUP_WARNING")
+    self._sc = Scaleform.RequestWidescreen("POPUP_WARNING")
 
     if self._sc == nil then
         p:reject("Error requesting warning scaleform.")

@@ -42,57 +42,74 @@ AddEventHandler("onResourceStop", function(resName)
     end
 end)
 
-Citizen.CreateThread(function()
+local function initializeScaleforms()
     ScaleformUI.Scaleforms._ui = Scaleform.RequestWidescreen("scaleformui")
     ScaleformUI.Scaleforms._radialMenu = Scaleform.RequestWidescreen("radialmenu")
     ScaleformUI.Scaleforms._radioMenu = Scaleform.RequestWidescreen("radiomenu")
     ScaleformUI.Scaleforms._pauseMenu = PauseMenu.New()
     ScaleformUI.Scaleforms._pauseMenu:Load()
     ScaleformUI.Scaleforms.MinimapOverlays:Load()
+end
 
+Citizen.CreateThread(function()
+    initializeScaleforms()
+    
     while true do
+        -- Check if any menu is active
         if MenuHandler:IsAnyMenuOpen() or MenuHandler:IsAnyPauseMenuOpen() then
             if MenuHandler.ableToDraw and not (IsWarningMessageActive() or ScaleformUI.Scaleforms.Warning:IsShowing()) then
-                if GetCurrentFrontendMenuVersion() == `FE_MENU_VERSION_CORONA` then
+                -- Cache frontend menu version check
+                local currentMenuVersion = GetCurrentFrontendMenuVersion()
+                
+                if currentMenuVersion == FE_MENU_VERSION_CORONA then
                     SetScriptGfxDrawBehindPausemenu(true)
-                    BeginScaleformMovieMethodOnFrontend("INSTRUCTIONAL_BUTTONS");
-                    ScaleformMovieMethodAddParamPlayerNameString("SET_DATA_SLOT_EMPTY");
+                    
+                    BeginScaleformMovieMethodOnFrontend("INSTRUCTIONAL_BUTTONS")
+                    ScaleformMovieMethodAddParamPlayerNameString("SET_DATA_SLOT_EMPTY")
                     EndScaleformMovieMethod()
-                    BeginScaleformMovieMethodOnFrontendHeader("SHOW_MENU");
-                    ScaleformMovieMethodAddParamBool(false);
-                    EndScaleformMovieMethod();
-                    BeginScaleformMovieMethodOnFrontendHeader("SHOW_HEADING_DETAILS");
-                    ScaleformMovieMethodAddParamBool(false);
-                    EndScaleformMovieMethod();
+                    
+                    BeginScaleformMovieMethodOnFrontendHeader("SHOW_MENU")
+                    ScaleformMovieMethodAddParamBool(false)
+                    EndScaleformMovieMethod()
+                    
+                    BeginScaleformMovieMethodOnFrontendHeader("SHOW_HEADING_DETAILS")
+                    ScaleformMovieMethodAddParamBool(false)
+                    EndScaleformMovieMethod()
                 end
+                
                 MenuHandler:ProcessMenus()
             end
-            ScaleformUI.Scaleforms.Warning:Update()
-            if ScaleformUI.Scaleforms.SplashText ~= nil then
-                ScaleformUI.Scaleforms.SplashText:Draw()
+        end
+        
+        -- Update scaleforms outside menu checks
+        ScaleformUI.Scaleforms.Warning:Update()
+        
+        if ScaleformUI.Scaleforms.SplashText ~= nil then
+            ScaleformUI.Scaleforms.SplashText:Draw()
+        end
+        
+        ScaleformUI.Scaleforms.InstructionalButtons:Update()
+        
+        if not IsPauseMenuActive() then
+            ScaleformUI.Scaleforms.BigMessageInstance:Update()
+            ScaleformUI.Scaleforms.MidMessageInstance:Update()
+            ScaleformUI.Scaleforms.PlayerListScoreboard:Update()
+            ScaleformUI.Scaleforms.JobMissionSelector:Update()
+            ScaleformUI.Scaleforms.BigFeed:Update()
+            
+            -- Check for null references once per iteration
+            if ScaleformUI.Scaleforms._ui == nil then
+                ScaleformUI.Scaleforms._ui = Scaleform.RequestWidescreen("scaleformui")
             end
-            ScaleformUI.Scaleforms.InstructionalButtons:Update()
-            if not IsPauseMenuActive() then
-                ScaleformUI.Scaleforms.BigMessageInstance:Update()
-                ScaleformUI.Scaleforms.MidMessageInstance:Update()
-                ScaleformUI.Scaleforms.PlayerListScoreboard:Update()
-                ScaleformUI.Scaleforms.JobMissionSelector:Update()
-                ScaleformUI.Scaleforms.BigFeed:Update()
-                if ScaleformUI.Scaleforms._ui == nil then
-                    ScaleformUI.Scaleforms._ui = Scaleform.RequestWidescreen("scaleformui")
-                end
-                if ScaleformUI.Scaleforms._radialMenu == nil then
-                    ScaleformUI.Scaleforms._radialMenu = Scaleform.RequestWidescreen("radialmenu")
-                end
-                if ScaleformUI.Scaleforms._radioMenu == nil then
-                    ScaleformUI.Scaleforms._radioMenu = Scaleform.RequestWidescreen("radiomenu")
-                end
-                if not ScaleformUI.Scaleforms._pauseMenu:IsLoaded() then
-                    ScaleformUI.Scaleforms._pauseMenu:Load()
-                end
+            if ScaleformUI.Scaleforms._radialMenu == nil then
+                ScaleformUI.Scaleforms._radialMenu = Scaleform.RequestWidescreen("radialmenu")
             end
-        else
-            Citizen.Wait(500)
+            if ScaleformUI.Scaleforms._radioMenu == nil then
+                ScaleformUI.Scaleforms._radioMenu = Scaleform.RequestWidescreen("radiomenu")
+            end
+            if not ScaleformUI.Scaleforms._pauseMenu:IsLoaded() then
+                ScaleformUI.Scaleforms._pauseMenu:Load()
+            end
         end
         Citizen.Wait(0)
     end
