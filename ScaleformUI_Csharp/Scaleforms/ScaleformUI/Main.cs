@@ -98,6 +98,7 @@ namespace ScaleformUI
                 Warning.Update();
             if (InstructionalButtons._sc != null && (InstructionalButtons.ControlButtons != null && InstructionalButtons.ControlButtons.Count != 0))
                 InstructionalButtons.Update();
+            MinimapOverlays.Update();
             if (Game.IsPaused) return;
             if (MedMessageInstance._sc != null)
                 MedMessageInstance.Update();

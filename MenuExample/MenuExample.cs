@@ -1908,19 +1908,40 @@ public class MenuExample : BaseScript
             if (Game.IsControlJustPressed(0, Control.SelectCharacterTrevor) && !MenuHandler.IsAnyMenuOpen && !MenuHandler.IsAnyPauseMenuOpen)
                 LobbyPauseMenuShowcase(null);
 
-            /*
+
             if (Game.IsControlJustPressed(0, Control.Detonate) || Game.IsDisabledControlJustPressed(0, Control.Detonate))
             {
 
                 long _wallp = API.CreateDui("https://images8.alphacoders.com/132/1322626.png", 2560, 1440);
                 API.CreateRuntimeTextureFromDuiHandle(txd, "wallp", API.GetDuiHandle(_wallp));
 
-                int overlay1 = await MinimapOverlays.AddSizedOverlayToMap("scaleformui", "bannerbackground", 365, -422, centered: true);
+                var overlay1 = await MinimapOverlays.AddSizedOverlayToMap("scaleformui", "bannerbackground", 365, -422, centered: true);
                 World.CreateBlip(new Vector3(365, -422, 45));
 
-                int overlay2 = await MinimapOverlays.AddSizedOverlayToMap("scaleformui", "wallp", 2000, 1000, centered: true);
+                var overlay2 = await MinimapOverlays.AddSizedOverlayToMap("scaleformui", "wallp", 2000, 1000, centered: true);
+
+                overlay1.OnMouseEvent += (ev) =>
+                {
+                    Debug.WriteLine("MouseEvent: " + ev);
+                };
+                overlay2.OnMouseEvent += (ev) =>
+                {
+                    switch (ev)
+                    {
+                        case MouseEvent.MOUSE_ROLL_OVER:
+                            overlay2.Alpha = 150;
+                            break;
+                        case MouseEvent.MOUSE_ROLL_OUT:
+                            overlay2.Alpha = 255;
+                            break;
+                        case MouseEvent.MOUSE_PRESS:
+                            overlay2.Rotation += 90;
+                            break;
+                    }
+                    Debug.WriteLine("MouseEvent: " + ev);
+                };
             }
-            */
+
 
             if (Game.IsControlJustPressed(0, (Control)170)) // F3
             {

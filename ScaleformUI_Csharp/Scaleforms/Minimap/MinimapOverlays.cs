@@ -1,10 +1,28 @@
 ﻿using CitizenFX.Core;
+using CitizenFX.Core.Native;
 using ScaleformUI.Elements;
 using System.Drawing;
+using System.Runtime.Remoting.Contexts;
 using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI.Scaleforms
 {
+    public enum MouseEvent
+    {
+        MOUSE_DRAG_OUT = 0,
+        MOUSE_DRAG_OVER = 1,
+        MOUSE_DOWN = 2,
+        MOUSE_MOVE = 3,
+        MOUSE_UP = 4,
+        MOUSE_PRESS = 5,
+        MOUSE_RELEASE = 6,
+        MOUSE_RELEASE_OUTSIDE = 7,
+        MOUSE_ROLL_OUT = 8,
+        MOUSE_ROLL_OVER = 9,
+    }
+
+    public delegate void MinimapOverlayMouseEvent(MouseEvent mouseEvent);
+
     public class MinimapOverlay
     {
         internal int handle;
@@ -16,6 +34,7 @@ namespace ScaleformUI.Scaleforms
         internal SizeF size;
         internal float alpha;
         internal bool centered;
+        public event MinimapOverlayMouseEvent OnMouseEvent;
 
         public bool Visible
         {
@@ -80,6 +99,10 @@ namespace ScaleformUI.Scaleforms
         }
 
         public bool Centered { get => centered; set => centered = value; }
+        internal void triggerMouseEvent(MouseEvent ev)
+        {
+            OnMouseEvent?.Invoke(ev);
+        }
 
         public MinimapOverlay() { }
         public MinimapOverlay(int handle, string txd, string txn, Vector2 pos, float r, SizeF size, int a, bool centered)
@@ -99,12 +122,54 @@ namespace ScaleformUI.Scaleforms
     {
         internal static List<MinimapOverlay> minimaps = new();
         internal static int overlay = 0;
+        internal static int minimapHandle = 0;
+        internal static int eventType = 0;
+        internal static int itemId = 0;
+        internal static int context = 0;
+        internal static int unused = 0;
+        internal static bool success;
 
         internal static async Task Load()
         {
             overlay = AddMinimapOverlay("files/MINIMAP_LOADER.gfx");
             while (!HasMinimapOverlayLoaded(overlay)) await BaseScript.Delay(0);
             SetMinimapOverlayDisplay(overlay, 0f, 0f, 100f, 100f, 100f);
+            int i = 0;
+            do
+            {
+                Main.TriggerEvent("ScUI:getMinimapHandle", [ new Action<dynamic>(handle => {
+                    minimapHandle = Convert.ToInt32(handle);
+                    return;
+                })]);
+                i++;
+                if (i >= 2 && minimapHandle == 0)
+                    break;
+                await BaseScript.Delay(1000);
+            } while (minimapHandle == 0);
+            if(minimapHandle == 0)
+            {
+                var mn = RequestScaleformMovieInstance("minimap");
+                while (!HasScaleformMovieLoaded(mn))
+                    await BaseScript.Delay(0);
+                minimapHandle = mn;
+                SetBigmapActive(true, false);
+                await BaseScript.Delay(0);
+                SetBigmapActive(false, false);
+            }
+        }
+
+        internal static void Update()
+        {
+            success = API.GetScaleformMovieCursorSelection(minimapHandle, ref eventType, ref context, ref itemId, ref unused);
+            if (success)
+            {
+                if (context == 1000)
+                {
+                    MouseEvent ev = (MouseEvent)eventType;
+                    if (minimaps.Count > itemId)
+                        minimaps[itemId].triggerMouseEvent(ev);
+                }
+            }
         }
 
         private static async Task<MinimapOverlay> addOverlay(string method, string txd, string txn, float x, float y, float r, float w, float h, int a, bool centered)

@@ -1,6 +1,7 @@
 MinimapOverlays = setmetatable({
     overlay = 0,
     minimaps = {},
+    minimapHandle = 0
 }, MinimapOverlays)
 MinimapOverlays.__index = MinimapOverlays
 MinimapOverlays.__call = function()
@@ -11,7 +12,42 @@ function MinimapOverlays:Load()
     self.overlay = AddMinimapOverlay("files/MINIMAP_LOADER.gfx")
     while not HasMinimapOverlayLoaded(self.overlay) do Citizen.Wait(0) end
     SetMinimapOverlayDisplay(self.overlay, 0.0, 0.0, 100.0, 100.0, 100.0)
+    local i = 0
+    while self.minimapHandle == 0 do
+        TriggerEvent("ScUI:getMinimapHandle", function(handle)
+            self.minimapHandle = handle
+        end)
+        i = i+1
+        if i==2 then
+            break
+        end
+        Wait(1000)
+    end
+    if self.minimapHandle == 0 then
+        local sc = Scaleform.RequestWidescreen("minimap")
+        while not HasScaleformMovieLoaded(sc.handle) do
+            Wait(0)
+        end
+        self.minimapHandle = sc.handle
+        SetBigmapActive(true, false)
+        Wait(0)
+        SetBigmapActive(false, false)
+    end
 end
+
+Citizen.CreateThread(function()
+    while true do
+        Wait(0)
+        if MinimapOverlays.minimapHandle ~= 0 then
+			local success, event_type, context, item_id = GetScaleformMovieCursorSelection( MinimapOverlays.minimapHandle)
+            if success then
+                if context == 1000 then
+                    MinimapOverlays.minimaps[item_id + 1].OnMouseEvent(event_type)
+                end
+            end
+        end
+    end
+end)
 
 ---Adds a new overlay with variable size to the minimap
 ---@param textureDict string the texture dict

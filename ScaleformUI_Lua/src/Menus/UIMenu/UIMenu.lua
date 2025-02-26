@@ -1538,7 +1538,7 @@ function UIMenu:ProcessMouse()
     SetInputExclusive(2, 238)
 
     success, event_type, context, item_id = GetScaleformMovieCursorSelection(ScaleformUI.Scaleforms._ui.handle)
-
+    
     if success == 1 then
         if event_type == 5 then --ON CLICK
             if context == -1 then
