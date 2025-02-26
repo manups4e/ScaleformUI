@@ -463,13 +463,11 @@ namespace ScaleformUI.Menu
         /// <param name="menu">The menu.</param>
         public void RefreshMenu(bool keepIndex = false)
         {
-            foreach (UIMenuItem it in MenuItems) it.Selected = false;
             if (Visible)
             {
-                int index = CurrentSelection;
-                isBuilding = false;
-                _currentSelection = keepIndex ? index : 0;
-                BuildUpMenuAsync(true);
+                if (!keepIndex)
+                    _currentSelection = 0;
+                Main.scaleformUI.CallFunction("REFRESH_MENU", CurrentSelection, topEdge);
                 // restore the previous settings
             }
         }
@@ -568,7 +566,7 @@ namespace ScaleformUI.Menu
                 if (Visible)
                 {
                     var idx = MenuItems.Count - 1;
-                    SendItemToScaleform(idx);
+                    SendItemToScaleform(idx, false, false, isSlot:MenuItems.Count <= MaxItemsOnScreen);
                 }
             }
             else throw new Exception("ScaleformUI - You cannot add items to an itemless menu, only a long description");
@@ -589,6 +587,7 @@ namespace ScaleformUI.Menu
                 if (Visible)
                 {
                     SendItemToScaleform(index, false, true);
+                    RefreshMenu(true);
                 }
             }
             else throw new Exception("ScaleformUI - You cannot add items to an itemless menu, only a long description");
@@ -635,9 +634,13 @@ namespace ScaleformUI.Menu
             if (MenuItems.Count > index)
             {
                 MenuItems.RemoveAt(index);
-                RefreshMenu();
                 if (selectedItem < MenuItems.Count)
                     CurrentSelection = selectedItem;
+                if (Visible)
+                {
+                    Main.scaleformUI.CallFunction("REMOVE_DATA_SLOT", index);
+                    RefreshMenu(true);
+                }
             }
             else
             {
@@ -1685,7 +1688,7 @@ namespace ScaleformUI.Menu
                     canBuild = true;
                     MenuHandler.currentMenu = this;
                     MenuHandler.ableToDraw = true;
-                    BuildUpMenuAsync();
+                    BuildMenu();
                     MenuOpenEv(this, null);
                     timeBeforeOverflow = Main.GameTime;
                     if (BreadcrumbsHandler.Count == 0)
@@ -1713,6 +1716,9 @@ namespace ScaleformUI.Menu
                     }
                     AddTextEntry("UIMenu_Current_Description", "");
                 }
+                //hack to make sure the current item is selected
+                CurrentSelection = _currentSelection;
+                Main.scaleformUI.CallFunction("SET_VISIBLE", _visible, CurrentSelection, topEdge);
                 if (!value) return;
                 if (!ResetCursorOnOpen) return;
                 SetCursorLocation(0.5f, 0.5f);
@@ -1720,7 +1726,7 @@ namespace ScaleformUI.Menu
             }
         }
 
-        internal async void BuildUpMenuAsync(bool itemsOnly = false, bool skipViewInitialization = false)
+        private async void BuildMenu(bool itemsOnly = false, bool skipViewInitialization = false)
         {
             isBuilding = true;
             while (!Main.scaleformUI.IsLoaded) await BaseScript.Delay(0);
@@ -1734,7 +1740,6 @@ namespace ScaleformUI.Menu
             SendItems();
 
             //Pagination.ScaleformIndex = Pagination.GetScaleformIndex(CurrentSelection);
-            Main.scaleformUI.CallFunction("SET_VISIBLE", _visible, CurrentSelection, topEdge);
             if (CurrentItem is UIMenuSeparatorItem sp && sp.Jumpable)
                 GoDown();
             SendPanelsToItemScaleform(CurrentSelection);
@@ -1901,7 +1906,7 @@ namespace ScaleformUI.Menu
                 Main.scaleformUI.CallFunction("SHOW_PANELS");
         }
 
-        internal void SendItemToScaleform(int i, bool update = false, bool newItem = false)
+        internal void SendItemToScaleform(int i, bool update = false, bool newItem = false, bool isSlot = false)
         {
             UIMenuItem item = MenuItems[i];
             string str = "SET_DATA_SLOT";
@@ -1909,6 +1914,8 @@ namespace ScaleformUI.Menu
                 str = "UPDATE_DATA_SLOT";
             if (newItem)
                 str = "SET_DATA_SLOT_SPLICE";
+            if (isSlot)
+                str = "ADD_SLOT";
 
             BeginScaleformMovieMethod(Main.scaleformUI.Handle, str);
             // here start
@@ -2038,7 +2045,7 @@ namespace ScaleformUI.Menu
                 List<UIMenuItem> list = _unfilteredMenuItems.ToList();
                 list.Sort(compare);
                 MenuItems = list.ToList();
-                BuildUpMenuAsync(true);
+                BuildMenu(true);
             }
             catch (Exception ex)
             {
@@ -2083,7 +2090,7 @@ namespace ScaleformUI.Menu
                 CurrentSelection = 0;
                 topEdge = 0;
 
-                BuildUpMenuAsync(true);
+                BuildMenu(true);
             }
             catch (Exception ex)
             {
@@ -2108,7 +2115,7 @@ namespace ScaleformUI.Menu
                 _unfilteredMenuItems.Clear();
                 _unfilteredSelection = 0;
                 _unfilteredTopEdge = 0;
-                BuildUpMenuAsync(true);
+                BuildMenu(true);
             }
             catch (Exception ex)
             {
@@ -2177,7 +2184,7 @@ namespace ScaleformUI.Menu
                     SendPanelsToItemScaleform(_currentSelection);
                     SendSidePanelToScaleform(_currentSelection);
                 }
-                MenuItems[value].Selected = true;
+                MenuItems[_currentSelection].Selected = true;
             }
         }
 

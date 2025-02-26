@@ -460,14 +460,10 @@ end
 function UIMenu:RefreshMenu(keepIndex)
     if keepIndex == nil then keepIndex = false end
     if (self:Visible()) then
-        local index = self:CurrentSelection()
-        self:SendItems()
-        self.isBuilding = false
-        if keepIndex then
-            self:CurrentSelection(index)
-        else
+        if not keepIndex then
             self:CurrentSelection(0)
         end
+        ScaleformUI.Scaleforms._ui:CallFunction("REFRESH_MENU", self._currentSelection - 1, self.topEdge - 1)
     end
 end
 
@@ -591,7 +587,7 @@ function UIMenu:AddItem(item)
     self.Items[#self.Items + 1] = item
     if self:Visible() then
         local idx = #self.Items - 1
-        self:SendItemToScaleform(idx)
+        self:SendItemToScaleform(idx, false, false, #self.Items <= idx)
     end
     -- add build new item (sent slot)
 end
@@ -605,6 +601,7 @@ function UIMenu:AddItemAt(item, index)
     table.insert(self.Items, index, item)
     if self:Visible() then
         self:SendItemToScaleform(index, false, true)
+        self:RefreshMenu(true)
     end
 end
 
@@ -614,11 +611,20 @@ function UIMenu:RemoveItemAt(index)
     if tonumber(index) then
         if self.Items[index] then
             table.remove(self.Items, index)
+            local idx = self:CurrentSelection()
+            if #self.Items < idx then
+                self:CurrentSelection(idx)
+            end
+            if self:CurrentSelection() == index then
+                self:CurrentSelection(self:CurrentSelection() - 1)
+            end
             if self:Visible() then
+                ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_DATA_SLOT", index - 1)
                 self:RefreshMenu(true)
             end
         else
-            print("ScaleformUI - UIMenu:RemoveItemAt - Index out of range (Index: " .. index .. ", Items: " .. #self.Items .. ")")
+            print("ScaleformUI - UIMenu:RemoveItemAt - Index out of range (Index: " ..
+            index .. ", Items: " .. #self.Items .. ")")
         end
     end
 end
@@ -654,7 +660,7 @@ function UIMenu:MaxItemsOnScreen(max)
         return self._maxItemsOnScreen
     end
     self._maxItemsOnScreen = max
-    self:BuildUpMenuAsync()
+    self:BuildMenu()
 end
 
 function UIMenu:SwitchTo(newMenu, newMenuCurrentSelection, inheritOldMenuParams)
@@ -691,7 +697,7 @@ function UIMenu:Visible(bool)
                     "UIMenu " .. self:Title() .. " menu is empty... Closing and clearing history.")
             end
             ScaleformUI.Scaleforms.InstructionalButtons:SetInstructionalButtons(self.InstructionalButtons)
-            self:BuildUpMenuAsync()
+            self:BuildMenu()
             MenuHandler._currentMenu = self
             MenuHandler.ableToDraw = true
             self.OnMenuOpen(self)
@@ -706,15 +712,19 @@ function UIMenu:Visible(bool)
             MenuHandler.ableToDraw = false
             if #self._unfilteredMenuItems > 0 then
                 self:Clear()
-                self.Items = _unfilteredMenuItems.ToList()
-                self._currentSelection = _unfilteredSelection
-                self.topEdge = _unfilteredTopEdge
+                self.Items = self._unfilteredMenuItems.ToList()
+                self._currentSelection = self._unfilteredSelection
+                self.topEdge = self._unfilteredTopEdge
                 self._unfilteredMenuItems.Clear()
                 self._unfilteredSelection = 1
                 self._unfilteredTopEdge = 1
             end
             self.OnMenuClose(self)
         end
+        --hack to make sure the current item is selected
+        self:CurrentSelection(self._currentSelection)
+        ScaleformUI.Scaleforms._ui:CallFunction("SET_VISIBLE", self._Visible, self:CurrentSelection() - 1,
+            self.topEdge - 1)
         if self.Settings.ResetCursorOnOpen then
             SetCursorLocation(0.5, 0.5)
             SetCursorSprite(1)
@@ -725,7 +735,7 @@ function UIMenu:Visible(bool)
 end
 
 ---BuildUpMenu
-function UIMenu:BuildUpMenuAsync(itemsOnly)
+function UIMenu:BuildMenu(itemsOnly)
     if itemsOnly == nil then itemsOnly = false end
     self._isBuilding = true
 
@@ -737,7 +747,6 @@ function UIMenu:BuildUpMenuAsync(itemsOnly)
         return
     end
     self:SendItems()
-    ScaleformUI.Scaleforms._ui:CallFunction("SET_VISIBLE", self._Visible, self:CurrentSelection() - 1, self.topEdge - 1)
     self:SendPanelsToItemScaleform(self:CurrentSelection())
     self:SendSidePanelToScaleform(self:CurrentSelection())
     if self._Visible then
@@ -927,9 +936,10 @@ function UIMenu:SendPanelsToItemScaleform(i, update)
     end
 end
 
-function UIMenu:SendItemToScaleform(i, update, newItem)
+function UIMenu:SendItemToScaleform(i, update, newItem, isSlot)
     if update == nil then update = false end
     if newItem == nil then newItem = false end
+    if isSlot == nil then isSlot = false end
     local item = self.Items[i]
     local str = "SET_DATA_SLOT"
     if update then
@@ -937,6 +947,9 @@ function UIMenu:SendItemToScaleform(i, update, newItem)
     end
     if newItem then
         str = "SET_DATA_SLOT_SPLICE"
+    end
+    if isSlot then
+        str = "ADD_SLOT"
     end
     local Type, SubType = item()
     local it = item
@@ -1538,7 +1551,7 @@ function UIMenu:ProcessMouse()
     SetInputExclusive(2, 238)
 
     success, event_type, context, item_id = GetScaleformMovieCursorSelection(ScaleformUI.Scaleforms._ui.handle)
-    
+
     if success == 1 then
         if event_type == 5 then --ON CLICK
             if context == -1 then
