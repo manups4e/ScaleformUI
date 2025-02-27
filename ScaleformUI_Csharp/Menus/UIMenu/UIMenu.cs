@@ -2046,6 +2046,7 @@ namespace ScaleformUI.Menu
                 list.Sort(compare);
                 MenuItems = list.ToList();
                 BuildMenu(true);
+                RefreshMenu(false);
             }
             catch (Exception ex)
             {
@@ -2091,6 +2092,7 @@ namespace ScaleformUI.Menu
                 topEdge = 0;
 
                 BuildMenu(true);
+                RefreshMenu(false);
             }
             catch (Exception ex)
             {
@@ -2116,6 +2118,7 @@ namespace ScaleformUI.Menu
                 _unfilteredSelection = 0;
                 _unfilteredTopEdge = 0;
                 BuildMenu(true);
+                RefreshMenu(false);
             }
             catch (Exception ex)
             {

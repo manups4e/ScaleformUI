@@ -636,6 +636,7 @@ function UIMenu:RemoveItem(item)
     for k, v in pairs(self.Items) do
         if v:Label() == item:Label() then
             idx = k
+            break
         end
     end
     if idx > 0 then
@@ -712,10 +713,10 @@ function UIMenu:Visible(bool)
             MenuHandler.ableToDraw = false
             if #self._unfilteredMenuItems > 0 then
                 self:Clear()
-                self.Items = self._unfilteredMenuItems.ToList()
+                self.Items = self._unfilteredMenuItems
                 self._currentSelection = self._unfilteredSelection
                 self.topEdge = self._unfilteredTopEdge
-                self._unfilteredMenuItems.Clear()
+                self._unfilteredMenuItems = {}
                 self._unfilteredSelection = 1
                 self._unfilteredTopEdge = 1
             end
@@ -1036,12 +1037,14 @@ function UIMenu:FilterMenuItems(predicate, fail)
         self:CurrentSelection(self._unfilteredSelection)
         self.topEdge = self._unfilteredTopEdge
         self:SendItems()
+        self:RefreshMenu()
         fail()
         return
     end
     self:CurrentSelection(1)
     self.topEdge = 1
     self:SendItems()
+    self:RefreshMenu()
 end
 
 function UIMenu:SortMenuItems(compare)
@@ -1059,6 +1062,7 @@ function UIMenu:SortMenuItems(compare)
     self:CurrentSelection(1)
     self.topEdge = 1
     self:SendItems()
+    self:RefreshMenu()
 end
 
 function UIMenu:ResetFilter()
@@ -1070,6 +1074,7 @@ function UIMenu:ResetFilter()
         self:CurrentSelection(self._unfilteredSelection)
         self.topEdge = self._unfilteredTopEdge
         self:SendItems()
+        self:RefreshMenu()
     end
 end
 
