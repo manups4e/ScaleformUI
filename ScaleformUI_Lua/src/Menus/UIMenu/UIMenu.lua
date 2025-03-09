@@ -993,7 +993,7 @@ function UIMenu:SendItemToScaleform(i, update, newItem, isSlot)
     elseif SubType == "UIMenuStatsItem" then
         PushScaleformMovieFunctionParameterInt(item:Index())
         PushScaleformMovieFunctionParameterInt(item._Type)
-        PushScaleformMovieFunctionParameterInt(item:SliderColor())
+        PushScaleformMovieFunctionParameterInt(item:SliderColor():ToArgb())
         PushScaleformMovieFunctionParameterInt(item:MainColor():ToArgb())
         PushScaleformMovieFunctionParameterInt(item:HighlightColor():ToArgb())
     elseif SubType == "UIMenuSeparatorItem" then
