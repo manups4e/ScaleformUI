@@ -61,7 +61,7 @@ Citizen.CreateThread(function()
                 -- Cache frontend menu version check
                 local currentMenuVersion = GetCurrentFrontendMenuVersion()
                 
-                if currentMenuVersion == FE_MENU_VERSION_CORONA then
+                if currentMenuVersion == `FE_MENU_VERSION_CORONA` then
                     SetScriptGfxDrawBehindPausemenu(true)
                     
                     BeginScaleformMovieMethodOnFrontend("INSTRUCTIONAL_BUTTONS")

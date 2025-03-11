@@ -530,6 +530,7 @@ end
 ---@param value number|nil
 function UIMenu:CurrentSelection(value)
     if value ~= nil then
+        assert(#self.Items > 0, "ScaleformUI - Cannot set CurrentSelection on an empty menu!")
         self:CurrentItem():Selected(false)
         self._currentSelection = math.max(1, math.min(value, #self.Items))
 
@@ -586,8 +587,9 @@ function UIMenu:AddItem(item)
     item:SetParentMenu(self)
     self.Items[#self.Items + 1] = item
     if self:Visible() then
-        local idx = #self.Items - 1
-        self:SendItemToScaleform(idx, false, false, #self.Items <= idx)
+        local idx = #self.Items
+        self:SendItemToScaleform(idx, false, false, #self.Items <= self:MaxItemsOnScreen())
+        self.Items[idx]:Selected(idx == 1)
     end
     -- add build new item (sent slot)
 end
@@ -609,22 +611,23 @@ end
 ---@param index number
 function UIMenu:RemoveItemAt(index)
     if tonumber(index) then
-        if self.Items[index] then
+        local idx = self:CurrentSelection()
+        if #self.Items >= index then
             table.remove(self.Items, index)
-            local idx = self:CurrentSelection()
-            if #self.Items < idx then
-                self:CurrentSelection(idx)
-            end
-            if self:CurrentSelection() == index then
-                self:CurrentSelection(self:CurrentSelection() - 1)
-            end
-            if self:Visible() then
-                ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_DATA_SLOT", index - 1)
-                self:RefreshMenu(true)
+            if #self.Items > 0 then
+                if self:Visible() then
+                    ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_DATA_SLOT", index - 1)
+                    self:RefreshMenu(true)
+                end
+                if idx >= #self.Items then
+                    self:CurrentSelection(idx)
+                else
+                    self:CurrentSelection(#self.Items)
+                end
             end
         else
             print("ScaleformUI - UIMenu:RemoveItemAt - Index out of range (Index: " ..
-            index .. ", Items: " .. #self.Items .. ")")
+                index .. ", Items: " .. #self.Items .. ")")
         end
     end
 end
@@ -722,10 +725,9 @@ function UIMenu:Visible(bool)
             end
             self.OnMenuClose(self)
         end
+        ScaleformUI.Scaleforms._ui:CallFunction("SET_VISIBLE", self._Visible, self:CurrentSelection() - 1, self.topEdge - 1)
         --hack to make sure the current item is selected
         self:CurrentSelection(self._currentSelection)
-        ScaleformUI.Scaleforms._ui:CallFunction("SET_VISIBLE", self._Visible, self:CurrentSelection() - 1,
-            self.topEdge - 1)
         if self.Settings.ResetCursorOnOpen then
             SetCursorLocation(0.5, 0.5)
             SetCursorSprite(1)
@@ -747,6 +749,7 @@ function UIMenu:BuildMenu(itemsOnly)
     if not self:Visible() then
         return
     end
+    assert(#self.Items > 0, "ScaleformUI - Cannot build an empty menu!")
     self:SendItems()
     self:SendPanelsToItemScaleform(self:CurrentSelection())
     self:SendSidePanelToScaleform(self:CurrentSelection())
