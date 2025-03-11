@@ -614,20 +614,20 @@ function UIMenu:RemoveItemAt(index)
         local idx = self:CurrentSelection()
         if #self.Items >= index then
             table.remove(self.Items, index)
+            if self:Visible() then
+                ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_DATA_SLOT", index - 1)
+                self:RefreshMenu(true)
+            end
             if #self.Items > 0 then
-                if self:Visible() then
-                    ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_DATA_SLOT", index - 1)
-                    self:RefreshMenu(true)
-                end
-                if idx >= #self.Items then
+                if #self.Items >= idx then
                     self:CurrentSelection(idx)
                 else
                     self:CurrentSelection(#self.Items)
                 end
+            else
+                print("ScaleformUI - UIMenu:RemoveItemAt - Index out of range (Index: " ..
+                    index .. ", Items: " .. #self.Items .. ")")
             end
-        else
-            print("ScaleformUI - UIMenu:RemoveItemAt - Index out of range (Index: " ..
-                index .. ", Items: " .. #self.Items .. ")")
         end
     end
 end
@@ -725,7 +725,8 @@ function UIMenu:Visible(bool)
             end
             self.OnMenuClose(self)
         end
-        ScaleformUI.Scaleforms._ui:CallFunction("SET_VISIBLE", self._Visible, self:CurrentSelection() - 1, self.topEdge - 1)
+        ScaleformUI.Scaleforms._ui:CallFunction("SET_VISIBLE", self._Visible, self:CurrentSelection() - 1,
+            self.topEdge - 1)
         --hack to make sure the current item is selected
         self:CurrentSelection(self._currentSelection)
         if self.Settings.ResetCursorOnOpen then
