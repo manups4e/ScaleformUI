@@ -1185,7 +1185,6 @@ public class MenuExample : BaseScript
         basicTab.UpdateBackground("scaleformui", "pausebigbg");
         basicTab.AddPicture("scaleformui", "rightPic");
         basicTab.AddItem(new BasicTabItem("~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
-        basicTab.LabelsList[0].LabelFont = ScaleformFonts.HANDSTYLE_HEIST;
         basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
         basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~b~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
         basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~g~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
@@ -1196,6 +1195,18 @@ public class MenuExample : BaseScript
         basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
         basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
         basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
+        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
+        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
+        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
+        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
+        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
+        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
+        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
+        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
+        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
+        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
+        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
         basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
         pauseMenu.AddTab(basicTab);
 
@@ -1255,18 +1266,22 @@ public class MenuExample : BaseScript
         third.AddItem(_coloredBarStatItem4);
 
         List<dynamic> itemList = new List<dynamic>() { "This", "Is", "The", "List", "Super", "Power", "Wooow" };
-        SettingsItem _settings1 = new SettingsItem("Item's Label", "Item's right Label");
-        SettingsItem _settings2 = new SettingsListItem("Item's Label", itemList, 0);
-        SettingsItem _settings3 = new SettingsProgressItem("Item's Label", 100, 25, false, SColor.HUD_Freemode);
-        SettingsItem _settings4 = new SettingsProgressItem("Item's Label", 100, 75, true, SColor.HUD_Pink);
-        SettingsItem _settings5 = new SettingsCheckboxItem("Item's Label", UIMenuCheckboxStyle.Tick, true);
-        SettingsItem _settings6 = new SettingsSliderItem("Item's Label", 100, 50, SColor.HUD_Red);
+        SettingsItem _settings1 = new SettingsItem("Basic Item's Label", "Item's right Label");
+        SettingsItem _settings2 = new SettingsListItem("List Item's Label", itemList, 0);
+        SettingsItem _settings3 = new SettingsProgressItem("Progress Item's Label", 100, 25, false, SColor.HUD_Freemode);
+        SettingsItem _settings4 = new SettingsProgressItem("Masked Progress Item's Label", 100, 75, true, SColor.HUD_Pink);
+        SettingsItem _settings5 = new SettingsCheckboxItem("Checkbox Item's Label", UIMenuCheckboxStyle.Tick, true);
+        SettingsItem _settings6 = new SettingsSliderItem("Slider Item's Label", 100, 50, SColor.HUD_Red);
+        SettingsItem _settings7 = new SettingsItem("Separator Item's Label", "") { ItemType = SettingsItemType.Separator };
+        SettingsItem _settings8 = new SettingsItem("BLIP Item's Label ~BLIP_INFO_ICON~ ~INPUT_CONTEXT~", "Right Label") { ItemType = SettingsItemType.BlipType };
         fourth.AddItem(_settings1);
         fourth.AddItem(_settings2);
         fourth.AddItem(_settings3);
         fourth.AddItem(_settings4);
         fourth.AddItem(_settings5);
         fourth.AddItem(_settings6);
+        fourth.AddItem(_settings7);
+        fourth.AddItem(_settings8);
 
         fifth.RightTitle = "ACTION";
         fifth.KeymapRightLabel_1 = "PRIMARY";
@@ -1919,6 +1934,16 @@ public class MenuExample : BaseScript
                 World.CreateBlip(new Vector3(365, -422, 45));
 
                 var overlay2 = await MinimapOverlays.AddSizedOverlayToMap("scaleformui", "wallp", 2000, 1000, centered: true);
+
+                List<Vector3> list = new List<Vector3>()
+                {
+                    new Vector3(-100.78f, -1129.4f, 25.8f),
+                    new Vector3(36.1f, -1120.28f, 19.2f),
+                    new Vector3(91.26f, -1004.77f, 29.35f),
+                    new Vector3(-24.42f, -963.52f, 29.35f),
+                };
+
+                var areaoverlay = await MinimapOverlays.AddAreaOverlay(list, false, SColor.FromArgb(180, SColor.HUD_Red));
 
                 overlay1.OnMouseEvent += (ev) =>
                 {

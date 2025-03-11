@@ -238,6 +238,28 @@ namespace ScaleformUI.Scaleforms
             return await addOverlay("ADD_SCALED_OVERLAY", textureDict, textureName, x, y, rotation, xScale, yScale, alpha, centered);
         }
 
+        public static async Task<MinimapOverlay> AddAreaOverlay(List<Vector3> coords, bool outline, SColor color)
+        {
+
+            List<Vector2> res = coords.ConvertAll(x => (Vector2)x);
+            IEnumerable<string> joined = res.Select(vec => $"{vec.X}:{vec.Y}");
+            string tobesent = string.Join(",", joined);
+            Debug.WriteLine("ToBeSent: " + tobesent);
+
+            CallMinimapScaleformFunction(overlay, "ADD_AREA_OVERLAY");
+            ScaleformMovieMethodAddParamPlayerNameString(tobesent);
+            ScaleformMovieMethodAddParamBool(outline);
+            ScaleformMovieMethodAddParamInt(color.R);
+            ScaleformMovieMethodAddParamInt(color.G);
+            ScaleformMovieMethodAddParamInt(color.B);
+            ScaleformMovieMethodAddParamInt(color.A);
+            EndScaleformMovieMethod();
+
+            MinimapOverlay minOv = new MinimapOverlay(minimaps.Count + 1, "", "", new Vector2(0), 0, new SizeF(0,0), 255, false);
+            minimaps.Add(minOv);
+            return minOv;
+        }
+
         /// <summary>
         /// Sets the selected overlay's color (argb)
         /// </summary>

@@ -566,7 +566,8 @@ namespace ScaleformUI.Menu
                 if (Visible)
                 {
                     var idx = MenuItems.Count - 1;
-                    SendItemToScaleform(idx, false, false, isSlot:MenuItems.Count <= MaxItemsOnScreen);
+                    SendItemToScaleform(idx, false, false, isSlot: MenuItems.Count <= MaxItemsOnScreen);
+                    item.Selected = idx == 0;
                 }
             }
             else throw new Exception("ScaleformUI - You cannot add items to an itemless menu, only a long description");
@@ -634,8 +635,13 @@ namespace ScaleformUI.Menu
             if (MenuItems.Count > index)
             {
                 MenuItems.RemoveAt(index);
-                if (selectedItem < MenuItems.Count)
-                    CurrentSelection = selectedItem;
+                if (MenuItems.Count > 0)
+                {
+                    if (selectedItem < MenuItems.Count)
+                        CurrentSelection = selectedItem;
+                    else
+                        CurrentSelection = MenuItems.Count - 1;
+                }
                 if (Visible)
                 {
                     Main.scaleformUI.CallFunction("REMOVE_DATA_SLOT", index);
@@ -660,6 +666,7 @@ namespace ScaleformUI.Menu
         {
             if (Visible)
                 Main.scaleformUI.CallFunction("SET_DATA_SLOT_EMPTY");
+            AddTextEntry("UIMenu_Current_Description", "");
             MenuItems.Clear();
             _currentSelection = 0;
             topEdge = 0;
@@ -1382,16 +1389,16 @@ namespace ScaleformUI.Menu
 
         public async void GoLeft()
         {
-            if (!MenuItems[CurrentSelection].Enabled)
+            if (!CurrentItem.Enabled)
             {
                 Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
                 return;
             }
-            switch (MenuItems[CurrentSelection])
+            switch (CurrentItem)
             {
                 case UIMenuListItem:
                     {
-                        UIMenuListItem it = (UIMenuListItem)MenuItems[CurrentSelection];
+                        UIMenuListItem it = (UIMenuListItem)CurrentItem;
                         it.Index--;
                         ListChange(it, it.Index);
                         it.ListChangedTrigger(it.Index);
@@ -1399,28 +1406,28 @@ namespace ScaleformUI.Menu
                     }
                 case UIMenuDynamicListItem:
                     {
-                        UIMenuDynamicListItem it = (UIMenuDynamicListItem)MenuItems[CurrentSelection];
+                        UIMenuDynamicListItem it = (UIMenuDynamicListItem)CurrentItem;
                         string newItem = await it.Callback(it, ChangeDirection.Left);
                         it.CurrentListItem = newItem;
                         break;
                     }
                 case UIMenuSliderItem:
                     {
-                        UIMenuSliderItem it = (UIMenuSliderItem)MenuItems[CurrentSelection];
+                        UIMenuSliderItem it = (UIMenuSliderItem)CurrentItem;
                         it.Value--;
                         SliderChange(it, it.Value);
                         break;
                     }
                 case UIMenuProgressItem:
                     {
-                        UIMenuProgressItem it = (UIMenuProgressItem)MenuItems[CurrentSelection];
+                        UIMenuProgressItem it = (UIMenuProgressItem)CurrentItem;
                         it.Value--;
                         ProgressChange(it, it.Value);
                         break;
                     }
                 case UIMenuStatsItem:
                     {
-                        UIMenuStatsItem it = (UIMenuStatsItem)MenuItems[CurrentSelection];
+                        UIMenuStatsItem it = (UIMenuStatsItem)CurrentItem;
                         it.Value--;
                         StatItemChange(it, it.Value);
                         break;
@@ -1431,16 +1438,16 @@ namespace ScaleformUI.Menu
 
         public async void GoRight()
         {
-            if (!MenuItems[CurrentSelection].Enabled)
+            if (!CurrentItem.Enabled)
             {
                 Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
                 return;
             }
-            switch (MenuItems[CurrentSelection])
+            switch (CurrentItem)
             {
                 case UIMenuListItem:
                     {
-                        UIMenuListItem it = (UIMenuListItem)MenuItems[CurrentSelection];
+                        UIMenuListItem it = (UIMenuListItem)CurrentItem;
                         it.Index++;
                         ListChange(it, it.Index);
                         it.ListChangedTrigger(it.Index);
@@ -1448,28 +1455,28 @@ namespace ScaleformUI.Menu
                     }
                 case UIMenuDynamicListItem:
                     {
-                        UIMenuDynamicListItem it = (UIMenuDynamicListItem)MenuItems[CurrentSelection];
+                        UIMenuDynamicListItem it = (UIMenuDynamicListItem)CurrentItem;
                         string newItem = await it.Callback(it, ChangeDirection.Right);
                         it.CurrentListItem = newItem;
                         break;
                     }
                 case UIMenuSliderItem:
                     {
-                        UIMenuSliderItem it = (UIMenuSliderItem)MenuItems[CurrentSelection];
+                        UIMenuSliderItem it = (UIMenuSliderItem)CurrentItem;
                         it.Value++;
                         SliderChange(it, it.Value);
                         break;
                     }
                 case UIMenuProgressItem:
                     {
-                        UIMenuProgressItem it = (UIMenuProgressItem)MenuItems[CurrentSelection];
+                        UIMenuProgressItem it = (UIMenuProgressItem)CurrentItem;
                         it.Value++;
                         ProgressChange(it, it.Value);
                         break;
                     }
                 case UIMenuStatsItem:
                     {
-                        UIMenuStatsItem it = (UIMenuStatsItem)MenuItems[CurrentSelection];
+                        UIMenuStatsItem it = (UIMenuStatsItem)CurrentItem;
                         it.Value++;
                         StatItemChange(it, it.Value);
                         break;
@@ -1717,7 +1724,7 @@ namespace ScaleformUI.Menu
                     AddTextEntry("UIMenu_Current_Description", "");
                 }
                 //hack to make sure the current item is selected
-                CurrentSelection = _currentSelection;
+                Main.scaleformUI.CallFunction("SET_CURRENT_SELECTION", _currentSelection, topEdge);
                 Main.scaleformUI.CallFunction("SET_VISIBLE", _visible, CurrentSelection, topEdge);
                 if (!value) return;
                 if (!ResetCursorOnOpen) return;

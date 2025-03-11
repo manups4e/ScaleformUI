@@ -22,15 +22,16 @@ namespace ScaleformUI.PauseMenu
     public delegate void IndexChangeEvent(SettingsItem item, int index);
     public delegate void ActivatedEvent(TabLeftItem item, int index);
 
-    public class TabLeftItem
+    public class TabLeftItem : BasicTabItem
     {
-        internal UIMenuItem _internalItem;
+        internal UIMenuItem _internalItem {  get; set; }
         private bool enabled = true;
         private string label;
         internal string _formatLeftLabel;
         private SColor mainColor = SColor.HUD_Pause_bg;
         private SColor highlightColor = SColor.HUD_White;
         private string textTitle;
+        private string keymapLeftLabel;
         private string keymapRightLabel_1;
         private string keymapRightLabel_2;
         public string TextureDict { get; private set; }
@@ -96,6 +97,9 @@ namespace ScaleformUI.PauseMenu
 
                 if (value)
                 {
+                    Parent.CenterColumn.Items.Clear();
+                    if(ItemType != LeftItemType.Empty)
+                    Parent.CenterColumn.Items.AddRange(ItemList);
                     _formatLeftLabel = _formatLeftLabel.Replace("~w~", "~l~");
                     _formatLeftLabel = _formatLeftLabel.Replace("~s~", "~l~");
                 }
@@ -161,20 +165,22 @@ namespace ScaleformUI.PauseMenu
         public BaseTab Parent { get; set; }
 
         public TabLeftItem(string label, LeftItemType type) : this(label, type, SColor.HUD_Pause_bg, SColor.HUD_White) { }
-        public TabLeftItem(string label, LeftItemType type, SColor mainColor, SColor highlightColor)
+        public TabLeftItem(string label, LeftItemType type, SColor mainColor, SColor highlightColor) : base(label)
         {
             Label = label;
             ItemType = type;
             MainColor = mainColor;
             HighlightColor = highlightColor;
+            _internalItem = new UIMenuItem(label, "", SColor.HUD_Pause_bg, SColor.HUD_White);
         }
-        public TabLeftItem(string label, LeftItemType type, ItemFont labelFont, SColor mainColor, SColor highlightColor)
+        public TabLeftItem(string label, LeftItemType type, ItemFont labelFont, SColor mainColor, SColor highlightColor) : base(label)
         {
             Label = label;
             ItemType = type;
             MainColor = mainColor;
             HighlightColor = highlightColor;
             _labelFont = labelFont;
+            _internalItem = new UIMenuItem(label, "", SColor.HUD_Pause_bg, SColor.HUD_White);
         }
 
         /// <summary>

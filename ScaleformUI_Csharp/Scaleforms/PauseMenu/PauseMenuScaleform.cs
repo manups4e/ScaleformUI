@@ -1,6 +1,7 @@
 ﻿using CitizenFX.Core;
 using ScaleformUI.Elements;
 using ScaleformUI.Menu;
+using ScaleformUI.Menus;
 using System.Drawing;
 using static CitizenFX.Core.Native.API;
 
@@ -24,16 +25,21 @@ namespace ScaleformUI.Scaleforms
         public void Load()
         {
             _header = new ScaleformWideScreen("pausemenuheader");
-            _pause = new ScaleformWideScreen("pausemenu");
-            _lobby = new ScaleformWideScreen("lobbymenu");
-            _pauseBG = new ScaleformWideScreen("store_background");
+            _pause = new ScaleformWideScreen("ScaleformUIPause");
+            //_lobby = new ScaleformWideScreen("lobbymenu");
+            //_pauseBG = new ScaleformWideScreen("store_background");
         }
 
         internal void FadeInMenus()
         {
             _header.CallFunction("DRAW_MENU");
             _pause.CallFunction("DRAW_MENU");
-            _lobby.CallFunction("DRAW_MENU");
+            //_lobby.CallFunction("DRAW_MENU");
+        }
+
+        public void SetDataSlotEmpty(PM_COLUMNS column)
+        {
+            _pause.CallFunction("SET_DATA_SLOT_EMPTY", (int)column);
         }
 
         public void SetHeaderTitle(string title, string subtitle = "", bool shiftUpHeader = false)
@@ -90,9 +96,9 @@ namespace ScaleformUI.Scaleforms
             _header.CallFunction("SET_TAB_INDEX", tab);
         }
 
-        public void SetFocus(int focus)
+        public void SetFocus(int focus, bool bDontFallOff = false, bool bSkipInputSpamCheck = false)
         {
-            _pause.CallFunction("SET_FOCUS", focus);
+            _pause.CallFunction("MENU_SHIFT_DEPTH", focus, bDontFallOff, bSkipInputSpamCheck);
         }
 
         public void AddLeftItem(int type, string title, SColor itemColor, SColor highlightColor, bool enabled = true)
@@ -255,10 +261,10 @@ namespace ScaleformUI.Scaleforms
         {
             _visible = false;
             _pause?.CallFunction("CLEAR_ALL");
-            _lobby?.CallFunction("CLEAR_ALL");
+            //_lobby?.CallFunction("CLEAR_ALL");
             _header?.CallFunction("CLEAR_ALL");
             _pause?.Dispose();
-            _lobby?.Dispose();
+            //_lobby?.Dispose();
             _header?.Dispose();
             firstTick = true;
         }
@@ -286,13 +292,14 @@ namespace ScaleformUI.Scaleforms
                     ScreenTools.AdjustNormalized16_9ValuesForCurrentAspectRatio(3, ref headerPos, ref headerSize);
                     ScreenTools.AdjustNormalized16_9ValuesForCurrentAspectRatio(3, ref pausePos, ref pauseSize);
 
-                    if (BGEnabled)
-                        _pauseBG.Render2D();
                     DrawScaleformMovie(_header.Handle, headerPos.X, headerPos.Y, headerSize.Width, headerSize.Height, 255, 255, 255, 255, 0);
-                    if (!isLobby)
-                        DrawScaleformMovie(_pause.Handle, pausePos.X, pausePos.Y, pauseSize.Width, pauseSize.Height, 255, 255, 255, 255, 0);
-                    else
-                        DrawScaleformMovie(_lobby.Handle, pausePos.X, pausePos.Y, pauseSize.Width, pauseSize.Height, 255, 255, 255, 255, 0);
+                    DrawScaleformMovie(_pause.Handle, pausePos.X, pausePos.Y, pauseSize.Width, pauseSize.Height, 255, 255, 255, 255, 0);
+
+                    //if (BGEnabled)
+                    //    _pauseBG.Render2D();
+                    //if (!isLobby)
+                    //else
+                    //    DrawScaleformMovie(_lobby.Handle, pausePos.X, pausePos.Y, pauseSize.Width, pauseSize.Height, 255, 255, 255, 255, 0);
                 }
             }
         }

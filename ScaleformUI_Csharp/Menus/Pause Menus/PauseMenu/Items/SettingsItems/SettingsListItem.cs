@@ -4,7 +4,7 @@
     public delegate void SettingsListItemSelected(SettingsListItem item, int value, string listItem);
     public class SettingsListItem : SettingsItem
     {
-        private int itemIndex;
+        internal int itemIndex;
         public List<dynamic> ListItems { get; set; }
         public event SettingsListItemChanged OnListItemChanged;
         public event SettingsListItemSelected OnListItemSelected;
@@ -14,12 +14,8 @@
             set
             {
                 itemIndex = value;
-                if (Parent != null)
-                {
-                    int leftItem = Parent.Parent.LeftItemList.IndexOf(Parent);
-                    int rightIndex = Parent.ItemList.IndexOf(this);
-                    Parent.Parent.Parent._pause.SetRightSettingsItemIndex(leftItem, rightIndex, itemIndex);
-                }
+                if (Parent != null && Parent.Parent != null && Parent.Parent.Visible && Parent.Parent.Parent != null && Parent.Parent.Parent.Visible && Parent.Parent.CenterColumn.Items.Contains(this))
+                    Parent?.Parent?.UpdateSlot(Menus.PM_COLUMNS.MIDDLE, Parent.Parent.CenterColumn.Items.IndexOf(this));
                 ListChanged();
             }
         }

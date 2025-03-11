@@ -5,9 +5,14 @@
         Basic,
         ListItem,
         ProgressBar,
-        MaskedProgressBar,
         CheckBox,
-        SliderBar
+        MaskedProgressBar = 4,
+        BlipType,
+        Separator,
+        SliderBar,
+        Empty,
+        Basic_tabbed = 10,
+        Progress_tabbed = 20
     }
 
     public delegate void SettingsItemSelected(SettingsItem item);
@@ -24,15 +29,8 @@
             set
             {
                 enabled = value;
-                if (Parent != null && Parent.Parent != null && Parent.Parent.Parent != null && Parent.Parent.Parent.Visible)
-                {
-                    if (Parent.Selected)
-                    {
-                        int it = Parent.Parent.LeftItemList.IndexOf(Parent);
-                        int rIt = Parent.ItemList.IndexOf(this);
-                        Parent.Parent.Parent._pause._pause.CallFunction("ENABLE_RIGHT_ITEM", it, rIt, enabled);
-                    }
-                }
+                if (Parent != null && Parent.Parent != null && Parent.Parent.Visible && Parent.Parent.Parent != null && Parent.Parent.Parent.Visible && Parent.Parent.CenterColumn.Items.Contains(this))
+                    Parent?.Parent?.UpdateSlot(Menus.PM_COLUMNS.MIDDLE, Parent.Parent.CenterColumn.Items.IndexOf(this));
             }
         }
         public bool Hovered { get; internal set; }
@@ -45,12 +43,8 @@
             set
             {
                 rightLabel = value;
-                if (Parent != null)
-                {
-                    int leftItem = Parent.Parent.LeftItemList.IndexOf(Parent);
-                    int rightIndex = Parent.ItemList.IndexOf(this);
-                    Parent.Parent.Parent._pause.UpdateItemRightLabel(leftItem, rightIndex, rightLabel);
-                }
+                if (Parent != null && Parent.Parent != null && Parent.Parent.Visible && Parent.Parent.Parent != null && Parent.Parent.Parent.Visible && Parent.Parent.CenterColumn.Items.Contains(this))
+                    Parent?.Parent?.UpdateSlot(Menus.PM_COLUMNS.MIDDLE, Parent.Parent.CenterColumn.Items.IndexOf(this));
             }
         }
 

@@ -423,6 +423,7 @@ namespace ScaleformUI.Elements
         public static SColor FromArgb(int alpha, int red, int green, int blue) => new(Color.FromArgb(alpha, red, green, blue));
 
         public static SColor FromArgb(int alpha, Color baseColor) => new(Color.FromArgb(alpha, baseColor));
+        public static SColor FromArgb(int alpha, SColor baseColor) => new(Color.FromArgb(alpha, baseColor.R, baseColor.G, baseColor.B));
 
         public static SColor FromArgb(int red, int green, int blue) => FromArgb(byte.MaxValue, red, green, blue);
 

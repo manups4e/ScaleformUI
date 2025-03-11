@@ -2,11 +2,15 @@
 using CitizenFX.Core.Native;
 using ScaleformUI.Elements;
 using ScaleformUI.Menu;
+using ScaleformUI.Menus;
 using ScaleformUI.PauseMenus;
+using ScaleformUI.PauseMenus.Elements;
 using ScaleformUI.PauseMenus.Elements.Items;
 using ScaleformUI.PauseMenus.Elements.Panels;
 using ScaleformUI.Scaleforms;
+using System.Reflection.Emit;
 using static CitizenFX.Core.Native.API;
+using static CitizenFX.Core.UI.Screen;
 
 namespace ScaleformUI.PauseMenu
 {
@@ -59,6 +63,10 @@ namespace ScaleformUI.PauseMenu
                 Tabs[Index].LeftItemList[leftItemIndex].Selected = false;
                 leftItemIndex = value;
                 Tabs[Index].LeftItemList[leftItemIndex].Selected = true;
+                if(Tabs[Index] is SubmenuTab submenuTab && focusLevel > 0)
+                {
+                    _pause?._pause.CallFunction("MENU_STATE", (int)submenuTab.LeftItemList[leftItemIndex].ItemType);
+                }
                 SendPauseMenuLeftItemChange();
             }
         }
@@ -76,11 +84,28 @@ namespace ScaleformUI.PauseMenu
             get => focusLevel;
             set
             {
-                focusLevel = value;
-                _pause?.SetFocus(value);
+                var dir = value == focusLevel ? 0 : value < focusLevel ? -1 : 1;
+                focusLevel += dir;
+                _pause?.SetFocus(dir);
+                if (dir > 0 && Tabs.Count > 0 && focusLevel == 1)
+                {
+                    Tabs[Index].HighlightColumn(PM_COLUMNS.LEFT, 0);
+                }
                 SendPauseMenuFocusChange();
             }
         }
+
+        public async void ChangeMenuLevel(int dir)
+        {
+            while (isBuilding) await BaseScript.Delay(0);
+            focusLevel += dir;
+            _pause?.SetFocus(dir);
+            if (dir > 0 && Tabs.Count > 0 && focusLevel == 1)
+            {
+                Tabs[Index].HighlightColumn(PM_COLUMNS.LEFT, 0);
+            }
+        }
+
         public bool TemporarilyHidden { get; set; }
         public bool HideTabs { get; set; }
         public bool DisplayHeader = true;
@@ -148,8 +173,8 @@ namespace ScaleformUI.PauseMenu
                         _pause.AddPauseMenuTab(tab.Title, 0, tab._type, tab.TabColor);
                     }
                     Tabs[0].Visible = true;
-                    BuildPauseMenu();
                     MenuHandler.currentBase = this;
+                    BuildPauseMenu();
                     SendPauseMenuOpen();
                 }
                 else
@@ -187,8 +212,6 @@ namespace ScaleformUI.PauseMenu
         {
             get => index; set
             {
-                _pause._pause.CallFunction("CLEAR_ALL");
-                _pause._pause.CallFunction("FADE_OUT");
                 Tabs[Index].Visible = false;
                 index = value;
                 if (index > Tabs.Count - 1)
@@ -250,201 +273,193 @@ namespace ScaleformUI.PauseMenu
             if (!HasStreamedTextureDictLoaded("commonmenu"))
                 RequestStreamedTextureDict("commonmenu", true);
             BaseTab tab = Tabs[Index];
+            _pause._pause.CallFunction("LOAD_CHILD_PAGE", tab._identifier);
+            tab.Populate();
+            tab.ShowColumns();
             switch (tab._type)
             {
-                case 0:
+                case 0: // will be removed... texttab is the default now
                     {
-                        TextTab simpleTab = (TextTab)tab;
-                        _pause._pause.CallFunction("ADD_TAB", 0);
-                        if (!string.IsNullOrWhiteSpace(simpleTab.TextTitle))
-                            _pause.AddRightTitle(0, simpleTab.TextTitle);
-                        for (int j = 0; j < simpleTab.LabelsList.Count; j++)
-                        {
-                            BasicTabItem it = simpleTab.LabelsList[j];
-                            _pause.AddRightListLabel(0, it.Label, it.LabelFont.FontName, it.LabelFont.FontID);
-                        }
-                        if (!(string.IsNullOrWhiteSpace(simpleTab.BGTextureDict) && string.IsNullOrWhiteSpace(simpleTab.BGTextureName)))
-                            _pause._pause.CallFunction("UPDATE_BASE_TAB_BACKGROUND", simpleTab.BGTextureDict, simpleTab.BGTextureName);
-                        if (!(string.IsNullOrWhiteSpace(simpleTab.RightTextureDict) && string.IsNullOrWhiteSpace(simpleTab.RightTextureName)))
-                            _pause._pause.CallFunction("SET_BASE_TAB_RIGHT_PICTURE", simpleTab.RightTextureDict, simpleTab.RightTextureName);
+                        //if (!(string.IsNullOrWhiteSpace(simpleTab.BGTextureDict) && string.IsNullOrWhiteSpace(simpleTab.BGTextureName)))
+                        //    _pause._pause.CallFunction("UPDATE_BASE_TAB_BACKGROUND", simpleTab.BGTextureDict, simpleTab.BGTextureName);
+                        //if (!(string.IsNullOrWhiteSpace(simpleTab.RightTextureDict) && string.IsNullOrWhiteSpace(simpleTab.RightTextureName)))
+                        //    _pause._pause.CallFunction("SET_BASE_TAB_RIGHT_PICTURE", simpleTab.RightTextureDict, simpleTab.RightTextureName);
                     }
                     break;
-                case 1:
-                    {
-                        SubmenuTab submenu = (SubmenuTab)tab;
-                        _pause._pause.CallFunction("ADD_TAB", 1);
-                        for (int j = 0; j < submenu.LeftItemList.Count; j++)
-                        {
-                            TabLeftItem item = submenu.LeftItemList[j];
-                            _pause.AddLeftItem((int)item.ItemType, item._formatLeftLabel, item.MainColor, item.HighlightColor);
+                    //    case 1:
+                    //        {
+                    //            SubmenuTab submenu = (SubmenuTab)tab;
+                    //            _pause._pause.CallFunction("ADD_TAB", 1);
+                    //            for (int j = 0; j < submenu.LeftItemList.Count; j++)
+                    //            {
+                    //                TabLeftItem item = submenu.LeftItemList[j];
+                    //                _pause.AddLeftItem((int)item.ItemType, item._formatLeftLabel, item.MainColor, item.HighlightColor);
 
-                            if (item._labelFont != ScaleformFonts.CHALET_LONDON_NINETEENSIXTY)
-                                _pause._pause.CallFunction("SET_LEFT_ITEM_LABEL_FONT", j, item._labelFont.FontName, item._labelFont.FontID);
-                            //_pause._pause.CallFunction("SET_LEFT_ITEM_RIGHT_LABEL_FONT", i, j, item._labelFont.FontName, item._labelFont.FontID);
+                    //                if (item._labelFont != ScaleformFonts.CHALET_LONDON_NINETEENSIXTY)
+                    //                    _pause._pause.CallFunction("SET_LEFT_ITEM_LABEL_FONT", j, item._labelFont.FontName, item._labelFont.FontID);
+                    //                //_pause._pause.CallFunction("SET_LEFT_ITEM_RIGHT_LABEL_FONT", i, j, item._labelFont.FontName, item._labelFont.FontID);
 
-                            if (!string.IsNullOrWhiteSpace(item.RightTitle))
-                            {
-                                if (item.ItemType == LeftItemType.Keymap)
-                                    _pause.AddKeymapTitle(j, item.RightTitle, item.KeymapRightLabel_1, item.KeymapRightLabel_2);
-                                else
-                                    _pause.AddRightTitle(j, item.RightTitle);
-                            }
+                    //                if (!string.IsNullOrWhiteSpace(item.RightTitle))
+                    //                {
+                    //                    if (item.ItemType == LeftItemType.Keymap)
+                    //                        _pause.AddKeymapTitle(j, item.RightTitle, item.KeymapRightLabel_1, item.KeymapRightLabel_2);
+                    //                    else
+                    //                        _pause.AddRightTitle(j, item.RightTitle);
+                    //                }
 
 
-                            for (int k = 0; k < item.ItemList.Count; k++)
-                            {
-                                BasicTabItem ii = item.ItemList[k];
-                                switch (ii)
-                                {
-                                    default:
-                                        {
-                                            _pause.AddRightListLabel(j, ii.Label, ii.LabelFont.FontName, ii.LabelFont.FontID);
-                                        }
-                                        break;
-                                    case StatsTabItem:
-                                        {
-                                            StatsTabItem sti = ii as StatsTabItem;
-                                            switch (sti.Type)
-                                            {
-                                                case StatItemType.Basic:
-                                                    _pause.AddRightStatItemLabel(j, sti.Label, sti.RightLabel, sti.LabelFont, sti.rightLabelFont);
-                                                    break;
-                                                case StatItemType.ColoredBar:
-                                                    _pause.AddRightStatItemColorBar(j, sti.Label, sti.Value, sti.ColoredBarColor, sti.labelFont);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case SettingsItem:
-                                        {
-                                            SettingsItem sti = ii as SettingsItem;
-                                            switch (sti.ItemType)
-                                            {
-                                                case SettingsItemType.Basic:
-                                                    _pause.AddRightSettingsBaseItem(j, sti.Label, sti.RightLabel, sti.Enabled);
-                                                    break;
-                                                case SettingsItemType.ListItem:
-                                                    SettingsListItem lis = (SettingsListItem)sti;
-                                                    _pause.AddRightSettingsListItem(j, lis.Label, lis.ListItems, lis.ItemIndex, lis.Enabled);
-                                                    break;
-                                                case SettingsItemType.ProgressBar:
-                                                    SettingsProgressItem prog = (SettingsProgressItem)sti;
-                                                    _pause.AddRightSettingsProgressItem(j, prog.Label, prog.MaxValue, prog.ColoredBarColor, prog.Value, prog.Enabled);
-                                                    break;
-                                                case SettingsItemType.MaskedProgressBar:
-                                                    SettingsProgressItem prog_alt = (SettingsProgressItem)sti;
-                                                    _pause.AddRightSettingsProgressItemAlt(j, sti.Label, prog_alt.MaxValue, prog_alt.ColoredBarColor, prog_alt.Value, prog_alt.Enabled);
-                                                    break;
-                                                case SettingsItemType.CheckBox:
-                                                    SettingsCheckboxItem check = (SettingsCheckboxItem)sti;
-                                                    _pause.AddRightSettingsCheckboxItem(j, check.Label, check.CheckBoxStyle, check.IsChecked, check.Enabled);
-                                                    break;
-                                                case SettingsItemType.SliderBar:
-                                                    SettingsSliderItem slid = (SettingsSliderItem)sti;
-                                                    _pause.AddRightSettingsSliderItem(j, slid.Label, slid.MaxValue, slid.ColoredBarColor, slid.Value, slid.Enabled);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-                                    case KeymapItem:
-                                        KeymapItem ki = ii as KeymapItem;
-                                        if (IsUsingKeyboard(2))
-                                            _pause.AddKeymapItem(j, ki.Label, ki.PrimaryKeyboard, ki.SecondaryKeyboard);
-                                        else
-                                            _pause.AddKeymapItem(j, ki.Label, ki.PrimaryGamepad, ki.SecondaryGamepad);
-                                        UpdateKeymapItems();
-                                        break;
-                                }
-                            }
+                    //                for (int k = 0; k < item.ItemList.Count; k++)
+                    //                {
+                    //                    BasicTabItem ii = item.ItemList[k];
+                    //                    switch (ii)
+                    //                    {
+                    //                        default:
+                    //                            {
+                    //                                _pause.AddRightListLabel(j, ii.Label, ii.LabelFont.FontName, ii.LabelFont.FontID);
+                    //                            }
+                    //                            break;
+                    //                        case StatsTabItem:
+                    //                            {
+                    //                                StatsTabItem sti = ii as StatsTabItem;
+                    //                                switch (sti.Type)
+                    //                                {
+                    //                                    case StatItemType.Basic:
+                    //                                        _pause.AddRightStatItemLabel(j, sti.Label, sti.RightLabel, sti.LabelFont, sti.rightLabelFont);
+                    //                                        break;
+                    //                                    case StatItemType.ColoredBar:
+                    //                                        _pause.AddRightStatItemColorBar(j, sti.Label, sti.Value, sti.ColoredBarColor, sti.labelFont);
+                    //                                        break;
+                    //                                }
+                    //                            }
+                    //                            break;
+                    //                        case SettingsItem:
+                    //                            {
+                    //                                SettingsItem sti = ii as SettingsItem;
+                    //                                switch (sti.ItemType)
+                    //                                {
+                    //                                    case SettingsItemType.Basic:
+                    //                                        _pause.AddRightSettingsBaseItem(j, sti.Label, sti.RightLabel, sti.Enabled);
+                    //                                        break;
+                    //                                    case SettingsItemType.ListItem:
+                    //                                        SettingsListItem lis = (SettingsListItem)sti;
+                    //                                        _pause.AddRightSettingsListItem(j, lis.Label, lis.ListItems, lis.ItemIndex, lis.Enabled);
+                    //                                        break;
+                    //                                    case SettingsItemType.ProgressBar:
+                    //                                        SettingsProgressItem prog = (SettingsProgressItem)sti;
+                    //                                        _pause.AddRightSettingsProgressItem(j, prog.Label, prog.MaxValue, prog.ColoredBarColor, prog.Value, prog.Enabled);
+                    //                                        break;
+                    //                                    case SettingsItemType.MaskedProgressBar:
+                    //                                        SettingsProgressItem prog_alt = (SettingsProgressItem)sti;
+                    //                                        _pause.AddRightSettingsProgressItemAlt(j, sti.Label, prog_alt.MaxValue, prog_alt.ColoredBarColor, prog_alt.Value, prog_alt.Enabled);
+                    //                                        break;
+                    //                                    case SettingsItemType.CheckBox:
+                    //                                        SettingsCheckboxItem check = (SettingsCheckboxItem)sti;
+                    //                                        _pause.AddRightSettingsCheckboxItem(j, check.Label, check.CheckBoxStyle, check.IsChecked, check.Enabled);
+                    //                                        break;
+                    //                                    case SettingsItemType.SliderBar:
+                    //                                        SettingsSliderItem slid = (SettingsSliderItem)sti;
+                    //                                        _pause.AddRightSettingsSliderItem(j, slid.Label, slid.MaxValue, slid.ColoredBarColor, slid.Value, slid.Enabled);
+                    //                                        break;
+                    //                                }
+                    //                            }
+                    //                            break;
+                    //                        case KeymapItem:
+                    //                            KeymapItem ki = ii as KeymapItem;
+                    //                            if (IsUsingKeyboard(2))
+                    //                                _pause.AddKeymapItem(j, ki.Label, ki.PrimaryKeyboard, ki.SecondaryKeyboard);
+                    //                            else
+                    //                                _pause.AddKeymapItem(j, ki.Label, ki.PrimaryGamepad, ki.SecondaryGamepad);
+                    //                            UpdateKeymapItems();
+                    //                            break;
+                    //                    }
+                    //                }
 
-                            if (item.ItemType == LeftItemType.Info || item.ItemType == LeftItemType.Statistics || item.ItemType == LeftItemType.Settings)
-                            {
-                                if (!(string.IsNullOrWhiteSpace(item.TextureDict) && string.IsNullOrWhiteSpace(item.TextureName)))
-                                    _pause._pause.CallFunction("UPDATE_LEFT_ITEM_RIGHT_BACKGROUND", j, item.TextureDict, item.TextureName, (int)item.LeftItemBGType);
-                            }
+                    //                if (item.ItemType == LeftItemType.Info || item.ItemType == LeftItemType.Statistics || item.ItemType == LeftItemType.Settings)
+                    //                {
+                    //                    if (!(string.IsNullOrWhiteSpace(item.TextureDict) && string.IsNullOrWhiteSpace(item.TextureName)))
+                    //                        _pause._pause.CallFunction("UPDATE_LEFT_ITEM_RIGHT_BACKGROUND", j, item.TextureDict, item.TextureName, (int)item.LeftItemBGType);
+                    //                }
 
-                        }
-                    }
-                    break;
-                case 2:
-                    {
-                        PlayerListTab plTab = (PlayerListTab)tab;
-                        _pause._pause.CallFunction("ADD_TAB", 2);
-                        switch (plTab.listCol.Count)
-                        {
-                            case 1:
-                                _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", plTab.listCol[0].Type);
-                                _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", 0, plTab.listCol[0]._maxItems);
-                                break;
-                            case 2:
-                                _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", plTab.listCol[0].Type, plTab.listCol[1].Type);
-                                _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", 0, plTab.listCol[0]._maxItems);
-                                _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", 1, plTab.listCol[1]._maxItems);
-                                break;
-                            case 3:
-                                _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", plTab.listCol[0].Type, plTab.listCol[1].Type, plTab.listCol[2].Type);
-                                _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", 0, plTab.listCol[0]._maxItems);
-                                _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", 1, plTab.listCol[1]._maxItems);
-                                _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", 2, plTab.listCol[2]._maxItems);
-                                break;
-                        }
-                        _pause._pause.CallFunction("SET_PLAYERS_TAB_NEWSTYLE", plTab._newStyle);
-                        if (plTab.listCol.Any(x => x.Type == "settings"))
-                        {
-                            plTab.SettingsColumn.Parent = this;
-                            plTab.SettingsColumn.isBuilding = true;
-                            buildSettings(plTab);
-                        }
-                        if (plTab.listCol.Any(x => x.Type == "players"))
-                        {
-                            plTab.PlayersColumn.Parent = this;
-                            plTab.PlayersColumn.isBuilding = true;
-                            buildPlayers(plTab);
-                        }
-                        if (plTab.listCol.Any(x => x.Type == "missions"))
-                        {
-                            plTab.MissionsColumn.isBuilding = true;
-                            plTab.MissionsColumn.Parent = this;
-                            buildMissions(plTab);
-                        }
-                        if (plTab.listCol.Any(x => x.Type == "store"))
-                        {
-                            plTab.StoreColumn.isBuilding = true;
-                            plTab.StoreColumn.Parent = this;
-                            buildStore(plTab);
-                        }
-                        if (plTab.listCol.Any(x => x.Type == "panel"))
-                        {
-                            plTab.MissionPanel.Parent = this;
-                            buildPanel(plTab);
-                        }
-                        plTab.SelectColumn(0);
-                    }
-                    break;
-                case 3:
-                    _pause._pause.CallFunction("ADD_TAB", 3);
-                    GalleryTab glTab = (GalleryTab)tab;
-                    if (!string.IsNullOrEmpty(glTab.dateLabel) && !string.IsNullOrEmpty(glTab.locationLabel) && !string.IsNullOrEmpty(glTab.trackLabel))
-                        _pause._pause.CallFunction("SET_GALLERY_DESCRIPTION_LABELS", glTab.maxItemsPerPage, glTab.titleLabel, glTab.dateLabel, glTab.locationLabel, glTab.trackLabel, glTab.labelsVisible);
+                    //            }
+                    //        }
+                    //        break;
+                    //    case 2:
+                    //        {
+                    //            PlayerListTab plTab = (PlayerListTab)tab;
+                    //            _pause._pause.CallFunction("ADD_TAB", 2);
+                    //            switch (plTab.listCol.Count)
+                    //            {
+                    //                case 1:
+                    //                    _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", plTab.listCol[0].Type);
+                    //                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", 0, plTab.listCol[0]._maxItems);
+                    //                    break;
+                    //                case 2:
+                    //                    _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", plTab.listCol[0].Type, plTab.listCol[1].Type);
+                    //                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", 0, plTab.listCol[0]._maxItems);
+                    //                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", 1, plTab.listCol[1]._maxItems);
+                    //                    break;
+                    //                case 3:
+                    //                    _pause._pause.CallFunction("CREATE_PLAYERS_TAB_COLUMNS", plTab.listCol[0].Type, plTab.listCol[1].Type, plTab.listCol[2].Type);
+                    //                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", 0, plTab.listCol[0]._maxItems);
+                    //                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", 1, plTab.listCol[1]._maxItems);
+                    //                    _pause._pause.CallFunction("SET_PLAYERS_TAB_COLUMN_MAXITEMS", 2, plTab.listCol[2]._maxItems);
+                    //                    break;
+                    //            }
+                    //            _pause._pause.CallFunction("SET_PLAYERS_TAB_NEWSTYLE", plTab._newStyle);
+                    //            if (plTab.listCol.Any(x => x.Type == "settings"))
+                    //            {
+                    //                plTab.SettingsColumn.Parent = this;
+                    //                plTab.SettingsColumn.isBuilding = true;
+                    //                buildSettings(plTab);
+                    //            }
+                    //            if (plTab.listCol.Any(x => x.Type == "players"))
+                    //            {
+                    //                plTab.PlayersColumn.Parent = this;
+                    //                plTab.PlayersColumn.isBuilding = true;
+                    //                buildPlayers(plTab);
+                    //            }
+                    //            if (plTab.listCol.Any(x => x.Type == "missions"))
+                    //            {
+                    //                plTab.MissionsColumn.isBuilding = true;
+                    //                plTab.MissionsColumn.Parent = this;
+                    //                buildMissions(plTab);
+                    //            }
+                    //            if (plTab.listCol.Any(x => x.Type == "store"))
+                    //            {
+                    //                plTab.StoreColumn.isBuilding = true;
+                    //                plTab.StoreColumn.Parent = this;
+                    //                buildStore(plTab);
+                    //            }
+                    //            if (plTab.listCol.Any(x => x.Type == "panel"))
+                    //            {
+                    //                plTab.MissionPanel.Parent = this;
+                    //                buildPanel(plTab);
+                    //            }
+                    //            plTab.SelectColumn(0);
+                    //        }
+                    //        break;
+                    //    case 3:
+                    //        _pause._pause.CallFunction("ADD_TAB", 3);
+                    //        GalleryTab glTab = (GalleryTab)tab;
+                    //        if (!string.IsNullOrEmpty(glTab.dateLabel) && !string.IsNullOrEmpty(glTab.locationLabel) && !string.IsNullOrEmpty(glTab.trackLabel))
+                    //            _pause._pause.CallFunction("SET_GALLERY_DESCRIPTION_LABELS", glTab.maxItemsPerPage, glTab.titleLabel, glTab.dateLabel, glTab.locationLabel, glTab.trackLabel, glTab.labelsVisible);
 
-                    for (int i = 0; i < 12; i++)
-                    {
-                        if (i <= glTab.GalleryItems.Count - 1)
-                        {
-                            GalleryItem item = glTab.GalleryItems[i];
-                            _pause._pause.CallFunction("ADD_GALLERY_ITEM", i, i, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4);
-                            if (item.Blip != null)
-                                glTab.Minimap.MinimapBlips.Add(item.Blip);
-                        }
-                        else
-                            _pause._pause.CallFunction("ADD_GALLERY_ITEM", i, i, 33, 0, 0, 1, "", "", "", "", 1, false);
-                    }
-                    glTab.UpdatePage();
-                    _pause._pause.CallFunction("DISPLAY_GALLERY");
-                    break;
+                    //        for (int i = 0; i < 12; i++)
+                    //        {
+                    //            if (i <= glTab.GalleryItems.Count - 1)
+                    //            {
+                    //                GalleryItem item = glTab.GalleryItems[i];
+                    //                _pause._pause.CallFunction("ADD_GALLERY_ITEM", i, i, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4);
+                    //                if (item.Blip != null)
+                    //                    glTab.Minimap.MinimapBlips.Add(item.Blip);
+                    //            }
+                    //            else
+                    //                _pause._pause.CallFunction("ADD_GALLERY_ITEM", i, i, 33, 0, 0, 1, "", "", "", "", 1, false);
+                    //        }
+                    //        glTab.UpdatePage();
+                    //        _pause._pause.CallFunction("DISPLAY_GALLERY");
+                    //        break;
             }
-            _pause._pause.CallFunction("UPDATE_DRAWING");
-            _pause._pause.CallFunction("FADE_IN");
             isBuilding = false;
         }
 
@@ -652,228 +667,240 @@ namespace ScaleformUI.PauseMenu
 
         public async void Select(bool playSound)
         {
-            switch (FocusLevel)
+            if (focusLevel == 0)
             {
-                case 0:
-                    FocusLevel++;
-                    if (Tabs[Index] is PlayerListTab pl)
-                    {
-                        int selection = pl._newStyle ? pl.Focus : 0;
-                        switch (pl.listCol[selection].Type)
-                        {
-                            case "settings":
-                                pl.SettingsColumn.Items[pl.SettingsColumn.CurrentSelection].Selected = true;
-                                break;
-                            case "players":
-                                pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].Selected = true;
-                                if (pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].KeepPanelVisible)
-                                {
-                                    if (pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].ClonePed != null)
-                                        pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].CreateClonedPed();
-                                }
-                                break;
-                            case "missions":
-                                pl.MissionsColumn.Items[pl.MissionsColumn.CurrentSelection].Selected = true;
-                                break;
-                            case "store":
-                                pl.StoreColumn.Items[pl.StoreColumn.CurrentSelection].Selected = true;
-                                break;
-                        }
-                        if (pl.listCol.Any(x => x.Type == "players"))
-                            SetPauseMenuPedLighting(FocusLevel != 0);
-                    }
-                    else if (Tabs[Index] is GalleryTab gT)
-                    {
-                        if (gT.GalleryItems[gT.currentIndex].Blip != null)
-                        {
-                            _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
-                            _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
-                            gT.Minimap.Enabled = true;
-                            gT.Minimap.RefreshMapPosition(new Vector2(gT.GalleryItems[gT.currentIndex].Blip.Position.X, gT.GalleryItems[gT.currentIndex].Blip.Position.Y));
-                        }
-                        else if (!string.IsNullOrEmpty(gT.GalleryItems[gT.currentIndex].RightPanelDescription))
-                        {
-                            gT.Minimap.Enabled = false;
-                            AddTextEntry("gallerytab_desc", gT.GalleryItems[gT.currentIndex].RightPanelDescription);
-                            _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
-                            BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
-                            BeginTextCommandScaleformString("gallerytab_desc");
-                            EndTextCommandScaleformString_2();
-                            EndScaleformMovieMethod();
-                        }
-                        else
-                        {
-                            gT.Minimap.Enabled = false;
-                            _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
-                            _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
-                        }
-                        return;
-                    }
-                    else if (Tabs[Index] is SubmenuTab)
-                    {
-                        Tabs[Index].LeftItemList[LeftItemIndex].Selected = true;
-                    }
-                    if (Tabs[Index].LeftItemList.All(x => !x.Enabled)) break;
-                    while (!Tabs[Index].LeftItemList[leftItemIndex].Enabled)
-                    {
-                        await BaseScript.Delay(0);
-                        LeftItemIndex++;
-                        _pause._pause.CallFunction("SELECT_LEFT_ITEM_INDEX", leftItemIndex);
-                    }
-                    break;
-                case 1:
-                    {
-                        if (Tabs[Index] is SubmenuTab)
-                        {
-                            TabLeftItem leftItem = Tabs[Index].LeftItemList[LeftItemIndex];
-                            if (!leftItem.Enabled)
-                            {
-                                Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
-                                return;
-                            }
-                            if (leftItem.ItemType == LeftItemType.Settings)
-                            {
-                                FocusLevel = 2;
-                                if (leftItem.ItemList.All(x => !(x as SettingsItem).Enabled)) break;
-                                while (!(leftItem.ItemList[rightItemIndex] as SettingsItem).Enabled)
-                                {
-                                    await BaseScript.Delay(0);
-                                    rightItemIndex++;
-                                    _pause._pause.CallFunction("SELECT_RIGHT_ITEM_INDEX", rightItemIndex);
-                                }
-                            }
-                            SendPauseMenuLeftItemSelect();
-                        }
-                        else if (Tabs[Index] is GalleryTab gT)
-                        {
-                            if (!gT.bigPic)
-                            {
-                                gT.SetTitle(gT.GalleryItems[gT.currentIndex].TextureDictionary, gT.GalleryItems[gT.currentIndex].TextureName, GalleryState.LOADED);
-
-                                if (gT.GalleryItems[gT.currentIndex].Blip != null)
-                                {
-                                    _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
-                                    _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
-                                    gT.Minimap.Enabled = true;
-                                    gT.Minimap.RefreshMapPosition(new Vector2(gT.GalleryItems[gT.currentIndex].Blip.Position.X, gT.GalleryItems[gT.currentIndex].Blip.Position.Y));
-                                }
-                                else if (!string.IsNullOrEmpty(gT.GalleryItems[gT.currentIndex].RightPanelDescription))
-                                {
-                                    gT.Minimap.Enabled = false;
-                                    AddTextEntry("gallerytab_desc", gT.GalleryItems[gT.currentIndex].RightPanelDescription);
-                                    _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
-                                    BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
-                                    BeginTextCommandScaleformString("gallerytab_desc");
-                                    EndTextCommandScaleformString_2();
-                                    EndScaleformMovieMethod();
-                                }
-                                else
-                                {
-                                    gT.Minimap.Enabled = false;
-                                    _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
-                                    _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
-                                }
-                                gT.ModeChanged();
-                            }
-                            else
-                            {
-                                gT.ItemSelected();
-                                gT.GalleryItems[gT.currentIndex].ItemSelected(gT, gT.GalleryItems[gT.currentIndex], gT.currentIndex, gT.CurrentSelection);
-                            }
-                        }
-                        else if (Tabs[Index] is PlayerListTab plTab)
-                        {
-                            switch (plTab.listCol[plTab.Focus].Type)
-                            {
-                                case "settings":
-                                    UIMenuItem item = plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection];
-                                    if (!item.Enabled)
-                                    {
-                                        Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
-                                        return;
-                                    }
-                                    switch (item)
-                                    {
-                                        case UIMenuCheckboxItem:
-                                            {
-                                                UIMenuCheckboxItem it = item as UIMenuCheckboxItem;
-                                                it.Checked = !it.Checked;
-                                                it.CheckboxEventTrigger();
-                                                plTab.SettingsColumn.SelectItem();
-                                                break;
-                                            }
-
-                                        case UIMenuListItem:
-                                            {
-                                                UIMenuListItem it = item as UIMenuListItem;
-                                                it.ListSelectedTrigger(it.Index);
-                                                plTab.SettingsColumn.SelectItem();
-                                                break;
-                                            }
-
-                                        default:
-                                            item.ItemActivate(null);
-                                            plTab.SettingsColumn.SelectItem();
-                                            break;
-                                    }
-                                    _pause._pause.CallFunction("SET_INPUT_EVENT", 16);
-                                    break;
-                                case "missions":
-                                    MissionItem mitem = plTab.MissionsColumn.Items[plTab.MissionsColumn.CurrentSelection];
-                                    mitem.ActivateMission(plTab);
-                                    plTab.MissionsColumn.SelectItem();
-                                    break;
-                                case "players":
-                                    plTab.PlayersColumn.SelectItem();
-                                    break;
-                                case "store":
-                                    StoreItem stItem = plTab.StoreColumn.Items[plTab.StoreColumn.CurrentSelection];
-                                    stItem.Activate(plTab);
-                                    plTab.StoreColumn.SelectItem();
-                                    break;
-                            }
-                        }
-                    }
-                    break;
-                case 2:
-                    {
-                        _pause._pause.CallFunction("SET_INPUT_EVENT", 16);
-                        TabLeftItem leftItem = Tabs[Index].LeftItemList[LeftItemIndex];
-                        if (leftItem.ItemType == LeftItemType.Settings)
-                        {
-                            if (leftItem.ItemList[RightItemIndex] is SettingsItem rightItem)
-                            {
-                                if (!rightItem.Enabled)
-                                {
-                                    Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
-                                    return;
-                                }
-
-                                switch (rightItem.ItemType)
-                                {
-                                    case SettingsItemType.ListItem:
-                                        (rightItem as SettingsListItem).ListSelected();
-                                        break;
-                                    case SettingsItemType.CheckBox:
-                                        (rightItem as SettingsCheckboxItem).IsChecked = !(rightItem as SettingsCheckboxItem).IsChecked!;
-                                        break;
-                                    case SettingsItemType.MaskedProgressBar:
-                                    case SettingsItemType.ProgressBar:
-                                        (rightItem as SettingsProgressItem).ProgressSelected();
-                                        break;
-                                    case SettingsItemType.SliderBar:
-                                        (rightItem as SettingsSliderItem).SliderSelected();
-                                        break;
-                                    default:
-                                        rightItem.Activated();
-                                        break;
-                                }
-                                SendPauseMenuRightItemSelect();
-                            }
-                        }
-                    }
-                    break;
+                Tabs[Index].Focus();
+                FocusLevel++;
             }
+            else
+            {
+                CurrentTab.Select();
+            }
+
+            //switch (FocusLevel)
+            //{
+            //    case 0:
+            //        FocusLevel++;
+            //        if (Tabs[Index] is PlayerListTab pl)
+            //        {
+            //            int selection = pl._newStyle ? pl.Focus : 0;
+            //            switch (pl.listCol[selection].Type)
+            //            {
+            //                case "settings":
+            //                    pl.SettingsColumn.Items[pl.SettingsColumn.CurrentSelection].Selected = true;
+            //                    break;
+            //                case "players":
+            //                    pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].Selected = true;
+            //                    if (pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].KeepPanelVisible)
+            //                    {
+            //                        if (pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].ClonePed != null)
+            //                            pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].CreateClonedPed();
+            //                    }
+            //                    break;
+            //                case "missions":
+            //                    pl.MissionsColumn.Items[pl.MissionsColumn.CurrentSelection].Selected = true;
+            //                    break;
+            //                case "store":
+            //                    pl.StoreColumn.Items[pl.StoreColumn.CurrentSelection].Selected = true;
+            //                    break;
+            //            }
+            //            if (pl.listCol.Any(x => x.Type == "players"))
+            //                SetPauseMenuPedLighting(FocusLevel != 0);
+            //        }
+            //        else if (Tabs[Index] is GalleryTab gT)
+            //        {
+            //            if (gT.GalleryItems[gT.currentIndex].Blip != null)
+            //            {
+            //                _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+            //                _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+            //                gT.Minimap.Enabled = true;
+            //                gT.Minimap.RefreshMapPosition(new Vector2(gT.GalleryItems[gT.currentIndex].Blip.Position.X, gT.GalleryItems[gT.currentIndex].Blip.Position.Y));
+            //            }
+            //            else if (!string.IsNullOrEmpty(gT.GalleryItems[gT.currentIndex].RightPanelDescription))
+            //            {
+            //                gT.Minimap.Enabled = false;
+            //                AddTextEntry("gallerytab_desc", gT.GalleryItems[gT.currentIndex].RightPanelDescription);
+            //                _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
+            //                BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+            //                BeginTextCommandScaleformString("gallerytab_desc");
+            //                EndTextCommandScaleformString_2();
+            //                EndScaleformMovieMethod();
+            //            }
+            //            else
+            //            {
+            //                gT.Minimap.Enabled = false;
+            //                _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+            //                _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+            //            }
+            //            return;
+            //        }
+            //        else if (Tabs[Index] is SubmenuTab)
+            //        {
+            //            if (Tabs[Index].LeftItemList.All(x => !x.Enabled)) break;
+            //            Tabs[Index].LeftItemList[LeftItemIndex].Selected = true;
+            //            _pause._pause.CallFunction("MOUSE_COLUMN_SHIFT", 0);
+            //            _pause._pause.CallFunction("SET_COLUMN_FOCUS", 0, true, true, true);
+            //        }
+            //        if (Tabs[Index].LeftItemList.All(x => !x.Enabled)) break;
+            //        while (!Tabs[Index].LeftItemList[leftItemIndex].Enabled)
+            //        {
+            //            await BaseScript.Delay(0);
+            //            LeftItemIndex++;
+            //        }
+            //        break;
+            //    case 1:
+            //        {
+            //            if (Tabs[Index] is SubmenuTab)
+            //            {
+            //                TabLeftItem leftItem = Tabs[Index].LeftItemList[LeftItemIndex]; 
+            //                if (!leftItem.Enabled)
+            //                {
+            //                    Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
+            //                    return;
+            //                }
+            //                if (leftItem.ItemType == LeftItemType.Settings)
+            //                {
+            //                    FocusLevel = 2;
+            //                    if (leftItem.ItemList.All(x => !(x as SettingsItem).Enabled)) break;
+            //                    while (!(leftItem.ItemList[rightItemIndex] as SettingsItem).Enabled)
+            //                    {
+            //                        await BaseScript.Delay(0);
+            //                        rightItemIndex++;
+            //                        _pause._pause.CallFunction("SELECT_RIGHT_ITEM_INDEX", rightItemIndex);
+            //                    }
+            //                }
+            //                SendPauseMenuLeftItemSelect();
+            //            }
+            //            else if (Tabs[Index] is GalleryTab gT)
+            //            {
+            //                if (!gT.bigPic)
+            //                {
+            //                    gT.SetTitle(gT.GalleryItems[gT.currentIndex].TextureDictionary, gT.GalleryItems[gT.currentIndex].TextureName, GalleryState.LOADED);
+
+            //                    if (gT.GalleryItems[gT.currentIndex].Blip != null)
+            //                    {
+            //                        _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+            //                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+            //                        gT.Minimap.Enabled = true;
+            //                        gT.Minimap.RefreshMapPosition(new Vector2(gT.GalleryItems[gT.currentIndex].Blip.Position.X, gT.GalleryItems[gT.currentIndex].Blip.Position.Y));
+            //                    }
+            //                    else if (!string.IsNullOrEmpty(gT.GalleryItems[gT.currentIndex].RightPanelDescription))
+            //                    {
+            //                        gT.Minimap.Enabled = false;
+            //                        AddTextEntry("gallerytab_desc", gT.GalleryItems[gT.currentIndex].RightPanelDescription);
+            //                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
+            //                        BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+            //                        BeginTextCommandScaleformString("gallerytab_desc");
+            //                        EndTextCommandScaleformString_2();
+            //                        EndScaleformMovieMethod();
+            //                    }
+            //                    else
+            //                    {
+            //                        gT.Minimap.Enabled = false;
+            //                        _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+            //                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+            //                    }
+            //                    gT.ModeChanged();
+            //                }
+            //                else
+            //                {
+            //                    gT.ItemSelected();
+            //                    gT.GalleryItems[gT.currentIndex].ItemSelected(gT, gT.GalleryItems[gT.currentIndex], gT.currentIndex, gT.CurrentSelection);
+            //                }
+            //            }
+            //            else if (Tabs[Index] is PlayerListTab plTab)
+            //            {
+            //                switch (plTab.listCol[plTab.Focus].Type)
+            //                {
+            //                    case "settings":
+            //                        UIMenuItem item = plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection];
+            //                        if (!item.Enabled)
+            //                        {
+            //                            Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
+            //                            return;
+            //                        }
+            //                        switch (item)
+            //                        {
+            //                            case UIMenuCheckboxItem:
+            //                                {
+            //                                    UIMenuCheckboxItem it = item as UIMenuCheckboxItem;
+            //                                    it.Checked = !it.Checked;
+            //                                    it.CheckboxEventTrigger();
+            //                                    plTab.SettingsColumn.SelectItem();
+            //                                    break;
+            //                                }
+
+            //                            case UIMenuListItem:
+            //                                {
+            //                                    UIMenuListItem it = item as UIMenuListItem;
+            //                                    it.ListSelectedTrigger(it.Index);
+            //                                    plTab.SettingsColumn.SelectItem();
+            //                                    break;
+            //                                }
+
+            //                            default:
+            //                                item.ItemActivate(null);
+            //                                plTab.SettingsColumn.SelectItem();
+            //                                break;
+            //                        }
+            //                        _pause._pause.CallFunction("SET_INPUT_EVENT", 16);
+            //                        break;
+            //                    case "missions":
+            //                        MissionItem mitem = plTab.MissionsColumn.Items[plTab.MissionsColumn.CurrentSelection];
+            //                        mitem.ActivateMission(plTab);
+            //                        plTab.MissionsColumn.SelectItem();
+            //                        break;
+            //                    case "players":
+            //                        plTab.PlayersColumn.SelectItem();
+            //                        break;
+            //                    case "store":
+            //                        StoreItem stItem = plTab.StoreColumn.Items[plTab.StoreColumn.CurrentSelection];
+            //                        stItem.Activate(plTab);
+            //                        plTab.StoreColumn.SelectItem();
+            //                        break;
+            //                }
+            //            }
+            //        }
+            //        break;
+            //    case 2:
+            //        {
+            //            _pause._pause.CallFunction("SET_INPUT_EVENT", 16);
+            //            TabLeftItem leftItem = Tabs[Index].LeftItemList[LeftItemIndex];
+            //            if (leftItem.ItemType == LeftItemType.Settings)
+            //            {
+            //                if (leftItem.ItemList[RightItemIndex] is SettingsItem rightItem)
+            //                {
+            //                    if (!rightItem.Enabled)
+            //                    {
+            //                        Game.PlaySound(AUDIO_ERROR, AUDIO_LIBRARY);
+            //                        return;
+            //                    }
+
+            //                    switch (rightItem.ItemType)
+            //                    {
+            //                        case SettingsItemType.ListItem:
+            //                            (rightItem as SettingsListItem).ListSelected();
+            //                            break;
+            //                        case SettingsItemType.CheckBox:
+            //                            (rightItem as SettingsCheckboxItem).IsChecked = !(rightItem as SettingsCheckboxItem).IsChecked!;
+            //                            break;
+            //                        case SettingsItemType.MaskedProgressBar:
+            //                        case SettingsItemType.ProgressBar:
+            //                            (rightItem as SettingsProgressItem).ProgressSelected();
+            //                            break;
+            //                        case SettingsItemType.SliderBar:
+            //                            (rightItem as SettingsSliderItem).SliderSelected();
+            //                            break;
+            //                        default:
+            //                            rightItem.Activated();
+            //                            break;
+            //                    }
+            //                    SendPauseMenuRightItemSelect();
+            //                }
+            //            }
+            //        }
+            //        break;
+            //}
             if (playSound) Game.PlaySound(AUDIO_SELECT, AUDIO_LIBRARY);
         }
 
@@ -882,821 +909,844 @@ namespace ScaleformUI.PauseMenu
             Game.PlaySound(AUDIO_BACK, AUDIO_LIBRARY);
             if (FocusLevel > 0)
             {
-                if (Tabs[Index] is not PlayerListTab)
+                //TODO: IMPLEMENTATION PER EACH TABS
+                if (FocusLevel == 1)
                 {
-                    if (Tabs[Index] is GalleryTab gT)
-                    {
-                        if (gT.bigPic)
-                        {
-                            gT.SetTitle("", "", GalleryState.EMPTY);
-                            if (gT.GalleryItems[gT.currentIndex].Blip != null)
-                            {
-                                _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
-                                _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
-                                gT.Minimap.Enabled = true;
-                                gT.Minimap.RefreshMapPosition(new Vector2(gT.GalleryItems[gT.currentIndex].Blip.Position.X, gT.GalleryItems[gT.currentIndex].Blip.Position.Y));
-                            }
-                            else if (!string.IsNullOrEmpty(gT.GalleryItems[gT.currentIndex].RightPanelDescription))
-                            {
-                                gT.Minimap.Enabled = false;
-                                AddTextEntry("gallerytab_desc", gT.GalleryItems[gT.currentIndex].RightPanelDescription);
-                                _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
-                                BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
-                                BeginTextCommandScaleformString("gallerytab_desc");
-                                EndTextCommandScaleformString_2();
-                                EndScaleformMovieMethod();
-                            }
-                            else
-                            {
-                                _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
-                                gT.Minimap.Enabled = false;
-                                _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
-                            }
-                            gT.ModeChanged();
-                            return;
-                        }
-                        else
-                        {
-                            gT.CurrentSelection = 0;
-                            gT.currentIndex = 0;
-                            _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
-                            if (gT.Minimap.enabled)
-                                gT.Minimap.Enabled = false;
-                        }
-                    }
+                    Tabs[Index].UnFocus();
                     FocusLevel--;
-                    if (Tabs[Index] is SubmenuTab subTab)
-                        subTab.LeftItemList[LeftItemIndex].Selected = focusLevel == 1;
                 }
-                else if (Tabs[Index] is PlayerListTab pl)
+                else
                 {
-                    if (pl._newStyle)
-                    {
-                        FocusLevel--;
-                        SetPauseMenuPedLighting(FocusLevel != 0);
-                        if (pl.listCol.Any(x => x.Type == "settings"))
-                            pl.SettingsColumn.Items[pl.SettingsColumn.CurrentSelection].Selected = false;
-                        if (pl.listCol.Any(x => x.Type == "players"))
-                            pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].Selected = false;
-                        if (pl.listCol.Any(x => x.Type == "missions"))
-                            pl.MissionsColumn.Items[pl.MissionsColumn.CurrentSelection].Selected = false;
-                        if (pl.listCol.Any(x => x.Type == "store"))
-                            pl.StoreColumn.Items[pl.StoreColumn.CurrentSelection].Selected = false;
-                    }
-                    else
-                    {
-                        if (FocusLevel == 1)
-                        {
-                            switch (pl.listCol[pl.Focus].Type)
-                            {
-                                case "settings":
-                                    pl.SettingsColumn.Items[pl.SettingsColumn.CurrentSelection].Selected = false;
-                                    break;
-                                case "players":
-                                    pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].Selected = false;
-                                    ClearPedInPauseMenu();
-                                    break;
-                                case "missions":
-                                    pl.MissionsColumn.Items[pl.MissionsColumn.CurrentSelection].Selected = false;
-                                    break;
-                                case "store":
-                                    pl.StoreColumn.Items[pl.StoreColumn.CurrentSelection].Selected = false;
-                                    break;
-                            }
-                            if (pl.Focus == 0)
-                            {
-                                FocusLevel--;
-                                return;
-                            }
-                            pl.updateFocus(pl.Focus - 1);
-                            return;
-                        }
-                    }
+                    CurrentTab.GoBack();
+                    //TODO: ADD TAB METHOD FOR > 1 FOCUS TO GO BACK IN THAT TAB
                 }
+
+                //if (Tabs[Index] is not PlayerListTab)
+                //{
+                //    if (Tabs[Index] is GalleryTab gT)
+                //    {
+                //        if (gT.bigPic)
+                //        {
+                //            gT.SetTitle("", "", GalleryState.EMPTY);
+                //            if (gT.GalleryItems[gT.currentIndex].Blip != null)
+                //            {
+                //                _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+                //                _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+                //                gT.Minimap.Enabled = true;
+                //                gT.Minimap.RefreshMapPosition(new Vector2(gT.GalleryItems[gT.currentIndex].Blip.Position.X, gT.GalleryItems[gT.currentIndex].Blip.Position.Y));
+                //            }
+                //            else if (!string.IsNullOrEmpty(gT.GalleryItems[gT.currentIndex].RightPanelDescription))
+                //            {
+                //                gT.Minimap.Enabled = false;
+                //                AddTextEntry("gallerytab_desc", gT.GalleryItems[gT.currentIndex].RightPanelDescription);
+                //                _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
+                //                BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+                //                BeginTextCommandScaleformString("gallerytab_desc");
+                //                EndTextCommandScaleformString_2();
+                //                EndScaleformMovieMethod();
+                //            }
+                //            else
+                //            {
+                //                _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+                //                gT.Minimap.Enabled = false;
+                //                _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
+                //            }
+                //            gT.ModeChanged();
+                //            return;
+                //        }
+                //        else
+                //        {
+                //            gT.CurrentSelection = 0;
+                //            gT.currentIndex = 0;
+                //            _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+                //            if (gT.Minimap.enabled)
+                //                gT.Minimap.Enabled = false;
+                //        }
+                //    }
+                //    FocusLevel--;
+                //    if (Tabs[Index] is SubmenuTab subTab)
+                //        subTab.LeftItemList[LeftItemIndex].Selected = focusLevel == 1;
+                //}
+                //else if (Tabs[Index] is PlayerListTab pl)
+                //{
+                //    if (pl._newStyle)
+                //    {
+                //        FocusLevel--;
+                //        SetPauseMenuPedLighting(FocusLevel != 0);
+                //        if (pl.listCol.Any(x => x.Type == "settings"))
+                //            pl.SettingsColumn.Items[pl.SettingsColumn.CurrentSelection].Selected = false;
+                //        if (pl.listCol.Any(x => x.Type == "players"))
+                //            pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].Selected = false;
+                //        if (pl.listCol.Any(x => x.Type == "missions"))
+                //            pl.MissionsColumn.Items[pl.MissionsColumn.CurrentSelection].Selected = false;
+                //        if (pl.listCol.Any(x => x.Type == "store"))
+                //            pl.StoreColumn.Items[pl.StoreColumn.CurrentSelection].Selected = false;
+                //    }
+                //    else
+                //    {
+                //        if (FocusLevel == 1)
+                //        {
+                //            switch (pl.listCol[pl.Focus].Type)
+                //            {
+                //                case "settings":
+                //                    pl.SettingsColumn.Items[pl.SettingsColumn.CurrentSelection].Selected = false;
+                //                    break;
+                //                case "players":
+                //                    pl.PlayersColumn.Items[pl.PlayersColumn.CurrentSelection].Selected = false;
+                //                    ClearPedInPauseMenu();
+                //                    break;
+                //                case "missions":
+                //                    pl.MissionsColumn.Items[pl.MissionsColumn.CurrentSelection].Selected = false;
+                //                    break;
+                //                case "store":
+                //                    pl.StoreColumn.Items[pl.StoreColumn.CurrentSelection].Selected = false;
+                //                    break;
+                //            }
+                //            if (pl.Focus == 0)
+                //            {
+                //                FocusLevel--;
+                //                return;
+                //            }
+                //            pl.updateFocus(pl.Focus - 1);
+                //            return;
+                //        }
+                //    }
+                //}
             }
             else
             {
-                if (CanPlayerCloseMenu) Visible = false;
+                if (CanPlayerCloseMenu) 
+                    Visible = false;
             }
         }
 
         public async void GoUp()
         {
-            if (Tabs[Index] is PlayerListTab plTab && FocusLevel == 1)
-            {
-                switch (plTab.listCol[plTab.Focus].Type)
-                {
-                    case "players":
-                        plTab.PlayersColumn.GoUp();
-                        break;
-                    case "settings":
-                        plTab.SettingsColumn.GoUp();
-                        break;
-                    case "missions":
-                        plTab.MissionsColumn.GoUp();
-                        break;
-                    case "store":
-                        plTab.StoreColumn.GoUp();
-                        break;
-                }
-                Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
-                return;
-            }
+            CurrentTab.GoUp();
+            //if (Tabs[Index] is PlayerListTab plTab && FocusLevel == 1)
+            //{
+            //    switch (plTab.listCol[plTab.Focus].Type)
+            //    {
+            //        case "players":
+            //            plTab.PlayersColumn.GoUp();
+            //            break;
+            //        case "settings":
+            //            plTab.SettingsColumn.GoUp();
+            //            break;
+            //        case "missions":
+            //            plTab.MissionsColumn.GoUp();
+            //            break;
+            //        case "store":
+            //            plTab.StoreColumn.GoUp();
+            //            break;
+            //    }
+            //    Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
+            //    return;
+            //}
 
-            if (FocusLevel == 1)
-            {
-                if (Tabs[Index] is GalleryTab g)
-                {
-                    int iPotentialIndex = g.currentIndex;
-                    int iPotentialIndexPerPage = g.CurrentSelection;
+            //if (FocusLevel == 1)
+            //{
+            //    if (Tabs[Index] is GalleryTab g)
+            //    {
+            //        int iPotentialIndex = g.currentIndex;
+            //        int iPotentialIndexPerPage = g.CurrentSelection;
 
-                    if (iPotentialIndexPerPage > 3)
-                    {
-                        iPotentialIndex -= 4;
-                        iPotentialIndexPerPage -= 4;
-                    }
-                    else
-                    {
-                        iPotentialIndex += 8;
-                        iPotentialIndexPerPage += 8;
-                    }
+            //        if (iPotentialIndexPerPage > 3)
+            //        {
+            //            iPotentialIndex -= 4;
+            //            iPotentialIndexPerPage -= 4;
+            //        }
+            //        else
+            //        {
+            //            iPotentialIndex += 8;
+            //            iPotentialIndexPerPage += 8;
+            //        }
 
-                    if (iPotentialIndex >= g.GalleryItems.Count)
-                        return;
+            //        if (iPotentialIndex >= g.GalleryItems.Count)
+            //            return;
 
-                    g.currentIndex = iPotentialIndex;
-                    g.CurrentSelection = iPotentialIndexPerPage;
+            //        g.currentIndex = iPotentialIndex;
+            //        g.CurrentSelection = iPotentialIndexPerPage;
 
-                    g.UpdateHighlight();
-                    g.UpdatePage();
-                    g.IndexChanged();
+            //        g.UpdateHighlight();
+            //        g.UpdatePage();
+            //        g.IndexChanged();
 
-                    GalleryItem it = g.GalleryItems[g.currentIndex];
-                    if (g.bigPic)
-                    {
-                        g.SetTitle(it.TextureDictionary, it.TextureName, GalleryState.LOADED);
-                    }
+            //        GalleryItem it = g.GalleryItems[g.currentIndex];
+            //        if (g.bigPic)
+            //        {
+            //            g.SetTitle(it.TextureDictionary, it.TextureName, GalleryState.LOADED);
+            //        }
 
-                    if (it.Blip != null)
-                    {
-                        _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
-                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
-                        g.Minimap.Enabled = true;
-                        g.Minimap.RefreshMapPosition(new Vector2(it.Blip.Position.X, it.Blip.Position.Y));
-                    }
-                    else if (!string.IsNullOrEmpty(it.RightPanelDescription))
-                    {
-                        AddTextEntry("gallerytab_desc", it.RightPanelDescription);
-                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
-                        BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
-                        BeginTextCommandScaleformString("gallerytab_desc");
-                        EndTextCommandScaleformString_2();
-                        EndScaleformMovieMethod();
-                    }
-                    else
-                    {
-                        _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
-                        g.Minimap.Enabled = false;
-                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
-                    }
-                    return;
-                }
-            }
+            //        if (it.Blip != null)
+            //        {
+            //            _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+            //            _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+            //            g.Minimap.Enabled = true;
+            //            g.Minimap.RefreshMapPosition(new Vector2(it.Blip.Position.X, it.Blip.Position.Y));
+            //        }
+            //        else if (!string.IsNullOrEmpty(it.RightPanelDescription))
+            //        {
+            //            AddTextEntry("gallerytab_desc", it.RightPanelDescription);
+            //            _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
+            //            BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+            //            BeginTextCommandScaleformString("gallerytab_desc");
+            //            EndTextCommandScaleformString_2();
+            //            EndScaleformMovieMethod();
+            //        }
+            //        else
+            //        {
+            //            _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+            //            g.Minimap.Enabled = false;
+            //            _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+            //        }
+            //        return;
+            //    }
+            //}
 
-
-            int retVal = await _pause._pause.CallFunctionReturnValueInt("SET_INPUT_EVENT", 8);
-            if (retVal != -1)
-            {
-                if (FocusLevel == 1)
-                {
-                    LeftItemIndex = retVal;
-                }
-                else if (FocusLevel == 2)
-                {
-                    RightItemIndex = retVal;
-                }
-            }
+            //_pause._pause.CallFunction("SET_INPUT_EVENT", 8);
+            //if (FocusLevel == 1)
+            //{
+            //    LeftItemIndex--;
+            //}
+            //else if (FocusLevel == 2)
+            //{
+            //    RightItemIndex--;
+            //}
         }
 
         public async void GoDown()
         {
-            if (Tabs[Index] is PlayerListTab plTab && FocusLevel == 1)
-            {
-                switch (plTab.listCol[plTab.Focus].Type)
-                {
-                    case "players":
-                        plTab.PlayersColumn.GoDown();
-                        break;
-                    case "settings":
-                        plTab.SettingsColumn.GoDown();
-                        break;
-                    case "missions":
-                        plTab.MissionsColumn.GoDown();
-                        break;
-                    case "store":
-                        plTab.StoreColumn.GoDown();
-                        break;
-                }
-                Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
-                return;
-            }
+            CurrentTab.GoDown();
+            //if (Tabs[Index] is PlayerListTab plTab && FocusLevel == 1)
+            //{
+            //    switch (plTab.listCol[plTab.Focus].Type)
+            //    {
+            //        case "players":
+            //            plTab.PlayersColumn.GoDown();
+            //            break;
+            //        case "settings":
+            //            plTab.SettingsColumn.GoDown();
+            //            break;
+            //        case "missions":
+            //            plTab.MissionsColumn.GoDown();
+            //            break;
+            //        case "store":
+            //            plTab.StoreColumn.GoDown();
+            //            break;
+            //    }
+            //    Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
+            //    return;
+            //}
 
-            if (FocusLevel == 1)
-            {
-                if (Tabs[Index] is GalleryTab g)
-                {
-                    int iPotentialIndex = g.currentIndex;
-                    int iPotentialIndexPerPage = g.CurrentSelection;
+            //if (FocusLevel == 1)
+            //{
+            //    if (Tabs[Index] is GalleryTab g)
+            //    {
+            //        int iPotentialIndex = g.currentIndex;
+            //        int iPotentialIndexPerPage = g.CurrentSelection;
 
-                    if (iPotentialIndexPerPage < 8)
-                    {
-                        iPotentialIndex += 4;
-                        iPotentialIndexPerPage += 4;
-                    }
-                    else
-                    {
-                        iPotentialIndex -= 8;
-                        iPotentialIndexPerPage -= 8;
-                    }
+            //        if (iPotentialIndexPerPage < 8)
+            //        {
+            //            iPotentialIndex += 4;
+            //            iPotentialIndexPerPage += 4;
+            //        }
+            //        else
+            //        {
+            //            iPotentialIndex -= 8;
+            //            iPotentialIndexPerPage -= 8;
+            //        }
 
-                    if (iPotentialIndex >= g.GalleryItems.Count)
-                        return;
+            //        if (iPotentialIndex >= g.GalleryItems.Count)
+            //            return;
 
-                    g.currentIndex = iPotentialIndex;
-                    g.CurrentSelection = iPotentialIndexPerPage;
-                    g.IndexChanged();
+            //        g.currentIndex = iPotentialIndex;
+            //        g.CurrentSelection = iPotentialIndexPerPage;
+            //        g.IndexChanged();
 
-                    g.UpdateHighlight();
-                    g.UpdatePage();
+            //        g.UpdateHighlight();
+            //        g.UpdatePage();
 
-                    GalleryItem it = g.GalleryItems[g.currentIndex];
-                    if (g.bigPic)
-                    {
-                        g.SetTitle(it.TextureDictionary, it.TextureName, GalleryState.LOADED);
-                    }
+            //        GalleryItem it = g.GalleryItems[g.currentIndex];
+            //        if (g.bigPic)
+            //        {
+            //            g.SetTitle(it.TextureDictionary, it.TextureName, GalleryState.LOADED);
+            //        }
 
-                    if (it.Blip != null)
-                    {
-                        _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
-                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
-                        g.Minimap.Enabled = true;
-                        g.Minimap.RefreshMapPosition(new Vector2(it.Blip.Position.X, it.Blip.Position.Y));
-                    }
-                    else if (!string.IsNullOrEmpty(it.RightPanelDescription))
-                    {
-                        AddTextEntry("gallerytab_desc", it.RightPanelDescription);
-                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
-                        BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
-                        BeginTextCommandScaleformString("gallerytab_desc");
-                        EndTextCommandScaleformString_2();
-                        EndScaleformMovieMethod();
-                    }
-                    else
-                    {
-                        _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
-                        g.Minimap.Enabled = false;
-                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
-                    }
-                    return;
-                }
-            }
+            //        if (it.Blip != null)
+            //        {
+            //            _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+            //            _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+            //            g.Minimap.Enabled = true;
+            //            g.Minimap.RefreshMapPosition(new Vector2(it.Blip.Position.X, it.Blip.Position.Y));
+            //        }
+            //        else if (!string.IsNullOrEmpty(it.RightPanelDescription))
+            //        {
+            //            AddTextEntry("gallerytab_desc", it.RightPanelDescription);
+            //            _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
+            //            BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+            //            BeginTextCommandScaleformString("gallerytab_desc");
+            //            EndTextCommandScaleformString_2();
+            //            EndScaleformMovieMethod();
+            //        }
+            //        else
+            //        {
+            //            _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+            //            g.Minimap.Enabled = false;
+            //            _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+            //        }
+            //        return;
+            //    }
+            //}
 
-            int retVal = await _pause._pause.CallFunctionReturnValueInt("SET_INPUT_EVENT", 9);
-            if (retVal != -1)
-            {
-                if (FocusLevel == 1)
-                {
-                    LeftItemIndex = retVal;
-                }
-                else if (FocusLevel == 2)
-                {
-                    RightItemIndex = retVal;
-                }
-            }
+            //_pause._pause.CallFunction("SET_INPUT_EVENT", 9);
+            //if (FocusLevel == 1)
+            //{
+            //    LeftItemIndex++;
+            //}
+            //else if (FocusLevel == 2)
+            //{
+            //    RightItemIndex++;
+            //}
         }
 
         public async void GoLeft()
         {
-            if (FocusLevel == 1)
+            if (FocusLevel == 0)
             {
-                if (Tabs[Index] is GalleryTab g)
-                {
-                    int iPotentialIndex = g.currentIndex;
-                    int iPotentialIndexPerPage = g.CurrentSelection;
-                    if (g.currentIndex == 0)
-                    {
-                        g.currentIndex = g.GalleryItems.Count - 1;
-                        g.CurrentSelection = g.currentIndex % 12;
-                        g.CurPage = g.MaxPages - 1;
-                        if (g.MaxPages > 1)
-                        {
-                            _pause._pause.CallFunction("CLEAR_GALLERY");
-                            g.SetDescriptionLabels(g.maxItemsPerPage, g.titleLabel, g.dateLabel, g.locationLabel, g.trackLabel, g.labelsVisible);
-                            for (int i = 0; i < 12; i++)
-                            {
-                                int index = i + (g.CurPage * 12);
-                                if (index <= g.GalleryItems.Count - 1)
-                                {
-                                    GalleryItem item = g.GalleryItems[index];
-                                    _pause._pause.CallFunction("UPDATE_GALLERY_ITEM", i, i, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4);
-                                    if (item.Blip != null)
-                                        g.Minimap.MinimapBlips.Add(item.Blip);
-                                }
-                                else
-                                    _pause._pause.CallFunction("UPDATE_GALLERY_ITEM", i, i, 33, 0, 0, 1, "", "", "", "", 1, false);
-                            }
-                        }
-                        g.UpdateHighlight();
-                        g.UpdatePage();
-                    }
-                    else
-                    {
-
-                        if (g.CurrentSelection % 4 > 0 || (g.MaxPages <= 1) || (g.bigPic && g.CurrentSelection > 0))
-                        {
-                            iPotentialIndex--;
-                            iPotentialIndexPerPage--;
-                        }
-
-                        if (g.ShouldNavigateToNewPage(iPotentialIndexPerPage))
-                        {
-                            g.CurPage = g.CurPage <= 0 ? (g.MaxPages - 1) : g.CurPage - 1;
-
-                            g.currentIndex = g.CurPage * g.maxItemsPerPage + 3;
-                            g.CurrentSelection = iPotentialIndexPerPage + 3;
-                            if (g.currentIndex >= g.GalleryItems.Count || g.CurPage == g.MaxPages - 1)
-                            {
-                                g.currentIndex = g.GalleryItems.Count - 1;
-                                g.CurrentSelection = g.currentIndex % 12;
-                            }
-
-                            _pause._pause.CallFunction("CLEAR_GALLERY");
-                            g.SetDescriptionLabels(g.maxItemsPerPage, g.titleLabel, g.dateLabel, g.locationLabel, g.trackLabel, g.labelsVisible);
-                            for (int i = 0; i < 12; i++)
-                            {
-                                int index = i + (g.CurPage * 12);
-                                if (index <= g.GalleryItems.Count - 1)
-                                {
-                                    GalleryItem item = g.GalleryItems[index];
-                                    _pause._pause.CallFunction("UPDATE_GALLERY_ITEM", i, i, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4);
-                                    if (item.Blip != null)
-                                        g.Minimap.MinimapBlips.Add(item.Blip);
-                                }
-                                else
-                                    _pause._pause.CallFunction("UPDATE_GALLERY_ITEM", i, i, 33, 0, 0, 1, "", "", "", "", 1, false);
-                            }
-
-                            g.UpdateHighlight();
-                            g.UpdatePage();
-                        }
-                        else
-                        {
-                            g.currentIndex = iPotentialIndex;
-                            g.CurrentSelection = iPotentialIndexPerPage;
-                            g.UpdateHighlight();
-                        }
-                    }
-
-                    GalleryItem it = g.GalleryItems[g.currentIndex];
-                    if (g.bigPic)
-                    {
-                        g.SetTitle(it.TextureDictionary, it.TextureName, GalleryState.LOADED);
-                    }
-
-                    if (it.Blip != null)
-                    {
-                        _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
-                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
-                        g.Minimap.Enabled = true;
-                        g.Minimap.RefreshMapPosition(new Vector2(it.Blip.Position.X, it.Blip.Position.Y));
-                    }
-                    else if (!string.IsNullOrEmpty(it.RightPanelDescription))
-                    {
-                        AddTextEntry("gallerytab_desc", it.RightPanelDescription);
-                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
-                        BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
-                        BeginTextCommandScaleformString("gallerytab_desc");
-                        EndTextCommandScaleformString_2();
-                        EndScaleformMovieMethod();
-                    }
-                    else
-                    {
-                        _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
-                        g.Minimap.Enabled = false;
-                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
-                    }
-                    g.IndexChanged();
-                    return;
-                }
+                Index--;
             }
-
-            int retVal = await _pause._pause.CallFunctionReturnValueInt("SET_INPUT_EVENT", 10);
-            switch (FocusLevel)
+            else
             {
-                case 0:
-                    ClearPedInPauseMenu();
-                    //_pause.HeaderGoLeft();
-                    if (Tabs[Index] is SubmenuTab)
-                    {
-                        Tabs[Index].LeftItemList[LeftItemIndex].Selected = false;
-                    }
-                    Index--;
-                    if (Tabs[Index] is PlayerListTab _plTab)
-                    {
-                        if (_plTab.listCol.Any(x => x.Type == "settings") && _plTab.SettingsColumn != null && _plTab.SettingsColumn.Items.Count > 0)
-                        {
-                            UIMenuItem item = _plTab.SettingsColumn.Items[_plTab.SettingsColumn.CurrentSelection];
-                            if (item is not UIMenuListItem && item is not UIMenuSliderItem && item is not UIMenuProgressItem)
-                            {
-                                item.Selected = false;
-                            }
-                        }
-                        if (_plTab.listCol.Any(x => x.Type == "missions") && _plTab.MissionsColumn != null && _plTab.MissionsColumn.Items.Count > 0)
-                            _plTab.MissionsColumn.Items[_plTab.MissionsColumn.CurrentSelection].Selected = false;
-                        if (_plTab.listCol.Any(x => x.Type == "store") && _plTab.StoreColumn != null && _plTab.StoreColumn.Items.Count > 0)
-                            _plTab.StoreColumn.Items[_plTab.StoreColumn.CurrentSelection].Selected = false;
-                        if (_plTab.listCol.Any(x => x.Type == "players"))
-                        {
-                            _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].Selected = false;
-                            if (_plTab.listCol[0].Type == "players" || _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].KeepPanelVisible)
-                            {
-                                if (_plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].ClonePed != null)
-                                    _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].CreateClonedPed();
-                                else
-                                    ClearPedInPauseMenu();
-                            }
-                            else
-                            {
-                                ClearPedInPauseMenu();
-                            }
-                        }
-                        else ClearPedInPauseMenu();
-                    }
-                    break;
-                case 1:
-                    {
-                        if (Tabs[Index] is PlayerListTab plTab)
-                        {
-                            switch (plTab.listCol[plTab.Focus].Type)
-                            {
-                                case "settings":
-                                    {
-                                        UIMenuItem item = plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection];
-                                        if (!item.Enabled)
-                                        {
-                                            if (plTab._newStyle)
-                                            {
-                                                plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection].Selected = false;
-                                                plTab.updateFocus(plTab.Focus - 1);
-                                            }
-                                            else
-                                            {
-                                                Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
-                                            }
-                                            return;
-                                        }
-
-                                        if (item is UIMenuListItem it)
-                                        {
-                                            it.Index = retVal;
-                                            //ListChange(it, it.Index);
-                                            it.ListChangedTrigger(it.Index);
-                                        }
-                                        else if (item is UIMenuSliderItem slit)
-                                        {
-                                            slit.Value = retVal;
-                                            slit.SliderChanged(slit.Value);
-                                            //SliderChange(it, it.Value);
-                                        }
-                                        else if (item is UIMenuProgressItem prit)
-                                        {
-                                            prit.Value = retVal;
-                                            prit.ProgressChanged(prit.Value);
-                                            //ProgressChange(it, it.Value);
-                                        }
-                                        else
-                                        {
-                                            if (plTab._newStyle)
-                                            {
-                                                plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection].Selected = false;
-                                                plTab.updateFocus(plTab.Focus - 1);
-                                            }
-                                        }
-                                    }
-                                    break;
-                                case "missions":
-                                    if (plTab._newStyle)
-                                    {
-                                        plTab.MissionsColumn.Items[plTab.MissionsColumn.CurrentSelection].Selected = false;
-                                        plTab.updateFocus(plTab.Focus - 1);
-                                    }
-                                    break;
-                                case "store":
-                                    if (plTab._newStyle)
-                                    {
-                                        plTab.StoreColumn.Items[plTab.StoreColumn.CurrentSelection].Selected = false;
-                                        plTab.updateFocus(plTab.Focus - 1);
-                                    }
-                                    break;
-                                case "panel":
-                                    plTab.updateFocus(plTab.Focus - 1);
-                                    break;
-                                case "players":
-                                    if (plTab._newStyle)
-                                    {
-                                        plTab.PlayersColumn.Items[plTab.PlayersColumn.CurrentSelection].Selected = false;
-                                        plTab.updateFocus(plTab.Focus - 1);
-                                    }
-                                    else
-                                    {
-                                        if (plTab.PlayersColumn.Items[plTab.PlayersColumn.CurrentSelection].ClonePed != null)
-                                            plTab.PlayersColumn.Items[plTab.PlayersColumn.CurrentSelection].CreateClonedPed();
-                                    }
-                                    break;
-                            }
-                        }
-                        break;
-                    }
-                case 2:
-                    {
-                        SettingsItem rightItem = Tabs[Index].LeftItemList[LeftItemIndex].ItemList[RightItemIndex] as SettingsItem;
-                        switch (rightItem.ItemType)
-                        {
-                            case SettingsItemType.ListItem:
-                                (rightItem as SettingsListItem).ItemIndex = retVal;
-                                (rightItem as SettingsListItem).ListChanged();
-                                break;
-                            case SettingsItemType.SliderBar:
-                                (rightItem as SettingsSliderItem).Value = retVal;
-                                (rightItem as SettingsSliderItem).SliderChanged();
-                                break;
-                            case SettingsItemType.ProgressBar:
-                            case SettingsItemType.MaskedProgressBar:
-                                (rightItem as SettingsProgressItem).Value = retVal;
-                                (rightItem as SettingsProgressItem).ProgressChanged();
-                                break;
-                        }
-
-                        break;
-                    }
+                CurrentTab.GoLeft();
             }
+            //if (FocusLevel == 1)
+            //{
+            //    if (Tabs[Index] is GalleryTab g)
+            //    {
+            //        int iPotentialIndex = g.currentIndex;
+            //        int iPotentialIndexPerPage = g.CurrentSelection;
+            //        if (g.currentIndex == 0)
+            //        {
+            //            g.currentIndex = g.GalleryItems.Count - 1;
+            //            g.CurrentSelection = g.currentIndex % 12;
+            //            g.CurPage = g.MaxPages - 1;
+            //            if (g.MaxPages > 1)
+            //            {
+            //                _pause._pause.CallFunction("CLEAR_GALLERY");
+            //                g.SetDescriptionLabels(g.maxItemsPerPage, g.titleLabel, g.dateLabel, g.locationLabel, g.trackLabel, g.labelsVisible);
+            //                for (int i = 0; i < 12; i++)
+            //                {
+            //                    int index = i + (g.CurPage * 12);
+            //                    if (index <= g.GalleryItems.Count - 1)
+            //                    {
+            //                        GalleryItem item = g.GalleryItems[index];
+            //                        _pause._pause.CallFunction("UPDATE_GALLERY_ITEM", i, i, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4);
+            //                        if (item.Blip != null)
+            //                            g.Minimap.MinimapBlips.Add(item.Blip);
+            //                    }
+            //                    else
+            //                        _pause._pause.CallFunction("UPDATE_GALLERY_ITEM", i, i, 33, 0, 0, 1, "", "", "", "", 1, false);
+            //                }
+            //            }
+            //            g.UpdateHighlight();
+            //            g.UpdatePage();
+            //        }
+            //        else
+            //        {
+
+            //            if (g.CurrentSelection % 4 > 0 || (g.MaxPages <= 1) || (g.bigPic && g.CurrentSelection > 0))
+            //            {
+            //                iPotentialIndex--;
+            //                iPotentialIndexPerPage--;
+            //            }
+
+            //            if (g.ShouldNavigateToNewPage(iPotentialIndexPerPage))
+            //            {
+            //                g.CurPage = g.CurPage <= 0 ? (g.MaxPages - 1) : g.CurPage - 1;
+
+            //                g.currentIndex = g.CurPage * g.maxItemsPerPage + 3;
+            //                g.CurrentSelection = iPotentialIndexPerPage + 3;
+            //                if (g.currentIndex >= g.GalleryItems.Count || g.CurPage == g.MaxPages - 1)
+            //                {
+            //                    g.currentIndex = g.GalleryItems.Count - 1;
+            //                    g.CurrentSelection = g.currentIndex % 12;
+            //                }
+
+            //                _pause._pause.CallFunction("CLEAR_GALLERY");
+            //                g.SetDescriptionLabels(g.maxItemsPerPage, g.titleLabel, g.dateLabel, g.locationLabel, g.trackLabel, g.labelsVisible);
+            //                for (int i = 0; i < 12; i++)
+            //                {
+            //                    int index = i + (g.CurPage * 12);
+            //                    if (index <= g.GalleryItems.Count - 1)
+            //                    {
+            //                        GalleryItem item = g.GalleryItems[index];
+            //                        _pause._pause.CallFunction("UPDATE_GALLERY_ITEM", i, i, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4);
+            //                        if (item.Blip != null)
+            //                            g.Minimap.MinimapBlips.Add(item.Blip);
+            //                    }
+            //                    else
+            //                        _pause._pause.CallFunction("UPDATE_GALLERY_ITEM", i, i, 33, 0, 0, 1, "", "", "", "", 1, false);
+            //                }
+
+            //                g.UpdateHighlight();
+            //                g.UpdatePage();
+            //            }
+            //            else
+            //            {
+            //                g.currentIndex = iPotentialIndex;
+            //                g.CurrentSelection = iPotentialIndexPerPage;
+            //                g.UpdateHighlight();
+            //            }
+            //        }
+
+            //        GalleryItem it = g.GalleryItems[g.currentIndex];
+            //        if (g.bigPic)
+            //        {
+            //            g.SetTitle(it.TextureDictionary, it.TextureName, GalleryState.LOADED);
+            //        }
+
+            //        if (it.Blip != null)
+            //        {
+            //            _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+            //            _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+            //            g.Minimap.Enabled = true;
+            //            g.Minimap.RefreshMapPosition(new Vector2(it.Blip.Position.X, it.Blip.Position.Y));
+            //        }
+            //        else if (!string.IsNullOrEmpty(it.RightPanelDescription))
+            //        {
+            //            AddTextEntry("gallerytab_desc", it.RightPanelDescription);
+            //            _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
+            //            BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+            //            BeginTextCommandScaleformString("gallerytab_desc");
+            //            EndTextCommandScaleformString_2();
+            //            EndScaleformMovieMethod();
+            //        }
+            //        else
+            //        {
+            //            _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+            //            g.Minimap.Enabled = false;
+            //            _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+            //        }
+            //        g.IndexChanged();
+            //        return;
+            //    }
+            //}
+
+            //int retVal = await _pause._pause.CallFunctionReturnValueInt("SET_INPUT_EVENT", 10);
+            //switch (FocusLevel)
+            //{
+            //    case 0:
+            //        ClearPedInPauseMenu();
+            //        //_pause.HeaderGoLeft();
+            //        if (Tabs[Index] is SubmenuTab)
+            //        {
+            //            Tabs[Index].LeftItemList[LeftItemIndex].Selected = false;
+            //        }
+            //        Index--;
+            //        if (Tabs[Index] is PlayerListTab _plTab)
+            //        {
+            //            if (_plTab.listCol.Any(x => x.Type == "settings") && _plTab.SettingsColumn != null && _plTab.SettingsColumn.Items.Count > 0)
+            //            {
+            //                UIMenuItem item = _plTab.SettingsColumn.Items[_plTab.SettingsColumn.CurrentSelection];
+            //                if (item is not UIMenuListItem && item is not UIMenuSliderItem && item is not UIMenuProgressItem)
+            //                {
+            //                    item.Selected = false;
+            //                }
+            //            }
+            //            if (_plTab.listCol.Any(x => x.Type == "missions") && _plTab.MissionsColumn != null && _plTab.MissionsColumn.Items.Count > 0)
+            //                _plTab.MissionsColumn.Items[_plTab.MissionsColumn.CurrentSelection].Selected = false;
+            //            if (_plTab.listCol.Any(x => x.Type == "store") && _plTab.StoreColumn != null && _plTab.StoreColumn.Items.Count > 0)
+            //                _plTab.StoreColumn.Items[_plTab.StoreColumn.CurrentSelection].Selected = false;
+            //            if (_plTab.listCol.Any(x => x.Type == "players"))
+            //            {
+            //                _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].Selected = false;
+            //                if (_plTab.listCol[0].Type == "players" || _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].KeepPanelVisible)
+            //                {
+            //                    if (_plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].ClonePed != null)
+            //                        _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].CreateClonedPed();
+            //                    else
+            //                        ClearPedInPauseMenu();
+            //                }
+            //                else
+            //                {
+            //                    ClearPedInPauseMenu();
+            //                }
+            //            }
+            //            else ClearPedInPauseMenu();
+            //        }
+            //        break;
+            //    case 1:
+            //        {
+            //            if (Tabs[Index] is PlayerListTab plTab)
+            //            {
+            //                switch (plTab.listCol[plTab.Focus].Type)
+            //                {
+            //                    case "settings":
+            //                        {
+            //                            UIMenuItem item = plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection];
+            //                            if (!item.Enabled)
+            //                            {
+            //                                if (plTab._newStyle)
+            //                                {
+            //                                    plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection].Selected = false;
+            //                                    plTab.updateFocus(plTab.Focus - 1);
+            //                                }
+            //                                else
+            //                                {
+            //                                    Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
+            //                                }
+            //                                return;
+            //                            }
+
+            //                            if (item is UIMenuListItem it)
+            //                            {
+            //                                it.Index = retVal;
+            //                                //ListChange(it, it.Index);
+            //                                it.ListChangedTrigger(it.Index);
+            //                            }
+            //                            else if (item is UIMenuSliderItem slit)
+            //                            {
+            //                                slit.Value = retVal;
+            //                                slit.SliderChanged(slit.Value);
+            //                                //SliderChange(it, it.Value);
+            //                            }
+            //                            else if (item is UIMenuProgressItem prit)
+            //                            {
+            //                                prit.Value = retVal;
+            //                                prit.ProgressChanged(prit.Value);
+            //                                //ProgressChange(it, it.Value);
+            //                            }
+            //                            else
+            //                            {
+            //                                if (plTab._newStyle)
+            //                                {
+            //                                    plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection].Selected = false;
+            //                                    plTab.updateFocus(plTab.Focus - 1);
+            //                                }
+            //                            }
+            //                        }
+            //                        break;
+            //                    case "missions":
+            //                        if (plTab._newStyle)
+            //                        {
+            //                            plTab.MissionsColumn.Items[plTab.MissionsColumn.CurrentSelection].Selected = false;
+            //                            plTab.updateFocus(plTab.Focus - 1);
+            //                        }
+            //                        break;
+            //                    case "store":
+            //                        if (plTab._newStyle)
+            //                        {
+            //                            plTab.StoreColumn.Items[plTab.StoreColumn.CurrentSelection].Selected = false;
+            //                            plTab.updateFocus(plTab.Focus - 1);
+            //                        }
+            //                        break;
+            //                    case "panel":
+            //                        plTab.updateFocus(plTab.Focus - 1);
+            //                        break;
+            //                    case "players":
+            //                        if (plTab._newStyle)
+            //                        {
+            //                            plTab.PlayersColumn.Items[plTab.PlayersColumn.CurrentSelection].Selected = false;
+            //                            plTab.updateFocus(plTab.Focus - 1);
+            //                        }
+            //                        else
+            //                        {
+            //                            if (plTab.PlayersColumn.Items[plTab.PlayersColumn.CurrentSelection].ClonePed != null)
+            //                                plTab.PlayersColumn.Items[plTab.PlayersColumn.CurrentSelection].CreateClonedPed();
+            //                        }
+            //                        break;
+            //                }
+            //            }
+            //            break;
+            //        }
+            //    case 2:
+            //        {
+            //            SettingsItem rightItem = Tabs[Index].LeftItemList[LeftItemIndex].ItemList[RightItemIndex] as SettingsItem;
+            //            switch (rightItem.ItemType)
+            //            {
+            //                case SettingsItemType.ListItem:
+            //                    (rightItem as SettingsListItem).ItemIndex = retVal;
+            //                    (rightItem as SettingsListItem).ListChanged();
+            //                    break;
+            //                case SettingsItemType.SliderBar:
+            //                    (rightItem as SettingsSliderItem).Value = retVal;
+            //                    (rightItem as SettingsSliderItem).SliderChanged();
+            //                    break;
+            //                case SettingsItemType.ProgressBar:
+            //                case SettingsItemType.MaskedProgressBar:
+            //                    (rightItem as SettingsProgressItem).Value = retVal;
+            //                    (rightItem as SettingsProgressItem).ProgressChanged();
+            //                    break;
+            //            }
+
+            //            break;
+            //        }
+            //}
         }
 
         public async void GoRight()
         {
-            if (FocusLevel == 1)
+            if(FocusLevel == 0)
             {
-                if (Tabs[Index] is GalleryTab g)
-                {
-                    int iPotentialIndex = g.currentIndex;
-                    int iPotentialIndexPerPage = g.CurrentSelection;
-
-                    if (g.currentIndex == g.GalleryItems.Count - 1)
-                    {
-                        g.currentIndex = 0;
-                        g.CurrentSelection = 0;
-                        g.CurPage = 0;
-                        if (g.MaxPages > 1)
-                        {
-                            _pause._pause.CallFunction("CLEAR_GALLERY");
-                            g.SetDescriptionLabels(g.maxItemsPerPage, g.titleLabel, g.dateLabel, g.locationLabel, g.trackLabel, g.labelsVisible);
-                            for (int i = 0; i < 12; i++)
-                            {
-                                int index = i + (g.CurPage * 12);
-                                if (index <= g.GalleryItems.Count - 1)
-                                {
-                                    GalleryItem item = g.GalleryItems[index];
-                                    _pause._pause.CallFunction("UPDATE_GALLERY_ITEM", i, i, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4);
-                                    if (item.Blip != null)
-                                        g.Minimap.MinimapBlips.Add(item.Blip);
-                                }
-                                else
-                                    _pause._pause.CallFunction("UPDATE_GALLERY_ITEM", i, i, 33, 0, 0, 1, "", "", "", "", 1, false);
-                            }
-                        }
-                        g.UpdateHighlight();
-                        g.UpdatePage();
-                    }
-                    else
-                    {
-                        if ((g.CurrentSelection % 4 < 4 - 1) || g.MaxPages <= 1 || (g.bigPic && g.CurrentSelection < 11))
-                        {
-                            iPotentialIndex++;
-                            iPotentialIndexPerPage++;
-                        }
-
-                        if (g.ShouldNavigateToNewPage(iPotentialIndexPerPage))
-                        {
-                            g.CurPage = g.CurPage == (g.MaxPages - 1) ? 0 : g.CurPage + 1;
-
-                            g.currentIndex = g.bigPic ? (g.CurPage * g.maxItemsPerPage) : (g.CurPage * g.maxItemsPerPage + iPotentialIndexPerPage - 3);
-                            g.CurrentSelection = g.bigPic ? 0 : iPotentialIndexPerPage - 3;
-                            if (g.currentIndex >= g.GalleryItems.Count || g.CurPage == 0)
-                                g.CurrentSelection = 0;
-
-                            _pause._pause.CallFunction("CLEAR_GALLERY");
-                            g.SetDescriptionLabels(g.maxItemsPerPage, g.titleLabel, g.dateLabel, g.locationLabel, g.trackLabel, g.labelsVisible);
-                            for (int i = 0; i < 12; i++)
-                            {
-                                int index = i + (g.CurPage * 12);
-                                if (index <= g.GalleryItems.Count - 1)
-                                {
-                                    GalleryItem item = g.GalleryItems[index];
-                                    _pause._pause.CallFunction("UPDATE_GALLERY_ITEM", i, i, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4);
-                                    if (item.Blip != null)
-                                        g.Minimap.MinimapBlips.Add(item.Blip);
-                                }
-                                else
-                                    _pause._pause.CallFunction("UPDATE_GALLERY_ITEM", i, i, 33, 0, 0, 1, "", "", "", "", 1, false);
-                            }
-
-                            g.UpdateHighlight();
-                            g.UpdatePage();
-                        }
-                        else
-                        {
-                            g.currentIndex = iPotentialIndex;
-                            g.CurrentSelection = iPotentialIndexPerPage;
-                            g.UpdateHighlight();
-                        }
-                    }
-
-                    GalleryItem it = g.GalleryItems[g.currentIndex];
-                    if (g.bigPic)
-                    {
-                        g.SetTitle(it.TextureDictionary, it.TextureName, GalleryState.LOADED);
-                    }
-
-                    if (it.Blip != null)
-                    {
-                        _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
-                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
-                        g.Minimap.Enabled = true;
-                        g.Minimap.RefreshMapPosition(new Vector2(it.Blip.Position.X, it.Blip.Position.Y));
-                    }
-                    else if (!string.IsNullOrEmpty(it.RightPanelDescription))
-                    {
-                        AddTextEntry("gallerytab_desc", it.RightPanelDescription);
-                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
-                        BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
-                        BeginTextCommandScaleformString("gallerytab_desc");
-                        EndTextCommandScaleformString_2();
-                        EndScaleformMovieMethod();
-                    }
-                    else
-                    {
-                        _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
-                        g.Minimap.Enabled = false;
-                        _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
-                    }
-                    g.IndexChanged();
-                    return;
-                }
+                Index++;
             }
-
-            int retVal = await _pause._pause.CallFunctionReturnValueInt("SET_INPUT_EVENT", 11);
-            switch (FocusLevel)
+            else
             {
-                case 0:
-                    ClearPedInPauseMenu();
-                    //_pause.HeaderGoRight();
-                    if (Tabs[Index] is SubmenuTab)
-                    {
-                        Tabs[Index].LeftItemList[LeftItemIndex].Selected = false;
-                    }
-                    Index++;
-                    if (Tabs[Index] is PlayerListTab _plTab)
-                    {
-                        if (_plTab.listCol.Any(x => x.Type == "settings") && _plTab.SettingsColumn != null && _plTab.SettingsColumn.Items.Count > 0)
-                        {
-                            UIMenuItem item = _plTab.SettingsColumn.Items[_plTab.SettingsColumn.CurrentSelection];
-                            if (item is not UIMenuListItem && item is not UIMenuSliderItem && item is not UIMenuProgressItem)
-                            {
-                                item.Selected = false;
-                            }
-                        }
-                        if (_plTab.listCol.Any(x => x.Type == "missions") && _plTab.MissionsColumn != null && _plTab.MissionsColumn.Items.Count > 0)
-                            _plTab.MissionsColumn.Items[_plTab.MissionsColumn.CurrentSelection].Selected = false;
-                        if (_plTab.listCol.Any(x => x.Type == "store") && _plTab.StoreColumn != null && _plTab.StoreColumn.Items.Count > 0)
-                            _plTab.StoreColumn.Items[_plTab.StoreColumn.CurrentSelection].Selected = false;
-                        if (_plTab.listCol.Any(x => x.Type == "players"))
-                        {
-                            _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].Selected = false;
-                            if (_plTab.listCol[0].Type == "players" || _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].KeepPanelVisible)
-                            {
-                                if (_plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].ClonePed != null)
-                                    _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].CreateClonedPed();
-                                else
-                                    ClearPedInPauseMenu();
-                            }
-                            else
-                                ClearPedInPauseMenu();
-                        }
-                        else ClearPedInPauseMenu();
-                    }
-                    break;
-                case 1:
-                    {
-                        if (Tabs[Index] is PlayerListTab plTab)
-                        {
-                            switch (plTab.listCol[plTab.Focus].Type)
-                            {
-                                case "settings":
-                                    {
-                                        UIMenuItem item = plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection];
-                                        if (!item.Enabled)
-                                        {
-                                            if (plTab._newStyle)
-                                            {
-                                                plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection].Selected = false;
-                                                plTab.updateFocus(plTab.Focus + 1);
-                                            }
-                                            else
-                                            {
-                                                Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
-                                            }
-                                            return;
-                                        }
-
-                                        if (item is UIMenuListItem it)
-                                        {
-                                            it.Index = retVal;
-                                            //ListChange(it, it.Index);
-                                            it.ListChangedTrigger(it.Index);
-                                        }
-                                        else if (item is UIMenuSliderItem slit)
-                                        {
-                                            slit.Value = retVal;
-                                            slit.SliderChanged(slit.Value);
-                                            //SliderChange(it, it.Value);
-                                        }
-                                        else if (item is UIMenuProgressItem prit)
-                                        {
-                                            prit.Value = retVal;
-                                            prit.ProgressChanged(prit.Value);
-                                            //ProgressChange(it, it.Value);
-                                        }
-                                        else
-                                        {
-                                            if (plTab._newStyle)
-                                            {
-                                                plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection].Selected = false;
-                                                plTab.updateFocus(plTab.Focus + 1);
-                                            }
-                                        }
-                                    }
-                                    break;
-                                case "missions":
-                                    if (plTab._newStyle)
-                                    {
-                                        plTab.MissionsColumn.Items[plTab.MissionsColumn.CurrentSelection].Selected = false;
-                                        plTab.updateFocus(plTab.Focus + 1);
-                                    }
-                                    break;
-                                case "store":
-                                    if (plTab._newStyle)
-                                    {
-                                        plTab.StoreColumn.Items[plTab.StoreColumn.CurrentSelection].Selected = false;
-                                        plTab.updateFocus(plTab.Focus + 1);
-                                    }
-                                    break;
-                                case "panel":
-                                    plTab.updateFocus(plTab.Focus + 1);
-                                    break;
-                                case "players":
-                                    if (plTab._newStyle)
-                                    {
-                                        plTab.PlayersColumn.Items[plTab.PlayersColumn.CurrentSelection].Selected = false;
-                                        plTab.updateFocus(plTab.Focus + 1);
-                                    }
-                                    break;
-                            }
-                        }
-                        break;
-                    }
-                case 2:
-                    {
-                        SettingsItem rightItem = Tabs[Index].LeftItemList[LeftItemIndex].ItemList[RightItemIndex] as SettingsItem;
-                        switch (rightItem.ItemType)
-                        {
-                            case SettingsItemType.ListItem:
-                                (rightItem as SettingsListItem).ItemIndex = retVal;
-                                (rightItem as SettingsListItem).ListChanged();
-                                break;
-                            case SettingsItemType.SliderBar:
-                                (rightItem as SettingsSliderItem).Value = retVal;
-                                (rightItem as SettingsSliderItem).SliderChanged();
-                                break;
-                            case SettingsItemType.ProgressBar:
-                            case SettingsItemType.MaskedProgressBar:
-                                (rightItem as SettingsProgressItem).Value = retVal;
-                                (rightItem as SettingsProgressItem).ProgressChanged();
-                                break;
-                        }
-                        break;
-                    }
+                CurrentTab.GoRight();
             }
+            //if (FocusLevel == 1)
+            //{
+            //    if (Tabs[Index] is GalleryTab g)
+            //    {
+            //        int iPotentialIndex = g.currentIndex;
+            //        int iPotentialIndexPerPage = g.CurrentSelection;
 
+            //        if (g.currentIndex == g.GalleryItems.Count - 1)
+            //        {
+            //            g.currentIndex = 0;
+            //            g.CurrentSelection = 0;
+            //            g.CurPage = 0;
+            //            if (g.MaxPages > 1)
+            //            {
+            //                _pause._pause.CallFunction("CLEAR_GALLERY");
+            //                g.SetDescriptionLabels(g.maxItemsPerPage, g.titleLabel, g.dateLabel, g.locationLabel, g.trackLabel, g.labelsVisible);
+            //                for (int i = 0; i < 12; i++)
+            //                {
+            //                    int index = i + (g.CurPage * 12);
+            //                    if (index <= g.GalleryItems.Count - 1)
+            //                    {
+            //                        GalleryItem item = g.GalleryItems[index];
+            //                        _pause._pause.CallFunction("UPDATE_GALLERY_ITEM", i, i, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4);
+            //                        if (item.Blip != null)
+            //                            g.Minimap.MinimapBlips.Add(item.Blip);
+            //                    }
+            //                    else
+            //                        _pause._pause.CallFunction("UPDATE_GALLERY_ITEM", i, i, 33, 0, 0, 1, "", "", "", "", 1, false);
+            //                }
+            //            }
+            //            g.UpdateHighlight();
+            //            g.UpdatePage();
+            //        }
+            //        else
+            //        {
+            //            if ((g.CurrentSelection % 4 < 4 - 1) || g.MaxPages <= 1 || (g.bigPic && g.CurrentSelection < 11))
+            //            {
+            //                iPotentialIndex++;
+            //                iPotentialIndexPerPage++;
+            //            }
+
+            //            if (g.ShouldNavigateToNewPage(iPotentialIndexPerPage))
+            //            {
+            //                g.CurPage = g.CurPage == (g.MaxPages - 1) ? 0 : g.CurPage + 1;
+
+            //                g.currentIndex = g.bigPic ? (g.CurPage * g.maxItemsPerPage) : (g.CurPage * g.maxItemsPerPage + iPotentialIndexPerPage - 3);
+            //                g.CurrentSelection = g.bigPic ? 0 : iPotentialIndexPerPage - 3;
+            //                if (g.currentIndex >= g.GalleryItems.Count || g.CurPage == 0)
+            //                    g.CurrentSelection = 0;
+
+            //                _pause._pause.CallFunction("CLEAR_GALLERY");
+            //                g.SetDescriptionLabels(g.maxItemsPerPage, g.titleLabel, g.dateLabel, g.locationLabel, g.trackLabel, g.labelsVisible);
+            //                for (int i = 0; i < 12; i++)
+            //                {
+            //                    int index = i + (g.CurPage * 12);
+            //                    if (index <= g.GalleryItems.Count - 1)
+            //                    {
+            //                        GalleryItem item = g.GalleryItems[index];
+            //                        _pause._pause.CallFunction("UPDATE_GALLERY_ITEM", i, i, 33, 4, 0, 1, item.Label1, item.Label2, item.TextureDictionary, item.TextureName, 1, false, item.Label3, item.Label4);
+            //                        if (item.Blip != null)
+            //                            g.Minimap.MinimapBlips.Add(item.Blip);
+            //                    }
+            //                    else
+            //                        _pause._pause.CallFunction("UPDATE_GALLERY_ITEM", i, i, 33, 0, 0, 1, "", "", "", "", 1, false);
+            //                }
+
+            //                g.UpdateHighlight();
+            //                g.UpdatePage();
+            //            }
+            //            else
+            //            {
+            //                g.currentIndex = iPotentialIndex;
+            //                g.CurrentSelection = iPotentialIndexPerPage;
+            //                g.UpdateHighlight();
+            //            }
+            //        }
+
+            //        GalleryItem it = g.GalleryItems[g.currentIndex];
+            //        if (g.bigPic)
+            //        {
+            //            g.SetTitle(it.TextureDictionary, it.TextureName, GalleryState.LOADED);
+            //        }
+
+            //        if (it.Blip != null)
+            //        {
+            //            _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+            //            _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+            //            g.Minimap.Enabled = true;
+            //            g.Minimap.RefreshMapPosition(new Vector2(it.Blip.Position.X, it.Blip.Position.Y));
+            //        }
+            //        else if (!string.IsNullOrEmpty(it.RightPanelDescription))
+            //        {
+            //            AddTextEntry("gallerytab_desc", it.RightPanelDescription);
+            //            _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", false);
+            //            BeginScaleformMovieMethod(_pause._pause.Handle, "SET_GALLERY_PANEL_DESCRIPTION");
+            //            BeginTextCommandScaleformString("gallerytab_desc");
+            //            EndTextCommandScaleformString_2();
+            //            EndScaleformMovieMethod();
+            //        }
+            //        else
+            //        {
+            //            _pause._pause.CallFunction("SET_GALLERY_PANEL_DESCRIPTION", "");
+            //            g.Minimap.Enabled = false;
+            //            _pause._pause.CallFunction("SET_GALLERY_PANEL_HIDDEN", true);
+            //        }
+            //        g.IndexChanged();
+            //        return;
+            //    }
+            //}
+
+            //int retVal = await _pause._pause.CallFunctionReturnValueInt("SET_INPUT_EVENT", 11);
+            //switch (FocusLevel)
+            //{
+            //    case 0:
+            //        ClearPedInPauseMenu();
+            //        //_pause.HeaderGoRight();
+            //        if (Tabs[Index] is SubmenuTab)
+            //        {
+            //            Tabs[Index].LeftItemList[LeftItemIndex].Selected = false;
+            //        }
+            //        Index++;
+            //        if (Tabs[Index] is PlayerListTab _plTab)
+            //        {
+            //            if (_plTab.listCol.Any(x => x.Type == "settings") && _plTab.SettingsColumn != null && _plTab.SettingsColumn.Items.Count > 0)
+            //            {
+            //                UIMenuItem item = _plTab.SettingsColumn.Items[_plTab.SettingsColumn.CurrentSelection];
+            //                if (item is not UIMenuListItem && item is not UIMenuSliderItem && item is not UIMenuProgressItem)
+            //                {
+            //                    item.Selected = false;
+            //                }
+            //            }
+            //            if (_plTab.listCol.Any(x => x.Type == "missions") && _plTab.MissionsColumn != null && _plTab.MissionsColumn.Items.Count > 0)
+            //                _plTab.MissionsColumn.Items[_plTab.MissionsColumn.CurrentSelection].Selected = false;
+            //            if (_plTab.listCol.Any(x => x.Type == "store") && _plTab.StoreColumn != null && _plTab.StoreColumn.Items.Count > 0)
+            //                _plTab.StoreColumn.Items[_plTab.StoreColumn.CurrentSelection].Selected = false;
+            //            if (_plTab.listCol.Any(x => x.Type == "players"))
+            //            {
+            //                _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].Selected = false;
+            //                if (_plTab.listCol[0].Type == "players" || _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].KeepPanelVisible)
+            //                {
+            //                    if (_plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].ClonePed != null)
+            //                        _plTab.PlayersColumn.Items[_plTab.PlayersColumn.CurrentSelection].CreateClonedPed();
+            //                    else
+            //                        ClearPedInPauseMenu();
+            //                }
+            //                else
+            //                    ClearPedInPauseMenu();
+            //            }
+            //            else ClearPedInPauseMenu();
+            //        }
+            //        break;
+            //    case 1:
+            //        {
+            //            if (Tabs[Index] is PlayerListTab plTab)
+            //            {
+            //                switch (plTab.listCol[plTab.Focus].Type)
+            //                {
+            //                    case "settings":
+            //                        {
+            //                            UIMenuItem item = plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection];
+            //                            if (!item.Enabled)
+            //                            {
+            //                                if (plTab._newStyle)
+            //                                {
+            //                                    plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection].Selected = false;
+            //                                    plTab.updateFocus(plTab.Focus + 1);
+            //                                }
+            //                                else
+            //                                {
+            //                                    Game.PlaySound("ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET");
+            //                                }
+            //                                return;
+            //                            }
+
+            //                            if (item is UIMenuListItem it)
+            //                            {
+            //                                it.Index = retVal;
+            //                                //ListChange(it, it.Index);
+            //                                it.ListChangedTrigger(it.Index);
+            //                            }
+            //                            else if (item is UIMenuSliderItem slit)
+            //                            {
+            //                                slit.Value = retVal;
+            //                                slit.SliderChanged(slit.Value);
+            //                                //SliderChange(it, it.Value);
+            //                            }
+            //                            else if (item is UIMenuProgressItem prit)
+            //                            {
+            //                                prit.Value = retVal;
+            //                                prit.ProgressChanged(prit.Value);
+            //                                //ProgressChange(it, it.Value);
+            //                            }
+            //                            else
+            //                            {
+            //                                if (plTab._newStyle)
+            //                                {
+            //                                    plTab.SettingsColumn.Items[plTab.SettingsColumn.CurrentSelection].Selected = false;
+            //                                    plTab.updateFocus(plTab.Focus + 1);
+            //                                }
+            //                            }
+            //                        }
+            //                        break;
+            //                    case "missions":
+            //                        if (plTab._newStyle)
+            //                        {
+            //                            plTab.MissionsColumn.Items[plTab.MissionsColumn.CurrentSelection].Selected = false;
+            //                            plTab.updateFocus(plTab.Focus + 1);
+            //                        }
+            //                        break;
+            //                    case "store":
+            //                        if (plTab._newStyle)
+            //                        {
+            //                            plTab.StoreColumn.Items[plTab.StoreColumn.CurrentSelection].Selected = false;
+            //                            plTab.updateFocus(plTab.Focus + 1);
+            //                        }
+            //                        break;
+            //                    case "panel":
+            //                        plTab.updateFocus(plTab.Focus + 1);
+            //                        break;
+            //                    case "players":
+            //                        if (plTab._newStyle)
+            //                        {
+            //                            plTab.PlayersColumn.Items[plTab.PlayersColumn.CurrentSelection].Selected = false;
+            //                            plTab.updateFocus(plTab.Focus + 1);
+            //                        }
+            //                        break;
+            //                }
+            //            }
+            //            break;
+            //        }
+            //    case 2:
+            //        {
+            //            SettingsItem rightItem = Tabs[Index].LeftItemList[LeftItemIndex].ItemList[RightItemIndex] as SettingsItem;
+            //            switch (rightItem.ItemType)
+            //            {
+            //                case SettingsItemType.ListItem:
+            //                    (rightItem as SettingsListItem).ItemIndex = retVal;
+            //                    (rightItem as SettingsListItem).ListChanged();
+            //                    break;
+            //                case SettingsItemType.SliderBar:
+            //                    (rightItem as SettingsSliderItem).Value = retVal;
+            //                    (rightItem as SettingsSliderItem).SliderChanged();
+            //                    break;
+            //                case SettingsItemType.ProgressBar:
+            //                case SettingsItemType.MaskedProgressBar:
+            //                    (rightItem as SettingsProgressItem).Value = retVal;
+            //                    (rightItem as SettingsProgressItem).ProgressChanged();
+            //                    break;
+            //            }
+            //            break;
+            //        }
+            //}
         }
 
         private bool firstTick = true;
@@ -2147,9 +2197,13 @@ namespace ScaleformUI.PauseMenu
             if (!Visible || TemporarilyHidden || isBuilding) return;
 
             if (Game.IsControlJustPressed(2, Control.PhoneUp))
+            {
                 GoUp();
+            }
             else if (Game.IsControlJustPressed(2, Control.PhoneDown))
+            {
                 GoDown();
+            }
             else if (Game.IsControlJustPressed(2, Control.PhoneLeft))
                 GoLeft();
             else if (Game.IsControlJustPressed(2, Control.PhoneRight))
@@ -2172,27 +2226,29 @@ namespace ScaleformUI.PauseMenu
                 GoBack();
 
             if (Game.IsControlJustPressed(1, Control.CursorScrollUp))
-                _pause.SendScrollEvent(-1);
+                CurrentTab.MouseScroll(1);
             else if (Game.IsControlJustPressed(1, Control.CursorScrollDown))
-                _pause.SendScrollEvent(1);
+                CurrentTab.MouseScroll(-1);
 
             if (Game.IsControlPressed(2, Control.LookUpOnly) && !IsUsingKeyboard(2))
-            {
-                if (Main.GameTime - _timer > 175)
                 {
-                    _pause.SendScrollEvent(-1);
-                    _timer = Main.GameTime;
+                    if (Main.GameTime - _timer > 175)
+                    {
+                        _pause.SendScrollEvent(-1);
+                        _timer = Main.GameTime;
+                    }
                 }
-            }
-            else if (Game.IsControlPressed(2, Control.LookDownOnly) && !IsUsingKeyboard(2))
-            {
-                if (Main.GameTime - _timer > 175)
+                else if (Game.IsControlPressed(2, Control.LookDownOnly) && !IsUsingKeyboard(2))
                 {
-                    _pause.SendScrollEvent(1);
-                    _timer = Main.GameTime;
+                    if (Main.GameTime - _timer > 175)
+                    {
+                        _pause.SendScrollEvent(1);
+                        _timer = Main.GameTime;
+                    }
                 }
-            }
         }
+
+        public BaseTab CurrentTab => Tabs[Index];
 
         internal void SendPauseMenuOpen()
         {

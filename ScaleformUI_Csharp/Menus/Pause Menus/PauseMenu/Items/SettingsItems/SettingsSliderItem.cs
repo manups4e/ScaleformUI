@@ -5,7 +5,7 @@ namespace ScaleformUI.PauseMenu
     public delegate void SettingsSliderEvent(SettingsSliderItem item, int value);
     public class SettingsSliderItem : SettingsItem
     {
-        private int _value;
+        internal int _value;
         private SColor coloredBarColor = SColor.HUD_Freemode;
         public event SettingsSliderEvent OnBarChanged;
         public event SettingsSliderEvent OnSliderSelected;
@@ -16,12 +16,8 @@ namespace ScaleformUI.PauseMenu
             set
             {
                 _value = value;
-                if (Parent != null)
-                {
-                    int leftItem = Parent.Parent.LeftItemList.IndexOf(Parent);
-                    int rightIndex = Parent.ItemList.IndexOf(this);
-                    Parent.Parent.Parent._pause.SetRightSettingsItemValue(leftItem, rightIndex, _value);
-                }
+                if (Parent != null && Parent.Parent != null && Parent.Parent.Visible && Parent.Parent.Parent != null && Parent.Parent.Parent.Visible && Parent.Parent.CenterColumn.Items.Contains(this))
+                    Parent?.Parent?.UpdateSlot(Menus.PM_COLUMNS.MIDDLE, Parent.Parent.CenterColumn.Items.IndexOf(this));
                 OnBarChanged?.Invoke(this, _value);
             }
         }
@@ -31,12 +27,8 @@ namespace ScaleformUI.PauseMenu
             set
             {
                 coloredBarColor = value;
-                if (Parent != null)
-                {
-                    int leftItem = Parent.Parent.LeftItemList.IndexOf(Parent);
-                    int rightIndex = Parent.ItemList.IndexOf(this);
-                    Parent.Parent.Parent._pause.UpdateItemColoredBar(leftItem, rightIndex, coloredBarColor);
-                }
+                if (Parent != null && Parent.Parent != null && Parent.Parent.Visible &&Parent.Parent.Parent != null && Parent.Parent.Parent.Visible && Parent.Parent.CenterColumn.Items.Contains(this))
+                    Parent?.Parent?.UpdateSlot(Menus.PM_COLUMNS.MIDDLE, Parent.Parent.CenterColumn.Items.IndexOf(this));
             }
         }
 
