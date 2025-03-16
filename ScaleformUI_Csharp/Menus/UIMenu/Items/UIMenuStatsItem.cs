@@ -18,7 +18,7 @@ namespace ScaleformUI.Menu
         }
         public int Type { get; private set; }
         private SColor sliderColor;
-        public SColor Color
+        public SColor SliderColor
         {
             get => sliderColor;
             set
