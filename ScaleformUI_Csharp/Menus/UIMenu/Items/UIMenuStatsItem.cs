@@ -43,7 +43,8 @@ namespace ScaleformUI.Menu
 
         public void SetValue(int value)
         {
-            //Main.scaleformUI.CallFunction("SET_ITEM_VALUE", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), value);
+            if (Parent != null && Parent.Visible)
+                Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
             OnStatChanged?.Invoke(value);
         }
 
