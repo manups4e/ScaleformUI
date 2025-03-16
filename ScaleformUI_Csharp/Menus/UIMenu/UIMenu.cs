@@ -1346,9 +1346,9 @@ namespace ScaleformUI.Menu
                     topEdge = MenuItems.Count - _visibleItems;
                 }
                 AddTextEntry("UIMenu_Current_Description", CurrentItem.Description);
-                Main.scaleformUI.CallFunction("SET_INPUT_EVENT", 8);
             }
-            while (MenuItems[_currentSelection]._itemId == 6 && ((UIMenuSeparatorItem)MenuItems[_currentSelection]).Jumpable);
+            while (CurrentItem._itemId == 6 && ((UIMenuSeparatorItem)CurrentItem).Jumpable);
+            Main.scaleformUI.CallFunction("SET_INPUT_EVENT", 8);
             CurrentItem.Selected = true;
             SendPanelsToItemScaleform(_currentSelection);
             SendSidePanelToScaleform(_currentSelection);
@@ -1371,9 +1371,9 @@ namespace ScaleformUI.Menu
                     topEdge = 0;
                 }
                 AddTextEntry("UIMenu_Current_Description", CurrentItem.Description);
-                Main.scaleformUI.CallFunction("SET_INPUT_EVENT", 9);
             }
-            while (MenuItems[_currentSelection]._itemId == 6 && ((UIMenuSeparatorItem)MenuItems[_currentSelection]).Jumpable);
+            while (CurrentItem._itemId == 6 && ((UIMenuSeparatorItem)CurrentItem).Jumpable);
+            Main.scaleformUI.CallFunction("SET_INPUT_EVENT", 9);
             CurrentItem.Selected = true;
             SendPanelsToItemScaleform(_currentSelection);
             SendSidePanelToScaleform(_currentSelection);

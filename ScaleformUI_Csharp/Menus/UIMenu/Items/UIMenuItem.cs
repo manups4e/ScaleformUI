@@ -205,7 +205,7 @@ namespace ScaleformUI.Menu
     /// <summary>
     /// Simple item with a label.
     /// </summary>
-    public class UIMenuItem : PauseMenuItem
+    public class UIMenuItem : BasicTabItem
     {
         internal int _itemId = 0;
         internal string _formatLeftLabel = "";
