@@ -1920,6 +1920,16 @@ public class MenuExample : BaseScript
 
                 var overlay2 = await MinimapOverlays.AddSizedOverlayToMap("scaleformui", "wallp", 2000, 1000, centered: true);
 
+                List<Vector3> list = new List<Vector3>()
+                {
+                    new Vector3(-100.78f, -1129.4f, 25.8f),
+                    new Vector3(36.1f, -1120.28f, 19.2f),
+                    new Vector3(91.26f, -1004.77f, 29.35f),
+                    new Vector3(-24.42f, -963.52f, 29.35f),
+                };
+
+                var areaoverlay = await MinimapOverlays.AddAreaOverlay(list, false, SColor.FromArgb(180, SColor.HUD_Red));
+
                 overlay1.OnMouseEvent += (ev) =>
                 {
                     Debug.WriteLine("MouseEvent: " + ev);

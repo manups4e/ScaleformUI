@@ -17,8 +17,8 @@ function MinimapOverlays:Load()
         TriggerEvent("ScUI:getMinimapHandle", function(handle)
             self.minimapHandle = handle
         end)
-        i = i+1
-        if i==2 then
+        i = i + 1
+        if i == 2 then
             break
         end
         Wait(1000)
@@ -39,7 +39,7 @@ Citizen.CreateThread(function()
     while true do
         Wait(0)
         if MinimapOverlays.minimapHandle ~= 0 then
-			local success, event_type, context, item_id = GetScaleformMovieCursorSelection( MinimapOverlays.minimapHandle)
+            local success, event_type, context, item_id = GetScaleformMovieCursorSelection(MinimapOverlays.minimapHandle)
             if success then
                 if context == 1000 then
                     MinimapOverlays.minimaps[item_id + 1].OnMouseEvent(event_type)
@@ -87,7 +87,8 @@ function MinimapOverlays:AddSizedOverlayToMap(textureDict, textureName, x, y, ro
 
     SetStreamedTextureDictAsNoLongerNeeded(textureDict)
 
-    local overlay = MinimapOverlay.New(#self.minimaps + 1, textureDict, textureName, x, y, rotation, width, height, alpha, centered)
+    local overlay = MinimapOverlay.New(#self.minimaps + 1, textureDict, textureName, x, y, rotation, width, height, alpha,
+        centered)
     table.insert(self.minimaps, overlay)
     return overlay
 end
@@ -132,7 +133,30 @@ function MinimapOverlays:AddScaledOverlayToMap(textureDict, textureName, x, y, r
 
     SetStreamedTextureDictAsNoLongerNeeded(textureDict)
 
-    local overlay = MinimapOverlay.New(#self.minimaps + 1, textureDict, textureName, x, y, rotation, xScale, yScale, alpha, centered)
+    local overlay = MinimapOverlay.New(#self.minimaps + 1, textureDict, textureName, x, y, rotation, xScale, yScale,
+        alpha, centered)
+    table.insert(self.minimaps, overlay)
+    return overlay
+end
+
+function MinimapOverlays:AddAreaOverlay(coords, outline, color)
+    local points = {}
+    for _, coord in ipairs(coords) do
+        table.insert(points, string.format("%.2f:%.2f", coord.x, coord.y))
+    end
+
+    local tobeparsed = table.concat(points, ",")
+
+    CallMinimapScaleformFunction(self.overlay, "ADD_AREA_OVERLAY")
+    ScaleformMovieMethodAddParamPlayerNameString(tobeparsed)
+    ScaleformMovieMethodAddParamBool(outline)
+    ScaleformMovieMethodAddParamInt(color.R)
+    ScaleformMovieMethodAddParamInt(color.G)
+    ScaleformMovieMethodAddParamInt(color.B)
+    ScaleformMovieMethodAddParamInt(color.A)
+    EndScaleformMovieMethod()
+
+    local overlay = MinimapOverlay.New(#self.minimaps + 1, "", "", 0, 0, 0, 0, 0, color.A, true)
     table.insert(self.minimaps, overlay)
     return overlay
 end
