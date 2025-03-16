@@ -1353,15 +1353,16 @@ namespace ScaleformUI.Menu
                     topEdge = MenuItems.Count - _visibleItems;
                 }
                 AddTextEntry("UIMenu_Current_Description", CurrentItem.Description);
+                Main.scaleformUI.CallFunction("SET_INPUT_EVENT", 8);
             }
-            while (CurrentItem._itemId == 6 && ((UIMenuSeparatorItem)CurrentItem).Jumpable);
-            Main.scaleformUI.CallFunction("SET_INPUT_EVENT", 8);
+            while (MenuItems[_currentSelection]._itemId == 6 && ((UIMenuSeparatorItem)MenuItems[_currentSelection]).Jumpable);
             CurrentItem.Selected = true;
             SendPanelsToItemScaleform(_currentSelection);
             SendSidePanelToScaleform(_currentSelection);
             Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
             IndexChange(_currentSelection);
         }
+
         public async void GoDown()
         {
             do
@@ -1377,9 +1378,9 @@ namespace ScaleformUI.Menu
                     topEdge = 0;
                 }
                 AddTextEntry("UIMenu_Current_Description", CurrentItem.Description);
+                Main.scaleformUI.CallFunction("SET_INPUT_EVENT", 9);
             }
-            while (CurrentItem._itemId == 6 && ((UIMenuSeparatorItem)CurrentItem).Jumpable);
-            Main.scaleformUI.CallFunction("SET_INPUT_EVENT", 9);
+            while (MenuItems[_currentSelection]._itemId == 6 && ((UIMenuSeparatorItem)MenuItems[_currentSelection]).Jumpable);
             CurrentItem.Selected = true;
             SendPanelsToItemScaleform(_currentSelection);
             SendSidePanelToScaleform(_currentSelection);
@@ -1926,54 +1927,93 @@ namespace ScaleformUI.Menu
 
             BeginScaleformMovieMethod(Main.scaleformUI.Handle, str);
             // here start
-            PushScaleformMovieFunctionParameterInt(i); // slot, menuIndex
+            PushScaleformMovieFunctionParameterInt(i);
+            PushScaleformMovieFunctionParameterInt(0); 
+            PushScaleformMovieFunctionParameterInt(0);
             PushScaleformMovieFunctionParameterInt(item._itemId);//id
-            PushScaleformMovieMethodParameterString(item._formatLeftLabel);
+            switch (item._itemId)
+            {
+                case 1:
+                    UIMenuDynamicListItem dit = (UIMenuDynamicListItem)item;
+                    var curString = dit.Selected ? (dit.CurrentListItem.StartsWith("~") ? dit.CurrentListItem : "~s~" + dit.CurrentListItem).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (dit.CurrentListItem.StartsWith("~") ? dit.CurrentListItem : "~s~" + dit.CurrentListItem).ToString().Replace("~l~", "~s~");
+                    if (!dit.Enabled)
+                        curString = curString.ReplaceRstarColorsWith("~c~");
+                    PushScaleformMovieMethodParameterString(curString);
+                    break;
+                case 2:
+                    UIMenuCheckboxItem check = (UIMenuCheckboxItem)item;
+                    PushScaleformMovieMethodParameterBool(check.Checked);
+                    break;
+                case 3:
+                    UIMenuSliderItem prItem = (UIMenuSliderItem)item;
+                    PushScaleformMovieFunctionParameterInt(prItem.Value);
+                    break;
+                case 4:
+                    UIMenuProgressItem slItem = (UIMenuProgressItem)item;
+                    PushScaleformMovieFunctionParameterInt(slItem.Value);
+                    break;
+                case 5:
+                    UIMenuStatsItem statsItem = (UIMenuStatsItem)item;
+                    PushScaleformMovieFunctionParameterInt(statsItem.Value);
+                    break;
+                case 6:
+                default:
+                    PushScaleformMovieFunctionParameterInt(0);
+                    break;
+            }
             PushScaleformMovieFunctionParameterBool(item.Enabled);
+            PushScaleformMovieMethodParameterString(item._formatLeftLabel);
             PushScaleformMovieFunctionParameterBool(item.BlinkDescription);
             switch (item)
             {
                 case UIMenuDynamicListItem:
-                    UIMenuDynamicListItem dit = (UIMenuDynamicListItem)item;
-                    var curString = dit.Selected ? (dit.CurrentListItem.StartsWith("~") ? dit.CurrentListItem : "~s~" + dit.CurrentListItem).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (dit.CurrentListItem.StartsWith("~") ? dit.CurrentListItem : "~s~" + dit.CurrentListItem).ToString().Replace("~l~", "~s~");
-                    if (!dit.Enabled)
-                       curString = curString.ReplaceRstarColorsWith("~c~");
-                    PushScaleformMovieMethodParameterString(curString);
-                    PushScaleformMovieFunctionParameterInt(0);
-                    PushScaleformMovieFunctionParameterInt(dit.MainColor.ArgbValue);
-                    PushScaleformMovieFunctionParameterInt(dit.HighlightColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(item.MainColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(item.HighlightColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt((int)item.LeftBadge);
+                    PushScaleformMovieMethodParameterString(item.customLeftBadge.Key);
+                    PushScaleformMovieMethodParameterString(item.customLeftBadge.Value);
+                    PushScaleformMovieMethodParameterString(item.labelFont.FontName);
+                    PushScaleformMovieMethodParameterString(item.rightLabelFont.FontName);
                     break;
                 case UIMenuCheckboxItem:
                     UIMenuCheckboxItem check = (UIMenuCheckboxItem)item;
                     PushScaleformMovieFunctionParameterInt((int)check.Style);
-                    PushScaleformMovieMethodParameterBool(check.Checked);
                     PushScaleformMovieFunctionParameterInt(check.MainColor.ArgbValue);
                     PushScaleformMovieFunctionParameterInt(check.HighlightColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt((int)item.LeftBadge);
+                    PushScaleformMovieMethodParameterString(item.customLeftBadge.Key);
+                    PushScaleformMovieMethodParameterString(item.customLeftBadge.Value);
+                    PushScaleformMovieMethodParameterString(item.labelFont.FontName);
                     break;
                 case UIMenuSliderItem:
                     UIMenuSliderItem prItem = (UIMenuSliderItem)item;
                     PushScaleformMovieFunctionParameterInt(prItem._max);
                     PushScaleformMovieFunctionParameterInt(prItem._multiplier);
-                    PushScaleformMovieFunctionParameterInt(prItem.Value);
                     PushScaleformMovieFunctionParameterInt(prItem.MainColor.ArgbValue);
                     PushScaleformMovieFunctionParameterInt(prItem.HighlightColor.ArgbValue);
                     PushScaleformMovieFunctionParameterInt(prItem.SliderColor.ArgbValue);
                     PushScaleformMovieFunctionParameterBool(prItem._heritage);
+                    PushScaleformMovieFunctionParameterInt((int)item.LeftBadge);
+                    PushScaleformMovieMethodParameterString(item.customLeftBadge.Key);
+                    PushScaleformMovieMethodParameterString(item.customLeftBadge.Value);
+                    PushScaleformMovieMethodParameterString(item.labelFont.FontName);
                     break;
                 case UIMenuProgressItem:
                     UIMenuProgressItem slItem = (UIMenuProgressItem)item;
                     PushScaleformMovieFunctionParameterInt(slItem._max);
                     PushScaleformMovieFunctionParameterInt(slItem._multiplier);
-                    PushScaleformMovieFunctionParameterInt(slItem.Value);
                     PushScaleformMovieFunctionParameterInt(slItem.MainColor.ArgbValue);
                     PushScaleformMovieFunctionParameterInt(slItem.HighlightColor.ArgbValue);
                     PushScaleformMovieFunctionParameterInt(slItem.SliderColor.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt((int)item.LeftBadge);
+                    PushScaleformMovieMethodParameterString(item.customLeftBadge.Key);
+                    PushScaleformMovieMethodParameterString(item.customLeftBadge.Value);
+                    PushScaleformMovieMethodParameterString(item.labelFont.FontName);
                     break;
                 case UIMenuStatsItem:
                     UIMenuStatsItem statsItem = (UIMenuStatsItem)item;
-                    PushScaleformMovieFunctionParameterInt(statsItem.Value);
                     PushScaleformMovieFunctionParameterInt(statsItem.Type);
-                    PushScaleformMovieFunctionParameterInt(statsItem.Color.ArgbValue);
+                    PushScaleformMovieFunctionParameterInt(statsItem.SliderColor.ArgbValue);
                     PushScaleformMovieFunctionParameterInt(statsItem.MainColor.ArgbValue);
                     PushScaleformMovieFunctionParameterInt(statsItem.HighlightColor.ArgbValue);
                     break;
@@ -1982,21 +2022,22 @@ namespace ScaleformUI.Menu
                     PushScaleformMovieFunctionParameterBool(separatorItem.Jumpable);
                     PushScaleformMovieFunctionParameterInt(item.MainColor.ArgbValue);
                     PushScaleformMovieFunctionParameterInt(item.HighlightColor.ArgbValue);
+                    PushScaleformMovieMethodParameterString(item.labelFont.FontName);
                     break;
                 default:
                     PushScaleformMovieFunctionParameterInt(item.MainColor.ArgbValue);
                     PushScaleformMovieFunctionParameterInt(item.HighlightColor.ArgbValue);
+                    PushScaleformMovieMethodParameterString(item._formatRightLabel);
+                    PushScaleformMovieFunctionParameterInt((int)item.LeftBadge);
+                    PushScaleformMovieMethodParameterString(item.customLeftBadge.Key);
+                    PushScaleformMovieMethodParameterString(item.customLeftBadge.Value);
+                    PushScaleformMovieFunctionParameterInt((int)item.RightBadge);
+                    PushScaleformMovieMethodParameterString(item.customRightBadge.Key);
+                    PushScaleformMovieMethodParameterString(item.customRightBadge.Value);
+                    PushScaleformMovieMethodParameterString(item.labelFont.FontName);
+                    PushScaleformMovieMethodParameterString(item.rightLabelFont.FontName);
                     break;
             }
-            PushScaleformMovieMethodParameterString(item._formatRightLabel);
-            PushScaleformMovieFunctionParameterInt((int)item.LeftBadge);
-            PushScaleformMovieMethodParameterString(item.customLeftBadge.Key);
-            PushScaleformMovieMethodParameterString(item.customLeftBadge.Value);
-            PushScaleformMovieFunctionParameterInt((int)item.RightBadge);
-            PushScaleformMovieMethodParameterString(item.customRightBadge.Key);
-            PushScaleformMovieMethodParameterString(item.customRightBadge.Value);
-            PushScaleformMovieMethodParameterString(item.labelFont.FontName);
-            PushScaleformMovieMethodParameterString(item.rightLabelFont.FontName);
             EndScaleformMovieMethod();
         }
 

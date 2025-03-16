@@ -205,7 +205,7 @@ namespace ScaleformUI.Menu
     /// <summary>
     /// Simple item with a label.
     /// </summary>
-    public class UIMenuItem
+    public class UIMenuItem : PauseMenuItem
     {
         internal int _itemId = 0;
         internal string _formatLeftLabel = "";
@@ -329,7 +329,7 @@ namespace ScaleformUI.Menu
         /// <param name="description">Item's description</param>
         /// <param name="color">Main Color</param>
         /// <param name="highlightColor">Highlighted Color</param>
-        public UIMenuItem(string text, string description, SColor color, SColor highlightColor)
+        public UIMenuItem(string text, string description, SColor color, SColor highlightColor) : base(text)
         {
             _enabled = true;
             MainColor = color;
