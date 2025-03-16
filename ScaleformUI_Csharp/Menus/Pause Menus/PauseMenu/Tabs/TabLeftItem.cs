@@ -22,7 +22,7 @@ namespace ScaleformUI.PauseMenu
     public delegate void IndexChangeEvent(SettingsItem item, int index);
     public delegate void ActivatedEvent(TabLeftItem item, int index);
 
-    public class TabLeftItem : BasicTabItem
+    public class TabLeftItem : PauseMenuItem
     {
         internal UIMenuItem _internalItem {  get; set; }
         private bool enabled = true;
@@ -97,9 +97,6 @@ namespace ScaleformUI.PauseMenu
 
                 if (value)
                 {
-                    Parent.CenterColumn.Items.Clear();
-                    if(ItemType != LeftItemType.Empty)
-                    Parent.CenterColumn.Items.AddRange(ItemList);
                     _formatLeftLabel = _formatLeftLabel.Replace("~w~", "~l~");
                     _formatLeftLabel = _formatLeftLabel.Replace("~s~", "~l~");
                 }
@@ -116,7 +113,7 @@ namespace ScaleformUI.PauseMenu
         }
 
         public int ItemIndex { get; internal set; }
-        public List<BasicTabItem> ItemList = new List<BasicTabItem>();
+        public List<PauseMenuItem> ItemList = new List<PauseMenuItem>();
         private bool selected;
 
         public string RightTitle
@@ -199,7 +196,7 @@ namespace ScaleformUI.PauseMenu
             }
         }
 
-        public void AddItem(BasicTabItem item)
+        public void AddItem(PauseMenuItem item)
         {
             item.Parent = this;
             ItemList.Add(item);

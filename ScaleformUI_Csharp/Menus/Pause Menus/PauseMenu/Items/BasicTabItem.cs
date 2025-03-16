@@ -2,16 +2,16 @@
 
 namespace ScaleformUI.PauseMenu
 {
-    public class BasicTabItem
+    public class PauseMenuItem
     {
         public ItemFont LabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
         public ScaleformLabel Label { get; set; }
         public TabLeftItem Parent { get; set; }
-        public BasicTabItem(string label)
+        public PauseMenuItem(string label)
         {
             Label = label;
         }
-        public BasicTabItem(string label, ItemFont labelFont)
+        public PauseMenuItem(string label, ItemFont labelFont)
         {
             Label = label;
             LabelFont = labelFont;

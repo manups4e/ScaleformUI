@@ -1184,30 +1184,30 @@ public class MenuExample : BaseScript
 
         basicTab.UpdateBackground("scaleformui", "pausebigbg");
         basicTab.AddPicture("scaleformui", "rightPic");
-        basicTab.AddItem(new BasicTabItem("~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
-        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
-        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~b~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
-        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~g~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
-        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
-        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
-        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
-        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
-        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
-        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
-        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
-        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
-        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
-        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
-        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
-        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
-        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
-        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
-        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
-        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
-        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
-        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
-        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
-        basicTab.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
+        basicTab.AddItem(new PauseMenuItem("~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+        basicTab.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~r~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+        basicTab.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~b~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+        basicTab.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~g~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+        basicTab.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+        basicTab.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+        basicTab.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+        basicTab.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+        basicTab.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+        basicTab.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+        basicTab.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+        basicTab.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
+        basicTab.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
+        basicTab.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
+        basicTab.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
+        basicTab.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
+        basicTab.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
+        basicTab.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
+        basicTab.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
+        basicTab.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
+        basicTab.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
+        basicTab.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
+        basicTab.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
+        basicTab.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
         pauseMenu.AddTab(basicTab);
 
         SubmenuTab multiItemTab = new SubmenuTab("SUBMENUTAB", SColor.HUD_Freemode);
@@ -1238,18 +1238,18 @@ public class MenuExample : BaseScript
         multiItemTab.AddLeftItem(fifth);
 
         second.RightTitle = "Info Title!!";
-        second.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
-        second.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
-        second.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~b~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
-        second.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~g~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
-        second.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
-        second.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
-        second.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
-        second.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
-        second.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
-        second.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
-        second.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
-        second.AddItem(new BasicTabItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
+        second.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~y~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+        second.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~r~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+        second.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~b~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+        second.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~g~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+        second.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+        second.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+        second.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+        second.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+        second.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+        second.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+        second.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~p~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"));
+        second.AddItem(new PauseMenuItem("~BLIP_INFO_ICON~ ~r~Use the mouse wheel to scroll the text!!"));
 
         StatsTabItem _labelStatItem = new StatsTabItem("Item's Label", "Item's right label");
         StatsTabItem _coloredBarStatItem0 = new StatsTabItem("Item's Label", 0, SColor.HUD_Orange);
@@ -1264,16 +1264,53 @@ public class MenuExample : BaseScript
         third.AddItem(_coloredBarStatItem2);
         third.AddItem(_coloredBarStatItem3);
         third.AddItem(_coloredBarStatItem4);
+        third.AddItem(_labelStatItem);
+        third.AddItem(_coloredBarStatItem0);
+        third.AddItem(_coloredBarStatItem1);
+        third.AddItem(_coloredBarStatItem2);
+        third.AddItem(_coloredBarStatItem3);
+        third.AddItem(_coloredBarStatItem4);
+        third.AddItem(_labelStatItem);
+        third.AddItem(_coloredBarStatItem0);
+        third.AddItem(_coloredBarStatItem1);
+        third.AddItem(_coloredBarStatItem2);
+        third.AddItem(_coloredBarStatItem3);
+        third.AddItem(_coloredBarStatItem4);
 
         List<dynamic> itemList = new List<dynamic>() { "This", "Is", "The", "List", "Super", "Power", "Wooow" };
         SettingsItem _settings1 = new SettingsItem("Basic Item's Label", "Item's right Label");
-        SettingsItem _settings2 = new SettingsListItem("List Item's Label", itemList, 0);
-        SettingsItem _settings3 = new SettingsProgressItem("Progress Item's Label", 100, 25, false, SColor.HUD_Freemode);
-        SettingsItem _settings4 = new SettingsProgressItem("Masked Progress Item's Label", 100, 75, true, SColor.HUD_Pink);
-        SettingsItem _settings5 = new SettingsCheckboxItem("Checkbox Item's Label", UIMenuCheckboxStyle.Tick, true);
-        SettingsItem _settings6 = new SettingsSliderItem("Slider Item's Label", 100, 50, SColor.HUD_Red);
+        SettingsListItem _settings2 = new SettingsListItem("List Item's Label", itemList, 0);
+        SettingsProgressItem _settings3 = new SettingsProgressItem("Progress Item's Label", 100, 25, false, SColor.HUD_Freemode);
+        SettingsProgressItem _settings4 = new SettingsProgressItem("Masked Progress Item's Label", 100, 75, true, SColor.HUD_Pink);
+        SettingsCheckboxItem _settings5 = new SettingsCheckboxItem("Checkbox Item's Label", UIMenuCheckboxStyle.Tick, true);
+        SettingsSliderItem _settings6 = new SettingsSliderItem("Slider Item's Label", 100, 50, SColor.HUD_Red);
         SettingsItem _settings7 = new SettingsItem("Separator Item's Label", "") { ItemType = SettingsItemType.Separator };
         SettingsItem _settings8 = new SettingsItem("BLIP Item's Label ~BLIP_INFO_ICON~ ~INPUT_CONTEXT~", "Right Label") { ItemType = SettingsItemType.BlipType };
+        _settings1.OnActivate += (a) =>
+        {
+            Debug.WriteLine("Item activated!");
+        };
+        _settings2.OnListItemChanged += (a, b, c) =>
+        {
+            Debug.WriteLine($"Selected {c}!");
+        };
+
+        fourth.AddItem(_settings1);
+        fourth.AddItem(_settings2);
+        fourth.AddItem(_settings3);
+        fourth.AddItem(_settings4);
+        fourth.AddItem(_settings5);
+        fourth.AddItem(_settings6);
+        fourth.AddItem(_settings7);
+        fourth.AddItem(_settings8);
+        fourth.AddItem(_settings1);
+        fourth.AddItem(_settings2);
+        fourth.AddItem(_settings3);
+        fourth.AddItem(_settings4);
+        fourth.AddItem(_settings5);
+        fourth.AddItem(_settings6);
+        fourth.AddItem(_settings7);
+        fourth.AddItem(_settings8);
         fourth.AddItem(_settings1);
         fourth.AddItem(_settings2);
         fourth.AddItem(_settings3);
@@ -1637,29 +1674,34 @@ public class MenuExample : BaseScript
 
         };
 
-        pauseMenu.OnLeftItemChange += (menu, leftItem, leftItemIndex) =>
+        pauseMenu.OnColumnItemChange += (menu, tab, column, itemIndex) =>
         {
-            Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, and left Item ~o~N° " + (leftItemIndex + 1) + "~w~ selected!");
-            Debug.WriteLine(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, and left Item ~o~N° " + (leftItemIndex + 1) + "~w~ selected!");
+            if (column == ScaleformUI.Menus.PM_COLUMNS.LEFT)
+            {
+                Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, and left Item ~o~N° " + (itemIndex + 1) + "~w~ selected!");
+                Debug.WriteLine(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, and left Item ~o~N° " + (itemIndex + 1) + "~w~ selected!");
+            }
+            else if (column == ScaleformUI.Menus.PM_COLUMNS.MIDDLE)
+            {
+                Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, left Item ~o~N° " + (tab.LeftColumn.Index + 1) + "~w~ and right Item ~b~N° " + (itemIndex + 1) + "~w~ selected!");
+                Debug.WriteLine(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, left Item ~o~N° " + (tab.LeftColumn.Index + 1) + "~w~ and right Item ~b~N° " + (itemIndex + 1) + "~w~ selected!");
+            }
         };
 
-        pauseMenu.OnLeftItemSelect += (menu, leftItem, leftItemIndex) =>
+        pauseMenu.OnColumnItemSelect += (menu, tab, column, itemIndex) =>
         {
-            Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, and left Item ~o~N° " + (leftItemIndex + 1) + "~w~ selected!");
-            Debug.WriteLine(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, and left Item ~o~N° " + (leftItemIndex + 1) + "~w~ selected!");
+            if (column == ScaleformUI.Menus.PM_COLUMNS.LEFT)
+            {
+                Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, and left Item ~o~N° " + (itemIndex + 1) + "~w~ selected!");
+                Debug.WriteLine(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, and left Item ~o~N° " + (itemIndex + 1) + "~w~ selected!");
+            }
+            else if (column == ScaleformUI.Menus.PM_COLUMNS.MIDDLE)
+            {
+                Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + "~w~, left Item ~o~N° " + (tab.LeftColumn.Index + 1) + "~w~ and right Item ~b~N° " + (itemIndex + 1));
+                Debug.WriteLine(menu.Tabs[menu.Index].Title + "~w~, left Item ~o~N° " + (tab.LeftColumn.Index + 1) + "~w~ and right Item ~b~N° " + (itemIndex + 1));
+            }
         };
 
-        pauseMenu.OnRightItemChange += (menu, item, leftItemIndex, rightItemIndex) =>
-        {
-            Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, left Item ~o~N° " + (leftItemIndex + 1) + "~w~ and right Item ~b~N° " + (rightItemIndex + 1) + "~w~ selected!");
-            Debug.WriteLine(menu.Tabs[menu.Index].Title + " Focus at level => ~y~" + menu.FocusLevel + "~w~, left Item ~o~N° " + (leftItemIndex + 1) + "~w~ and right Item ~b~N° " + (rightItemIndex + 1) + "~w~ selected!");
-        };
-
-        pauseMenu.OnRightItemSelect += (menu, item, leftItemIndex, rightItemIndex) =>
-        {
-            Screen.ShowSubtitle(menu.Tabs[menu.Index].Title + "~w~, left Item ~o~N° " + (leftItemIndex + 1) + "~w~ and right Item ~b~N° " + (rightItemIndex + 1) + "~w~ of type ~p~" + item.ItemType + "~w~ selected!");
-            Debug.WriteLine(menu.Tabs[menu.Index].Title + "~w~, left Item ~o~N° " + (leftItemIndex + 1) + "~w~ and right Item ~b~N° " + (rightItemIndex + 1) + "~w~ of type ~p~" + item.ItemType + "~w~ selected!");
-        };
         pauseMenu.Visible = true;
         //API.UnregisterPedheadshot(mugshot);
     }

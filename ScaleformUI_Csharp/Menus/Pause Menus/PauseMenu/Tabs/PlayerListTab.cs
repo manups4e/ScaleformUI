@@ -39,6 +39,7 @@ namespace ScaleformUI.PauseMenu
         {
             _type = 2;
             _newStyle = newStyle;
+            _identifier = "Page_Multi";
         }
 
         public void SelectColumn(Column column)

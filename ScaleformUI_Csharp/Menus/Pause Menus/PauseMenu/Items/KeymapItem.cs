@@ -1,6 +1,6 @@
 ﻿namespace ScaleformUI.PauseMenu
 {
-    public class KeymapItem : BasicTabItem
+    public class KeymapItem : PauseMenuItem
     {
         public string PrimaryKeyboard;
         public string PrimaryGamepad;

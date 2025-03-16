@@ -7,7 +7,7 @@ namespace ScaleformUI.PauseMenu
         Basic,
         ColoredBar
     }
-    public class StatsTabItem : BasicTabItem
+    public class StatsTabItem : PauseMenuItem
     {
         private string rightLabel;
         private SColor coloredBarColor = SColor.HUD_Freemode;

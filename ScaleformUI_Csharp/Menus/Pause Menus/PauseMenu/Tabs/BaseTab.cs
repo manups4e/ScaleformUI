@@ -37,16 +37,12 @@ namespace ScaleformUI.PauseMenu
         public bool Active { get; set; }
         public TabView Parent { get; internal set; }
         public int CurrentColumnIndex { get; internal set; }
-        public PM_Column CurrentColumn { get 
-            {
-                return CurrentColumnIndex switch
-                {
-                    1 => CenterColumn,
-                    2 => RightColumn,
-                    _ => LeftColumn,
-                };
-            }
-        }
+        public PM_Column CurrentColumn => CurrentColumnIndex switch
+        {
+            1 => CenterColumn,
+            2 => RightColumn,
+            _ => LeftColumn,
+        };
 
         public List<TabLeftItem> LeftItemList { get; set; } = new List<TabLeftItem>();
 
@@ -84,26 +80,7 @@ namespace ScaleformUI.PauseMenu
             //Parent._pause._pause.CallFunction("DELTA_MOUSE_WHEEL", dir);
         }
 
-        public virtual void HighlightColumn(PM_COLUMNS slot, int index) { }
-
-        public virtual void ClearColumn(PM_COLUMNS slot)
-        {
-            Parent._pause._pause.CallFunction("SET_DATA_SLOT_EMPTY", (int)slot);
-        }
-        public virtual void ShowColumn(PM_COLUMNS slot, bool show = true)
-        {
-            Parent._pause._pause.CallFunction("DISPLAY_DATA_SLOT", (int)slot);
-        }
-
-        public virtual void InitColumnScroll(PM_COLUMNS slot, bool visible, int columns, ScrollType scrollType, ScrollArrowsPosition arrowPosition, bool @override = false, float xColOffset = 0f)
-        {
-            Parent._pause._pause.CallFunction("INIT_COLUMN_SCROLL", (int)slot, visible, columns, (int)scrollType,(int)arrowPosition, @override, xColOffset);
-        }
-
-        public virtual void SetColumnScroll(PM_COLUMNS slot, int currentPosition, int maxPosition, int maxVisible, string caption, bool forceInvisible = false, string captionR = "")
-        {
-            Parent._pause._pause.CallFunction("SET_COLUMN_SCROLL", (int)slot, currentPosition, maxPosition, maxVisible, caption, forceInvisible, captionR);
-        }
+        public virtual void StateChange(int state) { }
         #endregion
     }
 }

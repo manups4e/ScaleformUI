@@ -17,7 +17,7 @@
 
     public delegate void SettingsItemSelected(SettingsItem item);
 
-    public class SettingsItem : BasicTabItem
+    public class SettingsItem : PauseMenuItem
     {
         private string rightLabel;
         private bool enabled = true;

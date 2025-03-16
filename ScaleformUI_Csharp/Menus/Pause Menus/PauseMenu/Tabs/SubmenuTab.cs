@@ -1,5 +1,7 @@
 ﻿using ScaleformUI.Elements;
+using ScaleformUI.Menu;
 using ScaleformUI.Menus;
+using ScaleformUI.PauseMenus.Elements;
 using System.Linq;
 using System.Reflection.Emit;
 using static CitizenFX.Core.UI.Screen;
@@ -9,12 +11,25 @@ namespace ScaleformUI.PauseMenu
     public class SubmenuTab : BaseTab
     {
         private bool _focused;
+        public new SubmenuLefColumn LeftColumn
+        {
+            get => (SubmenuLefColumn)base.LeftColumn;
+            internal set => base.LeftColumn = value;
+        }
+
+        public new SubmenuCentralColumn CenterColumn
+        {
+            get => (SubmenuCentralColumn)base.CenterColumn;
+            internal set => base.CenterColumn = value;
+        }
+        internal LeftItemType currentItemType => LeftColumn.currentItemType;
+
         public SubmenuTab(string name, SColor color) : base(name, color)
         {
             _type = 1;
             _identifier = "Page_Info";
-            LeftColumn = new PM_Column(0);
-            CenterColumn =  new PM_Column(1);
+            LeftColumn = new SubmenuLefColumn(0) { Parent = this };
+            CenterColumn = new SubmenuCentralColumn(1) { Parent = this };
         }
 
         public override bool Focused
@@ -33,9 +48,38 @@ namespace ScaleformUI.PauseMenu
             LeftColumn.AddItem(item);
         }
 
-        public override void HighlightColumn(PM_COLUMNS col, int index)
+        public override void StateChange(int state)
         {
-            Parent._pause._pause.CallFunction("SET_COLUMN_FOCUS", (int)col, true, false, true);
+            Parent._pause._pause.CallFunction("MENU_STATE", (int)currentItemType);
+            CenterColumn.Items.Clear();
+            if(state != 0)
+                CenterColumn.Items.AddRange(((TabLeftItem)LeftColumn.Items[LeftColumn.Index]).ItemList);
+            switch (currentItemType)
+            {
+                case LeftItemType.Statistics:
+                    CenterColumn.VisibleItems = 16;
+                    CenterColumn.InitColumnScroll(true, 2, ScrollType.UP_DOWN, ScrollArrowsPosition.CENTER);
+                    CenterColumn.SetColumnScroll(-1, -1, -1, string.Empty, CenterColumn.Items.Count < CenterColumn.VisibleItems);
+                    break;
+                case LeftItemType.Settings:
+                    CenterColumn.VisibleItems = 16;
+                    CenterColumn.InitColumnScroll(true, 2, ScrollType.ALL, ScrollArrowsPosition.RIGHT);
+                    CenterColumn.SetColumnScroll(CenterColumn.Index + 1, CenterColumn.Items.Count, CenterColumn.VisibleItems, string.Empty, CenterColumn.Items.Count < CenterColumn.VisibleItems);
+                    break;
+                case LeftItemType.Info:
+                    CenterColumn.VisibleItems = 10;
+                    CenterColumn.InitColumnScroll(true, 2, ScrollType.UP_DOWN, ScrollArrowsPosition.CENTER);
+                    CenterColumn.SetColumnScroll(-1, -1, -1, string.Empty, CenterColumn.Items.Count < CenterColumn.VisibleItems);
+                    break;
+                case LeftItemType.Keymap:
+                    CenterColumn.VisibleItems = 15;
+                    CenterColumn.InitColumnScroll(true, 2, ScrollType.UP_DOWN, ScrollArrowsPosition.CENTER);
+                    CenterColumn.SetColumnScroll(-1, -1, -1, string.Empty, CenterColumn.Items.Count < CenterColumn.VisibleItems);
+                    break;
+                default:
+                    CenterColumn.VisibleItems = 0;
+                    break;
+            }
         }
 
         public override void GoUp()
@@ -45,20 +89,15 @@ namespace ScaleformUI.PauseMenu
             switch (CurrentColumnIndex)
             {
                 case 0:
-                    ((TabLeftItem)LeftColumn.Items[LeftColumn.Index]).Selected = false;
-                    LeftColumn.Index--;
-                    ((TabLeftItem)LeftColumn.Items[LeftColumn.Index]).Selected = true;
-                    Parent._pause._pause.CallFunction("MENU_STATE", (int)((TabLeftItem)LeftColumn.Items[LeftColumn.Index]).ItemType);
+                    LeftColumn.GoUp();
+                    CenterColumn.currentColumnType = currentItemType;
+                    StateChange((int)currentItemType);
                     Refresh(false);
                     break;
                 case 1:
-                    if (((TabLeftItem)LeftColumn.Items[LeftColumn.Index]).ItemType == LeftItemType.Settings)
-                    {
-                        var item = (SettingsItem)CenterColumn.Items[CenterColumn.Index];
-                        item.Selected = false;
-                        CenterColumn.Index--;
-                        item.Selected = true;
-                    }
+                    CenterColumn.GoUp();
+                    if(CenterColumn.currentColumnType == LeftItemType.Settings)
+                        CenterColumn.SetColumnScroll(CenterColumn.Index + 1, CenterColumn.Items.Count, CenterColumn.VisibleItems, string.Empty, CenterColumn.Items.Count < CenterColumn.VisibleItems);
                     break;
             }
         }
@@ -70,20 +109,53 @@ namespace ScaleformUI.PauseMenu
             switch (CurrentColumnIndex)
             {
                 case 0:
-                    ((TabLeftItem)LeftColumn.Items[LeftColumn.Index]).Selected = false;
-                    LeftColumn.Index++;
-                    ((TabLeftItem)LeftColumn.Items[LeftColumn.Index]).Selected = true;
-                    Parent._pause._pause.CallFunction("MENU_STATE", (int)((TabLeftItem)LeftColumn.Items[LeftColumn.Index]).ItemType);
+                    LeftColumn.GoDown();
+                    CenterColumn.currentColumnType = currentItemType;
+                    StateChange((int)currentItemType);
                     Refresh(false);
                     break;
                 case 1:
-                    if (((TabLeftItem)LeftColumn.Items[LeftColumn.Index]).ItemType == LeftItemType.Settings)
+                    CenterColumn.GoDown();
+                    if (CenterColumn.currentColumnType == LeftItemType.Settings)
+                        CenterColumn.SetColumnScroll(CenterColumn.Index + 1, CenterColumn.Items.Count, CenterColumn.VisibleItems, string.Empty, CenterColumn.Items.Count < CenterColumn.VisibleItems);
+                    break;
+            }
+        }
+
+        public override void MouseScroll(int dir)
+        {
+            int col = Parent.hoveredColumn;
+            switch (CurrentColumnIndex)
+            {
+                case 0:
+                    if (col == 1)
                     {
-                        var item = (SettingsItem)CenterColumn.Items[CenterColumn.Index];
-                        item.Selected = false;
-                        CenterColumn.Index++;
-                        item.Selected = true;
+                        if (currentItemType == LeftItemType.Info || currentItemType == LeftItemType.Statistics)
+                        {
+                            Debug.WriteLine("GET_HOVERED_COLUMN -- Current: " + col);
+                            Game.PlaySound(Parent.AUDIO_UPDOWN, Parent.AUDIO_LIBRARY);
+                            return;
+                        }
                     }
+                    if (dir == -1)
+                        LeftColumn.GoUp();
+                    else
+                        LeftColumn.GoDown();
+                    CenterColumn.currentColumnType = currentItemType;
+                    StateChange((int)currentItemType);
+                    Refresh(false);
+                    break;
+                case 1:
+                    if (currentItemType == LeftItemType.Settings)
+                    {
+                        if (dir == -1)
+                            CenterColumn.GoUp();
+                        else
+                            CenterColumn.GoDown();
+                    }
+                    if (CenterColumn.currentColumnType == LeftItemType.Settings)
+                        CenterColumn.SetColumnScroll(CenterColumn.Index + 1, CenterColumn.Items.Count, CenterColumn.VisibleItems, string.Empty, CenterColumn.Items.Count < CenterColumn.VisibleItems);
+                    Game.PlaySound(Parent.AUDIO_UPDOWN, Parent.AUDIO_LIBRARY);
                     break;
             }
         }
@@ -92,50 +164,20 @@ namespace ScaleformUI.PauseMenu
         {
             if(Parent.FocusLevel == 0) return;
             Parent._pause._pause.CallFunction("SET_COLUMN_INPUT_EVENT", CurrentColumnIndex, 10);
-            if (CurrentColumnIndex == 1 && ((TabLeftItem)LeftColumn.Items[LeftColumn.Index]).ItemType == LeftItemType.Settings)
+
+            if (CurrentColumnIndex == 1)
             {
-                var item = (SettingsItem)CenterColumn.Items[CenterColumn.Index];
-                switch (item.ItemType)
-                {
-                    case SettingsItemType.ListItem:
-                        (item as SettingsListItem).itemIndex--;
-                        (item as SettingsListItem).ListChanged();
-                        break;
-                    case SettingsItemType.SliderBar: //TODO: UPDATE WITH MULTIPLIER
-                        (item as SettingsSliderItem)._value--;
-                        (item as SettingsSliderItem).SliderChanged();
-                        break;
-                    case SettingsItemType.ProgressBar:
-                    case SettingsItemType.MaskedProgressBar: //TODO: UPDATE WITH MULTIPLIER
-                        (item as SettingsProgressItem)._value--;
-                        (item as SettingsProgressItem).ProgressChanged();
-                        break;
-                }
+                CenterColumn.GoLeft();
             }
         }
+
         public override void GoRight()
         {
             if (Parent.FocusLevel == 0) return;
             Parent._pause._pause.CallFunction("SET_COLUMN_INPUT_EVENT", CurrentColumnIndex, 11);
-            if (CurrentColumnIndex == 1 && ((TabLeftItem)LeftColumn.Items[LeftColumn.Index]).ItemType == LeftItemType.Settings)
+            if (CurrentColumnIndex == 1)
             {
-                var item = (SettingsItem)CenterColumn.Items[CenterColumn.Index];
-                switch (item.ItemType)
-                {
-                    case SettingsItemType.ListItem:
-                        (item as SettingsListItem).ItemIndex++;
-                        (item as SettingsListItem).ListChanged();
-                        break;
-                    case SettingsItemType.SliderBar: //TODO: UPDATE WITH MULTIPLIER
-                        (item as SettingsSliderItem).Value++;
-                        (item as SettingsSliderItem).SliderChanged();
-                        break;
-                    case SettingsItemType.ProgressBar:
-                    case SettingsItemType.MaskedProgressBar: //TODO: UPDATE WITH MULTIPLIER
-                        (item as SettingsProgressItem).Value++;
-                        (item as SettingsProgressItem).ProgressChanged();
-                        break;
-                }
+                CenterColumn.GoRight();
             }
         }
 
@@ -143,7 +185,7 @@ namespace ScaleformUI.PauseMenu
         {
             switch (CurrentColumnIndex)
             {
-                case 0 when ((TabLeftItem)LeftColumn.Items[LeftColumn.Index]).ItemType == LeftItemType.Settings:
+                case 0 when currentItemType == LeftItemType.Settings:
                     TabLeftItem leftItem = (TabLeftItem)LeftColumn.Items[LeftColumn.Index];
                     if (!leftItem.Enabled)
                     {
@@ -158,35 +200,11 @@ namespace ScaleformUI.PauseMenu
                         CenterColumn.Index++;
                     }
                     Parent.FocusLevel++;
-                    Parent.SendPauseMenuLeftItemSelect();
+                    Parent.SendColumnItemSelect(LeftColumn);
                     break;
                 case 1:
-                    if (CenterColumn.Items[CenterColumn.Index] is SettingsItem item)
-                    {
-                        if (!item.Enabled)
-                        {
-                            Game.PlaySound(Parent.AUDIO_ERROR, Parent.AUDIO_LIBRARY);
-                            return;
-                        }
-                        switch (item.ItemType)
-                        {
-                            case SettingsItemType.ListItem:
-                                (item as SettingsListItem).ListSelected();
-                                break;
-                            case SettingsItemType.CheckBox:
-                                (item as SettingsCheckboxItem).IsChecked = !(item as SettingsCheckboxItem).IsChecked;
-                                break;
-                            case SettingsItemType.MaskedProgressBar:
-                            case SettingsItemType.ProgressBar:
-                                (item as SettingsProgressItem).ProgressSelected();
-                                break;
-                            case SettingsItemType.SliderBar:
-                                (item as SettingsSliderItem).SliderSelected();
-                                break;
-                        }
-                        // we always trigger this because all items inherit this
-                        item.Activated();
-                    }
+                    CenterColumn.Select();
+                    Parent.SendColumnItemSelect(CenterColumn);
                     break;
             }
         }
@@ -202,7 +220,7 @@ namespace ScaleformUI.PauseMenu
 
         public override void Focus()
         {
-            Parent._pause._pause.CallFunction("SET_COLUMN_HIGHLIGHT", 0, LeftColumn.Index, false, false);
+            LeftColumn.HighlightColumn(true, false, true);
         }
 
         public override void Refresh(bool highlightOldIndex)
@@ -213,7 +231,7 @@ namespace ScaleformUI.PauseMenu
             {
                 SetDataSlot(CenterColumn.position, i);
             }
-            switch (((TabLeftItem)LeftColumn.Items[LeftColumn.Index]).ItemType)
+            switch (currentItemType)
             {
                 case LeftItemType.Keymap:
                     Parent._pause._pause.CallFunction("SET_COLUMN_TITLE", 1, ((TabLeftItem)LeftColumn.Items[LeftColumn.Index]).RightTitle, ((TabLeftItem)LeftColumn.Items[LeftColumn.Index]).KeymapRightLabel_1, ((TabLeftItem)LeftColumn.Items[LeftColumn.Index]).KeymapRightLabel_2);
@@ -230,15 +248,18 @@ namespace ScaleformUI.PauseMenu
                         //Parent._pause._pause.CallFunction("SET_DESCRIPTION", 1, "~r~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "scaleformui", "pauseinfobg", 0, 0, 578, 160);
                         break;
             }
-            ShowColumn(PM_COLUMNS.MIDDLE);
+            CenterColumn.ShowColumn();
         }
 
         public override void Populate()
         {
             TabLeftItem item = (TabLeftItem)LeftColumn.Items[LeftColumn.Index];
             item.Selected = true;
+            CenterColumn.Items.Clear();
+            if (currentItemType != LeftItemType.Empty)
+                CenterColumn.Items.AddRange(item.ItemList);
             Parent._pause._pause.CallFunction("SET_MENU_LEVEL", 1);
-            Parent._pause._pause.CallFunction("MENU_STATE", (int)((TabLeftItem)LeftColumn.Items[LeftColumn.Index]).ItemType);
+            Parent._pause._pause.CallFunction("MENU_STATE", (int)currentItemType);
             Parent._pause._pause.CallFunction("SET_MENU_LEVEL", 0);
             for (int i = 0; i < LeftColumn.Items.Count; i++)
             {
@@ -254,350 +275,42 @@ namespace ScaleformUI.PauseMenu
         {
             //Parent._pause._pause.CallFunction("MOUSE_COLUMN_SHIFT", 0);
             //Parent._pause._pause.CallFunction("SET_COLUMN_HIGHLIGHT", 0, 0, false, false);
-            ShowColumn(PM_COLUMNS.LEFT);
-            ShowColumn(PM_COLUMNS.MIDDLE);
-            if (((TabLeftItem)LeftColumn.Items[LeftColumn.Index]).ItemType == LeftItemType.Settings)
+            LeftColumn.ShowColumn();
+            CenterColumn.ShowColumn();
+            if (currentItemType == LeftItemType.Settings)
             {
                 Parent._pause._pause.CallFunction("SET_COLUMN_STATE", 1, 1);
             }
             Parent._pause._pause.CallFunction("SET_COLUMN_FOCUS", 0, false, false, false);
-            InitColumnScroll(LeftColumn.position, true, 1, ScrollType.UP_DOWN, ScrollArrowsPosition.RIGHT);
-            SetColumnScroll(LeftColumn.position, LeftColumn.Index, LeftColumn.Items.Count, 16, "", LeftColumn.Items.Count < 16);
+            //to be overridden by subcolumns
+            LeftColumn.InitColumnScroll(true, 1, ScrollType.UP_DOWN, ScrollArrowsPosition.RIGHT);
+            LeftColumn.SetColumnScroll(LeftColumn.Index, LeftColumn.Items.Count, 16, "", LeftColumn.Items.Count < 16);
         }
 
         public override void SetDataSlot(PM_COLUMNS slot, int index)
         {
-            if (slot == PM_COLUMNS.LEFT)
+            switch (slot)
             {
-                if (index >= LeftColumn.Items.Count)
-                    return;
-                TabLeftItem item = (TabLeftItem)LeftColumn.Items[index];
-                BeginScaleformMovieMethod(Parent._pause._pause.Handle, "SET_DATA_SLOT");
-                PushScaleformMovieFunctionParameterInt((int)slot);
-                PushScaleformMovieFunctionParameterInt(index);
-                PushScaleformMovieFunctionParameterInt(0);
-                PushScaleformMovieFunctionParameterInt(0);
-                PushScaleformMovieMethodParameterString(item._formatLeftLabel);
-                PushScaleformMovieFunctionParameterBool(item.Enabled);
-                PushScaleformMovieFunctionParameterBool(false);
-                PushScaleformMovieFunctionParameterInt(item.MainColor.ArgbValue);
-                PushScaleformMovieFunctionParameterInt(item.HighlightColor.ArgbValue);
-                PushScaleformMovieMethodParameterString(item._internalItem._formatRightLabel);
-                PushScaleformMovieFunctionParameterInt((int)item._internalItem.LeftBadge);
-                PushScaleformMovieMethodParameterString(item._internalItem.customLeftBadge.Key);
-                PushScaleformMovieMethodParameterString(item._internalItem.customLeftBadge.Value);
-                PushScaleformMovieFunctionParameterInt((int)item._internalItem.RightBadge);
-                PushScaleformMovieMethodParameterString(item._internalItem.customRightBadge.Key);
-                PushScaleformMovieMethodParameterString(item._internalItem.customRightBadge.Value);
-                PushScaleformMovieMethodParameterString(item._internalItem.labelFont.FontName);
-                PushScaleformMovieMethodParameterString(item._internalItem.rightLabelFont.FontName);
-                EndScaleformMovieMethod();
+                case PM_COLUMNS.LEFT:
+                    LeftColumn.SetDataSlot(index);
+                    break;
+                case PM_COLUMNS.MIDDLE:
+                    CenterColumn.SetDataSlot(index);
+                    break;
             }
-            else if (slot == PM_COLUMNS.MIDDLE)
-            {
-                TabLeftItem curItem = (TabLeftItem)LeftColumn.Items[LeftColumn.Index];
-                switch (curItem.ItemType)
-                {
-                    case LeftItemType.Info:
-                        {
-                            var _item = CenterColumn.Items[index];
-                            var labels = _item.Label.SplitLabel;
-                            BeginScaleformMovieMethod(Parent._pause._pause.Handle, "SET_DATA_SLOT");
-                            PushScaleformMovieFunctionParameterInt((int)slot);
-                            PushScaleformMovieFunctionParameterInt(index);
-                            PushScaleformMovieFunctionParameterInt(0);
-                            PushScaleformMovieFunctionParameterInt(index);
-                            PushScaleformMovieFunctionParameterInt(0);
-                            PushScaleformMovieFunctionParameterInt(0);
-                            PushScaleformMovieFunctionParameterBool(true);
-                            BeginTextCommandScaleformString("CELL_EMAIL_BCON");
-                            for (var i = 0; i < labels?.Length; i++)
-                                AddTextComponentScaleform(labels[i]);
-                            EndTextCommandScaleformString_2();
-                            EndScaleformMovieMethod();
-                        }
-                        break;
-                    case LeftItemType.Statistics:
-                        {
-                            StatsTabItem it = (StatsTabItem)CenterColumn.Items[index];
-                            BeginScaleformMovieMethod(Parent._pause._pause.Handle, "SET_DATA_SLOT");
-                            PushScaleformMovieFunctionParameterInt((int)slot);
-                            PushScaleformMovieFunctionParameterInt(index);
-                            PushScaleformMovieFunctionParameterInt(0);
-                            PushScaleformMovieFunctionParameterInt(index);
-                            PushScaleformMovieFunctionParameterInt((int)it.Type);
-                            PushScaleformMovieFunctionParameterInt(0);
-                            PushScaleformMovieFunctionParameterBool(true);
-                            PushScaleformMovieFunctionParameterString(it.Label.Label);
-                            switch (it.Type)
-                            {
-                                case StatItemType.Basic:
-                                    PushScaleformMovieFunctionParameterString(it.RightLabel);
-                                    break;
-                                case StatItemType.ColoredBar:
-                                    PushScaleformMovieMethodParameterInt(it.Value);
-                                    PushScaleformMovieMethodParameterInt(it.ColoredBarColor.ArgbValue);
-                                    break;
-                            }
-                            EndScaleformMovieMethod();
-                        }
-                        break;
-                    case LeftItemType.Settings:
-                        {
-                            SettingsItem it = (SettingsItem)CenterColumn.Items[index];
-                            BeginScaleformMovieMethod(Parent._pause._pause.Handle, "SET_DATA_SLOT");
-                            PushScaleformMovieFunctionParameterInt((int)slot);
-                            PushScaleformMovieFunctionParameterInt(index);
-                            PushScaleformMovieFunctionParameterInt(0);
-                            PushScaleformMovieFunctionParameterInt(index);
-                            PushScaleformMovieFunctionParameterInt((int)it.ItemType);
-                            switch (it.ItemType)
-                            {
-                                case SettingsItemType.ListItem:
-                                    PushScaleformMovieFunctionParameterInt(((SettingsListItem)it).ItemIndex);
-                                    break;
-                                case SettingsItemType.SliderBar:
-                                    PushScaleformMovieFunctionParameterInt(((SettingsSliderItem)it).Value);
-                                    break;
-                                case SettingsItemType.MaskedProgressBar:
-                                case SettingsItemType.ProgressBar:
-                                    PushScaleformMovieFunctionParameterInt(((SettingsProgressItem)it).Value);
-                                    break;
-                                default:
-                                    PushScaleformMovieFunctionParameterInt(0);
-                                    break;
-                            }
-                            PushScaleformMovieFunctionParameterBool(true);
-                            if (it.ItemType == SettingsItemType.BlipType)
-                            {
-                                BeginTextCommandScaleformString("STRING");
-                                AddTextComponentScaleform(it.Label.Label);
-                                EndTextCommandScaleformString_2();
-                            }
-                            else
-                            {
-                                PushScaleformMovieFunctionParameterString(it.Label.Label);
-                            }
-                            switch (it.ItemType)
-                            {
-                                case SettingsItemType.Basic:
-                                    PushScaleformMovieFunctionParameterString(it.RightLabel);
-                                    break;
-                                case SettingsItemType.ListItem:
-                                    PushScaleformMovieFunctionParameterString(string.Join(",", ((SettingsListItem)it).ListItems));
-                                    break;
-                                case SettingsItemType.CheckBox:
-                                    PushScaleformMovieFunctionParameterInt((int)((SettingsCheckboxItem)it).CheckBoxStyle);
-                                    PushScaleformMovieFunctionParameterBool(((SettingsCheckboxItem)it).IsChecked);
-                                    break;
-                                case SettingsItemType.MaskedProgressBar:
-                                case SettingsItemType.ProgressBar:
-                                    PushScaleformMovieMethodParameterInt(((SettingsProgressItem)it).MaxValue);
-                                    PushScaleformMovieMethodParameterInt(((SettingsProgressItem)it).ColoredBarColor.ArgbValue);
-                                    break;
-                                case SettingsItemType.SliderBar:
-                                    PushScaleformMovieMethodParameterInt(((SettingsSliderItem)it).MaxValue);
-                                    PushScaleformMovieMethodParameterInt(((SettingsSliderItem)it).ColoredBarColor.ArgbValue);
-                                    break;
-                                case SettingsItemType.BlipType:
-                                    PushScaleformMovieFunctionParameterString(it.RightLabel);
-                                    break;
-                            }
-                            EndScaleformMovieMethod();
-                        }
-                        break;
-                    case LeftItemType.Keymap:
-                        {
-                            var _item = (KeymapItem)CenterColumn.Items[index];
-                            BeginScaleformMovieMethod(Parent._pause._pause.Handle, "SET_DATA_SLOT");
-                            PushScaleformMovieFunctionParameterInt((int)slot);
-                            PushScaleformMovieFunctionParameterInt(index);
-                            PushScaleformMovieFunctionParameterInt(0);
-                            PushScaleformMovieFunctionParameterInt(index);
-                            PushScaleformMovieFunctionParameterInt(0);
-                            PushScaleformMovieFunctionParameterInt(0);
-                            PushScaleformMovieFunctionParameterBool(true);
-                            BeginTextCommandScaleformString("STRING");
-                            AddTextComponentScaleform(_item.Label.Label);
-                            EndTextCommandScaleformString_2();
-                            BeginTextCommandScaleformString("STRING");
-                            AddTextComponentScaleform(Game.CurrentInputMode == InputMode.MouseAndKeyboard ? _item.PrimaryKeyboard : _item.PrimaryGamepad);
-                            EndTextCommandScaleformString_2();
-                            BeginTextCommandScaleformString("STRING");
-                            AddTextComponentScaleform(Game.CurrentInputMode == InputMode.MouseAndKeyboard ? _item.SecondaryKeyboard : _item.SecondaryGamepad);
-                            EndTextCommandScaleformString_2();
-                            EndScaleformMovieMethod();
-                        }
-                        break;
-                }
-            }
+
         }
 
         public override void UpdateSlot(PM_COLUMNS slot, int index)
         {
-            if (slot == PM_COLUMNS.LEFT)
+            switch (slot)
             {
-                if (index >= LeftColumn.Items.Count)
-                    return;
-                TabLeftItem item = (TabLeftItem)LeftColumn.Items[index];
-                BeginScaleformMovieMethod(Parent._pause._pause.Handle, "UPDATE_SLOT");
-                PushScaleformMovieFunctionParameterInt((int)slot);
-                PushScaleformMovieFunctionParameterInt(index);
-                PushScaleformMovieFunctionParameterInt(0);
-                PushScaleformMovieFunctionParameterInt(0);
-                PushScaleformMovieMethodParameterString(item._formatLeftLabel);
-                PushScaleformMovieFunctionParameterBool(item.Enabled);
-                PushScaleformMovieFunctionParameterBool(false);
-                PushScaleformMovieFunctionParameterInt(item.MainColor.ArgbValue);
-                PushScaleformMovieFunctionParameterInt(item.HighlightColor.ArgbValue);
-                PushScaleformMovieMethodParameterString(item._internalItem._formatRightLabel);
-                PushScaleformMovieFunctionParameterInt((int)item._internalItem.LeftBadge);
-                PushScaleformMovieMethodParameterString(item._internalItem.customLeftBadge.Key);
-                PushScaleformMovieMethodParameterString(item._internalItem.customLeftBadge.Value);
-                PushScaleformMovieFunctionParameterInt((int)item._internalItem.RightBadge);
-                PushScaleformMovieMethodParameterString(item._internalItem.customRightBadge.Key);
-                PushScaleformMovieMethodParameterString(item._internalItem.customRightBadge.Value);
-                PushScaleformMovieMethodParameterString(item._internalItem.labelFont.FontName);
-                PushScaleformMovieMethodParameterString(item._internalItem.rightLabelFont.FontName);
-                EndScaleformMovieMethod();
-            }
-            else if (slot == PM_COLUMNS.MIDDLE)
-            {
-                TabLeftItem curItem = (TabLeftItem)LeftColumn.Items[LeftColumn.Index];
-                switch (curItem.ItemType)
-                {
-                    case LeftItemType.Info:
-                        {
-                            var _item = CenterColumn.Items[index];
-                            var labels = _item.Label.SplitLabel;
-                            BeginScaleformMovieMethod(Parent._pause._pause.Handle, "UPDATE_SLOT");
-                            PushScaleformMovieFunctionParameterInt((int)slot);
-                            PushScaleformMovieFunctionParameterInt(index);
-                            PushScaleformMovieFunctionParameterInt(0);
-                            PushScaleformMovieFunctionParameterInt(index);
-                            PushScaleformMovieFunctionParameterInt(0);
-                            PushScaleformMovieFunctionParameterInt(0);
-                            PushScaleformMovieFunctionParameterBool(true);
-                            BeginTextCommandScaleformString("CELL_EMAIL_BCON");
-                            for (var i = 0; i < labels?.Length; i++)
-                                AddTextComponentScaleform(labels[i]);
-                            EndTextCommandScaleformString_2();
-                            EndScaleformMovieMethod();
-                        }
-                        break;
-                    case LeftItemType.Statistics:
-                        {
-                            StatsTabItem it = (StatsTabItem)CenterColumn.Items[index];
-                            BeginScaleformMovieMethod(Parent._pause._pause.Handle, "UPDATE_SLOT");
-                            PushScaleformMovieFunctionParameterInt((int)slot);
-                            PushScaleformMovieFunctionParameterInt(index);
-                            PushScaleformMovieFunctionParameterInt(0);
-                            PushScaleformMovieFunctionParameterInt(index);
-                            PushScaleformMovieFunctionParameterInt((int)it.Type);
-                            PushScaleformMovieFunctionParameterInt(0);
-                            PushScaleformMovieFunctionParameterBool(true);
-                            PushScaleformMovieFunctionParameterString(it.Label.Label);
-                            switch (it.Type)
-                            {
-                                case StatItemType.Basic:
-                                    PushScaleformMovieFunctionParameterString(it.RightLabel);
-                                    break;
-                                case StatItemType.ColoredBar:
-                                    PushScaleformMovieMethodParameterInt(it.Value);
-                                    PushScaleformMovieMethodParameterInt(it.ColoredBarColor.ArgbValue);
-                                    break;
-                            }
-                            EndScaleformMovieMethod();
-                        }
-                        break;
-                    case LeftItemType.Settings:
-                        {
-                            SettingsItem it = (SettingsItem)CenterColumn.Items[index];
-                            BeginScaleformMovieMethod(Parent._pause._pause.Handle, "UPDATE_SLOT");
-                            PushScaleformMovieFunctionParameterInt((int)slot);
-                            PushScaleformMovieFunctionParameterInt(index);
-                            PushScaleformMovieFunctionParameterInt(0);
-                            PushScaleformMovieFunctionParameterInt(index);
-                            PushScaleformMovieFunctionParameterInt((int)it.ItemType);
-                            switch (it.ItemType)
-                            {
-                                case SettingsItemType.ListItem:
-                                    PushScaleformMovieFunctionParameterInt(((SettingsListItem)it).ItemIndex);
-                                    break;
-                                case SettingsItemType.SliderBar:
-                                    PushScaleformMovieFunctionParameterInt(((SettingsSliderItem)it).Value);
-                                    break;
-                                case SettingsItemType.MaskedProgressBar:
-                                case SettingsItemType.ProgressBar:
-                                    PushScaleformMovieFunctionParameterInt(((SettingsProgressItem)it).Value);
-                                    break;
-                                default:
-                                    PushScaleformMovieFunctionParameterInt(0);
-                                    break;
-                            }
-                            PushScaleformMovieFunctionParameterBool(true);
-                            if (it.ItemType == SettingsItemType.BlipType)
-                            {
-                                BeginTextCommandScaleformString("STRING");
-                                AddTextComponentScaleform(it.Label.Label);
-                                EndTextCommandScaleformString_2();
-                            }
-                            else
-                            {
-                                PushScaleformMovieFunctionParameterString(it.Label.Label);
-                            }
-                            switch (it.ItemType)
-                            {
-                                case SettingsItemType.Basic:
-                                    PushScaleformMovieFunctionParameterString(it.RightLabel);
-                                    break;
-                                case SettingsItemType.ListItem:
-                                    PushScaleformMovieFunctionParameterString(string.Join(",", ((SettingsListItem)it).ListItems));
-                                    break;
-                                case SettingsItemType.CheckBox:
-                                    PushScaleformMovieFunctionParameterInt((int)((SettingsCheckboxItem)it).CheckBoxStyle);
-                                    PushScaleformMovieFunctionParameterBool(((SettingsCheckboxItem)it).IsChecked);
-                                    break;
-                                case SettingsItemType.MaskedProgressBar:
-                                case SettingsItemType.ProgressBar:
-                                    PushScaleformMovieMethodParameterInt(((SettingsProgressItem)it).MaxValue);
-                                    PushScaleformMovieMethodParameterInt(((SettingsProgressItem)it).ColoredBarColor.ArgbValue);
-                                    break;
-                                case SettingsItemType.SliderBar:
-                                    PushScaleformMovieMethodParameterInt(((SettingsSliderItem)it).MaxValue);
-                                    PushScaleformMovieMethodParameterInt(((SettingsSliderItem)it).ColoredBarColor.ArgbValue);
-                                    break;
-                                case SettingsItemType.BlipType:
-                                    PushScaleformMovieFunctionParameterString(it.RightLabel);
-                                    break;
-                            }
-                            EndScaleformMovieMethod();
-                        }
-                        break;
-                    case LeftItemType.Keymap:
-                        {
-                            var _item = (KeymapItem)CenterColumn.Items[index];
-                            BeginScaleformMovieMethod(Parent._pause._pause.Handle, "UPDATE_SLOT");
-                            PushScaleformMovieFunctionParameterInt((int)slot);
-                            PushScaleformMovieFunctionParameterInt(index);
-                            PushScaleformMovieFunctionParameterInt(0);
-                            PushScaleformMovieFunctionParameterInt(index);
-                            PushScaleformMovieFunctionParameterInt(0);
-                            PushScaleformMovieFunctionParameterInt(0);
-                            PushScaleformMovieFunctionParameterBool(true);
-                            BeginTextCommandScaleformString("STRING");
-                            AddTextComponentScaleform(_item.Label.Label);
-                            EndTextCommandScaleformString_2();
-                            BeginTextCommandScaleformString("STRING");
-                            AddTextComponentScaleform(Game.CurrentInputMode == InputMode.MouseAndKeyboard ? _item.PrimaryKeyboard : _item.PrimaryGamepad);
-                            EndTextCommandScaleformString_2();
-                            BeginTextCommandScaleformString("STRING");
-                            AddTextComponentScaleform(Game.CurrentInputMode == InputMode.MouseAndKeyboard ? _item.SecondaryKeyboard : _item.SecondaryGamepad);
-                            EndTextCommandScaleformString_2();
-                            EndScaleformMovieMethod();
-                        }
-                        break;
-                }
+                case PM_COLUMNS.LEFT:
+                    LeftColumn.UpdateSlot(index);
+                    break;
+                case PM_COLUMNS.MIDDLE:
+                    CenterColumn.UpdateSlot(index);
+                    break;
             }
         }
     }

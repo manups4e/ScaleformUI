@@ -1,5 +1,6 @@
 ﻿using ScaleformUI.Elements;
 using ScaleformUI.Menus;
+using ScaleformUI.PauseMenus.Elements;
 
 namespace ScaleformUI.PauseMenu
 {
@@ -12,10 +13,16 @@ namespace ScaleformUI.PauseMenu
         public string RightTextureDict { get; private set; }
         public string RightTextureName { get; private set; }
 
+        public new TextColumn LeftColumn
+        {
+            get => (TextColumn)base.LeftColumn;
+            internal set => base.LeftColumn = value;
+        }
+
         public TextTab(string name, string title, SColor color) : base(name, color)
         {
             TextTitle = title;
-            LeftColumn = new PM_Column(0);
+            LeftColumn = new TextColumn(0);
             _identifier = "Page_Simple";
             _type = 0;
         }
@@ -26,9 +33,9 @@ namespace ScaleformUI.PauseMenu
                 TextTitle = title;
         }
 
-        public void AddItem(BasicTabItem item)
+        public void AddItem(PauseMenuItem item)
         {
-            this.LeftColumn.AddItem(item);
+            LeftColumn.AddItem(item);
         }
 
         public override void Populate()
@@ -41,35 +48,20 @@ namespace ScaleformUI.PauseMenu
 
         public override void ShowColumns()
         {
-            ShowColumn(PM_COLUMNS.LEFT);
-            InitColumnScroll(LeftColumn.position, true, 3, ScrollType.UP_DOWN, ScrollArrowsPosition.CENTER);
-            SetColumnScroll(LeftColumn.position, -1, -1, -1, "", LeftColumn.Items.Count < 16);
+            LeftColumn.ShowColumn();
+            LeftColumn.InitColumnScroll(true, 3, ScrollType.UP_DOWN, ScrollArrowsPosition.CENTER);
+            LeftColumn.SetColumnScroll(-1, -1, -1, "", LeftColumn.Items.Count < LeftColumn.VisibleItems);
+            LeftColumn.HighlightColumn(true, false, true);
         }
 
-        public override void HighlightColumn(PM_COLUMNS slot, int index)
+        public override void Focus()
         {
-            Parent._pause._pause.CallFunction("SET_COLUMN_FOCUS", (int)slot, false, false, false);
+            LeftColumn.HighlightColumn(true, false, true);
         }
 
         public override void SetDataSlot(PM_COLUMNS slot, int index)
         {
-            if (index >= LeftColumn.Items.Count)
-                return;
-            BasicTabItem it = LeftColumn.Items[index];
-            var labels = it.Label.SplitLabel;
-            BeginScaleformMovieMethod(Parent._pause._pause.Handle, "SET_DATA_SLOT");
-            PushScaleformMovieFunctionParameterInt(0);
-            PushScaleformMovieFunctionParameterInt(index);
-            PushScaleformMovieFunctionParameterInt(0);
-            PushScaleformMovieFunctionParameterInt(index);
-            PushScaleformMovieFunctionParameterInt(0);
-            PushScaleformMovieFunctionParameterInt(0);
-            PushScaleformMovieFunctionParameterBool(true);
-            BeginTextCommandScaleformString("CELL_EMAIL_BCON");
-            for (var i = 0; i < labels?.Length; i++)
-                AddTextComponentScaleform(labels[i]);
-            EndTextCommandScaleformString_2();
-            EndScaleformMovieMethod();
+            LeftColumn.SetDataSlot(index);
         }
 
         /// <summary>
