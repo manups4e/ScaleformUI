@@ -19,7 +19,22 @@ Main.MinimapOverlays
 ScaleformUI.Scaleforms.MinimapOverlays
 ```
 
-# ⚠️⚠️ Due to some recent changes in FiveM it seems that the overlay is not accessible anymore remotely for Lua, so i suggest (like for C# already) to copy the `files` folder into your own resource and take my `MinimapOverlays` code out of `ScaleformUI.lua` and add it to your resource. Beware! ScaleformUI is protected by Creative Commons you **CANNOT** sell any resource with ScUI code in it!
+## ⚠️⚠️ Due to the nature of the Minimap Overlay Scaleform, being loaded as a file and not as a streamed scaleform, the only way you're able to use the Overlays is by calling an export to load the overlays metatable
+
+```lua
+local overlays = exports.ScaleformUI_Lua:GetMinimapOverlays()
+
+-- you can then call the functions by doing
+overlays:AddSizedOverlayToMap(textureDict, textureName, x, y, rotation, width, height, alpha, centered)
+overlays:AddScaledOverlayToMap(textureDict, textureName, x, y, rotation, xScale, yScale, alpha, centered)
+overlays:SetOverlayColor(overlayId, color)
+overlays:HideOverlay(overlayId, hide)
+overlays:SetOverlayAlpha(overlayId, alpha)
+overlays:SetOverlayPosition(overlayId, position)
+overlays:SetOverlaySizeOrScale(overlayId, width, height)
+overlays:RemoveOverlayFromMinimap(overlayId)
+overlays:ClearAll()
+```
 
 ## Functions
 
