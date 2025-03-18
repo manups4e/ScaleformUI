@@ -131,21 +131,15 @@ namespace ScaleformUI.Scaleforms
 
         internal static async Task Load()
         {
-            overlay = AddMinimapOverlay("files/MINIMAP_LOADER.gfx");
-            while (!HasMinimapOverlayLoaded(overlay)) await BaseScript.Delay(0);
-            SetMinimapOverlayDisplay(overlay, 0f, 0f, 100f, 100f, 100f);
-            int i = 0;
-            do
-            {
-                Main.TriggerEvent("ScUI:getMinimapHandle", [ new Action<dynamic>(handle => {
-                    minimapHandle = Convert.ToInt32(handle);
-                    return;
-                })]);
-                i++;
-                if (i >= 2 && minimapHandle == 0)
-                    break;
-                await BaseScript.Delay(1000);
-            } while (minimapHandle == 0);
+            BaseScript.TriggerEvent("ScUI:AddMinimapOverlay", [ new Action<dynamic>(async handle => {
+                overlay = Convert.ToInt32(handle);
+                while (!HasMinimapOverlayLoaded(overlay)) await BaseScript.Delay(0);
+                SetMinimapOverlayDisplay(overlay, 0f, 0f, 100f, 100f, 100f);
+            })]);
+            BaseScript.TriggerEvent("ScUI:getMinimapHandle", [ new Action<dynamic>(handle => {
+                minimapHandle = Convert.ToInt32(handle);
+                return;
+            })]);
             if(minimapHandle == 0)
             {
                 var mn = RequestScaleformMovieInstance("minimap");

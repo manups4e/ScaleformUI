@@ -1,28 +1,16 @@
 MinimapOverlays = setmetatable({
     overlay = 0,
     minimaps = {},
-    minimapHandle = 0
+    minimapHandle = 0,
+    isLoaded = false
 }, MinimapOverlays)
 MinimapOverlays.__index = MinimapOverlays
-MinimapOverlays.__call = function()
-    return "MinimapOverlays"
-end
+MinimapOverlays.__call = function() return "MinimapOverlays" end
 
 function MinimapOverlays:Load()
-    self.overlay = AddMinimapOverlay("files/MINIMAP_LOADER.gfx")
-    while not HasMinimapOverlayLoaded(self.overlay) do Citizen.Wait(0) end
-    SetMinimapOverlayDisplay(self.overlay, 0.0, 0.0, 100.0, 100.0, 100.0)
-    local i = 0
-    while self.minimapHandle == 0 do
-        TriggerEvent("ScUI:getMinimapHandle", function(handle)
-            self.minimapHandle = handle
-        end)
-        i = i + 1
-        if i == 2 then
-            break
-        end
-        Wait(1000)
-    end
+    TriggerEvent("ScUI:getMinimapHandle", function(handle)
+        self.minimapHandle = handle
+    end)
     if self.minimapHandle == 0 then
         local sc = Scaleform.RequestWidescreen("minimap")
         while not HasScaleformMovieLoaded(sc.handle) do
@@ -33,17 +21,39 @@ function MinimapOverlays:Load()
         Wait(0)
         SetBigmapActive(false, false)
     end
+    TriggerEvent("ScUI:AddMinimapOverlay", function(handle)
+        self.overlay = handle
+        while not HasMinimapOverlayLoaded(self.overlay) do Citizen.Wait(0) end
+        SetMinimapOverlayDisplay(self.overlay, 0.0, 0.0, 100.0, 100.0, 100.0)
+    end)
+    self.isLoaded = HasMinimapOverlayLoaded(self.overlay) and HasScaleformMovieLoaded(self.minimapHandle)
 end
 
 Citizen.CreateThread(function()
     while true do
         Wait(0)
-        if MinimapOverlays.minimapHandle ~= 0 then
-            local success, event_type, context, item_id = GetScaleformMovieCursorSelection(MinimapOverlays.minimapHandle)
+        if HasScaleformMovieLoaded(ScaleformUI.Scaleforms.MinimapOverlays.minimapHandle) then
+            local success, event_type, context, item_id = GetScaleformMovieCursorSelection(ScaleformUI.Scaleforms.MinimapOverlays.minimapHandle)
             if success then
                 if context == 1000 then
-                    MinimapOverlays.minimaps[item_id + 1].OnMouseEvent(event_type)
+                    if ScaleformUI.Scaleforms.MinimapOverlays.minimaps[item_id + 1] ~= nil then
+                        ScaleformUI.Scaleforms.MinimapOverlays.minimaps[item_id + 1].OnMouseEvent(event_type)
+                    end
                 end
+            end
+        else
+            TriggerEvent("ScUI:getMinimapHandle", function(handle)
+                ScaleformUI.Scaleforms.MinimapOverlays.minimapHandle = handle
+            end)
+            if ScaleformUI.Scaleforms.MinimapOverlays.minimapHandle == 0 then
+                local sc = Scaleform.RequestWidescreen("minimap")
+                while not HasScaleformMovieLoaded(sc.handle) do
+                    Wait(0)
+                end
+                ScaleformUI.Scaleforms.MinimapOverlays.minimapHandle = sc.handle
+                SetBigmapActive(true, false)
+                Wait(0)
+                SetBigmapActive(false, false)
             end
         end
     end
@@ -140,15 +150,15 @@ function MinimapOverlays:AddScaledOverlayToMap(textureDict, textureName, x, y, r
 end
 
 function MinimapOverlays:AddAreaOverlay(coords, outline, color)
+    if self.overlay == 0 then self:Load() end
     local points = {}
     for _, coord in ipairs(coords) do
         table.insert(points, string.format("%.2f:%.2f", coord.x, coord.y))
     end
-
     local tobeparsed = table.concat(points, ",")
 
     CallMinimapScaleformFunction(self.overlay, "ADD_AREA_OVERLAY")
-    ScaleformMovieMethodAddParamPlayerNameString(tobeparsed)
+    ScaleformMovieMethodAddParamTextureNameString(tobeparsed)
     ScaleformMovieMethodAddParamBool(outline)
     ScaleformMovieMethodAddParamInt(color.R)
     ScaleformMovieMethodAddParamInt(color.G)
@@ -173,7 +183,7 @@ function MinimapOverlays:SetOverlayColor(overlayId, color)
     ScaleformMovieMethodAddParamInt(color.G);
     ScaleformMovieMethodAddParamInt(color.B);
     EndScaleformMovieMethod();
-    self.minimaps[overlayId - 1].color = color;
+    self.minimaps[overlayId].Color = color;
 end
 
 ---Hides overlay in minimap
@@ -185,7 +195,7 @@ function MinimapOverlays:HideOverlay(overlayId, hide)
     ScaleformMovieMethodAddParamInt(overlayId - 1);
     ScaleformMovieMethodAddParamBool(hide);
     EndScaleformMovieMethod();
-    self.minimaps[overlayId - 1].visible = not hide;
+    self.minimaps[overlayId].visible = not hide;
 end
 
 ---Sets the desired Alpha to the overlay
@@ -197,7 +207,7 @@ function MinimapOverlays:SetOverlayAlpha(overlayId, alpha)
     ScaleformMovieMethodAddParamInt(overlayId - 1);
     ScaleformMovieMethodAddParamFloat(alpha);
     EndScaleformMovieMethod();
-    self.minimaps[overlayId - 1].alpha = alpha;
+    self.minimaps[overlayId].alpha = alpha;
 end
 
 ---Changes position of the overlay
@@ -210,7 +220,7 @@ function MinimapOverlays:SetOverlayPosition(overlayId, position)
     ScaleformMovieMethodAddParamFloat(position.x);
     ScaleformMovieMethodAddParamFloat(position.y);
     EndScaleformMovieMethod();
-    self.minimaps[overlayId - 1].position = position;
+    self.minimaps[overlayId].position = position;
 end
 
 ---Changes size of the overlay
@@ -224,7 +234,7 @@ function MinimapOverlays:SetOverlaySizeOrScale(overlayId, width, height)
     ScaleformMovieMethodAddParamFloat(width);
     ScaleformMovieMethodAddParamFloat(height);
     EndScaleformMovieMethod();
-    self.minimaps[overlayId - 1].size = { width, height };
+    self.minimaps[overlayId].size = { width, height };
 end
 
 ---Removes the desired overlay from the minimap

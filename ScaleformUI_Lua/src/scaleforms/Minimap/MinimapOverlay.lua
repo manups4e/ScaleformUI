@@ -26,6 +26,7 @@ function MinimapOverlay.New(handle, textureDict, textureName, x, y, rotation, wi
         Size = { width or 0, height or 0 },
         Alpha = alpha or 0,
         Centered = centered or false,
+        visible = true,
         OnMouseEvent = function(eventType)
         end
     }
