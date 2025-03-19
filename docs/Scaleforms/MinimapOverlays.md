@@ -19,24 +19,6 @@ Main.MinimapOverlays
 ScaleformUI.Scaleforms.MinimapOverlays
 ```
 
-## ⚠️⚠️ Due to the nature of the Minimap Overlay Scaleform, being loaded as a file and not as a streamed scaleform, the only way you're able to use the Overlays is by calling an export to load the overlays metatable
-
-```lua
-local overlays = exports.ScaleformUI_Lua:GetMinimapOverlays()
-
--- you can then call the functions by doing
-overlays:AddSizedOverlayToMap(textureDict, textureName, x, y, rotation, width, height, alpha, centered)
-overlays:AddScaledOverlayToMap(textureDict, textureName, x, y, rotation, xScale, yScale, alpha, centered)
-overlays:AddAreaOverlay(coordsTable, hasOutline, color)
-overlays:SetOverlayColor(overlayId, color)
-overlays:HideOverlay(overlayId, hide)
-overlays:SetOverlayAlpha(overlayId, alpha)
-overlays:SetOverlayPosition(overlayId, position)
-overlays:SetOverlaySizeOrScale(overlayId, width, height)
-overlays:RemoveOverlayFromMinimap(overlayId)
-overlays:ClearAll()
-```
-
 ## Functions
 
 ```c#
