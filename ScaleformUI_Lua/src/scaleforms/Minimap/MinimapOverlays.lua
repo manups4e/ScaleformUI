@@ -7,6 +7,25 @@ MinimapOverlays = setmetatable({
 MinimapOverlays.__index = MinimapOverlays
 MinimapOverlays.__call = function() return "MinimapOverlays" end
 
+---@class MinimapOverlays
+---@field private overlay number
+---@field private minimaps table
+---@field private minimapHandle number
+---@field public isLoaded boolean
+---@field private Load fun(self:MinimapOverlays)
+---@field public AddSizedOverlayToMap fun(self:MinimapOverlays, textureDict:string, textureName:string, x:number, y:number, rotation:number, width:number, height:number, alpha:number, centered:boolean)
+---@field public AddScaledOverlayToMap fun(self:MinimapOverlays, textureDict:string, textureName:string, x:number, y:number, rotation:number, xScale:number, yScale:number, alpha:number, centered:boolean)
+---@field public AddAreaOverlay fun(self:MinimapOverlays, coords:table, outline:boolean, color:SColor)
+---@field public SetOverlayColor fun(self:MinimapOverlays, overlayId:number, color:SColor)
+---@field public HideOverlay fun(self:MinimapOverlays, overlayId:number, hide:boolean)
+---@field public SetOverlayAlpha fun(self:MinimapOverlays, overlayId:number, alpha:number)
+---@field public SetOverlayRotation fun(self:MinimapOverlays, overlayId:number, rotation:number)
+---@field public SetOverlayPosition fun(self:MinimapOverlays, overlayId:number, position:vector2|vector3)
+---@field public SetOverlaySizeOrScale fun(self:MinimapOverlays, overlayId:number, width:number, height:number)
+---@field public RemoveOverlayFromMinimap fun(self:MinimapOverlays, overlayId:number)
+---@field public ClearAll fun(self:MinimapOverlays)
+
+
 function MinimapOverlays:Load()
     TriggerEvent("ScUI:getMinimapHandle", function(handle)
         self.minimapHandle = handle
@@ -21,18 +40,19 @@ function MinimapOverlays:Load()
         Wait(0)
         SetBigmapActive(false, false)
     end
+    -- TODO: ADD CHECKS IN FUNCTIONS TO PREVENT USING WITH AREA OVERLAY (COORDS FOR EXAMPLE)
     TriggerEvent("ScUI:AddMinimapOverlay", function(handle)
         self.overlay = handle
         while not HasMinimapOverlayLoaded(self.overlay) do Citizen.Wait(0) end
         SetMinimapOverlayDisplay(self.overlay, 0.0, 0.0, 100.0, 100.0, 100.0)
+        self.isLoaded = HasMinimapOverlayLoaded(self.overlay) and HasScaleformMovieLoaded(self.minimapHandle)
     end)
-    self.isLoaded = HasMinimapOverlayLoaded(self.overlay) and HasScaleformMovieLoaded(self.minimapHandle)
 end
 
 Citizen.CreateThread(function()
     while true do
         Wait(0)
-        if HasScaleformMovieLoaded(ScaleformUI.Scaleforms.MinimapOverlays.minimapHandle) then
+        if ScaleformUI.Scaleforms.MinimapOverlays.isLoaded then
             local success, event_type, context, item_id = GetScaleformMovieCursorSelection(ScaleformUI.Scaleforms.MinimapOverlays.minimapHandle)
             if success then
                 if context == 1000 then
@@ -42,19 +62,7 @@ Citizen.CreateThread(function()
                 end
             end
         else
-            TriggerEvent("ScUI:getMinimapHandle", function(handle)
-                ScaleformUI.Scaleforms.MinimapOverlays.minimapHandle = handle
-            end)
-            if ScaleformUI.Scaleforms.MinimapOverlays.minimapHandle == 0 then
-                local sc = Scaleform.RequestWidescreen("minimap")
-                while not HasScaleformMovieLoaded(sc.handle) do
-                    Wait(0)
-                end
-                ScaleformUI.Scaleforms.MinimapOverlays.minimapHandle = sc.handle
-                SetBigmapActive(true, false)
-                Wait(0)
-                SetBigmapActive(false, false)
-            end
+            ScaleformUI.Scaleforms.MinimapOverlays:Load()
         end
     end
 end)
@@ -167,6 +175,8 @@ function MinimapOverlays:AddAreaOverlay(coords, outline, color)
     EndScaleformMovieMethod()
 
     local overlay = MinimapOverlay.New(#self.minimaps + 1, "", "", 0, 0, 0, 0, 0, color.A, true)
+    overlay.Color = color
+    overlay.isArea = true
     table.insert(self.minimaps, overlay)
     return overlay
 end
@@ -195,7 +205,7 @@ function MinimapOverlays:HideOverlay(overlayId, hide)
     ScaleformMovieMethodAddParamInt(overlayId - 1);
     ScaleformMovieMethodAddParamBool(hide);
     EndScaleformMovieMethod();
-    self.minimaps[overlayId].visible = not hide;
+    self.minimaps[overlayId].Visible = not hide;
 end
 
 ---Sets the desired Alpha to the overlay
@@ -207,7 +217,17 @@ function MinimapOverlays:SetOverlayAlpha(overlayId, alpha)
     ScaleformMovieMethodAddParamInt(overlayId - 1);
     ScaleformMovieMethodAddParamFloat(alpha);
     EndScaleformMovieMethod();
-    self.minimaps[overlayId].alpha = alpha;
+    self.minimaps[overlayId].Alpha = alpha;
+end
+
+function MinimapOverlays:SetOverlayRotation(overlayId, rotation)
+    if self.overlay == 0 then return end
+    if self.minimaps[overlayId].isArea then print("ScaleformUI - MinimapOverlays - method \"SetOverlayRotation\" is not supported on Areas due to their vector boundaries") return end
+    CallMinimapScaleformFunction(self.overlay, "UPDATE_OVERLAY_ROTATION");
+    ScaleformMovieMethodAddParamInt(overlayId - 1);
+    ScaleformMovieMethodAddParamFloat(rotation);
+    EndScaleformMovieMethod();
+    self.minimaps[overlayId].Rotation = rotation;
 end
 
 ---Changes position of the overlay
@@ -215,6 +235,7 @@ end
 ---@param position vector2 the new overlay position
 function MinimapOverlays:SetOverlayPosition(overlayId, position)
     if self.overlay == 0 then return end
+    if self.minimaps[overlayId].isArea then print("ScaleformUI - MinimapOverlays - method \"SetOverlayPosition\" is not supported on Areas due to their vector boundaries") return end
     CallMinimapScaleformFunction(self.overlay, "UPDATE_OVERLAY_POSITION");
     ScaleformMovieMethodAddParamInt(overlayId - 1);
     ScaleformMovieMethodAddParamFloat(position.x);
@@ -229,6 +250,7 @@ end
 ---@param height number the new size, if the overlay is scaled, value must be in percentage (0 to 100)
 function MinimapOverlays:SetOverlaySizeOrScale(overlayId, width, height)
     if self.overlay == 0 then return end
+    if self.minimaps[overlayId].isArea then print("ScaleformUI - MinimapOverlays - method \"SetOverlaySizeOrScale\" is not supported on Areas due to their vector boundaries") return end
     CallMinimapScaleformFunction(self.overlay, "UPDATE_OVERLAY_SIZE_OR_SCALE");
     ScaleformMovieMethodAddParamInt(overlayId - 1);
     ScaleformMovieMethodAddParamFloat(width);
@@ -240,7 +262,7 @@ end
 ---Removes the desired overlay from the minimap
 ---@param overlayId number the overlay handle
 function MinimapOverlays:RemoveOverlayFromMinimap(overlayId)
-    if overlayId == nil then return end
+    if overlayId == nil or overlayId <= 0 then return end
     if self.overlay == 0 then self:Load() end
     CallMinimapScaleformFunction(self.overlay, "REM_OVERLAY");
     ScaleformMovieMethodAddParamInt(overlayId - 1)

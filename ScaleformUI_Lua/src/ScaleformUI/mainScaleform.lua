@@ -29,6 +29,8 @@ AddEventHandler("onResourceStop", function(resName)
             AnimpostfxStop("PauseMenuIn");
             AnimpostfxPlay("PauseMenuOut", 800, false);
         end
+        -- DO NOT REMOVE THIS.. THIS IS NEEDED!
+        ScaleformUI.Scaleforms.MinimapOverlays:ClearAll()
         ScaleformUI.Scaleforms._pauseMenu:Dispose()
         ScaleformUI.Scaleforms._ui:CallFunction("CLEAR_ALL")
         ScaleformUI.Scaleforms._ui:Dispose()

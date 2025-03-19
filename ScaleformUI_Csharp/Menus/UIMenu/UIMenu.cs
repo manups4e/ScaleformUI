@@ -636,6 +636,8 @@ namespace ScaleformUI.Menu
                 MenuItems.RemoveAt(index);
                 if (selectedItem < MenuItems.Count)
                     CurrentSelection = selectedItem;
+                else
+                    CurrentSelection = MenuItems.Count - 1;
                 if (Visible)
                 {
                     Main.scaleformUI.CallFunction("REMOVE_DATA_SLOT", index);
@@ -644,8 +646,31 @@ namespace ScaleformUI.Menu
             }
             else
             {
-                throw new Exception("ScaleformUI - Cannot remove an index out of bounds!!");
+                throw new ArgumentOutOfRangeException("ScaleformUI - Cannot remove an index out of bounds!!");
             }
+        }
+
+        /// <summary>
+        /// Remove a range of items from the menu.
+        /// </summary>
+        /// <param name="startIndex">An integer that specifies the index of the element in the array where the deletion begins</param>
+        /// <param name="count">An integer that specifies the number of elements to be deleted. This number includes the element specified in the startIndex parameter. If no value is specified for the deleteCount parameter, the method deletes only 1 item. If the value is 0, no elements are deleted</param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public void RemoveItemsRange(int startIndex, int count = 1)
+        {
+            if (startIndex < 0 || startIndex >= MenuItems.Count)
+                throw new ArgumentOutOfRangeException("ScaleformUI - Cannot remove an index out of bounds!!");
+            if (startIndex + count > MenuItems.Count || count == 0)
+                return;
+            int selectedItem = CurrentSelection;
+            for (int i = startIndex; i < count; i++)
+                MenuItems.RemoveAt(i);
+            if (Visible)
+                BuildMenu(true);
+            if (selectedItem < MenuItems.Count)
+                CurrentSelection = selectedItem;
+            else
+                CurrentSelection = MenuItems.Count - 1;
         }
 
         public void RemoveItem(UIMenuItem item)
@@ -1679,12 +1704,6 @@ namespace ScaleformUI.Menu
                 {
                     if (_visible) return;
                     _visible = value;
-                    if (!itemless && this.MenuItems.Count == 0)
-                    {
-                        MenuHandler.CloseAndClearHistory();
-                        throw new Exception($"UIMenu {this.Title} menu is empty... Closing and clearing history.");
-                    }
-
                     Main.InstructionalButtons.SetInstructionalButtons(this.InstructionalButtons);
                     canBuild = true;
                     MenuHandler.currentMenu = this;
@@ -1704,6 +1723,7 @@ namespace ScaleformUI.Menu
                     MenuCloseEv(this);
                     MenuHandler.ableToDraw = false;
                     MenuHandler.currentMenu = null;
+                    Main.scaleformUI.CallFunction("SET_DATA_SLOT_EMPTY");
                     if (_unfilteredMenuItems.Count > 0)
                     {
                         MenuItems[CurrentSelection].Selected = false;
@@ -1738,13 +1758,15 @@ namespace ScaleformUI.Menu
             }
 
             if (!Visible) return;
-            SendItems();
-
-            //Pagination.ScaleformIndex = Pagination.GetScaleformIndex(CurrentSelection);
-            if (CurrentItem is UIMenuSeparatorItem sp && sp.Jumpable)
-                GoDown();
-            SendPanelsToItemScaleform(CurrentSelection);
-            SendSidePanelToScaleform(CurrentSelection);
+            if (MenuItems.Count > 0)
+            {
+                SendItems();
+                SendPanelsToItemScaleform(CurrentSelection);
+                SendSidePanelToScaleform(CurrentSelection);
+                //Pagination.ScaleformIndex = Pagination.GetScaleformIndex(CurrentSelection);
+                if (CurrentItem is UIMenuSeparatorItem sp && sp.Jumpable)
+                    GoDown();
+            }
             Main.scaleformUI.CallFunction("ENABLE_MOUSE", MouseControlsEnabled);
             isBuilding = false;
         }
@@ -2212,6 +2234,7 @@ namespace ScaleformUI.Menu
             get { return MenuItems.Count == 0 ? 0 : _currentSelection; }
             set
             {
+                if (MenuItems.Count == 0) return;
                 if (CurrentSelection < MenuItems.Count)
                     MenuItems[CurrentSelection].Selected = false;
                 _currentSelection = Math.Max(0, Math.Min(value, MenuItems.Count - 1));

@@ -76,7 +76,6 @@ namespace ScaleformUI
                         newer.SetMenuOffset(old.Offset);
                         newer.AlternativeTitle = old.AlternativeTitle;
                         newer.MaxItemsOnScreen = old.MaxItemsOnScreen;
-                        newer.ScrollingType = old.ScrollingType;
                         newer.Glare = old.Glare;
                         newer.SetMouse(old.MouseControlsEnabled, old.MouseEdgeEnabled, old.MouseWheelControlEnabled, old.ResetCursorOnOpen, old.leftClickEnabled);
                         newer.SubtitleColor = old.SubtitleColor;
