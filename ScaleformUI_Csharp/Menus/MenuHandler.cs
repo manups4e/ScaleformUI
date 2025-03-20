@@ -56,8 +56,7 @@ namespace ScaleformUI
                 throw new ArgumentNullException("The menu you're switching to cannot be null.");
             if (newMenu == currentMenu)
                 throw new Exception("You cannot switch a menu to itself.");
-            if (newMenu is UIMenu menu && menu.MenuItems.Count == 0)
-                throw new Exception("You cannot switch to an empty menu.");
+
             if (BreadcrumbsHandler.SwitchInProgress) return;
 
             BreadcrumbsHandler.SwitchInProgress = true;
