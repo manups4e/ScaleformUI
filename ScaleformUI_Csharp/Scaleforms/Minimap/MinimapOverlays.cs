@@ -99,7 +99,7 @@ namespace ScaleformUI.Scaleforms
         }
 
         public bool Centered { get => centered; set => centered = value; }
-        internal bool iaArea = false;
+        internal bool isArea = false;
         internal void triggerMouseEvent(MouseEvent ev)
         {
             OnMouseEvent?.Invoke(ev);
@@ -364,7 +364,7 @@ namespace ScaleformUI.Scaleforms
         public static void SetOverlayRotation(int overlayId, float rotation)
         {
             if (overlay == 0) return;
-            if (minimaps[overlayId - 1].iaArea)
+            if (minimaps[overlayId - 1].isArea)
             {
                 Debug.WriteLine("ScaleformUI - MinimapOverlays - method \"SetOverlayRotation\" is not supported on Areas due to their vector boundaries");
                 return;
@@ -379,7 +379,7 @@ namespace ScaleformUI.Scaleforms
         private static void overlayPos(int overlayId, float x, float y)
         {
             if (overlay == 0) return;
-            if (minimaps[overlayId - 1].iaArea)
+            if (minimaps[overlayId - 1].isArea)
             {
                 Debug.WriteLine("ScaleformUI - MinimapOverlays - method \"SetOverlayPosition\" is not supported on Areas due to their vector boundaries");
                 return;
