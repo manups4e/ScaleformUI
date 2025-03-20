@@ -530,7 +530,7 @@ end
 ---@param value number|nil
 function UIMenu:CurrentSelection(value)
     if value ~= nil then
-        assert(#self.Items > 0, "ScaleformUI - Cannot set CurrentSelection on an empty menu!")
+        if #self.Items == 0 then return end
         self:CurrentItem():Selected(false)
         self._currentSelection = math.max(1, math.min(value, #self.Items))
 
@@ -613,22 +613,82 @@ function UIMenu:RemoveItemAt(index)
     if tonumber(index) then
         local idx = self:CurrentSelection()
         if #self.Items >= index then
+            if idx == index then
+            --[[
+                Failsafe workaround because Lua sucks shit so bad that is not even able
+                to handle the last index in a table without crashing the entire game... 
+                I HATE YOU LUA!!! W C# FOR EVER!
+                And they say C# has bigger overhead and it's slow... at least C# handles arrays like it should!!!
+            ]]
+            self:CurrentSelection(1)
+            end
+            
             table.remove(self.Items, index)
+            if self:Visible() then
+                ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_DATA_SLOT", index - 1)
+                self:RefreshMenu(true)
+            end
             if #self.Items > 0 then
-                if self:Visible() then
-                    ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_DATA_SLOT", index - 1)
-                    self:RefreshMenu(true)
-                end
-                if idx >= #self.Items then
+                if #self.Items >= idx then
                     self:CurrentSelection(idx)
                 else
                     self:CurrentSelection(#self.Items)
                 end
+            else
+                print("ScaleformUI - UIMenu:RemoveItemAt - Index out of range (Index: " ..
+                    index .. ", Items: " .. #self.Items .. ")")
             end
-        else
-            print("ScaleformUI - UIMenu:RemoveItemAt - Index out of range (Index: " ..
-                index .. ", Items: " .. #self.Items .. ")")
         end
+    end
+end
+
+---RemoveItemsRange
+---@param startIndex number An integer that specifies the index of the element in the array where the deletion begins.
+---@param count number An integer that specifies the number of elements to be deleted. This number includes the element specified in the startIndex parameter. If no value is specified for the deleteCount parameter, the method deletes only 1 item. If the value is 0, no elements are deleted
+function UIMenu:RemoveItemsRange(startIndex, count)
+    local idx = self:CurrentSelection()
+    local n = #self.Items
+
+    if startIndex < 1 or startIndex > n then return end
+    count = count or 1
+    count = math.min(count, n - startIndex + 1)
+    if count == 0 then return end
+
+    if idx == startIndex then
+        --[[
+            Failsafe workaround because Lua sucks shit so bad that is not even able
+            to handle the last index in a table without crashing the entire game... 
+            I HATE YOU LUA!!! W C# FOR EVER!
+            And they say C# has bigger overhead and it's slow... at least C# handles arrays like it should!!!
+        ]]
+        self:CurrentSelection(1)
+    end
+
+    local j = startIndex
+    for i = startIndex + count, n do
+        self.Items[j] = self.Items[i]
+        j = j + 1
+    end
+
+    for i = j, n do
+        self.Items[i] = nil
+    end
+
+    if self:Visible() then
+        self:BuildMenu(true)
+    end
+    while self._isBuilding do Wait(0) end
+    if #self.Items > 0 then
+        -- if menu has enough items to cover last selection
+        if #self.Items >= idx then
+            self:CurrentSelection(idx)
+        else
+            -- else we select last item possible
+            self:CurrentSelection(#self.Items)
+        end
+    else
+        print("ScaleformUI - UIMenu:RemoveItemAt - Index out of range (Index: " ..
+            index .. ", Items: " .. #self.Items .. ")")
     end
 end
 
@@ -668,8 +728,7 @@ function UIMenu:MaxItemsOnScreen(max)
 end
 
 function UIMenu:SwitchTo(newMenu, newMenuCurrentSelection, inheritOldMenuParams)
-    assert(newMenu ~= nil, "ScaleformUI - cannot switch to a nil menu")
-    assert(not newMenu:Visible(), "The menu is already open!")
+    assert(newMenu ~= nil, "ScaleformUI - cannot switch to a null menu")
     if newMenuCurrentSelection == nil then newMenuCurrentSelection = 1 end
     if inheritOldMenuParams == nil then inheritOldMenuParams = true end
     MenuHandler:SwitchTo(self, newMenu, newMenuCurrentSelection, inheritOldMenuParams)
@@ -708,8 +767,11 @@ function UIMenu:Visible(bool)
             if BreadcrumbsHandler:Count() == 0 then
                 BreadcrumbsHandler:Forward(self)
             end
-            AddTextEntry("UIMenu_Current_Description", self:CurrentItem():Description())
+            if #self.Items > 0 then
+                AddTextEntry("UIMenu_Current_Description", self:CurrentItem():Description())
+            end
         else
+            ScaleformUI.Scaleforms._ui:CallFunction("SET_DATA_SLOT_EMPTY")
             self._Visible = bool
             ScaleformUI.Scaleforms.InstructionalButtons:ClearButtonList()
             MenuHandler._currentMenu = nil
@@ -725,7 +787,8 @@ function UIMenu:Visible(bool)
             end
             self.OnMenuClose(self)
         end
-        ScaleformUI.Scaleforms._ui:CallFunction("SET_VISIBLE", self._Visible, self:CurrentSelection() - 1, self.topEdge - 1)
+        ScaleformUI.Scaleforms._ui:CallFunction("SET_VISIBLE", self._Visible, self:CurrentSelection() - 1,
+            self.topEdge - 1)
         --hack to make sure the current item is selected
         self:CurrentSelection(self._currentSelection)
         if self.Settings.ResetCursorOnOpen then
@@ -749,14 +812,15 @@ function UIMenu:BuildMenu(itemsOnly)
     if not self:Visible() then
         return
     end
-    assert(#self.Items > 0, "ScaleformUI - Cannot build an empty menu!")
-    self:SendItems()
-    self:SendPanelsToItemScaleform(self:CurrentSelection())
-    self:SendSidePanelToScaleform(self:CurrentSelection())
-    if self._Visible then
-        while self:CurrentItem().ItemId == 6 and self:CurrentItem().Jumpable do
-            Wait(0)
-            self:GoDown()
+    if #self.Items > 0 then 
+        self:SendItems()
+        self:SendPanelsToItemScaleform(self:CurrentSelection())
+        self:SendSidePanelToScaleform(self:CurrentSelection())
+        if self._Visible then
+            while self:CurrentItem().ItemId == 6 and self:CurrentItem().Jumpable do
+                Wait(0)
+                self:GoDown()
+            end
         end
     end
     ScaleformUI.Scaleforms._ui:CallFunction("ENABLE_MOUSE", self.Settings.MouseControlsEnabled)
@@ -855,11 +919,12 @@ end
 function UIMenu:SendSidePanelToScaleform(i, update)
     if update == nil then update = false end
     local index = i - self.topEdge
-    local item = self.Items[i]
-    if (item.SidePanel == nil or not item.Enabled or index < 0 or index > self:MaxItemsOnScreen()) then
+    if (#self.Items < i or self.Items[i].SidePanel == nil or not self.Items[i].Enabled or index < 0 or index > self:MaxItemsOnScreen()) then
         ScaleformUI.Scaleforms._ui:CallFunction("SET_SIDE_PANEL_DATA_SLOT_EMPTY")
         return
     end
+
+    local item = self.Items[i]
 
     if not update then
         ScaleformUI.Scaleforms._ui:CallFunction("SET_SIDE_PANEL_DATA_SLOT_EMPTY")
@@ -893,12 +958,14 @@ end
 function UIMenu:SendPanelsToItemScaleform(i, update)
     if update == nil then update = false end
     local index = i - self.topEdge
-    local item = self.Items[i]
 
-    if (item.Panels.Count == 0 or not item.Enabled or index < 0 or index > self:MaxItemsOnScreen()) then
+    if (#self.Items < i or self.Items[i].Panels.Count == 0 or not self.Items[i].Enabled or index < 0 or index > self:MaxItemsOnScreen()) then
         ScaleformUI.Scaleforms._ui:CallFunction("SET_PANEL_DATA_SLOT_EMPTY")
         return
     end
+
+    local item = self.Items[i]
+
     local str = "UPDATE_PANEL_DATA_SLOT"
     if (not update) then
         ScaleformUI.Scaleforms._ui:CallFunction("SET_PANEL_DATA_SLOT_EMPTY")
@@ -963,60 +1030,87 @@ function UIMenu:SendItemToScaleform(i, update, newItem, isSlot)
 
     BeginScaleformMovieMethod(ScaleformUI.Scaleforms._ui.handle, str)
     PushScaleformMovieFunctionParameterInt(i - 1)
+    PushScaleformMovieFunctionParameterInt(0)
+    PushScaleformMovieFunctionParameterInt(0)
     PushScaleformMovieFunctionParameterInt(item.ItemId)
-    PushScaleformMovieMethodParameterString(it._formatLeftLabel)
-    PushScaleformMovieFunctionParameterBool(item:Enabled())
-    PushScaleformMovieFunctionParameterBool(item:BlinkDescription())
-    if SubType == "UIMenuDynamicListItem" or SubType == "UIMenuListItem" then -- dynamic list item are handled like list items in the scaleform.. so the type remains 1
+
+    if item.ItemId == 1 then
         local lbl = item:createListString()
         PushScaleformMovieMethodParameterString(lbl)
+    elseif item.ItemId == 2 then
+        PushScaleformMovieFunctionParameterBool(item:Checked())
+    elseif item.ItemId == 3 or item.ItemId == 4 or item.ItemId == 5 then
+        PushScaleformMovieFunctionParameterInt(item:Index())
+    else
         PushScaleformMovieFunctionParameterInt(0)
+    end
+    PushScaleformMovieFunctionParameterBool(item:Enabled())
+    PushScaleformMovieMethodParameterString(it._formatLeftLabel)
+    PushScaleformMovieFunctionParameterBool(item:BlinkDescription())
+    if SubType == "UIMenuDynamicListItem" or SubType == "UIMenuListItem" then -- dynamic list item are handled like list items in the scaleform.. so the type remains 1
         PushScaleformMovieFunctionParameterInt(item:MainColor():ToArgb())
         PushScaleformMovieFunctionParameterInt(item:HighlightColor():ToArgb())
+        PushScaleformMovieFunctionParameterInt(it._leftBadge)
+        PushScaleformMovieMethodParameterString(it.customLeftIcon.TXD)
+        PushScaleformMovieMethodParameterString(it.customLeftIcon.TXN)
+        PushScaleformMovieMethodParameterString(it._labelFont.FontName)
+        PushScaleformMovieMethodParameterString(it._rightLabelFont.FontName)
     elseif SubType == "UIMenuCheckboxItem" then
         PushScaleformMovieFunctionParameterInt(item.CheckBoxStyle)
-        PushScaleformMovieFunctionParameterBool(item:Checked())
         PushScaleformMovieFunctionParameterInt(item:MainColor():ToArgb())
         PushScaleformMovieFunctionParameterInt(item:HighlightColor():ToArgb())
+        PushScaleformMovieFunctionParameterInt(it._leftBadge)
+        PushScaleformMovieMethodParameterString(it.customLeftIcon.TXD)
+        PushScaleformMovieMethodParameterString(it.customLeftIcon.TXN)
+        PushScaleformMovieMethodParameterString(it._labelFont.FontName)
     elseif SubType == "UIMenuSliderItem" then
         PushScaleformMovieFunctionParameterInt(item._Max)
         PushScaleformMovieFunctionParameterInt(item._Multiplier)
-        PushScaleformMovieFunctionParameterInt(item:Index())
         PushScaleformMovieFunctionParameterInt(item:MainColor():ToArgb())
         PushScaleformMovieFunctionParameterInt(item:HighlightColor():ToArgb())
         PushScaleformMovieFunctionParameterInt(item:SliderColor():ToArgb())
         PushScaleformMovieFunctionParameterBool(item._heritage)
+        PushScaleformMovieFunctionParameterInt(it._leftBadge)
+        PushScaleformMovieMethodParameterString(it.customLeftIcon.TXD)
+        PushScaleformMovieMethodParameterString(it.customLeftIcon.TXN)
+        PushScaleformMovieMethodParameterString(it._labelFont.FontName)
     elseif SubType == "UIMenuProgressItem" then
         PushScaleformMovieFunctionParameterInt(item._Max)
         PushScaleformMovieFunctionParameterInt(item._Multiplier)
-        PushScaleformMovieFunctionParameterInt(item:Index())
         PushScaleformMovieFunctionParameterInt(item:MainColor():ToArgb())
         PushScaleformMovieFunctionParameterInt(item:HighlightColor():ToArgb())
         PushScaleformMovieFunctionParameterInt(item:SliderColor():ToArgb())
+        PushScaleformMovieFunctionParameterInt(it._leftBadge)
+        PushScaleformMovieMethodParameterString(it.customLeftIcon.TXD)
+        PushScaleformMovieMethodParameterString(it.customLeftIcon.TXN)
+        PushScaleformMovieMethodParameterString(it._labelFont.FontName)
     elseif SubType == "UIMenuStatsItem" then
-        PushScaleformMovieFunctionParameterInt(item:Index())
         PushScaleformMovieFunctionParameterInt(item._Type)
-        PushScaleformMovieFunctionParameterInt(item:SliderColor())
+        PushScaleformMovieFunctionParameterInt(item:SliderColor():ToArgb())
         PushScaleformMovieFunctionParameterInt(item:MainColor():ToArgb())
         PushScaleformMovieFunctionParameterInt(item:HighlightColor():ToArgb())
+        PushScaleformMovieFunctionParameterInt(it._leftBadge)
+        PushScaleformMovieMethodParameterString(it.customLeftIcon.TXD)
+        PushScaleformMovieMethodParameterString(it.customLeftIcon.TXN)
+        PushScaleformMovieMethodParameterString(it._labelFont.FontName)
     elseif SubType == "UIMenuSeparatorItem" then
         PushScaleformMovieFunctionParameterBool(item.Jumpable)
         PushScaleformMovieFunctionParameterInt(item:MainColor():ToArgb())
         PushScaleformMovieFunctionParameterInt(item:HighlightColor():ToArgb())
+        PushScaleformMovieMethodParameterString(it._labelFont.FontName)
     else
         PushScaleformMovieFunctionParameterInt(item:MainColor():ToArgb())
         PushScaleformMovieFunctionParameterInt(item:HighlightColor():ToArgb())
-    end
-
-    PushScaleformMovieMethodParameterString(it._formatRightLabel)
-    PushScaleformMovieFunctionParameterInt(it._leftBadge)
-    PushScaleformMovieMethodParameterString(it.customLeftIcon.TXD)
-    PushScaleformMovieMethodParameterString(it.customLeftIcon.TXN)
-    PushScaleformMovieFunctionParameterInt(it._rightBadge)
-    PushScaleformMovieMethodParameterString(it.customRightIcon.TXD)
-    PushScaleformMovieMethodParameterString(it.customRightIcon.TXN)
-    PushScaleformMovieMethodParameterString(it._labelFont.FontName)
-    PushScaleformMovieMethodParameterString(it._rightLabelFont.FontName)
+        PushScaleformMovieMethodParameterString(it._formatRightLabel)
+        PushScaleformMovieFunctionParameterInt(it._leftBadge)
+        PushScaleformMovieMethodParameterString(it.customLeftIcon.TXD)
+        PushScaleformMovieMethodParameterString(it.customLeftIcon.TXN)
+        PushScaleformMovieFunctionParameterInt(it._rightBadge)
+        PushScaleformMovieMethodParameterString(it.customRightIcon.TXD)
+        PushScaleformMovieMethodParameterString(it.customRightIcon.TXN)
+        PushScaleformMovieMethodParameterString(it._labelFont.FontName)
+        PushScaleformMovieMethodParameterString(it._rightLabelFont.FontName)
+        end
     EndScaleformMovieMethod()
 end
 
@@ -1092,7 +1186,7 @@ function UIMenu:ProcessControl()
         return
     end
 
-    if UpdateOnscreenKeyboard() == 0 or IsWarningMessageActive() or ScaleformUI.Scaleforms.Warning:IsShowing() or BreadcrumbsHandler.SwitchInProgress or self.isFading then return end
+    if UpdateOnscreenKeyboard() == 0 or IsWarningMessageActive() or ScaleformUI.Scaleforms.Warning:IsShowing() or BreadcrumbsHandler.SwitchInProgress then return end
 
     if self.Controls.Back.Enabled then
         if IsDisabledControlJustReleased(0, 177) or IsDisabledControlJustReleased(1, 177) or IsDisabledControlJustReleased(2, 177) or IsDisabledControlJustReleased(0, 199) or IsDisabledControlJustReleased(1, 199) or IsDisabledControlJustReleased(2, 199) then
@@ -1381,31 +1475,32 @@ function UIMenu:SelectItem(play)
     if subtype == "UIMenuCheckboxItem" then
         Item:Checked(not Item:Checked())
         PlaySoundFrontend(-1, self.Settings.Audio.Select, self.Settings.Audio.Library, true)
-        self.OnCheckboxChange(self, Item, Item:Checked())
         Item.OnCheckboxChanged(self, Item, Item:Checked())
+        self.OnCheckboxChange(self, Item, Item:Checked())
     elseif subtype == "UIMenuListItem" then
         PlaySoundFrontend(-1, self.Settings.Audio.Select, self.Settings.Audio.Library, true)
-        self.OnListSelect(self, Item, Item._Index)
         Item.OnListSelected(self, Item, Item._Index)
+        self.OnListSelect(self, Item, Item._Index)
     elseif subtype == "UIMenuDynamicListItem" then
         PlaySoundFrontend(-1, self.Settings.Audio.Select, self.Settings.Audio.Library, true)
-        self.OnListSelect(self, Item, Item._currentItem)
         Item.OnListSelected(self, Item, Item._currentItem)
+        self.OnListSelect(self, Item, Item._currentItem)
     elseif subtype == "UIMenuSliderItem" then
         PlaySoundFrontend(-1, self.Settings.Audio.Select, self.Settings.Audio.Library, true)
-        self.OnSliderSelect(self, Item, Item._Index)
         Item.OnSliderSelected(self, Item, Item._Index)
+        self.OnSliderSelect(self, Item, Item._Index)
     elseif subtype == "UIMenuProgressItem" then
         PlaySoundFrontend(-1, self.Settings.Audio.Select, self.Settings.Audio.Library, true)
-        self.OnProgressSelect(self, Item, Item._Index)
         Item.OnProgressSelected(self, Item, Item._Index)
+        self.OnProgressSelect(self, Item, Item._Index)
     elseif subtype == "UIMenuStatsItem" then
         PlaySoundFrontend(-1, self.Settings.Audio.Select, self.Settings.Audio.Library, true)
-        self.OnStatsSelect(self, Item, Item._Index)
         Item.OnStatsSelected(self, Item, Item._Index)
-    else
-        self.OnItemSelect(self, Item, self:CurrentSelection())
+        self.OnStatsSelect(self, Item, Item._Index)
+    end
+    if subtype ~= "UIMenuCheckboxItem" then 
         Item.Activated(self, Item)
+        self.OnItemSelect(self, Item, self:CurrentSelection())
     end
 end
 

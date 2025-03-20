@@ -99,6 +99,7 @@ namespace ScaleformUI.Scaleforms
         }
 
         public bool Centered { get => centered; set => centered = value; }
+        internal bool isArea = false;
         internal void triggerMouseEvent(MouseEvent ev)
         {
             OnMouseEvent?.Invoke(ev);
@@ -131,21 +132,15 @@ namespace ScaleformUI.Scaleforms
 
         internal static async Task Load()
         {
-            overlay = AddMinimapOverlay("files/MINIMAP_LOADER.gfx");
-            while (!HasMinimapOverlayLoaded(overlay)) await BaseScript.Delay(0);
-            SetMinimapOverlayDisplay(overlay, 0f, 0f, 100f, 100f, 100f);
-            int i = 0;
-            do
-            {
-                Main.TriggerEvent("ScUI:getMinimapHandle", [ new Action<dynamic>(handle => {
-                    minimapHandle = Convert.ToInt32(handle);
-                    return;
-                })]);
-                i++;
-                if (i >= 2 && minimapHandle == 0)
-                    break;
-                await BaseScript.Delay(1000);
-            } while (minimapHandle == 0);
+            BaseScript.TriggerEvent("ScUI:AddMinimapOverlay", [ new Action<dynamic>(async handle => {
+                overlay = Convert.ToInt32(handle);
+                while (!HasMinimapOverlayLoaded(overlay)) await BaseScript.Delay(0);
+                SetMinimapOverlayDisplay(overlay, 0f, 0f, 100f, 100f, 100f);
+            })]);
+            BaseScript.TriggerEvent("ScUI:getMinimapHandle", [ new Action<dynamic>(handle => {
+                minimapHandle = Convert.ToInt32(handle);
+                return;
+            })]);
             if(minimapHandle == 0)
             {
                 var mn = RequestScaleformMovieInstance("minimap");
@@ -240,11 +235,9 @@ namespace ScaleformUI.Scaleforms
 
         public static async Task<MinimapOverlay> AddAreaOverlay(List<Vector3> coords, bool outline, SColor color)
         {
-
             List<Vector2> res = coords.ConvertAll(x => (Vector2)x);
             IEnumerable<string> joined = res.Select(vec => $"{vec.X}:{vec.Y}");
             string tobesent = string.Join(",", joined);
-            Debug.WriteLine("ToBeSent: " + tobesent);
 
             CallMinimapScaleformFunction(overlay, "ADD_AREA_OVERLAY");
             ScaleformMovieMethodAddParamPlayerNameString(tobesent);
@@ -371,6 +364,11 @@ namespace ScaleformUI.Scaleforms
         public static void SetOverlayRotation(int overlayId, float rotation)
         {
             if (overlay == 0) return;
+            if (minimaps[overlayId - 1].isArea)
+            {
+                Debug.WriteLine("ScaleformUI - MinimapOverlays - method \"SetOverlayRotation\" is not supported on Areas due to their vector boundaries");
+                return;
+            }
             CallMinimapScaleformFunction(overlay, "UPDATE_OVERLAY_ROTATION");
             ScaleformMovieMethodAddParamInt(overlayId - 1);
             ScaleformMovieMethodAddParamFloat(rotation);
@@ -381,6 +379,11 @@ namespace ScaleformUI.Scaleforms
         private static void overlayPos(int overlayId, float x, float y)
         {
             if (overlay == 0) return;
+            if (minimaps[overlayId - 1].isArea)
+            {
+                Debug.WriteLine("ScaleformUI - MinimapOverlays - method \"SetOverlayPosition\" is not supported on Areas due to their vector boundaries");
+                return;
+            }
             CallMinimapScaleformFunction(overlay, "UPDATE_OVERLAY_POSITION");
             ScaleformMovieMethodAddParamInt(overlayId - 1);
             ScaleformMovieMethodAddParamFloat(x);
@@ -392,6 +395,7 @@ namespace ScaleformUI.Scaleforms
         private static void overlaySize(int overlayId, float w, float h)
         {
             if (overlay == 0) return;
+            Debug.WriteLine("ScaleformUI - MinimapOverlays - method \"SetOverlaySizeOrScale\" is not supported on Areas due to their vector boundaries");
             CallMinimapScaleformFunction(overlay, "UPDATE_OVERLAY_SIZE_OR_SCALE");
             ScaleformMovieMethodAddParamInt(overlayId - 1);
             ScaleformMovieMethodAddParamFloat(w);

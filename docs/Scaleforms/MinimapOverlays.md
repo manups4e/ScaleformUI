@@ -41,6 +41,7 @@ public static void ClearAll() {}
 ```lua
 function MinimapOverlays:AddSizedOverlayToMap(textureDict, textureName, x, y, rotation, width, height, alpha, centered)
 function MinimapOverlays:AddScaledOverlayToMap(textureDict, textureName, x, y, rotation, xScale, yScale, alpha, centered)
+function MinimapOverlays:AddAreaOverlay(coordsTable, hasOutline, color)
 function MinimapOverlays:SetOverlayColor(overlayId, color)
 function MinimapOverlays:HideOverlay(overlayId, hide)
 function MinimapOverlays:SetOverlayAlpha(overlayId, alpha)
