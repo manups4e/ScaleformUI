@@ -23,10 +23,10 @@ namespace ScaleformUI.PauseMenu
             set
             {
                 rightLabel = value;
-                if (Parent != null)
+                if (ParentLeftItem != null)
                 {
-                    int leftItem = Parent.Parent.LeftItemList.IndexOf(Parent);
-                    int rightIndex = Parent.ItemList.IndexOf(this);
+                    int leftItem = ParentLeftItem.ParentTab.LeftColumn.Items.IndexOf(ParentLeftItem);
+                    int rightIndex = ParentLeftItem.ItemList.IndexOf(this);
                     //Parent.Parent.Parent._pause.UpdateStatsItem(leftItem, rightIndex, Label, rightLabel);
                 }
             }
@@ -37,10 +37,10 @@ namespace ScaleformUI.PauseMenu
             set
             {
                 coloredBarColor = value;
-                if (Parent != null)
+                if (ParentLeftItem != null)
                 {
-                    int leftItem = Parent.Parent.LeftItemList.IndexOf(Parent);
-                    int rightIndex = Parent.ItemList.IndexOf(this);
+                    int leftItem = ParentLeftItem.ParentTab.LeftColumn.Items.IndexOf(ParentLeftItem);
+                    int rightIndex = ParentLeftItem.ItemList.IndexOf(this);
                     //Parent.Parent.Parent._pause.UpdateStatsItem(leftItem, rightIndex, Label, _value, coloredBarColor);
                 }
             }
@@ -51,10 +51,10 @@ namespace ScaleformUI.PauseMenu
             set
             {
                 _value = value;
-                if (Parent != null)
+                if (ParentLeftItem != null)
                 {
-                    int leftItem = Parent.Parent.LeftItemList.IndexOf(Parent);
-                    int rightIndex = Parent.ItemList.IndexOf(this);
+                    int leftItem = ParentLeftItem.ParentTab.LeftColumn.Items.IndexOf(ParentLeftItem);
+                    int rightIndex = ParentLeftItem.ItemList.IndexOf(this);
                     //Parent.Parent.Parent._pause.UpdateStatsItem(leftItem, rightIndex, Label, _value, coloredBarColor);
                 }
             }

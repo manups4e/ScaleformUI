@@ -77,6 +77,8 @@ namespace ScaleformUI.Menu
                 _checked = value;
                 if (Parent != null && Parent.Visible)
                     Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
+                if (ParentColumn != null && ParentColumn.visible)
+                    ParentColumn.SendItemToScaleform(ParentColumn.Items.IndexOf(this), true);
             }
         }
 

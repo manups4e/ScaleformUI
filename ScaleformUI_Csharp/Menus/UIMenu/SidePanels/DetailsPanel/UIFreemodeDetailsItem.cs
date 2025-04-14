@@ -1,82 +1,67 @@
 ﻿using ScaleformUI.Elements;
+using ScaleformUI.PauseMenu;
+using ScaleformUI.PauseMenus.Elements;
 
 namespace ScaleformUI.Menu
 {
-    public class UIFreemodeDetailsItem
+    public class UIFreemodeDetailsItem : PauseMenuItem
     {
-        public string TextLeft;
         public string TextRight = "";
         public BadgeIcon Icon = BadgeIcon.NONE;
         public SColor IconColor = SColor.HUD_None;
         public int Type;
         public bool Tick;
-        internal ItemFont _labelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
         internal ItemFont _rightLabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
+        internal CrewTag CrewTag = new CrewTag();
 
-        public UIFreemodeDetailsItem(string description)
+        public UIFreemodeDetailsItem(string description): this(description, ScaleformFonts.CHALET_LONDON_NINETEENSIXTY)
         {
-            Type = 4;
-            TextLeft = description;
         }
-        public UIFreemodeDetailsItem(string description, ItemFont labelFont)
+        public UIFreemodeDetailsItem(string description, ItemFont labelFont) : base(description, labelFont)
         {
-            Type = 4;
-            TextLeft = description;
-            _labelFont = labelFont;
+            Type = 5;
+            LabelFont = labelFont;
         }
-        public UIFreemodeDetailsItem(string textLeft, string textRight, bool separator)
+        public UIFreemodeDetailsItem(string textLeft, string textRight, bool separator) : this(textLeft, textRight, separator, ScaleformFonts.CHALET_LONDON_NINETEENSIXTY)
         {
-            Type = separator ? 3 : 0;
-            TextLeft = textLeft;
-            TextRight = textRight;
         }
 
-        public UIFreemodeDetailsItem(string textLeft, string textRight, bool separator, ItemFont labelFont)
+        public UIFreemodeDetailsItem(string textLeft, string textRight, bool separator, ItemFont labelFont) : this(textLeft, textRight, separator, labelFont, ScaleformFonts.CHALET_LONDON_NINETEENSIXTY)
         {
-            Type = separator ? 3 : 0;
-            TextLeft = textLeft;
-            TextRight = textRight;
-            _labelFont = labelFont;
         }
 
-        public UIFreemodeDetailsItem(string textLeft, string textRight, bool separator, ItemFont labelFont, ItemFont rightLabelFont)
+        public UIFreemodeDetailsItem(string textLeft, string textRight, bool separator, ItemFont labelFont, ItemFont rightLabelFont) : base(textLeft, labelFont)
         {
-            Type = separator ? 3 : 0;
-            TextLeft = textLeft;
+            Type = separator ? 4 : 0;
             TextRight = textRight;
-            _labelFont = labelFont;
             _rightLabelFont = rightLabelFont;
         }
 
+        public UIFreemodeDetailsItem(string textLeft, CrewTag crewTag) : this(textLeft, ScaleformFonts.CHALET_LONDON_NINETEENSIXTY, crewTag)
+        {
+        }
 
-        public UIFreemodeDetailsItem(string textLeft, string textRight, BadgeIcon icon, SColor iconColor, bool tick = false)
+        public UIFreemodeDetailsItem(string textLeft, ItemFont labelFont, CrewTag crewTag) : base(textLeft, labelFont)
         {
-            Type = 2;
-            TextLeft = textLeft;
-            TextRight = textRight;
-            Icon = icon;
-            IconColor = iconColor;
-            Tick = tick;
+            Type = 3;
+            CrewTag = crewTag;
         }
-        public UIFreemodeDetailsItem(string textLeft, string textRight, ItemFont labelFont, BadgeIcon icon, SColor iconColor, bool tick = false)
+
+        public UIFreemodeDetailsItem(string textLeft, string textRight, BadgeIcon icon, SColor iconColor, bool tick = false) : this(textLeft, textRight, ScaleformFonts.CHALET_LONDON_NINETEENSIXTY, icon, iconColor, tick)
         {
-            Type = 2;
-            TextLeft = textLeft;
-            TextRight = textRight;
-            Icon = icon;
-            IconColor = iconColor;
-            Tick = tick;
-            _labelFont = labelFont;
         }
-        public UIFreemodeDetailsItem(string textLeft, string textRight, ItemFont labelFont, ItemFont rightLabelFont, BadgeIcon icon, SColor iconColor, bool tick = false)
+ 
+        public UIFreemodeDetailsItem(string textLeft, string textRight, ItemFont labelFont, BadgeIcon icon, SColor iconColor, bool tick = false) : this(textLeft, textRight, labelFont, ScaleformFonts.CHALET_LONDON_NINETEENSIXTY, icon, iconColor, tick)
+        {
+        }
+
+        public UIFreemodeDetailsItem(string textLeft, string textRight, ItemFont labelFont, ItemFont rightLabelFont, BadgeIcon icon, SColor iconColor, bool tick = false) : base(textLeft, labelFont)
         {
             Type = 2;
-            TextLeft = textLeft;
             TextRight = textRight;
             Icon = icon;
             IconColor = iconColor;
             Tick = tick;
-            _labelFont = labelFont;
             _rightLabelFont = rightLabelFont;
         }
     }

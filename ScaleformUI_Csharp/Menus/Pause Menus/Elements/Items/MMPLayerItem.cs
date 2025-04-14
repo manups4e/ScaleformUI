@@ -15,7 +15,7 @@
 
     public class MMPLayerItem : LobbyItem
     {
-        public MMPLayerItem(string label, PlayerCardType type, PlayerCardTeam team) : base()
+        public MMPLayerItem(string label, PlayerCardType type, PlayerCardTeam team) : base(label)
         {
 
         }

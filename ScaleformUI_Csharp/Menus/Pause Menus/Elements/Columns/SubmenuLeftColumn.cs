@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace ScaleformUI.PauseMenus.Elements
 {
-    public class SubmenuLefColumn : PM_Column
+    public class SubmenuLeftColumn : PM_Column
     {
         internal LeftItemType currentItemType => ((TabLeftItem)Items[Index]).ItemType;
         public int CurrentSelection { get => Index; set => Index = value; }
         public TabLeftItem CurrentItem => (TabLeftItem)Items[CurrentSelection];
 
-        public SubmenuLefColumn(PM_COLUMNS position) : base(position)
+        public SubmenuLeftColumn(PM_COLUMNS position) : base(position)
         {
             VisibleItems = 10;
         }
@@ -39,8 +39,10 @@ namespace ScaleformUI.PauseMenus.Elements
             PushScaleformMovieFunctionParameterInt(index);
             PushScaleformMovieFunctionParameterInt(0);
             PushScaleformMovieFunctionParameterInt(0);
-            PushScaleformMovieMethodParameterString(item._formatLeftLabel);
+            PushScaleformMovieFunctionParameterInt(0);
+            PushScaleformMovieFunctionParameterInt(0);
             PushScaleformMovieFunctionParameterBool(item.Enabled);
+            PushScaleformMovieMethodParameterString(item._formatLeftLabel);
             PushScaleformMovieFunctionParameterBool(false);
             PushScaleformMovieFunctionParameterInt(item.MainColor.ArgbValue);
             PushScaleformMovieFunctionParameterInt(item.HighlightColor.ArgbValue);
@@ -66,8 +68,10 @@ namespace ScaleformUI.PauseMenus.Elements
             PushScaleformMovieFunctionParameterInt(index);
             PushScaleformMovieFunctionParameterInt(0);
             PushScaleformMovieFunctionParameterInt(0);
-            PushScaleformMovieMethodParameterString(item._formatLeftLabel);
+            PushScaleformMovieFunctionParameterInt(0);
+            PushScaleformMovieFunctionParameterInt(0);
             PushScaleformMovieFunctionParameterBool(item.Enabled);
+            PushScaleformMovieMethodParameterString(item._formatLeftLabel);
             PushScaleformMovieFunctionParameterBool(false);
             PushScaleformMovieFunctionParameterInt(item.MainColor.ArgbValue);
             PushScaleformMovieFunctionParameterInt(item.HighlightColor.ArgbValue);
@@ -85,30 +89,30 @@ namespace ScaleformUI.PauseMenus.Elements
 
         public override void GoUp()
         {
-            ((TabLeftItem)Items[Index]).Selected = false;
-            Index--;
-            ((TabLeftItem)Items[Index]).Selected = true;
+            Items[Index].Selected = false;
+            index--;
+            if (index < 0)
+                index = Items.Count - 1;
+            Items[Index].Selected = true;
             Parent.CenterColumn.Items.Clear();
             if (currentItemType != LeftItemType.Empty)
                 Parent.CenterColumn.Items.AddRange(((TabLeftItem)Items[Index]).ItemList);
             if (Parent != null && Parent.Visible && Parent.Parent != null && Parent.Parent.Visible)
-            {
                 Parent.Parent._pause._pause.CallFunction("MENU_STATE", (int)currentItemType);
-            }
         }
 
         public override void GoDown()
         {
-            ((TabLeftItem)Items[Index]).Selected = false;
-            Index++;
-            ((TabLeftItem)Items[Index]).Selected = true;
+            Items[Index].Selected = false;
+            index++;
+            if (index >= Items.Count)
+                index = 0;
+            Items[Index].Selected = true;
             Parent.CenterColumn.Items.Clear();
             if (currentItemType != LeftItemType.Empty)
                 Parent.CenterColumn.Items.AddRange(((TabLeftItem)Items[Index]).ItemList);
             if (Parent != null && Parent.Visible && Parent.Parent != null && Parent.Parent.Visible)
-            {
                 Parent.Parent._pause._pause.CallFunction("MENU_STATE", (int)currentItemType);
-            }
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using ScaleformUI.Elements;
 using ScaleformUI.Menus;
 using ScaleformUI.PauseMenus.Elements;
+using ScaleformUI.PauseMenus.Elements.Panels;
 
 namespace ScaleformUI.PauseMenu
 {
@@ -22,15 +23,16 @@ namespace ScaleformUI.PauseMenu
         internal int _type;
         internal string _identifier;
         internal SColor TabColor;
+        public MinimapPanel Minimap { get; internal set; }
         public BaseTab(string name, SColor color)
         {
             Title = name;
             TabColor = color;
         }
 
-        public PM_Column LeftColumn { get; internal set; }
-        public PM_Column CenterColumn { get; internal set; }
-        public PM_Column RightColumn { get; internal set; }
+        public virtual PM_Column LeftColumn { get; internal set; }
+        public virtual PM_Column CenterColumn { get; internal set; }
+        public virtual PM_Column RightColumn { get; internal set; }
         public bool Visible { get; set; }
         public virtual bool Focused { get; set; }
         public string Title { get; set; }
@@ -43,8 +45,6 @@ namespace ScaleformUI.PauseMenu
             2 => RightColumn,
             _ => LeftColumn,
         };
-
-        public List<TabLeftItem> LeftItemList { get; set; } = new List<TabLeftItem>();
 
         public event EventHandler Activated;
         public event EventHandler DrawInstructionalButtons;
@@ -65,8 +65,8 @@ namespace ScaleformUI.PauseMenu
         
         public virtual void AddSlot(PM_COLUMNS slot, int index) { }
         
-        public virtual void Focus() { }
-        public virtual void UnFocus() { }
+        public virtual void Focus() { Focused = true; }
+        public virtual void UnFocus() { Focused = false; }
 
         public virtual void GoUp() { }
         public virtual void GoDown() { }
@@ -75,12 +75,25 @@ namespace ScaleformUI.PauseMenu
         public virtual void Select() { }
         public virtual void GoBack() { }
         public virtual void Selected() { }
-        public virtual void MouseScroll(int dir)
-        {
-            //Parent._pause._pause.CallFunction("DELTA_MOUSE_WHEEL", dir);
-        }
+
+        public virtual void MouseEvent(int eventType, int context, int index) { }
 
         public virtual void StateChange(int state) { }
         #endregion
+
+        internal PM_Column GetColumnAtPosition(int position)
+        {
+            return GetColumnAtPosition((PM_COLUMNS)position);
+        }
+        internal virtual PM_Column GetColumnAtPosition(PM_COLUMNS position) 
+        {
+            return position switch
+            {
+                PM_COLUMNS.LEFT => LeftColumn,
+                PM_COLUMNS.MIDDLE => CenterColumn,
+                PM_COLUMNS.RIGHT => RightColumn,
+                _ => null,
+            };
+        }
     }
 }

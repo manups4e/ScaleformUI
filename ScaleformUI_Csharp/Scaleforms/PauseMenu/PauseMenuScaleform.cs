@@ -84,7 +84,6 @@ namespace ScaleformUI.Scaleforms
         public void AddPauseMenuTab(string title, int tabType, int tabContentType, SColor color)
         {
             _header.CallFunction("ADD_HEADER_TAB", title, tabType, color);
-            //_pause.CallFunction("ADD_TAB", tabContentType);
         }
         public void AddLobbyMenuTab(string title, int tabType, SColor color)
         {
@@ -292,11 +291,11 @@ namespace ScaleformUI.Scaleforms
                     ScreenTools.AdjustNormalized16_9ValuesForCurrentAspectRatio(3, ref headerPos, ref headerSize);
                     ScreenTools.AdjustNormalized16_9ValuesForCurrentAspectRatio(3, ref pausePos, ref pauseSize);
 
+                    if (BGEnabled)
+                        _pauseBG.Render2D();
                     DrawScaleformMovie(_header.Handle, headerPos.X, headerPos.Y, headerSize.Width, headerSize.Height, 255, 255, 255, 255, 0);
                     DrawScaleformMovie(_pause.Handle, pausePos.X, pausePos.Y, pauseSize.Width, pauseSize.Height, 255, 255, 255, 255, 0);
 
-                    //if (BGEnabled)
-                    //    _pauseBG.Render2D();
                     //if (!isLobby)
                     //else
                     //    DrawScaleformMovie(_lobby.Handle, pausePos.X, pausePos.Y, pauseSize.Width, pauseSize.Height, 255, 255, 255, 255, 0);

@@ -44,6 +44,10 @@ namespace ScaleformUI.PauseMenu
             {
                 SetDataSlot(LeftColumn.position, i);
             }
+            if(!string.IsNullOrWhiteSpace(BGTextureDict))
+                Main.PauseMenu._pause.CallFunction("CALL_CUSTOM_COLUMN_FUNCTION", (int)LeftColumn.position, "SET_BACKGROUND", BGTextureDict, BGTextureName);
+            if (!string.IsNullOrWhiteSpace(RightTextureDict))
+                Main.PauseMenu._pause.CallFunction("CALL_CUSTOM_COLUMN_FUNCTION", (int)LeftColumn.position, "SET_RIGHT_PICTURE", RightTextureDict, RightTextureName);
         }
 
         public override void ShowColumns()
@@ -56,6 +60,7 @@ namespace ScaleformUI.PauseMenu
 
         public override void Focus()
         {
+            base.Focus();
             LeftColumn.HighlightColumn(true, false, true);
         }
 
@@ -75,7 +80,7 @@ namespace ScaleformUI.PauseMenu
             BGTextureName = txn;
             if (Parent != null && Parent.Visible)
             {
-                Parent._pause._pause.CallFunction("UPDATE_BASE_TAB_BACKGROUND", txd, txn);
+                Parent._pause._pause.CallFunction("CALL_CUSTOM_COLUMN_FUNCTION", (int)LeftColumn.position, "SET_BACKGROUND", txd, txn);
             }
         }
 
@@ -90,7 +95,7 @@ namespace ScaleformUI.PauseMenu
             RightTextureName = txn;
             if (Parent != null && Parent.Visible)
             {
-                Parent._pause._pause.CallFunction("SET_BASE_TAB_RIGHT_PICTURE", txd, txn);
+                Parent._pause._pause.CallFunction("CALL_CUSTOM_COLUMN_FUNCTION", (int)LeftColumn.position, "SET_RIGHT_PICTURE", txd, txn);
             }
         }
     }

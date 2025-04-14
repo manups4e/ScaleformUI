@@ -101,7 +101,7 @@ namespace ScaleformUI.Menu
         private int _maxItemsOnScreen = 7;
         internal int _currentSelection = 0;
         private int _visibleItems = 0;
-        internal int topEdge = 0;
+        private int topEdge = 0;
 
         internal KeyValuePair<string, string> _customTexture;
         internal KeyValuePair<string, string> _customBGTexture = new KeyValuePair<string, string>("", "");
@@ -467,7 +467,7 @@ namespace ScaleformUI.Menu
             {
                 if (!keepIndex)
                     _currentSelection = 0;
-                Main.scaleformUI.CallFunction("REFRESH_MENU", CurrentSelection, topEdge);
+                Main.scaleformUI.CallFunction("REFRESH_MENU", CurrentSelection);
                 // restore the previous settings
             }
         }
@@ -692,7 +692,6 @@ namespace ScaleformUI.Menu
             AddTextEntry("UIMenu_Current_Description", "");
             MenuItems.Clear();
             _currentSelection = 0;
-            topEdge = 0;
             //Pagination.TotalItems = 0;
         }
 
@@ -1363,23 +1362,18 @@ namespace ScaleformUI.Menu
 
         public async void GoUp()
         {
+            CurrentItem.Selected = false;
             do
             {
-                await BaseScript.Delay(0);
-                CurrentItem.Selected = false;
                 _currentSelection--;
-                if (_currentSelection < topEdge)
-                    topEdge--;
                 if (_currentSelection < 0)
-                {
                     _currentSelection = MenuItems.Count - 1;
-                    topEdge = MenuItems.Count - _visibleItems;
-                }
-                AddTextEntry("UIMenu_Current_Description", CurrentItem.Description);
-                Main.scaleformUI.CallFunction("SET_INPUT_EVENT", 8);
+                await BaseScript.Delay(0);
             }
             while (MenuItems[_currentSelection]._itemId == 6 && ((UIMenuSeparatorItem)MenuItems[_currentSelection]).Jumpable);
             CurrentItem.Selected = true;
+            AddTextEntry("UIMenu_Current_Description", CurrentItem.Description);
+            topEdge = await Main.scaleformUI.CallFunctionReturnValueInt("SET_INPUT_EVENT", 8);
             SendPanelsToItemScaleform(_currentSelection);
             SendSidePanelToScaleform(_currentSelection);
             Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
@@ -1388,23 +1382,18 @@ namespace ScaleformUI.Menu
 
         public async void GoDown()
         {
+            CurrentItem.Selected = false;
             do
             {
-                await BaseScript.Delay(0);
-                CurrentItem.Selected = false;
                 _currentSelection++;
-                if (_currentSelection >= topEdge + _visibleItems)
-                    topEdge++;
                 if (_currentSelection >= MenuItems.Count)
-                {
                     _currentSelection = 0;
-                    topEdge = 0;
-                }
-                AddTextEntry("UIMenu_Current_Description", CurrentItem.Description);
-                Main.scaleformUI.CallFunction("SET_INPUT_EVENT", 9);
+                await BaseScript.Delay(0);
             }
             while (MenuItems[_currentSelection]._itemId == 6 && ((UIMenuSeparatorItem)MenuItems[_currentSelection]).Jumpable);
             CurrentItem.Selected = true;
+            AddTextEntry("UIMenu_Current_Description", CurrentItem.Description);
+            topEdge = await Main.scaleformUI.CallFunctionReturnValueInt("SET_INPUT_EVENT", 9);
             SendPanelsToItemScaleform(_currentSelection);
             SendSidePanelToScaleform(_currentSelection);
             Game.PlaySound(AUDIO_UPDOWN, AUDIO_LIBRARY);
@@ -1735,16 +1724,15 @@ namespace ScaleformUI.Menu
                         Clear();
                         MenuItems = _unfilteredMenuItems.ToList();
                         _currentSelection = _unfilteredSelection;
-                        topEdge = _unfilteredTopEdge;
                         _unfilteredMenuItems.Clear();
                         _unfilteredSelection = 0;
-                        _unfilteredTopEdge = 0;
                     }
                     AddTextEntry("UIMenu_Current_Description", "");
                 }
                 //hack to make sure the current item is selected
-                Main.scaleformUI.CallFunction("SET_CURRENT_SELECTION", _currentSelection, topEdge);
-                Main.scaleformUI.CallFunction("SET_VISIBLE", _visible, CurrentSelection, topEdge);
+                CurrentSelection = _currentSelection;
+                Main.scaleformUI.CallFunction("SET_CURRENT_SELECTION", _currentSelection);
+                Main.scaleformUI.CallFunction("SET_VISIBLE", _visible, CurrentSelection);
                 if (!value) return;
                 if (!ResetCursorOnOpen) return;
                 SetCursorLocation(0.5f, 0.5f);
@@ -1879,7 +1867,7 @@ namespace ScaleformUI.Menu
                     Main.scaleformUI.CallFunction(str, index, 0, (int)mis.PanelSide, (int)mis._titleType, mis.Title, mis.TitleColor, mis.TextureDict, mis.TextureName);
                     foreach (UIFreemodeDetailsItem _it in mis.Items)
                     {
-                        Main.scaleformUI.CallFunction("SET_SIDE_PANEL_SLOT", index, _it.Type, _it.TextLeft, _it.TextRight, (int)_it.Icon, _it.IconColor, _it.Tick, _it._labelFont.FontName, _it._labelFont.FontID, _it._rightLabelFont.FontName, _it._rightLabelFont.FontID);
+                        Main.scaleformUI.CallFunction("SET_SIDE_PANEL_SLOT", index, _it.Type, _it.Label, _it.TextRight, (int)_it.Icon, _it.IconColor, _it.Tick, _it.LabelFont.FontName, _it.LabelFont.FontID, _it._rightLabelFont.FontName, _it._rightLabelFont.FontID);
                     }
                     break;
                 case UIVehicleColourPickerPanel:
@@ -1895,7 +1883,7 @@ namespace ScaleformUI.Menu
         {
             int index = i - topEdge;
             var item = MenuItems[i];
-
+            
             if (item.Panels.Count == 0 || !item.Enabled || index < 0 || index > MaxItemsOnScreen)
             {
                 Main.scaleformUI.CallFunction("SET_PANEL_DATA_SLOT_EMPTY");
@@ -1946,11 +1934,10 @@ namespace ScaleformUI.Menu
                 str = "ADD_SLOT";
 
             BeginScaleformMovieMethod(Main.scaleformUI.Handle, str);
-            // here start
             PushScaleformMovieFunctionParameterInt(i);
             PushScaleformMovieFunctionParameterInt(0); 
             PushScaleformMovieFunctionParameterInt(0);
-            PushScaleformMovieFunctionParameterInt(item._itemId);//id
+            PushScaleformMovieFunctionParameterInt(item._itemId);
             switch (item._itemId)
             {
                 case 1:
@@ -1976,7 +1963,6 @@ namespace ScaleformUI.Menu
                     UIMenuStatsItem statsItem = (UIMenuStatsItem)item;
                     PushScaleformMovieFunctionParameterInt(statsItem.Value);
                     break;
-                case 6:
                 default:
                     PushScaleformMovieFunctionParameterInt(0);
                     break;
@@ -2108,7 +2094,6 @@ namespace ScaleformUI.Menu
                 MenuItems[CurrentSelection].Selected = false;
                 _unfilteredMenuItems = MenuItems.ToList();
                 _unfilteredSelection = CurrentSelection;
-                _unfilteredTopEdge = topEdge;
                 Clear();
                 List<UIMenuItem> list = _unfilteredMenuItems.ToList();
                 list.Sort(compare);
@@ -2139,7 +2124,6 @@ namespace ScaleformUI.Menu
             {
                 _unfilteredMenuItems = MenuItems.ToList();
                 _unfilteredSelection = CurrentSelection;
-                _unfilteredTopEdge = topEdge;
 
                 var filteredItems = MenuItems.Where(predicate).ToList();
 
@@ -2148,7 +2132,6 @@ namespace ScaleformUI.Menu
                     Debug.WriteLine("^1ScaleformUI - No items were found, resetting the filter");
                     _unfilteredMenuItems.Clear();
                     _unfilteredSelection = 0;
-                    _unfilteredTopEdge = 0;
                     return;
                 }
 
@@ -2157,7 +2140,6 @@ namespace ScaleformUI.Menu
 
                 MenuItems = filteredItems;
                 CurrentSelection = 0;
-                topEdge = 0;
 
                 BuildMenu(true);
                 RefreshMenu(false);
@@ -2181,10 +2163,8 @@ namespace ScaleformUI.Menu
                 Clear();
                 MenuItems = _unfilteredMenuItems.ToList();
                 _currentSelection = _unfilteredSelection;
-                topEdge = _unfilteredTopEdge;
                 _unfilteredMenuItems.Clear();
                 _unfilteredSelection = 0;
-                _unfilteredTopEdge = 0;
                 BuildMenu(true);
                 RefreshMenu(false);
             }
@@ -2243,16 +2223,19 @@ namespace ScaleformUI.Menu
                 if (CurrentSelection < MenuItems.Count)
                     MenuItems[CurrentSelection].Selected = false;
                 _currentSelection = Math.Max(0, Math.Min(value, MenuItems.Count - 1));
+                var max = MenuItems.Count;
 
-                if (_currentSelection > topEdge + _visibleItems)
-                    topEdge = Math.Max(0, Math.Min(_currentSelection, MenuItems.Count - 1 - _visibleItems));
-                else if (_currentSelection < topEdge)
+                if (max >= MaxItemsOnScreen)
+                    max = MaxItemsOnScreen;
+                if (_currentSelection < topEdge)
                     topEdge = _currentSelection;
+                else if (_currentSelection >= topEdge + max)
+                    topEdge = Math.Max(0, Math.Min(_currentSelection, MenuItems.Count - 1 - max));
 
                 if (_visible)
                 {
                     AddTextEntry("UIMenu_Current_Description", CurrentItem.Description);
-                    Main.scaleformUI.CallFunction("SET_CURRENT_SELECTION", _currentSelection, topEdge);
+                    Main.scaleformUI.CallFunction("SET_CURRENT_SELECTION", _currentSelection);
                     SendPanelsToItemScaleform(_currentSelection);
                     SendSidePanelToScaleform(_currentSelection);
                 }

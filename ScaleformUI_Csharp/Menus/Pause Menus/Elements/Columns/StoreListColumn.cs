@@ -2,277 +2,180 @@
 using ScaleformUI.Elements;
 using ScaleformUI.LobbyMenu;
 using ScaleformUI.Menu;
+using ScaleformUI.Menus;
 using ScaleformUI.PauseMenu;
 using ScaleformUI.PauseMenus.Elements.Items;
+using System.Linq;
 
 namespace ScaleformUI.PauseMenus.Elements.Columns
 {
     public delegate void StoreItemSelected(StoreItem item, int index);
-    public class StoreListColumn : Column
+    public class StoreListColumn : PM_Column
     {
         public event IndexChanged OnIndexChanged;
-        public List<StoreItem> Items { get; private set; }
-        private List<StoreItem> _unfilteredItems;
-        public ScrollingType ScrollingType { get => Pagination.scrollType; set => Pagination.scrollType = value; }
+        private List<PauseMenuItem> _unfilteredItems;
+        private int _unfilteredSelection = 0;
         public event StoreItemSelected StoreItemActivated;
-        public StoreListColumn(string label, SColor color, ScrollingType scrollType = ScrollingType.CLASSIC) : base(label, color)
+        public StoreListColumn(string label) : base(-1)
         {
-            Items = new();
-            Type = "store";
-            Pagination = new PaginationHandler
-            {
-                ItemsPerPage = 4,
-                scrollType = scrollType
-            };
+            Label = label;
+            VisibleItems = 4;
+            type = (int)PLT_COLUMNS.STORE;
         }
 
         public void AddStoreItem(StoreItem item)
         {
             item.ParentColumn = this;
             Items.Add(item);
-            Pagination.TotalItems = Items.Count;
-            if (Parent != null && Parent.Visible)
+            if (visible && Items.Count <= VisibleItems)
             {
-                if (Pagination.TotalItems <= Pagination.ItemsPerPage)
-                {
-                    int sel = CurrentSelection;
-                    Pagination.MinItem = Pagination.CurrentPageStartIndex;
-                    if (Pagination.scrollType == ScrollingType.CLASSIC && Pagination.TotalPages > 1)
-                    {
-                        int missingItems = Pagination.GetMissingItems();
-                        if (missingItems > 0)
-                        {
-                            Pagination.ScaleformIndex = Pagination.GetPageIndexFromMenuIndex(Pagination.CurrentPageEndIndex) + missingItems;
-                            Pagination.MinItem = Pagination.CurrentPageStartIndex - missingItems;
-                        }
-                    }
-                    Pagination.MaxItem = Pagination.CurrentPageEndIndex;
-                    _itemCreation(Pagination.CurrentPage, Items.Count - 1, false);
-                    if (Parent is TabView pause && ParentTab.Visible)
-                    {
-                        if (ParentTab.listCol[ParentTab.Focus] == this)
-                            CurrentSelection = sel;
-                    }
-                }
-                if (Parent is MainView _lobby)
-                {
-                    _lobby._pause._lobby.CallFunction("SET_STORE_SELECTION", Pagination.ScaleformIndex);
-                    _lobby._pause._lobby.CallFunction("SET_STORE_QTTY", CurrentSelection + 1, Items.Count);
-                }
-                else if (Parent is TabView _pause && ParentTab.Visible)
-                {
-                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_STORE_SELECTION", Pagination.ScaleformIndex);
-                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_STORE_QTTY", CurrentSelection + 1, Items.Count);
-                }
+                var idx = Items.Count - 1;
+                AddSlot(idx);
+                item.Selected = idx == index;
             }
         }
 
-        internal void _itemCreation(int page, int pageIndex, bool before, bool isOverflow = false)
+        public override void SetDataSlot(int index)
         {
-            int menuIndex = Pagination.GetMenuIndexFromPageIndex(page, pageIndex);
-            if (!before)
+            this.SendItemToScaleform(index);
+        }
+
+        public override void UpdateSlot(int index)
+        {
+            if (index >= Items.Count) return;
+            if (visible)
+                SendItemToScaleform(index, true);
+        }
+
+        public override void AddSlot(int index)
+        {
+            if (index >= Items.Count) return;
+            if (visible)
+                SendItemToScaleform(index, false, false, true);
+        }
+
+        public override void Populate()
+        {
+            Main.PauseMenu._pause.CallFunction("SET_DATA_SLOT_EMPTY", (int)position);
+            Main.PauseMenu._pause.CallFunction("SET_COLUMN_MAX_ITEMS", (int)position, VisibleItems);
+            for (var i = 0; i < Items.Count; i++)
             {
-                if (Pagination.GetPageItemsCount(page) < Pagination.ItemsPerPage && Pagination.TotalPages > 1)
-                {
-                    if (Pagination.scrollType == ScrollingType.ENDLESS)
-                    {
-                        if (menuIndex > Pagination.TotalItems - 1)
-                        {
-                            menuIndex -= Pagination.TotalItems;
-                            Pagination.MaxItem = menuIndex;
-                        }
-                    }
-                    else if (Pagination.scrollType == ScrollingType.CLASSIC && isOverflow)
-                    {
-                        int missingItems = Pagination.ItemsPerPage - Pagination.GetPageItemsCount(page);
-                        menuIndex -= missingItems;
-                    }
-                    else if (Pagination.scrollType == ScrollingType.PAGINATED)
-                        if (menuIndex >= Items.Count) return;
-                }
+                SetDataSlot(i);
             }
+        }
 
-            StoreItem item = Items[menuIndex];
+        internal void SendItemToScaleform(int i, bool update = false, bool newItem = false, bool isSlot = false)
+        {
+            if (i >= Items.Count) return;
+            StoreItem item = (StoreItem)Items[i];
+            string str = "SET_DATA_SLOT";
+            if (update)
+                str = "UPDATE_SLOT";
+            if (newItem)
+                str = "ADD_SLOT";
+            if (isSlot)
+                str = "SET_SLOT_EMPTY";
+            Main.PauseMenu._pause.CallFunction(str, (int)position, i, 0, 0, i, 0, item.Enabled, item.textureDictionary, item.textureName, item.Description);
+        }
 
-            if (Parent is MainView lobby)
-                lobby._pause._lobby.CallFunction("ADD_STORE_ITEM", before, menuIndex, 0, item.textureDictionary, item.textureName, item.Description, item.Enabled);
-            else if (Parent is TabView pause && ParentTab.Visible)
-                pause._pause._pause.CallFunction("ADD_PLAYERS_TAB_STORE_ITEM", before, menuIndex, 0, item.textureDictionary, item.textureName, item.Description, item.Enabled);
+        public override void ShowColumn(bool show = true)
+        {
+            base.ShowColumn(show);
+            InitColumnScroll(true, 1, ScrollType.UP_DOWN, ScrollArrowsPosition.RIGHT);
+            SetColumnScroll(Index + 1, Items.Count, VisibleItems, CaptionLeft, Items.Count < VisibleItems);
+            Main.PauseMenu._pause.CallFunction("SET_COLUMN_FOCUS", (int)position, Focused, false, false);
         }
 
         public void Clear()
         {
-            if (Parent is MainView lobby)
-                lobby._pause._lobby.CallFunction("CLEAR_STORE_COLUMN");
-            else if (Parent is TabView pause && ParentTab.Visible)
-                pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_STORE_COLUMN");
+            if (visible)
+                ClearColumn();
             Items.Clear();
-            Pagination.Reset();
+        }
+
+        public override void GoUp()
+        {
+            try
+            {
+                CurrentItem.Selected = false;
+                index--;
+                if (index < 0)
+                    index = Items.Count - 1;
+                Main.PauseMenu._pause.CallFunction("SET_COLUMN_INPUT_EVENT", (int)position, 8);
+                CurrentItem.Selected = true;
+                IndexChangedEvent();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.ToString());
+            }
+        }
+
+        public override void GoDown()
+        {
+            try
+            {
+                CurrentItem.Selected = false;
+                index++;
+                if (index >= Items.Count)
+                    index = 0;
+                Main.PauseMenu._pause.CallFunction("SET_COLUMN_INPUT_EVENT", (int)position, 9);
+                CurrentItem.Selected = true;
+                IndexChangedEvent();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.ToString());
+            }
+        }
+
+        public override void Select()
+        {
+            SelectItem();
+        }
+
+        public override void GoBack()
+        {
+            Focused = false;
+        }
+
+        public override void MouseScroll(int dir)
+        {
+            CurrentItem.Selected = false;
+            index += dir;
+            if (index < 0)
+                index = Items.Count - 1;
+            if (index >= Items.Count)
+                index = 0;
+            CurrentItem.Selected = true;
+            IndexChangedEvent();
+        }
+
+        public StoreItem CurrentItem => (StoreItem)Items[CurrentSelection];
+        public int CurrentSelection
+        {
+            get => index;
+            set
+            {
+                CurrentItem.Selected = false;
+                index = value;
+                if (index < 0)
+                    index = Items.Count - 1;
+                else if (index >= Items.Count)
+                    index = 0;
+                CurrentItem.Selected = true;
+                if (visible)
+                    Main.PauseMenu._pause.CallFunction("SET_COLUMN_HIGHLIGHT", (int)position, index, true, true);
+                IndexChangedEvent();
+            }
         }
 
         public void RemoveItem(int id)
         {
-            if (Parent != null && Parent.Visible)
-            {
-                if (Parent is MainView lobby)
-                    lobby._pause._lobby.CallFunction("REMOVE_STORE_ITEM", id);
-                else if (Parent is TabView pause && ParentTab.Visible)
-                    pause._pause._lobby.CallFunction("REMOVE_PLAYERS_TAB_STORE_ITEM", id);
-            }
             Items.RemoveAt(id);
-        }
-
-        internal async void GoUp()
-        {
-            try
+            if (visible)
             {
-                Items[CurrentSelection].Selected = false;
-                await BaseScript.Delay(0);
-                bool overflow = CurrentSelection == 0 && Pagination.TotalPages > 1;
-                if (Pagination.GoUp())
-                {
-                    if (Pagination.scrollType == ScrollingType.ENDLESS || (Pagination.scrollType == ScrollingType.CLASSIC && !overflow))
-                    {
-                        _itemCreation(Pagination.GetPage(CurrentSelection), Pagination.CurrentPageIndex, true);
-                        if (Parent is MainView lobby)
-                            lobby._pause._lobby.CallFunction("SET_INPUT_EVENT", 8, 100);
-                        else if (Parent is TabView pause && ParentTab.Visible)
-                            pause._pause._pause.CallFunction("SET_INPUT_EVENT", 8, 100);
-                    }
-                    else if (Pagination.scrollType == ScrollingType.PAGINATED || (Pagination.scrollType == ScrollingType.CLASSIC && overflow))
-                    {
-                        if (Parent is MainView lobby)
-                            lobby._pause._lobby.CallFunction("CLEAR_STORE_COLUMN");
-                        else if (Parent is TabView pause && ParentTab.Visible)
-                            pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_STORE_COLUMN");
-                        int max = Pagination.ItemsPerPage;
-                        isBuilding = true;
-                        for (int i = 0; i < max; i++)
-                        {
-                            if (!Parent.Visible) return;
-                            _itemCreation(Pagination.CurrentPage, i, false, true);
-                        }
-                        isBuilding = false;
-                    }
-                }
-                if (Parent is MainView _lobby)
-                {
-                    _lobby._pause._lobby.CallFunction("SET_STORE_SELECTION", Pagination.ScaleformIndex);
-                    _lobby._pause._lobby.CallFunction("SET_STORE_QTTY", CurrentSelection + 1, Items.Count);
-                }
-                else if (Parent is TabView _pause && ParentTab.Visible)
-                {
-                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_STORE_SELECTION", Pagination.ScaleformIndex);
-                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_STORE_QTTY", CurrentSelection + 1, Items.Count);
-                }
 
-                Items[CurrentSelection].Selected = true;
-                IndexChangedEvent();
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.ToString());
-            }
-        }
-
-        internal async void GoDown()
-        {
-            try
-            {
-                Items[CurrentSelection].Selected = false;
-                await BaseScript.Delay(0);
-                bool overflow = CurrentSelection == Items.Count - 1 && Pagination.TotalPages > 1;
-                if (Pagination.GoDown())
-                {
-                    if (Pagination.scrollType == ScrollingType.ENDLESS || (Pagination.scrollType == ScrollingType.CLASSIC && !overflow))
-                    {
-                        _itemCreation(Pagination.GetPage(CurrentSelection), Pagination.CurrentPageIndex, false);
-                        if (Parent is MainView lobby)
-                            lobby._pause._lobby.CallFunction("SET_INPUT_EVENT", 9, 100);
-                        else if (Parent is TabView pause && ParentTab.Visible)
-                            pause._pause._pause.CallFunction("SET_INPUT_EVENT", 9, 100);
-                    }
-                    else if (Pagination.scrollType == ScrollingType.PAGINATED || (Pagination.scrollType == ScrollingType.CLASSIC && overflow))
-                    {
-                        if (Parent is MainView lobby)
-                            lobby._pause._lobby.CallFunction("CLEAR_STORE_COLUMN");
-                        else if (Parent is TabView pause && ParentTab.Visible)
-                            pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_STORE_COLUMN");
-                        int max = Pagination.ItemsPerPage;
-                        isBuilding = true;
-                        for (int i = 0; i < max; i++)
-                        {
-                            if (!Parent.Visible) return;
-                            _itemCreation(Pagination.CurrentPage, i, false, true);
-                        }
-                        isBuilding = false;
-                    }
-                }
-                if (Parent is MainView _lobby)
-                {
-                    _lobby._pause._lobby.CallFunction("SET_STORE_SELECTION", Pagination.ScaleformIndex);
-                    _lobby._pause._lobby.CallFunction("SET_STORE_QTTY", CurrentSelection + 1, Items.Count);
-                }
-                else if (Parent is TabView _pause && ParentTab.Visible)
-                {
-                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_STORE_SELECTION", Pagination.ScaleformIndex);
-                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_STORE_QTTY", CurrentSelection + 1, Items.Count);
-                }
-
-                Items[CurrentSelection].Selected = true;
-                IndexChangedEvent();
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.ToString());
-            }
-        }
-
-        public int CurrentSelection
-        {
-            get { return Items.Count == 0 ? 0 : Pagination.CurrentMenuIndex; }
-            set
-            {
-                if (value == Pagination.CurrentMenuIndex) return;
-                if (value < 0)
-                {
-                    Pagination.CurrentMenuIndex = 0;
-                }
-                else if (value >= Items.Count)
-                {
-                    Pagination.CurrentMenuIndex = Items.Count - 1;
-                }
-                if (Pagination.TotalItems > 0)
-                {
-                    Items[CurrentSelection].Selected = false;
-
-                    Pagination.CurrentMenuIndex = value;
-                    Pagination.CurrentPage = Pagination.GetPage(Pagination.CurrentMenuIndex);
-                    Pagination.CurrentPageIndex = value;
-                    Pagination.ScaleformIndex = Pagination.GetScaleformIndex(value);
-                    if (value > Pagination.MaxItem || value < Pagination.MinItem)
-                    {
-                        RefreshColumn();
-                    }
-
-                    if (Parent != null && Parent.Visible)
-                    {
-                        if (Parent is MainView lobby)
-                        {
-                            lobby._pause._lobby.CallFunction("SET_STORE_SELECTION", Pagination.GetScaleformIndex(Pagination.CurrentMenuIndex));
-                            lobby._pause._lobby.CallFunction("SET_STORE_QTTY", CurrentSelection + 1, Items.Count);
-                            Items[CurrentSelection].Selected = true;
-                        }
-                        else if (Parent is TabView pause && ParentTab.Visible)
-                        {
-                            pause._pause._pause.CallFunction("SET_PLAYERS_TAB_STORE_SELECTION", Pagination.GetScaleformIndex(Pagination.CurrentMenuIndex));
-                            pause._pause._pause.CallFunction("SET_PLAYERS_TAB_STORE_QTTY", CurrentSelection + 1, Items.Count);
-                            if (pause.Index == pause.Tabs.IndexOf(ParentTab) && pause.FocusLevel == 1)
-                                Items[CurrentSelection].Selected = true;
-                        }
-                        IndexChangedEvent();
-                    }
-                }
             }
         }
 
@@ -280,55 +183,63 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
         {
             try
             {
-                Items[CurrentSelection].Selected = false;
-                if (_unfilteredItems == null || _unfilteredItems.Count == 0)
-                {
-                    _unfilteredItems = Items.ToList();
-                }
+                CurrentItem.Selected = false;
+                _unfilteredItems = Items.ToList();
+                _unfilteredSelection = CurrentSelection;
                 Clear();
-                List<StoreItem> list = _unfilteredItems.ToList();
+                List<StoreItem> list = _unfilteredItems.Cast<StoreItem>().ToList();
                 list.Sort(compare);
-                Items = list.ToList();
-                Pagination.TotalItems = Items.Count;
-                if (Parent != null && Parent.Visible)
+                Items = list.Cast<PauseMenuItem>().ToList();
+                if (visible)
                 {
-                    if (Parent is MainView lobby)
-                        lobby.buildMissions();
-                    else if (Parent is TabView pause && ParentTab.Visible)
-                        pause.buildMissions(ParentTab);
+                    Populate();
+                    ShowColumn();
                 }
             }
             catch (Exception ex)
             {
+                ResetFilter();
                 Debug.WriteLine("ScaleformUI - " + ex.ToString());
             }
         }
 
         public void FilterMissions(Func<StoreItem, bool> predicate)
         {
+            if (predicate == null)
+                throw new ArgumentNullException(nameof(predicate));
             try
             {
-                Items[CurrentSelection].Selected = false;
-                if (_unfilteredItems == null || _unfilteredItems.Count == 0)
+                _unfilteredItems = Items.ToList();
+                _unfilteredSelection = CurrentSelection;
+                //_unfilteredTopEdge = topEdge;
+
+                var filteredItems = Items.Cast<StoreItem>().Where(predicate).ToList();
+
+                if (!filteredItems.Any())
                 {
-                    _unfilteredItems = Items.ToList();
+                    Debug.WriteLine("^1ScaleformUI - No items were found, resetting the filter");
+                    _unfilteredItems.Clear();
+                    _unfilteredSelection = 0;
+                    return;
                 }
+
+                Items[CurrentSelection].Selected = false;
                 Clear();
-                Items = _unfilteredItems.Where(predicate.Invoke).ToList();
-                if (Items.Count == 0)
-                    throw new Exception("Predicate resulted in a filtering of 0 items.. store column cannot rebuild!");
-                Pagination.TotalItems = Items.Count;
-                if (Parent != null && Parent.Visible)
+
+                Items = filteredItems.Cast<PauseMenuItem>().ToList();
+                CurrentSelection = 0;
+
+                if (visible)
                 {
-                    if (Parent is MainView lobby)
-                        lobby.buildMissions();
-                    else if (Parent is TabView pause && ParentTab.Visible)
-                        pause.buildMissions(ParentTab);
+                    Populate();
+                    ShowColumn();
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("^1ScaleformUI - " + ex.ToString());
+                ResetFilter();
+                Debug.WriteLine($"^1ScaleformUI - Error filtering menu items: {ex}");
+                throw;
             }
         }
 
@@ -338,16 +249,14 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             {
                 if (_unfilteredItems != null && _unfilteredItems.Count > 0)
                 {
-                    Items[CurrentSelection].Selected = false;
+                    CurrentItem.Selected = false;
                     Clear();
                     Items = _unfilteredItems.ToList();
-                    Pagination.TotalItems = Items.Count;
-                    if (Parent != null && Parent.Visible)
+                    CurrentSelection = _unfilteredSelection;
+                    if (visible)
                     {
-                        if (Parent is MainView lobby)
-                            lobby.buildMissions();
-                        else if (Parent is TabView pause && ParentTab.Visible)
-                            pause.buildMissions(ParentTab);
+                        Populate();
+                        ShowColumn();
                     }
                 }
             }
@@ -357,55 +266,55 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             }
         }
 
-        private void RefreshColumn()
-        {
-            if (Parent is MainView lobby)
-                lobby._pause._lobby.CallFunction("CLEAR_STORE_COLUMN");
-            else if (Parent is TabView pause && ParentTab.Visible)
-                pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_STORE_COLUMN");
-            if (Items.Count > 0)
-            {
-                isBuilding = true;
-                int max = Pagination.ItemsPerPage;
-                if (Items.Count < max)
-                    max = Items.Count;
+        //private void RefreshColumn()
+        //{
+        //    if (Parent is MainView lobby)
+        //        lobby._pause._lobby.CallFunction("CLEAR_STORE_COLUMN");
+        //    else if (Parent is TabView pause && ParentTab.Visible)
+        //        pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_STORE_COLUMN");
+        //    if (Items.Count > 0)
+        //    {
+        //        isBuilding = true;
+        //        int max = Pagination.ItemsPerPage;
+        //        if (Items.Count < max)
+        //            max = Items.Count;
 
-                Pagination.MinItem = Pagination.CurrentPageStartIndex;
-                if (Pagination.scrollType == ScrollingType.CLASSIC && Pagination.TotalPages > 1)
-                {
-                    int missingItems = Pagination.GetMissingItems();
-                    if (missingItems > 0)
-                    {
-                        Pagination.ScaleformIndex = Pagination.GetPageIndexFromMenuIndex(Pagination.CurrentPageEndIndex) + missingItems;
-                        Pagination.MinItem = Pagination.CurrentPageStartIndex - missingItems;
-                    }
-                }
-                Pagination.MaxItem = Pagination.CurrentPageEndIndex;
+        //        Pagination.MinItem = Pagination.CurrentPageStartIndex;
+        //        if (Pagination.scrollType == ScrollingType.CLASSIC && Pagination.TotalPages > 1)
+        //        {
+        //            int missingItems = Pagination.GetMissingItems();
+        //            if (missingItems > 0)
+        //            {
+        //                Pagination.ScaleformIndex = Pagination.GetPageIndexFromMenuIndex(Pagination.CurrentPageEndIndex) + missingItems;
+        //                Pagination.MinItem = Pagination.CurrentPageStartIndex - missingItems;
+        //            }
+        //        }
+        //        Pagination.MaxItem = Pagination.CurrentPageEndIndex;
 
-                for (int i = 0; i < max; i++)
-                {
-                    if (!Parent.Visible) return;
-                    _itemCreation(Pagination.CurrentPage, i, false, true);
-                }
-                Pagination.ScaleformIndex = Pagination.GetScaleformIndex(CurrentSelection);
-                if (Parent is MainView _lobby)
-                {
-                    _lobby._pause._lobby.CallFunction("SET_STORE_SELECTION", Pagination.ScaleformIndex);
-                    _lobby._pause._lobby.CallFunction("SET_STORE_QTTY", CurrentSelection + 1, Items.Count);
-                }
-                else if (Parent is TabView _pause && ParentTab.Visible)
-                {
-                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_STORE_SELECTION", Pagination.ScaleformIndex);
-                    _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_STORE_QTTY", CurrentSelection + 1, Items.Count);
-                }
-                isBuilding = false;
-            }
-        }
+        //        for (int i = 0; i < max; i++)
+        //        {
+        //            if (!Parent.Visible) return;
+        //            _itemCreation(Pagination.CurrentPage, i, false, true);
+        //        }
+        //        Pagination.ScaleformIndex = Pagination.GetScaleformIndex(CurrentSelection);
+        //        if (Parent is MainView _lobby)
+        //        {
+        //            _lobby._pause._lobby.CallFunction("SET_STORE_SELECTION", Pagination.ScaleformIndex);
+        //            _lobby._pause._lobby.CallFunction("SET_STORE_QTTY", CurrentSelection + 1, Items.Count);
+        //        }
+        //        else if (Parent is TabView _pause && ParentTab.Visible)
+        //        {
+        //            _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_STORE_SELECTION", Pagination.ScaleformIndex);
+        //            _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_STORE_QTTY", CurrentSelection + 1, Items.Count);
+        //        }
+        //        isBuilding = false;
+        //    }
+        //}
 
 
         public void SelectItem()
         {
-            StoreItemActivated?.Invoke(Items[CurrentSelection], CurrentSelection);
+            StoreItemActivated?.Invoke(CurrentItem, CurrentSelection);
         }
         public void IndexChangedEvent()
         {

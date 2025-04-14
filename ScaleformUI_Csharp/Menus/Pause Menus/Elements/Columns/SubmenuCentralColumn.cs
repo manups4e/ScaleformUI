@@ -16,7 +16,7 @@ namespace ScaleformUI.PauseMenus.Elements
         {
         }
 
-        public virtual void SetDataSlot(int index)
+        public override void SetDataSlot(int index)
         {
             TabLeftItem curItem = (TabLeftItem)Parent.LeftColumn.Items[Parent.LeftColumn.Index];
             switch (curItem.ItemType)
@@ -156,10 +156,9 @@ namespace ScaleformUI.PauseMenus.Elements
             }
         }
 
-        public virtual void UpdateSlot(int index)
+        public override void UpdateSlot(int index)
         {
-            TabLeftItem curItem = (TabLeftItem)Parent.LeftColumn.Items[Parent.LeftColumn.Index];
-            switch (curItem.ItemType)
+            switch (currentColumnType)
             {
                 case LeftItemType.Info:
                     {
@@ -298,26 +297,38 @@ namespace ScaleformUI.PauseMenus.Elements
 
         public virtual void AddSlot(int index) { }
 
-        public virtual void GoUp()
+        public override async void GoUp()
         {
             if (currentColumnType == LeftItemType.Settings)
             {
-                SettingsItem item = (SettingsItem)Items[Index];
-                item.Selected = false;
-                Index--;
-                item.Selected = true;
+                ((SettingsItem)Items[Index]).Selected = false;
+                do
+                {
+                    index--;
+                    if(index < 0)
+                        index = Items.Count - 1;
+                    await BaseScript.Delay(0);
+                } while (((SettingsItem)Items[Index]).ItemType == SettingsItemType.Empty || ((SettingsItem)Items[Index]).ItemType == SettingsItemType.Separator);
+                ((SettingsItem)Items[Index]).Selected = true;
+                Main.PauseMenu._pause.CallFunction("SET_COLUMN_HIGHLIGHT", (int)position, index, true, true);
                 SetColumnScroll(Index + 1, Items.Count, VisibleItems, string.Empty, Items.Count < VisibleItems);
             }
         }
 
-        public virtual void GoDown()
+        public override async void GoDown()
         {
             if (currentColumnType == LeftItemType.Settings)
             {
-                SettingsItem item = (SettingsItem)Items[Index];
-                item.Selected = false;
-                Index++;
-                item.Selected = true;
+                ((SettingsItem)Items[Index]).Selected = false;
+                do
+                {
+                    index++;
+                    if (index >= Items.Count)
+                        index = 0;
+                    await BaseScript.Delay(0);
+                } while (((SettingsItem)Items[Index]).ItemType == SettingsItemType.Empty || ((SettingsItem)Items[Index]).ItemType == SettingsItemType.Separator);
+                ((SettingsItem)Items[Index]).Selected = true;
+                Main.PauseMenu._pause.CallFunction("SET_COLUMN_HIGHLIGHT", (int)position, index, true, true);
                 SetColumnScroll(Index + 1, Items.Count, VisibleItems, string.Empty, Items.Count < VisibleItems);
             }
         }
@@ -375,7 +386,7 @@ namespace ScaleformUI.PauseMenus.Elements
             {
                 if (!item.Enabled)
                 {
-                    Game.PlaySound(Parent.Parent.AUDIO_ERROR, Parent.Parent.AUDIO_LIBRARY);
+                    Game.PlaySound(TabView.AUDIO_ERROR, TabView.AUDIO_LIBRARY);
                     return;
                 }
                 switch (item.ItemType)
@@ -401,11 +412,7 @@ namespace ScaleformUI.PauseMenus.Elements
 
         }
 
-        public virtual void GoBack() { }
-
-        public virtual void Selected() { }
-
-        public virtual void MouseScroll(int dir)
+        public override void MouseScroll(int dir)
         {
             //Parent._pause._pause.CallFunction("DELTA_MOUSE_WHEEL", dir);
         }

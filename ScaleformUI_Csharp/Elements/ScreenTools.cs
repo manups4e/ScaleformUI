@@ -162,7 +162,7 @@ namespace ScaleformUI.Elements
 
             float fDifference = ((16f/9f) / GetAspectRatio(false));
             if (pos != null)
-                pos = new Vector2(0.5f - ((0.5f - pos.X) * fDifference));
+                pos = new Vector2(0.5f - ((0.5f - pos.X) * fDifference), pos.Y);
 
             if (size != null)
                 size.Width *= fDifference;

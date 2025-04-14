@@ -1,4 +1,5 @@
 ﻿using ScaleformUI.Elements;
+using ScaleformUI.Menus;
 
 namespace ScaleformUI.PauseMenu
 {
@@ -6,7 +7,9 @@ namespace ScaleformUI.PauseMenu
     {
         public ItemFont LabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
         public ScaleformLabel Label { get; set; }
-        public TabLeftItem Parent { get; set; }
+        public TabLeftItem ParentLeftItem { get; set; }
+        public BaseTab ParentTab { get; set; }
+        public PM_Column ParentColumn { get; set; }
         public PauseMenuItem(string label)
         {
             Label = label;
@@ -16,5 +19,7 @@ namespace ScaleformUI.PauseMenu
             Label = label;
             LabelFont = labelFont;
         }
+
+        public virtual bool Selected { get; set; }
     }
 }

@@ -7,7 +7,7 @@ using ScaleformUI.PauseMenus.Elements.Panels;
 
 namespace ScaleformUI.PauseMenus.Elements.Items
 {
-    public class LobbyItem
+    public class LobbyItem : PauseMenuItem
     {
         internal int _type;
         private bool _enabled = true;
@@ -19,15 +19,25 @@ namespace ScaleformUI.PauseMenus.Elements.Items
         private bool _clonePedLighting = false;
         private bool keepPanelVisible;
 
+        public LobbyItem(string label) : base(label)
+        {
+        }
+
         /// <summary>
         /// Whether this item is currently selected.
         /// </summary>
-        public virtual bool Selected
+        public override bool Selected
         {
             get => _selected;
             set
             {
+                if(_selected == value) return;
                 _selected = value;
+                ClearPedInPauseMenu();
+                if (value)
+                    CreateClonedPed();
+                else
+                    Dispose();
             }
         }
 
@@ -43,25 +53,25 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                 if (ParentColumn != null && ParentColumn.Parent != null && ParentColumn.Parent.Visible)
                 {
                     Panel?.UpdatePanel();
-                    if (ParentColumn.Parent is MainView lobby)
-                    {
-                        if (lobby.PlayersColumn.Items[lobby.PlayersColumn.CurrentSelection] == this)
-                        {
-                            UpdateClone();
-                            lobby._pause._lobby.CallFunction("SET_PLAYERS_STAT_PANEL_PERMANENT", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), keepPanelVisible);
-                        }
-                    }
-                    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
-                    {
-                        if (pause.Tabs[pause.Index] is PlayerListTab tab)
-                        {
-                            if (tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection] == this)
-                            {
-                                UpdateClone();
-                                pause._pause._lobby.CallFunction("SET_PLAYERS_TAB_PLAYERS_STAT_PANEL_PERMANENT", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), keepPanelVisible);
-                            }
-                        }
-                    }
+                    //if (ParentColumn.Parent is MainView lobby)
+                    //{
+                    //    if (lobby.PlayersColumn.Items[lobby.PlayersColumn.CurrentSelection] == this)
+                    //    {
+                    //        UpdateClone();
+                    //        lobby._pause._lobby.CallFunction("SET_PLAYERS_STAT_PANEL_PERMANENT", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), keepPanelVisible);
+                    //    }
+                    //}
+                    //else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
+                    //{
+                    //    if (pause.Tabs[pause.Index] is PlayerListTab tab)
+                    //    {
+                    //        if (tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection] == this)
+                    //        {
+                    //            UpdateClone();
+                    //            pause._pause._lobby.CallFunction("SET_PLAYERS_TAB_PLAYERS_STAT_PANEL_PERMANENT", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), keepPanelVisible);
+                    //        }
+                    //    }
+                    //}
                 }
             }
         }
@@ -120,32 +130,21 @@ namespace ScaleformUI.PauseMenus.Elements.Items
         internal void CreateClonedPed()
         {
             // create a ped that we can use for the pause menu and hide it
-            if (_clonePedForPauseMenu is null || !_clonePedForPauseMenu.Exists())
-            {
-                _clonePedForPauseMenu = clonePed.Clone();
-                HidePed(_clonePedForPauseMenu);
+            if (clonePed != null && clonePed.Exists())
+            { 
+               if (_clonePedForPauseMenu is null || !_clonePedForPauseMenu.Exists())
+                {
+                    _clonePedForPauseMenu = clonePed.Clone();
+                    HidePed(_clonePedForPauseMenu);
+                }
             }
-
-            if (ParentColumn != null && ParentColumn.Parent != null && ParentColumn.Parent.Visible)
+            if (ParentColumn != null && ParentColumn.visible)
             {
                 Panel?.UpdatePanel();
-                if (ParentColumn.Parent is MainView lobby)
-                {
-                    if (lobby.PlayersColumn.Items[lobby.PlayersColumn.CurrentSelection] == this)
-                    {
-                        UpdateClone();
-                    }
-                }
-                else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
-                {
-                    if (pause.Tabs[pause.Index] is PlayerListTab tab)
-                    {
-                        if (tab.PlayersColumn.Items[tab.PlayersColumn.CurrentSelection] == this)
-                        {
-                            UpdateClone();
-                        }
-                    }
-                }
+                Panel?.ShowColumn();
+                if (Panel != null)
+                    Panel.ColumnVisible = true;
+                UpdateClone();
             }
         }
 
@@ -168,26 +167,23 @@ namespace ScaleformUI.PauseMenus.Elements.Items
             }
 
             // clone the ped we cached away for the pause menu
-            _clonePed = new Ped(API.ClonePed(ClonePed.Handle, 0, true, true));
-            await BaseScript.Delay(1);
-            HidePed(_clonePed);
-            API.GivePedToPauseMenu(_clonePed.Handle, 2);
-            API.SetPauseMenuPedSleepState(!_clonePedAsleep);
-            if (ParentColumn != null && ParentColumn.Parent != null && ParentColumn.Parent.Visible)
+            if (clonePed != null && clonePed.Exists())
             {
-                if (ParentColumn.Parent is MainView lobby)
+                _clonePed = new Ped(API.ClonePed(ClonePed.Handle, 0, true, true));
+                await BaseScript.Delay(1);
+                HidePed(_clonePed);
+                API.GivePedToPauseMenu(_clonePed.Handle, 2);
+                API.SetPauseMenuPedSleepState(!_clonePedAsleep);
+                if (ParentColumn != null && ParentColumn.visible)
                 {
-                    API.SetPauseMenuPedLighting(_clonePedLighting);
-                }
-                else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
-                {
-                    API.SetPauseMenuPedLighting(_clonePedLighting && pause.FocusLevel > 0);
+                    API.SetPauseMenuPedLighting(_clonePedLighting && ParentColumn.Parent.Parent.FocusLevel > 0);
                 }
             }
         }
 
         public void Dispose()
         {
+            ClearPedInPauseMenu();
             if (_clonePed != null)
             {
                 if (_clonePed.Exists())
@@ -202,6 +198,8 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                     _clonePedForPauseMenu.Delete();
                 }
             }
+            if (Panel != null)
+                Panel.ColumnVisible = false;
         }
 
         /// <summary>
@@ -220,7 +218,7 @@ namespace ScaleformUI.PauseMenus.Elements.Items
                 _enabled = value;
                 if (ParentColumn != null)
                 {
-                    int it = ParentColumn.Items.IndexOf(this);
+                    //int it = ParentColumn.Items.IndexOf(this);
                     //ParentColumn.Parent._pause._lobby.CallFunction("ENABLE_ITEM", it, _enabled);
                 }
             }

@@ -2,6 +2,7 @@
 using ScaleformUI.Menu;
 using ScaleformUI.Menus;
 using ScaleformUI.PauseMenus.Elements;
+using ScaleformUI.PauseMenus.Elements.Columns;
 using System.Linq;
 using System.Reflection.Emit;
 using static CitizenFX.Core.UI.Screen;
@@ -10,119 +11,209 @@ namespace ScaleformUI.PauseMenu
 {
     public class SubmenuTab : BaseTab
     {
-        private bool _focused;
-        public new SubmenuLefColumn LeftColumn
-        {
-            get => (SubmenuLefColumn)base.LeftColumn;
-            internal set => base.LeftColumn = value;
-        }
-
-        public new SubmenuCentralColumn CenterColumn
-        {
-            get => (SubmenuCentralColumn)base.CenterColumn;
-            internal set => base.CenterColumn = value;
-        }
-        internal LeftItemType currentItemType => LeftColumn.currentItemType;
+        internal LeftItemType currentItemType => ((SubmenuLeftColumn)LeftColumn).currentItemType;
 
         public SubmenuTab(string name, SColor color) : base(name, color)
         {
             _type = 1;
             _identifier = "Page_Info";
-            LeftColumn = new SubmenuLefColumn(0) { Parent = this };
+            LeftColumn = new SubmenuLeftColumn(0) { Parent = this };
             CenterColumn = new SubmenuCentralColumn(1) { Parent = this };
         }
-
-        public override bool Focused
+        public void SwitchColumn(int index)
         {
-            get { return _focused; }
-            set
-            {
-                _focused = value;
-                //if (!value) Items[Index].Focused = false;
-            }
+            SwitchColumn((PM_COLUMNS)index);
         }
 
+        public void SwitchColumn(PM_COLUMNS index)
+        {
+            switchColumnInternal(index, true);
+        }
+
+        private void switchColumnInternal(PM_COLUMNS index, bool apply)
+        {
+            var col = GetColumnAtPosition(index);
+            CurrentColumnIndex = (int)index;
+            if (Parent != null && Parent.Visible)
+            {
+                Main.PauseMenu._pause.CallFunction("SET_MENU_LEVEL", CurrentColumnIndex + 1);
+                Main.PauseMenu._pause.CallFunction("MENU_SHIFT_DEPTH", 0, true, true);
+                Parent.focusLevel = CurrentColumnIndex + 1;
+                Main.PauseMenu._pause.CallFunction("SET_COLUMN_HIGHLIGHT", (int)col.position, col.Index, true, true);
+                col.Items[col.Index].Selected = true;
+            }
+        }
         public void AddLeftItem(TabLeftItem item)
         {
-            item.Parent = this;
+            item.ParentTab = this;
             LeftColumn.AddItem(item);
         }
 
         public override void StateChange(int state)
         {
             Parent._pause._pause.CallFunction("MENU_STATE", (int)currentItemType);
-            CenterColumn.Items.Clear();
+            ((SubmenuCentralColumn)CenterColumn).Items.Clear();
             if(state != 0)
-                CenterColumn.Items.AddRange(((TabLeftItem)LeftColumn.Items[LeftColumn.Index]).ItemList);
+                ((SubmenuCentralColumn)CenterColumn).Items.AddRange(((TabLeftItem)LeftColumn.Items[LeftColumn.Index]).ItemList);
+            ((SubmenuCentralColumn)CenterColumn).Items.ForEach(x => x.ParentColumn = ((SubmenuCentralColumn)CenterColumn));
             switch (currentItemType)
             {
                 case LeftItemType.Statistics:
-                    CenterColumn.VisibleItems = 16;
-                    CenterColumn.InitColumnScroll(true, 2, ScrollType.UP_DOWN, ScrollArrowsPosition.CENTER);
-                    CenterColumn.SetColumnScroll(-1, -1, -1, string.Empty, CenterColumn.Items.Count < CenterColumn.VisibleItems);
+                    ((SubmenuCentralColumn)CenterColumn).VisibleItems = 16;
+                    ((SubmenuCentralColumn)CenterColumn).InitColumnScroll(true, 2, ScrollType.UP_DOWN, ScrollArrowsPosition.CENTER);
+                    ((SubmenuCentralColumn)CenterColumn).SetColumnScroll(-1, -1, -1, string.Empty, ((SubmenuCentralColumn)CenterColumn).Items.Count < ((SubmenuCentralColumn)CenterColumn).VisibleItems);
                     break;
                 case LeftItemType.Settings:
-                    CenterColumn.VisibleItems = 16;
-                    CenterColumn.InitColumnScroll(true, 2, ScrollType.ALL, ScrollArrowsPosition.RIGHT);
-                    CenterColumn.SetColumnScroll(CenterColumn.Index + 1, CenterColumn.Items.Count, CenterColumn.VisibleItems, string.Empty, CenterColumn.Items.Count < CenterColumn.VisibleItems);
+                    ((SubmenuCentralColumn)CenterColumn).VisibleItems = 16;
+                    ((SubmenuCentralColumn)CenterColumn).InitColumnScroll(true, 2, ScrollType.ALL, ScrollArrowsPosition.RIGHT);
+                    ((SubmenuCentralColumn)CenterColumn).SetColumnScroll(((SubmenuCentralColumn)CenterColumn).Index + 1, ((SubmenuCentralColumn)CenterColumn).Items.Count, ((SubmenuCentralColumn)CenterColumn).VisibleItems, string.Empty, ((SubmenuCentralColumn)CenterColumn).Items.Count < ((SubmenuCentralColumn)CenterColumn).VisibleItems);
                     break;
                 case LeftItemType.Info:
-                    CenterColumn.VisibleItems = 10;
-                    CenterColumn.InitColumnScroll(true, 2, ScrollType.UP_DOWN, ScrollArrowsPosition.CENTER);
-                    CenterColumn.SetColumnScroll(-1, -1, -1, string.Empty, CenterColumn.Items.Count < CenterColumn.VisibleItems);
+                    ((SubmenuCentralColumn)CenterColumn).VisibleItems = 10;
+                    ((SubmenuCentralColumn)CenterColumn).InitColumnScroll(true, 2, ScrollType.UP_DOWN, ScrollArrowsPosition.CENTER);
+                    ((SubmenuCentralColumn)CenterColumn).SetColumnScroll(-1, -1, -1, string.Empty, ((SubmenuCentralColumn)CenterColumn).Items.Count < ((SubmenuCentralColumn)CenterColumn).VisibleItems);
                     break;
                 case LeftItemType.Keymap:
-                    CenterColumn.VisibleItems = 15;
-                    CenterColumn.InitColumnScroll(true, 2, ScrollType.UP_DOWN, ScrollArrowsPosition.CENTER);
-                    CenterColumn.SetColumnScroll(-1, -1, -1, string.Empty, CenterColumn.Items.Count < CenterColumn.VisibleItems);
+                    ((SubmenuCentralColumn)CenterColumn).VisibleItems = 15;
+                    ((SubmenuCentralColumn)CenterColumn).InitColumnScroll(true, 2, ScrollType.UP_DOWN, ScrollArrowsPosition.CENTER);
+                    ((SubmenuCentralColumn)CenterColumn).SetColumnScroll(-1, -1, -1, string.Empty, ((SubmenuCentralColumn)CenterColumn).Items.Count < ((SubmenuCentralColumn)CenterColumn).VisibleItems);
                     break;
                 default:
-                    CenterColumn.VisibleItems = 0;
+                    ((SubmenuCentralColumn)CenterColumn).VisibleItems = 0;
                     break;
             }
         }
 
         public override void GoUp()
         {
-            if (Parent.FocusLevel == 0) return;
-            Parent._pause._pause.CallFunction("SET_COLUMN_INPUT_EVENT", CurrentColumnIndex, 8);
+            if (!Focused) return;
             switch (CurrentColumnIndex)
             {
                 case 0:
                     LeftColumn.GoUp();
-                    CenterColumn.currentColumnType = currentItemType;
+                    ((SubmenuCentralColumn)CenterColumn).currentColumnType = currentItemType;
                     StateChange((int)currentItemType);
                     Refresh(false);
+                    Parent._pause._pause.CallFunction("SET_COLUMN_INPUT_EVENT", CurrentColumnIndex, 8);
                     break;
                 case 1:
-                    CenterColumn.GoUp();
-                    if(CenterColumn.currentColumnType == LeftItemType.Settings)
-                        CenterColumn.SetColumnScroll(CenterColumn.Index + 1, CenterColumn.Items.Count, CenterColumn.VisibleItems, string.Empty, CenterColumn.Items.Count < CenterColumn.VisibleItems);
+                    ((SubmenuCentralColumn)CenterColumn).GoUp();
+                    if(((SubmenuCentralColumn)CenterColumn).currentColumnType == LeftItemType.Settings)
+                        ((SubmenuCentralColumn)CenterColumn).SetColumnScroll(((SubmenuCentralColumn)CenterColumn).Index + 1, ((SubmenuCentralColumn)CenterColumn).Items.Count, ((SubmenuCentralColumn)CenterColumn).VisibleItems, string.Empty, ((SubmenuCentralColumn)CenterColumn).Items.Count < ((SubmenuCentralColumn)CenterColumn).VisibleItems);
                     break;
             }
         }
 
         public override void GoDown()
         {
-            if (Parent.FocusLevel == 0) return;
-            Parent._pause._pause.CallFunction("SET_COLUMN_INPUT_EVENT", CurrentColumnIndex, 9);
+            if (!Focused) return;
             switch (CurrentColumnIndex)
             {
                 case 0:
                     LeftColumn.GoDown();
-                    CenterColumn.currentColumnType = currentItemType;
+                    ((SubmenuCentralColumn)CenterColumn).currentColumnType = currentItemType;
                     StateChange((int)currentItemType);
                     Refresh(false);
+                    Parent._pause._pause.CallFunction("SET_COLUMN_INPUT_EVENT", CurrentColumnIndex, 9);
                     break;
                 case 1:
-                    CenterColumn.GoDown();
-                    if (CenterColumn.currentColumnType == LeftItemType.Settings)
-                        CenterColumn.SetColumnScroll(CenterColumn.Index + 1, CenterColumn.Items.Count, CenterColumn.VisibleItems, string.Empty, CenterColumn.Items.Count < CenterColumn.VisibleItems);
+                    ((SubmenuCentralColumn)CenterColumn).GoDown();
+                    if (((SubmenuCentralColumn)CenterColumn).currentColumnType == LeftItemType.Settings)
+                        ((SubmenuCentralColumn)CenterColumn).SetColumnScroll(((SubmenuCentralColumn)CenterColumn).Index + 1, ((SubmenuCentralColumn)CenterColumn).Items.Count, ((SubmenuCentralColumn)CenterColumn).VisibleItems, string.Empty, ((SubmenuCentralColumn)CenterColumn).Items.Count < ((SubmenuCentralColumn)CenterColumn).VisibleItems);
                     break;
             }
         }
 
-        public override void MouseScroll(int dir)
+        public override async void MouseEvent(int eventType, int context, int index)
+        {
+            if (!Focused) return;
+            switch (eventType)
+            {
+                case 5: // mouse pressed
+                    if (CurrentColumnIndex == context)
+                    {
+                        if (CurrentColumn.Index != index)
+                        {
+                            switch (CurrentColumnIndex)
+                            {
+                                case 0:
+                                    LeftColumn.Items[LeftColumn.Index].Selected = false;
+                                    LeftColumn.Index = index;
+                                    LeftColumn.Items[LeftColumn.Index].Selected = true;
+                                    StateChange((int)currentItemType);
+                                    Refresh(false);
+                                    break;
+                                case 1:
+                                    ((SubmenuCentralColumn)CenterColumn).Items[((SubmenuCentralColumn)CenterColumn).Index].Selected = false;
+                                    ((SubmenuCentralColumn)CenterColumn).Index = index;
+                                    ((SubmenuCentralColumn)CenterColumn).Items[((SubmenuCentralColumn)CenterColumn).Index].Selected = true;
+                                    break;
+                            }
+                            return;
+                        }
+                        switch (CurrentColumnIndex)
+                        {
+                            case 0 when currentItemType == LeftItemType.Settings:
+                                TabLeftItem leftItem = (TabLeftItem)LeftColumn.Items[LeftColumn.Index];
+                                if (!leftItem.Enabled)
+                                {
+                                    Game.PlaySound(TabView.AUDIO_ERROR, TabView.AUDIO_LIBRARY);
+                                    return;
+                                }
+                                CurrentColumnIndex++;
+                                if (leftItem.ItemList.All(x => !(x as SettingsItem).Enabled)) break;
+                                while (!(((SubmenuCentralColumn)CenterColumn).Items[((SubmenuCentralColumn)CenterColumn).Index] as SettingsItem).Enabled)
+                                {
+                                    await BaseScript.Delay(0);
+                                    ((SubmenuCentralColumn)CenterColumn).Index++;
+                                }
+                                Parent.FocusLevel++;
+                                Parent.SendColumnItemSelect(LeftColumn);
+                                break;
+                            case 1:
+                                ((SubmenuCentralColumn)CenterColumn).Select();
+                                Parent.SendColumnItemSelect(((SubmenuCentralColumn)CenterColumn));
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        Debug.WriteLine($"GET_HOVERED_COLUMN -- Current: {CurrentColumnIndex}, context: {context}");
+                        if (context > CurrentColumnIndex)
+                        {
+                            Parent.FocusLevel++;
+                            CurrentColumnIndex++;
+                        }
+                        else if (context < CurrentColumnIndex)
+                        {
+                            Parent.FocusLevel--;
+                            CurrentColumnIndex--;
+                        }
+                        switch (CurrentColumnIndex)
+                        {
+                            case 0:
+                                LeftColumn.Items[LeftColumn.Index].Selected = false;
+                                LeftColumn.Index = index;
+                                LeftColumn.Items[LeftColumn.Index].Selected = true;
+                                StateChange((int)currentItemType);
+                                Refresh(false);
+                                break;
+                            case 1:
+                                ((SubmenuCentralColumn)CenterColumn).Items[((SubmenuCentralColumn)CenterColumn).Index].Selected = false;
+                                ((SubmenuCentralColumn)CenterColumn).Index = index;
+                                ((SubmenuCentralColumn)CenterColumn).Items[((SubmenuCentralColumn)CenterColumn).Index].Selected = true;
+                                break;
+                        }
+                    }
+                    break;
+                case 10: // mouse wheel up
+                case 11: // mouse wheel down
+                    MouseScroll(eventType == 10 ? -1 : 1);
+                    break;
+            }
+        }
+
+        public void MouseScroll(int dir)
         {
             int col = Parent.hoveredColumn;
             switch (CurrentColumnIndex)
@@ -133,7 +224,7 @@ namespace ScaleformUI.PauseMenu
                         if (currentItemType == LeftItemType.Info || currentItemType == LeftItemType.Statistics)
                         {
                             Debug.WriteLine("GET_HOVERED_COLUMN -- Current: " + col);
-                            Game.PlaySound(Parent.AUDIO_UPDOWN, Parent.AUDIO_LIBRARY);
+                            Game.PlaySound(TabView.AUDIO_UPDOWN, TabView.AUDIO_LIBRARY);
                             return;
                         }
                     }
@@ -141,7 +232,7 @@ namespace ScaleformUI.PauseMenu
                         LeftColumn.GoUp();
                     else
                         LeftColumn.GoDown();
-                    CenterColumn.currentColumnType = currentItemType;
+                    ((SubmenuCentralColumn)CenterColumn).currentColumnType = currentItemType;
                     StateChange((int)currentItemType);
                     Refresh(false);
                     break;
@@ -149,68 +240,71 @@ namespace ScaleformUI.PauseMenu
                     if (currentItemType == LeftItemType.Settings)
                     {
                         if (dir == -1)
-                            CenterColumn.GoUp();
+                            ((SubmenuCentralColumn)CenterColumn).GoUp();
                         else
-                            CenterColumn.GoDown();
+                            ((SubmenuCentralColumn)CenterColumn).GoDown();
                     }
-                    if (CenterColumn.currentColumnType == LeftItemType.Settings)
-                        CenterColumn.SetColumnScroll(CenterColumn.Index + 1, CenterColumn.Items.Count, CenterColumn.VisibleItems, string.Empty, CenterColumn.Items.Count < CenterColumn.VisibleItems);
-                    Game.PlaySound(Parent.AUDIO_UPDOWN, Parent.AUDIO_LIBRARY);
+                    if (((SubmenuCentralColumn)CenterColumn).currentColumnType == LeftItemType.Settings)
+                        ((SubmenuCentralColumn)CenterColumn).SetColumnScroll(((SubmenuCentralColumn)CenterColumn).Index + 1, ((SubmenuCentralColumn)CenterColumn).Items.Count, ((SubmenuCentralColumn)CenterColumn).VisibleItems, string.Empty, ((SubmenuCentralColumn)CenterColumn).Items.Count < ((SubmenuCentralColumn)CenterColumn).VisibleItems);
+                    Game.PlaySound(TabView.AUDIO_UPDOWN, TabView.AUDIO_LIBRARY);
                     break;
             }
         }
 
         public override void GoLeft()
         {
-            if(Parent.FocusLevel == 0) return;
+            if(!Focused) return;
             Parent._pause._pause.CallFunction("SET_COLUMN_INPUT_EVENT", CurrentColumnIndex, 10);
 
             if (CurrentColumnIndex == 1)
             {
-                CenterColumn.GoLeft();
+                ((SubmenuCentralColumn)CenterColumn).GoLeft();
             }
         }
 
         public override void GoRight()
         {
-            if (Parent.FocusLevel == 0) return;
+            if (!Focused) return;
             Parent._pause._pause.CallFunction("SET_COLUMN_INPUT_EVENT", CurrentColumnIndex, 11);
             if (CurrentColumnIndex == 1)
             {
-                CenterColumn.GoRight();
+                ((SubmenuCentralColumn)CenterColumn).GoRight();
             }
         }
 
         public override async void Select()
         {
+            if (!Focused) return;
             switch (CurrentColumnIndex)
             {
-                case 0 when currentItemType == LeftItemType.Settings:
+                case 0:
+                    if (currentItemType != LeftItemType.Settings) return;
                     TabLeftItem leftItem = (TabLeftItem)LeftColumn.Items[LeftColumn.Index];
                     if (!leftItem.Enabled)
                     {
-                        Game.PlaySound(Parent.AUDIO_ERROR, Parent.AUDIO_LIBRARY);
+                        Game.PlaySound(TabView.AUDIO_ERROR, TabView.AUDIO_LIBRARY);
                         return;
                     }
                     CurrentColumnIndex++;
                     if (leftItem.ItemList.All(x => !(x as SettingsItem).Enabled)) break;
-                    while (!(CenterColumn.Items[CenterColumn.Index] as SettingsItem).Enabled)
+                    while (!(((SubmenuCentralColumn)CenterColumn).Items[((SubmenuCentralColumn)CenterColumn).Index] as SettingsItem).Enabled)
                     {
                         await BaseScript.Delay(0);
-                        CenterColumn.Index++;
+                        ((SubmenuCentralColumn)CenterColumn).Index++;
                     }
                     Parent.FocusLevel++;
                     Parent.SendColumnItemSelect(LeftColumn);
                     break;
                 case 1:
-                    CenterColumn.Select();
-                    Parent.SendColumnItemSelect(CenterColumn);
+                    ((SubmenuCentralColumn)CenterColumn).Select();
+                    Parent.SendColumnItemSelect(((SubmenuCentralColumn)CenterColumn));
                     break;
             }
         }
 
         public override void GoBack()
         {
+            if (!Focused) return;
             if (CurrentColumnIndex == 1)
             {
                 CurrentColumnIndex--;
@@ -220,16 +314,26 @@ namespace ScaleformUI.PauseMenu
 
         public override void Focus()
         {
+            base.Focus();
+            LeftColumn.Index = LeftColumn.index;
             LeftColumn.HighlightColumn(true, false, true);
+            LeftColumn.Items[LeftColumn.Index].Selected = true;
+            Refresh(true);
+        }
+
+        public override void UnFocus()
+        {
+            base.UnFocus();
+            LeftColumn.Items[LeftColumn.Index].Selected = false;
         }
 
         public override void Refresh(bool highlightOldIndex)
         {
             Parent._pause._pause.CallFunction("ALLOW_CLICK_FROM_COLUMN", 0, true);
             Parent._pause._pause.CallFunction("SET_DATA_SLOT_EMPTY", 1);
-            for (int i = 0; i < CenterColumn.Items.Count; i++)
+            for (int i = 0; i < ((SubmenuCentralColumn)CenterColumn).Items.Count; i++)
             {
-                SetDataSlot(CenterColumn.position, i);
+                SetDataSlot(((SubmenuCentralColumn)CenterColumn).position, i);
             }
             switch (currentItemType)
             {
@@ -239,7 +343,7 @@ namespace ScaleformUI.PauseMenu
                     break;
                 case LeftItemType.Settings:
                     if (highlightOldIndex)
-                        Parent._pause._pause.CallFunction("SET_COLUMN_HIGHLIGHT", 1, CenterColumn.Index, true, true);
+                        Parent._pause._pause.CallFunction("SET_COLUMN_HIGHLIGHT", 1, ((SubmenuCentralColumn)CenterColumn).Index, true, true);
                         //Parent._pause._pause.CallFunction("SET_COLUMN_STATE", 3);
                         ////Parent._pause._pause.CallFunction("SET_CONTROL_IMAGE", "pause_menu_pages_settings_pc", "controller");
                         ////Parent._pause._pause.CallFunction("SET_CONTROL_LABELS", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "SUPER TITLE");
@@ -248,16 +352,19 @@ namespace ScaleformUI.PauseMenu
                         //Parent._pause._pause.CallFunction("SET_DESCRIPTION", 1, "~r~Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat", "scaleformui", "pauseinfobg", 0, 0, 578, 160);
                         break;
             }
-            CenterColumn.ShowColumn();
+            ((SubmenuCentralColumn)CenterColumn).ShowColumn();
         }
 
         public override void Populate()
         {
             TabLeftItem item = (TabLeftItem)LeftColumn.Items[LeftColumn.Index];
             item.Selected = true;
-            CenterColumn.Items.Clear();
+            ((SubmenuCentralColumn)CenterColumn).Items.Clear();
             if (currentItemType != LeftItemType.Empty)
-                CenterColumn.Items.AddRange(item.ItemList);
+            {
+                ((SubmenuCentralColumn)CenterColumn).Items.AddRange(item.ItemList);
+                ((SubmenuCentralColumn)CenterColumn).Items.ForEach(x => x.ParentColumn = ((SubmenuCentralColumn)CenterColumn));
+            }
             Parent._pause._pause.CallFunction("SET_MENU_LEVEL", 1);
             Parent._pause._pause.CallFunction("MENU_STATE", (int)currentItemType);
             Parent._pause._pause.CallFunction("SET_MENU_LEVEL", 0);
@@ -265,9 +372,9 @@ namespace ScaleformUI.PauseMenu
             {
                 SetDataSlot(LeftColumn.position, i);
             }
-            for (int i = 0; i < CenterColumn.Items.Count; i++)
+            for (int i = 0; i < ((SubmenuCentralColumn)CenterColumn).Items.Count; i++)
             {
-                SetDataSlot(CenterColumn.position, i);
+                SetDataSlot(((SubmenuCentralColumn)CenterColumn).position, i);
             }
         }
 
@@ -276,10 +383,10 @@ namespace ScaleformUI.PauseMenu
             //Parent._pause._pause.CallFunction("MOUSE_COLUMN_SHIFT", 0);
             //Parent._pause._pause.CallFunction("SET_COLUMN_HIGHLIGHT", 0, 0, false, false);
             LeftColumn.ShowColumn();
-            CenterColumn.ShowColumn();
+            ((SubmenuCentralColumn)CenterColumn).ShowColumn();
             if (currentItemType == LeftItemType.Settings)
             {
-                Parent._pause._pause.CallFunction("SET_COLUMN_STATE", 1, 1);
+                Parent._pause._pause.CallFunction("SET_COLUMN_STATE", 0);
             }
             Parent._pause._pause.CallFunction("SET_COLUMN_FOCUS", 0, false, false, false);
             //to be overridden by subcolumns
@@ -295,7 +402,7 @@ namespace ScaleformUI.PauseMenu
                     LeftColumn.SetDataSlot(index);
                     break;
                 case PM_COLUMNS.MIDDLE:
-                    CenterColumn.SetDataSlot(index);
+                    ((SubmenuCentralColumn)CenterColumn).SetDataSlot(index);
                     break;
             }
 
@@ -309,7 +416,7 @@ namespace ScaleformUI.PauseMenu
                     LeftColumn.UpdateSlot(index);
                     break;
                 case PM_COLUMNS.MIDDLE:
-                    CenterColumn.UpdateSlot(index);
+                    ((SubmenuCentralColumn)CenterColumn).UpdateSlot(index);
                     break;
             }
         }

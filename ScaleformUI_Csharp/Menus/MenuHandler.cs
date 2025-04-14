@@ -87,11 +87,6 @@ namespace ScaleformUI
                             max = newer.MaxItemsOnScreen;
 
                         newer._currentSelection = Math.Max(0, Math.Min(newMenuCurrentSelection, newer.MenuItems.Count - 1));
-
-                        if (newMenuCurrentSelection < newer.topEdge)
-                            newer.topEdge = newMenuCurrentSelection;
-                        else if (newMenuCurrentSelection >= newer.topEdge + max)
-                            newer.topEdge = Math.Max(0, Math.Min(newMenuCurrentSelection, newer.MenuItems.Count - 1 - max)); ;
                     }
                 }
                 else if (newMenu is RadialMenu rad)

@@ -16,8 +16,8 @@ namespace ScaleformUI.PauseMenu
             set
             {
                 _value = value;
-                if (Parent != null && Parent.Parent != null && Parent.Parent.Visible && Parent.Parent.Parent != null && Parent.Parent.Parent.Visible && Parent.Parent.CenterColumn.Items.Contains(this))
-                    Parent?.Parent?.UpdateSlot(Menus.PM_COLUMNS.MIDDLE, Parent.Parent.CenterColumn.Items.IndexOf(this));
+                if (ParentColumn != null && ParentColumn.visible)
+                    ParentColumn.UpdateSlot(ParentColumn.Items.IndexOf(this));
                 OnBarChanged?.Invoke(this, _value);
             }
         }
@@ -27,8 +27,8 @@ namespace ScaleformUI.PauseMenu
             set
             {
                 coloredBarColor = value;
-                if (Parent != null && Parent.Parent != null && Parent.Parent.Visible &&Parent.Parent.Parent != null && Parent.Parent.Parent.Visible && Parent.Parent.CenterColumn.Items.Contains(this))
-                    Parent?.Parent?.UpdateSlot(Menus.PM_COLUMNS.MIDDLE, Parent.Parent.CenterColumn.Items.IndexOf(this));
+                if (ParentColumn != null && ParentColumn.visible)
+                    ParentColumn.UpdateSlot(ParentColumn.Items.IndexOf(this));
             }
         }
 
