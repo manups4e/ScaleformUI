@@ -11,11 +11,10 @@ namespace ScaleformUI.Scaleforms
     {
         public ScaleformWideScreen _header;
         public ScaleformWideScreen _pause;
-        public ScaleformWideScreen _lobby;
         public ScaleformWideScreen _pauseBG;
         internal bool BGEnabled;
         private bool _visible;
-        internal bool Loaded => _header is not null && _header.IsLoaded && _pause is not null && _pause.IsLoaded && _lobby is not null && _lobby.IsLoaded && _pauseBG is not null && _pauseBG.IsLoaded;
+        internal bool Loaded => _header is not null && _header.IsLoaded && _pause is not null && _pause.IsLoaded && _pauseBG is not null && _pauseBG.IsLoaded;
         public bool Visible { get => _visible; set => _visible = value; }
 
         public PauseMenuScaleform()
@@ -26,15 +25,13 @@ namespace ScaleformUI.Scaleforms
         {
             _header = new ScaleformWideScreen("pausemenuheader");
             _pause = new ScaleformWideScreen("ScaleformUIPause");
-            //_lobby = new ScaleformWideScreen("lobbymenu");
-            //_pauseBG = new ScaleformWideScreen("store_background");
+            _pauseBG = new ScaleformWideScreen("store_background");
         }
 
         internal void FadeInMenus()
         {
             _header.CallFunction("DRAW_MENU");
             _pause.CallFunction("DRAW_MENU");
-            //_lobby.CallFunction("DRAW_MENU");
         }
 
         public void SetDataSlotEmpty(PM_COLUMNS column)
@@ -260,10 +257,8 @@ namespace ScaleformUI.Scaleforms
         {
             _visible = false;
             _pause?.CallFunction("CLEAR_ALL");
-            //_lobby?.CallFunction("CLEAR_ALL");
             _header?.CallFunction("CLEAR_ALL");
             _pause?.Dispose();
-            //_lobby?.Dispose();
             _header?.Dispose();
             firstTick = true;
         }
@@ -295,10 +290,6 @@ namespace ScaleformUI.Scaleforms
                         _pauseBG.Render2D();
                     DrawScaleformMovie(_header.Handle, headerPos.X, headerPos.Y, headerSize.Width, headerSize.Height, 255, 255, 255, 255, 0);
                     DrawScaleformMovie(_pause.Handle, pausePos.X, pausePos.Y, pauseSize.Width, pauseSize.Height, 255, 255, 255, 255, 0);
-
-                    //if (!isLobby)
-                    //else
-                    //    DrawScaleformMovie(_lobby.Handle, pausePos.X, pausePos.Y, pauseSize.Width, pauseSize.Height, 255, 255, 255, 255, 0);
                 }
             }
         }

@@ -48,7 +48,7 @@ namespace ScaleformUI.PauseMenu
 
         public override void GoUp()
         {
-            if (Focused) return;
+            if (!Focused) return;
             LeftColumn.GoUp();
             column.UpdatePage();
             GalleryItem it = column.Items[column.currentPageIndex] as GalleryItem;
@@ -85,7 +85,7 @@ namespace ScaleformUI.PauseMenu
 
         public override void GoDown()
         {
-            if (Focused) return;
+            if (!Focused) return;
             LeftColumn.GoDown();
             column.UpdatePage();
             GalleryItem it = column.Items[column.currentPageIndex] as GalleryItem;
@@ -122,7 +122,7 @@ namespace ScaleformUI.PauseMenu
 
         public override void GoLeft()
         {
-            if (Focused) return;
+            if (!Focused) return;
             LeftColumn.GoLeft();
             column.UpdatePage();
             GalleryItem it = column.Items[column.currentPageIndex] as GalleryItem;
@@ -159,7 +159,7 @@ namespace ScaleformUI.PauseMenu
 
         public override void GoRight()
         {
-            if (Focused) return;
+            if (!Focused) return;
             LeftColumn.GoRight();
             column.UpdatePage();
             GalleryItem it = column.Items[column.currentPageIndex] as GalleryItem;
@@ -196,14 +196,14 @@ namespace ScaleformUI.PauseMenu
 
         public override void GoBack()
         {
-            if (Focused) return;
+            if (!Focused) return;
             LeftColumn.GoBack();
             CurrentColumnIndex = 0;
         }
 
         public override void Select()
         {
-            if (Focused) return;
+            if (!Focused) return;
             CurrentColumnIndex = 1;
             LeftColumn.Select();
         }

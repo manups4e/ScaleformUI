@@ -1339,11 +1339,11 @@ public class MenuExample : BaseScript
         // in new version of ScaleformUI you can initialize the columns directly and give them to the tab.
         // this way you can create multiple instances of the same column.
 
-        SettingsListColumn settings = new SettingsListColumn("settings", 16); // Giving a label for corona mode.
-        PlayerListColumn players = new PlayerListColumn("players", 16); // Giving a label for corona mode.
-        MissionsListColumn missions = new MissionsListColumn("missions", 16); // Giving a label for corona mode.
-        StoreListColumn store = new StoreListColumn("store"); // Giving a label for corona mode.
-        MissionDetailsPanel missionPanel = new MissionDetailsPanel("missionPanel"); // Giving a label for corona mode.
+        SettingsListColumn settings = new SettingsListColumn("settings", 16); // Giving a label in pause menu is useless.. works only for corona mode.
+        PlayerListColumn players = new PlayerListColumn("players", 16); // Giving a label in pause menu is useless.. works only for corona mode.
+        MissionsListColumn missions = new MissionsListColumn("missions", 16); // Giving a label in pause menu is useless.. works only for corona mode.
+        StoreListColumn store = new StoreListColumn("store"); // Giving a label in pause menu is useless.. works only for corona mode.
+        MissionDetailsPanel missionPanel = new MissionDetailsPanel("missionPanel"); // Giving a label in pause menu is useless.. works only for corona mode.
 
         playersTab.SetupLeftColumn(settings);
         playersTab.SetupCenterColumn(players);
