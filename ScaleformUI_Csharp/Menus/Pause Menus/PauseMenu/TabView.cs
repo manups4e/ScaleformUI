@@ -285,9 +285,9 @@ namespace ScaleformUI.PauseMenu
 
             if (!IsCorona)
             {
+                _pause._header.CallFunction("ENABLE_DYNAMIC_WIDTH", SetHeaderDynamicWidth);
                 foreach (BaseTab tab in Tabs)
                     _pause.AddPauseMenuTab(tab.Title, 0, tab._type, tab.TabColor);
-                _pause._header.CallFunction("ENABLE_DYNAMIC_WIDTH", SetHeaderDynamicWidth);
             }
             else
             {

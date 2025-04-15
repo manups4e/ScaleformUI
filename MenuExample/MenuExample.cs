@@ -1345,8 +1345,8 @@ public class MenuExample : BaseScript
         StoreListColumn store = new StoreListColumn("store"); // Giving a label in pause menu is useless.. works only for corona mode.
         MissionDetailsPanel missionPanel = new MissionDetailsPanel("missionPanel"); // Giving a label in pause menu is useless.. works only for corona mode.
 
-        playersTab.SetupLeftColumn(settings);
-        playersTab.SetupCenterColumn(players);
+        playersTab.SetupLeftColumn(players);
+        playersTab.SetupCenterColumn(settings);
         playersTab.SetupRightColumn(missions);
 
         missionPanel.Title = "ScaleformUI - Title";
@@ -1396,7 +1396,7 @@ public class MenuExample : BaseScript
 
             n1.Activated += (sender, args) =>
             {
-                playersTab.SwitchColumn(1);
+                playersTab.SwitchColumn(2);
             };
         }
         MissionItem mission1 = new MissionItem("Mission 1");
@@ -1443,21 +1443,22 @@ public class MenuExample : BaseScript
             CrewTag crew4 = new CrewTag("at", false, false, CrewHierarchy.Representative, SColor.HUD_Orange);
             CrewTag crew5 = new CrewTag("this", false, false, CrewHierarchy.Muscle, SColor.HUD_Red);
 
-            FriendItem friend = new FriendItem(Game.Player.Name + " #1", SColor.HUD_Green, true, API.GetRandomIntInRange(15, 55), "Online", crew1);
-            FriendItem friend2 = new FriendItem(Game.Player.Name + " #2", SColor.HUD_Pink, true, API.GetRandomIntInRange(15, 55), "Offline", crew2);
-            FriendItem friend3 = new FriendItem(Game.Player.Name + " #3", SColor.HUD_Blue, true, API.GetRandomIntInRange(15, 55), "Online", crew3);
-            FriendItem friend4 = new FriendItem(Game.Player.Name + " #4", SColor.HUD_Orange, true, API.GetRandomIntInRange(15, 55), "Offline", crew4);
-            FriendItem friend5 = new FriendItem(Game.Player.Name + " #5", SColor.HUD_Red, true, API.GetRandomIntInRange(15, 55), "Busy", crew5);
+            FriendItem friend = new FriendItem(Game.Player.Name + " #1", SColor.HUD_Green, true, API.GetRandomIntInRange(15, 55), "Online", crew1) { KeepPanelVisible = true};
+            FriendItem friend2 = new FriendItem(Game.Player.Name + " #2", SColor.HUD_Pink, true, API.GetRandomIntInRange(15, 55), "Offline", crew2) {KeepPanelVisible = true};
+            FriendItem friend3 = new FriendItem(Game.Player.Name + " #3", SColor.HUD_Blue, true, API.GetRandomIntInRange(15, 55), "Online", crew3) {KeepPanelVisible = true};
+            FriendItem friend4 = new FriendItem(Game.Player.Name + " #4", SColor.HUD_Orange, true, API.GetRandomIntInRange(15, 55), "Offline", crew4) {KeepPanelVisible = true};
+            FriendItem friend5 = new FriendItem(Game.Player.Name + " #5", SColor.HUD_Red, true, API.GetRandomIntInRange(15, 55), "Busy", crew5) {KeepPanelVisible = true};
             friend.SetLeftIcon(LobbyBadgeIcon.IS_CONSOLE_PLAYER);
             friend2.SetLeftIcon(BadgeIcon.COUNTRY_ITALY);
             friend3.SetLeftIcon(BadgeIcon.COUNTRY_ITALY);
             friend4.SetLeftIcon(BadgeIcon.COUNTRY_ITALY);
             friend5.SetLeftIcon(BadgeIcon.COUNTRY_ITALY);
 
+
             players.OnPlayerItemActivated += (col, item) =>
             {
                 Debug.WriteLine("Player activated!");
-                playersTab.SwitchColumn(PM_COLUMNS.RIGHT);
+                playersTab.SwitchColumn(PM_COLUMNS.MIDDLE);
             };
 
             friend.ClonePed = Game.PlayerPed;

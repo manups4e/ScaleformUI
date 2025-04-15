@@ -63,39 +63,73 @@ namespace ScaleformUI.PauseMenu
 
         private void switchColumnInternal(PM_COLUMNS index, bool apply)
         {
-            if (index > PM_COLUMNS.RIGHT) return;
             // for now we won't allow selecting the mission details column
-            if (order[(int)index] == (int)PLT_COLUMNS.MISSION_DETAILS)
-                return;
+            if (index > PM_COLUMNS.RIGHT || order[(int)index] == (int)PLT_COLUMNS.MISSION_DETAILS) return;
+            bool canHideShow = true;
             var col = GetColumnAtPosition(index);
-            CurrentColumnIndex = (int)index;
-            if (Parent != null && Parent.Visible)
+
+            // we don't check for right column because
+            // if right column is players then it means there's no player panel to be shown
+            if (LeftColumn is PlayerListColumn plCol)
             {
-                if (col is PlayerListColumn plc)
+                if (plCol.CurrentItem.KeepPanelVisible)
                 {
-                    if (plc.CurrentItem.Panel != null)
+                    canHideShow = false;
+                }
+            }
+            else if (CenterColumn is PlayerListColumn cenPlCol)
+            {
+                if(cenPlCol.CurrentItem.KeepPanelVisible)
+                {
+                    canHideShow = false;
+                }
+            }
+            if (canHideShow)
+            {
+                if (Parent != null && Parent.Visible)
+                {
+                    if (col is PlayerListColumn plc)
                     {
+                        if (plc.CurrentItem.Panel != null)
+                        {
+                            RightColumn.ColumnVisible = false;
+                        }
+                    }
+                    else
+                    {
+                        bool show = true;
+                        var befcol = GetColumnAtPosition(index - 1);
+                        var afterCol = GetColumnAtPosition(index + 1);
+                        if (befcol is PlayerListColumn _plc && !_plc.CurrentItem.KeepPanelVisible)
+                        {
+                            _plc.CurrentItem.Dispose();
+                            show = false;
+                        }
+
+                        if (afterCol is PlayerListColumn _plc2 && !_plc2.CurrentItem.KeepPanelVisible)
+                        {
+                            _plc2.CurrentItem.Dispose();
+                            show = false;
+                        }
+
                         var _col = GetColumnAtPosition(2);
-                        _col.ColumnVisible = false;
+                        _col.ColumnVisible = show;
                     }
                 }
-                else
-                {
-                    var befcol = GetColumnAtPosition(index - 1);
-                    var afterCol = GetColumnAtPosition(index + 1);
-                    if (befcol is PlayerListColumn _plc)
-                        _plc.CurrentItem.Dispose();
-                    if (afterCol is PlayerListColumn _plc2)
-                        _plc2.CurrentItem.Dispose();
-                    var _col = GetColumnAtPosition(2);
-                    _col.ColumnVisible = true;
-                }
-                Main.PauseMenu._pause.CallFunction("SET_MENU_LEVEL", CurrentColumnIndex + 1);
-                Main.PauseMenu._pause.CallFunction("MENU_SHIFT_DEPTH", 0, true, true);
-                Parent.focusLevel = CurrentColumnIndex + 1;
-                Main.PauseMenu._pause.CallFunction("SET_COLUMN_HIGHLIGHT", (int)col.position, col.Index, true, true);
-                col.Items[col.Index].Selected = true;
             }
+            else
+            {
+                RightColumn.ColumnVisible = false;
+            }
+
+            if (index == PM_COLUMNS.RIGHT && !canHideShow) return;
+
+            Main.PauseMenu._pause.CallFunction("SET_MENU_LEVEL", CurrentColumnIndex + 1);
+            Main.PauseMenu._pause.CallFunction("MENU_SHIFT_DEPTH", 0, true, true);
+            CurrentColumnIndex = (int)index;
+            Parent.focusLevel = CurrentColumnIndex + 1;
+            Main.PauseMenu._pause.CallFunction("SET_COLUMN_HIGHLIGHT", (int)col.position, col.Index, true, true);
+            col.Items[col.Index].Selected = true;
         }
 
         public override void StateChange(int state)
@@ -325,6 +359,13 @@ namespace ScaleformUI.PauseMenu
                     play.Focused = true;
                     play.CurrentItem.Selected = true;
                     play.CurrentItem.CreateClonedPed();
+                    if(play.CurrentItem.Panel != null)
+                    {
+                        play.CurrentItem.Panel.UpdatePanel();
+                        RightColumn.ColumnVisible = false;
+                    }
+                    else
+                        RightColumn.ColumnVisible = true;
                     break;
                 case MissionsListColumn miss:
                     miss.Focused = true;
@@ -341,11 +382,15 @@ namespace ScaleformUI.PauseMenu
         public override void UnFocus()
         {
             base.UnFocus();
-            if (LeftColumn is SettingsListColumn set)
-            {
-                set.Focused = false;
-                set.CurrentItem.Selected = false;
-            }
+            ClearPedInPauseMenu();
+            LeftColumn.Focused = false;
+            CenterColumn.Focused = false;
+            RightColumn.Focused = false;
+            LeftColumn.Items[LeftColumn.Index].Selected = false;
+            CenterColumn.Items[CenterColumn.Index].Selected = false;
+            RightColumn.Items[RightColumn.Index].Selected = false;
+            if(!RightColumn.ColumnVisible)
+                RightColumn.ColumnVisible = true;
             API.AddTextEntry("PAUSEMENU_Current_Description", "");
         }
     }
