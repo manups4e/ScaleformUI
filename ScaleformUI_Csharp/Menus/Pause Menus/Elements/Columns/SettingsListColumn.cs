@@ -164,7 +164,6 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             }
             PushScaleformMovieFunctionParameterBool(item.Enabled);
             PushScaleformMovieMethodParameterString(item._formatLeftLabel);
-            Debug.WriteLine(item._formatLeftLabel);
             PushScaleformMovieFunctionParameterBool(item.BlinkDescription);
             switch (item)
             {

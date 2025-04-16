@@ -1345,8 +1345,8 @@ public class MenuExample : BaseScript
         StoreListColumn store = new StoreListColumn("store"); // Giving a label in pause menu is useless.. works only for corona mode.
         MissionDetailsPanel missionPanel = new MissionDetailsPanel("missionPanel"); // Giving a label in pause menu is useless.. works only for corona mode.
 
-        playersTab.SetupLeftColumn(players);
-        playersTab.SetupCenterColumn(settings);
+        playersTab.SetupLeftColumn(settings);
+        //playersTab.SetupCenterColumn(settings);
         playersTab.SetupRightColumn(missions);
 
         missionPanel.Title = "ScaleformUI - Title";

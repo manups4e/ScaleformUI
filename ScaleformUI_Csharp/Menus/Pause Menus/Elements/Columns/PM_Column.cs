@@ -58,7 +58,6 @@ namespace ScaleformUI.Menus
             set
             {
                 columnVisible = value;
-                Debug.WriteLine("SHOW_COLUMN " + (int)position + " " + columnVisible);
                 Main.PauseMenu._pause.CallFunction("SHOW_COLUMN", (int)position, columnVisible);
             }
         }

@@ -58,15 +58,25 @@ namespace ScaleformUI.PauseMenu
 
         public void SwitchColumn(PM_COLUMNS index)
         {
-            switchColumnInternal(index, true);
+            switchColumnInternal(index);
         }
 
-        private void switchColumnInternal(PM_COLUMNS index, bool apply)
+        private void switchColumnInternal(PM_COLUMNS index)
         {
             // for now we won't allow selecting the mission details column
             if (index > PM_COLUMNS.RIGHT || order[(int)index] == (int)PLT_COLUMNS.MISSION_DETAILS) return;
             bool canHideShow = true;
             var col = GetColumnAtPosition(index);
+
+            // handle if the column is null
+            if (col == null)
+            {
+                if (index < PM_COLUMNS.RIGHT)
+                {
+                    switchColumnInternal(index + ((int)index < CurrentColumnIndex?-1:1));
+                }
+                return;
+            }
 
             // we don't check for right column because
             // if right column is players then it means there's no player panel to be shown
@@ -119,14 +129,15 @@ namespace ScaleformUI.PauseMenu
             }
             else
             {
-                RightColumn.ColumnVisible = false;
+                if(RightColumn != null)
+                    RightColumn.ColumnVisible = false;
             }
 
             if (index == PM_COLUMNS.RIGHT && !canHideShow) return;
 
+            CurrentColumnIndex = (int)index;
             Main.PauseMenu._pause.CallFunction("SET_MENU_LEVEL", CurrentColumnIndex + 1);
             Main.PauseMenu._pause.CallFunction("MENU_SHIFT_DEPTH", 0, true, true);
-            CurrentColumnIndex = (int)index;
             Parent.focusLevel = CurrentColumnIndex + 1;
             Main.PauseMenu._pause.CallFunction("SET_COLUMN_HIGHLIGHT", (int)col.position, col.Index, true, true);
             col.Items[col.Index].Selected = true;
@@ -222,7 +233,7 @@ namespace ScaleformUI.PauseMenu
                         else
                         {
                             var selectedCol = GetColumnAtPosition(context);
-                            switchColumnInternal((PM_COLUMNS)context, false);
+                            switchColumnInternal((PM_COLUMNS)context);
                             switch (selectedCol)
                             {
                                 case SettingsListColumn set:
@@ -292,9 +303,16 @@ namespace ScaleformUI.PauseMenu
             if (CurrentColumnIndex > 0)
             {
                 var col = GetColumnAtPosition(CurrentColumnIndex);
-                col.Items[col.Index].Selected = false;
-                CurrentColumnIndex--;
+                if(col != null)
+                    col.Items[col.Index].Selected = false;
+                Main.PauseMenu._pause.CallFunction("SET_COLUMN_FOCUS", CurrentColumnIndex, false, false, false);
+                switchColumnInternal((PM_COLUMNS)CurrentColumnIndex - 1);
                 col = GetColumnAtPosition(CurrentColumnIndex);
+                if (col == null && CurrentColumnIndex > 0)
+                {
+                    GoBack();
+                    return;
+                }
                 col.Items[col.Index].Selected = true;
                 if (col is PlayerListColumn plc)
                 {
@@ -308,9 +326,9 @@ namespace ScaleformUI.PauseMenu
                 else
                 {
                     var _col = GetColumnAtPosition(2);
-                    _col.ColumnVisible = true;
+                    if(_col != null)
+                        _col.ColumnVisible = true;
                 }
-                Parent.FocusLevel--;
             }
         }
 
@@ -362,9 +380,10 @@ namespace ScaleformUI.PauseMenu
                     if(play.CurrentItem.Panel != null)
                     {
                         play.CurrentItem.Panel.UpdatePanel();
+                        if(RightColumn != null)
                         RightColumn.ColumnVisible = false;
                     }
-                    else
+                    else if (RightColumn != null)
                         RightColumn.ColumnVisible = true;
                     break;
                 case MissionsListColumn miss:
@@ -383,14 +402,26 @@ namespace ScaleformUI.PauseMenu
         {
             base.UnFocus();
             ClearPedInPauseMenu();
-            LeftColumn.Focused = false;
-            CenterColumn.Focused = false;
-            RightColumn.Focused = false;
-            LeftColumn.Items[LeftColumn.Index].Selected = false;
-            CenterColumn.Items[CenterColumn.Index].Selected = false;
-            RightColumn.Items[RightColumn.Index].Selected = false;
-            if(!RightColumn.ColumnVisible)
-                RightColumn.ColumnVisible = true;
+            if (LeftColumn != null)
+            {
+                LeftColumn.Focused = false;
+                LeftColumn.Items[LeftColumn.Index].Selected = false;
+            }
+
+            if (CenterColumn != null)
+            {
+                CenterColumn.Focused = false;
+                CenterColumn.Items[CenterColumn.Index].Selected = false;
+            }
+
+            if (RightColumn != null)
+            {
+                RightColumn.Focused = false;
+                RightColumn.Items[RightColumn.Index].Selected = false;
+                if (!RightColumn.ColumnVisible)
+                    RightColumn.ColumnVisible = true;
+            }
+
             API.AddTextEntry("PAUSEMENU_Current_Description", "");
         }
     }
