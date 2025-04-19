@@ -1,12 +1,7 @@
-﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using ScaleformUI.Elements;
-using ScaleformUI.LobbyMenu;
+﻿using ScaleformUI.Elements;
 using ScaleformUI.Menu;
 using ScaleformUI.Menus;
 using ScaleformUI.PauseMenu;
-using ScaleformUI.PauseMenus.Elements.Items;
-using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI.PauseMenus.Elements.Columns
 {
@@ -39,6 +34,11 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             position = pos;
         }
 
+        public override void AddItem(PauseMenuItem item)
+        {
+            AddSettings((UIMenuItem)item);
+        }
+
         public void AddSettings(UIMenuItem item)
         {
             if(item.mainColor == SColor.HUD_Panel_light)
@@ -50,18 +50,19 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             if (visible && Items.Count <= VisibleItems)
             {
                 var idx = Items.Count - 1;
-                UpdateSlot(idx);
+                AddSlot(idx);
                 item.Selected = idx == index;
             }
         }
 
         public override void ShowColumn(bool show = true)
         {
+            if (!visible) return;
             base.ShowColumn(show);
-            InitColumnScroll(true, 1, ScrollType.UP_DOWN, ScrollArrowsPosition.RIGHT);
+            InitColumnScroll(Items.Count >= VisibleItems, 1, ScrollType.UP_DOWN, ScrollArrowsPosition.RIGHT);
             SetColumnScroll(Index + 1, Items.Count, VisibleItems, CaptionLeft, Items.Count < VisibleItems);
             Main.PauseMenu._pause.CallFunction("SET_COLUMN_FOCUS", (int)position, Focused, false, false);
-            if (CurrentItem is UIMenuSeparatorItem it && it.Jumpable)
+            if (Items.Count > 0 && CurrentItem is UIMenuSeparatorItem it && it.Jumpable)
             {
                 CurrentItem.Selected = false;
                 index++;
@@ -73,6 +74,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
 
         public override void Populate()
         {
+            if (!visible) return;
             Main.PauseMenu._pause.CallFunction("SET_DATA_SLOT_EMPTY", (int)position);
             Main.PauseMenu._pause.CallFunction("SET_COLUMN_MAX_ITEMS", (int)position, VisibleItems);
             for (var i = 0; i < Items.Count; i++)
@@ -104,6 +106,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
 
         public void AddItemAt(UIMenuItem item, int idx)
         {
+            if (!visible) return;
             if (idx >= Items.Count) return;
             Items.Insert(idx, item);
             if (visible)
@@ -127,12 +130,11 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                 str = "ADD_SLOT";
 
             BeginScaleformMovieMethod(Main.PauseMenu._pause.Handle, str);
-            // here start
             PushScaleformMovieFunctionParameterInt((int)position);
             PushScaleformMovieFunctionParameterInt(i);
             PushScaleformMovieFunctionParameterInt(0);
             PushScaleformMovieFunctionParameterInt(0);
-            PushScaleformMovieFunctionParameterInt(item._itemId);//id
+            PushScaleformMovieFunctionParameterInt(item._itemId);
             switch (item._itemId)
             {
                 case 1:
@@ -246,6 +248,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
 
         public override async void GoUp()
         {
+            if (!visible) return;
             try
             {
                 CurrentItem.Selected = false;
@@ -270,6 +273,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
 
         public override async void GoDown()
         {
+            if (!visible) return;
             try
             {
                 CurrentItem.Selected = false;
@@ -294,6 +298,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
 
         public override async void GoLeft()
         {
+            if (!visible) return;
             if (!CurrentItem.Enabled)
             {
                 Game.PlaySound(TabView.AUDIO_ERROR, TabView.AUDIO_LIBRARY);
@@ -334,6 +339,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
 
         public override async void GoRight()
         {
+            if (!visible) return;
             if (!CurrentItem.Enabled)
             {
                 Game.PlaySound(TabView.AUDIO_ERROR, TabView.AUDIO_LIBRARY);
@@ -374,6 +380,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
 
         public override void Select()
         {
+            if (!visible) return;
             UIMenuItem item = CurrentItem;
             if (!item.Enabled)
             {
@@ -409,6 +416,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
 
         public async override void MouseScroll(int dir)
         {
+            if (!visible) return;
             CurrentItem.Selected = false;
             do
             {
@@ -509,15 +517,9 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             }
         }
 
-        public void Clear()
-        {
-            if (visible)
-                base.ClearColumn();
-            Items.Clear();
-        }
-
         public void SortSettings(Comparison<UIMenuItem> compare)
         {
+            if (!visible) return;
             try
             {
                 CurrentItem.Selected = false;
@@ -542,6 +544,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
 
         public void FilterSettings(Func<UIMenuItem, bool> predicate)
         {
+            if (!visible) return;
             if (predicate == null)
                 throw new ArgumentNullException(nameof(predicate));
             try
@@ -584,6 +587,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
 
         public void ResetFilter()
         {
+            if (!visible) return;
             try
             {
                 if (_unfilteredItems != null && _unfilteredItems.Count > 0)

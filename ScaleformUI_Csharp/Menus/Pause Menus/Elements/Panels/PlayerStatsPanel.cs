@@ -1,10 +1,8 @@
 ﻿using ScaleformUI.Elements;
-using ScaleformUI.LobbyMenu;
 using ScaleformUI.Menu;
 using ScaleformUI.Menus;
 using ScaleformUI.PauseMenu;
 using ScaleformUI.PauseMenus.Elements.Items;
-using ScaleformUI.Scaleforms;
 
 namespace ScaleformUI.PauseMenus.Elements.Panels
 {
@@ -128,6 +126,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
                 position = ParentItem?.ClonePed == null ? PM_COLUMNS.EXTRA3 : PM_COLUMNS.EXTRA4;
                 Parent = ParentItem?.ParentColumn?.Parent;
                 Populate();
+                ShowColumn();
             }
         }
 
@@ -144,7 +143,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
                 PlayerStatsPanelStatItem stat = (PlayerStatsPanelStatItem)Items[i];
                 Main.PauseMenu._pause.CallFunction("SET_DATA_SLOT", (int)position, 1, i, 0, stat.Label, stat.Description, stat.Value);
             }
-            if (DetailsItems.Count > 0 && position == PM_COLUMNS.EXTRA4)
+            if (DetailsItems.Count > 0 && position == PM_COLUMNS.EXTRA3)
             {
                 for (int i = 0; i < DetailsItems.Count; i++)
                 {

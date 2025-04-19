@@ -1,9 +1,6 @@
-﻿using ScaleformUI.Elements;
-using ScaleformUI.LobbyMenu;
-using ScaleformUI.Menu;
+﻿using ScaleformUI.Menu;
 using ScaleformUI.Menus;
 using ScaleformUI.PauseMenu;
-using ScaleformUI.PauseMenus.Elements.Items;
 
 namespace ScaleformUI.PauseMenus.Elements.Panels
 {
@@ -19,7 +16,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             {
                 title = value;
                 if(visible)
-                    Main.PauseMenu._pause.CallFunction("SET_COLUMN_TITLE", (int)position, title, TextureDict, TextureName);
+                    Main.PauseMenu._pause.CallFunction("SET_COLUMN_TITLE", (int)position, title);
             }
         }
 
@@ -31,14 +28,15 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
         }
         public override void ShowColumn(bool show = true)
         {
+            if (!visible) return;
             base.ShowColumn(show);
-            //InitColumnScroll(true, 1, ScrollType.UP_DOWN, ScrollArrowsPosition.RIGHT);
-            //SetColumnScroll(Index + 1, Items.Count, VisibleItems, CaptionLeft, Items.Count < VisibleItems);
+            Main.PauseMenu._pause.CallFunction("SET_COLUMN_TITLE", (int)position, title, TextureDict, TextureName);
             Main.PauseMenu._pause.CallFunction("SET_COLUMN_FOCUS", (int)position, Focused, false, false);
         }
 
         public override void SetDataSlot(int index)
         {
+            if (!visible) return;
             this.SendItemToScaleform(index);
         }
 
@@ -58,8 +56,8 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
 
         public override void Populate()
         {
+            if (!visible) return;
             Main.PauseMenu._pause.CallFunction("SET_DATA_SLOT_EMPTY", (int)position);
-            Main.PauseMenu._pause.CallFunction("SET_COLUMN_TITLE", (int)position, title, TextureDict, TextureName);
             for (int i = 0; i < Items.Count; i++)
             {
                 SetDataSlot(i);
@@ -67,15 +65,16 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
         }
         internal void SendItemToScaleform(int i, bool update = false, bool newItem = false, bool isSlot = false)
         {
+            if (!visible) return;
             if (i >= Items.Count) return;
             UIFreemodeDetailsItem item  = Items[i] as UIFreemodeDetailsItem;
             string str = "SET_DATA_SLOT";
             if (update)
                 str = "UPDATE_SLOT";
             if (newItem)
-                str = "ADD_SLOT";
+                str = "SET_DATA_SLOT_SPLICE";
             if (isSlot)
-                str = "SET_SLOT_EMPTY";
+                str = "ADD_SLOT";
             BeginScaleformMovieMethod(Main.PauseMenu._pause.Handle, str);
             PushScaleformMovieFunctionParameterInt((int)position);
             PushScaleformMovieFunctionParameterInt(i);
@@ -114,11 +113,11 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
         /// <param name="txn">Texture name for the picture</param>
         public void UpdatePanelPicture(string txd, string txn)
         {
+            bool change = TextureDict != txd || TextureName != txn;
             TextureDict = txd;
             TextureName = txn;
-            if (visible)
+            if (visible && change)
                 Main.PauseMenu._pause.CallFunction("SET_COLUMN_TITLE", (int)position, title, TextureDict, TextureName);
-
         }
 
         /// <summary>
@@ -128,13 +127,11 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
         public void AddItem(UIFreemodeDetailsItem item)
         {
             Items.Add(item);
-            //if (Parent != null && Parent.Visible)
-            //{
-            //    if (Parent is MainView lobby)
-            //        lobby._pause._lobby.CallFunction("ADD_MISSION_PANEL_ITEM", item.Type, item.TextLeft, item.TextRight, (int)item.Icon, item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID);
-            //    else if (Parent is TabView pause && ParentTab.Visible)
-            //        pause._pause._pause.CallFunction("ADD_PLAYERS_TAB_MISSION_PANEL_ITEM", item.Type, item.TextLeft, item.TextRight, (int)item.Icon, item.IconColor, item.Tick, item._labelFont.FontName, item._labelFont.FontID, item._rightLabelFont.FontName, item._rightLabelFont.FontID);
-            //}
+            if(visible && Items.Count <= VisibleItems)
+            {
+                var idx = Items.Count - 1;
+                AddSlot(idx);
+            }
         }
 
         /// <summary>
@@ -151,11 +148,6 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             //    else if (Parent is TabView pause && ParentTab.Visible)
             //        pause._pause._pause.CallFunction("REMOVE_PLAYERS_TAB_MISSION_PANEL_ITEM", idx);
             //}
-        }
-
-        public void Clear()
-        {
-            Items.Clear();
         }
     }
 }

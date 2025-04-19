@@ -1,11 +1,6 @@
-﻿using CitizenFX.Core;
-using ScaleformUI.LobbyMenu;
-using ScaleformUI.PauseMenu;
+﻿using ScaleformUI.PauseMenu;
 using ScaleformUI.PauseMenus.Elements.Columns;
 using ScaleformUI.PauseMenus.Elements.Items;
-using System.Security.Cryptography;
-using System.Threading.Tasks;
-using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI.PauseMenus.Elements.Panels
 {
@@ -178,7 +173,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
                     break;
             }
         }
-        public async Task ProcessMap()
+        public void ProcessMap()
         {
             if (enabled)
             {

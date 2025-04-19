@@ -1,7 +1,4 @@
-﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using ScaleformUI.LobbyMenu;
-using ScaleformUI.PauseMenu;
+﻿using ScaleformUI.PauseMenu;
 using ScaleformUI.PauseMenus.Elements.Columns;
 using ScaleformUI.PauseMenus.Elements.Panels;
 

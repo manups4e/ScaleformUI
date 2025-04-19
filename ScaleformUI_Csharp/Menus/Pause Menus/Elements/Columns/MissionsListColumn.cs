@@ -1,11 +1,6 @@
-﻿using CitizenFX.Core;
-using ScaleformUI.Elements;
-using ScaleformUI.LobbyMenu;
-using ScaleformUI.Menu;
-using ScaleformUI.Menus;
+﻿using ScaleformUI.Menus;
 using ScaleformUI.PauseMenu;
 using ScaleformUI.PauseMenus.Elements.Items;
-using System.Linq;
 
 namespace ScaleformUI.PauseMenus.Elements.Columns
 {
@@ -33,6 +28,10 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             }
         }
 
+        public override void AddItem(PauseMenuItem item)
+        {
+            AddMissionItem((MissionItem)item);
+        }
         public void AddMissionItem(MissionItem item)
         {
             item.ParentColumn = this;
@@ -103,10 +102,10 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
         public override void ShowColumn(bool show = true)
         {
             base.ShowColumn(show);
-            InitColumnScroll(true, 1, ScrollType.UP_DOWN, ScrollArrowsPosition.RIGHT);
+            InitColumnScroll(Items.Count >= VisibleItems, 1, ScrollType.UP_DOWN, ScrollArrowsPosition.RIGHT);
             SetColumnScroll(Index + 1, Items.Count, VisibleItems, CaptionLeft, Items.Count < VisibleItems);
             Main.PauseMenu._pause.CallFunction("SET_COLUMN_FOCUS", (int)position, Focused, false, false);
-            if(CurrentItem is MissionSeparatorItem it && it.Jumpable)
+            if(Items.Count >= 0 && CurrentItem is MissionSeparatorItem it && it.Jumpable)
             {
                 CurrentItem.Selected = false;
                 index++;
@@ -130,6 +129,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                 }
                 while (CurrentItem is MissionSeparatorItem sp && sp.Jumpable);
                 Main.PauseMenu._pause.CallFunction("SET_COLUMN_INPUT_EVENT", (int)position, 8);
+                SetColumnScroll(Index + 1, Items.Count, VisibleItems, CaptionLeft, Items.Count < VisibleItems);
                 CurrentItem.Selected = true;
                 IndexChangedEvent();
             }
@@ -153,6 +153,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                 }
                 while (CurrentItem is MissionSeparatorItem sp && sp.Jumpable);
                 Main.PauseMenu._pause.CallFunction("SET_COLUMN_INPUT_EVENT", (int)position, 9);
+                SetColumnScroll(Index + 1, Items.Count, VisibleItems, CaptionLeft, Items.Count < VisibleItems);
                 CurrentItem.Selected = true;
                 IndexChangedEvent();
             }
@@ -205,13 +206,6 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                     Main.PauseMenu._pause.CallFunction("SET_COLUMN_HIGHLIGHT", (int)position, index, true, true);
                 IndexChangedEvent();
             }
-        }
-
-        public void Clear()
-        {
-            Items.Clear();
-            if(visible)
-                Main.PauseMenu._pause.CallFunction("SET_DATA_SLOT_EMPTY", (int)position);
         }
 
         public void RemoveItem(int id)

@@ -1,12 +1,6 @@
-﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using ScaleformUI.Elements;
-using ScaleformUI.LobbyMenu;
-using ScaleformUI.Menu;
-using ScaleformUI.Menus;
+﻿using ScaleformUI.Menus;
 using ScaleformUI.PauseMenu;
 using ScaleformUI.PauseMenus.Elements.Items;
-using System.Linq;
 
 namespace ScaleformUI.PauseMenus.Elements.Columns
 {
@@ -35,6 +29,10 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             }
         }
 
+        public override void AddItem(PauseMenuItem item)
+        {
+            AddPlayer((FriendItem)item);
+        }
         public void AddPlayer(FriendItem item)
         {
             item.ParentColumn = this;
@@ -81,7 +79,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
         public override void ShowColumn(bool show = true)
         {
             base.ShowColumn(show);
-            InitColumnScroll(true, 1, ScrollType.UP_DOWN, ScrollArrowsPosition.RIGHT);
+            InitColumnScroll(Items.Count >= VisibleItems, 1, ScrollType.UP_DOWN, ScrollArrowsPosition.RIGHT);
             SetColumnScroll(Index + 1, Items.Count, VisibleItems, CaptionLeft, Items.Count < VisibleItems);
             Main.PauseMenu._pause.CallFunction("SET_COLUMN_FOCUS", (int)position, Focused, false, false);
         }
@@ -113,7 +111,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
         {
             try
             {
-                ClearPedInPauseMenu();
+                API.ClearPedInPauseMenu();
                 CurrentItem.Selected = false;
                 index--;
                 if (index < 0)
@@ -133,7 +131,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
         {
             try
             {
-                ClearPedInPauseMenu();
+                API.ClearPedInPauseMenu();
                 CurrentItem.Selected = false;
                     index++;
                     if (index >= Items.Count)
@@ -161,7 +159,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
 
         public override void MouseScroll(int dir)
         {
-                ClearPedInPauseMenu();
+            API.ClearPedInPauseMenu();
             CurrentItem.Selected = false;
                 index += dir;
                 if (index < 0)

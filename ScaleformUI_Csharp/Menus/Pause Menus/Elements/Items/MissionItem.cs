@@ -1,10 +1,7 @@
 ﻿using ScaleformUI.Elements;
-using ScaleformUI.LobbyMenu;
 using ScaleformUI.Menu;
 using ScaleformUI.PauseMenu;
 using ScaleformUI.PauseMenus.Elements.Columns;
-using ScaleformUI.Scaleforms;
-using System.Drawing;
 
 namespace ScaleformUI.PauseMenus.Elements.Items
 {
@@ -56,18 +53,24 @@ namespace ScaleformUI.PauseMenus.Elements.Items
         {
             LeftIcon = icon;
             LeftIconColor = color;
+            if (ParentColumn != null && ParentColumn.visible)
+                ParentColumn.UpdateSlot(ParentColumn.Items.IndexOf(this));
         }
         public virtual void SetRightIcon(BadgeIcon icon, SColor color, bool @checked = false)
         {
             RightIcon = icon;
             RightIconColor = color;
             RightIconChecked = @checked;
+            if(ParentColumn != null && ParentColumn.visible)
+                ParentColumn.UpdateSlot(ParentColumn.Items.IndexOf(this));
         }
 
         public virtual void SetCustomLeftIcon(string txd, string txn)
         {
             LeftIcon = BadgeIcon.CUSTOM;
             customLeftBadge = new KeyValuePair<string, string>(txd, txn);
+            if (ParentColumn != null && ParentColumn.visible)
+                ParentColumn.UpdateSlot(ParentColumn.Items.IndexOf(this));
         }
 
         public virtual void SetCustomRightIcon(string txd, string txn, bool @checked = false)
@@ -75,6 +78,8 @@ namespace ScaleformUI.PauseMenus.Elements.Items
             RightIcon = BadgeIcon.CUSTOM;
             customRightBadge = new KeyValuePair<string, string>(txd, txn);
             rIcChecked = @checked;
+            if (ParentColumn != null && ParentColumn.visible)
+                ParentColumn.UpdateSlot(ParentColumn.Items.IndexOf(this));
         }
     }
     public class MissionSeparatorItem : MissionItem

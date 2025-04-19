@@ -1,12 +1,5 @@
-﻿using CitizenFX.Core.Native;
-using ScaleformUI.Elements;
+﻿using ScaleformUI.Elements;
 using ScaleformUI.PauseMenu;
-using ScaleformUI.PauseMenus.Elements.Items;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ScaleformUI.Menus
 {
@@ -46,7 +39,7 @@ namespace ScaleformUI.Menus
                 else if (index >= Items.Count)
                     index = 0;
 
-                if (visible)
+                if (visible && Parent.CurrentColumnIndex == (int)position)
                     Main.PauseMenu._pause.CallFunction("SET_COLUMN_HIGHLIGHT", (int)position, index, false, false);
                 //TODO: ADD INDEX CHANGE EVENT HERE
             }
@@ -81,6 +74,11 @@ namespace ScaleformUI.Menus
             Items.Add(item);
         }
 
+        public void Clear()
+        {
+            ClearColumn();
+        }
+
         public virtual void Populate() { }
 
         public virtual void SetDataSlot(int index) { }
@@ -99,55 +97,66 @@ namespace ScaleformUI.Menus
 
         public virtual void HighlightColumn(bool highlighted = false, bool moveFocus = false, bool prevHighlight = false)
         {
-            Main.PauseMenu._pause.CallFunction("SET_COLUMN_FOCUS", (int)position, highlighted, moveFocus, prevHighlight);
+            if (visible)
+                Main.PauseMenu._pause.CallFunction("SET_COLUMN_FOCUS", (int)position, highlighted, moveFocus, prevHighlight);
         }
         public virtual void ClearColumn()
         {
-            Main.PauseMenu._pause.CallFunction("SET_DATA_SLOT_EMPTY", (int)position);
+            Items.Clear();
+            index = 0;
+            if (visible)
+                Main.PauseMenu._pause.CallFunction("SET_DATA_SLOT_EMPTY", (int)position);
         }
         public virtual void ShowColumn(bool show = true)
         {
-            Main.PauseMenu._pause.CallFunction("DISPLAY_DATA_SLOT", (int)position);
+            if (visible)
+                Main.PauseMenu._pause.CallFunction("DISPLAY_DATA_SLOT", (int)position);
         }
         public virtual void InitColumnScroll(bool visible, int columns, ScrollType scrollType, ScrollArrowsPosition arrowPosition, bool @override = false, float xColOffset = 0f)
         {
-            Main.PauseMenu._pause.CallFunction("INIT_COLUMN_SCROLL", (int)position, visible, columns, (int)scrollType, (int)arrowPosition, @override, xColOffset);
+            if (visible)
+                Main.PauseMenu._pause.CallFunction("INIT_COLUMN_SCROLL", (int)position, visible, columns, (int)scrollType, (int)arrowPosition, @override, xColOffset);
         }
         public virtual void SetColumnScroll(int currentPosition, int maxPosition, int maxVisible, string caption, bool forceInvisible = false, string captionR = "")
         {
-            Main.PauseMenu._pause.CallFunction("SET_COLUMN_SCROLL", (int)position, currentPosition, maxPosition, maxVisible, caption, forceInvisible, captionR);
+            if (visible)
+                Main.PauseMenu._pause.CallFunction("SET_COLUMN_SCROLL", (int)position, currentPosition, maxPosition, maxVisible, caption, forceInvisible, captionR);
         }
 
         public virtual void SetColumnScroll(int currentPosition, int maxPosition, int maxVisible = -1)
         {
-            Main.PauseMenu._pause.CallFunction("SET_COLUMN_SCROLL", (int)position, currentPosition, maxPosition, maxVisible);
+            if (visible)
+                Main.PauseMenu._pause.CallFunction("SET_COLUMN_SCROLL", (int)position, currentPosition, maxPosition, maxVisible);
         }
 
         public virtual void SetColumnScroll(string caption, params object[] args)
         {
-            BeginScaleformMovieMethod(Main.PauseMenu._pause.Handle, "SET_COLUMN_SCROLL");
-            ScaleformMovieMethodAddParamInt((int)position);
-            ScaleformMovieMethodAddParamInt(0);
-            ScaleformMovieMethodAddParamInt(0);
-            ScaleformMovieMethodAddParamInt(0);
-            BeginTextCommandScaleformString(caption);
-            foreach (object arg in args)
+            if (visible)
             {
-                switch (arg)
+                BeginScaleformMovieMethod(Main.PauseMenu._pause.Handle, "SET_COLUMN_SCROLL");
+                ScaleformMovieMethodAddParamInt((int)position);
+                ScaleformMovieMethodAddParamInt(0);
+                ScaleformMovieMethodAddParamInt(0);
+                ScaleformMovieMethodAddParamInt(0);
+                BeginTextCommandScaleformString(caption);
+                foreach (object arg in args)
                 {
-                    case int:
-                        AddTextComponentInteger((int)arg);
-                        break;
-                    case string:
-                        AddTextComponentSubstringPlayerName((string)arg);
-                        break;
-                    case float:
-                        AddTextComponentFloat((float)arg, 2);
-                        break;
+                    switch (arg)
+                    {
+                        case int:
+                            AddTextComponentInteger((int)arg);
+                            break;
+                        case string:
+                            AddTextComponentSubstringPlayerName((string)arg);
+                            break;
+                        case float:
+                            AddTextComponentFloat((float)arg, 2);
+                            break;
+                    }
                 }
+                EndTextCommandScaleformString_2();
+                EndScaleformMovieMethod();
             }
-            EndTextCommandScaleformString_2();
-            EndScaleformMovieMethod();
         }
     }
 }
