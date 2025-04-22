@@ -1,13 +1,5 @@
 ﻿using ScaleformUI.PauseMenu;
-using ScaleformUI.PauseMenus.Elements;
 using ScaleformUI.PauseMenus.Elements.Items;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Security.Policy;
-using System.Text;
 
 namespace ScaleformUI.Menus.Pause_Menus.Elements.Columns
 {
@@ -109,7 +101,7 @@ namespace ScaleformUI.Menus.Pause_Menus.Elements.Columns
             }
         }
 
-        public override void GoDown()
+         public override void GoDown()
         {
             int iPotentialIndex = Index;
             int iPotentialIndexPerPage = currentPageIndex;

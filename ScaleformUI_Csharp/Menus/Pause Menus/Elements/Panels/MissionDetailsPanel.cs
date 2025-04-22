@@ -31,6 +31,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             if (!visible) return;
             base.ShowColumn(show);
             Main.PauseMenu._pause.CallFunction("SET_COLUMN_TITLE", (int)position, title, TextureDict, TextureName);
+            Debug.WriteLine($"{position} - {title} - {TextureDict} - {TextureName}");
             Main.PauseMenu._pause.CallFunction("SET_COLUMN_FOCUS", (int)position, Focused, false, false);
         }
 
@@ -141,13 +142,14 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
         public void RemoveItem(int idx)
         {
             Items.RemoveAt(idx);
-            //if (Parent != null && Parent.Visible)
-            //{
-            //    if (Parent is MainView lobby)
-            //        lobby._pause._lobby.CallFunction("REMOVE_MISSION_PANEL_ITEM", idx);
-            //    else if (Parent is TabView pause && ParentTab.Visible)
-            //        pause._pause._pause.CallFunction("REMOVE_PLAYERS_TAB_MISSION_PANEL_ITEM", idx);
-            //}
         }
+
+        //public override void ClearColumn()
+        //{
+        //    base.ClearColumn();
+        //    title = "";
+        //    TextureDict = "";
+        //    TextureName = "";
+        //}
     }
 }

@@ -1,7 +1,15 @@
-﻿using ScaleformUI.Elements;
+﻿using CitizenFX.Core;
+using CitizenFX.Core.Native;
+using ScaleformUI.Elements;
+using ScaleformUI.LobbyMenu;
 using ScaleformUI.Menu;
 using ScaleformUI.Menus;
 using ScaleformUI.PauseMenu;
+using ScaleformUI.PauseMenus.Elements.Items;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI.PauseMenus.Elements.Columns
 {
@@ -447,9 +455,9 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                     index = 0;
                 CurrentItem.Selected = true;
 
-                if (visible)
+                if (visible && Focused)
                     Main.PauseMenu._pause.CallFunction("SET_COLUMN_HIGHLIGHT", (int)position, index, true, true);
-                //TODO: ADD INDEX CHANGE EVENT HERE
+                IndexChangedEvent();
             }
         }
 
@@ -609,68 +617,11 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             }
         }
 
-        // this should not be necessary at all
-        internal void RefreshColumn(bool keepIndex = false, bool keepScroll = false)
+        public override void ClearColumn()
         {
-            //var index = CurrentSelection;
-            //var position = Pagination.GetScaleformIndex(index);
-            //if (Parent is MainView lobby)
-            //    lobby._pause._lobby.CallFunction("CLEAR_SETTINGS_COLUMN");
-            //else if (Parent is TabView pause && ParentTab.Visible)
-            //    pause._pause._pause.CallFunction("CLEAR_PLAYERS_TAB_SETTINGS_COLUMN");
-            //if (Items.Count > 0)
-            //{
-            //    isBuilding = true;
-            //    int max = Pagination.ItemsPerPage;
-            //    if (Items.Count < max)
-            //        max = Items.Count;
-
-            //    Pagination.MinItem = Pagination.CurrentPageStartIndex;
-            //    if (Pagination.scrollType == ScrollingType.CLASSIC && Pagination.TotalPages > 1)
-            //    {
-            //        int missingItems = Pagination.GetMissingItems();
-            //        if (missingItems > 0)
-            //        {
-            //            Pagination.ScaleformIndex = Pagination.GetPageIndexFromMenuIndex(Pagination.CurrentPageEndIndex) + missingItems;
-            //            Pagination.MinItem = Pagination.CurrentPageStartIndex - missingItems;
-            //        }
-            //    }
-            //    Pagination.MaxItem = Pagination.CurrentPageEndIndex;
-
-            //    for (int i = 0; i < max; i++)
-            //    {
-            //        if (!Parent.Visible) return;
-            //        _itemCreation(Pagination.CurrentPage, i, false, true);
-            //    }
-            //    Pagination.ScaleformIndex = Pagination.GetScaleformIndex(CurrentSelection);
-            //    if (Parent is MainView _lobby)
-            //    {
-            //        _lobby._pause._lobby.CallFunction("SET_SETTINGS_SELECTION", Pagination.ScaleformIndex);
-            //        _lobby._pause._lobby.CallFunction("SET_SETTINGS_QTTY", CurrentSelection + 1, Items.Count);
-            //    }
-            //    else if (Parent is TabView _pause && ParentTab.Visible)
-            //    {
-            //        _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_SELECTION", Pagination.ScaleformIndex);
-            //        _pause._pause._pause.CallFunction("SET_PLAYERS_TAB_SETTINGS_QTTY", CurrentSelection + 1, Items.Count);
-            //    }
-            //    isBuilding = false;
-            //    if (keepIndex)
-            //        CurrentSelection = index;
-            //}
+            base.ClearColumn();
+            API.AddTextEntry("PAUSEMENU_Current_Description", "");
         }
-
-        //internal void RestoreScrollPosition(int index, int position)
-        //{
-        //    CurrentSelection = 0;
-        //    for (int i = 0; i < Items.Count; i++)
-        //    {
-        //        if (position == Pagination.GetScaleformIndex(index))
-        //            break;
-        //        else
-        //            GoDown();
-        //    }
-        //    CurrentSelection = index;
-        //}
 
         public void SelectItem()
         {

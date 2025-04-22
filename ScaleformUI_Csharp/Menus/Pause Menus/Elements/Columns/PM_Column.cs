@@ -28,20 +28,20 @@ namespace ScaleformUI.Menus
 
         internal bool visible => Parent != null && Parent.Visible && Parent.Parent != null && Parent.Parent.Visible;
         public List<PauseMenuItem> Items { get; internal set; } = new List<PauseMenuItem>();
-        public int Index
+        public virtual int Index
         {
             get => index;
             set
             {
+                Items[index].Selected = false;
                 index = value;
                 if (index < 0)
                     index = Items.Count - 1;
                 else if (index >= Items.Count)
                     index = 0;
-
+                Items[index].Selected = true;
                 if (visible && Parent.CurrentColumnIndex == (int)position)
                     Main.PauseMenu._pause.CallFunction("SET_COLUMN_HIGHLIGHT", (int)position, index, false, false);
-                //TODO: ADD INDEX CHANGE EVENT HERE
             }
         }
 
@@ -155,6 +155,23 @@ namespace ScaleformUI.Menus
                     }
                 }
                 EndTextCommandScaleformString_2();
+                EndScaleformMovieMethod();
+            }
+        }
+        public virtual void SetColumnScroll(string caption, string rightC)
+        {
+            if (visible)
+            {
+                BeginScaleformMovieMethod(Main.PauseMenu._pause.Handle, "SET_COLUMN_SCROLL");
+                ScaleformMovieMethodAddParamInt((int)position);
+                ScaleformMovieMethodAddParamInt(0);
+                ScaleformMovieMethodAddParamInt(0);
+                ScaleformMovieMethodAddParamInt(0);
+                BeginTextCommandScaleformString("CELL_EMAIL_BCON");
+                AddTextComponentSubstringPlayerName(caption);
+                EndTextCommandScaleformString_2();
+                ScaleformMovieMethodAddParamBool(false);
+                ScaleformMovieMethodAddParamPlayerNameString(rightC);
                 EndScaleformMovieMethod();
             }
         }

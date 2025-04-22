@@ -140,10 +140,10 @@ namespace ScaleformUI.PauseMenus.Elements
                         AddTextComponentScaleform(_item.Label.Label);
                         EndTextCommandScaleformString_2();
                         BeginTextCommandScaleformString("STRING");
-                        AddTextComponentScaleform(Game.CurrentInputMode == InputMode.MouseAndKeyboard ? _item.PrimaryKeyboard : _item.PrimaryGamepad);
+                        AddTextComponentScaleform(IsUsingKeyboard(2) ? _item.PrimaryKeyboard : _item.PrimaryGamepad);
                         EndTextCommandScaleformString_2();
                         BeginTextCommandScaleformString("STRING");
-                        AddTextComponentScaleform(Game.CurrentInputMode == InputMode.MouseAndKeyboard ? _item.SecondaryKeyboard : _item.SecondaryGamepad);
+                        AddTextComponentScaleform(IsUsingKeyboard(2) ? _item.SecondaryKeyboard : _item.SecondaryGamepad);
                         EndTextCommandScaleformString_2();
                         EndScaleformMovieMethod();
                     }

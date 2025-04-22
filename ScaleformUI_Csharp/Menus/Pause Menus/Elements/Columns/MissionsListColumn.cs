@@ -165,6 +165,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
 
         public override void Select()
         {
+            CurrentItem.ActivateMission((PlayerListTab)Parent);
             SelectItem();
         }
         public override void GoBack()

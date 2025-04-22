@@ -173,7 +173,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
                     break;
             }
         }
-        public void ProcessMap()
+        public async Task ProcessMap()
         {
             if (enabled)
             {

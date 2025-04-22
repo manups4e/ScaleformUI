@@ -1,8 +1,12 @@
 ﻿using ScaleformUI.Elements;
+using ScaleformUI.LobbyMenu;
 using ScaleformUI.Menu;
 using ScaleformUI.Menus;
 using ScaleformUI.PauseMenu;
 using ScaleformUI.PauseMenus.Elements.Items;
+using ScaleformUI.Scaleforms;
+using System.Collections.Generic;
+using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI.PauseMenus.Elements.Panels
 {
