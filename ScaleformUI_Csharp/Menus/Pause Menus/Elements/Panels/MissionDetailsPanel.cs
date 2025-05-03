@@ -31,7 +31,6 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             if (!visible) return;
             base.ShowColumn(show);
             Main.PauseMenu._pause.CallFunction("SET_COLUMN_TITLE", (int)position, title, TextureDict, TextureName);
-            Debug.WriteLine($"{position} - {title} - {TextureDict} - {TextureName}");
             Main.PauseMenu._pause.CallFunction("SET_COLUMN_FOCUS", (int)position, Focused, false, false);
         }
 

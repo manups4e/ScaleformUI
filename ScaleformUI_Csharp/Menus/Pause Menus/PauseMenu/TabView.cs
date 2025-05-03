@@ -72,6 +72,8 @@ namespace ScaleformUI.PauseMenu
         public string SideStringTop { get; set; }
         public string SideStringMiddle { get; set; }
         public string SideStringBottom { get; set; }
+        public bool ShowStoreBackground { internal get; set; }
+        public int StoreBackgroundAnimationSpeed { internal get; set; } = 240; // should be expressed in ms
         public HudColor TabsColor { get; set; } = HudColor.HUD_COLOUR_PAUSE_BG;
         public bool ShowBlur = true;
         public Tuple<string, string> HeaderPicture
@@ -103,7 +105,7 @@ namespace ScaleformUI.PauseMenu
         private int s_lastGameFrame = 0;
 
         [Flags]
-        enum CHECK_INPUT_OVERRIDE_FLAG : short
+        enum CHECK_INPUT_OVERRIDE_FLAG : byte
         {
             CHECK_INPUT_OVERRIDE_FLAG_NONE = 0,
             CHECK_INPUT_OVERRIDE_FLAG_WARNING_MESSAGE = (1 << 0),
@@ -128,15 +130,6 @@ namespace ScaleformUI.PauseMenu
                     Tabs[Index].UnFocus();
                 SendPauseMenuFocusChange();
             }
-        }
-
-        public async void ChangeMenuLevel(int dir)
-        {
-            while (isBuilding) await BaseScript.Delay(0);
-            focusLevel += dir;
-            _pause?.SetFocus(dir);
-            if (dir > 0 && Tabs.Count > 0 && focusLevel == 1)
-                Tabs[Index].Focus();
         }
 
         public bool TemporarilyHidden { get; set; }
@@ -205,7 +198,11 @@ namespace ScaleformUI.PauseMenu
                     BuildPauseMenu();
                     SendPauseMenuOpen();
                     if (IsCorona)
+                    {
                         FocusLevel = 1;
+                        Main.PauseMenu.BGEnabled = ShowStoreBackground;
+                        Main.PauseMenu._pauseBG.CallFunction("ANIMATE_BACKGROUND", StoreBackgroundAnimationSpeed);
+                    }
                 }
                 else
                 {
@@ -287,16 +284,16 @@ namespace ScaleformUI.PauseMenu
             {
                 _pause._header.CallFunction("ENABLE_DYNAMIC_WIDTH", SetHeaderDynamicWidth);
                 foreach (BaseTab tab in Tabs)
-                    _pause.AddPauseMenuTab(tab.Title, 0, tab._type, tab.TabColor);
+                    _pause.AddPauseMenuTab(tab.Title, 0, tab.TabColor);
             }
             else
             {
                 if (coronaTab.LeftColumn != null)
-                    _pause.AddLobbyMenuTab(coronaTab.LeftColumn.Label, 2, coronaTab.LeftColumn.Color);
+                    _pause.AddPauseMenuTab(coronaTab.LeftColumn.Label, 2, coronaTab.LeftColumn.Color);
                 if (coronaTab.CenterColumn != null)
-                    _pause.AddLobbyMenuTab(coronaTab.CenterColumn.Label, 2, coronaTab.CenterColumn.Color);
+                    _pause.AddPauseMenuTab(coronaTab.CenterColumn.Label, 2, coronaTab.CenterColumn.Color);
                 if (coronaTab.RightColumn != null)
-                    _pause.AddLobbyMenuTab(coronaTab.RightColumn.Label, 2, coronaTab.RightColumn.Color);
+                    _pause.AddPauseMenuTab(coronaTab.RightColumn.Label, 2, coronaTab.RightColumn.Color);
                 _pause._header.CallFunction("SET_ALL_HIGHLIGHTS", true, (int)TabsColor);
                 _pause._header.CallFunction("ENABLE_DYNAMIC_WIDTH", false);
             }

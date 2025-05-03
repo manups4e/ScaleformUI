@@ -37,11 +37,6 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             }
         }
 
-        public void SetColumnPosition(PM_COLUMNS pos)
-        {
-            position = pos;
-        }
-
         public override void AddItem(PauseMenuItem item)
         {
             AddSettings((UIMenuItem)item);

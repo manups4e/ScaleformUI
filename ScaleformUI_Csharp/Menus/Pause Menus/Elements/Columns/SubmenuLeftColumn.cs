@@ -94,7 +94,7 @@ namespace ScaleformUI.PauseMenus.Elements
             if (Parent != null && Parent.Visible && Parent.Parent != null && Parent.Parent.Visible)
                 Parent.Parent._pause._pause.CallFunction("MENU_STATE", (int)currentItemType);
         }
-
+         
         public override void GoDown()
         {
             Items[Index].Selected = false;

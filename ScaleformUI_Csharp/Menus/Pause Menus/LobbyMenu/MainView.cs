@@ -21,8 +21,6 @@ namespace ScaleformUI.LobbyMenu
     {
         public event LobbyMenuOpenEvent OnLobbyMenuOpen;
         public event LobbyMenuCloseEvent OnLobbyMenuClose;
-        public bool ShowStoreBackground { internal get; set; }
-        public int StoreBackgroundAnimationSpeed { internal get; set; } = 240; // should be expressed in ms
         public MinimapPanel Minimap => coronaTab.Minimap;
 
         public new int Index;
@@ -64,7 +62,6 @@ namespace ScaleformUI.LobbyMenu
 
         public void SelectColumn(int column) => coronaTab.SwitchColumn(column);
         public void SelectColumn(PM_COLUMNS column) => coronaTab.SwitchColumn(column);
-
         public void SetupLeftColumn(PM_Column column) => coronaTab.SetupLeftColumn(column);
         public void SetupCenterColumn(PM_Column column) => coronaTab.SetupCenterColumn(column);
         public void SetupRightColumn(PM_Column column) => coronaTab.SetupRightColumn(column);

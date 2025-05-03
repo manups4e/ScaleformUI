@@ -62,7 +62,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             if (isSlot)
                 str = "ADD_SLOT";
             Main.PauseMenu._pause.CallFunction(str, (int)position, i, 0, i, 2, fi.Rank, true, fi.Label, fi.ItemColor, fi.ColoredTag, fi.iconL, fi.boolL, fi.iconR, fi.boolR, fi.Status, fi.StatusColor, fi.CrewTag.TAG);
-            if(position == PM_COLUMNS.LEFT)
+            if(position == PM_COLUMNS.LEFT && i == index)
                 fi.Panel?.UpdatePanel();
         }
 

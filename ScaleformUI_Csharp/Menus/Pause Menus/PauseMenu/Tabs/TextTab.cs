@@ -27,6 +27,7 @@ namespace ScaleformUI.PauseMenu
             _type = 0;
         }
 
+        [Obsolete("Not supported yet at the moment due to new Pause conversion")]
         public void AddTitle(string title)
         {
             if (string.IsNullOrWhiteSpace(TextTitle))

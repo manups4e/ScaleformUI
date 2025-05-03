@@ -90,7 +90,7 @@ namespace ScaleformUI.PauseMenu
         }
 
         public int ItemIndex { get; internal set; }
-        public List<PauseMenuItem> ItemList = new List<PauseMenuItem>();
+        public List<PauseMenuItem> ItemList { get; set; } = new List<PauseMenuItem>();
         private bool selected;
 
         public string RightTitle
@@ -134,7 +134,6 @@ namespace ScaleformUI.PauseMenu
             }
         }
 
-        public event IndexChangeEvent OnIndexChanged;
         public event ActivatedEvent OnActivated;
         public new SubmenuTab ParentTab { get; set; }
 
@@ -179,11 +178,6 @@ namespace ScaleformUI.PauseMenu
             item.ParentLeftItem = this;
             item.ParentTab = ParentTab;
             ItemList.Add(item);
-        }
-
-        internal void IndexChanged()
-        {
-            OnIndexChanged?.Invoke(ItemList[ItemIndex] as SettingsItem, ItemIndex);
         }
 
         internal void Activated()

@@ -198,7 +198,7 @@ namespace ScaleformUI.Menus.Pause_Menus.Elements.Columns
             }
             else
             {
-                if ((currentPageIndex % 4 < 4 - 1) || MaxPages <= 1 || (((GalleryTab)Parent).bigPic && Index < 11))
+                if ((currentPageIndex % 4 < 3) || MaxPages <= 1 || (((GalleryTab)Parent).bigPic && Index < 11))
                 {
                     iPotentialIndex++;
                     iPotentialIndexPerPage++;
@@ -300,7 +300,6 @@ namespace ScaleformUI.Menus.Pause_Menus.Elements.Columns
                     Main.PauseMenu._pause.CallFunction("SET_COLUMN_STATE", (int)position, "", true);
                 }
                 ((GalleryTab)Parent).ModeChanged();
-                return;
             }
             else
             {

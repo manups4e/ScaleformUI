@@ -23,12 +23,8 @@ namespace ScaleformUI.PauseMenu
             set
             {
                 rightLabel = value;
-                if (ParentLeftItem != null)
-                {
-                    int leftItem = ParentLeftItem.ParentTab.LeftColumn.Items.IndexOf(ParentLeftItem);
-                    int rightIndex = ParentLeftItem.ItemList.IndexOf(this);
-                    //Parent.Parent.Parent._pause.UpdateStatsItem(leftItem, rightIndex, Label, rightLabel);
-                }
+                if (ParentColumn != null && ParentColumn.visible)
+                    ParentColumn.UpdateSlot(ParentColumn.Items.IndexOf(this));
             }
         }
         public SColor ColoredBarColor
@@ -37,12 +33,8 @@ namespace ScaleformUI.PauseMenu
             set
             {
                 coloredBarColor = value;
-                if (ParentLeftItem != null)
-                {
-                    int leftItem = ParentLeftItem.ParentTab.LeftColumn.Items.IndexOf(ParentLeftItem);
-                    int rightIndex = ParentLeftItem.ItemList.IndexOf(this);
-                    //Parent.Parent.Parent._pause.UpdateStatsItem(leftItem, rightIndex, Label, _value, coloredBarColor);
-                }
+                if (ParentColumn != null && ParentColumn.visible)
+                    ParentColumn.UpdateSlot(ParentColumn.Items.IndexOf(this));
             }
         }
         public int Value
@@ -51,12 +43,8 @@ namespace ScaleformUI.PauseMenu
             set
             {
                 _value = value;
-                if (ParentLeftItem != null)
-                {
-                    int leftItem = ParentLeftItem.ParentTab.LeftColumn.Items.IndexOf(ParentLeftItem);
-                    int rightIndex = ParentLeftItem.ItemList.IndexOf(this);
-                    //Parent.Parent.Parent._pause.UpdateStatsItem(leftItem, rightIndex, Label, _value, coloredBarColor);
-                }
+                if (ParentColumn != null && ParentColumn.visible)
+                    ParentColumn.UpdateSlot(ParentColumn.Items.IndexOf(this));
             }
         }
 

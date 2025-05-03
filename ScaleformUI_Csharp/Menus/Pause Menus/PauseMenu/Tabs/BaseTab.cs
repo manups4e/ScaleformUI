@@ -5,7 +5,8 @@ using ScaleformUI.PauseMenus.Elements.Panels;
 
 namespace ScaleformUI.PauseMenu
 {
-    public enum ScrollType {
+    public enum ScrollType
+    {
         ALL = 0,
         UP_DOWN = 1,
         LEFT_RIGHT = 2,

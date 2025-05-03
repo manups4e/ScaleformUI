@@ -129,7 +129,7 @@ namespace ScaleformUI.PauseMenu
             if (!Focused) return;
             switch (eventType)
             {
-                case 5: // mouse pressed
+                case 5:
                     if (CurrentColumnIndex == context)
                     {
                         if (CurrentColumn.Index != index)
@@ -178,7 +178,6 @@ namespace ScaleformUI.PauseMenu
                     }
                     else
                     {
-                        Debug.WriteLine($"GET_HOVERED_COLUMN -- Current: {CurrentColumnIndex}, context: {context}");
                         if (context > CurrentColumnIndex)
                         {
                             Parent.FocusLevel++;

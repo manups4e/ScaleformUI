@@ -31,6 +31,8 @@ namespace ScaleformUI.PauseMenu
 
         public void SetupLeftColumn(PM_Column column)
         {
+            if (column is MissionDetailsPanel)
+                throw new Exception("You cannot set the mission details column as the left column.");
             column.position = PM_COLUMNS.LEFT;
             LeftColumn = column;
             LeftColumn.Parent = this;
@@ -38,6 +40,8 @@ namespace ScaleformUI.PauseMenu
         }
         public void SetupCenterColumn(PM_Column column)
         {
+            if (column is MissionDetailsPanel)
+                throw new Exception("You cannot set the mission details column as the center column.");
             column.position = PM_COLUMNS.MIDDLE;
             CenterColumn = column;
             CenterColumn.Parent = this;
@@ -123,7 +127,7 @@ namespace ScaleformUI.PauseMenu
                         }
 
                         var _col = GetColumnAtPosition(2);
-                        _col.ColumnVisible = show;
+                        _col.ColumnVisible = !show;
                     }
                 }
             }
