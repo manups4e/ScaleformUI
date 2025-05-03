@@ -3,7 +3,8 @@
     "editor.insertSpaces": true,
     "Lua.diagnostics.disable": [
         "redundant-value",
-        "undefined-global"
+        "undefined-global",
+        "inject-field"
     ],
     "Lua.diagnostics.globals": [
         "Citizen",
