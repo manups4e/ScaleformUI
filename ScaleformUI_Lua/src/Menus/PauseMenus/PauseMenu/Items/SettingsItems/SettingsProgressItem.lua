@@ -1,15 +1,14 @@
-SettingsProgressItem = setmetatable({}, SettingsProgressItem)
+SettingsProgressItem = {}
 SettingsProgressItem.__index = SettingsProgressItem
-SettingsProgressItem.__call = function()
-    return "SettingsItem", "SettingsItem"
-end
+setmetatable(SettingsProgressItem, { __index = SettingsItem })
+SettingsProgressItem.__call = function() return "SettingsProgressItem" end
 
 ---@class SettingsProgressItem
----@field public Base BasicTabItem
+---@field public Base PauseMenuItem
 ---@field public ItemType SettingsItemType
 ---@field public Label string
 ---@field public MaxValue number
----@field public Parent BasicTabItem
+---@field public Parent PauseMenuItem
 ---@field public OnBarChanged fun(item: SettingsProgressItem, value: number)
 ---@field public OnProgressSelected fun(item: SettingsProgressItem, value: number)
 
@@ -25,61 +24,16 @@ function SettingsProgressItem.New(label, max, startIndex, masked, barColor)
     if (masked) then
         _type = SettingsItemType.MaskedProgressBar
     end
-    local data = {
-        Base = BasicTabItem.New(label or ""),
-        ItemType = _type,
-        Label = label or "",
-        MaxValue = max,
-        _value = startIndex,
-        _coloredBarColor = barColor or SColor.HUD_Freemode,
-        _enabled = true,
-        _hovered = false,
-        _selected = false,
-        Parent = nil,
-        OnBarChanged = function(item, value)
-        end,
-        OnProgressSelected = function(item, value)
-        end
-    }
-    return setmetatable(data, SettingsProgressItem)
-end
-
----Toggle the enabled state of the item.
----@param enabled boolean
----@return boolean
-function SettingsProgressItem:Enabled(enabled)
-    if enabled ~= nil then
-        self._enabled = enabled
-        if self.Parent ~= nil and self.Parent.Parent ~= nil and self.Parent.Parent.Base.Parent ~= nil and self.Parent.Parent.Base.Parent:Visible() then
-            if self.Parent:Selected() then
-                local leftItem = IndexOf(self.Parent.Parent.LeftItemList, self.Parent) - 1
-                local rightIndex = IndexOf(self.Parent.ItemList, self) - 1
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ENABLE_RIGHT_ITEM", leftItem,
-                    rightIndex, self._enabled)
-            end
-        end
+    local base = SettingsItem.New(label,  "")
+    base.ItemType = _type
+    base.MaxValue = max
+    base._value = startIndex
+    base._coloredBarColor = barColor or SColor.HUD_Freemode
+    base.OnBarChanged = function(item, value)
     end
-    return self._enabled
-end
-
----Toggle the hovered state of the item.
----@param hover boolean
----@return boolean
-function SettingsProgressItem:Hovered(hover)
-    if hover ~= nil then
-        self._hovered = hover
+    base.OnProgressSelected = function(item, value)
     end
-    return self._hovered
-end
-
----Toggle the selected state of the item.
----@param selected boolean
----@return boolean
-function SettingsProgressItem:Selected(selected)
-    if selected ~= nil then
-        self._selected = selected
-    end
-    return self._selected
+    return setmetatable(base, SettingsProgressItem)
 end
 
 ---Set the value of the item.
@@ -88,10 +42,9 @@ end
 function SettingsProgressItem:Value(value)
     if value ~= nil then
         self._value = value
-        local tab = IndexOf(self.Parent.Parent.Base.Parent.Tabs, self.Parent.Parent) - 1
-        local leftItem = IndexOf(self.Parent.Parent.LeftItemList, self.Parent) - 1
-        local rightIndex = IndexOf(self.Parent.ItemList, self) - 1
-        ScaleformUI.Scaleforms._pauseMenu:SetRightSettingsItemValue(leftItem, rightIndex, value)
+        if self.ParentColumn ~= nil and self.ParentColumn:visible() then
+            self.ParentColumn:UpdateSlot(IndexOf(self.ParentColumn.Items, self))
+        end
         self.OnBarChanged(self, value)
     end
     return self._value
@@ -103,10 +56,9 @@ end
 function SettingsProgressItem:ColoredBarColor(color)
     if color ~= nil then
         self._coloredBarColor = color
-        local tab = IndexOf(self.Parent.Parent.Base.Parent.Tabs, self.Parent.Parent) - 1
-        local leftItem = IndexOf(self.Parent.Parent.LeftItemList, self.Parent) - 1
-        local rightIndex = IndexOf(self.Parent.ItemList, self) - 1
-        ScaleformUI.Scaleforms._pauseMenu:UpdateItemColoredBar(leftItem, rightIndex, color)
+        if self.ParentColumn ~= nil and self.ParentColumn:visible() then
+            self.ParentColumn:UpdateSlot(IndexOf(self.ParentColumn.Items, self))
+        end
     end
     return self._coloredBarColor
 end

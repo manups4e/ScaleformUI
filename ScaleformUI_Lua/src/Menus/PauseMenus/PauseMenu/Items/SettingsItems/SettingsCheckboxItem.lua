@@ -1,8 +1,7 @@
-SettingsCheckboxItem = setmetatable({}, SettingsCheckboxItem)
+SettingsCheckboxItem = {}
 SettingsCheckboxItem.__index = SettingsCheckboxItem
-SettingsCheckboxItem.__call = function()
-    return "SettingsItem", "SettingsItem"
-end
+setmetatable(SettingsCheckboxItem, { __index = SettingsItem })
+SettingsCheckboxItem.__call = function() return "SettingsCheckboxItem" end
 
 ---@class SettingsCheckboxItem
 ---@field public Base SettingsItem
@@ -18,20 +17,13 @@ end
 ---@param checked boolean
 ---@return table
 function SettingsCheckboxItem.New(label, style, checked)
-    local data = {
-        Base = SettingsItem.New(label),
-        ItemType = SettingsItemType.CheckBox,
-        Label = label or "",
-        CheckBoxStyle = style or 0,
-        _isChecked = checked,
-        _enabled = true,
-        _hovered = false,
-        _selected = false,
-        Parent = nil,
-        OnCheckboxChanged = function(item, _checked)
-        end
-    }
-    return setmetatable(data, SettingsCheckboxItem)
+    local base = SettingsItem.New(label, "")
+    base.ItemType = SettingsItemType.CheckBox
+    base.CheckBoxStyle = style or 0
+    base._isChecked = checked
+    base.OnCheckboxChanged = function(item, _checked)
+    end
+    return setmetatable(base, SettingsCheckboxItem)
 end
 
 ---Toggle the enabled state of the item.
@@ -78,9 +70,9 @@ end
 function SettingsCheckboxItem:Checked(checked)
     if checked ~= nil then
         self._isChecked = checked
-        local leftItem = IndexOf(self.Parent.Parent.LeftItemList, self.Parent) - 1
-        local rightIndex = IndexOf(self.Parent.ItemList, self) - 1
-        ScaleformUI.Scaleforms._pauseMenu:SetRightSettingsItemBool(leftItem, rightIndex, checked)
+        if self.ParentColumn ~= nil and self.ParentColumn:visible() then
+            self.ParentColumn:UpdateSlot(IndexOf(self.ParentColumn.Items, self))
+        end
         self.OnCheckboxChanged(self, checked)
     end
     return self._isChecked

@@ -1,8 +1,8 @@
-GalleryItem = setmetatable({}, GalleryItem)
+GalleryItem = {}
 GalleryItem.__index = GalleryItem
-GalleryItem.__call = function()
-    return "BasicTabItem", "GalleryItem"
-end
+setmetatable(GalleryItem, { __index = PauseMenuItem })
+GalleryItem.__call = function() return "GalleryItem" end
+
 
 ---@class GalleryItem
 ---@field public TextureDictionary string
@@ -15,20 +15,18 @@ end
 ---@field public Parent GalleryTab
 ---@field public Blip FakeBlip
 function GalleryItem.New(txd, txn, label1, label2, label3, label4)
-    local data = {
-        TextureDictionary = txd or "",
-        TextureName = txn or "",
-        Label1 = label1 or "",
-        Label2 = label2 or "",
-        Label3 = label3 or "",
-        Label4 = label4 or "",
-        RightPanelDescription = "",
-        Parent = nil,
-        Blip = nil,
-        Activated = function(tab, item, totalIndex, gridIndex)
-        end
-    }
-    return setmetatable(data, GalleryItem)
+    local base = PauseMenuItem.New("")
+    base.TextureDictionary = txd or ""
+    base.TextureName = txn or ""
+    base.Label1 = label1 or ""
+    base.Label2 = label2 or ""
+    base.Label3 = label3 or ""
+    base.Label4 = label4 or ""
+    base.RightPanelDescription = ""
+    base.Blip = nil
+    base.Activated = function(tab, item, totalIndex, gridIndex)
+    end
+    return setmetatable(base, GalleryItem)
 end
 
 ---Sets item description labels.

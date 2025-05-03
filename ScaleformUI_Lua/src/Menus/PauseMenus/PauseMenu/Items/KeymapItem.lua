@@ -1,41 +1,35 @@
-KeymapItem = setmetatable({}, KeymapItem)
+KeymapItem = {}
 KeymapItem.__index = KeymapItem
-KeymapItem.__call = function()
-    return "BasicTabItem", "KeymapItem"
-end
+setmetatable(KeymapItem, { __index = PauseMenuItem })
+KeymapItem.__call = function() return "KeymapItem" end
 
 ---@class KeymapItem
 ---@field public Label string
 ---@field public PrimaryKeyboard string
 ---@field public PrimaryGamepad string
----@field public SecondaryKeyboard string
----@field public SecondaryGamepad string
+---@field public SecondaryKeyboard string?
+---@field public SecondaryGamepad string?
 
 ---Creates a new KeymapItem.
 ---@param title string
----@param primaryKeyboard string?
----@param primaryGamepad string?
+---@param primaryKeyboard string
+---@param primaryGamepad string
 ---@param secondaryKeyboard string?
 ---@param secondaryGamepad string?
 ---@return table
 function KeymapItem.New(title, primaryKeyboard, primaryGamepad, secondaryKeyboard, secondaryGamepad)
-    local data = {}
-    if secondaryKeyboard == nil and secondaryGamepad == nil then
-        data = {
-            Label = title,
-            PrimaryKeyboard = primaryKeyboard,
-            PrimaryGamepad = primaryGamepad,
-            SecondaryKeyboard = "",
-            SecondaryGamepad = "",
-        }
+    local base = PauseMenuItem.New(title, ScaleformFonts.CHALET_LONDON_NINETEENSIXTY)
+    base.PrimaryKeyboard = primaryKeyboard or ""
+    base.PrimaryGamepad = primaryGamepad or ""
+    base.SecondaryKeyboard = secondaryKeyboard or ""
+    base.SecondaryGamepad = secondaryGamepad or ""
+    return setmetatable(base, KeymapItem)
+end
+
+function KeymapItem:Selected(bool)
+    if bool == nil then
+        return self.selected
     else
-        data = {
-            Label = title,
-            PrimaryKeyboard = primaryKeyboard or "",
-            PrimaryGamepad = primaryGamepad or "",
-            SecondaryKeyboard = secondaryKeyboard or "",
-            SecondaryGamepad = secondaryGamepad or "",
-        }
+        self.selected = bool
     end
-    return setmetatable(data, KeymapItem)
 end

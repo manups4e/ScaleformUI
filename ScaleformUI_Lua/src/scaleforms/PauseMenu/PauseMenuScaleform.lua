@@ -7,7 +7,6 @@ end
 ---@class PauseMenu: Scaleform
 ---@field public _header Scaleform
 ---@field public _pause Scaleform
----@field public _lobby Scaleform
 ---@field public _pauseBG Scaleform
 ---@field public Loaded boolean
 ---@field public _visible boolean
@@ -60,7 +59,6 @@ function PauseMenu.New()
     local _data = {
         _header = nil,
         _pause = nil,
-        _lobby = nil,
         _pauseBG = nil,
         BGEnabled = false,
         Loaded = false,
@@ -82,21 +80,19 @@ end
 
 ---Load the pause menu scaleforms
 function PauseMenu:Load()
-    if (self._header ~= nil and self._pause ~= nil and self._lobby ~= nil and self._pauseBG ~= nil) then return end
+    if (self._header ~= nil and self._pause ~= nil and self._pauseBG ~= nil) then return end
     self._header = Scaleform.RequestWidescreen("pausemenuheader")
-    self._pause = Scaleform.RequestWidescreen("pausemenu")
-    self._lobby = Scaleform.RequestWidescreen("lobbymenu")
+    self._pause = Scaleform.RequestWidescreen("ScaleformUIPause")
     self._pauseBG = Scaleform.RequestWidescreen("store_background")
 end
 
 function PauseMenu:FadeInMenus()
     self._header:CallFunction("DRAW_MENU")
     self._pause:CallFunction("DRAW_MENU")
-    self._lobby:CallFunction("DRAW_MENU")
 end
 
 function PauseMenu:IsLoaded()
-    return self._header ~= nil and self._header:IsLoaded() and self._pause ~= nil and self._pause:IsLoaded() and self._lobby ~= nil and self._lobby:IsLoaded() and self._pauseBG ~= nil and self._pauseBG:IsLoaded()
+    return self._header ~= nil and self._header:IsLoaded() and self._pause ~= nil and self._pause:IsLoaded() and self._pauseBG ~= nil and self._pauseBG:IsLoaded()
 end
 
 ---Set the header title and subtitle text of the pause menu header
@@ -159,18 +155,8 @@ end
 ---Add a tab to the pause menu
 ---@param title string
 ---@param _type number
----@param _tabContentType number
----@param color HudColours | nil Sets the color of the tab (default: SColor.HUD_Freemode)
-function PauseMenu:AddPauseMenuTab(title, _type, _tabContentType, color)
-    if color == nil then color = 116 end
-    self._header:CallFunction("ADD_HEADER_TAB", title, _type, color)
-end
-
----Add a tab to the lobby menu
----@param title string
----@param _type number
----@param color SColor | nil Sets the color of the tab (default: 116)
-function PauseMenu:AddLobbyMenuTab(title, _type, color)
+---@param color SColor Sets the color of the tab (default: SColor.HUD_Freemode)
+function PauseMenu:AddPauseMenuTab(title, _type, color)
     if color == nil then color = SColor.HUD_Freemode end
     self._header:CallFunction("ADD_HEADER_TAB", title, _type, color)
 end
@@ -182,258 +168,10 @@ end
 
 ---Set the focued item of the pause menu
 ---@param focus number
-function PauseMenu:SetFocus(focus)
-    self._pause:CallFunction("SET_FOCUS", focus)
-end
-
----Add a left item to the pause menu
----@param _type number
----@param title string
----@param itemColor SColor | nil Sets the color of the item (default: SColor.HUD_Pause_bg)
----@param highlightColor SColor | nil Sets the color of the item when highlighted (default: SColor.HUD_White)
----@param enabled boolean | nil Sets the item to be enabled or disabled
-function PauseMenu:AddLeftItem(_type, title, itemColor, highlightColor, enabled)
-    if itemColor == nil then itemColor = SColor.HUD_Pause_bg end
-    if highlightColor == nil then highlightColor = SColor.HUD_White end
-
-    if (itemColor ~= SColor.HUD_None and highlightColor ~= SColor.HUD_None) then
-        self._pause:CallFunction("ADD_LEFT_ITEM", _type, title, enabled, itemColor, highlightColor)
-    elseif itemColor ~= SColor.HUD_None and highlightColor == SColor.HUD_None then
-        self._pause:CallFunction("ADD_LEFT_ITEM", _type, title, enabled, itemColor)
-    else
-        self._pause:CallFunction("ADD_LEFT_ITEM", _type, title, enabled)
-    end
-end
-
----Add a right title to a tab and left item
----@param leftItemIndex number
----@param title string
-function PauseMenu:AddRightTitle(leftItemIndex, title)
-    self._pause:CallFunction("ADD_RIGHT_TITLE", leftItemIndex, title)
-end
-
----Add a right list label to a tab and left item
----@param leftItemIndex number
----@param label string
-function PauseMenu:AddRightListLabel(leftItemIndex, label, fontName, fontId)
-    AddTextEntry("PauseMenu_" .. leftItemIndex, label)
-    BeginScaleformMovieMethod(self._pause.handle, "ADD_RIGHT_LIST_ITEM")
-    ScaleformMovieMethodAddParamInt(leftItemIndex)
-    ScaleformMovieMethodAddParamInt(0)
-    BeginTextCommandScaleformString("PauseMenu_" .. leftItemIndex)
-    EndTextCommandScaleformString_2()
-    ScaleformMovieMethodAddParamPlayerNameString(fontName)
-    ScaleformMovieMethodAddParamInt(fontId)
-    EndScaleformMovieMethod()
-end
-
----Add a right stat item to a tab and left item
----@param leftItemIndex number
----@param label string
----@param rightLabel string
-function PauseMenu:AddRightStatItemLabel(leftItemIndex, label, rightLabel, labelFont, rLabelFont)
-    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", leftItemIndex, 1, 0, label, rightLabel, -1, labelFont.FontName, labelFont.FontID, rLabelFont.FontName, rLabelFont.FontID)
-end
-
----Add a right stat item colour bar to a tab and left item
----@param leftItemIndex number
----@param label string
----@param value number
----@param barColor SColor | nil Sets the color of the bar (default: SColor.HUD_Freemode)
-function PauseMenu:AddRightStatItemColorBar(leftItemIndex, label, value, barColor, labelFont)
-    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", leftItemIndex, 1, 1, label, value, barColor, labelFont.FontName, labelFont.FontID)
-end
-
----Add a right settings base item to a tab and left item
----@param leftItemIndex number
----@param label string
----@param rightLabel string
----@param enabled boolean | nil Sets the item to be enabled or disabled
-function PauseMenu:AddRightSettingsBaseItem(leftItemIndex, label, rightLabel, enabled)
-    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", leftItemIndex, 2, 0, label, enabled, rightLabel)
-end
-
----Add a right settings list item to a tab and left item
----@param leftItemIndex number
----@param label string
----@param items table
----@param startIndex number
----@param enabled boolean | nil Sets the item to be enabled or disabled
-function PauseMenu:AddRightSettingsListItem(leftItemIndex, label, items, startIndex, enabled)
-    local stringList = table.concat(items, ",")
-    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", leftItemIndex, 2, 1, label, enabled, stringList,
-        startIndex)
-end
-
----Add a right settings progress item to a tab and left item
----@param leftItemIndex number
----@param label string
----@param max number
----@param color SColor | nil Sets the color of the bar (default: SColor.HUD_Freemode)
----@param index number
----@param enabled boolean | nil Sets the item to be enabled or disabled
-function PauseMenu:AddRightSettingsProgressItem(leftItemIndex, label, max, color, index, enabled)
-    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", leftItemIndex, 2, 2, label, enabled, max, color, index)
-end
-
----Add a right settings progress item to a tab and left item
----@param leftItemIndex number
----@param label string
----@param max number
----@param color SColor | nil Sets the color of the bar (default: SColor.HUD_Freemode)
----@param index number
----@param enabled boolean | nil Sets the item to be enabled or disabled
-function PauseMenu:AddRightSettingsProgressItemAlt(leftItemIndex, label, max, color, index, enabled)
-    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", leftItemIndex, 2, 3, label, enabled, max, color, index)
-end
-
----Add a right settings slider item to a tab and left item
----@param leftItemIndex number
----@param label string
----@param max number
----@param color SColor | nil Sets the color of the bar (default: SColor.HUD_Freemode)
----@param index number
----@param enabled boolean | nil Sets the item to be enabled or disabled
-function PauseMenu:AddRightSettingsSliderItem(leftItemIndex, label, max, color, index, enabled)
-    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", leftItemIndex, 2, 5, label, enabled, max, color, index)
-end
-
----Add a right settings checkbox item to a tab and left item
----@param leftItemIndex number
----@param label string
----@param style number
----@param check boolean
----@param enabled boolean | nil Sets the item to be enabled or disabled
-function PauseMenu:AddRightSettingsCheckboxItem(leftItemIndex, label, style, check, enabled)
-    self._pause:CallFunction("ADD_RIGHT_LIST_ITEM", leftItemIndex, 2, 4, label, enabled, style, check)
-end
-
----Add a key map title to a tab and left item
----@param leftItemIndex number
----@param title string
----@param rightLabel_1 string
----@param rightLabel_2 string
-function PauseMenu:AddKeymapTitle(leftItemIndex, title, rightLabel_1, rightLabel_2)
-    self._pause:CallFunction("ADD_RIGHT_TITLE", leftItemIndex, title, rightLabel_1, rightLabel_2)
-end
-
----Add a key map item to a tab and left item
----@param leftItemIndex number
----@param label string
----@param control1 string
----@param control2 string
-function PauseMenu:AddKeymapItem(leftItemIndex, label, control1, control2)
-    BeginScaleformMovieMethod(self._pause.handle, "ADD_RIGHT_LIST_ITEM")
-    ScaleformMovieMethodAddParamInt(leftItemIndex)
-    ScaleformMovieMethodAddParamInt(3)
-    ScaleformMovieMethodAddParamTextureNameString(label)
-    BeginTextCommandScaleformString("STRING")
-    AddTextComponentSubstringKeyboardDisplay(control1)
-    EndTextCommandScaleformString_2()
-    BeginTextCommandScaleformString("STRING")
-    AddTextComponentSubstringKeyboardDisplay(control2)
-    EndTextCommandScaleformString_2()
-    EndScaleformMovieMethod()
-end
-
----Update a key map item
----@param leftItemIndex number
----@param rightItem number
----@param control1 string
----@param control2 string
-function PauseMenu:UpdateKeymap(leftItemIndex, rightItem, control1, control2)
-    BeginScaleformMovieMethod(self._pause.handle, "UPDATE_KEYMAP_ITEM")
-    ScaleformMovieMethodAddParamInt(leftItemIndex)
-    ScaleformMovieMethodAddParamInt(rightItem)
-    BeginTextCommandScaleformString("string")
-    AddTextComponentSubstringKeyboardDisplay(control1)
-    EndTextCommandScaleformString_2()
-    BeginTextCommandScaleformString("string")
-    AddTextComponentSubstringKeyboardDisplay(control2)
-    EndTextCommandScaleformString_2()
-    EndScaleformMovieMethod()
-end
-
----Set right settings item boolean value
----@param leftItemIndex number
----@param rightItem number
----@param value boolean
-function PauseMenu:SetRightSettingsItemBool(leftItemIndex, rightItem, value)
-    self._pause:CallFunction("SET_RIGHT_SETTINGS_ITEM_VALUE", leftItemIndex, rightItem, value)
-end
-
----Set right settings item index
----@param leftItemIndex number
----@param rightItem number
----@param value number
-function PauseMenu:SetRightSettingsItemIndex(leftItemIndex, rightItem, value)
-    self._pause:CallFunction("SET_RIGHT_SETTINGS_ITEM_VALUE", leftItemIndex, rightItem, value)
-end
-
----Set right settings item value
----@param leftItemIndex number
----@param rightItem number
----@param value number
-function PauseMenu:SetRightSettingsItemValue(leftItemIndex, rightItem, value)
-    self._pause:CallFunction("SET_RIGHT_SETTINGS_ITEM_VALUE", leftItemIndex, rightItem, value)
-end
-
----Update right settings item label
----@param leftItemIndex number
----@param rightItem number
----@param label string
-function PauseMenu:UpdateItemRightLabel(leftItemIndex, rightItem, label)
-    self._pause:CallFunction("UPDATE_RIGHT_ITEM_RIGHT_LABEL", leftItemIndex, rightItem, label)
-end
-
----Update Stats Item Basic
----@param leftItemIndex number
----@param rightItem number
----@param label string
----@param rightLabel string
-function PauseMenu:UpdateStatsItemBasic(leftItemIndex, rightItem, label, rightLabel)
-    self._pause:CallFunction("UPDATE_RIGHT_STATS_ITEM", leftItemIndex, rightItem, label, rightLabel)
-end
-
----Update Stats Item Bar
----@param leftItemIndex number
----@param rightItem number
----@param label string
----@param value number
----@param color SColor | nil Sets the color of the bar (default: SColor.HUD_Freemode)
-function PauseMenu:UpdateStatsItemBar(leftItemIndex, rightItem, label, value, color)
-    self._pause:CallFunction("UPDATE_RIGHT_STATS_ITEM", leftItemIndex, rightItem, label, value, color)
-end
-
----Update Item Colored Bar
----@param leftItemIndex number
----@param rightItem number
----@param color SColor | nil Sets the color of the bar (default: SColor.HUD_Freemode)
-function PauseMenu:UpdateItemColoredBar(leftItemIndex, rightItem, color)
-    if (color == nil or color == SColor.HUD_None) then
-        self._pause:CallFunction("UPDATE_COLORED_BAR_COLOR", leftItemIndex, rightItem, SColor.HUD_Freemode)
-    else
-        self._pause:CallFunction("UPDATE_COLORED_BAR_COLOR", leftItemIndex, rightItem, color)
-    end
-end
-
----Send an input event to the pause menu
----@param direction any
----@return string
-function PauseMenu:SendInputEvent(direction) -- to be awaited
-    return self._pause:CallFunctionAsyncReturnString("SET_INPUT_EVENT", direction)
-end
-
----Send a scroll event to the pause menu
----@param direction number
-function PauseMenu:SendScrollEvent(direction)
-    self._pause:CallFunction("SET_SCROLL_EVENT", direction)
-end
-
----Send a click event to the pause menu
----@return string
-function PauseMenu:SendClickEvent() -- to be awaited
-    return self._pause:CallFunctionAsyncReturnString("MOUSE_CLICK_EVENT")
+function PauseMenu:SetFocus(focus, bDontFallOff, bSkipInputSpamCheck)
+    if bDontFallOff == nil then bDontFallOff = false end
+    if  bSkipInputSpamCheck == nil then  bSkipInputSpamCheck = false end
+    self._pause:CallFunction("MENU_SHIFT_DEPTH", focus, bDontFallOff, bSkipInputSpamCheck)
 end
 
 ---Dispose the pause menu
@@ -441,11 +179,9 @@ function PauseMenu:Dispose()
     self._visible = false
     self._pause:CallFunction("CLEAR_ALL")
     self._header:CallFunction("CLEAR_ALL")
-    self._lobby:CallFunction("CLEAR_ALL")
     -- self._pause:Dispose()
     -- self._header:Dispose()
-    -- self._lobby:Dispose()
-    --self._pauseBG:Dispose()
+    -- self._pauseBG:Dispose()
     self.firstTick = true;
 end
 
@@ -467,16 +203,11 @@ function PauseMenu:Draw(isLobby)
                 self._pauseBG:Render2D()
             end
 
-
             local headx, heady, headw, headh = AdjustNormalized16_9ValuesForCurrentAspectRatio(0.501, 0.162, 0.6782, 0.145)
             local pausex, pausey, pausew, pauseh = AdjustNormalized16_9ValuesForCurrentAspectRatio(0.6617187, 0.7226667, 1.0, 1.0)
 
             self._header:Render2DNormal(headx, heady, headw, headh)
-            if isLobby then
-                self._lobby:Render2DNormal(pausex, pausey, pausew, pauseh)
-            else
-                self._pause:Render2DNormal(pausex, pausey, pausew, pauseh)
-            end
+            self._pause:Render2DNormal(pausex, pausey, pausew, pauseh)
         end
     end
 end

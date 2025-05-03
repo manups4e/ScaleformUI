@@ -51,8 +51,9 @@ end
 function Scaleform:CallFunction(theFunction, ...)
     BeginScaleformMovieMethod(self.handle, theFunction)
     local arg = { ... }
-    if arg ~= nil then
+    if arg ~= nil and #arg > 0 then
         for i = 1, #arg do
+            assert(arg[i] ~= nil and type(arg[i]) ~= table, "ScaleformUI - function ".. theFunction.." - argument nil or table at position " .. i)
             local sType = type(arg[i])
             if sType == "boolean" then
                 ScaleformMovieMethodAddParamBool(arg[i])
