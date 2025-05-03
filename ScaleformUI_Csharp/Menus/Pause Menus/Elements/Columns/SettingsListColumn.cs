@@ -58,6 +58,27 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             }
         }
 
+        public void RemoveItem(UIMenuItem item)
+        {
+            if (Items.Contains(item))
+            {
+                int idx = Items.IndexOf(item);
+                RemoveSlot(idx);
+            }
+        }
+
+        public void RemoveItemAt(int index)
+        {
+            if (index >= Items.Count) return;
+            RemoveSlot(index);
+        }
+
+        public override void RemoveSlot(int idx)
+        {
+            base.RemoveSlot(idx);
+            API.AddTextEntry("PAUSEMENU_Current_Description", "");
+        }
+
         public override void ShowColumn(bool show = true)
         {
             if (!visible) return;

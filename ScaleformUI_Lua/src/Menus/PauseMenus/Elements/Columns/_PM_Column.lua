@@ -80,6 +80,37 @@ function PM_Column:UpdateSlot(index) end
 
 function PM_Column:AddSlot(index) end
 
+function PM_Column:RemoveSlot(idx)
+    if idx > #self.Items then return end
+    self.Items[idx]:Selected(false)
+    local curItem = self.index
+    table.remove(self.Items, idx)
+    if self:visible() then
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("REMOVE_SLOT", self.position, idx - 1)
+    end
+    if #self.Items > 0 then
+        if idx == self.index then
+            if idx > #self.Items then
+                self.index = #self.Items
+            elseif idx > 1 and idx <= #self.Items then
+                self.index = idx - 1
+            else
+                self.index = 1
+            end
+        else
+            if curItem <= #self.Items then
+                self.index = curItem
+            else
+                self.index = #self.Items
+            end
+        end
+        self.Items[self.index]:Selected(true)
+        if self:visible() and self.Parent.CurrentColumnIndex == self.position then
+            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_COLUMN_HIGHLIGHT", self.index - 1, false, false)
+        end
+    end
+end
+
 function PM_Column:GoUp() end
 
 function PM_Column:GoDown() end

@@ -152,10 +152,21 @@ function PlayerListColumn:RemovePlayer(item)
         print("^1[ERROR] PlayerListColumn:RemovePlayer() - item is nil")
         return
     end
-    table.remove(self.Items, id)
-    if self:visible() then
-        -- TODO: complete
+    for k,v in pairs(self.Items) do
+        if v.Label == item.Label then
+            self:RemoveSlot(k)
+        end
     end
+end
+
+function PlayerListColumn:RemoveItemAt(index)
+    if index >#self.Items or index < 1 then return end
+    self:RemoveSlot(index)
+end
+
+function PlayerListColumn:RemoveSlot(idx)
+    self:CurrentItem():Dispose()
+    PM_Column.RemoveSlot(self, idx)
 end
 
 function PlayerListColumn:GoUp()

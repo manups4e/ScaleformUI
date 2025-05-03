@@ -602,34 +602,38 @@ end
 
 ---RemoveItemAt
 ---@param index number
-function UIMenu:RemoveItemAt(index)
-    if tonumber(index) then
-        local idx = self:CurrentSelection()
-        if #self.Items >= index then
-            if idx == index then
-                --[[
-                Failsafe workaround because Lua sucks shit so bad that is not even able
-                to handle the last index in a table without crashing the entire game...
-                I HATE YOU LUA!!! W C# FOR EVER!
-                And they say C# has bigger overhead and it's slow... at least C# handles arrays like it should!!!
-            ]]
-                self:CurrentSelection(1)
-            end
-
-            table.remove(self.Items, index)
+function UIMenu:RemoveItemAt(idx)
+    if tonumber(idx) then
+        if #self.Items >= idx then
+            self.Items[idx]:Selected(false)
+            local curItem = self._currentSelection
+            table.remove(self.Items, idx)
             if self:Visible() then
-                ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_DATA_SLOT", index - 1)
-                self:RefreshMenu(true)
+                ScaleformUI.Scaleforms._ui:CallFunction("REMOVE_DATA_SLOT", idx - 1)
             end
             if #self.Items > 0 then
-                if #self.Items >= idx then
-                    self:CurrentSelection(idx)
+                if idx == self._currentSelection then
+                    if idx > #self.Items then
+                        self._currentSelection = #self.Items
+                    elseif idx > 1 and idx <= #self.Items then
+                        self._currentSelection = idx - 1
+                    else
+                        self._currentSelection = 1
+                    end
                 else
-                    self:CurrentSelection(#self.Items)
+                    if curItem <= #self.Items then
+                        self._currentSelection = curItem
+                    else
+                        self._currentSelection = #self.Items
+                    end
                 end
-            else
-                print("ScaleformUI - UIMenu:RemoveItemAt - Index out of range (Index: " ..
-                    index .. ", Items: " .. #self.Items .. ")")
+                self.Items[self._currentSelection]:Selected(true)
+                if self:Visible() then
+                    AddTextEntry("UIMenu_Current_Description", self:CurrentItem():Description())
+                    ScaleformUI.Scaleforms._ui:CallFunction("SET_CURRENT_SELECTION", self._currentSelection - 1, self.topEdge - 1)
+                    self:SendPanelsToItemScaleform(self._currentSelection)
+                    self:SendSidePanelToScaleform(self._currentSelection)
+                end
             end
         end
     end
@@ -690,7 +694,7 @@ end
 function UIMenu:RemoveItem(item)
     local idx = 0
     for k, v in pairs(self.Items) do
-        if v:LeftLabel() == item:LeftLabel() then
+        if v.Label == item.Label then
             idx = k
             break
         end

@@ -1,4 +1,5 @@
-﻿using ScaleformUI.Menus;
+﻿using ScaleformUI.Menu;
+using ScaleformUI.Menus;
 using ScaleformUI.PauseMenu;
 using ScaleformUI.PauseMenus.Elements.Items;
 
@@ -48,6 +49,38 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
         public override void SetDataSlot(int index)
         {
             SendItemToScaleform(index);
+        }
+
+        public override void UpdateSlot(int index)
+        {
+            SendItemToScaleform(index, true);
+        }
+
+        public override void AddSlot(int index)
+        {
+            SendItemToScaleform(index, isSlot: true);
+        }
+
+        public void RemoveItem(FriendItem item)
+        {
+            if (Items.Contains(item))
+            {
+                int idx = Items.IndexOf(item);
+                RemoveSlot(idx);
+            }
+        }
+
+        public void RemoveItemAt(int index)
+        {
+            if (index >= Items.Count) return;
+            RemoveSlot(index);
+        }
+
+        public override void RemoveSlot(int index)
+        {
+            if (index >= Items.Count) return;
+            ((FriendItem)Items[Index]).Dispose();
+            base.RemoveSlot(index);
         }
 
         internal void SendItemToScaleform(int i, bool update = false, bool newItem = false, bool isSlot = false)

@@ -154,10 +154,16 @@ function MissionListColumn:RemoveItem(item)
         print("^1[ERROR] MissionListColumn:RemovePlayer() - item is nil")
         return
     end
-    table.remove(self.Items, id)
-    if self:visible() then
-        -- TODO: COMPLETE THIS
+    for k,v in pairs(self.Items) do
+        if v.Label == item.Label then
+            self:RemoveSlot(k)
+        end
     end
+end
+
+function MissionListColumn:RemoveItemAt(index)
+    if index >#self.Items or index < 1 then return end
+    self:RemoveSlot(index)
 end
 
 function MissionListColumn:GoUp()

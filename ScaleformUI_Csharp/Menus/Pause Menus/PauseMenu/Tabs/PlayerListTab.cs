@@ -155,7 +155,7 @@ namespace ScaleformUI.PauseMenu
         public override void GoUp()
         {
             if (!Focused) return;
-            var col = GetColumnAtPosition(CurrentColumnIndex);
+            var col = CurrentColumn;
             col.GoUp();
             col.SetColumnScroll(col.Index + 1, col.Items.Count, col.VisibleItems, string.Empty, col.Items.Count < col.VisibleItems);
         }
@@ -163,7 +163,7 @@ namespace ScaleformUI.PauseMenu
         public override void GoDown()
         {
             if (!Focused) return;
-            var col = GetColumnAtPosition(CurrentColumnIndex);
+            var col = CurrentColumn;
             col.GoDown();
             col.SetColumnScroll(col.Index + 1, col.Items.Count, col.VisibleItems, string.Empty, col.Items.Count < col.VisibleItems);
         }
@@ -284,21 +284,18 @@ namespace ScaleformUI.PauseMenu
         public override void GoLeft()
         {
             if (!Focused) return;
-            var col = GetColumnAtPosition(CurrentColumnIndex);
-            col.GoLeft();
+            CurrentColumn.GoLeft();
         }
 
         public override void GoRight()
         {
             if (!Focused) return;
-            var col = GetColumnAtPosition(CurrentColumnIndex);
-            col.GoRight();
+            CurrentColumn.GoRight();
         }
         public override void Select()
         {
             if (!Focused) return;
-            var col = GetColumnAtPosition(CurrentColumnIndex);
-            col.Select();
+            CurrentColumn.Select();
         }
 
         public override void GoBack()

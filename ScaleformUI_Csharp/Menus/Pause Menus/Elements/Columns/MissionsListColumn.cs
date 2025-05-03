@@ -1,4 +1,5 @@
-﻿using ScaleformUI.Menus;
+﻿using ScaleformUI.Menu;
+using ScaleformUI.Menus;
 using ScaleformUI.PauseMenu;
 using ScaleformUI.PauseMenus.Elements.Items;
 
@@ -72,6 +73,21 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                 SendItemToScaleform(idx, false, true, false);
                 item.Selected = idx == index;
             }
+        }
+
+        public void RemoveItem(MissionItem item)
+        {
+            if (Items.Contains(item))
+            {
+                int idx = Items.IndexOf(item);
+                RemoveSlot(idx);
+            }
+        }
+
+        public void RemoveItemAt(int index)
+        {
+            if (index >= Items.Count) return;
+            RemoveSlot(index);
         }
 
         public override void Populate()

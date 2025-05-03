@@ -48,6 +48,20 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             if (visible)
                 SendItemToScaleform(index, false, false, true);
         }
+        public void RemoveItem(StoreItem item)
+        {
+            if (Items.Contains(item))
+            {
+                int idx = Items.IndexOf(item);
+                RemoveSlot(idx);
+            }
+        }
+
+        public void RemoveItemAt(int index)
+        {
+            if (index >= Items.Count) return;
+            RemoveSlot(index);
+        }
 
         public override void Populate()
         {

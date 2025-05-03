@@ -629,23 +629,36 @@ namespace ScaleformUI.Menu
         /// Remove an item at index n.
         /// </summary>
         /// <param name="index">Index to remove the item at.</param>
-        public void RemoveItemAt(int index)
+        public void RemoveItemAt(int idx)
         {
             int selectedItem = CurrentSelection;
-            if (MenuItems.Count > index)
+            if (MenuItems.Count > idx)
             {
-                MenuItems.RemoveAt(index);
-                if (MenuItems.Count > 0)
-                {
-                    if (selectedItem < MenuItems.Count)
-                        CurrentSelection = selectedItem;
-                    else
-                        CurrentSelection = MenuItems.Count - 1;
-                }
+                MenuItems[idx].Selected = false;
+                MenuItems.RemoveAt(idx);
                 if (Visible)
                 {
-                    Main.scaleformUI.CallFunction("REMOVE_DATA_SLOT", index);
-                    RefreshMenu(true);
+                    Main.scaleformUI.CallFunction("REMOVE_DATA_SLOT", idx);
+                }
+                if (MenuItems.Count > 0)
+                {
+                    if (idx == _currentSelection)
+                        _currentSelection = idx >= MenuItems.Count ? MenuItems.Count - 1 : idx > 0 && idx < MenuItems.Count - 1 ? idx - 1 : 0;
+                    else
+                    {
+                        if (selectedItem < MenuItems.Count)
+                            _currentSelection = selectedItem;
+                        else
+                            _currentSelection = MenuItems.Count - 1;
+                    }
+                    MenuItems[_currentSelection].Selected = true;
+                    if (Visible)
+                    {
+                        AddTextEntry("UIMenu_Current_Description", CurrentItem.Description);
+                        Main.scaleformUI.CallFunction("SET_CURRENT_SELECTION", _currentSelection);
+                        SendPanelsToItemScaleform(_currentSelection);
+                        SendSidePanelToScaleform(_currentSelection);
+                    }
                 }
             }
             else
@@ -693,22 +706,6 @@ namespace ScaleformUI.Menu
             MenuItems.Clear();
             _currentSelection = 0;
             //Pagination.TotalItems = 0;
-        }
-
-        /// <summary>
-        /// Removes the items that matches the predicate.
-        /// </summary>
-        /// <param name="predicate">The function to use as the check.</param>
-        public void Remove(Func<UIMenuItem, bool> predicate)
-        {
-            List<UIMenuItem> TempList = new List<UIMenuItem>(MenuItems);
-            foreach (UIMenuItem item in TempList)
-            {
-                if (predicate(item))
-                {
-                    MenuItems.Remove(item);
-                }
-            }
         }
 
         /// <summary>
@@ -1865,9 +1862,34 @@ namespace ScaleformUI.Menu
                 case UIMissionDetailsPanel:
                     UIMissionDetailsPanel mis = (UIMissionDetailsPanel)item.SidePanel;
                     Main.scaleformUI.CallFunction(str, index, 0, (int)mis.PanelSide, (int)mis._titleType, mis.Title, mis.TitleColor, mis.TextureDict, mis.TextureName);
-                    foreach (UIFreemodeDetailsItem _it in mis.Items)
+                    foreach (UIFreemodeDetailsItem _item in mis.Items)
                     {
-                        Main.scaleformUI.CallFunction("SET_SIDE_PANEL_SLOT", index, _it.Type, _it.Label, _it.TextRight, (int)_it.Icon, _it.IconColor, _it.Tick, _it.LabelFont.FontName, _it.LabelFont.FontID, _it._rightLabelFont.FontName, _it._rightLabelFont.FontID);
+                        BeginScaleformMovieMethod(Main.scaleformUI.Handle, "SET_SIDE_PANEL_SLOT");
+                        PushScaleformMovieFunctionParameterInt(index);
+                        PushScaleformMovieFunctionParameterInt(_item.Type);
+                        var labels = _item.Label.SplitLabel;
+                        BeginTextCommandScaleformString("CELL_EMAIL_BCON");
+                        for (var j = 0; j < labels?.Length; j++)
+                            AddTextComponentScaleform(labels[j]);
+                        EndTextCommandScaleformString_2();
+                        PushScaleformMovieFunctionParameterString(_item.TextRight);
+                        switch (_item.Type)
+                        {
+                            case 2:
+                                PushScaleformMovieFunctionParameterInt((int)_item.Icon);
+                                PushScaleformMovieFunctionParameterInt(_item.IconColor.ArgbValue);
+                                PushScaleformMovieFunctionParameterBool(_item.Tick);
+                                break;
+                            case 3:
+                                PushScaleformMovieFunctionParameterString(_item.CrewTag.TAG);
+                                PushScaleformMovieFunctionParameterBool(false);
+                                break;
+                        }
+                        PushScaleformMovieFunctionParameterString(_item.LabelFont.FontName);
+                        PushScaleformMovieFunctionParameterInt(_item.LabelFont.FontID);
+                        PushScaleformMovieFunctionParameterString(_item._rightLabelFont.FontName);
+                        PushScaleformMovieFunctionParameterInt(_item._rightLabelFont.FontID);
+                        EndScaleformMovieMethod();
                     }
                     break;
                 case UIVehicleColourPickerPanel:

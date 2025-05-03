@@ -86,6 +86,25 @@ function StoreListColumn:AddItem(item)
     self:AddStoreItem(item)
 end
 
+---Removes an item from the column.
+---@param item StoreItem 
+function StoreListColumn:RemoveSetting(item)
+    if item == nil then
+        print("^1[ERROR] SettingsListColumn:RemoveSetting() - item is nil")
+        return
+    end
+    for k,v in pairs(self.Items) do
+        if v.Label == item.Label then
+            self:RemoveSlot(k)
+        end
+    end
+end
+
+function StoreListColumn:RemoveItemAt(index)
+    if index >#self.Items or index < 1 then return end
+    self:RemoveSlot(index)
+end
+
 ---Add a new item to the column.
 ---@param item StoreItem
 function StoreListColumn:AddStoreItem(item)

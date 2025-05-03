@@ -86,6 +86,30 @@ namespace ScaleformUI.Menus
         public virtual void UpdateSlot(int index) { }
 
         public virtual void AddSlot(int index) { }
+        public virtual void RemoveSlot(int idx)
+        {
+            if (idx >= Items.Count) return;
+            var selectedItem = Index;
+            Items[idx].Selected = false;
+            Items.RemoveAt(idx);
+            if (visible)
+                Main.PauseMenu._pause.CallFunction("REMOVE_SLOT", (int)position, idx, false, false);
+            if (Items.Count > 0)
+            {
+                if (idx == this.index)
+                    index = idx >= Items.Count ? Items.Count - 1 : idx >= 0 && idx < Items.Count ? idx - 1 : 0;
+                else
+                {
+                    if (selectedItem < Items.Count)
+                        index = selectedItem;
+                    else
+                        index = Items.Count - 1;
+                }
+                Items[index].Selected = true;
+                if (visible && Parent.CurrentColumnIndex == (int)position)
+                    Main.PauseMenu._pause.CallFunction("SET_COLUMN_HIGHLIGHT", (int)position, idx, false, false);
+            }
+        }
 
         public virtual void GoUp() { }
         public virtual void GoDown() { }
@@ -109,18 +133,15 @@ namespace ScaleformUI.Menus
         }
         public virtual void ShowColumn(bool show = true)
         {
-            if (visible)
-                Main.PauseMenu._pause.CallFunction("DISPLAY_DATA_SLOT", (int)position);
+             Main.PauseMenu._pause.CallFunction("DISPLAY_DATA_SLOT", (int)position);
         }
         public virtual void InitColumnScroll(bool visible, int columns, ScrollType scrollType, ScrollArrowsPosition arrowPosition, bool @override = false, float xColOffset = 0f)
         {
-            if (visible)
-                Main.PauseMenu._pause.CallFunction("INIT_COLUMN_SCROLL", (int)position, visible, columns, (int)scrollType, (int)arrowPosition, @override, xColOffset);
+             Main.PauseMenu._pause.CallFunction("INIT_COLUMN_SCROLL", (int)position, visible, columns, (int)scrollType, (int)arrowPosition, @override, xColOffset);
         }
         public virtual void SetColumnScroll(int currentPosition, int maxPosition, int maxVisible, string caption, bool forceInvisible = false, string captionR = "")
         {
-            if (visible)
-                Main.PauseMenu._pause.CallFunction("SET_COLUMN_SCROLL", (int)position, currentPosition, maxPosition, maxVisible, caption, forceInvisible, captionR);
+             Main.PauseMenu._pause.CallFunction("SET_COLUMN_SCROLL", (int)position, currentPosition, maxPosition, maxVisible, caption, forceInvisible, captionR);
         }
 
         public virtual void SetColumnScroll(int currentPosition, int maxPosition, int maxVisible = -1)

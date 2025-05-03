@@ -27,6 +27,7 @@ public class MenuExample : BaseScript
     //private TimerBarPool _timerBarPool;
     private long txd;
     private Random Random = new Random(API.GetGameTimer());
+    private UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI ~o~SHOWCASE", new PointF(376, 50), "commonmenu", "interaction_bgd", true, true, MenuAlignment.RIGHT);
     #region UIMenu
     public async void ExampleMenu()
     {
@@ -38,7 +39,7 @@ public class MenuExample : BaseScript
 
         // first true means add menu Glare scaleform to the menu
         // last true means it's using the alternative title style
-        UIMenu exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI ~o~SHOWCASE", new PointF(376, 50), "commonmenu", "interaction_bgd", true, true, MenuAlignment.RIGHT);
+        exampleMenu = new UIMenu("ScaleformUI", "ScaleformUI ~o~SHOWCASE", new PointF(376, 50), "commonmenu", "interaction_bgd", true, true, MenuAlignment.RIGHT);
         exampleMenu.MaxItemsOnScreen = 7; // To decide max items on screen at time, default 7
         exampleMenu.SetMouse(true, false, true, false, false);
 
@@ -152,7 +153,8 @@ public class MenuExample : BaseScript
         UIMenuCheckboxItem ketchupItem = new UIMenuCheckboxItem("~g~Scrolling animation enabled? ~b~in a very long label to ~o~test the text scrolling feature!", UIMenuCheckboxStyle.Tick, enabled, "Do you wish to enable the scrolling animation?");
         long _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
         API.CreateRuntimeTextureFromDuiHandle(txd, "panelbackground", API.GetDuiHandle(_paneldui));
-        UIMissionDetailsPanel sidePanel = new UIMissionDetailsPanel(PanelSide.Right, "Side Panel", true, "scaleformui", "bannerbackground");
+        //UIMissionDetailsPanel sidePanel = new UIMissionDetailsPanel(PanelSide.Right, "Side Panel", false, "scaleformui", "bannerbackground");
+        UIMissionDetailsPanel sidePanel = new UIMissionDetailsPanel(PanelSide.Right, "Side Panel", SColor.HUD_Freemode, "scaleformui", "bannerbackground");
         UIFreemodeDetailsItem detailItem1 = new UIFreemodeDetailsItem("Left Label", "RIGHT LABEL", ScaleformFonts.SIGNPAINTER_HOUSESCRIPT, ScaleformFonts.GTAV_TAXI_DIGITAL, BadgeIcon.BRIEFCASE, SColor.FromRandomValues());
         UIFreemodeDetailsItem detailItem2 = new UIFreemodeDetailsItem("Left Label", "RIGHT LABEL", ScaleformFonts.SIGNPAINTER_HOUSESCRIPT, ScaleformFonts.GTAV_TAXI_DIGITAL, BadgeIcon.MISSION_STAR, SColor.FromRandomValues());
         UIFreemodeDetailsItem detailItem3 = new UIFreemodeDetailsItem("Left Label", "RIGHT LABEL", ScaleformFonts.SIGNPAINTER_HOUSESCRIPT, ScaleformFonts.GTAV_TAXI_DIGITAL, BadgeIcon.ARMOR, SColor.FromRandomValues());
@@ -1346,8 +1348,8 @@ public class MenuExample : BaseScript
         MissionDetailsPanel missionPanel = new MissionDetailsPanel("missionPanel"); // Giving a label in pause menu is useless.. works only for corona mode.
 
         playersTab.SetupLeftColumn(settings);
-        //playersTab.SetupCenterColumn(settings);
-        playersTab.SetupRightColumn(missions);
+        playersTab.SetupCenterColumn(players);
+        playersTab.SetupRightColumn(missionPanel);
 
         missionPanel.Title = "ScaleformUI - Title";
         missionPanel.UpdatePanelPicture("scaleformui", "bannerbackground");
@@ -1380,31 +1382,38 @@ public class MenuExample : BaseScript
             store.AddStoreItem(item5);
         }
 
-        for (int i = 0; i < 5; i++)
-        {
-            UIMenuItem n1 = new("Base Item", "Basic Description");
-            n1.SetRightLabel("Right Label");
-            UIMenuListItem n2 = new("List Item", new List<dynamic> { "~r~item1", "item2", "item3" }, 0, "List Description");
-            UIMenuCheckboxItem n3 = new("Checkbox Item", UIMenuCheckboxStyle.Tick, true, "Checkbox Description");
-            UIMenuSliderItem n4 = new("Slider Item", "Slider Description", 100, 10, 50, false);
-            UIMenuProgressItem n5 = new("Progress Item", 100, 50, "Progress Description");
-            settings.AddSettings(n1);
-            settings.AddSettings(n2);
-            settings.AddSettings(n3);
-            settings.AddSettings(n4);
-            settings.AddSettings(n5);
+        UIMenuItem n1 = new("Base Item", "Basic Description");
+        n1.SetRightLabel("Right Label");
+        UIMenuListItem n2 = new("List Item", new List<dynamic> { "~r~item1", "item2", "item3" }, 0, "List Description");
+        UIMenuCheckboxItem n3 = new("Checkbox Item", UIMenuCheckboxStyle.Tick, true, "Checkbox Description");
+        UIMenuSliderItem n4 = new("Slider Item", "Slider Description", 100, 10, 50, false);
+        UIMenuProgressItem n5 = new("Progress Item", 100, 50, "Progress Description");
+        settings.AddSettings(n1);
+        settings.AddSettings(n2);
+        settings.AddSettings(n3);
+        settings.AddSettings(n4);
+        settings.AddSettings(n5);
 
-            n1.Activated += (sender, args) =>
-            {
-                playersTab.SwitchColumn(2);
-            };
-        }
+        //n1.Activated += (sender, args) =>
+        //{
+        //    playersTab.SwitchColumn(1);
+        //};
+
+        settings.OnSettingItemActivated += delegate
+        {
+            settings.RemoveItemAt(settings.Index);
+        };
+
         MissionItem mission1 = new MissionItem("Mission 1");
         MissionItem mission2 = new MissionItem("Mission 2");
         MissionItem mission3 = new MissionItem("Mission 3");
         MissionItem mission4 = new MissionItem("Mission 4");
         MissionItem mission5 = new MissionItem("Mission 5");
         MissionSeparatorItem separator = new MissionSeparatorItem("Separator", true);
+        mission1.MissionActivated += delegate
+        {
+            missions.RemoveSlot(0);
+        };
 
         //mission1.SetLeftIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
         //mission1.SetRightIcon((BadgeIcon)API.GetRandomIntInRange(1, 179), SColor.FromRandomValues());
@@ -1443,11 +1452,11 @@ public class MenuExample : BaseScript
             CrewTag crew4 = new CrewTag("at", false, false, CrewHierarchy.Representative, SColor.HUD_Orange);
             CrewTag crew5 = new CrewTag("this", false, false, CrewHierarchy.Muscle, SColor.HUD_Red);
 
-            FriendItem friend = new FriendItem(Game.Player.Name + " #1", SColor.HUD_Green, true, API.GetRandomIntInRange(15, 55), "Online", crew1) { KeepPanelVisible = true};
-            FriendItem friend2 = new FriendItem(Game.Player.Name + " #2", SColor.HUD_Pink, true, API.GetRandomIntInRange(15, 55), "Offline", crew2) {KeepPanelVisible = true};
-            FriendItem friend3 = new FriendItem(Game.Player.Name + " #3", SColor.HUD_Blue, true, API.GetRandomIntInRange(15, 55), "Online", crew3) {KeepPanelVisible = true};
-            FriendItem friend4 = new FriendItem(Game.Player.Name + " #4", SColor.HUD_Orange, true, API.GetRandomIntInRange(15, 55), "Offline", crew4) {KeepPanelVisible = true};
-            FriendItem friend5 = new FriendItem(Game.Player.Name + " #5", SColor.HUD_Red, true, API.GetRandomIntInRange(15, 55), "Busy", crew5) {KeepPanelVisible = true};
+            FriendItem friend = new FriendItem(Game.Player.Name + " #1", SColor.HUD_Green, true, API.GetRandomIntInRange(15, 55), "Online", crew1);
+            FriendItem friend2 = new FriendItem(Game.Player.Name + " #2", SColor.HUD_Pink, true, API.GetRandomIntInRange(15, 55), "Offline", crew2);
+            FriendItem friend3 = new FriendItem(Game.Player.Name + " #3", SColor.HUD_Blue, true, API.GetRandomIntInRange(15, 55), "Online", crew3);
+            FriendItem friend4 = new FriendItem(Game.Player.Name + " #4", SColor.HUD_Orange, true, API.GetRandomIntInRange(15, 55), "Offline", crew4);
+            FriendItem friend5 = new FriendItem(Game.Player.Name + " #5", SColor.HUD_Red, true, API.GetRandomIntInRange(15, 55), "Busy", crew5);
             friend.SetLeftIcon(LobbyBadgeIcon.IS_CONSOLE_PLAYER);
             friend2.SetLeftIcon(BadgeIcon.COUNTRY_ITALY);
             friend3.SetLeftIcon(BadgeIcon.COUNTRY_ITALY);
@@ -1457,8 +1466,7 @@ public class MenuExample : BaseScript
 
             players.OnPlayerItemActivated += (col, item) =>
             {
-                Debug.WriteLine("Player activated!");
-                playersTab.SwitchColumn(PM_COLUMNS.MIDDLE);
+                playersTab.SwitchColumn(PM_COLUMNS.RIGHT);
             };
 
             friend.ClonePed = Game.PlayerPed;
@@ -1981,8 +1989,13 @@ public class MenuExample : BaseScript
             if (playerMarker.IsInRange)
                 Notifications.DrawText(text: $"IsInMarker => {playerMarker.IsInMarker}");
 
-            if (Game.IsControlJustPressed(0, Control.SelectCharacterMichael) && !MenuHandler.IsAnyMenuOpen) // Our menu enabler (to exit menu simply press Back on the main menu)
-                ExampleMenu();
+            if (Game.IsControlJustPressed(0, Control.SelectCharacterMichael)) // Our menu enabler (to exit menu simply press Back on the main menu)
+            {
+                if(!MenuHandler.IsAnyMenuOpen)
+                    ExampleMenu();
+                else
+                    exampleMenu.RemoveItemAt(0);
+            }
 
             if (Game.IsControlJustPressed(0, Control.DropAmmo) && !Game.IsControlPressed(0, Control.Sprint) && !MenuHandler.IsAnyMenuOpen)
                 CreateRadialMenu();
