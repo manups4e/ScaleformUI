@@ -1,5 +1,4 @@
-﻿using CitizenFX.Core;
-using ScaleformUI.Elements;
+﻿using ScaleformUI.Elements;
 using System.Drawing;
 
 namespace ScaleformUI.PauseMenus.Elements

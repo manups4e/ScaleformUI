@@ -1,8 +1,8 @@
-SettingsItem = setmetatable({}, SettingsItem)
+SettingsItem = {}
 SettingsItem.__index = SettingsItem
-SettingsItem.__call = function()
-    return "SettingsItem", "SettingsItem"
-end
+setmetatable(SettingsItem, { __index = PauseMenuItem })
+SettingsItem.__call = function() return "SettingsItem" end
+
 
 ---@class SettingsItem
 ---@field ItemType SettingsItemType
@@ -15,41 +15,31 @@ end
 ---@param rightLabel string?
 ---@return SettingsItem
 function SettingsItem.New(label, rightLabel)
-    local data = {
-        ItemType = SettingsItemType.Basic,
-        Label = label or "",
-        _rightLabel = rightLabel or "",
-        Parent = nil,
-        _enabled = true,
-        _hovered = false,
-        _selected = false,
-        OnActivated = function(item, index)
-        end
-    }
-    return setmetatable(data, SettingsItem)
+    local base = PauseMenuItem.New(label, ScaleformFonts.CHALET_LONDON_NINETEENSIXTY)
+    base.ItemType = SettingsItemType.Basic
+    base._rightLabel = rightLabel or ""
+    base.enabled = true
+    base.OnActivated = function()
+    end
+    return setmetatable(base, SettingsItem)
 end
 
 ---Toggle the enabled state of the item.
----@param enabled any
----@return any
+---@param enabled boolean
+---@return boolean
 function SettingsItem:Enabled(enabled)
     if enabled ~= nil then
         self._enabled = enabled
-        if self.Parent ~= nil and self.Parent.Parent ~= nil and self.Parent.Parent.Base.Parent ~= nil and self.Parent.Parent.Base.Parent:Visible() then
-            if self.Parent:Selected() then
-                local leftItem = IndexOf(self.Parent.Parent.LeftItemList, self.Parent) - 1
-                local rightIndex = IndexOf(self.Parent.ItemList, self) - 1
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ENABLE_RIGHT_ITEM", leftItem,
-                    rightIndex, self._enabled)
-            end
+        if self.ParentColumn ~= nil and self.ParentColumn:visible() then
+            self.ParentColumn:UpdateSlot(IndexOf(self.ParentColumn.Items, self))
         end
     end
     return self._enabled
 end
 
 ---Toggle the hovered state of the item.
----@param hover any
----@return any
+---@param hover boolean
+---@return boolean
 function SettingsItem:Hovered(hover)
     if hover ~= nil then
         self._hovered = hover
@@ -58,8 +48,8 @@ function SettingsItem:Hovered(hover)
 end
 
 ---Toggle the selected state of the item.
----@param selected any
----@return any
+---@param selected boolean
+---@return boolean
 function SettingsItem:Selected(selected)
     if selected ~= nil then
         self._selected = selected
@@ -73,12 +63,8 @@ end
 function SettingsItem:RightLabel(label)
     if label ~= nil then
         self._rightLabel = label
-        if self.Parent ~= nil and self.Parent.Parent ~= nil and self.Parent.Parent.Base.Parent ~= nil and self.Parent.Parent.Base.Parent:Visible() then
-            if self.Parent:Selected() then
-                local leftItem = IndexOf(self.Parent.Parent.LeftItemList, self.Parent) - 1
-                local rightIndex = IndexOf(self.Parent.ItemList, self) - 1
-                ScaleformUI.Scaleforms._pauseMenu:UpdateItemRightLabel(leftItem, rightIndex, self._rightLabel)
-            end
+        if self.ParentColumn ~= nil and self.ParentColumn:visible() then
+            self.ParentColumn:UpdateSlot(IndexOf(self.ParentColumn.Items, self))
         end
     end
     return self._rightLabel

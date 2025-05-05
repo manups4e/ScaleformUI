@@ -17,6 +17,22 @@
             }
         }
 
+        public string[] SplitLabel
+        {
+            get
+            {
+                int stringsNeeded = (_label.Length - 1) / 99 + 1; // division with round up
+
+                String[] outputString = new String[stringsNeeded];
+                for (int i = 0; i < stringsNeeded; i++)
+                {
+                    outputString[i] = _label.Substring(i * 99, MathUtil.Clamp(_label.Substring(i * 99).Length, 0, 99));
+                }
+
+                return outputString;
+            }
+        }
+
         public static implicit operator ScaleformLabel(string label)
         {
             return new ScaleformLabel(label);

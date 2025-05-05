@@ -1,34 +1,37 @@
-UIMenuFreemodeDetailsItem = setmetatable({}, UIMenuFreemodeDetailsItem)
+UIMenuFreemodeDetailsItem = {}
 UIMenuFreemodeDetailsItem.__index = UIMenuFreemodeDetailsItem
-UIMenuFreemodeDetailsItem.__call = function() return "UIMenuFreemodeDetailsItem", "UIMenuFreemodeDetailsItem" end
+setmetatable(UIMenuFreemodeDetailsItem, { __index = PauseMenuItem })
+UIMenuFreemodeDetailsItem.__call = function() return "UIMenuFreemodeDetailsItem" end
 
-function UIMenuFreemodeDetailsItem.New(textLeft, textRight, seperator, icon, iconColor, tick)
+function UIMenuFreemodeDetailsItem.New(textLeft, textRight, seperator, icon, iconColor, tick, crewTag)
     local _type
     if seperator then
-        _type = 3
+        _type = 4
     elseif icon ~= nil and iconColor ~= nil then
         _type = 2
+    elseif crewTag ~= nil then
+        _type = 3
     elseif textRight == nil and seperator == nil and icon == nil and iconColor == nil and tick == nil then
-        _type = 4
+        _type = 5
     else
         _type = 0
     end
-    _UIMenuFreemodeDetailsItem = {
-        Type = _type,
-        TextLeft = textLeft,
-        TextRight = textRight or "",
-        Icon = icon or BadgeStyle.NONE,
-        IconColor = iconColor or SColor.HUD_White,
-        Tick = tick or false,
-        _labelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY,
-        _rightLabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY
-    }
-    return setmetatable(_UIMenuFreemodeDetailsItem, UIMenuFreemodeDetailsItem)
+   
+    local base = PauseMenuItem.New(textLeft)
+    base.Type = _type
+    base.TextRight = textRight or ""
+    base.Icon = icon or BadgeStyle.NONE
+    base.IconColor = iconColor or SColor.HUD_White
+    base.Tick = tick or false
+    base.CrewTag = crewTag
+    base._rightLabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY
+
+    return setmetatable(base, UIMenuFreemodeDetailsItem)
 end
 
 function UIMenuFreemodeDetailsItem:SetLabelsFonts(leftFont, rightFont)
     if leftFont then
-        self._labelFont = leftFont
+        self.LabelFont = leftFont
     end
     if rightFont then
         self._rightLabelFont = rightFont

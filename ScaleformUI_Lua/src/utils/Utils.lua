@@ -95,6 +95,23 @@ string.IsNullOrEmpty = function(self)
     return self == nil or self == '' or not not tostring(self):find("^%s*$")
 end
 
+---SplitLabel
+---@param self string
+---@return table
+string.SplitLabel = function(self)
+    local stringsNeeded = math.ceil((self:len() - 1) / 99)
+    local outputString = {}
+
+    -- Fill table with substrings
+    for i = 0, stringsNeeded - 1 do
+        local start = i * 99
+        local length = math.min(99, self:len() - start)
+        table.insert(outputString, self:sub(start + 1, start + length))
+    end
+
+    return outputString
+end
+
 ---Insert
 ---@param self string
 ---@param pos number
@@ -417,4 +434,15 @@ end
 function IsSuperWideScreen()
     local aspRat = GetAspectRatio(false)
     return aspRat > (16.0 / 9.0)
+end
+
+function Join(symbol, list)
+    local result = ""
+    for i, value in ipairs(list) do
+        if i ~= 1 then
+            result = result .. symbol
+        end
+        result = result .. tostring(value)
+    end
+    return result
 end

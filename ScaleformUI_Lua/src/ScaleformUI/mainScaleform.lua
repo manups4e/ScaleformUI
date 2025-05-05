@@ -24,7 +24,7 @@ AddEventHandler("onResourceStop", function(resName)
         if MenuHandler:IsAnyMenuOpen() or MenuHandler:IsAnyPauseMenuOpen() then
             MenuHandler:CloseAndClearHistory()
         end
-        if IsPauseMenuActive() or GetCurrentFrontendMenuVersion() == `FE_MENU_VERSION_CORONA` then
+        if IsPauseMenuActive() and GetCurrentFrontendMenuVersion() == `FE_MENU_VERSION_CORONA` then
             ActivateFrontendMenu(`FE_MENU_VERSION_CORONA`, false, 0)
             AnimpostfxStop("PauseMenuIn");
             AnimpostfxPlay("PauseMenuOut", 800, false);

@@ -5,7 +5,7 @@ namespace ScaleformUI.PauseMenu
     public delegate void SettingsProgressEvent(SettingsProgressItem item, int value);
     public class SettingsProgressItem : SettingsItem
     {
-        private int _value;
+        internal int _value;
         private SColor coloredBarColor = SColor.HUD_Freemode;
         public event SettingsProgressEvent OnBarChanged;
         public event SettingsProgressEvent OnProgressSelected;
@@ -16,12 +16,8 @@ namespace ScaleformUI.PauseMenu
             set
             {
                 _value = value;
-                if (Parent != null)
-                {
-                    int leftItem = Parent.Parent.LeftItemList.IndexOf(Parent);
-                    int rightIndex = Parent.ItemList.IndexOf(this);
-                    Parent.Parent.Parent._pause.SetRightSettingsItemValue(leftItem, rightIndex, _value);
-                }
+                if (ParentColumn != null && ParentColumn.visible)
+                    ParentColumn.UpdateSlot(ParentColumn.Items.IndexOf(this));
                 ProgressChanged();
             }
         }
@@ -31,12 +27,8 @@ namespace ScaleformUI.PauseMenu
             set
             {
                 coloredBarColor = value;
-                if (Parent != null)
-                {
-                    int leftItem = Parent.Parent.LeftItemList.IndexOf(Parent);
-                    int rightIndex = Parent.ItemList.IndexOf(this);
-                    Parent.Parent.Parent._pause.UpdateItemColoredBar(leftItem, rightIndex, coloredBarColor);
-                }
+                if (ParentColumn != null && ParentColumn.visible)
+                    ParentColumn.UpdateSlot(ParentColumn.Items.IndexOf(this));
             }
         }
         public SettingsProgressItem(string label, int max, int startIndex, bool masked, SColor barColor) : base(label, "")

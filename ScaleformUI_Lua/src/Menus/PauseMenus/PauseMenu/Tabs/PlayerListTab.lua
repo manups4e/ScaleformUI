@@ -1,12 +1,21 @@
-PlayerListTab = setmetatable({}, PlayerListTab)
+PlayerListTab = {}
 PlayerListTab.__index = PlayerListTab
-PlayerListTab.__call = function()
-    return "BaseTab", "PlayerListTab"
-end
+setmetatable(PlayerListTab, { __index = BaseTab })
+PlayerListTab.__call = function() return "PlayerListTab" end
+
+---@enum PLT_COLUMNS
+PLT_COLUMNS =
+{
+    SETTINGS = 0,
+    PLAYERS = 1,
+    MISSION = 2,
+    STORE = 3,
+    MISSION_DETAILS = 4,
+}
 
 ---@class PlayerListTab
 ---@field public Base BaseTab
----@field public LeftItemList BasicTabItem[]
+---@field public LeftItemList PauseMenuItem[]
 ---@field public Label string
 ---@field public TextTitle string
 ---@field public SettingsColumn SettingsListColumn
@@ -19,117 +28,297 @@ end
 ---Creates a new PlayerListTab.
 ---@param name string
 ---@param color SColor
----@param newStyle boolean
 ---@return PlayerListTab
-function PlayerListTab.New(name, color, newStyle)
-    if newStyle == nil then newStyle = true end
-    local data = {
-        Base = BaseTab.New(name or "", 2, color),
-        LeftItemList = {},
-        Label = name or "",
-        TextTitle = "",
-        listCol = {},
-        _newStyle = newStyle,
-        SettingsColumn = nil,
-        PlayersColumn = nil,
-        MissionsColumn = nil,
-        StoreColumn = nil,
-        MissionPanel = nil,
-        Minimap = nil,
-        Index = 0,
-        Focused = false,
-        _focus = 0,
-        Visible = false,
-        OnFocusChanged = function(focus)
-        end
-    }
-    return setmetatable(data, PlayerListTab)
+function PlayerListTab.New(name, color)
+    local base = BaseTab.New(name, color)
+    base._identifier = "Page_Multi"
+    base.OnFocusChanged = function(focus)
+    end
+    base.order = { 0, 0, 0 }
+    local meta = setmetatable(base, PlayerListTab)
+    meta.Minimap = MinimapPanel.New(meta)
+    meta.Minimap.HidePedBlip = true
+    return meta
 end
 
----@param columns table
-function PlayerListTab:SetUpColumns(columns)
-    assert(#columns <= 3, "You must have 3 columns!")
-    assert(not (#columns == 3 and columns[3].Type == "players"), "For panel designs reasons, you can't have Players list in 3rd column!")
-    for k, v in pairs(columns) do
-        if self.Base.Parent ~= nil then
-            v.Parent = self.Base.Parent
-        end
-
-        v.ParentTab = self
-        v.Order = k
-
-        if v.Type == "settings" then
-            self.SettingsColumn = v
-        elseif v.Type == "players" then
-            self.PlayersColumn = v
-        elseif v.Type == "missions" then
-            self.MissionsColumn = v
-        elseif v.Type == "store" then
-            self.StoreColumn = v
-        elseif v.Type == "panel" then
-            self.MissionPanel = v
-        end
-    end
-    self.listCol = columns
+function PlayerListTab:SetupLeftColumn(column)
+    column.position = 0
+    self.LeftColumn = column
+    self.LeftColumn.Parent = self
+    self.order[1] = column.type
 end
 
-function PlayerListTab:SelectColumn(column)
-    local val = 0
-    if type(column) == "table" then
-        val = column.Order
-    elseif type(column) == "number" then
-        val = column
-    end
-    if val > #self.listCol then
-        val = 1
-    elseif val < 1 then
-        val = #self.listCol
-    end
-    self:updateFocus(val)
+function PlayerListTab:SetupCenterColumn(column)
+    column.position = 1
+    self.CenterColumn = column
+    self.CenterColumn.Parent = self
+    self.order[2] = column.type
 end
 
-function PlayerListTab:updateFocus(_f, isMouse)
-    if isMouse == nil then isMouse = false end
-    local goingLeft = _f < self._focus
-    local val = _f
+function PlayerListTab:SetupRightColumn(column)
+    column.position = 2
+    self.RightColumn = column
+    self.RightColumn.Parent = self
+    self.order[3] = column.type
+end
 
-    if val > #self.listCol then
-        val = 1
-    elseif val < 1 then
-        val = #self.listCol
-    end
+function PlayerListTab:SelectColumn(index)
+    self:SwitchColumn(index - 1)
+end
 
-    if self.listCol[val].Type ~= "players" then
-        if (self.PlayersColumn ~= nil and #self.PlayersColumn.Items > 0) and not self.PlayersColumn.Items[self.PlayersColumn:CurrentSelection()]:KeepPanelVisible() then
-            ClearPedInPauseMenu()
-        end
-    end
-
-    self._focus = val
-    if self.listCol[self._focus].Type == "panel" then
-        if goingLeft then
-            self:updateFocus(self._focus - 1)
-        else
-            self:updateFocus(self._focus + 1)
+function PlayerListTab:SwitchColumn(index)
+    if index > 2 or self.order[index + 1] == PLT_COLUMNS.MISSION_DETAILS then return end
+    local canHideShow = true
+    local col = self:GetColumnAtPosition(index)
+    if col == nil then
+        if index < 2 then
+            if index < self.CurrentColumnIndex then
+                self:SwitchColumn(index - 1)
+            else
+                self:SwitchColumn(index + 1)
+            end
         end
         return
     end
 
-    if self.Base.Parent ~= nil and self.Base.Parent:Visible() and self.Visible then
-        local idx = ScaleformUI.Scaleforms._pauseMenu._pause:CallFunctionAsyncReturnInt("SET_PLAYERS_TAB_FOCUS", self._focus - 1)
-        if not isMouse then
-            local _id = self.listCol[self._focus].Pagination:GetMenuIndexFromScaleformIndex(idx)
-            self.listCol[self._focus]:CurrentSelection(_id)
-            if not goingLeft or self._newStyle then
-                self.listCol[self._focus].OnIndexChanged(_id)
+
+    -- we don't check for right column because
+    -- if right column is players then it means there's no player panel to be shown
+    if self.LeftColumn.type == PLT_COLUMNS.PLAYERS then
+        if self.LeftColumn:CurrentItem():KeepPanelVisible() then
+            canHideShow = false
+        end
+    elseif self.CenterColumn.type == PLT_COLUMNS.PLAYERS then
+        if self.CenterColumn:CurrentItem():KeepPanelVisible() then
+            canHideShow = false
+        end
+    end
+
+    if canHideShow then
+        if self.Parent ~= nil and self.Parent:Visible() then
+            if col.type == PLT_COLUMNS.PLAYERS then
+                if col:CurrentItem().Panel ~= nil then
+                    self.RightColumn:ColumnVisible(false)
+                end
+            else
+                -- we check that the columns before and after selected index are players columns
+                -- and that its current item has KeepPanelVisible true.. 
+                -- if KeepPanelVisible is true, we keep hidden the right column, else we show it.
+                local show = true
+                local befCol = self:GetColumnAtPosition(index - 1)
+                local afterCol = self:GetColumnAtPosition(index + 1)
+                if befCol ~= nil and befCol.type == PLT_COLUMNS.PLAYERS and not befCol:CurrentItem():KeepPanelVisible() then
+                    befCol:CurrentItem():Dispose()
+                    show = false
+                end
+                if afterCol ~= nil and afterCol.type == PLT_COLUMNS.PLAYERS and not afterCol:CurrentItem():KeepPanelVisible() then
+                    afterCol:CurrentItem():Dispose()
+                    show = false
+                end
+                if self.RightColumn ~= nil then
+                    self.RightColumn:ColumnVisible(not show)
+                end
+            end
+        end
+    else
+        if self.RightColumn ~= nil then
+            self.RightColumn:ColumnVisible(true)
+        end
+    end
+
+    if index == 2 and not canHideShow then return end
+    self.CurrentColumnIndex = index
+    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_MENU_LEVEL", self.CurrentColumnIndex + 1)
+    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("MENU_SHIFT_DEPTH", 0, true, true)
+    self.Parent.focusLevel = self.CurrentColumnIndex + 1
+    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_COLUMN_HIGHLIGHT", col.position, col.index - 1, true, true)
+    col.Items[col.index]:Selected(true)
+end
+
+function PlayerListTab:StateChange()
+    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("MENU_STATE", Join("", self.order))
+end
+
+function PlayerListTab:GoUp()
+    if not self.Focused then return end
+    local col = self:CurrentColumn()
+    Citizen.CreateThread(function()
+        col:GoUp()
+    end)
+    col:SetColumnScroll(col.index, #col.Items, col.VisibleItems, "", #col.Items < col.VisibleItems)
+end
+
+function PlayerListTab:GoDown()
+    if not self.Focused then return end
+    local col = self:CurrentColumn()
+    Citizen.CreateThread(function()
+        col:GoDown()
+    end)
+    col:SetColumnScroll(col.index, #col.Items, col.VisibleItems, "", #col.Items < col.VisibleItems)
+end
+
+function PlayerListTab:GoLeft()
+    if not self.Focused then return end
+    self:CurrentColumn():GoLeft()
+end
+
+function PlayerListTab:GoRight()
+    if not self.Focused then return end
+    self:CurrentColumn():GoRight()
+end
+
+function PlayerListTab:Select()
+    if not self.Focused then return end
+    self:CurrentColumn():Select()
+end
+
+function PlayerListTab:GoBack()
+    if not self.Focused then return end
+    if self.CurrentColumnIndex > 0 then
+        self:CurrentColumn():CurrentItem():Selected(false)
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_COLUMN_FOCUS", self.CurrentColumnIndex, false, false,
+            false)
+        self:SwitchColumn(self.CurrentColumnIndex - 1)
+        if self:CurrentColumn() == nil and self.CurrentColumnIndex > 0 then
+            self:GoBack()
+            return
+        end
+        self:CurrentColumn():CurrentItem():Selected(true)
+        if self:CurrentColumn().type == PLT_COLUMNS.PLAYERS then
+            if self:CurrentColumn():CurrentItem().Panel ~= nil then
+                self:CurrentColumn():CurrentItem():CreateClonedPed()
+                local rr = self:GetColumnAtPosition(2)
+                if rr ~= nil then
+                    rr:ColumnVisible(false)
+                end
+            else
+                local rr = self:GetColumnAtPosition(2)
+                if rr ~= nil then
+                    rr:ColumnVisible(true)
+                end
             end
         end
     end
-    self.OnFocusChanged(self:Focus())
 end
 
----returns the focus of the tab.
----@return number
+function PlayerListTab:MouseEvent(eventType, context, index)
+    if not self.Focused then return end
+    if eventType == 5 then
+        if context > 999 then
+            local colidx = context - 1000
+            local col = self:GetColumnAtPosition(colidx)
+            if index == 0 then
+                col:GoLeft()
+            elseif index == 1 then
+                col:GoRight()
+            elseif index == 2 then
+                col:GoUp()
+            elseif index == 3 then
+                col:GoDown()
+            end
+            return
+        end
+
+        if self.CurrentColumnIndex == context then
+            if index == self:CurrentColumn():Index() then
+                self:CurrentColumn():Select()
+                return
+            end
+            self:CurrentColumn():CurrentItem():Selected(false)
+            self:CurrentColumn().index = index
+            self:CurrentColumn():CurrentItem():Selected(true)
+            if self:CurrentColumn().type == PLT_COLUMNS.SETTINGS then
+                AddTextEntry("PAUSEMENU_Current_Description", self:CurrentColumn():CurrentItem():Description())
+            elseif self:CurrentColumn().type == PLT_COLUMNS.PLAYERS then
+                self:CurrentColumn():CurrentItem():CreateClonedPed()
+            end
+        else
+            local selectedCol = self:GetColumnAtPosition(context)
+            self:SwitchColumn(context)
+            selectedCol:CurrentItem():Selected(false)
+            selectedCol.index = index
+            selectedCol:CurrentItem():Selected(true)
+            if selectedCol.type == PLT_COLUMNS.SETTINGS then
+                AddTextEntry("PAUSEMENU_Current_Description", selectedCol:CurrentItem():Description())
+            elseif selectedCol.type == PLT_COLUMNS.PLAYERS then
+                selectedCol:CurrentItem():CreateClonedPed()
+            end
+        end
+    elseif eventType == 10 or eventType == 11 then
+        local dir = -1
+        if eventType == 11 then
+            dir = 1
+        end
+        self:CurrentColumn():MouseScroll(dir)
+    end
+end
+
+function PlayerListTab:Populate()
+    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_MENU_LEVEL", 1)
+    self:StateChange()
+    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_MENU_LEVEL", 0)
+    if self.LeftColumn ~= nil then
+        self.LeftColumn:Populate()
+    end
+    if self.CenterColumn ~= nil then
+        self.CenterColumn:Populate()
+    end
+    if self.RightColumn ~= nil then
+        self.RightColumn:Populate()
+    end
+end
+
+function PlayerListTab:ShowColumns()
+    if self.LeftColumn ~= nil then
+        self.LeftColumn:ShowColumn()
+    end
+    if self.CenterColumn ~= nil then
+        self.CenterColumn:ShowColumn()
+    end
+    if self.RightColumn ~= nil then
+        self.RightColumn:ShowColumn()
+    end
+end
+
 function PlayerListTab:Focus()
-    return self._focus
+    BaseTab.Focus(self)
+    self:CurrentColumn().Focused = true
+    self:CurrentColumn():CurrentItem():Selected(true)
+    if self:CurrentColumn().type == PLT_COLUMNS.SETTINGS then
+        AddTextEntry("PAUSEMENU_Current_Description", self:CurrentColumn():CurrentItem():Description())
+    elseif self:CurrentColumn().type == PLT_COLUMNS.PLAYERS then
+        ClearPedInPauseMenu()
+        self:CurrentColumn():CreateClonedPed()
+        if self:CurrentColumn().Panel ~= nil then
+            self:CurrentColumn().Panel:UpdatePanel()
+            if self.RightColumn ~= nil then
+                self.RightColumn:ColumnVisible(false)
+            end
+        elseif self.RightColumn ~= nil then
+            self.RightColumn:ColumnVisible(true)
+        end
+    end
+    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_COLUMN_HIGHLIGHT", self:CurrentColumn().position,
+        self:CurrentColumn():Index() - 1, true, false)
+end
+
+function PlayerListTab:UnFocus()
+    BaseTab.UnFocus(self)
+    ClearPedInPauseMenu()
+    if self.LeftColumn then
+        self.LeftColumn.Focused = false
+        self.LeftColumn:CurrentItem():Selected(false)
+    end
+    if self.CenterColumn then
+        self.CenterColumn.Focused = false
+        self.CenterColumn:CurrentItem():Selected(false)
+    end
+    if self.RightColumn then
+        self.RightColumn.Focused = false
+        self.RightColumn:CurrentItem():Selected(false)
+        if not self.RightColumn:ColumnVisible() then
+            self.RightColumn:ColumnVisible(true)
+        end
+    end
+    AddTextEntry("PAUSEMENU_Current_Description", "")
 end

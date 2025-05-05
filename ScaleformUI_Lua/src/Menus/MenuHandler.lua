@@ -93,13 +93,13 @@ end
 ---ProcessControl
 function MenuHandler:ProcessControl()
     if self._currentMenu ~= nil then
-        self._currentMenu:ProcessControl()
         self._currentMenu:ProcessMouse()
+        self._currentMenu:ProcessControl()
     end
 
     if self._currentPauseMenu ~= nil then
-        self._currentPauseMenu:ProcessControl()
         self._currentPauseMenu:ProcessMouse()
+        self._currentPauseMenu:ProcessControl()
     end
 end
 

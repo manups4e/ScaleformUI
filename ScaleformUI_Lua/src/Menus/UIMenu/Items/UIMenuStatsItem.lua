@@ -1,6 +1,7 @@
-UIMenuStatsItem = setmetatable({}, UIMenuStatsItem)
+UIMenuStatsItem = {}
 UIMenuStatsItem.__index = UIMenuStatsItem
-UIMenuStatsItem.__call = function() return "UIMenuItem", "UIMenuStatsItem" end
+setmetatable(UIMenuStatsItem, { __index = UIMenuItem })
+UIMenuStatsItem.__call = function() return "UIMenuStatsItem" end
 
 ---@class UIMenuStatsItem : UIMenuItem
 ---@field public Base UIMenuItem
@@ -14,110 +15,20 @@ UIMenuStatsItem.__call = function() return "UIMenuItem", "UIMenuStatsItem" end
 ---@param mainColor SColor
 ---@param highlightColor SColor
 function UIMenuStatsItem.New(Text, Description, Index, barColor, type, mainColor, highlightColor)
-    local _UIMenuStatsItem = {
-        Base = UIMenuItem.New(Text or "", Description or "", SColor.HUD_Panel_light, highlightColor or SColor.HUD_White),
-        _Index = Index or 0,
-        Panels = {},
-        SidePanel = nil,
-        _Color = barColor or SColor.HUD_Freemode,
-        _Type = type or 0,
-        ItemId = 5,
-        OnStatsChanged = function(menu, item, newindex)
-        end,
-        OnStatsSelected = function(menu, item, newindex)
-        end,
-    }
-    return setmetatable(_UIMenuStatsItem, UIMenuStatsItem)
-end
-
-function UIMenuStatsItem:ItemData(data)
-    if data == nil then
-        return self.Base:ItemData(data)
-    else
-        self.Base:ItemData()
+    local base = UIMenuItem.New(Text or "", Description or "", color or SColor.HUD_Panel_light, highlightColor or SColor.HUD_White)
+    base._Index = Index or 0
+    base._Color = barColor or SColor.HUD_Freemode
+    base._Type = type or 0
+    base.ItemId = 5
+    base.OnStatsChanged = function(menu, item, newindex)
     end
-end
-
--- not supported on Lobby and Pause menu yet
-function UIMenuStatsItem:LabelFont(itemFont)
-    if itemFont == nil then
-        return self.Base:LabelFont()
+    base.OnStatsSelected = function(menu, item, newindex)
     end
-    self.Base:LabelFont(itemFont, self)
+    return setmetatable(base, UIMenuStatsItem)
 end
 
--- not supported on Lobby and Pause menu yet
 function UIMenuStatsItem:RightLabelFont(itemFont)
-    if itemFont == nil then
-        return self.Base:RightLabelFont()
-    end
-    self.Base:RightLabelFont(itemFont, self)
-end
-
----Set the Parent Menu of the Item
----@param menu UIMenu
----@return UIMenu? -- returns the parent menu if no menu is passed, if a menu is passed it returns the menu if it was set successfully
-function UIMenuStatsItem:SetParentMenu(menu)
-    if menu == nil then
-        return self.Base:SetParentMenu()
-    end
-    self.Base:SetParentMenu(menu)
-end
-
-function UIMenuStatsItem:Selected(bool)
-    if bool == nil then
-        return self.Base:Selected()
-    end
-    self.Base:Selected(bool, self)
-end
-
-function UIMenuStatsItem:Hovered(bool)
-    if bool == nil then
-        return self.Base:Hovered()
-    end
-    self.Base:Hovered(bool)
-end
-
-function UIMenuStatsItem:Enabled(bool)
-    if bool == nil then
-        return self.Base:Enabled()
-    end
-    self.Base:Hovered(bool, self)
-end
-
-function UIMenuStatsItem:Description(str)
-    if str == nil then
-        return self.Base:Description()
-    end
-    self.Base:Description(str, self)
-end
-
-function UIMenuStatsItem:MainColor(color)
-    if color == nil then
-        return self.Base:MainColor()
-    end
-    self.Base:MainColor(color, self)
-end
-
-function UIMenuStatsItem:HighlightColor(color)
-    if color == nil then
-        return self.Base:HighlightColor()
-    end
-    self.Base:HighlightColor(color, self)
-end
-
-function UIMenuStatsItem:Label(Text)
-    if Text == nil then
-        return self.Base:Label()
-    end
-    self.Base:Label(Text, self)
-end
-
-function UIMenuStatsItem:BlinkDescription(bool)
-    if bool == nil then
-        return self.Base:BlinkDescription()
-    end
-    self.Base:BlinkDescription(bool, self)
+    error("UIMenuStatsItem does not support a right label")
 end
 
 ---LeftBadge
@@ -143,68 +54,17 @@ function UIMenuStatsItem:RightLabel()
     error("This item does not support a right label")
 end
 
-
-function UIMenuStatsItem:AddPanel(Panel)
-    if Panel() == "UIMenuPanel" then
-        Panel.ParentItem = self
-        self.Panels[#self.Panels + 1] = Panel
-    end
-end
-
-function UIMenuStatsItem:AddSidePanel(sidePanel)
-    sidePanel:SetParentItem(self)
-    self.SidePanel = sidePanel
-    if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
-        local it = IndexOf(self.ParentMenu.Items, self)
-        self.ParentMenu:SendSidePanelToScaleform(it)
-    end
-end
-
-function UIMenuStatsItem:RemoveSidePanel()
-    self.SidePanel = nil
-    if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
-        local it = IndexOf(self.ParentMenu.Items, self)
-        self.ParentMenu:SendSidePanelToScaleform(it)
-    end
-end
-
-function UIMenuStatsItem:RemovePanelAt(Index)
-    if tonumber(Index) then
-        if self.Panels[Index] then
-            table.remove(self.Panels, tonumber(Index))
-            local it = IndexOf(self.ParentMenu.Items, self)
-            self.ParentMenu:SendPanelsToItemScaleform(it)
-        end
-    end
-end
-
-function UIMenuStatsItem:FindPanelIndex(Panel)
-    if Panel() == "UIMenuPanel" then
-        for Index = 1, #self.Panels do
-            if self.Panels[Index] == Panel then
-                return Index
-            end
-        end
-    end
-    return nil
-end
-
-function UIMenuStatsItem:FindPanelItem()
-    for Index = #self.Items, 1, -1 do
-        if self.Items[Index].Panel then
-            return Index
-        end
-    end
-    return nil
-end
-
 function UIMenuStatsItem:SliderColor(color)
     if color then
         assert(color() == "SColor", "Color must be SColor type")
         self._Color = color
-        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
-            local it = IndexOf(self.Base.ParentMenu.Items, self)
-            self.Base.ParentMenu:SendItemToScaleform(it, true)
+        if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+            local it = IndexOf(self.ParentMenu.Items, self)
+            self.ParentMenu:SendItemToScaleform(it, true)
+        end
+        if self.ParentColumn ~= nil then
+            local it = IndexOf(self.ParentColumn.Items, self)
+            self.ParentColumn:SendItemToScaleform(it, true)
         end
     else
         return self._Color
@@ -223,9 +83,13 @@ function UIMenuStatsItem:Index(Index)
             self._Index = Index
         end
         self.OnStatsChanged(self._Index)
-        if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
-            local it = IndexOf(self.Base.ParentMenu.Items, self)
-            self.Base.ParentMenu:SendItemToScaleform(it, true)
+        if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+            local it = IndexOf(self.ParentMenu.Items, self)
+            self.ParentMenu:SendItemToScaleform(it, true)
+        end
+        if self.ParentColumn ~= nil then
+            local it = IndexOf(self.ParentColumn.Items, self)
+            self.ParentColumn:SendItemToScaleform(it, true)
         end
     else
         return self._Index

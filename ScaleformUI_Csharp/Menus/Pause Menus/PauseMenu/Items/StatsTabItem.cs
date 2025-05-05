@@ -7,7 +7,7 @@ namespace ScaleformUI.PauseMenu
         Basic,
         ColoredBar
     }
-    public class StatsTabItem : BasicTabItem
+    public class StatsTabItem : PauseMenuItem
     {
         private string rightLabel;
         private SColor coloredBarColor = SColor.HUD_Freemode;
@@ -23,12 +23,8 @@ namespace ScaleformUI.PauseMenu
             set
             {
                 rightLabel = value;
-                if (Parent != null)
-                {
-                    int leftItem = Parent.Parent.LeftItemList.IndexOf(Parent);
-                    int rightIndex = Parent.ItemList.IndexOf(this);
-                    Parent.Parent.Parent._pause.UpdateStatsItem(leftItem, rightIndex, Label, rightLabel);
-                }
+                if (ParentColumn != null && ParentColumn.visible)
+                    ParentColumn.UpdateSlot(ParentColumn.Items.IndexOf(this));
             }
         }
         public SColor ColoredBarColor
@@ -37,12 +33,8 @@ namespace ScaleformUI.PauseMenu
             set
             {
                 coloredBarColor = value;
-                if (Parent != null)
-                {
-                    int leftItem = Parent.Parent.LeftItemList.IndexOf(Parent);
-                    int rightIndex = Parent.ItemList.IndexOf(this);
-                    Parent.Parent.Parent._pause.UpdateStatsItem(leftItem, rightIndex, Label, _value, coloredBarColor);
-                }
+                if (ParentColumn != null && ParentColumn.visible)
+                    ParentColumn.UpdateSlot(ParentColumn.Items.IndexOf(this));
             }
         }
         public int Value
@@ -51,12 +43,8 @@ namespace ScaleformUI.PauseMenu
             set
             {
                 _value = value;
-                if (Parent != null)
-                {
-                    int leftItem = Parent.Parent.LeftItemList.IndexOf(Parent);
-                    int rightIndex = Parent.ItemList.IndexOf(this);
-                    Parent.Parent.Parent._pause.UpdateStatsItem(leftItem, rightIndex, Label, _value, coloredBarColor);
-                }
+                if (ParentColumn != null && ParentColumn.visible)
+                    ParentColumn.UpdateSlot(ParentColumn.Items.IndexOf(this));
             }
         }
 

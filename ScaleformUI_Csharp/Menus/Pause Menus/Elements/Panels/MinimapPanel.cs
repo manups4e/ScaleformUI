@@ -1,8 +1,6 @@
-﻿using CitizenFX.Core;
-using ScaleformUI.LobbyMenu;
-using ScaleformUI.PauseMenu;
+﻿using ScaleformUI.PauseMenu;
+using ScaleformUI.PauseMenus.Elements.Columns;
 using ScaleformUI.PauseMenus.Elements.Items;
-using static CitizenFX.Core.Native.API;
 
 namespace ScaleformUI.PauseMenus.Elements.Panels
 {
@@ -10,21 +8,21 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
     {
         internal PauseMenuBase Parent { get; set; }
         internal BaseTab ParentTab { get; set; }
+        public bool HidePedBlip { get; set; } = true;
         internal Vector2 mapPosition = new Vector2();
         internal float zoomDistance = 0;
         internal bool enabled;
         private bool turnedOn = false;
         private bool IsRadarVisible = !IsRadarHidden();
-        internal int localCoronaMapStage = 0;
+        internal int localCoronaMapStage = -1;
 
         public MinimapRoute MinimapRoute;
         public List<FakeBlip> MinimapBlips { get; internal set; }
 
-        public MinimapPanel(PauseMenuBase parent, BaseTab parenttab)
+        public MinimapPanel(BaseTab parenttab)
         {
             MinimapBlips = new List<FakeBlip>();
             MinimapRoute = new MinimapRoute();
-            Parent = parent;
             ParentTab = parenttab;
         }
 
@@ -35,26 +33,13 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             {
                 if (Parent != null && Parent.Visible)
                 {
-                    if (Parent is MainView lobby)
+                    if(ParentTab is PlayerListTab plTab)
                     {
-                        if (lobby.listCol[lobby.FocusLevel].Type == "players")
+                        if(plTab.CurrentColumn is PlayerListColumn col)
                         {
-                            if (lobby.PlayersColumn.Items[lobby.PlayersColumn.CurrentSelection].KeepPanelVisible)
+                            if (col.CurrentItem.KeepPanelVisible)
                             {
                                 return;
-                            }
-                        }
-                    }
-                    else if (Parent is TabView)
-                    {
-                        if (ParentTab is PlayerListTab plTab)
-                        {
-                            if (plTab.listCol[plTab.Focus].Type == "players")
-                            {
-                                if (plTab.PlayersColumn.Items[plTab.PlayersColumn.CurrentSelection].KeepPanelVisible)
-                                {
-                                    return;
-                                }
                             }
                         }
                     }
@@ -72,19 +57,28 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
                     {
                         IsRadarVisible = !IsRadarHidden();
                         DisplayRadar(false);
-                        SetMapFullScreen(false);
+                        RaceGalleryFullscreen(false);
                         turnedOn = false;
                     }
                 }
                 if (Parent != null && Parent.Visible && ParentTab.Visible)
                 {
-                    if (Parent is MainView lobby)
+                    if (ParentTab is PlayerListTab plTab)
                     {
-                        lobby._pause._lobby.CallFunction("HIDE_MISSION_PANEL", !enabled);
-                    }
-                    else if (Parent is TabView pause)
-                    {
-                        pause._pause._pause.CallFunction("HIDE_PLAYERS_TAB_MISSION_PANEL", !enabled);
+                        if (plTab.CurrentColumn is PlayerListColumn col)
+                        {
+                            if (value)
+                            {
+                                col.CurrentItem.Dispose();
+                            }
+                            else
+                            {
+                                col.CurrentItem.CreateClonedPed();
+                            }
+                        }
+                        var rightCol = ParentTab.RightColumn;
+                        if (rightCol is MissionDetailsPanel panel)
+                            panel.ColumnVisible = !enabled && plTab.CurrentColumn is not PlayerListColumn;
                     }
                 }
             }
@@ -179,14 +173,14 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
                     break;
             }
         }
-        public void ProcessMap()
+        public async Task ProcessMap()
         {
             if (enabled)
             {
                 if (!turnedOn)
                 {
                     DisplayRadar(IsRadarVisible);
-                    SetMapFullScreen(true);
+                    RaceGalleryFullscreen(true);
                     turnedOn = true;
                 }
             }
@@ -196,12 +190,13 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
                 {
                     IsRadarVisible = !IsRadarHidden();
                     DisplayRadar(false);
-                    SetMapFullScreen(false);
+                    RaceGalleryFullscreen(false);
                     turnedOn = false;
                     Dispose();
                 }
             }
-            SetPlayerBlipPositionThisFrame(-5000, -5000);
+            if(HidePedBlip)
+                SetPlayerBlipPositionThisFrame(-5000, -5000);
             RefreshZoom();
         }
 
@@ -258,6 +253,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             ClearGpsFlags();
             MinimapBlips.Clear();
             MinimapRoute = new MinimapRoute();
+            SetBigmapActive(false, false);
         }
 
         public void ClearMinimap()
@@ -272,6 +268,7 @@ namespace ScaleformUI.PauseMenus.Elements.Panels
             DeleteWaypoint();
             ClearGpsCustomRoute();
             ClearGpsFlags();
+            SetBigmapActive(false, false);
         }
     }
 }

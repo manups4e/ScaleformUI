@@ -1,12 +1,11 @@
-GalleryTab = setmetatable({}, GalleryTab)
+GalleryTab = {}
 GalleryTab.__index = GalleryTab
-GalleryTab.__call = function()
-    return "BaseTab", "GalleryTab"
-end
+setmetatable(GalleryTab, { __index = BaseTab })
+GalleryTab.__call = function() return "GalleryTab" end
 
 ---@class GalleryTab
 ---@field public Base BaseTab
----@field public LeftItemList BasicTabItem[]
+---@field public LeftItemList PauseMenuItem[]
 ---@field public Label string
 ---@field public TextTitle string
 ---@field public SettingsColumn SettingsListColumn
@@ -36,141 +35,243 @@ end
 ---@param newStyle boolean
 ---@return GalleryTab
 function GalleryTab.New(name, color)
-    local data = {
-        Base = BaseTab.New(name or "", 3, color),
-        LeftItemList = {},
-        Label = name or "",
-        TextTitle = "",
-        GalleryItems = {},
-        Minimap = nil,
-        Index = 0,
-        Focused = false,
-        _focus = 0,
-        Visible = false,
-        txd = "",
-        txn = "",
-        maxItemsPerPage = 12,
-        titleLabel = "",
-        dateLabel = "",
-        locationLabel = "",
-        trackLabel = "",
-        labelsVisible = "",
-        state = 0,
-        bigPic = false,
-        CurPage = 1,
-        currentSelection = 1,
-        currentIndex = 1,
-        OnFocusChanged = function(focus)
-        end,
-        OnGalleryModeChanged = function(tab, item, bigPicture)
-        end,
-        OnGalleryIndexChanged = function(tab, item, totalIndex, gridIndex)
-        end,
-        OnGalleryItemSelected = function(tab, item, totalIndex, gridIndex)
+    local base = BaseTab.New(name, color)
+    base._identifier = "Page_Gallery"
+    base.LeftColumn = GalleryColumn.New()
+    base.bigPic = false
+    base.OnFocusChanged = function(focus)
+    end
+    base.OnGalleryModeChanged = function(tab, item, bigPicture)
+    end
+    base.OnGalleryIndexChanged = function(tab, item, totalIndex, gridIndex)
+    end
+    base.OnGalleryItemSelected = function(tab, item, totalIndex, gridIndex)
+    end
+local meta = setmetatable(base, GalleryTab)
+    meta.LeftColumn.Parent = meta
+    meta.Minimap = MinimapPanel.New(meta)
+    return meta
+end
+
+function GalleryTab:Populate()
+    self.LeftColumn:Index(1)
+    self.LeftColumn.currentPageIndex = 1
+    self.LeftColumn:Populate()
+end
+
+function GalleryTab:GoUp()
+    if not self.Focused then return end
+    self.LeftColumn:GoUp()
+    self.LeftColumn:UpdatePage()
+    local it = self.LeftColumn.Items[self.LeftColumn.currentPageIndex]
+    if self.bigPic then
+        self:SetTitle(it.TextureDictionary, it.TextureName, 4)
+    end
+
+    if it.Blip ~= nil then
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_COLUMN_STATE", self.LeftColumn.position, "", false)
+        self.Minimap:Enabled(true)
+        self.Minimap:RefreshMapPosition(vector2(it.Blip.Position.x, it.Blip.Position.y))
+    elseif not it.RightPanelDescription:IsNullOrEmpty() then
+        self.Minimap:Enabled(false)
+        local labels = it.RightPanelDescription:SplitLabel()
+        BeginScaleformMovieMethod(ScaleformUI.Scaleforms._pauseMenu._pause.handle, "SET_COLUMN_STATE");
+        ScaleformMovieMethodAddParamInt(self.LeftColumn.position);
+        BeginTextCommandScaleformString("CELL_EMAIL_BCON");
+        for i=1, #labels, 1 do
+            AddTextComponentScaleform(labels[i]);
         end
-    }
-    return setmetatable(data, GalleryTab)
-end
-
----Returns the max pages available.
----@return number
-function GalleryTab:MaxPages()
-    return math.ceil(#self.GalleryItems / 12)
-end
-
-function GalleryTab:shouldNavigateToNewPage(index)
-    if #self.GalleryItems <= 12 or self:MaxPages() <= 1 then
-        return false
-    end
-
-    return (self.currentSelection == 1 and index == 1) or (self.currentSelection == 5 and index == 5) or (self.currentSelection == 9 and index == 9) or
-        (self.currentSelection == 4 and index == 4) or (self.currentSelection == 8 and index == 8) or (self.currentSelection == 12 and index == 12)
-end
-
-function GalleryTab:isItemVisible(index)
-    local initial = (self.CurPage - 1) * self.maxItemsPerPage + 1
-    return index > initial and index < initial + 11
-end
-
-function GalleryTab:gridIndexFromItemIndex(index)
-    return index % 12
-end
-
-function GalleryTab:setTitle(txd, txn, state)
-    self.txd = txd
-    self.txn = txn
-    self.state = state
-    if self.Base.Parent ~= nil and self.Base.Parent:Visible() and self.Visible then
-        self.bigPic = not (state == 0)
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_TITLE", txd, txn, state)
+        EndTextCommandScaleformString_2();
+        ScaleformMovieMethodAddParamBool(true);
+        EndScaleformMovieMethod();
+    else
+        self.Minimap:Enabled(false)
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_COLUMN_STATE", self.LeftColumn.position, "", true)
     end
 end
 
----Sets the title labels for all the items.
----@param maxItems number
----@param title string
----@param date string
----@param location string
----@param track string
----@param visible boolean
-function GalleryTab:SetDescriptionLabels(maxItems, title, date, location, track, visible)
-    self.maxItemsPerPage = maxItems
-    self.titleLabel = title
-    self.dateLabel = date
-    self.locationLabel = location
-    self.trackLabel = track
-    self.labelsVisible = visible
-    if self.Base.Parent ~= nil and self.Base.Parent:Visible() and self.Visible then
-        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_GALLERY_DESCRIPTION_LABELS", maxItems, title, date, location, track, visible)
+function GalleryTab:GoDown()
+    if not self.Focused then return end
+    self.LeftColumn:GoDown()
+    self.LeftColumn:UpdatePage()
+    local it = self.LeftColumn.Items[self.LeftColumn.currentPageIndex]
+    if self.bigPic then
+        self:SetTitle(it.TextureDictionary, it.TextureName, 4)
+    end
+
+    if it.Blip ~= nil then
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_COLUMN_STATE", self.LeftColumn.position, "", false)
+        self.Minimap:Enabled(true)
+        self.Minimap:RefreshMapPosition(vector2(it.Blip.Position.x, it.Blip.Position.y))
+    elseif not it.RightPanelDescription:IsNullOrEmpty() then
+        self.Minimap:Enabled(false)
+        local labels = it.RightPanelDescription:SplitLabel()
+        BeginScaleformMovieMethod(ScaleformUI.Scaleforms._pauseMenu._pause.handle, "SET_COLUMN_STATE");
+        ScaleformMovieMethodAddParamInt(self.LeftColumn.position);
+        BeginTextCommandScaleformString("CELL_EMAIL_BCON");
+        for i=1, #labels, 1 do
+            AddTextComponentScaleform(labels[i]);
+        end
+        EndTextCommandScaleformString_2();
+        ScaleformMovieMethodAddParamBool(true);
+        EndScaleformMovieMethod();
+    else
+        self.Minimap:Enabled(false)
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_COLUMN_STATE", self.LeftColumn.position, "", true)
     end
 end
 
----Adds a GalleryItem to the gallery.
----@param item GalleryItem
+function GalleryTab:GoLeft()
+    if not self.Focused then return end
+    self.LeftColumn:GoLeft()
+    self.LeftColumn:UpdatePage()
+    local it = self.LeftColumn.Items[self.LeftColumn.currentPageIndex]
+    if self.bigPic then
+        self:SetTitle(it.TextureDictionary, it.TextureName, 4)
+    end
+
+    if it.Blip ~= nil then
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_COLUMN_STATE", self.LeftColumn.position, "", false)
+        self.Minimap:Enabled(true)
+        self.Minimap:RefreshMapPosition(vector2(it.Blip.Position.x, it.Blip.Position.y))
+    elseif not it.RightPanelDescription:IsNullOrEmpty() then
+        self.Minimap:Enabled(false)
+        local labels = it.RightPanelDescription:SplitLabel()
+        BeginScaleformMovieMethod(ScaleformUI.Scaleforms._pauseMenu._pause.handle, "SET_COLUMN_STATE");
+        ScaleformMovieMethodAddParamInt(self.LeftColumn.position);
+        BeginTextCommandScaleformString("CELL_EMAIL_BCON");
+        for i=1, #labels, 1 do
+            AddTextComponentScaleform(labels[i]);
+        end
+        EndTextCommandScaleformString_2();
+        ScaleformMovieMethodAddParamBool(true);
+        EndScaleformMovieMethod();
+    else
+        self.Minimap:Enabled(false)
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_COLUMN_STATE", self.LeftColumn.position, "", true)
+    end
+end
+
+function GalleryTab:GoRight()
+    if not self.Focused then return end
+    self.LeftColumn:GoRight()
+    self.LeftColumn:UpdatePage()
+    local it = self.LeftColumn.Items[self.LeftColumn.currentPageIndex]
+    if self.bigPic then
+        self:SetTitle(it.TextureDictionary, it.TextureName, 4)
+    end
+
+    if it.Blip ~= nil then
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_COLUMN_STATE", self.LeftColumn.position, "", false)
+        self.Minimap:Enabled(true)
+        self.Minimap:RefreshMapPosition(vector2(it.Blip.Position.x, it.Blip.Position.y))
+    elseif not it.RightPanelDescription:IsNullOrEmpty() then
+        self.Minimap:Enabled(false)
+        local labels = it.RightPanelDescription:SplitLabel()
+        BeginScaleformMovieMethod(ScaleformUI.Scaleforms._pauseMenu._pause.handle, "SET_COLUMN_STATE");
+        ScaleformMovieMethodAddParamInt(self.LeftColumn.position);
+        BeginTextCommandScaleformString("CELL_EMAIL_BCON");
+        for i=1, #labels, 1 do
+            AddTextComponentScaleform(labels[i]);
+        end
+        EndTextCommandScaleformString_2();
+        ScaleformMovieMethodAddParamBool(true);
+        EndScaleformMovieMethod();
+    else
+        self.Minimap:Enabled(false)
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_COLUMN_STATE", self.LeftColumn.position, "", true)
+    end
+end
+
+function GalleryTab:Select()
+    if not self.Focused then return end
+    self.CurrentColumnIndex = 1
+    self.LeftColumn:Select()
+end
+
+function GalleryTab:GoBack()
+    if not self.Focused then return end
+    self.LeftColumn:GoBack()
+    self.CurrentColumnIndex = 0
+end
+
+function GalleryTab:ShowColumns()
+    self.LeftColumn:ShowColumn()
+end
+
+function GalleryTab:Focus()
+    BaseTab.Focus(self)
+    self.LeftColumn:UpdatePage()
+    local it = self.LeftColumn.Items[self.LeftColumn:Index()]
+    if it.Blip ~= nil then
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_COLUMN_STATE", self.LeftColumn.position, "", false)
+        self.Minimap:Enabled(true)
+        self.Minimap:RefreshMapPosition(vector2(it.Blip.Position.x, it.Blip.Position.y))
+    elseif not it.RightPanelDescription:IsNullOrEmpty() then
+        self.Minimap:Enabled(false)
+        local labels = it.RightPanelDescription:SplitLabel()
+        BeginScaleformMovieMethod(ScaleformUI.Scaleforms._pauseMenu._pause.handle, "SET_COLUMN_STATE");
+        ScaleformMovieMethodAddParamInt(self.LeftColumn.position);
+        BeginTextCommandScaleformString("CELL_EMAIL_BCON");
+        for i=1, #labels, 1 do
+            AddTextComponentScaleform(labels[i]);
+        end
+        EndTextCommandScaleformString_2();
+        ScaleformMovieMethodAddParamBool(true);
+        EndScaleformMovieMethod();
+    else
+        self.Minimap:Enabled(false)
+        ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_COLUMN_STATE", self.LeftColumn.position, "", true)
+    end
+end
+
+function GalleryTab:UnFocus()
+    BaseTab.UnFocus(self)
+    self.Minimap:Enabled(false)
+    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_COLUMN_STATE", self.LeftColumn.position, "", true)
+end
+
+function GalleryTab:SetTitle(txd, txn, state)
+    self.LeftColumn:SetTitle(txd, txn, state)
+end
+
+function GalleryTab:SetDescriptionLabels(title, date, location, track, visible)
+    self.LeftColumn.titleLabel = title;
+    self.LeftColumn.dateLabel = date;
+    self.LeftColumn.locationLabel = location;
+    self.LeftColumn.trackLabel = track;
+    self.LeftColumn.labelsVisible = visible;
+    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_DESCRIPTION", self.LeftColumn.position, title, date, location, track, visible)
+end
+
 function GalleryTab:AddItem(item)
-    item.Parent = self
-    table.insert(self.GalleryItems, item)
+    self.LeftColumn:AddItem(item)
     if item.Blip ~= nil then
         table.insert(self.Minimap.MinimapBlips, item.Blip)
     end
-    if self.Base.Parent ~= nil and self.Base.Parent:Visible() and self.Visible then
-        if #self.GalleryItems < 12 then
-            local idx = IndexOf(self.GalleryItem, self) - 1
-            ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("ADD_GALLERY_ITEM", idx, idx, 33, 0, 0, 1, "", item.TextureDictionary, item.TextureName, "", 1, false, item.Label1, item.Label2, item.Label3, item.Label4)
+    if self.Parent ~= nil and self.Parent:Visible() and self.Visible then
+        if #self.LeftColumn.Items < 12 then
+            self.LeftColumn:Populate()
         end
     end
 end
 
----Gets the current grid selection (1 -> 12)
----@return number | nil
-function GalleryTab:CurrentSelection(index)
-    if index == nil then
-        return self.currentSelection
-    else
-        self.currentSelection = index
-    end
-end
-
-function GalleryTab:updateHighLight()
-    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("UPDATE_GALLERY_HIGHLIGHT", self.currentSelection - 1, true)
-end
-
-function GalleryTab:updatePage()
-    if not self.bigPic then
-        BeginScaleformMovieMethod(ScaleformUI.Scaleforms._pauseMenu._pause.handle, "SET_GALLERY_SCROLL_LABEL")
-        ScaleformMovieMethodAddParamInt(0)
-        ScaleformMovieMethodAddParamInt(0)
-        ScaleformMovieMethodAddParamInt(0)
-        BeginTextCommandScaleformString("GAL_NUM_PAGES")
-        AddTextComponentInteger(self.CurPage)
-        AddTextComponentInteger(self:MaxPages())
-        EndTextCommandScaleformString()
-        EndScaleformMovieMethod()
-    else
-        BeginScaleformMovieMethod(ScaleformUI.Scaleforms._pauseMenu._pause.handle, "SET_GALLERY_SCROLL_LABEL")
-        ScaleformMovieMethodAddParamInt(self.currentIndex - 1)
-        ScaleformMovieMethodAddParamInt(#self.GalleryItems)
-        ScaleformMovieMethodAddParamInt(self.maxItemsPerPage)
-        EndScaleformMovieMethod()
+function GalleryTab:MouseEvent(eventType, context, index)
+    if not self.Focused then return end
+    if eventType == 5 then
+        if index + 1 ~= self.LeftColumn:Index() then
+            self.LeftColumn.Items[self.LeftColumn:Index()]:Selected(false)
+            self.LeftColumn:Index(index + 1)
+            self.LeftColumn.Items[self.LeftColumn:Index()]:Selected(true)
+            return
+        end
+        self.LeftColumn:Select()
+        self.CurrentColumnIndex = 1
+    elseif eventType == 10 or eventType == 11 then
+        local dir = -1
+        if eventType == 11 then
+            dir = 1
+        end
+        self.LeftColumn:MouseScroll(dir)
     end
 end

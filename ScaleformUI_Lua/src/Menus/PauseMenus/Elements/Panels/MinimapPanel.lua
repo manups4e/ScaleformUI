@@ -25,17 +25,18 @@ end
 ---@field private Dispose fun()
 ---@field public ClearMinimap fun()
 
-function MinimapPanel.New(parent, parentTab)
+function MinimapPanel.New(parentTab)
     local _data = {
-        Parent = parent,
+        Parent = nil,
         ParentTab = parentTab,
         MinimapBlips = {},
         MinimapRoute = MinimapRoute.New(),
         mapPosition = vector2(0, 0),
         enabled = false,
         turnedOn = false,
-        localMapStage = 0,
-        IsRadarVisible = IsMinimapRendering(),
+        localMapStage = -1,
+        HidePedBlip = false,
+        IsRadarVisible = not IsRadarHidden(),
     }
     return setmetatable(_data, MinimapPanel)
 end
@@ -45,29 +46,10 @@ function MinimapPanel:Enabled(_e)
         return self.enabled
     else
         if self.Parent ~= nil and self.Parent:Visible() then
-            local pSubT
-            if self.ParentTab ~= nil then
-                pSubT = self.ParentTab.Base.Parent()
-            else
-                pSubT = self.Parent()
-            end
-            if pSubT == "LobbyMenu" then
-                if self.Parent.listCol[self.Parent._focus].Type == "players" then
-                    if self.Parent.PlayersColumn.Items[self.Parent.PlayersColumn:CurrentSelection()]:KeepPanelVisible() then
-                        self:Dispose()
-                        return
-                    end
-                end
-            elseif pSubT == "PauseMenu" then
-                local tab = self.ParentTab
-                local cur_tab, cur_sub_tab = tab()
-                if cur_sub_tab == "PlayerListTab" then
-                    if tab.listCol[tab._focus].Type == "players" then
-                        if tab.PlayerListColumn.Items[tab.PlayerListColumn:CurrentSelection()]:KeepPanelVisible() then
-                            self:Dispose()
-                            return
-                        end
-                    end
+            if self.ParentTab() == "PlayerListTab" and self.ParentTab:CurrentColumn().type == PLT_COLUMNS.PLAYERS then
+                if self.ParentTab:CurrentColumn():CurrentItem():KeepPanelVisible() then
+                    self:Dispose()
+                    return
                 end
             end
         end
@@ -80,22 +62,26 @@ function MinimapPanel:Enabled(_e)
             self.localMapStage = -1
             if self.turnedOn then
                 self.IsRadarVisible = IsMinimapRendering()
-                DisplayRadar(false);
-                RaceGalleryFullscreen(false);
-                self.turnedOn = false;
+                DisplayRadar(false)
+                RaceGalleryFullscreen(false)
+                self.turnedOn = false
             end
         end
         if self.Parent ~= nil and self.Parent:Visible() then
-            local show = not self.enabled
-            local pSubT = self.Parent()
-            if pSubT == "LobbyMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._lobby:CallFunction("HIDE_MISSION_PANEL", show)
-            elseif pSubT == "PauseMenu" then
-                ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("HIDE_PLAYERS_TAB_MISSION_PANEL", show)
+            if self.ParentTab() == "PlayerListTab" then
+                if self.ParentTab:CurrentColumn().type == PLT_COLUMNS.PLAYERS then
+                    if ToBool(_e) then
+                        self.ParentTab:CurrentColumn():CurrentItem():Dispose()
+                    else
+                        self.ParentTab:CurrentColumn():CurrentItem():AddPedToPauseMenu()
+                    end
+                end
+                if self.ParentTab.RightColumn ~= nil and self.ParentTab.RightColumn.type == PLT_COLUMNS.MISSION_DETAILS then
+                    self.ParentTab.RightColumn:ColumnVisible(not ToBool(_e) and
+                    self.ParentTab:CurrentColumn().type ~= PLT_COLUMNS.PLAYERS)
+                end
             end
         end
-
-        PlaySoundFrontend(-1, "NAV_UP_DOWN", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
     end
 end
 
@@ -127,13 +113,13 @@ function MinimapPanel:InitializeMapSize()
 
     -- Center of square area
     self.mapPosition = vector2((topLeft.x + bottomRight.x) / 2, (topLeft.y + bottomRight.y) / 2)
-    
+
     -- Calculate our range and get the correct zoom.
     local DistanceX = math.abs(left - right)
     local DistanceY = math.abs(top - bottom)
     local Diagonal = math.sqrt(DistanceX ^ 2 + DistanceY ^ 2)
 
-    if DistanceX == DistanceY then -- Square
+    if DistanceX == DistanceY then      -- Square
         self.zoomDistance = Diagonal / 2.4
     elseif (DistanceX > DistanceY) then -- Horizontal
         local mul = 1.7
@@ -158,16 +144,14 @@ function MinimapPanel:InitializeMapSize()
 end
 
 function MinimapPanel:RefreshMapPosition(position)
+    if position == vec(0,0) then return end
     self.mapPosition = position
     LockMinimapPosition(self.mapPosition.x, self.mapPosition.y)
-    if self.ParentTab ~= nil then
-        local cur_tab, cur_sub_tab = self.ParentTab()
-        if cur_sub_tab == "GalleryTab" then
-            if self.ParentTab.bigPic then
-                self.zoomDistance = 600.0
-            else
-                self.zoomDistance = 1200.0
-            end
+    if self.ParentTab() == "GalleryTab" then
+        if self.ParentTab.bigPic then
+            self.zoomDistance = 600.0
+        else
+            self.zoomDistance = 1200.0
         end
     end
 end
@@ -177,7 +161,7 @@ function MinimapPanel:SetupBlips()
         RaceGalleryNextBlipSprite(blip.Sprite)
         local b = RaceGalleryAddBlip(blip.Position.x, blip.Position.y, blip.Position.z)
         if blip.Scale > 0 then
-            SetBlipScale(b, blip.Scale)
+            SetBlipScale(b, blip.Scale) 
         end
         SetBlipColour(b, blip.Color)
     end
@@ -200,75 +184,79 @@ function MinimapPanel:ProcessMap()
         end
     else
         if self.turnedOn then
-            self.IsRadarVisible = IsMinimapRendering()
+            self.IsRadarVisible = not IsRadarHidden()
             DisplayRadar(false)
             RaceGalleryFullscreen(false)
             self.turnedOn = false
             self:Dispose()
         end
     end
-    SetPlayerBlipPositionThisFrame(-5000.0, -5000.0)
+    if self.HidePedBlip then
+        SetPlayerBlipPositionThisFrame(-5000.0, -5000.0)
+    end
     self:RefreshZoom()
 end
 
 function MinimapPanel:InitializeMapDisplay()
-    DeleteWaypoint();
-    SetWaypointOff();
-    ClearGpsCustomRoute();
-    ClearGpsMultiRoute();
-    SetPoliceRadarBlips(false);
+    DeleteWaypoint()
+    SetWaypointOff()
+    ClearGpsCustomRoute()
+    ClearGpsMultiRoute()
+    SetPoliceRadarBlips(false)
 
-    self.MinimapRoute:SetupCustomRoute();
-    self:SetupBlips();
+    self.MinimapRoute:SetupCustomRoute()
+    self:SetupBlips()
 end
 
 function MinimapPanel:InitializeMap()
     -- Use the data to set up our map.
-    self:InitializeMapSize();
+    self:InitializeMapSize()
     -- Initialise all our blips from data
-    self:InitializeMapDisplay();
+    self:InitializeMapDisplay()
     -- Set the zoom now
-    self:RefreshZoom();
-    self.localMapStage = 1;
+    self:RefreshZoom()
+    self.localMapStage = 1
 end
 
 function MinimapPanel:RefreshZoom()
     if self.zoomDistance ~= 0 then
-        SetRadarZoomToDistance(self.zoomDistance);
+        SetRadarZoomToDistance(self.zoomDistance)
     end
-    LockMinimapPosition(self.mapPosition.x, self.mapPosition.y);
+    LockMinimapPosition(self.mapPosition.x, self.mapPosition.y)
 end
 
 function MinimapPanel:Dispose()
-    self.localMapStage = -1;
-    self.enabled = false;
-    SetPoliceRadarBlips(true);
-    PauseToggleFullscreenMap(false);
-    DisplayRadar(self.IsRadarVisible);
-    RaceGalleryFullscreen(false);
-    ClearRaceGalleryBlips();
-    self.zoomDistance = 0;
-    SetRadarZoom(0);
-    SetGpsCustomRouteRender(false, 18, 30);
-    SetGpsMultiRouteRender(false);
-    UnlockMinimapPosition();
-    UnlockMinimapAngle();
-    DeleteWaypoint();
-    ClearGpsCustomRoute();
-    ClearGpsFlags();
+    self.localMapStage = 0
+    self.enabled = false
+    SetPoliceRadarBlips(true)
+    PauseToggleFullscreenMap(false)
+    DisplayRadar(self.IsRadarVisible)
+    RaceGalleryFullscreen(false)
+    ClearRaceGalleryBlips()
+    self.zoomDistance = 0
+    SetRadarZoom(0)
+    SetGpsCustomRouteRender(false, 18, 30)
+    SetGpsMultiRouteRender(false)
+    UnlockMinimapPosition()
+    UnlockMinimapAngle()
+    DeleteWaypoint()
+    ClearGpsCustomRoute()
+    ClearGpsFlags()
+    SetBigmapActive(false, false)
     self.MinimapBlips = {}
     self.MinimapRoute = MinimapRoute.New()
 end
 
 function MinimapPanel:ClearMinimap()
     self.MinimapBlips = {}
-    self.MinimapRoute = MinimapRoute.New();
-    self.localMapStage = -1;
-    self.zoomDistance = 0;
-    ClearRaceGalleryBlips();
-    SetRadarZoom(0);
-    SetGpsCustomRouteRender(false, 18, 30);
-    DeleteWaypoint();
-    ClearGpsCustomRoute();
-    ClearGpsFlags();
+    self.MinimapRoute = MinimapRoute.New()
+    self.localMapStage = 0
+    self.zoomDistance = 0
+    ClearRaceGalleryBlips()
+    SetRadarZoom(0)
+    SetGpsCustomRouteRender(false, 18, 30)
+    DeleteWaypoint()
+    ClearGpsCustomRoute()
+    ClearGpsFlags()
+    SetBigmapActive(false, false)
 end

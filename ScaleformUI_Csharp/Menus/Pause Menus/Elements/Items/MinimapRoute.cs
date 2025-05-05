@@ -1,7 +1,4 @@
-﻿using ScaleformUI.Scaleforms;
-using static CitizenFX.Core.Native.API;
-
-namespace ScaleformUI.PauseMenus.Elements.Items
+﻿namespace ScaleformUI.PauseMenus.Elements.Items
 {
     [Flags]
     public enum GPSFlags

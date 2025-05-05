@@ -43,21 +43,6 @@ namespace ScaleformUI.Menu
                     CurrentListItem = Items[_index].ToString();
                 else
                     CurrentListItem = "";
-                if (ParentColumn != null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
-                {
-                    string joinedList = string.Join(",", Items.Cast<string>().Select(x =>
-                        x = Selected ? (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~l~", "~s~")
-                    ));
-                    if (ParentColumn.Parent is MainView lobby)
-                    {
-                        lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_LISTITEM_LIST", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), joinedList, Index);
-                    }
-                    else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
-                    {
-                        pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_LISTITEM_LIST", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), joinedList, Index);
-                    }
-                }
-
             }
         }
 
@@ -186,22 +171,10 @@ namespace ScaleformUI.Menu
             _items = null;
             _items = new(list);
             Index = index;
-            if (ParentColumn != null && ParentColumn.Parent.Visible && ParentColumn.Pagination.IsItemVisible(ParentColumn.Items.IndexOf(this)))
-            {
-                string joinedList = string.Join(",", Items.Cast<string>().Select(x =>
-                  x = Selected ? (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (x.StartsWith("~") ? x : "~s~" + x).ToString().Replace("~l~", "~s~")
-                ));
-                if (!Enabled)
-                    joinedList = joinedList.ReplaceRstarColorsWith("~c~");
-                if (ParentColumn.Parent is MainView lobby)
-                {
-                    lobby._pause._lobby.CallFunction("UPDATE_SETTINGS_LISTITEM_LIST", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), joinedList, Index);
-                }
-                else if (ParentColumn.Parent is TabView pause && ParentColumn.ParentTab.Visible)
-                {
-                    pause._pause._pause.CallFunction("UPDATE_PLAYERS_TAB_SETTINGS_LISTITEM_LIST", ParentColumn.Pagination.GetScaleformIndex(ParentColumn.Items.IndexOf(this)), joinedList, Index);
-                }
-            }
+            if(ParentColumn != null && ParentColumn.visible)
+                ParentColumn.SendItemToScaleform(ParentColumn.Items.IndexOf(this), true);
+            if (ParentColumn != null && ParentColumn.visible)
+                ParentColumn.SendItemToScaleform(ParentColumn.Items.IndexOf(this), true);
         }
 
         public override void SetRightBadge(BadgeIcon badge)
@@ -214,7 +187,7 @@ namespace ScaleformUI.Menu
             throw new Exception("UIMenuListItem cannot have a right label.");
         }
 
-        [Obsolete("Use CurrentListItem instead.")]
+        [Obsolete("Use item.CurrentListItem instead.")]
         public string CurrentItem()
         {
             return CurrentListItem;

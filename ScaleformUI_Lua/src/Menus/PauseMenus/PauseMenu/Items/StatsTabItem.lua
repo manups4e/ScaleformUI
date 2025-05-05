@@ -1,14 +1,14 @@
-StatsTabItem = setmetatable({}, StatsTabItem)
+StatsTabItem = {}
 StatsTabItem.__index = StatsTabItem
-StatsTabItem.__call = function()
-    return "BasicTabItem", "StatsTabItem"
-end
+setmetatable(StatsTabItem, { __index = PauseMenuItem })
+StatsTabItem.__call = function() return "StatsTabItem" end
+
 
 ---@class StatsTabItem
----@field public Base BasicTabItem
+---@field public Base PauseMenuItem
 ---@field public Type StatItemType
 ---@field public Label string
----@field public Parent BasicTabItem
+---@field public Parent PauseMenuItem
 ---@field public OnBarChanged fun(item: StatsTabItem, value: number)
 ---@field public OnSliderSelected fun(item: StatsTabItem, value: number)
 
@@ -17,15 +17,11 @@ end
 ---@param rightLabel string?
 ---@return table
 function StatsTabItem.NewBasic(label, rightLabel)
-    local data = {
-        Base = BasicTabItem.New(label or ""),
-        Type = StatItemType.Basic,
-        Label = label or "",
-        _rightLabel = rightLabel or "",
-        LabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY,
-        RightLabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY
-    }
-    return setmetatable(data, StatsTabItem)
+    local base = PauseMenuItem.New(label, ScaleformFonts.CHALET_LONDON_NINETEENSIXTY)
+    base.Type = StatItemType.Basic
+    base._rightLabel = rightLabel or ""
+    base.RightLabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY
+    return setmetatable(base, StatsTabItem)
 end
 
 ---Adds a new bar to the StatsTabItem.
@@ -34,15 +30,11 @@ end
 ---@param color SColor?
 ---@return table
 function StatsTabItem.NewBar(label, value, color)
-    local data = {
-        Base = BasicTabItem.New(label or ""),
-        Type = StatItemType.ColoredBar,
-        Label = label or "",
-        _value = value,
-        _coloredBarColor = color or SColor.HUD_Freemode,
-        LabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY
-    }
-    return setmetatable(data, StatsTabItem)
+    local base = PauseMenuItem.New(label, ScaleformFonts.CHALET_LONDON_NINETEENSIXTY)
+    base.Type = StatItemType.ColoredBar
+    base._value = value
+    base._coloredBarColor = color or SColor.HUD_Freemode
+    return setmetatable(base, StatsTabItem)
 end
 
 ---Sets the right label of the item.
@@ -52,20 +44,15 @@ function StatsTabItem:RightLabel(label)
     if self.Type == StatItemType.Basic then
         if label ~= nil then
             self._rightLabel = label
-            local leftItem = IndexOf(self.Base.Parent.Parent.LeftItemList, self.Base.Parent) - 1
-            local rightIndex = IndexOf(self.Base.Parent.ItemList, self) - 1
-            self.Base.Parent.Parent.Parent._pause:UpdateStatsItemBasic(leftItem, rightIndex, self.Label,
-                self._rightLabel)
+            if self.ParentColumn ~= nil and self.ParentColumn:visible() then
+                self.ParentColumn:UpdateSlot(IndexOf(self.ParentColumn.Items, self))
+            end
         else
             return self._rightLabel
         end
     else
-        local _type = ""
-        for k, v in pairs(StatItemType) do
-            if v == self.Type then _type = tostring(k) end
-        end
         print("SCALEFORMUI - WARNING: RightLabel function can only be called by Basic items.. your item is of type: " ..
-            _type)
+        _type)
     end
     return self._rightLabel
 end
@@ -77,20 +64,16 @@ function StatsTabItem:Value(value)
     if self.Type == StatItemType.ColoredBar then
         if value ~= nil then
             self._value = value
-            local leftItem = IndexOf(self.Base.Parent.Parent.LeftItemList, self.Base.Parent) - 1
-            local rightIndex = IndexOf(self.Base.Parent.ItemList, self) - 1
-            self.Base.Parent.Parent.Parent._pause:UpdateStatsItemBar(leftItem, rightIndex, self._value)
+            if self.ParentColumn ~= nil and self.ParentColumn:visible() then
+                self.ParentColumn:UpdateSlot(IndexOf(self.ParentColumn.Items, self))
+            end
             self.OnBarChanged(self, value)
         else
             return self._value
         end
     else
-        local _type = ""
-        for k, v in pairs(StatItemType) do
-            if v == self.Type then _type = tostring(k) end
-        end
         print("SCALEFORMUI - WARNING: Value function can only be called by colored bar items.. your item is of type: " ..
-            _type)
+        _type)
     end
     return self._value
 end
@@ -102,20 +85,16 @@ function StatsTabItem:ColoredBarColor(color)
     if self.Type == StatItemType.ColoredBar then
         if color ~= nil then
             self._coloredBarColor = color
-            local leftItem = IndexOf(self.Base.Parent.Parent.LeftItemList, self.Base.Parent) - 1
-            local rightIndex = IndexOf(self.Base.Parent.ItemList, self) - 1
-            self.Base.Parent.Parent.Parent._pause:UpdateStatsItemBar(leftItem, rightIndex, color)
+            if self.ParentColumn ~= nil and self.ParentColumn:visible() then
+                self.ParentColumn:UpdateSlot(IndexOf(self.ParentColumn.Items, self))
+            end
         else
             return self._coloredBarColor
         end
     else
-        local _type = ""
-        for k, v in pairs(StatItemType) do
-            if v == self.Type then _type = tostring(k) end
-        end
         print(
-            "SCALEFORMUI - WARNING: ColoredBarColor function can only be called by colored bar items.. your item is of type: " ..
-            _type)
+        "SCALEFORMUI - WARNING: ColoredBarColor function can only be called by colored bar items.. your item is of type: " ..
+        _type)
     end
     return self._coloredBarColor
 end

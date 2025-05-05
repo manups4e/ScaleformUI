@@ -15,10 +15,8 @@ namespace ScaleformUI.Menu
                 sliderColor = value;
                 if (Parent != null && Parent.Visible)
                     Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
-                //if (Parent is not null && Parent.Visible && Parent.Pagination.IsItemVisible(Parent.MenuItems.IndexOf(this)))
-                //{
-                //    Main.scaleformUI.CallFunction("UPDATE_COLORS", Parent.Pagination.GetScaleformIndex(Parent.MenuItems.IndexOf(this)), MainColor, HighlightColor, TextColor, HighlightedTextColor, value);
-                //}
+                if (ParentColumn != null && ParentColumn.visible)
+                    ParentColumn.SendItemToScaleform(ParentColumn.Items.IndexOf(this), true);
             }
         }
         internal bool _heritage;
@@ -48,6 +46,8 @@ namespace ScaleformUI.Menu
                 }
                 if (Parent != null && Parent.Visible)
                     Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
+                if (ParentColumn != null && ParentColumn.visible)
+                    ParentColumn.SendItemToScaleform(ParentColumn.Items.IndexOf(this), true);
             }
         }
         /// <summary>
@@ -69,6 +69,8 @@ namespace ScaleformUI.Menu
                     _value = value;
                 if (Parent != null && Parent.Visible)
                     Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
+                if (ParentColumn != null && ParentColumn.visible)
+                    ParentColumn.SendItemToScaleform(ParentColumn.Items.IndexOf(this), true);
                 SliderChanged(_value);
             }
         }
@@ -86,6 +88,8 @@ namespace ScaleformUI.Menu
                 _multiplier = value;
                 if (Parent != null && Parent.Visible)
                     Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
+                if (ParentColumn != null && ParentColumn.visible)
+                    ParentColumn.SendItemToScaleform(ParentColumn.Items.IndexOf(this), true);
             }
         }
 

@@ -5,7 +5,7 @@ namespace ScaleformUI.PauseMenus.Elements.Items
 {
     public delegate void StoreItemActivated(PlayerListTab tab, StoreListColumn column, int index);
 
-    public class StoreItem
+    public class StoreItem : PauseMenuItem
     {
         internal string textureName;
         internal string textureDictionary;
@@ -15,20 +15,26 @@ namespace ScaleformUI.PauseMenus.Elements.Items
         public string TextureDictionary { get => textureDictionary; }
         public string TextureName { get => textureName; }
         public string Description { get => description; }
-        public bool Selected { get; internal set; }
-        public bool Enabled { get; internal set; }
+        public bool Enabled { get; internal set; } = true;
         public bool Hovered { get; internal set; }
 
-        public StoreItem(string textureDictionary, string textureName)
-        {
-            this.textureName = textureName;
-            this.textureDictionary = textureDictionary;
-        }
-        public StoreItem(string textureDictionary, string textureName, string description)
+        public StoreItem(string textureDictionary, string textureName) : this(textureDictionary, textureName, string.Empty) { }
+
+        public StoreItem(string textureDictionary, string textureName, string description) : base("")
         {
             this.textureName = textureName;
             this.textureDictionary = textureDictionary;
             this.description = description;
+        }
+        public override bool Selected
+        {
+            get => base.Selected;
+            set
+            {
+                base.Selected = value;
+                if (ParentColumn != null && ParentColumn.visible)
+                    ParentColumn.UpdateSlot(ParentColumn.Items.IndexOf(this));
+            }
         }
 
         internal void Activate(PlayerListTab tab)
