@@ -208,8 +208,8 @@ namespace ScaleformUI.Menu
     public class UIMenuItem : PauseMenuItem
     {
         internal int _itemId = 0;
-        internal string _formatLeftLabel = "";
-        internal string _formatRightLabel = "";
+        //internal string _formatLeftLabel = "";
+        //internal string _formatRightLabel = "";
         internal bool _selected = false;
         private string _label = "";
         private string _rightLabel = "";
@@ -222,6 +222,10 @@ namespace ScaleformUI.Menu
         internal ItemFont rightLabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY;
         internal KeyValuePair<string, string> customLeftBadge = new KeyValuePair<string, string>("", "");
         internal KeyValuePair<string, string> customRightBadge = new KeyValuePair<string, string>("", "");
+        /// <summary>
+        ///     This will override all the text color formatting to a pure white color both when highlighted and not.
+        /// </summary>
+        public bool KeepTextColorWhite = false;
 
         /// <summary>
         /// The item color when not highlighted
@@ -359,24 +363,7 @@ namespace ScaleformUI.Menu
             {
                 _selected = value;
                 if (value)
-                {
-                    if (Enabled)
-                    {
-                        _formatLeftLabel = _formatLeftLabel.Replace("~w~", "~l~").Replace("~s~", "~l~");
-                        if (!string.IsNullOrWhiteSpace(_formatRightLabel))
-                            _formatRightLabel = _formatRightLabel.Replace("~w~", "~l~").Replace("~s~", "~l~");
-                    }
                     Highlighted?.Invoke(Parent, this);
-                }
-                else
-                {
-                    if (Enabled)
-                    {
-                        _formatLeftLabel = _formatLeftLabel.Replace("~l~", "~s~");
-                        if (!string.IsNullOrWhiteSpace(_formatRightLabel))
-                            _formatRightLabel = _formatRightLabel.Replace("~l~", "~s~");
-                    }
-                }
                 if (Parent != null && Parent.Visible)
                     Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
                 if (ParentColumn != null && ParentColumn.visible)
@@ -422,17 +409,6 @@ namespace ScaleformUI.Menu
             set
             {
                 _enabled = value;
-                if (!value)
-                {
-                    _formatLeftLabel = _formatLeftLabel.ReplaceRstarColorsWith("~c~");
-                    if(this is UIMenuItem)
-                        _formatRightLabel = _formatRightLabel.ReplaceRstarColorsWith("~c~");
-                }
-                else
-                {
-                    Label = _label;
-                    RightLabel = _rightLabel;
-                }
                 if (Parent != null && Parent.Visible)
                     Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
                 if (ParentColumn != null && ParentColumn.visible)
@@ -450,14 +426,12 @@ namespace ScaleformUI.Menu
         /// <summary>
         /// Returns this item's label.
         /// </summary>
-        public virtual string Label
+        public new virtual string Label
         {
             get => _label;
             set
             {
                 _label = value;
-                _formatLeftLabel = value.StartsWith("~") ? value : "~s~" + value;
-                _formatLeftLabel = !_enabled ? _formatLeftLabel.ReplaceRstarColorsWith("~c~") : _selected ? _formatLeftLabel.Replace("~w~", "~l~").Replace("~s~", "~l~") : _formatLeftLabel.Replace("~l~", "~s~");
                 if (Parent != null && Parent.Visible)
                     Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
                 if (ParentColumn != null && ParentColumn.visible)
@@ -543,8 +517,6 @@ namespace ScaleformUI.Menu
             private set
             {
                 _rightLabel = value;
-                _formatRightLabel = value.StartsWith("~") ? value : "~s~" + value;
-                _formatRightLabel = !_enabled ? _formatRightLabel.ReplaceRstarColorsWith("~c~") : _selected ? _formatRightLabel .Replace("~w~", "~l~").Replace("~s~", "~l~") : _formatRightLabel .Replace("~l~", "~s~");
                 if (Parent != null && Parent.Visible)
                     Parent.SendItemToScaleform(Parent.MenuItems.IndexOf(this), true);
                 if (ParentColumn != null && ParentColumn.visible)

@@ -21,27 +21,6 @@ function UIMenuCheckboxItem.New(Text, Check, checkStyle, Description, color, hig
     return setmetatable(base, UIMenuCheckboxItem)
 end
 
-function UIMenuCheckboxItem:Enabled(bool)
-    if bool ~= nil then
-        self._Enabled = ToBool(bool)
-        if not self._Enabled then
-            self._formatLeftLabel = ReplaceRstarColorsWith(self._formatLeftLabel, "~c~")
-        else
-            self:LeftLabel(self._label)
-        end
-        if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
-            local it = IndexOf(self.ParentMenu.Items, self)
-            self.ParentMenu:SendItemToScaleform(it, true)
-        end
-        if self.ParentColumn ~= nil then
-            local it = IndexOf(self.ParentColumn.Items, self)
-            self.ParentColumn:SendItemToScaleform(it, true)
-        end
-    else
-        return self._Enabled
-    end
-end
-
 -- not supported on Lobby and Pause menu yet
 function UIMenuCheckboxItem:RightLabelFont(itemFont)
     error("UIMenuCheckboxItem does not support a right label")

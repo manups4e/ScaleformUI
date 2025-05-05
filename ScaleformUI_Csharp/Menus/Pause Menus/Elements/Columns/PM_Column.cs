@@ -97,7 +97,7 @@ namespace ScaleformUI.Menus
             if (Items.Count > 0)
             {
                 if (idx == this.index)
-                    index = idx >= Items.Count ? Items.Count - 1 : idx >= 0 && idx < Items.Count ? idx - 1 : 0;
+                    index = idx >= Items.Count ? Items.Count - 1 : idx >= 0 && idx < Items.Count ? idx : 0;
                 else
                 {
                     if (selectedItem < Items.Count)

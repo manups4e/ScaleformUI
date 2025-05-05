@@ -94,7 +94,7 @@ function StoreListColumn:RemoveSetting(item)
         return
     end
     for k,v in pairs(self.Items) do
-        if v.Label == item.Label then
+        if v:Label () == item:Label() then
             self:RemoveSlot(k)
         end
     end

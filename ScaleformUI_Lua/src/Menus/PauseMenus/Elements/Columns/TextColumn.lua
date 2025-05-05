@@ -15,7 +15,7 @@ end
 function TextColumn:SetDataSlot(index)
     if index > #self.Items then return end
     local item = self.Items[index]
-    local labels = item.Label:SplitLabel()
+    local labels = item.label:SplitLabel()
     BeginScaleformMovieMethod(ScaleformUI.Scaleforms._pauseMenu._pause.handle, "SET_DATA_SLOT")
     PushScaleformMovieFunctionParameterInt(0)
     PushScaleformMovieFunctionParameterInt(index - 1)
@@ -35,7 +35,7 @@ end
 function TextColumn:UpdateSlot(index)
     if index > #self.Items then return end
     local item = self.Items[index]
-    local labels = item.Label:SplitLabel()
+    local labels = item.label:SplitLabel()
     BeginScaleformMovieMethod(ScaleformUI.Scaleforms._pauseMenu._pause.handle, "UPDATE_SLOT")
     PushScaleformMovieFunctionParameterInt(0)
     PushScaleformMovieFunctionParameterInt(index - 1)

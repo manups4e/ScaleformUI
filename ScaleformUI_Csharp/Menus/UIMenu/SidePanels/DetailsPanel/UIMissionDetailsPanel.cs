@@ -1,4 +1,5 @@
 ﻿using ScaleformUI.Elements;
+using System.Drawing;
 
 namespace ScaleformUI.Menu
 {
@@ -91,6 +92,27 @@ namespace ScaleformUI.Menu
             {
                 int it = ParentItem.Parent.MenuItems.IndexOf(ParentItem);
                 ParentItem.Parent.SendSidePanelToScaleform(it, true);
+            }
+        }
+
+        public void Clear()
+        {
+            Title = "";
+            TextureDict = "";
+            TextureName = "";
+            Items.Clear();
+            if (ParentItem is not null && ParentItem.Parent != null && ParentItem.Parent.Visible)
+            {
+                Main.scaleformUI.CallFunction("SET_PANEL_DATA_SLOT_EMPTY");
+            }
+        }
+
+        public void Refresh()
+        {
+            if (ParentItem is not null && ParentItem.Parent != null && ParentItem.Parent.Visible)
+            {
+                int it = ParentItem.Parent.MenuItems.IndexOf(ParentItem);
+                ParentItem.Parent.SendSidePanelToScaleform(it);
             }
         }
 

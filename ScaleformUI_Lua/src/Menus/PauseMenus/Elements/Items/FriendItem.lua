@@ -61,12 +61,12 @@ end
 ---@return string
 function FriendItem:Label(label)
     if label ~= nil then
-        self.Label = label
+        self.label = label
         if self.ParentColumn ~= nil and self.ParentColumn:visible() then
             self.ParentColumn:UpdateSlot(IndexOf(self.ParentColumn.Items, self))
         end
     end
-    return self.Label
+    return self.label
 end
 
 function FriendItem:KeepPanelVisible(bool)

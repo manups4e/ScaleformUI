@@ -616,7 +616,7 @@ function UIMenu:RemoveItemAt(idx)
                     if idx > #self.Items then
                         self._currentSelection = #self.Items
                     elseif idx > 1 and idx <= #self.Items then
-                        self._currentSelection = idx - 1
+                        self._currentSelection = idx
                     else
                         self._currentSelection = 1
                     end
@@ -694,7 +694,7 @@ end
 function UIMenu:RemoveItem(item)
     local idx = 0
     for k, v in pairs(self.Items) do
-        if v.Label == item.Label then
+        if v:Label () == item:Label() then
             idx = k
             break
         end
@@ -938,7 +938,7 @@ function UIMenu:SendSidePanelToScaleform(i, update)
             item.SidePanel.TextureDict, item.SidePanel.TextureName)
         for key, value in pairs(item.SidePanel.Items) do
             ScaleformUI.Scaleforms._ui:CallFunction("SET_SIDE_PANEL_SLOT", index - 1,
-                value.Type, value.Label, value.TextRight, value.Icon, value.IconColor, value.Tick,
+                value.Type, value.label, value.TextRight, value.Icon, value.IconColor, value.Tick,
                 value.LabelFont.FontName, value.LabelFont.FontID,
                 value._rightLabelFont.FontName, value._rightLabelFont.FontID)
         end
@@ -987,7 +987,7 @@ function UIMenu:SendPanelsToItemScaleform(i, update)
                 panel.Max, panel._percentage)
         elseif pSubType == "UIMenuGridPanel" then
             ScaleformUI.Scaleforms._ui:CallFunction(str, index - 1, pan - 1, 2, panel.TopLabel,
-                panel.RightLabel, panel.LeftLabel, panel.BottomLabel, panel._CirclePosition.x,
+                panel.RightLabel, panel.TopLabel, panel.BottomLabel, panel._CirclePosition.x,
                 panel._CirclePosition.y, true, panel.GridType)
         elseif pSubType == "UIMenuStatisticsPanel" then
             local arr = {}
@@ -1009,7 +1009,6 @@ function UIMenu:SendItemToScaleform(i, update, newItem, isSlot)
     if newItem == nil then newItem = false end
     if isSlot == nil then isSlot = false end
     local item = self.Items[i]
-    print(item:LeftLabel(), item.ItemId)
     local str = "SET_DATA_SLOT"
     if update then
         str = "UPDATE_DATA_SLOT"
@@ -1028,8 +1027,9 @@ function UIMenu:SendItemToScaleform(i, update, newItem, isSlot)
     PushScaleformMovieFunctionParameterInt(item.ItemId)
 
     if item.ItemId == 1 then
-        local lbl = item:createListString()
-        PushScaleformMovieMethodParameterString(lbl)
+        BeginTextCommandScaleformString("CELL_EMAIL_BCON")
+        AddTextComponentScaleform(item:CurrentListItem())
+        EndTextCommandScaleformString_2()
     elseif item.ItemId == 2 then
         PushScaleformMovieFunctionParameterBool(item:Checked())
     elseif item.ItemId == 3 or item.ItemId == 4 or item.ItemId == 5 then
@@ -1038,7 +1038,9 @@ function UIMenu:SendItemToScaleform(i, update, newItem, isSlot)
         PushScaleformMovieFunctionParameterInt(0)
     end
     PushScaleformMovieFunctionParameterBool(item:Enabled())
-    PushScaleformMovieMethodParameterString(item._formatLeftLabel)
+    BeginTextCommandScaleformString("CELL_EMAIL_BCON")
+    AddTextComponentScaleform(item:Label())
+    EndTextCommandScaleformString_2()
     PushScaleformMovieFunctionParameterBool(item:BlinkDescription())
     if item.ItemId == 1 then -- dynamic list item are handled like list items in the scaleform.. so the type remains 1
         PushScaleformMovieFunctionParameterInt(item:MainColor():ToArgb())
@@ -1094,7 +1096,9 @@ function UIMenu:SendItemToScaleform(i, update, newItem, isSlot)
     else
         PushScaleformMovieFunctionParameterInt(item:MainColor():ToArgb())
         PushScaleformMovieFunctionParameterInt(item:HighlightColor():ToArgb())
-        PushScaleformMovieMethodParameterString(item._formatRightLabel)
+        BeginTextCommandScaleformString("CELL_EMAIL_BCON")
+        AddTextComponentScaleform(item:RightLabel())
+        EndTextCommandScaleformString_2()
         PushScaleformMovieFunctionParameterInt(item._leftBadge)
         PushScaleformMovieMethodParameterString(item.customLeftIcon.TXD)
         PushScaleformMovieMethodParameterString(item.customLeftIcon.TXN)
@@ -1104,6 +1108,7 @@ function UIMenu:SendItemToScaleform(i, update, newItem, isSlot)
         PushScaleformMovieMethodParameterString(item.LabelFont.FontName)
         PushScaleformMovieMethodParameterString(item._rightLabelFont.FontName)
     end
+    PushScaleformMovieMethodParameterBool(item:KeepTextColorWhite())
     EndScaleformMovieMethod()
 end
 

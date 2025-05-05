@@ -21,7 +21,7 @@ function SubmenuCentralColumn:SetDataSlot(index)
     local curItem = self.Parent.LeftColumn.Items[self.Parent.LeftColumn:Index()]
     local _item = self.Items[index]
     if curItem.ItemType == LeftItemType.Info then
-        local labels = _item.Label:SplitLabel()
+        local labels = _item.label:SplitLabel()
         BeginScaleformMovieMethod(ScaleformUI.Scaleforms._pauseMenu._pause.handle, "SET_DATA_SLOT")
         PushScaleformMovieFunctionParameterInt(self.position)
         PushScaleformMovieFunctionParameterInt(index - 1)
@@ -45,7 +45,7 @@ function SubmenuCentralColumn:SetDataSlot(index)
         PushScaleformMovieFunctionParameterInt(_item.Type)
         PushScaleformMovieFunctionParameterInt(0)
         PushScaleformMovieFunctionParameterBool(true)
-        PushScaleformMovieFunctionParameterString(_item.Label)
+        PushScaleformMovieFunctionParameterString(_item.label)
         if _item.Type == StatItemType.Basic then
             PushScaleformMovieFunctionParameterString(_item._rightLabel)
         elseif _item.Type == StatItemType.ColoredBar then
@@ -70,10 +70,10 @@ function SubmenuCentralColumn:SetDataSlot(index)
         PushScaleformMovieFunctionParameterBool(true)
         if (_item.ItemType == SettingsItemType.BlipType) then
             BeginTextCommandScaleformString("STRING")
-            AddTextComponentScaleform(_item.Label)
+            AddTextComponentScaleform(_item.label)
             EndTextCommandScaleformString_2()
         else
-            PushScaleformMovieFunctionParameterString(_item.Label)
+            PushScaleformMovieFunctionParameterString(_item.label)
         end
         if _item.ItemType == SettingsItemType.Basic then
             PushScaleformMovieFunctionParameterString(_item._rightLabel)
@@ -100,7 +100,7 @@ function SubmenuCentralColumn:SetDataSlot(index)
         PushScaleformMovieFunctionParameterInt(0)
         PushScaleformMovieFunctionParameterBool(true)
         BeginTextCommandScaleformString("STRING")
-        AddTextComponentScaleform(_item.Label)
+        AddTextComponentScaleform(_item.label)
         EndTextCommandScaleformString_2()
         BeginTextCommandScaleformString("STRING")
         if IsUsingKeyboard(2) then
@@ -123,7 +123,7 @@ end
 function SubmenuCentralColumn:UpdateSlot(index)
     local _item = self.Items[index]
     if self:currentColumnType() == LeftItemType.Info then
-        local labels = _item.Label:SplitLabel()
+        local labels = _item.label:SplitLabel()
         BeginScaleformMovieMethod(ScaleformUI.Scaleforms._pauseMenu._pause.handle, "UPDATE_SLOT")
         PushScaleformMovieFunctionParameterInt(self.position)
         PushScaleformMovieFunctionParameterInt(index - 1)
@@ -147,7 +147,7 @@ function SubmenuCentralColumn:UpdateSlot(index)
         PushScaleformMovieFunctionParameterInt(_item.Type)
         PushScaleformMovieFunctionParameterInt(0)
         PushScaleformMovieFunctionParameterBool(true)
-        PushScaleformMovieFunctionParameterString(_item.Label)
+        PushScaleformMovieFunctionParameterString(_item.label)
         if _item.Type == StatItemType.Basic then
             PushScaleformMovieFunctionParameterString(_item._rightLabel)
         elseif _item.Type == StatItemType.ColoredBar then
@@ -172,10 +172,10 @@ function SubmenuCentralColumn:UpdateSlot(index)
         PushScaleformMovieFunctionParameterBool(true)
         if (_item.ItemType == SettingsItemType.BlipType) then
             BeginTextCommandScaleformString("STRING")
-            AddTextComponentScaleform(_item.Label)
+            AddTextComponentScaleform(_item.label)
             EndTextCommandScaleformString_2()
         else
-            PushScaleformMovieFunctionParameterString(_item.Label)
+            PushScaleformMovieFunctionParameterString(_item.label)
         end
         if _item.ItemType == SettingsItemType.Basic then
             PushScaleformMovieFunctionParameterString(_item.RightLabel)
@@ -202,7 +202,7 @@ function SubmenuCentralColumn:UpdateSlot(index)
         PushScaleformMovieFunctionParameterInt(0)
         PushScaleformMovieFunctionParameterBool(true)
         BeginTextCommandScaleformString("STRING")
-        AddTextComponentScaleform(_item.Label)
+        AddTextComponentScaleform(_item.label)
         EndTextCommandScaleformString_2()
         BeginTextCommandScaleformString("STRING")
         if IsUsingKeyboard(2) then

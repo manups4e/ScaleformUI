@@ -28,10 +28,6 @@ end
 ---@field public OnActivated fun(item:TabLeftItem, index:number)
 
 function TabLeftItem.New(label, _type, mainColor, highlightColor, labelFont)
-    local __formatLeftLabel = (tostring(label))
-    if not __formatLeftLabel:StartsWith("~") then
-        __formatLeftLabel = "~s~" .. __formatLeftLabel
-    end
     local base = PauseMenuItem.New(label, labelFont)
     base.ItemType = _type
     base.Focused = false
@@ -63,34 +59,19 @@ end
 
 function TabLeftItem:Label(label)
     if label ~= nil then
-        self.Label = label
-        self._formatLeftLabel = tostring(label)
-        if not self._formatLeftLabel:StartsWith("~") then
-            self._formatLeftLabel = "~s~" .. self._formatLeftLabel
-        end
-        if self:Selected() then
-            self._formatLeftLabel = self._formatLeftLabel:gsub("~w~", "~l~")
-            self._formatLeftLabel = self._formatLeftLabel:gsub("~s~", "~l~")
-        else
-            self._formatLeftLabel = self._formatLeftLabel:gsub("~l~", "~s~")
-        end
+        self.label = label
         if self.ParentTab ~= nil and self.ParentTab.Visible then
             local leftItem = IndexOf(self.ParentTab.LeftColumn.Items, self)
             self.ParentTab.LeftColumn:UpdateSlot(leftItem)
         end
     else
-        return self.Label
+        return self.label
     end
 end
 
 function TabLeftItem:Enabled(enabled)
     if enabled ~= nil then
         self._enabled = enabled
-        if not self._Enabled then
-            self._formatLeftLabel = ReplaceRstarColorsWith(self._formatLeftLabel, "~c~")
-        else
-            self:Label(self._label)
-        end
         if self.ParentTab ~= nil and self.ParentTab.Visible then
             local leftItem = IndexOf(self.ParentTab.LeftColumn.Items, self)
             self.ParentTab.LeftColumn:UpdateSlot(leftItem)
@@ -111,12 +92,6 @@ end
 function TabLeftItem:Selected(selected)
     if selected ~= nil then
         self._selected = selected
-        if self._selected then
-            self._formatLeftLabel = self._formatLeftLabel:gsub("~w~", "~l~")
-            self._formatLeftLabel = self._formatLeftLabel:gsub("~s~", "~l~")
-        else
-            self._formatLeftLabel = self._formatLeftLabel:gsub("~l~", "~s~")
-        end
         if self.ParentTab ~= nil and self.ParentTab.Visible then
             local leftItem = IndexOf(self.ParentTab.LeftColumn.Items, self)
             self.ParentTab.LeftColumn:UpdateSlot(leftItem)

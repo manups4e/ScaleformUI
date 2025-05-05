@@ -643,7 +643,7 @@ namespace ScaleformUI.Menu
                 if (MenuItems.Count > 0)
                 {
                     if (idx == _currentSelection)
-                        _currentSelection = idx >= MenuItems.Count ? MenuItems.Count - 1 : idx > 0 && idx < MenuItems.Count - 1 ? idx - 1 : 0;
+                        _currentSelection = idx >= MenuItems.Count ? MenuItems.Count - 1 : idx > 0 && idx < MenuItems.Count - 1 ? idx : 0;
                     else
                     {
                         if (selectedItem < MenuItems.Count)
@@ -1964,10 +1964,9 @@ namespace ScaleformUI.Menu
             {
                 case 1:
                     UIMenuDynamicListItem dit = (UIMenuDynamicListItem)item;
-                    var curString = dit.Selected ? (dit.CurrentListItem.StartsWith("~") ? dit.CurrentListItem : "~s~" + dit.CurrentListItem).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (dit.CurrentListItem.StartsWith("~") ? dit.CurrentListItem : "~s~" + dit.CurrentListItem).ToString().Replace("~l~", "~s~");
-                    if (!dit.Enabled)
-                        curString = curString.ReplaceRstarColorsWith("~c~");
-                    PushScaleformMovieMethodParameterString(curString);
+                    BeginTextCommandScaleformString("CELL_EMAIL_BCON");
+                    AddTextComponentScaleform(dit.CurrentListItem);
+                    EndTextCommandScaleformString_2();
                     break;
                 case 2:
                     UIMenuCheckboxItem check = (UIMenuCheckboxItem)item;
@@ -1990,7 +1989,9 @@ namespace ScaleformUI.Menu
                     break;
             }
             PushScaleformMovieFunctionParameterBool(item.Enabled);
-            PushScaleformMovieMethodParameterString(item._formatLeftLabel);
+            BeginTextCommandScaleformString("CELL_EMAIL_BCON");
+            AddTextComponentScaleform(item.Label);
+            EndTextCommandScaleformString_2();
             PushScaleformMovieFunctionParameterBool(item.BlinkDescription);
             switch (item)
             {
@@ -2055,7 +2056,9 @@ namespace ScaleformUI.Menu
                 default:
                     PushScaleformMovieFunctionParameterInt(item.MainColor.ArgbValue);
                     PushScaleformMovieFunctionParameterInt(item.HighlightColor.ArgbValue);
-                    PushScaleformMovieMethodParameterString(item._formatRightLabel);
+                    BeginTextCommandScaleformString("CELL_EMAIL_BCON");
+                    AddTextComponentScaleform(item.RightLabel);
+                    EndTextCommandScaleformString_2();
                     PushScaleformMovieFunctionParameterInt((int)item.LeftBadge);
                     PushScaleformMovieMethodParameterString(item.customLeftBadge.Key);
                     PushScaleformMovieMethodParameterString(item.customLeftBadge.Value);
@@ -2066,6 +2069,7 @@ namespace ScaleformUI.Menu
                     PushScaleformMovieMethodParameterString(item.rightLabelFont.FontName);
                     break;
             }
+            PushScaleformMovieFunctionParameterBool(item.KeepTextColorWhite);
             EndScaleformMovieMethod();
         }
 

@@ -107,7 +107,7 @@ function MissionDetailsPanel:SendItemToScaleform(i, update, newItem, isSlot)
     PushScaleformMovieFunctionParameterInt(item.Type);
     PushScaleformMovieFunctionParameterInt(0);
     PushScaleformMovieFunctionParameterBool(false);
-    local labels = item.Label:SplitLabel()
+    local labels = item.label:SplitLabel()
     BeginTextCommandScaleformString("CELL_EMAIL_BCON");
     for k, v in pairs(labels) do
         AddTextComponentScaleform(v)

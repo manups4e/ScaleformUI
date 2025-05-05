@@ -13,7 +13,6 @@ end
 ---@return PauseMenuItem
 function PauseMenuItem.New(label, labelFont)
     local data = {
-        Label = label or "",
         label = label or "",
         LabelFont = labelFont or ScaleformFonts.CHALET_LONDON_NINETEENSIXTY,
         labelFont = labelFont or ScaleformFonts.CHALET_LONDON_NINETEENSIXTY,

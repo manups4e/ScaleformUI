@@ -137,7 +137,7 @@ function PlayerListColumn:SendItemToScaleform(i, update, newItem, isSlot)
     if isSlot then str = "ADD_SLOT" end
 
 -- item:Label(), item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL, item._iconR, item._boolR, item:Status(), item:StatusColor(), item:Rank(), item:CrewTag().TAG, item:KeepPanelVisible()
-    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction(str, self.position, i - 1, 0, i - 1, 2, item:Rank(), true, item.Label, item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL, item._iconR, item._boolR, item:Status(), item:StatusColor(), item:CrewTag().TAG)
+    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction(str, self.position, i - 1, 0, i - 1, 2, item:Rank(), true, item.label, item:ItemColor(), item:ColoredTag(), item._iconL, item._boolL, item._iconR, item._boolR, item:Status(), item:StatusColor(), item:CrewTag().TAG)
     if self.position == 0 and i == self.index then
         if item.Panel ~= nil then
             item.Panel:UpdatePanel()
@@ -153,7 +153,7 @@ function PlayerListColumn:RemovePlayer(item)
         return
     end
     for k,v in pairs(self.Items) do
-        if v.Label == item.Label then
+        if v:Label () == item:Label() then
             self:RemoveSlot(k)
         end
     end

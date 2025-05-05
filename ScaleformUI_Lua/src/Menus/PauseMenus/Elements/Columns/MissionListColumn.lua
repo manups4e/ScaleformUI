@@ -139,7 +139,7 @@ function MissionListColumn:SendItemToScaleform(i, update, newItem, isSlot)
     if update then str = "UPDATE_SLOT" end
     if newItem then str = "SET_DATA_SLOT_SPLICE" end
     if isSlot then str = "ADD_SLOT" end
-    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction(str, self.position, i, 0,i, item.type, 0, item.Enabled, item.Label, item.MainColor, item.HighlightColor, item.LeftIcon, item.RightIcon, item.LeftIconColor, item.RightIconColor, item.customLeftIcon.TXD, item.customLeftIcon.TXN, item.customRightIcon.TXD, item.customRightIcon.TXN, item.RightIconChecked, item.Jumpable)
+    ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction(str, self.position, i, 0,i, item.type, 0, item.Enabled, item.label, item.MainColor, item.HighlightColor, item.LeftIcon, item.RightIcon, item.LeftIconColor, item.RightIconColor, item.customLeftIcon.TXD, item.customLeftIcon.TXN, item.customRightIcon.TXD, item.customRightIcon.TXN, item.RightIconChecked, item.Jumpable)
     if self.position == 0 and i == self.index then
         if item.Panel ~= nil then
             item.Panel:UpdatePanel()
@@ -155,7 +155,7 @@ function MissionListColumn:RemoveItem(item)
         return
     end
     for k,v in pairs(self.Items) do
-        if v.Label == item.Label then
+        if v:Label () == item:Label() then
             self:RemoveSlot(k)
         end
     end

@@ -145,8 +145,9 @@ function SettingsListColumn:SendItemToScaleform(i, update, newItem, isSlot)
     PushScaleformMovieFunctionParameterInt(item.ItemId)
 
     if item.ItemId == 1 then
-        local lbl = item:createListString()
-        PushScaleformMovieMethodParameterString(lbl)
+        BeginTextCommandScaleformString("CELL_EMAIL_BCON")
+        AddTextComponentScaleform(item:CurrentListItem())
+        EndTextCommandScaleformString_2()
     elseif item.ItemId == 2 then
         PushScaleformMovieFunctionParameterBool(item:Checked())
     elseif item.ItemId == 3 or item.ItemId == 4 or item.ItemId == 5 then
@@ -155,7 +156,9 @@ function SettingsListColumn:SendItemToScaleform(i, update, newItem, isSlot)
         PushScaleformMovieFunctionParameterInt(0)
     end
     PushScaleformMovieFunctionParameterBool(item:Enabled())
-    PushScaleformMovieMethodParameterString(item._formatLeftLabel)
+    BeginTextCommandScaleformString("CELL_EMAIL_BCON")
+    AddTextComponentScaleform(item:Label())
+    EndTextCommandScaleformString_2()
     PushScaleformMovieFunctionParameterBool(item:BlinkDescription())
     if item.ItemId == 1 then -- dynamic list item are handled like list items in the scaleform.. so the type remains 1
         PushScaleformMovieFunctionParameterInt(item:MainColor():ToArgb())
@@ -211,7 +214,9 @@ function SettingsListColumn:SendItemToScaleform(i, update, newItem, isSlot)
     else
         PushScaleformMovieFunctionParameterInt(item:MainColor():ToArgb())
         PushScaleformMovieFunctionParameterInt(item:HighlightColor():ToArgb())
-        PushScaleformMovieMethodParameterString(item._formatRightLabel)
+        BeginTextCommandScaleformString("CELL_EMAIL_BCON")
+        AddTextComponentScaleform(item:RightLabel())
+        EndTextCommandScaleformString_2()
         PushScaleformMovieFunctionParameterInt(item._leftBadge)
         PushScaleformMovieMethodParameterString(item.customLeftIcon.TXD)
         PushScaleformMovieMethodParameterString(item.customLeftIcon.TXN)
@@ -221,6 +226,7 @@ function SettingsListColumn:SendItemToScaleform(i, update, newItem, isSlot)
         PushScaleformMovieMethodParameterString(item.LabelFont.FontName)
         PushScaleformMovieMethodParameterString(item._rightLabelFont.FontName)
     end
+    PushScaleformMovieMethodParameterBool(item:KeepTextColorWhite())
     EndScaleformMovieMethod()
 end
 
@@ -232,7 +238,7 @@ function SettingsListColumn:RemoveSetting(item)
         return
     end
     for k,v in pairs(self.Items) do
-        if v.Label == item.Label then
+        if v:Label () == item:Label() then
             self:RemoveSlot(k)
         end
     end
@@ -258,7 +264,7 @@ function SettingsListColumn:UpdateDescription()
 end
 
 function SettingsListColumn:GoUp()
-    self:CurrentItem():Selected(false, self:CurrentItem())
+    self:CurrentItem().selected = false
     repeat
         Citizen.Wait(0)
         self.index = self.index - 1
@@ -268,12 +274,12 @@ function SettingsListColumn:GoUp()
     until self:CurrentItem().ItemId ~= 6 or (self:CurrentItem().ItemId == 6 and not self:CurrentItem().Jumpable)
     ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_COLUMN_INPUT_EVENT", self.position, 8)
     AddTextEntry("PAUSEMENU_Current_Description", self:CurrentItem():Description());
-    self:CurrentItem():Selected(true, self:CurrentItem())
+    self:CurrentItem().selected = true
     self.OnIndexChanged(self:CurrentSelection())
 end
 
 function SettingsListColumn:GoDown()
-    self:CurrentItem():Selected(false, self:CurrentItem())
+    self:CurrentItem().selected = false
     repeat
         Citizen.Wait(0)
         self.index = self.index + 1
@@ -283,7 +289,7 @@ function SettingsListColumn:GoDown()
     until self:CurrentItem().ItemId ~= 6 or (self:CurrentItem().ItemId == 6 and not self:CurrentItem().Jumpable)
     ScaleformUI.Scaleforms._pauseMenu._pause:CallFunction("SET_COLUMN_INPUT_EVENT", self.position, 9)
     AddTextEntry("PAUSEMENU_Current_Description", self:CurrentItem():Description());
-    self:CurrentItem():Selected(true, self:CurrentItem())
+    self:CurrentItem().selected = true
     self.OnIndexChanged(self:CurrentSelection())
 end
 
@@ -346,7 +352,7 @@ function SettingsListColumn:Select()
 end
 
 function SettingsListColumn:MouseScroll(dir)
-    self:CurrentItem():Selected(false, self:CurrentItem())
+    self:CurrentItem().selected = false
     repeat
         Citizen.Wait(0)
         self.index = self.index + dir
@@ -357,14 +363,14 @@ function SettingsListColumn:MouseScroll(dir)
         end
     until self:CurrentItem().ItemId ~= 6 or (self:CurrentItem().ItemId == 6 and not self:CurrentItem().Jumpable)
     AddTextEntry("PAUSEMENU_Current_Description", self:CurrentItem():Description());
-    self:CurrentItem():Selected(true, self:CurrentItem())
+    self:CurrentItem().selected = true
     self.OnIndexChanged(self:CurrentSelection())
 end
 
 function SettingsListColumn:UpdateItemLabels(index, leftLabel, rightLabel)
     if not self:visible() or index > #self.Items then return end
     local item = self.Items[index]
-    item:LeftLabel(leftLabel)
+    item:Label(leftLabel)
     item:RightLabel(rightLabel)
 end
 
@@ -378,7 +384,7 @@ end
 function SettingsListColumn:UpdateItemLabel(index, label)
     if not self:visible() or index > #self.Items then return end
     local item = self.Items[index]
-    item:LeftLabel(label)
+    item:Label(label)
 end
 
 function SettingsListColumn:UpdateItemRightLabel(index, label)

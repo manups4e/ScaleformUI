@@ -93,7 +93,7 @@ function PM_Column:RemoveSlot(idx)
             if idx > #self.Items then
                 self.index = #self.Items
             elseif idx > 1 and idx <= #self.Items then
-                self.index = idx - 1
+                self.index = idx
             else
                 self.index = 1
             end

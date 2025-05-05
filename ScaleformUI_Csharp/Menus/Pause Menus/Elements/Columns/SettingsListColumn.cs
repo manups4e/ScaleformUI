@@ -163,10 +163,9 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             {
                 case 1:
                     UIMenuDynamicListItem dit = (UIMenuDynamicListItem)item;
-                    var curString = dit.Selected ? (dit.CurrentListItem.StartsWith("~") ? dit.CurrentListItem : "~s~" + dit.CurrentListItem).ToString().Replace("~w~", "~l~").Replace("~s~", "~l~") : (dit.CurrentListItem.StartsWith("~") ? dit.CurrentListItem : "~s~" + dit.CurrentListItem).ToString().Replace("~l~", "~s~");
-                    if (!dit.Enabled)
-                        curString = curString.ReplaceRstarColorsWith("~c~");
-                    PushScaleformMovieMethodParameterString(curString);
+                    BeginTextCommandScaleformString("CELL_EMAIL_BCON");
+                    AddTextComponentScaleform(dit.CurrentListItem);
+                    EndTextCommandScaleformString_2();
                     break;
                 case 2:
                     UIMenuCheckboxItem check = (UIMenuCheckboxItem)item;
@@ -189,7 +188,9 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                     break;
             }
             PushScaleformMovieFunctionParameterBool(item.Enabled);
-            PushScaleformMovieMethodParameterString(item._formatLeftLabel);
+            BeginTextCommandScaleformString("CELL_EMAIL_BCON");
+            AddTextComponentScaleform(item.Label);
+            EndTextCommandScaleformString_2();
             PushScaleformMovieFunctionParameterBool(item.BlinkDescription);
             switch (item)
             {
@@ -249,7 +250,9 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                 default:
                     PushScaleformMovieFunctionParameterInt(item.MainColor.ArgbValue);
                     PushScaleformMovieFunctionParameterInt(item.HighlightColor.ArgbValue);
-                    PushScaleformMovieMethodParameterString(item._formatRightLabel);
+                    BeginTextCommandScaleformString("CELL_EMAIL_BCON");
+                    AddTextComponentScaleform(item.RightLabel);
+                    EndTextCommandScaleformString_2();
                     PushScaleformMovieFunctionParameterInt((int)item.LeftBadge);
                     PushScaleformMovieMethodParameterString(item.customLeftBadge.Key);
                     PushScaleformMovieMethodParameterString(item.customLeftBadge.Value);
@@ -260,6 +263,7 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                     PushScaleformMovieMethodParameterString(item.rightLabelFont.FontName);
                     break;
             }
+            PushScaleformMovieFunctionParameterBool(item.KeepTextColorWhite);
             EndScaleformMovieMethod();
         }
 
@@ -417,7 +421,6 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                     {
                         it.Checked = !it.Checked;
                         it.CheckboxEventTrigger();
-                        SelectItem();
                         break;
                     }
                 case UIMenuListItem it:
@@ -441,19 +444,19 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
         public async override void MouseScroll(int dir)
         {
             if (!visible) return;
-            CurrentItem.Selected = false;
+            CurrentItem._selected = false;
             do
             {
+                await BaseScript.Delay(0);
                 index += dir;
                 if(index < 0)
                     index = Items.Count - 1;
                 if (index >= Items.Count)
                     index = 0;
-                await BaseScript.Delay(0);
             }
             while (CurrentItem is UIMenuSeparatorItem sp && sp.Jumpable);
             API.AddTextEntry("PAUSEMENU_Current_Description", CurrentItem.Description);
-            CurrentItem.Selected = true;
+            CurrentItem._selected = true;
             IndexChangedEvent();
         }
 

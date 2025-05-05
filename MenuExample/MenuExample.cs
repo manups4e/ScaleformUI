@@ -50,6 +50,7 @@ public class MenuExample : BaseScript
         #region Big Message
 
         UIMenuItem bigMessageItem = new UIMenuItem("~g~Big~s~ Message ~r~Examples~s~", "Select me to switch to the BigMessage menu!");
+        bigMessageItem.KeepTextColorWhite = true;
         bigMessageItem.SetCustomLeftBadge("scaleformui", "kitty");
         bigMessageItem.SetCustomRightBadge("scaleformui", "kitty");
 
@@ -153,8 +154,7 @@ public class MenuExample : BaseScript
         UIMenuCheckboxItem ketchupItem = new UIMenuCheckboxItem("~g~Scrolling animation enabled? ~b~in a very long label to ~o~test the text scrolling feature!", UIMenuCheckboxStyle.Tick, enabled, "Do you wish to enable the scrolling animation?");
         long _paneldui = API.CreateDui("https://i.imgur.com/mH0Y65C.gif", 288, 160);
         API.CreateRuntimeTextureFromDuiHandle(txd, "panelbackground", API.GetDuiHandle(_paneldui));
-        //UIMissionDetailsPanel sidePanel = new UIMissionDetailsPanel(PanelSide.Right, "Side Panel", false, "scaleformui", "bannerbackground");
-        UIMissionDetailsPanel sidePanel = new UIMissionDetailsPanel(PanelSide.Right, "Side Panel", SColor.HUD_Freemode, "scaleformui", "bannerbackground");
+        UIMissionDetailsPanel sidePanel = new UIMissionDetailsPanel(PanelSide.Right, "Side Panel", false, "scaleformui", "bannerbackground");
         UIFreemodeDetailsItem detailItem1 = new UIFreemodeDetailsItem("Left Label", "RIGHT LABEL", ScaleformFonts.SIGNPAINTER_HOUSESCRIPT, ScaleformFonts.GTAV_TAXI_DIGITAL, BadgeIcon.BRIEFCASE, SColor.FromRandomValues());
         UIFreemodeDetailsItem detailItem2 = new UIFreemodeDetailsItem("Left Label", "RIGHT LABEL", ScaleformFonts.SIGNPAINTER_HOUSESCRIPT, ScaleformFonts.GTAV_TAXI_DIGITAL, BadgeIcon.MISSION_STAR, SColor.FromRandomValues());
         UIFreemodeDetailsItem detailItem3 = new UIFreemodeDetailsItem("Left Label", "RIGHT LABEL", ScaleformFonts.SIGNPAINTER_HOUSESCRIPT, ScaleformFonts.GTAV_TAXI_DIGITAL, BadgeIcon.ARMOR, SColor.FromRandomValues());

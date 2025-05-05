@@ -19,9 +19,7 @@ UIMenuItem.__call = function() return "UIMenuItem" end
 ---@field _Hovered boolean
 ---@field _Enabled boolean
 ---@field blinkDescription boolean
----@field _formatLeftLabel string
 ---@field _rightLabel string
----@field _formatRightLabel string
 ---@field _rightBadge number
 ---@field _leftBadge number
 ---@field _mainColor SColor
@@ -43,22 +41,16 @@ UIMenuItem.__call = function() return "UIMenuItem" end
 ---@param color? SColor
 ---@param highlightColor? SColor
 function UIMenuItem.New(text, description, color, highlightColor)
-    local __formatLeftLabel = (tostring(text))
-    if not __formatLeftLabel:StartsWith("~") then
-        __formatLeftLabel = "~s~" .. __formatLeftLabel
-    end
-
     local base = PauseMenuItem.New(text)
     base._Description = tostring(description) or ""
     base._rightLabelFont = ScaleformFonts.CHALET_LONDON_NINETEENSIXTY
     base._Hovered = false
     base._Enabled = true
     base.blinkDescription = false
-    base._formatLeftLabel = __formatLeftLabel or ""
     base._rightLabel = ""
-    base._formatRightLabel = ""
     base._rightBadge = 0
     base._leftBadge = 0
+    base.keepWhite = false
     base._mainColor = color or SColor.HUD_Panel_light
     base._highlightColor = highlightColor or SColor.HUD_White
     base._itemData = {}
@@ -67,8 +59,8 @@ function UIMenuItem.New(text, description, color, highlightColor)
     base.Panels = {}
     base.SidePanel = nil
     base.ItemId = 0
-    base.customLeftIcon = {TXD="",TXN=""}
-    base.customRightIcon = {TXD="",TXN=""}
+    base.customLeftIcon = { TXD = "", TXN = "" }
+    base.customRightIcon = { TXD = "", TXN = "" }
     base.Activated = function(menu, item)
     end
     base.Highlighted = function(menu, item)
@@ -84,6 +76,22 @@ function UIMenuItem:ItemData(data)
         return self._itemData
     else
         self._itemData = data
+    end
+end
+
+function UIMenuItem:KeepTextColorWhite(keep)
+    if keep == nil then
+        return self.keepWhite
+    else
+        self.keepWhite = ToBool(bool)
+        if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+            local it = IndexOf(self.ParentMenu.Items, self)
+            self.ParentMenu:SendItemToScaleform(it, true)
+        end
+        if self.ParentColumn ~= nil then
+            local it = IndexOf(self.ParentColumn.Items, self)
+            self.ParentColumn:SendItemToScaleform(it, true)
+        end
     end
 end
 
@@ -140,22 +148,7 @@ end
 
 function UIMenuItem:Selected(bool)
     if bool ~= nil then
-
         self.selected = ToBool(bool)
-        if self.selected then
-            self._formatLeftLabel = self._formatLeftLabel:gsub("~w~", "~l~")
-            self._formatLeftLabel = self._formatLeftLabel:gsub("~s~", "~l~")
-            if not string.IsNullOrEmpty(self._formatRightLabel) then
-                self._formatRightLabel = self._formatRightLabel:gsub("~w~", "~l~")
-                self._formatRightLabel = self._formatRightLabel:gsub("~s~", "~l~")
-            end
-            self.Highlighted(self.ParentMenu, item)
-        else
-            self._formatLeftLabel = self._formatLeftLabel:gsub("~l~", "~s~")
-            if not string.IsNullOrEmpty(self._formatRightLabel) then
-                self._formatRightLabel = self._formatRightLabel:gsub("~l~", "~s~")
-            end
-        end
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
             local it = IndexOf(self.ParentMenu.Items, self)
             self.ParentMenu:SendItemToScaleform(it, true)
@@ -180,17 +173,6 @@ end
 function UIMenuItem:Enabled(bool)
     if bool ~= nil then
         self._Enabled = ToBool(bool)
-        if not self._Enabled then
-            self._formatLeftLabel = ReplaceRstarColorsWith(self._formatLeftLabel, "~c~")
-            if self.ItemId == 0 then
-                self._formatRightLabel = ReplaceRstarColorsWith(self._formatRightLabel, "~c~")
-            end
-        else
-            self:LeftLabel(self.Label)
-            if self.ItemId == 0 then
-                self:RightLabel(self._rightLabel)
-            end
-        end
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
             local it = IndexOf(self.ParentMenu.Items, self)
             self.ParentMenu:SendItemToScaleform(it, true)
@@ -228,11 +210,11 @@ function UIMenuItem:MainColor(color)
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
             local it = IndexOf(self.ParentMenu.Items, self)
             self.ParentMenu:SendItemToScaleform(it, true)
-            if self.ParentColumn ~= nil then
-                local it = IndexOf(self.ParentColumn.Items, self)
-                self.ParentColumn:SendItemToScaleform(it, true)
-            end
-            end
+        end
+        if self.ParentColumn ~= nil then
+            local it = IndexOf(self.ParentColumn.Items, self)
+            self.ParentColumn:SendItemToScaleform(it, true)
+        end
     else
         return self._mainColor
     end
@@ -250,21 +232,14 @@ function UIMenuItem:HighlightColor(color)
             local it = IndexOf(self.ParentColumn.Items, self)
             self.ParentColumn:SendItemToScaleform(it, true)
         end
-   else
+    else
         return self._highlightColor
     end
 end
 
-function UIMenuItem:LeftLabel(Text)
+function UIMenuItem:Label(Text)
     if tostring(Text) and Text ~= nil then
-        self.Label = tostring(Text)
-        self._formatLeftLabel = tostring(Text)
-        if not self._formatLeftLabel:StartsWith("~") then
-            self._formatLeftLabel = "~s~" .. self._formatLeftLabel
-        end
-        if not self:Enabled() then
-            self._formatLeftLabel = ReplaceRstarColorsWith(self._formatLeftLabel, "~c~")
-        end
+        self.label = tostring(Text)
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
             local it = IndexOf(self.ParentMenu.Items, self)
             self.ParentMenu:SendItemToScaleform(it, true)
@@ -274,26 +249,13 @@ function UIMenuItem:LeftLabel(Text)
             self.ParentColumn:SendItemToScaleform(it, true)
         end
     else
-        return self.Label
+        return self.label
     end
 end
 
 function UIMenuItem:RightLabel(Text)
     if tostring(Text) and Text ~= nil then
         self._rightLabel = tostring(Text)
-        self._formatRightLabel = tostring(Text)
-        if not self._formatRightLabel:StartsWith("~") then
-            self._formatRightLabel = "~s~" .. self._formatRightLabel
-        end
-        if self:Selected() then
-            self._formatRightLabel = self._formatRightLabel:gsub("~w~", "~l~")
-            self._formatRightLabel = self._formatRightLabel:gsub("~s~", "~l~")
-        else
-            self._formatRightLabel = self._formatRightLabel:gsub("~l~", "~s~")
-        end
-        if not self:Enabled() then
-            self._formatRightLabel = ReplaceRstarColorsWith(self._formatRightLabel, "~c~")
-        end
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
             local it = IndexOf(self.ParentMenu.Items, self)
             self.ParentMenu:SendItemToScaleform(it, true)
@@ -339,10 +301,10 @@ function UIMenuItem:LeftBadge(Badge)
     end
 end
 
-function UIMenuItem:CustomRightBadge(txd,txn)
+function UIMenuItem:CustomRightBadge(txd, txn)
     if item == nil then item = self end
     self._rightBadge = -1
-    self.customRightIcon = {TXD=txd, TXN=txn}
+    self.customRightIcon = { TXD = txd, TXN = txn }
     if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
         local it = IndexOf(self.ParentMenu.Items, self)
         self.ParentMenu:SendItemToScaleform(it, true)
@@ -353,10 +315,10 @@ function UIMenuItem:CustomRightBadge(txd,txn)
     end
 end
 
-function UIMenuItem:CustomLeftBadge(txd,txn)
+function UIMenuItem:CustomLeftBadge(txd, txn)
     if item == nil then item = self end
     self._leftBadge = -1
-    self.customLeftIcon = {TXD=txd, TXN=txn}
+    self.customLeftIcon = { TXD = txd, TXN = txn }
     if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
         local it = IndexOf(self.ParentMenu.Items, self)
         self.ParentMenu:SendItemToScaleform(it, true)
@@ -366,7 +328,6 @@ function UIMenuItem:CustomLeftBadge(txd,txn)
         self.ParentColumn:SendItemToScaleform(it, true)
     end
 end
-
 
 function UIMenuItem:AddPanel(Panel)
     if Panel() == "UIMenuPanel" then

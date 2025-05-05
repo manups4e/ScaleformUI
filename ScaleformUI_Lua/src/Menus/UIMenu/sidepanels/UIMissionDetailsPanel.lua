@@ -39,11 +39,28 @@ function UIMissionDetailsPanel:SetParentItem(Item) -- required
     end
 end
 
+function UIMissionDetailsPanel:Clear()
+    self.Title = ""
+    self.TextureDict  = ""
+    self.TextureName  = ""
+    self.Items  = {}
+    if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
+        ScaleformUI.Scaleforms._ui:CallFunction("SET_SIDE_PANEL_DATA_SLOT_EMPTY")
+    end
+end
+
+function UIMissionDetailsPanel:Refresh()
+    if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
+        local it = IndexOf(self.ParentItem.ParentMenu.Items, self.ParentItem)
+        self.ParentItem.ParentMenu:SendSidePanelToScaleform(it)
+    end
+end
+
 function UIMissionDetailsPanel:UpdatePanelTitle(title)
     self.Title = title
     if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
-        local it = IndexOf(self.ParentMenu.Items, self)
-        self.ParentMenu:SendSidePanelToScaleform(it, true)
+        local it = IndexOf(self.ParentItem.ParentMenu.Items, self.ParentItem)
+        self.ParentItem.ParentMenu:SendSidePanelToScaleform(it, true)
     end
 end
 
@@ -52,23 +69,23 @@ function UIMissionDetailsPanel:UpdatePanelPicture(txd, txn)
     self.TextureName = txn
 
     if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
-        local it = IndexOf(self.ParentMenu.Items, self)
-        self.ParentMenu:SendSidePanelToScaleform(it, true)
+        local it = IndexOf(self.ParentItem.ParentMenu.Items, self.ParentItem)
+        self.ParentItem.ParentMenu:SendSidePanelToScaleform(it, true)
     end
 end
 
 function UIMissionDetailsPanel:AddItem(newitem)
     self.Items[#self.Items + 1] = newitem
     if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
-        local it = IndexOf(self.ParentMenu.Items, self)
-        self.ParentMenu:SendSidePanelToScaleform(it, true)
+        local it = IndexOf(self.ParentItem.ParentMenu.Items, self.ParentItem)
+        self.ParentItem.ParentMenu:SendSidePanelToScaleform(it, true)
     end
 end
 
 function UIMissionDetailsPanel:RemoveItemAt(index)
     table.remove(self.Items, index)
     if self.ParentItem ~= nil and self.ParentItem:SetParentMenu() ~= nil and self.ParentItem:SetParentMenu():Visible() then
-        local it = IndexOf(self.ParentMenu.Items, self)
-        self.ParentMenu:SendSidePanelToScaleform(it, true)
+        local it = IndexOf(self.ParentItem.ParentMenu.Items, self.ParentItem)
+        self.ParentItem.ParentMenu:SendSidePanelToScaleform(it, true)
     end
 end

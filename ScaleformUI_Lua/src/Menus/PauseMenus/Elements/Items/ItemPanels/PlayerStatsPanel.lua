@@ -202,7 +202,7 @@ function PlayerStatsPanel:Populate()
             PushScaleformMovieFunctionParameterInt(item.Type)
             PushScaleformMovieFunctionParameterInt(0)
             PushScaleformMovieFunctionParameterBool(true)
-            local labels = item.Label:SplitLabel()
+            local labels = item.label:SplitLabel()
             BeginTextCommandScaleformString("CELL_EMAIL_BCON")
             for j = 1, #labels, 1 do
                 AddTextComponentScaleform(labels[j])
