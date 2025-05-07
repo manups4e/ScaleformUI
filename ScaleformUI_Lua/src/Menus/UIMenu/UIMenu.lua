@@ -1391,7 +1391,7 @@ end
 ---GoLeft
 function UIMenu:GoLeft()
     local Item = self:CurrentItem()
-    if Item.ItemId == 0 or item.ItemId == 2 or item.ItemId == 6 or not Item:Enabled() then
+    if Item.ItemId == 0 or Item.ItemId == 2 or Item.ItemId == 6 or not Item:Enabled() then
         PlaySoundFrontend(-1, self.Settings.Audio.Error, self.Settings.Audio.Library, true)
         return
     end
@@ -1423,7 +1423,7 @@ end
 ---GoRight
 function UIMenu:GoRight()
     local Item = self:CurrentItem()
-    if Item.ItemId == 0 or item.ItemId == 2 or item.ItemId == 6 or not Item:Enabled() then
+    if Item.ItemId == 0 or Item.ItemId == 2 or Item.ItemId == 6 or not Item:Enabled() then
         PlaySoundFrontend(-1, self.Settings.Audio.Error, self.Settings.Audio.Library, true)
         return
     end
