@@ -878,7 +878,7 @@ function UIMenu:SetWindows(update)
     end
 
     for w_id, window in pairs(self.Windows) do
-        local SubType = window()
+        local _, SubType = window()
         if SubType == "UIMenuHeritageWindow" then
             ScaleformUI.Scaleforms._ui:CallFunction(str, w_id - 1, window.id, window.Mom, window.Dad)
         elseif SubType == "UIMenuDetailsWindow" then
@@ -987,9 +987,9 @@ function UIMenu:SendPanelsToItemScaleform(i, update)
                 panel.Max, panel._percentage)
         elseif pSubType == "UIMenuGridPanel" then
             ScaleformUI.Scaleforms._ui:CallFunction(str, index - 1, pan - 1, 2, panel.TopLabel,
-                panel.RightLabel, panel.TopLabel, panel.BottomLabel, panel._CirclePosition.x,
-                panel._CirclePosition.y, true, panel.GridType)
-        elseif pSubType == "UIMenuStatisticsPanel" then
+            panel.LeftLabel, panel.RightLabel, panel.BottomLabel, panel._CirclePosition.x,
+            panel._CirclePosition.y, true, panel.GridType)
+    elseif pSubType == "UIMenuStatisticsPanel" then
             local arr = {}
             for k, v in pairs(panel.Items) do
                 table.insert(arr, v['name'] .. ":" .. v['value'])
