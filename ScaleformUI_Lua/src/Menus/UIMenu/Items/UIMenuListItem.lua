@@ -90,7 +90,7 @@ function UIMenuListItem:IndexToItem(Index)
 end
 
 function UIMenuListItem:ChangeList(list, index)
-    if index == nil or index < 1 then index = 1 end
+    if index == nil or index < 1 or index > #list or self._Index > #list then index = 1 end
     if type(list) ~= "table" then return end
     self.Items = {}
     self.Items = list

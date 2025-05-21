@@ -1008,7 +1008,13 @@ function UIMenu:SendItemToScaleform(i, update, newItem, isSlot)
     if update == nil then update = false end
     if newItem == nil then newItem = false end
     if isSlot == nil then isSlot = false end
+    if i < 1 then 
+        i = 1
+    else if i > #self.Items then
+        i = #sef.Items
+    end
     local item = self.Items[i]
+    print(#self.Items, i)
     local str = "SET_DATA_SLOT"
     if update then
         str = "UPDATE_DATA_SLOT"
