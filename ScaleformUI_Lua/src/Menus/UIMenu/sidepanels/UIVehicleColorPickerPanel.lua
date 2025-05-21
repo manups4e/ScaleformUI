@@ -37,8 +37,8 @@ end
 function UIVehicleColorPickerPanel:UpdatePanelTitle(title)
     self.Title = title
     if self.ParentItem ~= nil and self.ParentItem.ParentMenu ~= nil and self.ParentItem.ParentMenu:Visible() then
-        local it = IndexOf(self.ParentMenu.Items, self)
-        self.ParentMenu:SendSidePanelToScaleform(it, true)
+        local it = IndexOf(self.ParentItem.ParentMenu.Items, self)
+        self.ParentItem.ParentMenu:SendSidePanelToScaleform(it, true)
     end
 end
 
@@ -49,9 +49,9 @@ end
 
 function UIVehicleColorPickerPanel:_PickerHovered(colorId, color)
 
-    self.PickerHovered(self:SetParentItem():SetParentMenu(), colorId, color)
+    self.PickerHovered(self.ParentItem.ParentMenu, colorId, color)
 end
 
 function UIVehicleColorPickerPanel:_PickerRollout()
-    self.PickerHovered(self:SetParentItem():SetParentMenu(), self.ParentItem, self.Value, self.Color)
+    self.PickerHovered(self.ParentItem.ParentMenu, self.ParentItem, self.Value, self.Color)
 end

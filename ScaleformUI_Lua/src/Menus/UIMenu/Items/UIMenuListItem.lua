@@ -96,9 +96,9 @@ function UIMenuListItem:ChangeList(list, index)
     self.Items = list
     self:Index(index)
 
-    if self.Base.ParentMenu ~= nil and self.Base.ParentMenu:Visible() then
-        local it = IndexOf(self.Base.ParentMenu.Items, self)
-        self.Base.ParentMenu:SendItemToScaleform(it, true)
+    if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+        local it = IndexOf(self.ParentMenu.Items, self)
+        self.ParentMenu:SendItemToScaleform(it, true)
     end
     if self.ParentColumn ~= nil then
         local it = IndexOf(self.ParentColumn.Items, self)
