@@ -186,7 +186,6 @@ function PlayerListTab:GoBack()
         self:CurrentColumn():CurrentItem():Selected(true)
         if self:CurrentColumn().type == PLT_COLUMNS.PLAYERS then
             if self:CurrentColumn():CurrentItem().Panel ~= nil then
-                self:CurrentColumn():CurrentItem():CreateClonedPed()
                 local rr = self:GetColumnAtPosition(2)
                 if rr ~= nil then
                     rr:ColumnVisible(false)
@@ -225,23 +224,19 @@ function PlayerListTab:MouseEvent(eventType, context, index)
                 return
             end
             self:CurrentColumn():CurrentItem():Selected(false)
-            self:CurrentColumn().index = index
+            self:CurrentColumn():Index(index)
             self:CurrentColumn():CurrentItem():Selected(true)
             if self:CurrentColumn().type == PLT_COLUMNS.SETTINGS then
                 AddTextEntry("PAUSEMENU_Current_Description", self:CurrentColumn():CurrentItem():Description())
-            elseif self:CurrentColumn().type == PLT_COLUMNS.PLAYERS then
-                self:CurrentColumn():CurrentItem():CreateClonedPed()
             end
         else
             local selectedCol = self:GetColumnAtPosition(context)
             self:SwitchColumn(context)
             selectedCol:CurrentItem():Selected(false)
-            selectedCol.index = index
+            selectedCol:Index(index)
             selectedCol:CurrentItem():Selected(true)
             if selectedCol.type == PLT_COLUMNS.SETTINGS then
                 AddTextEntry("PAUSEMENU_Current_Description", selectedCol:CurrentItem():Description())
-            elseif selectedCol.type == PLT_COLUMNS.PLAYERS then
-                selectedCol:CurrentItem():CreateClonedPed()
             end
         end
     elseif eventType == 10 or eventType == 11 then
@@ -288,7 +283,6 @@ function PlayerListTab:Focus()
         AddTextEntry("PAUSEMENU_Current_Description", self:CurrentColumn():CurrentItem():Description())
     elseif self:CurrentColumn().type == PLT_COLUMNS.PLAYERS then
         ClearPedInPauseMenu()
-        self:CurrentColumn():CreateClonedPed()
         if self:CurrentColumn().Panel ~= nil then
             self:CurrentColumn().Panel:UpdatePanel()
             if self.RightColumn ~= nil then
@@ -303,22 +297,24 @@ function PlayerListTab:Focus()
 end
 
 function PlayerListTab:UnFocus()
+    if self.CurrentColumnIndex > 0 then
+        self:SelectColumn(1)
+    end
     BaseTab.UnFocus(self)
-    ClearPedInPauseMenu()
     if self.LeftColumn then
-        self.LeftColumn.Focused = false
         self.LeftColumn:CurrentItem():Selected(false)
+        self.LeftColumn.Focused = false
     end
     if self.CenterColumn then
-        self.CenterColumn.Focused = false
         self.CenterColumn:CurrentItem():Selected(false)
+        self.CenterColumn.Focused = false
     end
     if self.RightColumn then
-        self.RightColumn.Focused = false
         self.RightColumn:CurrentItem():Selected(false)
         if not self.RightColumn:ColumnVisible() then
             self.RightColumn:ColumnVisible(true)
         end
+        self.RightColumn.Focused = false
     end
     AddTextEntry("PAUSEMENU_Current_Description", "")
 end

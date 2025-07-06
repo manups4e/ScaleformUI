@@ -261,7 +261,7 @@ function GalleryTab:MouseEvent(eventType, context, index)
     if eventType == 5 then
         if index + 1 ~= self.LeftColumn:Index() then
             self.LeftColumn.Items[self.LeftColumn:Index()]:Selected(false)
-            self.LeftColumn:Index(index + 1)
+            self.LeftColumn:Index(index)
             self.LeftColumn.Items[self.LeftColumn:Index()]:Selected(true)
             return
         end

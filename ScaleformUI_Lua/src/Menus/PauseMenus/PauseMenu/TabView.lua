@@ -405,11 +405,12 @@ function TabView:ProcessMouse()
         if successHeader then
             if event_type_h == 5 then
                 if context_h == -1 then
-                    self:FocusLevel(0)
                     self:CurrentTab():UnFocus()
+                    self:FocusLevel(0)
                     ScaleformUI.Scaleforms._pauseMenu:SelectTab(item_id_h)
                     self:Index(item_id_h + 1)
                     self:CurrentTab():Focus()
+                    self:FocusLevel(1)
                     PlaySoundFrontend(-1, "SELECT","HUD_FRONTEND_DEFAULT_SOUNDSET", false)
                 end
             elseif event_type_h == 6 then
@@ -422,6 +423,7 @@ function TabView:ProcessMouse()
                         self:Index(self:Index() + 1)
                     end
                     self:CurrentTab():Focus()
+                    self:FocusLevel(1)
                 end
             elseif event_type_h == 8 then
                 self.tabArrowsHovered = false
@@ -437,7 +439,7 @@ function TabView:ProcessMouse()
                 self:FocusLevel(1)
                 return
             end
-            self:CurrentTab():MouseEvent(event_type, context, item_id)
+            self:CurrentTab():MouseEvent(event_type, context, item_id + 1)
         end
         if not successPause and not successHeader and self:FocusLevel() == 0 and event_type == 5 then
             self:FocusLevel(1)
