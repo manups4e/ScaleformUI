@@ -246,8 +246,8 @@ function SubmenuTab:UnFocus()
         self.Parent:FocusLevel(self.Parent:FocusLevel() - 1)
         self.CurrentColumnIndex = self.CurrentColumnIndex - 1
     end
-    BaseTab.UnFocus(self)
     self.LeftColumn.Items[self.LeftColumn:Index()]:Selected(false)
+    BaseTab.UnFocus(self)
 end
 
 function SubmenuTab:Refresh(highlightOldIndex)

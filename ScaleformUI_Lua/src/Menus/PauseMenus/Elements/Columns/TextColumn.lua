@@ -15,7 +15,7 @@ end
 function TextColumn:SetDataSlot(index)
     if index > #self.Items then return end
     local item = self.Items[index]
-    local labels = item.label:SplitLabel()
+    local label = "TXT_COL_LBL"
     BeginScaleformMovieMethod(ScaleformUI.Scaleforms._pauseMenu._pause.handle, "SET_DATA_SLOT")
     PushScaleformMovieFunctionParameterInt(0)
     PushScaleformMovieFunctionParameterInt(index - 1)
@@ -24,10 +24,8 @@ function TextColumn:SetDataSlot(index)
     PushScaleformMovieFunctionParameterInt(0)
     PushScaleformMovieFunctionParameterInt(0)
     PushScaleformMovieFunctionParameterBool(true)
-    BeginTextCommandScaleformString("CELL_EMAIL_BCON")
-    for k, v in pairs(labels) do
-        AddTextComponentScaleform(v)
-    end
+    AddTextEntry(label, item.label)
+    BeginTextCommandScaleformString(label)
     EndTextCommandScaleformString_2()
     EndScaleformMovieMethod()
 end
@@ -35,7 +33,7 @@ end
 function TextColumn:UpdateSlot(index)
     if index > #self.Items then return end
     local item = self.Items[index]
-    local labels = item.label:SplitLabel()
+    local label = "TXT_COL_LBL"
     BeginScaleformMovieMethod(ScaleformUI.Scaleforms._pauseMenu._pause.handle, "UPDATE_SLOT")
     PushScaleformMovieFunctionParameterInt(0)
     PushScaleformMovieFunctionParameterInt(index - 1)
@@ -44,10 +42,7 @@ function TextColumn:UpdateSlot(index)
     PushScaleformMovieFunctionParameterInt(0)
     PushScaleformMovieFunctionParameterInt(0)
     PushScaleformMovieFunctionParameterBool(true)
-    BeginTextCommandScaleformString("CELL_EMAIL_BCON")
-    for k, v in pairs(labels) do
-        AddTextComponentScaleform(v)
-    end
+    BeginTextCommandScaleformString(label)
     EndTextCommandScaleformString_2()
     EndScaleformMovieMethod()
 end

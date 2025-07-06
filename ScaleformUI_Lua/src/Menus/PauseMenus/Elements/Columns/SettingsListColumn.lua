@@ -145,8 +145,9 @@ function SettingsListColumn:SendItemToScaleform(i, update, newItem, isSlot)
     PushScaleformMovieFunctionParameterInt(item.ItemId)
 
     if item.ItemId == 1 then
-        BeginTextCommandScaleformString("CELL_EMAIL_BCON")
-        AddTextComponentScaleform(item:CurrentListItem())
+        local rlabel = "SCUI_SETTCOL_RLBL"
+        AddTextEntry(rlabel, item:CurrentListItem())
+        BeginTextCommandScaleformString(rlabel)
         EndTextCommandScaleformString_2()
     elseif item.ItemId == 2 then
         PushScaleformMovieFunctionParameterBool(item:Checked())
@@ -156,8 +157,9 @@ function SettingsListColumn:SendItemToScaleform(i, update, newItem, isSlot)
         PushScaleformMovieFunctionParameterInt(0)
     end
     PushScaleformMovieFunctionParameterBool(item:Enabled())
-    BeginTextCommandScaleformString("CELL_EMAIL_BCON")
-    AddTextComponentScaleform(item:Label())
+    local label = "SCUI_SETTCOL_LBL"
+    AddTextEntry(label, item:Label())
+    BeginTextCommandScaleformString(label)
     EndTextCommandScaleformString_2()
     PushScaleformMovieFunctionParameterBool(item:BlinkDescription())
     if item.ItemId == 1 then -- dynamic list item are handled like list items in the scaleform.. so the type remains 1

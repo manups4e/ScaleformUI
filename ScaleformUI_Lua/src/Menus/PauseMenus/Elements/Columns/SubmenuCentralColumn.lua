@@ -21,7 +21,7 @@ function SubmenuCentralColumn:SetDataSlot(index)
     local curItem = self.Parent.LeftColumn.Items[self.Parent.LeftColumn:Index()]
     local _item = self.Items[index]
     if curItem.ItemType == LeftItemType.Info then
-        local labels = _item.label:SplitLabel()
+        local label = "SUBMN_CCOL_LBL"
         BeginScaleformMovieMethod(ScaleformUI.Scaleforms._pauseMenu._pause.handle, "SET_DATA_SLOT")
         PushScaleformMovieFunctionParameterInt(self.position)
         PushScaleformMovieFunctionParameterInt(index - 1)
@@ -30,10 +30,8 @@ function SubmenuCentralColumn:SetDataSlot(index)
         PushScaleformMovieFunctionParameterInt(0)
         PushScaleformMovieFunctionParameterInt(0)
         PushScaleformMovieFunctionParameterBool(true)
-        BeginTextCommandScaleformString("CELL_EMAIL_BCON")
-        for k, v in pairs(labels) do
-            AddTextComponentScaleform(v)
-        end
+        AddTextEntry(label, _item.label)
+        BeginTextCommandScaleformString(label)
         EndTextCommandScaleformString_2()
         EndScaleformMovieMethod()
     elseif curItem.ItemType == LeftItemType.Statistics then
@@ -123,7 +121,7 @@ end
 function SubmenuCentralColumn:UpdateSlot(index)
     local _item = self.Items[index]
     if self:currentColumnType() == LeftItemType.Info then
-        local labels = _item.label:SplitLabel()
+        local label = "SUBMN_CCOL_LBL"
         BeginScaleformMovieMethod(ScaleformUI.Scaleforms._pauseMenu._pause.handle, "UPDATE_SLOT")
         PushScaleformMovieFunctionParameterInt(self.position)
         PushScaleformMovieFunctionParameterInt(index - 1)
@@ -132,10 +130,8 @@ function SubmenuCentralColumn:UpdateSlot(index)
         PushScaleformMovieFunctionParameterInt(0)
         PushScaleformMovieFunctionParameterInt(0)
         PushScaleformMovieFunctionParameterBool(true)
-        BeginTextCommandScaleformString("CELL_EMAIL_BCON")
-        for k, v in pairs(labels) do
-            AddTextComponentScaleform(v)
-        end
+        AddTextEntry(label, _item.label)
+        BeginTextCommandScaleformString(label)
         EndTextCommandScaleformString_2()
         EndScaleformMovieMethod()
     elseif self:currentColumnType() == LeftItemType.Statistics then
