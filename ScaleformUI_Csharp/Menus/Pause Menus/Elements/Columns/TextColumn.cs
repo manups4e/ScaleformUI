@@ -1,5 +1,6 @@
 ﻿using ScaleformUI.Menus;
 using ScaleformUI.PauseMenu;
+using System.Security.Policy;
 
 namespace ScaleformUI.PauseMenus.Elements
 {
@@ -24,11 +25,10 @@ namespace ScaleformUI.PauseMenus.Elements
             PushScaleformMovieFunctionParameterInt(0);
             PushScaleformMovieFunctionParameterInt(0);
             PushScaleformMovieFunctionParameterBool(true);
-            BeginTextCommandScaleformString("CELL_EMAIL_BCON");
-            for (var i = 0; i < labels?.Length; i++)
-                AddTextComponentScaleform(labels[i]);
-            EndTextCommandScaleformString_2();
-            EndScaleformMovieMethod();
+			AddTextEntry("TXT_COL_LBL", it.Label.Label);
+			BeginTextCommandScaleformString("TXT_COL_LBL");
+			EndTextCommandScaleformString_2();
+			EndScaleformMovieMethod();
         }
 
         public override void UpdateSlot(int index)
@@ -45,11 +45,10 @@ namespace ScaleformUI.PauseMenus.Elements
             PushScaleformMovieFunctionParameterInt(0);
             PushScaleformMovieFunctionParameterInt(0);
             PushScaleformMovieFunctionParameterBool(true);
-            BeginTextCommandScaleformString("CELL_EMAIL_BCON");
-            for (var i = 0; i < labels?.Length; i++)
-                AddTextComponentScaleform(labels[i]);
-            EndTextCommandScaleformString_2();
-            EndScaleformMovieMethod();
+			AddTextEntry("TXT_COL_LBL", it.Label.Label);
+			BeginTextCommandScaleformString("TXT_COL_LBL");
+			EndTextCommandScaleformString_2();
+			EndScaleformMovieMethod();
         }
     }
 }

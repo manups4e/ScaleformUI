@@ -19,7 +19,6 @@ namespace ScaleformUI.PauseMenus.Elements
                 case LeftItemType.Info:
                     {
                         var _item = Items[index];
-                        var labels = _item.Label.SplitLabel;
                         BeginScaleformMovieMethod(Main.PauseMenu._pause.Handle, "SET_DATA_SLOT");
                         PushScaleformMovieFunctionParameterInt((int)position);
                         PushScaleformMovieFunctionParameterInt(index);
@@ -28,9 +27,8 @@ namespace ScaleformUI.PauseMenus.Elements
                         PushScaleformMovieFunctionParameterInt(0);
                         PushScaleformMovieFunctionParameterInt(0);
                         PushScaleformMovieFunctionParameterBool(true);
-                        BeginTextCommandScaleformString("CELL_EMAIL_BCON");
-                        for (var i = 0; i < labels?.Length; i++)
-                            AddTextComponentScaleform(labels[i]);
+                        AddTextEntry("SUBMN_CCOL_LBL", _item.Label.Label);
+                        BeginTextCommandScaleformString("SUBMN_CCOL_LBL");
                         EndTextCommandScaleformString_2();
                         EndScaleformMovieMethod();
                     }
@@ -158,7 +156,6 @@ namespace ScaleformUI.PauseMenus.Elements
                 case LeftItemType.Info:
                     {
                         var _item = Items[index];
-                        var labels = _item.Label.SplitLabel;
                         BeginScaleformMovieMethod(Main.PauseMenu._pause.Handle, "UPDATE_SLOT");
                         PushScaleformMovieFunctionParameterInt((int)position);
                         PushScaleformMovieFunctionParameterInt(index);
@@ -167,11 +164,10 @@ namespace ScaleformUI.PauseMenus.Elements
                         PushScaleformMovieFunctionParameterInt(0);
                         PushScaleformMovieFunctionParameterInt(0);
                         PushScaleformMovieFunctionParameterBool(true);
-                        BeginTextCommandScaleformString("CELL_EMAIL_BCON");
-                        for (var i = 0; i < labels?.Length; i++)
-                            AddTextComponentScaleform(labels[i]);
-                        EndTextCommandScaleformString_2();
-                        EndScaleformMovieMethod();
+						AddTextEntry("SUBMN_CCOL_LBL", _item.Label.Label);
+						BeginTextCommandScaleformString("SUBMN_CCOL_LBL");
+						EndTextCommandScaleformString_2();
+						EndScaleformMovieMethod();
                     }
                     break;
                 case LeftItemType.Statistics:

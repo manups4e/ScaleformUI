@@ -1014,7 +1014,6 @@ function UIMenu:SendItemToScaleform(i, update, newItem, isSlot)
         i = #sef.Items
     end
     local item = self.Items[i]
-    print(#self.Items, i)
     local str = "SET_DATA_SLOT"
     if update then
         str = "UPDATE_DATA_SLOT"

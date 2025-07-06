@@ -163,10 +163,10 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
             {
                 case 1:
                     UIMenuDynamicListItem dit = (UIMenuDynamicListItem)item;
-                    BeginTextCommandScaleformString("CELL_EMAIL_BCON");
-                    AddTextComponentScaleform(dit.CurrentListItem);
-                    EndTextCommandScaleformString_2();
-                    break;
+					AddTextEntry("SCUI_SETTCOL_RLBL", dit.CurrentListItem);
+					BeginTextCommandScaleformString("SCUI_SETTCOL_RLBL");
+					EndTextCommandScaleformString_2();
+					break;
                 case 2:
                     UIMenuCheckboxItem check = (UIMenuCheckboxItem)item;
                     PushScaleformMovieMethodParameterBool(check.Checked);
@@ -188,10 +188,10 @@ namespace ScaleformUI.PauseMenus.Elements.Columns
                     break;
             }
             PushScaleformMovieFunctionParameterBool(item.Enabled);
-            BeginTextCommandScaleformString("CELL_EMAIL_BCON");
-            AddTextComponentScaleform(item.Label);
-            EndTextCommandScaleformString_2();
-            PushScaleformMovieFunctionParameterBool(item.BlinkDescription);
+			AddTextEntry("SCUI_SETTCOL_LBL", item.Label);
+			BeginTextCommandScaleformString("SCUI_SETTCOL_LBL");
+			EndTextCommandScaleformString_2();
+			PushScaleformMovieFunctionParameterBool(item.BlinkDescription);
             switch (item)
             {
                 case UIMenuDynamicListItem:

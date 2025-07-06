@@ -1964,8 +1964,8 @@ namespace ScaleformUI.Menu
             {
                 case 1:
                     UIMenuDynamicListItem dit = (UIMenuDynamicListItem)item;
-                    BeginTextCommandScaleformString("CELL_EMAIL_BCON");
-                    AddTextComponentScaleform(dit.CurrentListItem);
+                    AddTextEntry("SCUI_UIMENU_RLBL", dit.CurrentListItem);
+					BeginTextCommandScaleformString("SCUI_UIMENU_RLBL");
                     EndTextCommandScaleformString_2();
                     break;
                 case 2:
@@ -1988,9 +1988,9 @@ namespace ScaleformUI.Menu
                     PushScaleformMovieFunctionParameterInt(0);
                     break;
             }
-            PushScaleformMovieFunctionParameterBool(item.Enabled);
-            BeginTextCommandScaleformString("CELL_EMAIL_BCON");
-            AddTextComponentScaleform(item.Label);
+			PushScaleformMovieFunctionParameterBool(item.Enabled);
+			AddTextEntry("SCUI_UIMENU_LBL", item.Label);
+			BeginTextCommandScaleformString("SCUI_UIMENU_LBL");
             EndTextCommandScaleformString_2();
             PushScaleformMovieFunctionParameterBool(item.BlinkDescription);
             switch (item)
