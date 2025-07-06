@@ -157,21 +157,21 @@ function SubmenuTab:MouseEvent(eventType, context, index)
     if not self.Focused then return end
     if eventType == 5 then
         if self.CurrentColumnIndex == context then
-            if self:CurrentColumn():Index() ~= index then
+            if self:CurrentColumn():Index() ~= index + 1 then
                 if self.CurrentColumnIndex == 0 then
                     self.LeftColumn.Items[self.LeftColumn:Index()]:Selected(false)
-                    self.LeftColumn:Index(index)
+                    self.LeftColumn:Index(index + 1)
                     self.LeftColumn.Items[self.LeftColumn:Index()]:Selected(true)
                     self:StateChange(self:currentItemType())
                     self:Refresh(false)
                 elseif self.CurrentColumnIndex == 1 then
                     self.CenterColumn.Items[self.CenterColumn:Index()]:Selected(false)
-                    self.CenterColumn:Index(index)
+                    self.CenterColumn:Index(index + 1)
                     self.CenterColumn.Items[self.CenterColumn:Index()]:Selected(true)
                 end
-                return
+            else
+                self:Select()
             end
-            self:Select()
         else
             if context > self.CurrentColumnIndex then
                 self.Parent:FocusLevel(self.Parent:FocusLevel() + 1)
@@ -182,13 +182,13 @@ function SubmenuTab:MouseEvent(eventType, context, index)
             end
             if self.CurrentColumnIndex == 0 then
                 self.LeftColumn.Items[self.LeftColumn:Index()]:Selected(false)
-                self.LeftColumn:Index(index)
+                self.LeftColumn:Index(index + 1)
                 self.LeftColumn.Items[self.LeftColumn:Index()]:Selected(true)
                 self:StateChange(self:currentItemType())
                 self:Refresh(false)
             elseif self.CurrentColumnIndex == 1 then
                 self.CenterColumn.Items[self.CenterColumn:Index()]:Selected(false)
-                self.CenterColumn:Index(index)
+                self.CenterColumn:Index(index + 1)
                 self.CenterColumn.Items[self.CenterColumn:Index()]:Selected(true)
             end
         end

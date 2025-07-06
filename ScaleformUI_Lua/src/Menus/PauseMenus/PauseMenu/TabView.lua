@@ -745,10 +745,10 @@ function TabView:ProcessControl()
             self:FocusLevel(0)
         end
         self:Index(self.index + 1)
-    elseif (self:CheckInput(eFRONTEND_INPUT.FRONTEND_INPUT_ACCEPT, false, CHECK_INPUT_OVERRIDE_FLAG.CHECK_INPUT_OVERRIDE_FLAG_NONE, false)) then
+    elseif (self:CheckInput(eFRONTEND_INPUT.FRONTEND_INPUT_ACCEPT, false, CHECK_INPUT_OVERRIDE_FLAG.CHECK_INPUT_OVERRIDE_FLAG_NONE, false) or (self:CheckInput(eFRONTEND_INPUT.FRONTEND_INPUT_CURSOR_ACCEPT, false, CHECK_INPUT_OVERRIDE_FLAG.CHECK_INPUT_OVERRIDE_FLAG_NONE, false) and self.focusLevel == 0)) then
         if (self.focusLevel == 0) then
             self:CurrentTab():Focus()
-            self:FocusLevel(self.focusLevel + 1)
+            self:FocusLevel(1)
         else
             self:CurrentTab():Select()
         end

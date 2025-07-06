@@ -1010,7 +1010,7 @@ function UIMenu:SendItemToScaleform(i, update, newItem, isSlot)
     if isSlot == nil then isSlot = false end
     if i < 1 then 
         i = 1
-    else if i > #self.Items then
+    elseif i > #self.Items then
         i = #sef.Items
     end
     local item = self.Items[i]
