@@ -734,7 +734,7 @@ function TabView:ProcessControl()
             self:CurrentTab():GoRight()
         end
     elseif (self:CheckInput(eFRONTEND_INPUT.FRONTEND_INPUT_LB, false, CHECK_INPUT_OVERRIDE_FLAG.CHECK_INPUT_OVERRIDE_FLAG_NONE, false)
-            or (IsDisabledControlJustPressed(2, 192) and IsControlPressed(2, Control.Sprint) and IsUsingKeyboard(2))) then
+            or (IsDisabledControlJustPressed(2, 192) and IsControlPressed(2, 21) and IsUsingKeyboard(2))) then
         if (IsCorona or #self.Tabs == 1) then return end
         if (self:FocusLevel() > 0) then
             self:FocusLevel(0)
