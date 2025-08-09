@@ -514,7 +514,7 @@ function TabView:CheckInput(input, bPlaySound, OverrideFlags, bCheckForButtonJus
                     bInputTriggered = true
                 end
             end
-            if (s_lastGameFrame ~= GetFrameCount()) then
+            if self.s_lastGameFrame ~= GetFrameCount() then
                 -- can't just do bInputTriggered because we may be waiting for an up
                 if (iYAxis > self.FRONTEND_ANALOGUE_THRESHOLD or (IsDisabledControlPressed(2, 187) and not c_ignoreDpad)) then
                     if (bInputTriggered) then
