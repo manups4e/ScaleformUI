@@ -1,5 +1,6 @@
 ﻿using CitizenFX.Core;
 using CitizenFX.Core.Native;
+using CitizenFX.Core.UI;
 using ScaleformUI.Elements;
 using System.Drawing;
 using System.Runtime.Remoting.Contexts;
@@ -117,6 +118,28 @@ namespace ScaleformUI.Scaleforms
             this.rotation = r;
             this.centered = centered;
         }
+    }
+
+    public class TextOverlay : MinimapOverlay
+    {
+        public string Text { get; set; }
+        public int FontSize { get; set; }
+        public int Alignment { get; set; }
+        public string Font { get; set; }
+        public bool Outline { get; set; }
+        public bool Shadow { get; set; }
+        public TextOverlay() { }
+		public TextOverlay(int handle, string text, Vector2 pos, int fontSize = 13, int alignment = 1, string font = "$Font2", bool outline = true, bool shadow = false)
+        {
+            this.handle = handle;
+            this.Text = text;
+            this.position = pos;
+            this.FontSize = fontSize;
+            this.Alignment = alignment;
+            this.Font = font;
+            this.Outline = outline;
+            this.Shadow = shadow;
+		}
     }
 
     public static class MinimapOverlays
@@ -253,12 +276,52 @@ namespace ScaleformUI.Scaleforms
             return minOv;
         }
 
-        /// <summary>
-        /// Sets the selected overlay's color (argb)
-        /// </summary>
-        /// <param name="overlayId"></param>
-        /// <param name="color"></param>
-        public static void SetOverlayColor(int overlayId, SColor color)
+        public static TextOverlay AddTextOverlay(string text, Vector2 pos, int fontSize = 13, int alignment = 1, string font = "$Font2", bool outline = true, bool shadow = false)
+        {
+            CallMinimapScaleformFunction(overlay, "ADD_TEXT_OVERLAY");
+            AddTextEntry("MinimapOverlays_" + minimaps.Count, text);
+            BeginTextCommandScaleformString("MinimapOverlays_" + minimaps.Count);
+            EndTextCommandScaleformString_2();
+            ScaleformMovieMethodAddParamFloat(pos.X);
+            ScaleformMovieMethodAddParamFloat(pos.Y);
+            ScaleformMovieMethodAddParamInt(fontSize);
+            ScaleformMovieMethodAddParamInt(alignment);
+            ScaleformMovieMethodAddParamTextureNameString(font);
+            ScaleformMovieMethodAddParamBool(outline);
+            ScaleformMovieMethodAddParamBool(shadow);
+            EndScaleformMovieMethod();
+
+            var ov = new TextOverlay(minimaps.Count, text, pos, fontSize, alignment, font, outline, shadow);
+            minimaps.Add(ov);
+            return ov;
+		}
+
+        public static void UpdateTextOverlay(int handle, string text, Vector2 pos, int fontSize = 13, int alignment = 1, string font = "$Font2", bool outline = true, bool shadow = false)
+        {
+            if (overlay == 0) return;
+			CallMinimapScaleformFunction(overlay, "UPDATE_TEXT");
+			ScaleformMovieMethodAddParamInt(handle-1);
+			AddTextEntry("MinimapOverlays_" + minimaps.Count, text);
+			BeginTextCommandScaleformString("MinimapOverlays_" + minimaps.Count);
+			EndTextCommandScaleformString_2();
+			ScaleformMovieMethodAddParamFloat(pos.X);
+			ScaleformMovieMethodAddParamFloat(pos.Y);
+			ScaleformMovieMethodAddParamInt(fontSize);
+			ScaleformMovieMethodAddParamInt(alignment);
+			ScaleformMovieMethodAddParamTextureNameString(font);
+			ScaleformMovieMethodAddParamBool(outline);
+			ScaleformMovieMethodAddParamBool(shadow);
+			EndScaleformMovieMethod();
+			
+            minimaps[handle-1] = new TextOverlay(handle, text, pos, fontSize, alignment, font, outline, shadow);
+		}
+
+		/// <summary>
+		/// Sets the selected overlay's color (argb)
+		/// </summary>
+		/// <param name="overlayId"></param>
+		/// <param name="color"></param>
+		public static void SetOverlayColor(int overlayId, SColor color)
         {
             if (overlay == 0) return;
             CallMinimapScaleformFunction(overlay, "SET_OVERLAY_COLOR");

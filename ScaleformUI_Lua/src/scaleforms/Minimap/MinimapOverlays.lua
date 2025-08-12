@@ -27,19 +27,19 @@ MinimapOverlays.__call = function() return "MinimapOverlays" end
 
 
 function MinimapOverlays:Load()
-    TriggerEvent("ScUI:getMinimapHandle", function(handle)
-        self.minimapHandle = handle
-    end)
-    if self.minimapHandle == 0 then
-        local sc = Scaleform.RequestWidescreen("minimap")
-        while not HasScaleformMovieLoaded(sc.handle) do
-            Wait(0)
-        end
-        self.minimapHandle = sc.handle
-        SetBigmapActive(true, false)
-        Wait(0)
-        SetBigmapActive(false, false)
-    end
+    -- TriggerEvent("ScUI:getMinimapHandle", function(handle)
+    --     self.minimapHandle = handle
+    -- end)
+    -- if self.minimapHandle == 0 then
+    --     local sc = Scaleform.RequestWidescreen("minimap")
+    --     while not HasScaleformMovieLoaded(sc.handle) do
+    --         Wait(0)
+    --     end
+    --     self.minimapHandle = sc.handle
+    --     SetBigmapActive(true, false)
+    --     Wait(0)
+    --     SetBigmapActive(false, false)
+    -- end
     -- TODO: ADD CHECKS IN FUNCTIONS TO PREVENT USING WITH AREA OVERLAY (COORDS FOR EXAMPLE)
     TriggerEvent("ScUI:AddMinimapOverlay", function(handle)
         self.overlay = handle
@@ -180,6 +180,67 @@ function MinimapOverlays:AddAreaOverlay(coords, outline, color)
     table.insert(self.minimaps, overlay)
     return overlay
 end
+
+---Creates a new Textfield object in the scaleform and returns its handle
+---@param label string the texture
+---@param x number the x coordinate in screen format (0.0 to 1.0)
+---@param y number the y coordinate in screen format (0.0 to 1.0)
+---@param fontSize number FontSize (default is 13)
+---@param alignment number the text alignment (0 = left, 1 = center, 2 = right)
+---@param font string the font to be used (default $Font2, check https://forum.cfx.re/t/using-html-images-and-blips-in-scaleform-texts/553298/2 for all ingame fonts)
+---@param outline boolean toggle the text outline
+---@param shadow boolean toggle the text shadow
+---@return MinimapOverlay
+function MinimapOverlays:AddTextOverlay(label, x,y, fontSize, alignment, font, outline, shadow)
+    if fontSize == nil then fontSize = 13 end
+    if alignment == nil then alignment = 0 end
+    if font == nil then font = "$Font2" end
+    if outline == nil then outline = true end
+    if shadow == nil then shadow = false end
+
+    CallMinimapScaleformFunction(self.overlay, "ADD_TEXT_OVERLAY")
+    AddTextEntry("MinimapOverlays_" .. #self.minimaps, label)
+    BeginTextCommandScaleformString("MinimapOverlays_" .. #self.minimaps)
+    EndTextCommandScaleformString_2()
+    ScaleformMovieMethodAddParamFloat(x)
+    ScaleformMovieMethodAddParamFloat(y)
+    ScaleformMovieMethodAddParamInt(fontSize)
+    ScaleformMovieMethodAddParamInt(alignment)
+    ScaleformMovieMethodAddParamTextureNameString(font)
+    ScaleformMovieMethodAddParamBool(outline)
+    ScaleformMovieMethodAddParamBool(shadow)
+    EndScaleformMovieMethod()
+
+    local overlay = TextOverlay.New(#self.minimaps + 1, label, x,y, fontSize, alignment, font, outline, shadow)
+    table.insert(self.minimaps, overlay)
+    return overlay
+end
+
+function MinimapOverlays:UpdateTextOverlay(overlayId, label, x,y, fontSize, alignment, font, outline, shadow)
+    if self.overlay == 0 then return end
+    if fontSize == nil then fontSize = 13 end
+    if alignment == nil then alignment = 0 end
+    if font == nil then font = "$Font2" end
+    if outline == nil then outline = true end
+    if shadow == nil then shadow = false end
+
+    CallMinimapScaleformFunction(self.overlay, "UPDATE_TEXT")
+    ScaleformMovieMethodAddParamInt(overlayId - 1)
+    AddTextEntry("MinimapOverlays_" .. #self.minimaps, label)
+    BeginTextCommandScaleformString("MinimapOverlays_" .. #self.minimaps)
+    EndTextCommandScaleformString_2()
+    ScaleformMovieMethodAddParamFloat(x)
+    ScaleformMovieMethodAddParamFloat(y)
+    ScaleformMovieMethodAddParamInt(fontSize)
+    ScaleformMovieMethodAddParamInt(alignment)
+    ScaleformMovieMethodAddParamTextureNameString(font)
+    ScaleformMovieMethodAddParamBool(outline)
+    ScaleformMovieMethodAddParamBool(shadow)
+    EndScaleformMovieMethod()
+
+    self.minimaps[overlayId] = TextOverlay.New(overlayId, label, x,y, fontSize, alignment, font, outline, shadow)
+end
+
 
 ---Changes color to the desired overlay
 ---@param overlayId number the overlay handle
