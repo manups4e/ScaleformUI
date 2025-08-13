@@ -183,8 +183,8 @@ end
 
 ---Creates a new Textfield object in the scaleform and returns its handle
 ---@param label string the texture
----@param x number the x coordinate in screen format (0.0 to 1.0)
----@param y number the y coordinate in screen format (0.0 to 1.0)
+---@param x number the x coordinate in world format 
+---@param y number the y coordinate in world format
 ---@param fontSize number FontSize (default is 13)
 ---@param alignment number the text alignment (0 = left, 1 = center, 2 = right)
 ---@param font string the font to be used (default $Font2, check https://forum.cfx.re/t/using-html-images-and-blips-in-scaleform-texts/553298/2 for all ingame fonts)
