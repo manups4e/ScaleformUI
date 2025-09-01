@@ -593,6 +593,19 @@ namespace ScaleformUI.Menu
             }
             else throw new Exception("ScaleformUI - You cannot add items to an itemless menu, only a long description");
         }
+
+        /// <summary>
+        /// Add multiple items to the menu.
+        /// </summary>
+        /// <param name="items">Item objects to be added. Can be normal items, checkbox or list items.</param>
+        public void AddItems(List<UIMenuItem> items)
+        {
+            foreach (UIMenuItem item in items)
+            {
+                AddItem(item);
+            }
+        }
+
         /// <summary>
         /// Add a new Heritage Window to the Menu
         /// </summary>
