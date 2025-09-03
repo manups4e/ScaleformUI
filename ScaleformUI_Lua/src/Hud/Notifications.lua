@@ -207,7 +207,8 @@ end
 ---@param title string @The title
 ---@param subtitle string @The subtitle
 ---@param text string @The body of the nofitication
----@param characterIcon string @The character to be displayed in the notification, use the NotificationCharacters
+---@param iconSet string @The texture dictionary for the icon, use the NotificationCharacters
+---@param icon string @The texture name for the icon
 ---@param backgroundColour HudColours @The background color
 ---@param flashColour SColor @The flash color (RGBA)
 ---@param blink boolean @Should the notification blink?
@@ -218,9 +219,11 @@ end
 ---@see HudColours
 ---@see NotificationType
 ---@return nil
-function Notifications:ShowAdvancedNotification(title, subtitle, text, characterIcon, backgroundColour, flashColour, blink, notificationType, sound)
+function Notifications:ShowAdvancedNotification(title, subtitle, text, iconSet, icon, backgroundColour, flashColour,
+                                                blink, notificationType, sound)
     if (notificationType == nil) then notificationType = self.NotificationIcon.Default end
-    if (characterIcon == nil) then characterIcon = self.IconChars.Default end
+    if (iconSet == nil) then iconSet = self.IconChars.Default end
+    if (icon == nil) then icon = self.IconChars.Default end
     if (backgroundColour == nil) then backgroundColour = -1 end
     if (blink == nil) then blink = false end
     ThefeedResetAllParameters()
@@ -234,7 +237,8 @@ function Notifications:ShowAdvancedNotification(title, subtitle, text, character
         ThefeedSetAnimpostfxColor(flashColour.R, flashColour.G, flashColour.B, flashColour.A)
     end
     if (sound) then PlaySoundFrontend(-1, "DELETE", "HUD_DEATHMATCH_SOUNDSET", true); end
-    self._handle = EndTextCommandThefeedPostMessagetext(characterIcon, characterIcon, true, notificationType, title, subtitle)
+    self._handle = EndTextCommandThefeedPostMessagetext(iconSet, icon, true, notificationType, title,
+        subtitle)
 end
 
 -- TODO: Investigate if newProgress should be a boolean or a number for EndTextCommandThefeedPostStats
@@ -280,7 +284,8 @@ function Notifications:ShowVSNotification(leftPed, leftScore, leftColor, rightPe
 
     BeginTextCommandThefeedPost("")
     ---@diagnostic disable-next-line: redundant-parameter -- This is a bug in the linter
-    self._handle = EndTextCommandThefeedPostVersusTu(txd_1, txd_1, leftScore, txd_2, txd_2, rightScore, leftColor, rightColor)
+    self._handle = EndTextCommandThefeedPostVersusTu(txd_1, txd_1, leftScore, txd_2, txd_2, rightScore, leftColor,
+        rightColor)
 
     UnregisterPedheadshot(handle_1)
     UnregisterPedheadshot(handle_2)
