@@ -600,6 +600,15 @@ function UIMenu:AddItemAt(item, index)
     end
 end
 
+--- Add multiple new items to the menu.
+---@param items table
+---@see UIMenuItem
+function UIMenu:AddItems(items)
+    for i = 1, #items do
+        self:AddItem(items[i])
+    end
+end
+
 ---RemoveItemAt
 ---@param index number
 function UIMenu:RemoveItemAt(idx)
