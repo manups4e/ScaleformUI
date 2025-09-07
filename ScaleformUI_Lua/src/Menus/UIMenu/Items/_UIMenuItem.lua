@@ -150,10 +150,12 @@ function UIMenuItem:Selected(bool)
     if bool ~= nil then
         self.selected = ToBool(bool)
         if self.ParentMenu ~= nil and self.ParentMenu:Visible() then
+            self.Highlighted(self.ParentMenu, item)
             local it = IndexOf(self.ParentMenu.Items, self)
             self.ParentMenu:SendItemToScaleform(it, true)
         end
         if self.ParentColumn ~= nil then
+            self.Highlighted(nil, item)
             local it = IndexOf(self.ParentColumn.Items, self)
             self.ParentColumn:SendItemToScaleform(it, true)
         end
