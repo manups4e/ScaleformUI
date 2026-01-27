@@ -38,7 +38,8 @@ end
 
 ---Loads the instructional buttons
 function ButtonsHandler:Load()
-    if self._sc ~= nil then return end
+    if self._sc ~= nil and self._sc:IsLoaded() then return end
+    if self._sc ~= nil then self._sc = nil end
     self._sc = Scaleform.Request("INSTRUCTIONAL_BUTTONS")
     local timeout = 1000
     local start = GlobalGameTimer
@@ -175,7 +176,7 @@ end
 ---Update tick for the instructional buttons
 function ButtonsHandler:Update()
     if (self.ControlButtons == nil or #self.ControlButtons == 0) and not self.IsSaving then return end
-    if self._sc == nil then self:Load() end
+    if self._sc == nil or not self._sc:IsLoaded() then self:Load() end
     if IsUsingKeyboard(2) then
         if not self.IsUsingKeyboard then
             self.IsUsingKeyboard = true
