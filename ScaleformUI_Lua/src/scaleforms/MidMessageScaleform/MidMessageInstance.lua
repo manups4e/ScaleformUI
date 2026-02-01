@@ -3,6 +3,7 @@ MidMessageInstance = setmetatable({
     _start = 0,
     _timer = 0,
     _hasAnimatedOut = false,
+    _bgColor = 21,
 }, MidMessageInstance)
 MidMessageInstance.__index = MidMessageInstance
 MidMessageInstance.__call = function()
@@ -14,6 +15,7 @@ end
 ---@field public _start number
 ---@field public _timer number
 ---@field public _hasAnimatedOut boolean
+---@field public _bgColor HudColours
 ---@field public New fun():MidMessageInstance
 ---@field public Load fun(self:MidMessageInstance):nil
 ---@field public Dispose fun(self:MidMessageInstance, force:boolean):nil
@@ -45,6 +47,7 @@ function MidMessageInstance:ShowColoredShard(msg, desc, bgColor, useDarkerShard,
     if time == nil then time = 5000 end
     self:Load()
     self._start = GlobalGameTimer
+    self._bgColor = bgColor
     self._sc:CallFunction("SHOW_SHARD_MIDSIZED_MESSAGE", msg, desc, bgColor, useDarkerShard, useCondensedShard)
     self._timer = time
     self._hasAnimatedOut = false
@@ -57,7 +60,7 @@ function MidMessageInstance:Update()
     self._sc:Render2D()
     if self._start ~= 0 and GlobalGameTimer - self._start > self._timer then
         if not self._hasAnimatedOut then
-            self._sc:CallFunction("SHARD_ANIM_OUT", 21, 750)
+            self._sc:CallFunction("SHARD_ANIM_OUT", self._bgColor, 750)
             self._hasAnimatedOut = true
             self._timer = self._timer + 750
         else
