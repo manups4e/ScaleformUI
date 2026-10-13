@@ -62,7 +62,12 @@ Citizen.CreateThread(function()
             end
             Wait(0)
         else
-            Wait(250)
+            if not mm.isLoaded and mm.overlay == 0 then
+                mm:Load()
+                Wait(1000)
+            else
+                Wait(250)
+            end
         end
     end
 end)
