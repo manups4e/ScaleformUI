@@ -45,24 +45,29 @@ function MinimapOverlays:Load()
         self.overlay = handle
         while not HasMinimapOverlayLoaded(self.overlay) do Citizen.Wait(0) end
         SetMinimapOverlayDisplay(self.overlay, 0.0, 0.0, 100.0, 100.0, 100.0)
-        self.isLoaded = HasMinimapOverlayLoaded(self.overlay) and HasScaleformMovieLoaded(self.minimapHandle)
+        self.isLoaded = HasMinimapOverlayLoaded(self.overlay)
     end)
 end
 
 Citizen.CreateThread(function()
     while true do
-        Wait(0)
-        if ScaleformUI.Scaleforms.MinimapOverlays.isLoaded then
-            local success, event_type, context, item_id = GetScaleformMovieCursorSelection(ScaleformUI.Scaleforms.MinimapOverlays.minimapHandle)
-            if success then
-                if context == 1000 then
-                    if ScaleformUI.Scaleforms.MinimapOverlays.minimaps[item_id + 1] ~= nil then
-                        ScaleformUI.Scaleforms.MinimapOverlays.minimaps[item_id + 1].OnMouseEvent(event_type)
-                    end
+        local mm = ScaleformUI.Scaleforms.MinimapOverlays
+        if mm.isLoaded and #mm.minimaps > 0 and mm.minimapHandle ~= 0 and HasScaleformMovieLoaded(mm.minimapHandle) then
+            local success, event_type, context, item_id = GetScaleformMovieCursorSelection(mm.minimapHandle)
+            if success and context == 1000 then
+                local overlay = mm.minimaps[item_id + 1]
+                if overlay then
+                    overlay.OnMouseEvent(event_type)
                 end
             end
+            Wait(0)
         else
-            ScaleformUI.Scaleforms.MinimapOverlays:Load()
+            if not mm.isLoaded and mm.overlay == 0 then
+                mm:Load()
+                Wait(1000)
+            else
+                Wait(250)
+            end
         end
     end
 end)
